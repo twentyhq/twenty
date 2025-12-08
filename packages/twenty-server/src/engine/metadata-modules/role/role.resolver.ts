@@ -126,8 +126,8 @@ export class RoleResolver {
         workspaceId: workspace.id,
       });
 
-    await this.userRoleService.assignRoleToUserWorkspace({
-      userWorkspaceId: userWorkspace.id,
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      userWorkspaceIds: [userWorkspace.id],
       workspaceId: workspace.id,
       roleId,
     });

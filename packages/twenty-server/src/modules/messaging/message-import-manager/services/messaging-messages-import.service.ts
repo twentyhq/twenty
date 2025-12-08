@@ -101,7 +101,7 @@ export class MessagingMessagesImportService {
       );
 
       if (!messageIdsToFetch?.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
           [messageChannel.id],
           workspaceId,
         );
@@ -158,12 +158,12 @@ export class MessagingMessagesImportService {
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
           [messageChannel.id],
           workspaceId,
         );
       } else {
-        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
           [messageChannel.id],
           workspaceId,
         );

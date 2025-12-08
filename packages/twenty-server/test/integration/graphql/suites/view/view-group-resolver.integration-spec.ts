@@ -1,17 +1,15 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/create-one-core-view-group.util';
 import { deleteOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-core-view-group.util';
 import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
-import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
 import { updateOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/update-one-core-view-group.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_GROUP_ID = '20202020-0000-4000-8000-000000000003';
 
@@ -38,22 +36,14 @@ describe('View Group Resolver', () => {
 
     testObjectMetadataId = objectMetadataId;
 
-    const {
-      data: {
-        createOneField: { id: fieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        name: 'testField',
-        label: 'Test Field',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: testObjectMetadataId,
-        isLabelSyncedWithName: true,
-      },
-    });
+    const { selectFieldMetadataId } =
+      await createOneSelectFieldMetadataForIntegrationTests({
+        input: {
+          objectMetadataId: testObjectMetadataId,
+        },
+      });
 
-    testFieldMetadataId = fieldMetadataId;
+    testFieldMetadataId = selectFieldMetadataId;
   });
 
   afterAll(async () => {
@@ -76,6 +66,7 @@ describe('View Group Resolver', () => {
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
       objectMetadataId: testObjectMetadataId,
+      mainGroupByFieldMetadataId: testFieldMetadataId,
     });
 
     testViewId = view.id;
@@ -88,51 +79,12 @@ describe('View Group Resolver', () => {
     });
   });
 
-  describe('getCoreViewGroups', () => {
-    it('should return empty array when no view groups exist', async () => {
-      const { data } = await findCoreViewGroups({
-        viewId: testViewId,
-        expectToFail: false,
-      });
-
-      expect(data.getCoreViewGroups).toEqual([]);
-    });
-
-    it('should return view groups for a specific view', async () => {
-      await createOneCoreViewGroup({
-        expectToFail: false,
-        input: {
-          viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
-          isVisible: true,
-          fieldValue: 'active',
-          position: 0,
-        },
-      });
-
-      const { data } = await findCoreViewGroups({
-        viewId: testViewId,
-        expectToFail: false,
-      });
-
-      expect(data.getCoreViewGroups).toHaveLength(1);
-      assertViewGroupStructure(data.getCoreViewGroups[0], {
-        fieldMetadataId: testFieldMetadataId,
-        isVisible: true,
-        fieldValue: 'active',
-        position: 0,
-        viewId: testViewId,
-      });
-    });
-  });
-
   describe('createCoreViewGroup', () => {
     it('should create a new view group', async () => {
       const { data } = await createOneCoreViewGroup({
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: false,
           fieldValue: 'inactive',
           position: 1,
@@ -140,7 +92,6 @@ describe('View Group Resolver', () => {
       });
 
       assertViewGroupStructure(data.createCoreViewGroup, {
-        fieldMetadataId: testFieldMetadataId,
         isVisible: false,
         fieldValue: 'inactive',
         position: 1,
@@ -153,7 +104,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: '',
           position: 2,
@@ -161,7 +111,6 @@ describe('View Group Resolver', () => {
       });
 
       assertViewGroupStructure(data.createCoreViewGroup, {
-        fieldMetadataId: testFieldMetadataId,
         isVisible: true,
         fieldValue: '',
         position: 2,
@@ -175,7 +124,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'original',
           position: 0,
@@ -224,7 +172,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'to delete',
           position: 0,
@@ -263,7 +210,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'to destroy',
           position: 0,

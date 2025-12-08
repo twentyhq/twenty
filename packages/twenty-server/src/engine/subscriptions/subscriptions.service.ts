@@ -5,6 +5,7 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
+import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
 
 @Injectable()
 export class SubscriptionsService {
@@ -21,7 +22,7 @@ export class SubscriptionsService {
         event: eventData,
       });
 
-      await this.pubSub.publish('onDbEvent', {
+      await this.pubSub.publish(ON_DB_EVENT_TRIGGER, {
         onDbEvent: {
           action: operation,
           objectNameSingular: nameSingular,

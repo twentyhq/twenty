@@ -104,6 +104,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewGroupsToDelete,
       flatViewGroupsToUpdate,
     } = handleEnumFlatFieldMetadataUpdateSideEffects({
+      flatViewMaps,
       flatViewFilterMaps,
       flatViewGroupMaps,
       fromFlatFieldMetadata,

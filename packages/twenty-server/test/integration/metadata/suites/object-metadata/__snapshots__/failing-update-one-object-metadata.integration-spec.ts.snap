@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
+exports[`Object metadata update should fail when labelIdentifier is a UUID field (reserved for system objects) 1`] = `
 [
   {
     "extensions": {
@@ -16,7 +16,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             "errors": [
               {
                 "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
+                "message": "labelIdentifierFieldMetadataId validation failed: field type uuid is reserved for system object metadata",
                 "userFriendlyMessage": "Field cannot be used as label identifier",
               },
             ],
@@ -29,6 +29,8 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             "type": "update_object",
           },
         ],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
         "role": [],
         "roleTarget": [],
         "routeTrigger": [],
@@ -63,6 +65,93 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
+        "invalidRouteTrigger": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating object",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "agent": [],
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
+                "userFriendlyMessage": "Field cannot be used as label identifier",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "namePlural": "whatevers",
+              "nameSingular": "whatever",
+            },
+            "status": "fail",
+            "type": "update_object",
+          },
+        ],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
+        "routeTrigger": [],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_VIEW_DATA",
+                "message": "View field position cannot be lower than label identifier view field position",
+                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "fieldMetadataId": Any<String>,
+              "id": Any<String>,
+              "viewId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_view_field",
+          },
+        ],
+        "viewFilter": [],
+        "viewGroup": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidAgent": 0,
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
         "invalidRole": 0,
         "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
@@ -110,6 +199,8 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
             "type": "update_object",
           },
         ],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
         "role": [],
         "roleTarget": [],
         "routeTrigger": [],
@@ -149,6 +240,8 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
         "invalidRole": 0,
         "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
@@ -213,6 +306,8 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
             "type": "update_object",
           },
         ],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
         "role": [],
         "roleTarget": [],
         "routeTrigger": [],
@@ -230,6 +325,8 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
         "invalidRole": 0,
         "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,

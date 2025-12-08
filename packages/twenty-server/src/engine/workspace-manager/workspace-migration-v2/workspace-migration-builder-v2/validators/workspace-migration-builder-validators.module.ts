@@ -8,6 +8,8 @@ import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-m
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
+import { FlatPageLayoutTabValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service';
+import { FlatPageLayoutWidgetValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service';
 import { FlatRoleTargetValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service';
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service';
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
@@ -35,6 +37,8 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleValidatorService,
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
+    FlatPageLayoutWidgetValidatorService,
+    FlatPageLayoutTabValidatorService,
   ],
   exports: [
     FlatViewValidatorService,
@@ -52,6 +56,8 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatRoleValidatorService,
     FlatRoleTargetValidatorService,
     FlatAgentValidatorService,
+    FlatPageLayoutWidgetValidatorService,
+    FlatPageLayoutTabValidatorService,
   ],
 })
 export class WorkspaceMigrationBuilderValidatorsModule {}

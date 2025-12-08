@@ -1,0 +1,267 @@
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
+
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+
+export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
+  createdAt,
+  workspaceId,
+  standardFieldMetadataIdByObjectAndFieldName,
+}: {
+  createdAt: Date;
+  workspaceId: string;
+  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
+}): Record<
+  AllStandardObjectFieldName<'workflowVersion'>,
+  FlatFieldMetadata
+> => ({
+  id: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'id',
+      type: FieldMetadataType.UUID,
+      label: 'Id',
+      description: 'Id',
+      icon: 'Icon123',
+      isSystem: true,
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'uuid',
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  createdAt: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'createdAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Creation date',
+      description: 'Creation date',
+      icon: 'IconCalendar',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: { displayFormat: 'RELATIVE' },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  updatedAt: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'updatedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Last update',
+      description: 'Last time the record was changed',
+      icon: 'IconCalendarClock',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: { displayFormat: 'RELATIVE' },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  deletedAt: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'deletedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Deleted at',
+      description: 'Date when the record was deleted',
+      icon: 'IconCalendarMinus',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: { displayFormat: 'RELATIVE' },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  name: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
+      description: 'The workflow version name',
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  trigger: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'trigger',
+      type: FieldMetadataType.RAW_JSON,
+      label: 'Version trigger',
+      description: 'Json object to provide trigger',
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  steps: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'steps',
+      type: FieldMetadataType.RAW_JSON,
+      label: 'Version steps',
+      description: 'Json object to provide steps',
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  status: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'status',
+      type: FieldMetadataType.SELECT,
+      label: 'Version status',
+      description: 'The workflow version status',
+      icon: 'IconStatusChange',
+      isNullable: false,
+      defaultValue: "'DRAFT'",
+      options: [
+        { value: 'DRAFT', label: 'Draft', position: 0, color: 'yellow' },
+        { value: 'ACTIVE', label: 'Active', position: 1, color: 'green' },
+        {
+          value: 'DEACTIVATED',
+          label: 'Deactivated',
+          position: 2,
+          color: 'orange',
+        },
+        { value: 'ARCHIVED', label: 'Archived', position: 3, color: 'gray' },
+      ],
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  position: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'position',
+      type: FieldMetadataType.POSITION,
+      label: 'Position',
+      description: 'Workflow version position',
+      icon: 'IconHierarchy2',
+      isSystem: true,
+      isNullable: false,
+      defaultValue: 0,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  searchVector: createStandardFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+      label: 'Search vector',
+      description: 'Field used for full-text search',
+      icon: 'IconUser',
+      isSystem: true,
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  workflow: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'workflow',
+      label: 'Workflow',
+      description: 'WorkflowVersion workflow',
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'workflow',
+      targetFieldName: 'versions',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  runs: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'runs',
+      label: 'Runs',
+      description: 'Workflow runs linked to the version.',
+      icon: 'IconRun',
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'workflowRun',
+      targetFieldName: 'workflowVersion',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  favorites: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'favorites',
+      label: 'Favorites',
+      description: 'Favorites linked to the workflow version',
+      icon: 'IconHeart',
+      isSystem: true,
+      isNullable: false,
+      createdAt,
+      targetObjectName: 'favorite',
+      targetFieldName: 'workflowVersion',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  timelineActivities: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflowVersion',
+    workspaceId,
+    options: {
+      fieldName: 'timelineActivities',
+      label: 'Timeline Activities',
+      description: 'Timeline activities linked to the version',
+      icon: 'IconTimelineEvent',
+      isSystem: true,
+      isNullable: false,
+      createdAt,
+      targetObjectName: 'timelineActivity',
+      targetFieldName: 'workflowVersion',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+});
