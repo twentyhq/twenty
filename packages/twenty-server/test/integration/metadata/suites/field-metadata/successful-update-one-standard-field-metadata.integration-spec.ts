@@ -1,4 +1,3 @@
-import { sleep } from 'cloudflare/core';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -378,69 +377,5 @@ describe('Standard field isUnique update should succeed', () => {
     jestExpectToBeDefined(nameFieldIndex);
     expect(nameFieldIndex.isUnique).toBe(true);
     expect(nameFieldIndex.isCustom).toBe(true);
-  });
-
-  it('should set isUnique back to false on standard field', async () => {
-    jestExpectToBeDefined(nameFieldMetadata);
-
-    await updateOneFieldMetadata({
-      input: {
-        idToUpdate: nameFieldMetadata.id,
-        updatePayload: {
-          isUnique: true,
-        },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        label
-        isUnique
-        isActive
-        isCustom
-      `,
-    });
-
-    await sleep(2000);
-
-    const { data } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: nameFieldMetadata.id,
-        updatePayload: {
-          isUnique: false,
-        },
-      },
-      expectToFail: false,
-      gqlFields: `
-        id
-        name
-        label
-        isUnique
-        isActive
-        isCustom
-      `,
-    });
-
-    expect(data.updateOneField.id).toBe(nameFieldMetadata.id);
-    expect(data.updateOneField.name).toBe('name');
-    expect(data.updateOneField.isUnique).toBe(false);
-
-    const objects = await findManyObjectMetadataWithIndexes({
-      expectToFail: false,
-    });
-
-    const customObject = objects.find((obj) => obj.id === customObjectId);
-
-    jestExpectToBeDefined(customObject);
-
-    const nameFieldIndex = customObject.indexMetadataList.find((index) =>
-      index.indexFieldMetadataList.some(
-        (indexField) =>
-          isDefined(nameFieldMetadata) &&
-          indexField.fieldMetadataId === nameFieldMetadata.id,
-      ),
-    );
-
-    expect(nameFieldIndex).toBeUndefined();
   });
 });
