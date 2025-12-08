@@ -13,7 +13,9 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
     position: pageLayoutTabEntity.position,
     pageLayoutId: pageLayoutTabEntity.pageLayoutId,
     workspaceId: pageLayoutTabEntity.workspaceId,
-    universalIdentifier: pageLayoutTabEntity.universalIdentifier,
+    universalIdentifier:
+      pageLayoutTabEntity.universalIdentifier ?? pageLayoutTabEntity.id,
     applicationId: pageLayoutTabEntity.applicationId,
+    widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
   };
 };

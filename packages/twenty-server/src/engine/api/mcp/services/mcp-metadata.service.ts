@@ -8,16 +8,15 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
-import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 
 @Injectable()
 export class MCPMetadataService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly objectMetadataToolsFactory: ObjectMetadataToolsFactory,
-    private readonly fieldMetadataToolsFactory: FieldMetadataToolsFactory,
+    private readonly toolProvider: ToolProviderService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -50,18 +49,19 @@ export class MCPMetadataService {
     });
   }
 
-  getTools(workspaceId: string): ToolSet {
-    return {
-      ...this.objectMetadataToolsFactory.generateTools(workspaceId),
-      ...this.fieldMetadataToolsFactory.generateTools(workspaceId),
-    };
+  async getTools(workspaceId: string): Promise<ToolSet> {
+    return this.toolProvider.getTools({
+      workspaceId,
+      categories: [ToolCategory.METADATA],
+      wrapWithErrorContext: false,
+    });
   }
 
   async handleToolCall(
     request: Request,
     workspaceId: string,
   ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
-    const tools = this.getTools(workspaceId);
+    const tools = await this.getTools(workspaceId);
     const toolName = request.body.params.name as keyof typeof tools;
     const tool = tools[toolName];
 
@@ -99,8 +99,8 @@ export class MCPMetadataService {
     };
   }
 
-  listTools(request: Request, workspaceId: string) {
-    const tools = this.getTools(workspaceId);
+  async listTools(request: Request, workspaceId: string) {
+    const tools = await this.getTools(workspaceId);
 
     const toolsArray = Object.entries(tools)
       .filter(([, def]) => !!def.inputSchema)
@@ -167,7 +167,7 @@ export class MCPMetadataService {
       }
 
       if (request.body.method === 'tools/list') {
-        return this.listTools(request, workspace.id);
+        return await this.listTools(request, workspace.id);
       }
 
       if (request.body.method === 'prompts/list') {

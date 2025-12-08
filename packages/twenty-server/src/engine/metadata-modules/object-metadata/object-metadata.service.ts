@@ -6,8 +6,11 @@ import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -93,39 +96,30 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatObjectMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatObjectMetadataToUpdate],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: flatIndexMetadatasToUpdate,
-            }),
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+            },
+            fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: otherObjectFlatFieldMetadatasToUpdate,
-            }),
-            flatViewFieldMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFieldMaps,
+            },
+            viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatViewFieldsToUpdate,
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps: existingFlatViewMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -278,35 +272,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatObjectMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatObjectMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatFieldMetadataMaps,
+            },
+            fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            inferDeletionFromMissingEntities: {
-              objectMetadata: true,
-              fieldMetadata: true,
-              index: true,
             },
-            isSystemBuild,
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
@@ -369,33 +353,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       existingFeatureFlagsMap,
     });
 
-    const flatFieldMetadataMapsFromTo = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-      flatEntityToCreate: [
-        ...flatFieldMetadataToCreateOnObject,
-        ...relationTargetFlatFieldMetadataToCreate,
-      ],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
+    const optimisticFlatFieldMetadataMaps = [
+      ...flatFieldMetadataToCreateOnObject,
+      ...relationTargetFlatFieldMetadataToCreate,
+    ].reduce<MetadataFlatEntityMaps<'fieldMetadata'>>(
+      (flatEntityMaps, flatFieldMetadata) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatFieldMetadata,
+          flatEntityMaps,
+        }),
+      createEmptyFlatEntityMaps(),
+    );
 
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     });
 
     const flatDefaultViewFieldsToCreate =
       await this.computeFlatViewFieldsToCreate({
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
-          {
-            flatEntityMaps: flatFieldMetadataMapsFromTo.to,
-            flatEntityIds: flatFieldMetadataToCreateOnObject.map(
-              ({ id }) => id,
-            ),
-          },
-        ),
+        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
       });
@@ -403,37 +383,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatObjectMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
               flatEntityToCreate: [flatObjectMetadataToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatViewMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewMaps,
+            },
+            view: {
               flatEntityToCreate: [flatDefaultViewToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatViewFieldMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFieldMaps,
+            },
+            viewField: {
               flatEntityToCreate: flatDefaultViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatFieldMetadataMaps: flatFieldMetadataMapsFromTo,
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            fieldMetadata: {
+              flatEntityToCreate: [
+                ...flatFieldMetadataToCreateOnObject,
+                ...relationTargetFlatFieldMetadataToCreate,
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            index: {
               flatEntityToCreate: flatIndexMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -474,10 +455,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadata,
     workspaceId,
     workspaceCustomApplicationId,
+    flatFieldMetadataMaps,
   }: {
     workspaceCustomApplicationId: string;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }) {
     const defaultViewInput = {
       objectMetadataId: objectMetadata.id,
@@ -488,13 +471,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId: workspaceId,
     };
 
-    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
+    const { flatViewToCreate } = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
       workspaceCustomApplicationId,
+      flatFieldMetadataMaps,
     });
 
-    return flatViewFromCreateInput;
+    return flatViewToCreate;
   }
 
   private async computeFlatViewFieldsToCreate({

@@ -34,10 +34,10 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
       type: FieldMetadataType.DATE,
       universalIdentifier: 'field-universal-1',
       viewFieldIds: [],
-      viewGroupIds: [],
       viewFilterIds: [],
       workspaceId,
       calendarViewIds: [viewId],
+      mainGroupByFieldMetadataViewIds: [],
       applicationId,
     });
 

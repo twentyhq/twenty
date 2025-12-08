@@ -269,7 +269,7 @@ export const GraphWidgetLineChart = ({
         />
       </GraphWidgetChartContainer>
       <GraphLineChartTooltip
-        containerId={id}
+        containerRef={containerRef}
         enrichedSeries={enrichedSeries}
         formatOptions={formatOptions}
         onSliceClick={onSliceClick}

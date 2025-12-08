@@ -148,7 +148,6 @@ describe('WorkspaceEntityManager', () => {
       workspaceId: 'test-workspace-id',
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       mainGroupByFieldMetadataViewIds: [],

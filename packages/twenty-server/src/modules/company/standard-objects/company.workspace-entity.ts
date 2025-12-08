@@ -52,7 +52,6 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
-
   namePlural: 'companies',
   labelSingular: msg`Company`,
   labelPlural: msg`Companies`,

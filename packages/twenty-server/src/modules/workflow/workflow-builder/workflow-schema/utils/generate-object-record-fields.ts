@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
@@ -33,7 +34,7 @@ export const generateObjectRecordFields = ({
       continue;
     }
 
-    if (field.type !== FieldMetadataType.RELATION) {
+    if (!isMorphOrRelationFlatFieldMetadata(field)) {
       result[field.name] = generateFakeRecordField({
         type: field.type,
         label: field.label,
@@ -41,10 +42,6 @@ export const generateObjectRecordFields = ({
         fieldMetadataId: field.id,
       });
 
-      continue;
-    }
-
-    if (!isDefined(field.relationTargetObjectMetadataId)) {
       continue;
     }
 

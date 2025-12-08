@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { type Readable } from 'stream';
 
+import { Sources } from 'twenty-shared/types';
+
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 @Injectable()
 export class FileStorageService implements StorageDriver {
