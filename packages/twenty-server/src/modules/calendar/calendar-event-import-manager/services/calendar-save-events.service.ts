@@ -45,20 +45,20 @@ export class CalendarSaveEventsService {
     const existingCalendarEvents = await calendarEventRepository.find({
       where: {
         iCalUid: Any(
-          fetchedCalendarEvents.map((event) => event.iCalUID as string),
+          fetchedCalendarEvents.map((event) => event.iCalUid as string),
         ),
       },
     });
 
     const fetchedCalendarEventsWithDBEvents: FetchedCalendarEventWithDBEvent[] =
       fetchedCalendarEvents.map((event): FetchedCalendarEventWithDBEvent => {
-        const existingEventWithSameiCalUID = existingCalendarEvents.find(
-          (existingEvent) => existingEvent.iCalUid === event.iCalUID,
+        const existingEventWithSameiCalUid = existingCalendarEvents.find(
+          (existingEvent) => existingEvent.iCalUid === event.iCalUid,
         );
 
         return {
           fetchedCalendarEvent: event,
-          existingCalendarEvent: existingEventWithSameiCalUID ?? null,
+          existingCalendarEvent: existingEventWithSameiCalUid ?? null,
           newlyCreatedCalendarEvent: null,
         };
       });
@@ -78,7 +78,7 @@ export class CalendarSaveEventsService {
             .map(
               ({ fetchedCalendarEvent }) =>
                 ({
-                  iCalUid: fetchedCalendarEvent.iCalUID,
+                  iCalUid: fetchedCalendarEvent.iCalUid,
                   title: fetchedCalendarEvent.title,
                   description: fetchedCalendarEvent.description,
                   startsAt: fetchedCalendarEvent.startsAt,
@@ -113,7 +113,7 @@ export class CalendarSaveEventsService {
             ({ fetchedCalendarEvent, existingCalendarEvent }) => {
               const savedCalendarEvent = savedCalendarEvents.find(
                 (savedCalendarEvent) =>
-                  savedCalendarEvent.iCalUid === fetchedCalendarEvent.iCalUID,
+                  savedCalendarEvent.iCalUid === fetchedCalendarEvent.iCalUid,
               );
 
               return {
@@ -132,13 +132,13 @@ export class CalendarSaveEventsService {
             .map(({ fetchedCalendarEvent, existingCalendarEvent }) => {
               if (!existingCalendarEvent) {
                 throw new Error(
-                  `Existing calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Existing calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 
               return {
                 id: existingCalendarEvent.id,
-                iCalUid: fetchedCalendarEvent.iCalUID,
+                iCalUid: fetchedCalendarEvent.iCalUid,
                 title: fetchedCalendarEvent.title,
                 description: fetchedCalendarEvent.description,
                 startsAt: fetchedCalendarEvent.startsAt,
@@ -184,7 +184,7 @@ export class CalendarSaveEventsService {
 
             if (!calendarEventId) {
               throw new Error(
-                `Calendar event id not found for event with iCalUID ${fetchedCalendarEvent.iCalUID} - should never happen`,
+                `Calendar event id not found for event with iCalUid ${fetchedCalendarEvent.iCalUid} - should never happen`,
               );
             }
 
@@ -213,7 +213,7 @@ export class CalendarSaveEventsService {
             .flatMap(({ newlyCreatedCalendarEvent, fetchedCalendarEvent }) => {
               if (!newlyCreatedCalendarEvent?.id) {
                 throw new Error(
-                  `Newly created calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Newly created calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 
@@ -233,7 +233,7 @@ export class CalendarSaveEventsService {
             .flatMap(({ fetchedCalendarEvent, existingCalendarEvent }) => {
               if (!existingCalendarEvent?.id) {
                 throw new Error(
-                  `Existing calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Existing calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 
