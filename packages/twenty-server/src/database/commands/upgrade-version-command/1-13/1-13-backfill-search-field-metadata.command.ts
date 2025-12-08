@@ -41,7 +41,7 @@ const STANDARD_OBJECT_SEARCH_FIELDS_MAP: Partial<
 };
 
 @Command({
-  name: 'upgrade:1-14:backfill-search-field-metadata',
+  name: 'upgrade:1-13:backfill-search-field-metadata',
   description:
     'Backfill searchFieldMetadata table with existing hardcoded SEARCH_FIELDS_FOR_* configurations',
 })

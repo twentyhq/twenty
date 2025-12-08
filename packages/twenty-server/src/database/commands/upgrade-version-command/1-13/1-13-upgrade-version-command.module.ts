@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
+import { BackfillSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-search-field-metadata.command';
 import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-view-main-group-by-field-metadata-id.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
@@ -15,6 +16,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -31,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       RoleTargetEntity,
       PageLayoutWidgetEntity,
       PageLayoutTabEntity,
+      SearchFieldMetadataEntity,
     ]),
     DataSourceModule,
     ApplicationModule,
@@ -42,6 +45,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
+    BackfillSearchFieldMetadataCommand,
   ],
   exports: [
     CleanEmptyStringNullInTextFieldsCommand,
@@ -49,6 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
+    BackfillSearchFieldMetadataCommand,
   ],
 })
 export class V1_13_UpgradeVersionCommandModule {}

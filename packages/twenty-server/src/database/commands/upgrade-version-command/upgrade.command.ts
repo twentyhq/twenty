@@ -28,9 +28,9 @@ import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/u
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
+import { BackfillSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-search-field-metadata.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
-import { BackfillSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-backfill-search-field-metadata.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -101,8 +101,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly deduplicateRoleTargetsCommand: DeduplicateRoleTargetsCommand,
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
     protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
-
-    // 1.14 Commands
     protected readonly backfillSearchFieldMetadataCommand: BackfillSearchFieldMetadataCommand,
   ) {
     super(
@@ -176,12 +174,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.deduplicateRoleTargetsCommand,
         this.updateRoleTargetsUniqueConstraintMigrationCommand,
         this.backfillPageLayoutUniversalIdentifiersCommand,
+        this.backfillSearchFieldMetadataCommand,
       ],
-      afterSyncMetadata: [],
-    };
-
-    const commands_1140: VersionCommands = {
-      beforeSyncMetadata: [this.backfillSearchFieldMetadataCommand],
       afterSyncMetadata: [],
     };
 
@@ -193,7 +187,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.11.0': commands_1110,
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
-      '1.14.0': commands_1140,
     };
   }
 

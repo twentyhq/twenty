@@ -5,7 +5,6 @@ import { V1_10_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V1_11_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-11/1-11-upgrade-version-command.module';
 import { V1_12_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-12/1-12-upgrade-version-command.module';
 import { V1_13_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-13/1-13-upgrade-version-command.module';
-import { V1_14_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-14/1-14-upgrade-version-command.module';
 import { V1_6_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-6/1-6-upgrade-version-command.module';
 import { V1_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-7/1-7-upgrade-version-command.module';
 import { V1_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-8/1-8-upgrade-version-command.module';
@@ -24,7 +23,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     V1_11_UpgradeVersionCommandModule,
     V1_12_UpgradeVersionCommandModule,
     V1_13_UpgradeVersionCommandModule,
-    V1_14_UpgradeVersionCommandModule,
     DataSourceModule,
     WorkspaceSyncMetadataModule,
   ],
