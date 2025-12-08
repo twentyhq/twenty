@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierAndApplicationIdToPageLayout1764945428493
+export class AddApplicationIdAndUniversalIdentifierToPageLayouts1765200057592
   implements MigrationInterface
 {
-  name = 'AddUniversalIdentifierAndApplicationIdToPageLayout1764945428493';
+  name = 'AddApplicationIdAndUniversalIdentifierToPageLayouts1765200057592';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -11,22 +11,6 @@ export class AddUniversalIdentifierAndApplicationIdToPageLayout1764945428493
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayout" ADD "applicationId" uuid`,
-    );
-    await queryRunner.query(
-      `UPDATE "core"."pageLayout"
-       SET "universalIdentifier" = gen_random_uuid(),
-           "applicationId" = (
-             SELECT "workspaceCustomApplicationId"
-             FROM "core"."workspace"
-             WHERE "workspace"."id" = "pageLayout"."workspaceId"
-           )
-       WHERE "universalIdentifier" IS NULL OR "applicationId" IS NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" ALTER COLUMN "universalIdentifier" SET NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" ALTER COLUMN "applicationId" SET NOT NULL`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_256fabec226411154baba649df" ON "core"."pageLayout" ("workspaceId", "universalIdentifier") `,
