@@ -7,6 +7,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 500;
 
@@ -55,7 +56,7 @@ export class MessagingDeleteGroupEmailMessagesService {
           'message.messageParticipants',
           'participant',
           'participant.role = :role',
-          { role: 'from' },
+          { role: MessageParticipantRole.FROM },
         )
         .where('mcma.messageChannelId = :messageChannelId', {
           messageChannelId,

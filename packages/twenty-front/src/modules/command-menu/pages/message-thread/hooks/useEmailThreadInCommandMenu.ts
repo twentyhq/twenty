@@ -14,6 +14,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // to improve - https://github.com/twentyhq/twenty/issues/12190
@@ -82,7 +83,7 @@ export const useEmailThreadInCommandMenu = () => {
           in: messages.map(({ id }) => id),
         },
         role: {
-          eq: 'from',
+          eq: MessageParticipantRole.FROM,
         },
       },
       objectNameSingular: CoreObjectNameSingular.MessageParticipant,

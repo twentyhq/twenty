@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MessageParticipantRole,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -9,13 +10,6 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-
-export enum MessageParticipantRole {
-  'FROM' = 'FROM',
-  'TO' = 'TO',
-  'CC' = 'CC',
-  'BCC' = 'BCC',
-}
 
 export const buildMessageParticipantStandardFlatFieldMetadatas = ({
   createdAt,

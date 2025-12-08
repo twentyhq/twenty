@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldActorSource } from 'twenty-shared/types';
+import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -63,7 +63,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           return messageId
             ? message.participants.map((participant: Participant) => {
                 const fromHandle =
-                  message.participants.find((p) => p.role === 'from')?.handle ||
+                  message.participants.find((p) => p.role === MessageParticipantRole.FROM)?.handle ||
                   '';
 
                 const isMessageSentByConnectedAccount =

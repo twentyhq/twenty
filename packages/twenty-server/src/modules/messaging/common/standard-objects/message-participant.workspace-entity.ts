@@ -1,6 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MessageParticipantRole,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -39,14 +43,34 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Role`,
     icon: 'IconAt',
     options: [
-      { value: 'FROM', label: 'From', position: 0, color: 'green' },
-      { value: 'TO', label: 'To', position: 1, color: 'blue' },
-      { value: 'CC', label: 'Cc', position: 2, color: 'orange' },
-      { value: 'BCC', label: 'Bcc', position: 3, color: 'red' },
+      {
+        value: MessageParticipantRole.FROM,
+        label: 'From',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageParticipantRole.TO,
+        label: 'To',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageParticipantRole.CC,
+        label: 'Cc',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageParticipantRole.BCC,
+        label: 'Bcc',
+        position: 3,
+        color: 'red',
+      },
     ],
-    defaultValue: "'FROM'",
+    defaultValue: `'${MessageParticipantRole.FROM}'`,
   })
-  role: string;
+  role: MessageParticipantRole;
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,

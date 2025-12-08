@@ -14,6 +14,7 @@ import { type EmailAddress } from 'src/modules/messaging/message-import-manager/
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 type ConnectedAccount = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -203,11 +204,11 @@ export class ImapGetMessagesService {
 
   private extractParticipants(parsed: ParsedMail) {
     const addressFields = [
-      { field: parsed.from, role: 'from' as const },
-      { field: parsed.to, role: 'to' as const },
-      { field: parsed.cc, role: 'cc' as const },
-      { field: parsed.bcc, role: 'bcc' as const },
-    ];
+      { field: parsed.from, role: MessageParticipantRole.FROM },
+      { field: parsed.to, role: MessageParticipantRole.TO },
+      { field: parsed.cc, role: MessageParticipantRole.CC },
+      { field: parsed.bcc, role: MessageParticipantRole.BCC },
+    ] as const;
 
     return addressFields.flatMap(({ field, role }) =>
       formatAddressObjectAsParticipants(this.extractAddresses(field), role),
