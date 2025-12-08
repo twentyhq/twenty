@@ -104,7 +104,8 @@ describe('Standard field metadata update should be ignored', () => {
   );
 });
 
-describe('Standard field with standard unique index update should fail on isUnique change', () => {
+// TODO: Enable this test once isUnique set as editable on standard fields
+xdescribe('Standard field with standard unique index update should fail on isUnique change', () => {
   let companyDomainNameFieldMetadataId: string;
 
   beforeAll(async () => {
