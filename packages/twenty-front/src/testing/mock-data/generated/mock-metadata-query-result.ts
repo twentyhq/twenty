@@ -3877,7 +3877,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "isUnique": false,
               "createdAt": "2025-06-09T18:53:47.000Z",
               "updatedAt": "2025-06-09T18:53:47.000Z",
-              "defaultValue": "'from'",
+              "defaultValue": "'FROM'",
               "options": [
                 {
                   "id": "edc6f452-4ecc-4ff7-b30c-18575dbe0bfd",
