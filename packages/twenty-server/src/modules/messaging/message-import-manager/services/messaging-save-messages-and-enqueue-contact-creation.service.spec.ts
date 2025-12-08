@@ -239,7 +239,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           {
             handle: 'tim@apple.com',
             displayName: 'participant email',
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             shouldCreateContact: true,
             messageId: 'db-message-id-2',
           },
