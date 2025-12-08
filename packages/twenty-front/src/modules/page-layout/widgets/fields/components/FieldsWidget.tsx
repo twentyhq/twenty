@@ -16,7 +16,7 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useTemporaryNoteFieldsConfiguration } from '@/page-layout/hooks/__temporary__/useTemporaryNoteFieldsConfiguration';
+import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/__temporary__/useTemporaryFieldsConfiguration';
 import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import { filterAndOrderFieldsFromConfiguration } from '@/page-layout/widgets/fields/utils/filterAndOrderFieldsFromConfiguration';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
@@ -84,9 +84,11 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const temporaryNoteConfiguration = useTemporaryNoteFieldsConfiguration();
+  const temporaryConfiguration = useTemporaryFieldsConfiguration(
+    targetRecord.targetObjectNameSingular,
+  );
 
-  let configuration = temporaryNoteConfiguration;
+  let configuration = temporaryConfiguration;
 
   if (
     !isDefined(configuration) ||
