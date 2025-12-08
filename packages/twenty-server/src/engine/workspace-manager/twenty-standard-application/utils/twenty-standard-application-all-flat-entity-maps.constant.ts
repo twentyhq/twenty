@@ -1,20 +1,25 @@
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
 import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
 
-export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
-  createdAt,
-  workspaceId,
-}: {
-  createdAt: Date;
+export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
+  now: Date;
   workspaceId: string;
-}): AllFlatEntityMaps => {
+  twentyStandardApplicationId: string;
+};
+
+export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
+  now,
+  workspaceId,
+  twentyStandardApplicationId,
+}: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): AllFlatEntityMaps => {
   const standardFieldMetadataIdByObjectAndFieldName =
     getStandardFieldMetadataIdByObjectAndFieldName();
 
   const builderArgs = {
-    createdAt,
+    createdAt: now,
     workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   };
@@ -25,6 +30,17 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   // Build field metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
   const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps(builderArgs);
+
+  const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
+    now,
+    standardFieldMetadataIdByObjectAndFieldName,
+    workspaceId,
+    twentyStandardApplicationId,
+  });
 
   return {
     flatAgentMaps: {
@@ -43,11 +59,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       universalIdentifiersByApplicationId: {},
     },
     flatFieldMetadataMaps,
-    flatIndexMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
+    flatIndexMaps,
     flatObjectMetadataMaps,
     flatRoleMaps: {
       byId: {},

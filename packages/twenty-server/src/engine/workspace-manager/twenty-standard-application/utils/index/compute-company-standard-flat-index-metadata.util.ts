@@ -10,9 +10,9 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  workspaceTwentyStandardApplicationId,
   standardFieldMetadataIdByObjectAndFieldName,
   dependencyFlatEntityMaps,
+  twentyStandardApplicationId
 }: Omit<CreateStandardIndexArgs<'company'>, 'options'>): Record<
   AllStandardObjectIndexName<'company'>,
   FlatIndexMetadata
@@ -20,39 +20,39 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
   accountOwnerIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
-    options: {
+    context: {
       indexName: 'accountOwnerIdIndex',
       relatedFieldNames: ['accountOwner'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
-    workspaceTwentyStandardApplicationId,
+    twentyStandardApplicationId,
     now,
   }),
   domainNameUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
-    options: {
+    context: {
       indexName: 'domainNameUniqueIndex',
       relatedFieldNames: ['domainName'],
       isUnique: true,
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
-    workspaceTwentyStandardApplicationId,
+    twentyStandardApplicationId,
     now,
   }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
-    options: {
+    context: {
       indexName: 'searchVectorGinIndex',
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
-    workspaceTwentyStandardApplicationId,
+    twentyStandardApplicationId,
     now,
   }),
 });
