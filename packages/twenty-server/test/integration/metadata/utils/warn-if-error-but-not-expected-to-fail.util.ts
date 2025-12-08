@@ -16,7 +16,7 @@ export const warnIfErrorButNotExpectedToFail = ({
       process.env.LOG_LEVELS.includes('debug')
     ) {
       // eslint-disable-next-line no-console
-      console.log(JSON.stringify(response.body.errors));
+      console.log(JSON.stringify(response.body.errors, null, 2));
     }
     expect(response.body.errors).toEqual(errorMessage);
   }

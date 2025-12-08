@@ -154,7 +154,9 @@ const handleExistingIndexes = ({
 
     if (
       isDefined(uniqueIndexToDelete) &&
-      uniqueIndexToDelete.applicationId !== workspaceCustomApplicationId
+      ((isDefined(uniqueIndexToDelete.applicationId) &&
+        uniqueIndexToDelete.applicationId !== workspaceCustomApplicationId) ||
+        !uniqueIndexToDelete.isCustom)
     ) {
       return {
         status: 'fail',

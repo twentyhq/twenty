@@ -1,6 +1,7 @@
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
@@ -9,6 +10,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -261,7 +263,7 @@ describe('Standard field isUnique update should succeed', () => {
   let nameFieldMetadata: FieldMetadataDTO | undefined;
   let customObjectId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const customObject = {
       labelSingular: `Test Unique Standard Field`,
       labelPlural: `Test Unique Standard Fields`,
@@ -313,7 +315,7 @@ describe('Standard field isUnique update should succeed', () => {
     );
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -355,6 +357,27 @@ describe('Standard field isUnique update should succeed', () => {
     expect(data.updateOneField.id).toBe(nameFieldMetadata.id);
     expect(data.updateOneField.name).toBe('name');
     expect(data.updateOneField.isUnique).toBe(true);
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const customObject = objects.find((obj) => obj.id === customObjectId);
+
+    jestExpectToBeDefined(customObject);
+
+    const nameFieldIndex = customObject.indexMetadataList.find((index) =>
+      index.indexFieldMetadataList.some(
+        (indexField) =>
+          isDefined(nameFieldMetadata) &&
+          indexField.fieldMetadataId === nameFieldMetadata.id,
+      ),
+    );
+
+    jestExpectToBeDefined(nameFieldIndex);
+    expect(nameFieldIndex.isUnique).toBe(true);
+    expect(nameFieldIndex.isCustom).toBe(true);
+    //here - Suggestion: We could use findManyObjectWithIndexes and expect the index to be created and as custom
   });
 
   it('should set isUnique back to false on standard field', async () => {
@@ -399,5 +422,23 @@ describe('Standard field isUnique update should succeed', () => {
     expect(data.updateOneField.id).toBe(nameFieldMetadata.id);
     expect(data.updateOneField.name).toBe('name');
     expect(data.updateOneField.isUnique).toBe(false);
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const customObject = objects.find((obj) => obj.id === customObjectId);
+
+    jestExpectToBeDefined(customObject);
+
+    const nameFieldIndex = customObject.indexMetadataList.find((index) =>
+      index.indexFieldMetadataList.some(
+        (indexField) =>
+          isDefined(nameFieldMetadata) &&
+          indexField.fieldMetadataId === nameFieldMetadata.id,
+      ),
+    );
+
+    expect(nameFieldIndex).toBeUndefined();
   });
 });
