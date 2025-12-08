@@ -246,6 +246,12 @@ export const GraphWidgetLineChart = ({
     chartWidth,
     data,
   );
+  const chartMargins = {
+    top: LINE_CHART_MARGIN_TOP,
+    right: LINE_CHART_MARGIN_RIGHT,
+    bottom: LINE_CHART_MARGIN_BOTTOM,
+    left: LINE_CHART_MARGIN_LEFT,
+  };
   const { tickValues: valueTickValues, domain: valueDomain } =
     computeValueTickValues({
       minimum: effectiveMinimumValue,
@@ -257,6 +263,7 @@ export const GraphWidgetLineChart = ({
     yAxisLabel,
     formatOptions,
     valueTickValues,
+    chartMargins.left,
   );
 
   return (
@@ -275,10 +282,10 @@ export const GraphWidgetLineChart = ({
         <ResponsiveLine
           data={nivoData}
           margin={{
-            top: LINE_CHART_MARGIN_TOP,
-            right: LINE_CHART_MARGIN_RIGHT,
-            bottom: LINE_CHART_MARGIN_BOTTOM,
-            left: LINE_CHART_MARGIN_LEFT,
+            top: chartMargins.top,
+            right: chartMargins.right,
+            bottom: chartMargins.bottom,
+            left: chartMargins.left,
           }}
           xScale={{ type: 'point' }}
           yScale={{
