@@ -41,6 +41,8 @@ export const usePersistView = () => {
           triggerViewGroupSideEffectAtViewCreation({
             newViewId,
             objectMetadataItemId: objectMetadataItemId,
+            mainGroupByFieldMetadataId:
+              variables.input.mainGroupByFieldMetadataId,
           });
         }
 
