@@ -16,7 +16,9 @@ export class GmailMessageListFetchErrorHandler {
   constructor() {}
 
   public handleError(error: unknown): void {
-    this.logger.error(`Gmail: Error fetching message list: ${error}`);
+    this.logger.error(
+      `Gmail: Error fetching message list: ${JSON.stringify(error)}`,
+    );
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
