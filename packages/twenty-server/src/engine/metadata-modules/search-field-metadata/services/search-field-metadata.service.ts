@@ -252,38 +252,39 @@ export class SearchFieldMetadataService {
         cascade: true,
       });
 
-      // Recreate the column with new expression (or skip if no expression)
-      if (searchVectorExpression) {
-        await this.workspaceSchemaManager.columnManager.addColumns({
+      // Always recreate the column since searchVectorField exists in metadata
+      const expressionToUse =
+        searchVectorExpression ?? `to_tsvector('simple', '')`;
+
+      await this.workspaceSchemaManager.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions: [
+          {
+            name: SEARCH_VECTOR_FIELD.name,
+            type: 'tsvector',
+            isNullable: true,
+            generatedType: 'STORED',
+            asExpression: expressionToUse,
+          },
+        ],
+      });
+
+      // Recreate index if it existed
+      if (existingIndex) {
+        await this.workspaceSchemaManager.indexManager.createIndex({
           queryRunner,
           schemaName,
           tableName,
-          columnDefinitions: [
-            {
-              name: SEARCH_VECTOR_FIELD.name,
-              type: 'tsvector',
-              isNullable: true,
-              generatedType: 'STORED',
-              asExpression: searchVectorExpression,
-            },
-          ],
+          index: {
+            name: existingIndex.name,
+            columns: [SEARCH_VECTOR_FIELD.name],
+            type: existingIndex.indexType,
+            isUnique: existingIndex.isUnique,
+            where: existingIndex.indexWhereClause ?? undefined,
+          },
         });
-
-        // Recreate index if it existed
-        if (existingIndex) {
-          await this.workspaceSchemaManager.indexManager.createIndex({
-            queryRunner,
-            schemaName,
-            tableName,
-            index: {
-              name: existingIndex.name,
-              columns: [SEARCH_VECTOR_FIELD.name],
-              type: existingIndex.indexType,
-              isUnique: existingIndex.isUnique,
-              where: existingIndex.indexWhereClause ?? undefined,
-            },
-          });
-        }
       }
 
       this.logger.log(
