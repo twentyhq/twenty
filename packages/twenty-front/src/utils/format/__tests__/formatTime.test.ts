@@ -11,24 +11,24 @@ describe('formatTime', () => {
     expect(formatTime({ hour: '0', minute: '0', use24HourFormat: true })).toBe(
       '00:00',
     );
-    expect(formatTime({ hour: '23', minute: '59', use24HourFormat: true })).toBe(
-      '23:59',
-    );
+    expect(
+      formatTime({ hour: '23', minute: '59', use24HourFormat: true }),
+    ).toBe('23:59');
   });
 
   it('should format 12-hour time', () => {
     expect(
       formatTime({ hour: '9', minute: '30', use24HourFormat: false }),
     ).toBe('9:30 AM');
-    expect(formatTime({ hour: '14', minute: '0', use24HourFormat: false })).toBe(
-      '2:00 PM',
-    );
+    expect(
+      formatTime({ hour: '14', minute: '0', use24HourFormat: false }),
+    ).toBe('2:00 PM');
     expect(formatTime({ hour: '0', minute: '0', use24HourFormat: false })).toBe(
       '12:00 AM',
     );
-    expect(formatTime({ hour: '12', minute: '0', use24HourFormat: false })).toBe(
-      '12:00 PM',
-    );
+    expect(
+      formatTime({ hour: '12', minute: '0', use24HourFormat: false }),
+    ).toBe('12:00 PM');
     expect(
       formatTime({ hour: '23', minute: '59', use24HourFormat: false }),
     ).toBe('11:59 PM');
