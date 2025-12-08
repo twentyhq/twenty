@@ -4,7 +4,7 @@ import { computeMetadataNameFromLabel as computeMetadataNameFromLabelCore } from
 // This is needed for form validation and UI components that prefer graceful degradation
 export const computeMetadataNameFromLabel = (label: string): string => {
   try {
-    return computeMetadataNameFromLabelCore(label);
+    return computeMetadataNameFromLabelCore({label});
   } catch {
     return '';
   }
