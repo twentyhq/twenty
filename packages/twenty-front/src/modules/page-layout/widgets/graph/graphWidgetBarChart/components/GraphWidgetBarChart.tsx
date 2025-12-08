@@ -16,8 +16,9 @@ import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
-import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -62,9 +63,6 @@ type GraphWidgetBarChartProps = {
   omitNullValues?: boolean;
   onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
 } & GraphValueFormatOptions;
-
-const POSITIVE_RANGE_PADDING_RATIO = 0.1;
-const MIN_POSITIVE_RANGE_PADDING = 1;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -134,40 +132,14 @@ export const GraphWidgetBarChart = ({
       ? calculateStackedBarChartValueRange(data, keys)
       : calculateValueRangeFromBarChartKeys(data, keys);
 
-  const hasOnlyNonNegativeValues =
-    calculatedValueRange.minimum >= 0 && calculatedValueRange.maximum >= 0;
-  const hasOnlyZeroValues =
-    calculatedValueRange.minimum === 0 && calculatedValueRange.maximum === 0;
-  const hasNoData = data.length === 0 || hasOnlyZeroValues;
-
-  const baseMinimumValue = isDefined(rangeMin)
-    ? rangeMin
-    : hasOnlyNonNegativeValues
-    ? 0
-    : calculatedValueRange.minimum;
-
-  const positiveRangePaddingTarget = isDefined(rangeMax)
-    ? rangeMax
-    : calculatedValueRange.maximum;
-
-  const paddedMaximumForNonNegative =
-    isDefined(rangeMax) || !hasOnlyNonNegativeValues
-      ? positiveRangePaddingTarget
-      : positiveRangePaddingTarget +
-        Math.max(
-          Math.abs(positiveRangePaddingTarget) * POSITIVE_RANGE_PADDING_RATIO,
-          MIN_POSITIVE_RANGE_PADDING,
-        );
-
-  let effectiveMinimumValue = baseMinimumValue;
-  let effectiveMaximumValue = paddedMaximumForNonNegative;
-
-  if (!isDefined(rangeMax) && !isDefined(rangeMin)) {
-    if (effectiveMinimumValue === effectiveMaximumValue) {
-      effectiveMaximumValue =
-        effectiveMinimumValue + MIN_POSITIVE_RANGE_PADDING;
-    }
-  }
+  const { effectiveMinimumValue, effectiveMaximumValue, hasNoData } =
+    computeEffectiveValueRange({
+      calculatedMinimum: calculatedValueRange.minimum,
+      calculatedMaximum: calculatedValueRange.maximum,
+      rangeMin,
+      rangeMax,
+      dataLength: data.length,
+    });
 
   const tickConfig = getBarChartTickConfig({
     width: chartWidth,
@@ -180,11 +152,12 @@ export const GraphWidgetBarChart = ({
     layout,
   });
 
-  const valueTickValues = computeValueTickValues({
-    minimum: effectiveMinimumValue,
-    maximum: effectiveMaximumValue,
-    tickCount: tickConfig.numberOfValueTicks,
-  });
+  const { tickValues: valueTickValues, domain: valueDomain } =
+    computeValueTickValues({
+      minimum: effectiveMinimumValue,
+      maximum: effectiveMaximumValue,
+      tickCount: tickConfig.numberOfValueTicks,
+    });
 
   const hasClickableItems = isDefined(onBarClick);
 
@@ -314,8 +287,8 @@ export const GraphWidgetBarChart = ({
           layout={layout}
           valueScale={{
             type: 'linear',
-            min: effectiveMinimumValue,
-            max: effectiveMaximumValue,
+            min: valueDomain.min,
+            max: valueDomain.max,
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
@@ -336,8 +309,12 @@ export const GraphWidgetBarChart = ({
           axisLeft={axisLeftConfig}
           enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
           enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
-          gridXValues={layout === BarChartLayout.HORIZONTAL ? 5 : undefined}
-          gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
+          gridXValues={
+            layout === BarChartLayout.HORIZONTAL ? valueTickValues : undefined
+          }
+          gridYValues={
+            layout === BarChartLayout.VERTICAL ? valueTickValues : undefined
+          }
           enableLabel={false}
           labelSkipWidth={12}
           innerPadding={getBarChartInnerPadding({

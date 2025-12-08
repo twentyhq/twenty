@@ -1,6 +1,6 @@
+import { BAR_CHART_MAXIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumValueTickCount';
+import { BAR_CHART_MINIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumValueTickCount';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
-import { BAR_CHART_MAX_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartValueTickCountBounds';
-import { BAR_CHART_MIN_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartValueTickCountBounds';
 import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
@@ -38,8 +38,8 @@ export const getBarChartTickConfig = ({
 }): BarChartTickConfig => {
   const clampValueTickCount = (tickCount: number) =>
     Math.min(
-      BAR_CHART_MAX_VALUE_TICK_COUNT,
-      Math.max(BAR_CHART_MIN_VALUE_TICK_COUNT, tickCount),
+      BAR_CHART_MAXIMUM_VALUE_TICK_COUNT,
+      Math.max(BAR_CHART_MINIMUM_VALUE_TICK_COUNT, tickCount),
     );
 
   const categoryTickValues = computeBarChartCategoryTickValues({

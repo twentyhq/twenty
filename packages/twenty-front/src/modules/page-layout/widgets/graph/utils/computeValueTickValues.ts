@@ -1,15 +1,18 @@
-const getNiceStep = (roughStep: number): number => {
-  if (roughStep === 0) {
+const computeNiceStepInterval = (roughStepInterval: number): number => {
+  if (roughStepInterval === 0) {
     return 0;
   }
 
-  const power = Math.pow(10, Math.floor(Math.log10(Math.abs(roughStep))));
-  const normalized = roughStep / power;
+  const stepMagnitude = Math.pow(
+    10,
+    Math.floor(Math.log10(Math.abs(roughStepInterval))),
+  );
+  const normalizedStepValue = roughStepInterval / stepMagnitude;
 
-  if (normalized >= 5) return 10 * power;
-  if (normalized >= 2) return 5 * power;
-  if (normalized >= 1) return 2 * power;
-  return 1 * power;
+  if (normalizedStepValue >= 5) return 10 * stepMagnitude;
+  if (normalizedStepValue >= 2) return 5 * stepMagnitude;
+  if (normalizedStepValue >= 1) return 2 * stepMagnitude;
+  return 1 * stepMagnitude;
 };
 
 export const computeValueTickValues = ({
@@ -20,30 +23,43 @@ export const computeValueTickValues = ({
   minimum: number;
   maximum: number;
   tickCount: number;
-}): number[] => {
+}): {
+  tickValues: number[];
+  domain: { min: number; max: number };
+} => {
   if (!Number.isFinite(minimum) || !Number.isFinite(maximum)) {
-    return [];
+    return { tickValues: [], domain: { min: 0, max: 0 } };
   }
 
   if (minimum === maximum) {
-    return [minimum];
+    return { tickValues: [minimum], domain: { min: minimum, max: minimum } };
   }
 
   const safeTickCount = Math.max(2, tickCount);
-  const roughStep = (maximum - minimum) / (safeTickCount - 1);
-  const step = getNiceStep(roughStep);
+  const roughStepInterval = (maximum - minimum) / (safeTickCount - 1);
+  const niceStepInterval = computeNiceStepInterval(roughStepInterval);
 
-  if (step === 0) {
-    return [minimum, maximum];
+  if (niceStepInterval === 0) {
+    return {
+      tickValues: [minimum, maximum],
+      domain: { min: minimum, max: maximum },
+    };
   }
 
-  const niceMinimum = Math.floor(minimum / step) * step;
-  const niceMaximum = Math.ceil(maximum / step) * step;
+  const niceMinimum = Math.floor(minimum / niceStepInterval) * niceStepInterval;
+  const niceMaximum = Math.ceil(maximum / niceStepInterval) * niceStepInterval;
   const tickValues: number[] = [];
 
-  for (let value = niceMinimum; value <= niceMaximum + step / 2; value += step) {
-    tickValues.push(Number(value.toFixed(12)));
+  for (
+    let tickValue = niceMinimum;
+    tickValue <= niceMaximum + niceStepInterval / 2;
+    tickValue += niceStepInterval
+  ) {
+    tickValues.push(Number(tickValue.toFixed(12)));
   }
 
-  return tickValues;
+  return {
+    tickValues,
+    domain: { min: niceMinimum, max: niceMaximum },
+  };
 };
