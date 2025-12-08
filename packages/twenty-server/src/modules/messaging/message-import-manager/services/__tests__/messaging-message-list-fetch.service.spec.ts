@@ -334,6 +334,7 @@ describe('MessagingMessageListFetchService', () => {
         },
       },
       'new-sync-cursor',
+      workspaceId,
       'inbox-folder-id',
     );
 
@@ -393,6 +394,7 @@ describe('MessagingMessageListFetchService', () => {
         },
       },
       'new-google-history-id',
+      workspaceId,
       undefined,
     );
 

@@ -151,8 +151,8 @@ describe('ToolAdapterService', () => {
       },
     );
 
-    // Ensure wrapper forwards only parameters.input
-    expect(unflaggedToolExecute).toHaveBeenCalledWith(input);
+    // Ensure wrapper forwards parameters.input and workspaceId
+    expect(unflaggedToolExecute).toHaveBeenCalledWith(input, 'ws-1');
     expect(result).toEqual({
       success: true,
       message: 'Tool executed successfully',
