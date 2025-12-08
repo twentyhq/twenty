@@ -9,6 +9,7 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   createdAt,
@@ -296,29 +297,34 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconNumbers',
       isSystem: true,
       isNullable: false,
-      defaultValue: "'SYSTEM'",
+      defaultValue: `'${WorkspaceMemberNumberFormatEnum.SYSTEM}'`,
       options: [
-        { value: 'SYSTEM', label: 'System', position: 0, color: 'turquoise' },
         {
-          value: 'COMMAS_AND_DOT',
+          value: WorkspaceMemberNumberFormatEnum.SYSTEM,
+          label: 'System',
+          position: 0,
+          color: 'turquoise',
+        },
+        {
+          value: WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT,
           label: 'Commas and dot',
           position: 1,
           color: 'blue',
         },
         {
-          value: 'SPACES_AND_COMMA',
+          value: WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA,
           label: 'Spaces and comma',
           position: 2,
           color: 'green',
         },
         {
-          value: 'DOTS_AND_COMMA',
+          value: WorkspaceMemberNumberFormatEnum.DOTS_AND_COMMA,
           label: 'Dots and comma',
           position: 3,
           color: 'orange',
         },
         {
-          value: 'APOSTROPHE_AND_DOT',
+          value: WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT,
           label: 'Apostrophe and dot',
           position: 4,
           color: 'purple',
