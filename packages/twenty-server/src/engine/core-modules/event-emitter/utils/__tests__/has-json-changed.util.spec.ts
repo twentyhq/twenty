@@ -88,11 +88,11 @@ describe('hasJsonChanged', () => {
             type: 'DATABASE_EVENT',
             settings: { eventName: 'company.created', outputSchema: {} },
           },
-          steps: Array.from({ length: 100 }, (_, i) => ({
-            id: `step-${i}`,
-            name: `Step ${i}`,
+          steps: Array.from({ length: 100 }, (_, index) => ({
+            id: `step-${index}`,
+            name: `Step ${index}`,
             type: 'CODE',
-            settings: { code: `console.log(${i})` },
+            settings: { code: `console.log(${index})` },
             valid: true,
           })),
         },

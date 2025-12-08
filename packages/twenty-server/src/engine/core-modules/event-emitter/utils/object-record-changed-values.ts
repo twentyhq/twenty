@@ -56,7 +56,6 @@ export const objectRecordChangedValues = (
       }
 
       if (isLargeJsonField(objectMetadataItem, key)) {
-        console.log('------------ isLargeJsonField', key);
         if (!hasJsonChanged(oldRecordValue, newRecordValue)) {
           return acc;
         }
