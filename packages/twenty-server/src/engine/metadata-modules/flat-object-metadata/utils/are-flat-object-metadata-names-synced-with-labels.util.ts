@@ -4,6 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const areFlatObjectMetadataNamesSyncedWithLabels = ({
   flatObjectdMetadata,
+  isSystemBuild,
 }: {
   isSystemBuild: boolean;
   flatObjectdMetadata: Pick<
@@ -17,6 +18,7 @@ export const areFlatObjectMetadataNamesSyncedWithLabels = ({
   ].map((label) =>
     computeMetadataNameFromLabel({
       label,
+      applyCustomSuffix: !isSystemBuild,
     }),
   );
 
