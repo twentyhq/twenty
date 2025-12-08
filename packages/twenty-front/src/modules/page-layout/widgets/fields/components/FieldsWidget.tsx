@@ -5,7 +5,6 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
@@ -18,6 +17,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useTemporaryNoteFieldsConfiguration } from '@/page-layout/hooks/__temporary__/useTemporaryNoteFieldsConfiguration';
+import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import { filterAndOrderFieldsFromConfiguration } from '@/page-layout/widgets/fields/utils/filterAndOrderFieldsFromConfiguration';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -80,11 +80,8 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     instanceId,
   );
 
-  const { inlineFieldMetadataItems } = useFieldListFieldMetadataItems({
+  const fieldMetadataItems = useFieldsWidgetFieldMetadataItems({
     objectNameSingular: targetRecord.targetObjectNameSingular,
-    excludeFieldMetadataIds: [],
-    showRelationSections: false,
-    excludeCreatedAtAndUpdatedAt: false,
   });
 
   const temporaryNoteConfiguration = useTemporaryNoteFieldsConfiguration();
@@ -123,45 +120,44 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     device: isMobile ? ('MOBILE' as const) : ('DESKTOP' as const),
   };
 
-  console.log('FieldsWidget configuration:', {
-    configuration,
-    availableFieldMetadataItems: inlineFieldMetadataItems,
-    context,
-  });
-
   const sectionsWithFields = filterAndOrderFieldsFromConfiguration({
     configuration,
-    availableFieldMetadataItems: inlineFieldMetadataItems,
+    availableFieldMetadataItems: fieldMetadataItems,
     context,
   });
 
-  console.log('Sections with fields:', sectionsWithFields);
+  const sectionsWithFieldIndices = sectionsWithFields.map(
+    (section, sectionIndex) => {
+      const startIndex = sectionsWithFields
+        .slice(0, sectionIndex)
+        .reduce((sum, s) => sum + s.fields.length, 0);
 
-  // Track hover position globally across all sections
-  let globalFieldIndex = 0;
+      return {
+        ...section,
+        fields: section.fields.map((field, fieldIndex) => ({
+          field,
+          globalIndex: startIndex + fieldIndex,
+        })),
+      };
+    },
+  );
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
-      <StyledContainer>
-        <RecordFieldListComponentInstanceContext.Provider
-          value={{
-            instanceId,
-          }}
-        >
-          {sectionsWithFields.map((section) => (
-            <RecordDetailSectionContainer
-              key={section.id}
-              title={section.title}
-            >
-              <PropertyBox>
-                {isPrefetchLoading ? (
-                  <PropertyBoxSkeletonLoader />
-                ) : (
-                  <>
-                    {section.fields.map((fieldMetadataItem) => {
-                      const currentFieldIndex = globalFieldIndex;
-                      globalFieldIndex++;
-
+    <StyledContainer>
+      <RecordFieldListComponentInstanceContext.Provider
+        value={{
+          instanceId,
+        }}
+      >
+        {sectionsWithFieldIndices.map((section) => (
+          <RecordDetailSectionContainer key={section.id} title={section.title}>
+            <PropertyBox>
+              {isPrefetchLoading ? (
+                <PropertyBoxSkeletonLoader />
+              ) : (
+                <>
+                  {section.fields.map(
+                    ({ field: fieldMetadataItem, globalIndex }) => {
                       return (
                         <FieldContext.Provider
                           key={targetRecord.id + fieldMetadataItem.id}
@@ -172,7 +168,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
                                 field: fieldMetadataItem,
-                                position: currentFieldIndex,
+                                position: globalIndex,
                                 objectMetadataItem,
                                 showLabel: true,
                                 labelWidth: 90,
@@ -193,9 +189,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                               },
                             }),
                             onMouseEnter: () =>
-                              setRecordFieldListHoverPosition(
-                                currentFieldIndex,
-                              ),
+                              setRecordFieldListHoverPosition(globalIndex),
                             anchorId: `${getRecordFieldInputInstanceId({
                               recordId: targetRecord.id,
                               fieldName: fieldMetadataItem.name,
@@ -219,23 +213,23 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                           </RecordFieldComponentInstanceContext.Provider>
                         </FieldContext.Provider>
                       );
-                    })}
-                  </>
-                )}
-              </PropertyBox>
-            </RecordDetailSectionContainer>
-          ))}
+                    },
+                  )}
+                </>
+              )}
+            </PropertyBox>
+          </RecordDetailSectionContainer>
+        ))}
 
-          <RecordFieldListCellHoveredPortal
-            objectMetadataItem={objectMetadataItem}
-            recordId={targetRecord.id}
-          />
-          <RecordFieldListCellEditModePortal
-            objectMetadataItem={objectMetadataItem}
-            recordId={targetRecord.id}
-          />
-        </RecordFieldListComponentInstanceContext.Provider>
-      </StyledContainer>
-    </RightDrawerProvider>
+        <RecordFieldListCellHoveredPortal
+          objectMetadataItem={objectMetadataItem}
+          recordId={targetRecord.id}
+        />
+        <RecordFieldListCellEditModePortal
+          objectMetadataItem={objectMetadataItem}
+          recordId={targetRecord.id}
+        />
+      </RecordFieldListComponentInstanceContext.Provider>
+    </StyledContainer>
   );
 };
