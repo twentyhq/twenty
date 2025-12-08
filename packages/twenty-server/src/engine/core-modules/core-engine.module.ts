@@ -61,6 +61,7 @@ import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.modu
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
+import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -138,6 +139,7 @@ import { FileModule } from './file/file.module';
     ApiKeyModule,
     WebhookModule,
     PageLayoutModule,
+    FlatPageLayoutTabModule,
     ImpersonationModule,
     TrashCleanupModule,
   ],
