@@ -17,6 +17,7 @@ import {
   IconSettingsAutomation,
   IconWebhook,
 } from 'twenty-ui/display';
+import { isNonEmptyString } from '@sniptt/guards';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
@@ -73,7 +74,7 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      label={name ?? t`Deleted user`}
+      label={isNonEmptyString(name) ? name : t`Deleted user`}
       leftComponent={
         <AvatarChip
           placeholderColorSeed={workspaceMemberId ?? undefined}
