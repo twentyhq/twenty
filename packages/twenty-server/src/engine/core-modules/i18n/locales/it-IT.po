@@ -635,6 +635,11 @@ msgstr "Impossibile eliminare l'account: sei l'unico amministratore. Assegna un 
 msgid "Cannot delete standard agent"
 msgstr ""
 
+#. js-lingui-id: mWk3X+
+#: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
+msgid "Cannot delete unique index that have not been created by the workspace custom application"
+msgstr ""
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -1476,6 +1481,11 @@ msgstr "Campo per creare oggetto correlato non trovato"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
 msgstr "Campo da aggiornare non trovato"
+
+#. js-lingui-id: 5cm5Hn
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field to update object metadata not found"
+msgstr ""
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
