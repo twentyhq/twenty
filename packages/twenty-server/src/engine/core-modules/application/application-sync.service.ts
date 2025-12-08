@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Sources } from 'twenty-shared/types';
+import { HTTPMethod, Sources } from 'twenty-shared/types';
 import {
   ApplicationManifest,
   FieldManifest,
@@ -43,6 +43,7 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -66,6 +67,7 @@ export class ApplicationSyncService {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -106,6 +108,12 @@ export class ApplicationSyncService {
       });
     }
 
+    await this.syncApplicationRole({
+      applicationId: application.id,
+      manifest,
+      workspaceId,
+    });
+
     this.logger.log('✅ Application sync from manifest completed');
   }
 
@@ -134,12 +142,6 @@ export class ApplicationSyncService {
       }));
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
-
-    await this.syncApplicationRole({
-      applicationId: application.id,
-      manifest,
-      workspaceId,
-    });
 
     if (manifest.serverlessFunctions.length > 0) {
       if (!isDefined(serverlessFunctionLayerId)) {
@@ -217,7 +219,7 @@ export class ApplicationSyncService {
       } else {
         role = await this.roleService.createRole({
           input: {
-            canReadAllObjectRecords: true,
+            canReadAllObjectRecords: false,
             canUpdateAllObjectRecords: false,
             canSoftDeleteAllObjectRecords: false,
             canDestroyAllObjectRecords: false,
@@ -249,24 +251,32 @@ export class ApplicationSyncService {
         isDefined(applicationRole.objectPermissions) &&
         applicationRole.objectPermissions.length > 0
       ) {
+        const { flatObjectMetadataMaps, objectIdByNameSingular } =
+          await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+            workspaceId,
+          );
+
+        const formattedObjectPermissions = applicationRole.objectPermissions
+          .map((perm) => ({
+            ...perm,
+            objectMetadataId: isDefined(perm.objectNameSingular)
+              ? objectIdByNameSingular[perm.objectNameSingular]
+              : isDefined(perm.objectUniversalIdentifier)
+                ? flatObjectMetadataMaps.idByUniversalIdentifier[
+                    perm.objectUniversalIdentifier
+                  ]
+                : undefined,
+          }))
+          .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
+            isDefined(perm.objectMetadataId),
+          );
+
+        console.log('formattedObjectPermissions', formattedObjectPermissions);
         await this.objectPermissionService.upsertObjectPermissions({
           workspaceId,
           input: {
             roleId: role.id,
-            objectPermissions: applicationRole.objectPermissions,
-          },
-        });
-      }
-
-      if (
-        isDefined(applicationRole.fieldPermissions) &&
-        applicationRole.fieldPermissions.length > 0
-      ) {
-        await this.fieldPermissionService.upsertFieldPermissions({
-          workspaceId,
-          input: {
-            roleId: role.id,
-            fieldPermissions: applicationRole.fieldPermissions,
+            objectPermissions: formattedObjectPermissions,
           },
         });
       }
@@ -1036,7 +1046,7 @@ export class ApplicationSyncService {
         id: triggerToUpdate.id,
         update: {
           path: triggerToSync.path,
-          httpMethod: triggerToSync.httpMethod,
+          httpMethod: triggerToSync.httpMethod as HTTPMethod,
           isAuthRequired: triggerToSync.isAuthRequired,
         },
       };
@@ -1054,7 +1064,7 @@ export class ApplicationSyncService {
 
       const createRouteTriggerInput = {
         path: triggerToCreate.path,
-        httpMethod: triggerToCreate.httpMethod,
+        httpMethod: triggerToCreate.httpMethod as HTTPMethod,
         isAuthRequired: triggerToCreate.isAuthRequired,
         serverlessFunctionId,
       };

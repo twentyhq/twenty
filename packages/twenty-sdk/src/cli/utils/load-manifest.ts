@@ -428,7 +428,9 @@ export const extractTwentyAppConfig = (program: Program): Application => {
                   decl.initializer &&
                   isObjectLiteralExpression(decl.initializer)
                 ) {
-                  found = exprToValue(decl.initializer) as Application;
+                  found = exprToValue(
+                    decl.initializer,
+                  ) as unknown as Application;
                 }
               }
             }

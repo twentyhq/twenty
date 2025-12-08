@@ -23,7 +23,7 @@ export type CronTrigger = {
 export type RouteTrigger = {
   type: 'route';
   path: string;
-  httpMethod: HTTPMethod;
+  httpMethod: `${HTTPMethod}`;
   isAuthRequired: boolean;
 };
 

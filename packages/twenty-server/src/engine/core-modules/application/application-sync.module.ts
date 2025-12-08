@@ -20,6 +20,7 @@ import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-t
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
     RoleTargetModule,
     ObjectPermissionModule,
     PermissionFlagModule,
+    WorkflowCommonModule,
   ],
   providers: [
     ApplicationResolver,
