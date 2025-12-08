@@ -90,6 +90,34 @@ export type FirefliesMeetingData = {
   summary_status?: string;
 };
 
+export type FirefliesTranscriptListItem = {
+  id: string;
+  title: string;
+  date?: string;
+  duration?: number;
+  organizer_email?: string;
+  participants?: string[];
+  transcript_url?: string;
+  meeting_link?: string;
+  summary_status?: string;
+};
+
+export type FirefliesTranscriptListOptions = {
+  limit?: number;
+  skip?: number;
+  organizers?: string[];
+  participants?: string[];
+  hostEmail?: string;
+  participantEmail?: string;
+  userId?: string;
+  channelId?: string;
+  mine?: boolean;
+  fromDate?: number;
+  toDate?: number;
+  pageSize?: number;
+  maxRecords?: number;
+};
+
 // Configuration Types
 export type SummaryStrategy = 'immediate_only' | 'immediate_with_retry' | 'delayed_polling' | 'basic_only';
 

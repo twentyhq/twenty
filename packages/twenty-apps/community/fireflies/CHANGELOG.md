@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.1] - 2025-12-08
+
+Import all
+
+### Added
+- Historical import CLI: `yarn meeting:all` to fetch and insert historical Fireflies meetings with filters (date range, organizers, participants, channel, mine) and dry-run support.
+- Fireflies transcripts listing with pagination and date filtering to support bulk imports.
+
+### Changed
+- Deduplication now checks `firefliesMeetingId` before creating meetings (webhook + bulk).
+- Shared historical importer pipeline reusing existing note/meeting formatting.
+
 ## [0.3.0] - 2025-12-08
 
 Subscription-based query / Full transcript and AI notes for Pro+ / More

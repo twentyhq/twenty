@@ -114,11 +114,19 @@ export class WebhookHandler {
         getApiUrl()
       );
 
-      const existingMeeting = await twentyService.findExistingMeeting(meetingData.title);
-      if (existingMeeting) {
-        this.logger.debug(`meeting already exists id=${existingMeeting.id}`);
+      const existingMeetingById = await twentyService.findMeetingByFirefliesId(meetingData.id);
+      if (existingMeetingById) {
+        this.logger.debug(`meeting already exists by firefliesMeetingId id=${existingMeetingById.id}`);
         result.success = true;
-        result.meetingId = existingMeeting.id;
+        result.meetingId = existingMeetingById.id;
+        return this.addDebugLogs(result);
+      }
+
+      const existingMeetingByTitle = await twentyService.findExistingMeeting(meetingData.title);
+      if (existingMeetingByTitle) {
+        this.logger.debug(`meeting already exists by title id=${existingMeetingByTitle.id}`);
+        result.success = true;
+        result.meetingId = existingMeetingByTitle.id;
         return this.addDebugLogs(result);
       }
       this.logger.debug('no existing meeting found, proceeding');

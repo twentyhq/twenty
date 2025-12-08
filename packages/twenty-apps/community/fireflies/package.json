@@ -13,7 +13,8 @@
     "setup:fields": "tsx scripts/add-meeting-fields.ts",
     "test:webhook": "tsx scripts/test-webhook.ts",
     "meeting:ingest": "tsx scripts/ingest-meeting.ts",
-    "meeting:delete": "tsx scripts/delete-meeting.ts"
+    "meeting:delete": "tsx scripts/delete-meeting.ts",
+    "meeting:all": "tsx scripts/fetch-all-meetings.ts"
   },
   "dependencies": {
     "axios": "^1.13.1",

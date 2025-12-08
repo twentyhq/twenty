@@ -43,6 +43,20 @@ export class TwentyCrmService {
     return response.data?.meetings?.edges?.[0]?.node;
   }
 
+  async findMeetingByFirefliesId(meetingId: string): Promise<IdNode | undefined> {
+    const query = `
+      query FindMeetingByFirefliesId($meetingId: String!) {
+        meetings(filter: { firefliesMeetingId: { eq: $meetingId } }) {
+          edges { node { id } }
+        }
+      }
+    `;
+
+    const variables = { meetingId };
+    const response = await this.gqlRequest<FindMeetingResponse>(query, variables);
+    return response.data?.meetings?.edges?.[0]?.node;
+  }
+
   async matchParticipantsToContacts(
     participants: FirefliesParticipant[],
   ): Promise<{
@@ -148,23 +162,34 @@ export class TwentyCrmService {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ');
 
-    let query = `
-      query FindPeopleByName($firstName: String!, $lastName: String) {
-        people(filter: {
-          and: [
-            { name: { firstName: { eq: $firstName } } }
-            ${lastName ? '{ name: { lastName: { eq: $lastName } } }' : ''}
-          ]
-        }) {
-          edges { node { id emails { primaryEmail } name { firstName lastName } } }
-        }
-      }
-    `;
+    const hasLastName = Boolean(lastName);
 
-    const variables: Record<string, unknown> = { firstName };
-    if (lastName) {
-      variables.lastName = lastName;
-    }
+    const query = hasLastName
+      ? `
+        query FindPeopleByName($firstName: String!, $lastName: String!) {
+          people(filter: {
+            and: [
+              { name: { firstName: { eq: $firstName } } }
+              { name: { lastName: { eq: $lastName } } }
+            ]
+          }) {
+            edges { node { id emails { primaryEmail } name { firstName lastName } } }
+          }
+        }
+      `
+      : `
+        query FindPeopleByName($firstName: String!) {
+          people(filter: {
+            name: { firstName: { eq: $firstName } }
+          }) {
+            edges { node { id emails { primaryEmail } name { firstName lastName } } }
+          }
+        }
+      `;
+
+    const variables: Record<string, unknown> = hasLastName
+      ? { firstName, lastName }
+      : { firstName };
 
     try {
       const response = await this.gqlRequest<{ people: { edges: Array<{ node: { id: string; emails?: { primaryEmail?: string }; name?: { firstName?: string; lastName?: string } } }> } }>(query, variables);
@@ -178,8 +203,8 @@ export class TwentyCrmService {
         };
       }
 
-      if (lastName) {
-        query = `
+      if (hasLastName) {
+        const fuzzyQuery = `
           query FindPeopleByNameFuzzy($firstName: String!) {
             people(filter: { name: { firstName: { ilike: $firstName } } }) {
               edges { node { id emails { primaryEmail } name { firstName lastName } } }
@@ -187,7 +212,7 @@ export class TwentyCrmService {
           }
         `;
 
-        const fuzzyResponse = await this.gqlRequest<{ people: { edges: Array<{ node: { id: string; emails?: { primaryEmail?: string }; name?: { firstName?: string; lastName?: string } } }> } }>(query, { firstName: `%${firstName}%` });
+        const fuzzyResponse = await this.gqlRequest<{ people: { edges: Array<{ node: { id: string; emails?: { primaryEmail?: string }; name?: { firstName?: string; lastName?: string } } }> } }>(fuzzyQuery, { firstName: `%${firstName}%` });
         const fuzzyPeople = fuzzyResponse.data?.people?.edges;
 
         if (fuzzyPeople && fuzzyPeople.length > 0) {
@@ -264,7 +289,10 @@ export class TwentyCrmService {
       };
 
       try {
-        const response = await this.gqlRequest<CreatePersonResponse>(mutation, variables);
+        const response = await this.gqlRequest<CreatePersonResponse>(mutation, variables, {
+          suppressErrorCodes: ['BAD_USER_INPUT'],
+          suppressErrorMessageIncludes: ['Duplicate Emails', 'duplicate entry'],
+        });
         if (!response.data?.createPerson?.id) {
           throw new Error(`Failed to create contact for ${participant.email}`);
         }
@@ -417,7 +445,8 @@ export class TwentyCrmService {
 
   private async gqlRequest<T>(
     query: string,
-    variables?: Record<string, unknown>
+    variables?: Record<string, unknown>,
+    options?: { suppressErrorCodes?: string[]; suppressErrorMessageIncludes?: string[] }
   ): Promise<GraphQLResponse<T>> {
     const url = `${this.apiUrl}/graphql`;
 
@@ -461,7 +490,16 @@ export class TwentyCrmService {
 
       return json;
     } catch (error) {
-      logger.error('GraphQL request error:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      const suppressByCode = options?.suppressErrorCodes?.some((code) =>
+        message.includes(code),
+      );
+      const suppressByMessage = options?.suppressErrorMessageIncludes?.some((substring) =>
+        message.includes(substring),
+      );
+      if (!suppressByCode && !suppressByMessage) {
+        logger.error('GraphQL request error:', error);
+      }
       throw error;
     }
   }

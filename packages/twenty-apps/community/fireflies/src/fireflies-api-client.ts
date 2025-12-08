@@ -4,6 +4,8 @@ import {
   type FirefliesMeetingData,
   type FirefliesParticipant,
   type FirefliesPlan,
+  type FirefliesTranscriptListItem,
+  type FirefliesTranscriptListOptions,
   type SummaryFetchConfig
 } from './types';
 
@@ -18,6 +20,124 @@ export class FirefliesApiClient {
       throw new Error('FIREFLIES_API_KEY is required');
     }
     this.apiKey = apiKey;
+  }
+
+  async listTranscripts(options: FirefliesTranscriptListOptions = {}): Promise<FirefliesTranscriptListItem[]> {
+    const {
+      organizers,
+      participants,
+      hostEmail,
+      participantEmail,
+      userId,
+      channelId,
+      mine,
+      fromDate,
+      toDate,
+      pageSize = 50,
+      maxRecords = 500,
+    } = options;
+
+    const sanitizedOrganizers = organizers?.filter(Boolean);
+    const sanitizedParticipants = participants?.filter(Boolean);
+
+    const transcripts: FirefliesTranscriptListItem[] = [];
+    let skip = options.skip ?? 0;
+    const limit = options.limit ?? pageSize;
+
+    const baseQuery = `
+      query Transcripts(
+        $limit: Int
+        $skip: Int
+        $hostEmail: String
+        $participantEmail: String
+        $organizers: [String!]
+        $participants: [String!]
+        $userId: String
+        $channelId: String
+        $mine: Boolean
+        $date: Float
+      ) {
+        transcripts(
+          limit: $limit
+          skip: $skip
+          host_email: $hostEmail
+          participant_email: $participantEmail
+          organizers: $organizers
+          participants: $participants
+          user_id: $userId
+          channel_id: $channelId
+          mine: $mine
+          date: $date
+        ) {
+          id
+          title
+          date
+          duration
+          organizer_email
+          participants
+          transcript_url
+          meeting_link
+          meeting_info { summary_status }
+        }
+      }
+    `;
+
+    while (transcripts.length < maxRecords) {
+      const pageVariables = {
+        limit,
+        skip,
+        hostEmail,
+        participantEmail,
+        organizers: sanitizedOrganizers,
+        participants: sanitizedParticipants,
+        userId,
+        channelId,
+        mine,
+        date: fromDate,
+      };
+
+      const page = await this.executeTranscriptListQuery(baseQuery, pageVariables);
+      const normalized = page
+        .map((item) => {
+          const normalizedDate = this.normalizeDate(item.date);
+          return {
+            id: (item.id as string) || '',
+            title: (item.title as string) || 'Untitled Meeting',
+            date: normalizedDate,
+            duration: (item.duration as number) || 0,
+            organizer_email: item.organizer_email as string | undefined,
+            participants: Array.isArray(item.participants)
+              ? (item.participants as string[])
+              : undefined,
+            transcript_url: item.transcript_url as string | undefined,
+            meeting_link: item.meeting_link as string | undefined,
+            summary_status: (item.meeting_info as { summary_status?: string } | undefined)?.summary_status,
+          };
+        })
+        .filter((item) => {
+          if (toDate && item.date) {
+            const itemTime = Date.parse(item.date);
+            if (!Number.isNaN(itemTime) && itemTime > toDate) {
+              return false;
+            }
+          }
+          return true;
+        });
+
+      transcripts.push(...normalized);
+
+      if (page.length < limit) {
+        break;
+      }
+
+      skip += limit;
+    }
+
+    if (transcripts.length > maxRecords) {
+      return transcripts.slice(0, maxRecords);
+    }
+
+    return transcripts;
   }
 
   async fetchMeetingData(
@@ -647,6 +767,57 @@ export class FirefliesApiClient {
       meeting_link: transcript.meeting_link as string | undefined, // All plans
       summary_status: (meetingInfo?.summary_status as string) || (transcript.summary_status as string) || undefined,
     };
+  }
+
+  private async executeTranscriptListQuery(
+    query: string,
+    variables: Record<string, unknown>,
+  ): Promise<Array<Record<string, unknown>>> {
+    const response = await fetch('https://api.fireflies.ai/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(`Fireflies transcripts request failed: ${response.status} ${errorBody}`);
+    }
+
+    const json = await response.json() as {
+      data?: { transcripts?: Array<Record<string, unknown>> };
+      errors?: Array<{ message?: string }>;
+    };
+
+    if (json.errors && json.errors.length > 0) {
+      const message = json.errors[0]?.message || 'Unknown error';
+      throw new Error(`Fireflies API error: ${message}`);
+    }
+
+    return json.data?.transcripts ?? [];
+  }
+
+  private normalizeDate(dateValue: unknown): string | undefined {
+    if (!dateValue) {
+      return undefined;
+    }
+
+    if (typeof dateValue === 'number') {
+      return new Date(dateValue).toISOString();
+    }
+
+    if (typeof dateValue === 'string') {
+      const parsed = Number(dateValue);
+      if (!Number.isNaN(parsed)) {
+        return new Date(parsed).toISOString();
+      }
+      return dateValue;
+    }
+
+    return undefined;
   }
 }
 

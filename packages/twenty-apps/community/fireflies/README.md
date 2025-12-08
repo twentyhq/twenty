@@ -4,8 +4,7 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 
 ### Current Status
 - Doesn't work with Fireflies webhook yet due to missing headers forwarding in twenty serverless func
-- Meeting ingestion utility script is available for individual meeting fetching
-- Soon be added : Fetch all Fireflies historical meetings (no header limitation for this)
+- Meeting ingestion utility script are available for individual meeting insertion and historical meetings with filters with yarn meeting:all
 
 ## Integration Overview
 
@@ -154,11 +153,6 @@ The `setup:fields` script adds 13 custom fields to store rich Fireflies data:
 | `firefliesMeetingId` | TEXT | Fireflies Meeting ID | Unique identifier from Fireflies |
 | `organizerEmail` | TEXT | Organizer Email | Email address of the meeting organizer |
 
-Then re-sync:
-```bash
-npx twenty-cli app sync
-```
-
 **Note:** Without custom fields, meetings will be created with just the title. The rich summary data will only be stored in Notes for 1-on-1 meetings.
 
 ## Configuration
@@ -209,6 +203,19 @@ The integration uses **HMAC SHA-256 signature verification**:
 
 - Ingest a specific Fireflies meeting into Twenty:
 `yarn meeting:ingest <meetingId>` or `MEETING_ID=... yarn meeting:ingest`
+
+- Fetch all/historical Fireflies meetings into Twenty:
+`yarn meeting:all [--from 2024-01-01] [--to 2024-02-01] [--organizer a@x.com] [--participant b@x.com] [--channel <channelId>] [--mine] [--dry-run]`
+
+  - Filters (combine as needed):
+    - `--from` / `--to`: ISO or date string range filter
+    - `--organizer` / `--participant`: comma-separated emails
+    - `--channel`: Fireflies channel id
+    - `--mine`: only meetings for the current Fireflies user
+  - Controls:
+    - `--dry-run`: list and transform without writing to Twenty
+    - `--page-size`: pagination size (default 50)
+    - `--max-records`: stop after N transcripts (default 500)
 
 ## Development
 
@@ -296,10 +303,6 @@ Client expressed strong interest in the enterprise plan.
 - Keywords as tags/categories (future)
 
 ## Future Implementation Opportunities
-
-### Past Meetings Retrieval
-- **New trigger to retrieve past meetings from a contact** - Enable users to fetch historical meeting data from Fireflies for specific contacts, allowing retrospective capture and analysis of past interactions.
-- **Fetch all Fireflies historical meetings** - Enable users to fetch all historical meeting data from Fireflies.
 
 Next iterations would enhance the **intelligence layer** to:
 
