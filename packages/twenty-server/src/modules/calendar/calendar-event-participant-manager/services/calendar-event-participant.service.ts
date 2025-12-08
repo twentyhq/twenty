@@ -10,7 +10,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
@@ -34,7 +34,7 @@ type FetchedCalendarEventParticipantWithCalendarEventIdAndExistingId =
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -58,7 +58,8 @@ export class CalendarEventParticipantService {
     const chunkedParticipantsToUpdate = chunk(participantsToUpdate, 200);
 
     const calendarEventParticipantRepository =
-      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventParticipantWorkspaceEntity>(
+        workspaceId,
         'calendarEventParticipant',
       );
 

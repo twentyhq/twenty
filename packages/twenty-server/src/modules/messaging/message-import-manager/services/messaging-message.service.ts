@@ -5,7 +5,7 @@ import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -38,7 +38,7 @@ type MessageAccumulator = {
 export class MessagingMessageService {
   private readonly logger = new Logger(MessagingMessageService.name);
 
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {}
 
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
@@ -50,17 +50,20 @@ export class MessagingMessageService {
     messageExternalIdsAndIdsMap: Map<string, string>;
   }> {
     const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
         'messageChannelMessageAssociation',
       );
 
     const messageRepository =
-      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageWorkspaceEntity>(
+        workspaceId,
         'message',
       );
 
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 

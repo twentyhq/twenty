@@ -5,7 +5,8 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -14,14 +15,24 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
     calendarEvents: CalendarEventWorkspaceEntity[],
     userId?: string, // undefined when request is made with api key
   ) {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelEventAssociationWorkspaceEntity>(
+        workspaceId,
         'calendarChannelEventAssociation',
       );
 
@@ -34,12 +45,14 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
       });
 
     const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspaceId,
         'connectedAccount',
       );
 
     const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
         'workspaceMember',
       );
 

@@ -6,7 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -15,14 +16,23 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Injectable()
 export class ApplyMessagesVisibilityRestrictionsService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   public async applyMessagesVisibilityRestrictions(
     messages: MessageWorkspaceEntity[],
     userId?: string, // undefined when request is made with api key
   ) {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
         'messageChannelMessageAssociation',
       );
 
@@ -35,12 +45,14 @@ export class ApplyMessagesVisibilityRestrictionsService {
       });
 
     const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspaceId,
         'connectedAccount',
       );
 
     const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
         'workspaceMember',
       );
 

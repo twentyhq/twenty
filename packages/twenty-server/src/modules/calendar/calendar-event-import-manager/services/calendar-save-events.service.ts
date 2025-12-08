@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Any } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -20,7 +20,7 @@ type FetchedCalendarEventWithDBEvent = {
 @Injectable()
 export class CalendarSaveEventsService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
@@ -31,12 +31,14 @@ export class CalendarSaveEventsService {
     workspaceId: string,
   ): Promise<void> {
     const calendarEventRepository =
-      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventWorkspaceEntity>(
+        workspaceId,
         'calendarEvent',
       );
 
     const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelEventAssociationWorkspaceEntity>(
+        workspaceId,
         'calendarChannelEventAssociation',
       );
 
@@ -61,7 +63,9 @@ export class CalendarSaveEventsService {
         };
       });
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+      workspaceId,
+    });
 
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {

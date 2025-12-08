@@ -4,15 +4,17 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly timelineMessagingService: TimelineMessagingService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async getMessagesFromPersonIds(
@@ -68,8 +70,15 @@ export class GetMessagesService {
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const personRepository =
-      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
         'person',
       );
     const personIds = (
@@ -106,8 +115,15 @@ export class GetMessagesService {
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const opportunityRepository =
-      await this.twentyORMManager.getRepository<OpportunityWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<OpportunityWorkspaceEntity>(
+        workspaceId,
         'opportunity',
       );
 

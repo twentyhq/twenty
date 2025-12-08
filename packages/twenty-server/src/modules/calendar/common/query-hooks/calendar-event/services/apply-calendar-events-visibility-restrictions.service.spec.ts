@@ -2,7 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -52,8 +53,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     findOneByOrFail: jest.fn(),
   };
 
-  const mockTwentyORMManager = {
-    getRepository: jest.fn().mockImplementation((name) => {
+  const mockTwentyORMGlobalManager = {
+    getRepositoryForWorkspace: jest.fn().mockImplementation((workspaceId, name) => {
       if (name === 'calendarChannelEventAssociation') {
         return mockCalendarEventAssociationRepository;
       }
@@ -66,13 +67,21 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     }),
   };
 
+  const mockScopedWorkspaceContextFactory = {
+    create: jest.fn().mockReturnValue({ workspaceId: 'test-workspace-id' }),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplyCalendarEventsVisibilityRestrictionsService,
         {
-          provide: TwentyORMManager,
-          useValue: mockTwentyORMManager,
+          provide: TwentyORMGlobalManager,
+          useValue: mockTwentyORMGlobalManager,
+        },
+        {
+          provide: ScopedWorkspaceContextFactory,
+          useValue: mockScopedWorkspaceContextFactory,
         },
       ],
     }).compile();

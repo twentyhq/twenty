@@ -6,7 +6,8 @@ import { Any } from 'typeorm';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
 import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -14,7 +15,10 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 
 @Injectable()
 export class TimelineCalendarEventService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   // TODO: Align return type with the entities to avoid mapping
   async getCalendarEventsFromPersonIds({
@@ -28,10 +32,16 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const offset = (page - 1) * pageSize;
 
     const calendarEventRepository =
-      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventWorkspaceEntity>(
+        workspaceId,
         'calendarEvent',
       );
 
@@ -170,8 +180,14 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const personRepository =
-      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
         'person',
       );
 
@@ -214,8 +230,14 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const opportunityRepository =
-      await this.twentyORMManager.getRepository<OpportunityWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<OpportunityWorkspaceEntity>(
+        workspaceId,
         'opportunity',
       );
 

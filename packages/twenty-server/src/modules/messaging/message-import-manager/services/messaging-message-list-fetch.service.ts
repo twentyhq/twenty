@@ -8,7 +8,7 @@ import { In, MoreThanOrEqual } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
@@ -43,7 +43,7 @@ export class MessagingMessageListFetchService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
@@ -76,7 +76,8 @@ export class MessagingMessageListFetchService {
       );
 
       const messageChannelRepository =
-        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+          workspaceId,
           'messageChannel',
         );
 
@@ -116,7 +117,9 @@ export class MessagingMessageListFetchService {
         },
       };
 
-      const datasource = await this.twentyORMManager.getDatasource();
+      const datasource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
       await this.syncMessageFoldersService.syncMessageFolders({
         workspaceId,
@@ -125,7 +128,8 @@ export class MessagingMessageListFetchService {
       });
 
       const messageFolderRepository =
-        await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+          workspaceId,
           'messageFolder',
         );
 
@@ -176,7 +180,8 @@ export class MessagingMessageListFetchService {
       );
 
       const messageChannelMessageAssociationRepository =
-        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
+          workspaceId,
           'messageChannelMessageAssociation',
         );
 
@@ -342,7 +347,8 @@ export class MessagingMessageListFetchService {
     workspaceId: string,
   ): Promise<boolean> {
     const messageFolderRepository =
-      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+        workspaceId,
         'messageFolder',
       );
 
@@ -375,7 +381,8 @@ export class MessagingMessageListFetchService {
     messageExternalIds: string[],
   ) {
     const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
         'messageChannelMessageAssociation',
       );
 

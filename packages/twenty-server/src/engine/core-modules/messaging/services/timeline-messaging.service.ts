@@ -3,14 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
 @Injectable()
 export class TimelineMessagingService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+  ) {}
 
   public async getAndCountMessageThreads(
     personIds: string[],
@@ -27,8 +31,15 @@ export class TimelineMessagingService {
     >[];
     totalNumberOfThreads: number;
   }> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 
@@ -90,8 +101,15 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageParticipantWorkspaceEntity[];
   }> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const messageParticipantRepository =
-      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
+        workspaceId,
         'messageParticipant',
       );
 
@@ -179,8 +197,15 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 
