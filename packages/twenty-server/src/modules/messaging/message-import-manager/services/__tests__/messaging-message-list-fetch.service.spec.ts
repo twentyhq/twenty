@@ -201,14 +201,16 @@ describe('MessagingMessageListFetchService', () => {
             getDataSourceForWorkspace: jest.fn().mockResolvedValue({
               manager: {},
             }),
-            getRepositoryForWorkspace: jest.fn().mockImplementation((workspaceId, name) => {
-              if (name === 'messageChannelMessageAssociation') {
-                return mockMessageChannelMessageAssociationRepository;
-              }
-              if (name === 'messageFolder') {
-                return mockMessageFolderRepository;
-              }
-            }),
+            getRepositoryForWorkspace: jest
+              .fn()
+              .mockImplementation((workspaceId, name) => {
+                if (name === 'messageChannelMessageAssociation') {
+                  return mockMessageChannelMessageAssociationRepository;
+                }
+                if (name === 'messageFolder') {
+                  return mockMessageFolderRepository;
+                }
+              }),
           },
         },
         {
@@ -273,7 +275,9 @@ describe('MessagingMessageListFetchService', () => {
       module.get<MessageChannelSyncStatusService>(
         MessageChannelSyncStatusService,
       );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(TwentyORMGlobalManager);
+    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
+      TwentyORMGlobalManager,
+    );
     messagingCursorService = module.get<MessagingCursorService>(
       MessagingCursorService,
     );
@@ -316,10 +320,9 @@ describe('MessagingMessageListFetchService', () => {
       ],
     );
 
-    expect(twentyORMGlobalManager.getRepositoryForWorkspace).toHaveBeenCalledWith(
-      workspaceId,
-      'messageChannelMessageAssociation',
-    );
+    expect(
+      twentyORMGlobalManager.getRepositoryForWorkspace,
+    ).toHaveBeenCalledWith(workspaceId, 'messageChannelMessageAssociation');
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(
       {
@@ -376,10 +379,9 @@ describe('MessagingMessageListFetchService', () => {
       ],
     );
 
-    expect(twentyORMGlobalManager.getRepositoryForWorkspace).toHaveBeenCalledWith(
-      workspaceId,
-      'messageChannelMessageAssociation',
-    );
+    expect(
+      twentyORMGlobalManager.getRepositoryForWorkspace,
+    ).toHaveBeenCalledWith(workspaceId, 'messageChannelMessageAssociation');
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(
       {

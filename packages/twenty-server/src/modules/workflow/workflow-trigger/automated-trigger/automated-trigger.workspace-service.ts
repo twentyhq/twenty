@@ -24,7 +24,6 @@ export class AutomatedTriggerWorkspaceService {
     settings: AutomatedTriggerSettings;
     workspaceId: string;
   }) {
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,
@@ -45,7 +44,6 @@ export class AutomatedTriggerWorkspaceService {
     workflowId: string;
     workspaceId: string;
   }) {
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,

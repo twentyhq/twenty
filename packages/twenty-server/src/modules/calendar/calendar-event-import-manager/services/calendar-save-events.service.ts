@@ -63,9 +63,10 @@ export class CalendarSaveEventsService {
         };
       });
 
-    const workspaceDataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-      workspaceId,
-    });
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {

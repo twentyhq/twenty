@@ -32,7 +32,6 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-
     const offset = (page - 1) * pageSize;
 
     const calendarEventRepository =
@@ -178,7 +177,6 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
@@ -227,7 +225,6 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-
     const opportunityRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<OpportunityWorkspaceEntity>(
         workspaceId,

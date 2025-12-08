@@ -53,17 +53,19 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
   };
 
   const mockTwentyORMGlobalManager = {
-    getRepositoryForWorkspace: jest.fn().mockImplementation((workspaceId, name) => {
-      if (name === 'calendarChannelEventAssociation') {
-        return mockCalendarEventAssociationRepository;
-      }
-      if (name === 'connectedAccount') {
-        return mockConnectedAccountRepository;
-      }
-      if (name === 'workspaceMember') {
-        return mockWorkspaceMemberRepository;
-      }
-    }),
+    getRepositoryForWorkspace: jest
+      .fn()
+      .mockImplementation((workspaceId, name) => {
+        if (name === 'calendarChannelEventAssociation') {
+          return mockCalendarEventAssociationRepository;
+        }
+        if (name === 'connectedAccount') {
+          return mockConnectedAccountRepository;
+        }
+        if (name === 'workspaceMember') {
+          return mockWorkspaceMemberRepository;
+        }
+      }),
   };
 
   beforeEach(async () => {

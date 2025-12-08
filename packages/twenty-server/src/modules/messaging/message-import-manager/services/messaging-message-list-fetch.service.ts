@@ -117,9 +117,10 @@ export class MessagingMessageListFetchService {
         },
       };
 
-      const datasource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+      const datasource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId,
+        });
 
       await this.syncMessageFoldersService.syncMessageFolders({
         workspaceId,

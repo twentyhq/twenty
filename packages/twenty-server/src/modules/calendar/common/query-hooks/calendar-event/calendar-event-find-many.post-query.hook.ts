@@ -32,6 +32,7 @@ export class CalendarEventFindManyPostQueryHook
     }
 
     const workspace = authContext.workspace;
+
     if (!workspace) {
       throw new ForbiddenError('Workspace is required');
     }

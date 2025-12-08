@@ -60,9 +60,10 @@ export class MessagingProcessGroupEmailActionsService {
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing group email action: ${pendingGroupEmailsAction}`,
     );
 
-    const workspaceDataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-      workspaceId,
-    });
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {

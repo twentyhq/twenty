@@ -1,12 +1,12 @@
 import { UseGuards } from '@nestjs/common';
 import {
-    Args,
-    ArgsType,
-    Field,
-    Int,
-    Mutation,
-    Query,
-    Resolver,
+  Args,
+  ArgsType,
+  Field,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';

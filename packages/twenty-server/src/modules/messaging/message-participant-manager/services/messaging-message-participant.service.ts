@@ -20,7 +20,6 @@ export class MessagingMessageParticipantService {
     workspaceId: string,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
-
     const messageParticipantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
         workspaceId,

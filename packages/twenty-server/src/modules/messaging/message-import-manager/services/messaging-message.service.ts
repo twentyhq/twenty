@@ -38,7 +38,9 @@ type MessageAccumulator = {
 export class MessagingMessageService {
   private readonly logger = new Logger(MessagingMessageService.name);
 
-  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],

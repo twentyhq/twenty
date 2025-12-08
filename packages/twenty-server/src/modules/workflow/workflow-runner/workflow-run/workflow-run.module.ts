@@ -24,10 +24,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     MetricsModule,
     DataSourceModule,
   ],
-  providers: [
-    WorkflowRunWorkspaceService,
-    DeleteWorkflowRunsCommand,
-  ],
+  providers: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
   exports: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
 })
 export class WorkflowRunModule {}

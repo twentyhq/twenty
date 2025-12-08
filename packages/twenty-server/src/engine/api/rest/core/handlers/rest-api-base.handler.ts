@@ -2,9 +2,9 @@ import { BadRequestException, Inject } from '@nestjs/common';
 
 import { SettingsPath } from 'twenty-shared/types';
 import {
-    assertIsDefinedOrThrow,
-    getSettingsPath,
-    isDefined,
+  assertIsDefinedOrThrow,
+  getSettingsPath,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
@@ -28,9 +28,9 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

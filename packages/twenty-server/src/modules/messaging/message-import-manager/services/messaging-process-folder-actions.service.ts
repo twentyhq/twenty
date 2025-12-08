@@ -86,9 +86,10 @@ export class MessagingProcessFolderActionsService {
     }
 
     if (processedFolderIds.length > 0 || folderIdsToDelete.length > 0) {
-      const workspaceDataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId,
+        });
 
       await workspaceDataSource?.transaction(
         async (transactionManager: WorkspaceEntityManager) => {

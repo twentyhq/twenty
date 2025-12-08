@@ -43,17 +43,19 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
   };
 
   const mockTwentyORMGlobalManager = {
-    getRepositoryForWorkspace: jest.fn().mockImplementation((workspaceId, name) => {
-      if (name === 'messageChannelMessageAssociation') {
-        return mockMessageChannelMessageAssociationRepository;
-      }
-      if (name === 'connectedAccount') {
-        return mockConnectedAccountRepository;
-      }
-      if (name === 'workspaceMember') {
-        return mockWorkspaceMemberRepository;
-      }
-    }),
+    getRepositoryForWorkspace: jest
+      .fn()
+      .mockImplementation((workspaceId, name) => {
+        if (name === 'messageChannelMessageAssociation') {
+          return mockMessageChannelMessageAssociationRepository;
+        }
+        if (name === 'connectedAccount') {
+          return mockConnectedAccountRepository;
+        }
+        if (name === 'workspaceMember') {
+          return mockWorkspaceMemberRepository;
+        }
+      }),
   };
 
   beforeEach(async () => {

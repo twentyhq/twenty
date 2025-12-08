@@ -7,7 +7,9 @@ import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/uti
 
 @Injectable()
 export class CalendarEventCleanerService {
-  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     const calendarEventRepository =

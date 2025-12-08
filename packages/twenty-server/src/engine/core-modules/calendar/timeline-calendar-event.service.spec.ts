@@ -37,7 +37,9 @@ describe('TimelineCalendarEventService', () => {
     };
 
     const mockTwentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockCalendarEventRepository),
+      getRepositoryForWorkspace: jest
+        .fn()
+        .mockResolvedValue(mockCalendarEventRepository),
     };
 
     const module: TestingModule = await Test.createTestingModule({

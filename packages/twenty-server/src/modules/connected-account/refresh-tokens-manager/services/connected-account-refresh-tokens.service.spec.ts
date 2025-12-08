@@ -61,7 +61,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       module.get<MicrosoftAPIRefreshAccessTokenService>(
         MicrosoftAPIRefreshAccessTokenService,
       );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(TwentyORMGlobalManager);
+    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
+      TwentyORMGlobalManager,
+    );
   });
 
   afterEach(() => {
@@ -90,7 +92,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
-      expect(twentyORMGlobalManager.getRepositoryForWorkspace).not.toHaveBeenCalled();
+      expect(
+        twentyORMGlobalManager.getRepositoryForWorkspace,
+      ).not.toHaveBeenCalled();
     });
 
     it('should refresh and save new Microsoft token when expired (lastCredentialsRefreshedAt is old)', async () => {

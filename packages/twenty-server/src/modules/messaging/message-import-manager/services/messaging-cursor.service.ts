@@ -16,7 +16,6 @@ export class MessagingCursorService {
     workspaceId: string,
     folderId?: string,
   ) {
-
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
         workspaceId,

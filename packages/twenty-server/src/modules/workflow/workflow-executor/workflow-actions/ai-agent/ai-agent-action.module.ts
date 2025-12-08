@@ -20,10 +20,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
     UserWorkspaceModule,
     UserRoleModule,
   ],
-  providers: [
-    WorkflowExecutionContextService,
-    AiAgentWorkflowAction,
-  ],
+  providers: [WorkflowExecutionContextService, AiAgentWorkflowAction],
   exports: [AiAgentWorkflowAction],
 })
 export class AiAgentActionModule {}

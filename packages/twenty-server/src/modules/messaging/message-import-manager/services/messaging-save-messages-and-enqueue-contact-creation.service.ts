@@ -43,9 +43,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
-    const workspaceDataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-      workspaceId,
-    });
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {

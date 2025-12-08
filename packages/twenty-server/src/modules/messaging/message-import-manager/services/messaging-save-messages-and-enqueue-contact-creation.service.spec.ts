@@ -134,7 +134,9 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         {
           provide: TwentyORMGlobalManager,
           useValue: {
-            getDataSourceForWorkspace: jest.fn().mockResolvedValue(datasourceInstance),
+            getDataSourceForWorkspace: jest
+              .fn()
+              .mockResolvedValue(datasourceInstance),
           },
         },
       ],

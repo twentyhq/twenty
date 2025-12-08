@@ -36,14 +36,7 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     PgPoolSharedModule,
     WorkspaceCacheModule,
   ],
-  providers: [
-    ...entitySchemaFactories,
-    TwentyORMGlobalManager,
-  ],
-  exports: [
-    EntitySchemaFactory,
-    TwentyORMGlobalManager,
-    PgPoolSharedModule,
-  ],
+  providers: [...entitySchemaFactories, TwentyORMGlobalManager],
+  exports: [EntitySchemaFactory, TwentyORMGlobalManager, PgPoolSharedModule],
 })
 export class TwentyORMModule {}

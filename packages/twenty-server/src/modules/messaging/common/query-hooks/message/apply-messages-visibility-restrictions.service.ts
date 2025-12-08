@@ -24,7 +24,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
     workspaceId: string,
     userId?: string, // undefined when request is made with api key
   ) {
-
     const messageChannelMessageAssociationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
         workspaceId,
