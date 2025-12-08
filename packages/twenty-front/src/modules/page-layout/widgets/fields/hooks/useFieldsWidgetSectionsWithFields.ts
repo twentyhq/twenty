@@ -1,4 +1,4 @@
-import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/__temporary__/useTemporaryFieldsConfiguration';
+import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import { filterAndOrderFieldsFromConfiguration } from '@/page-layout/widgets/fields/utils/filterAndOrderFieldsFromConfiguration';
