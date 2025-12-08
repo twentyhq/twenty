@@ -1,9 +1,86 @@
 ---
 title: Data Model FAQ
-description: Frequently asked questions about the data model.
+description: Frequently asked questions about Twenty's data model.
+image: /images/user-guide/objects/objects_orange.png
 ---
 
-# Data Model FAQ
+## Objects
 
-*Content to be added*
+<AccordionGroup>
+<Accordion title="Can I delete a custom object?">
+No, custom objects cannot be deleted once created. You can deactivate them, which hides the object and its data from the interface. The data is preserved and can be restored by reactivating the object.
+</Accordion>
 
+<Accordion title="How many custom objects can I create?">
+There's no hard limit on the number of custom objects. However, for performance and usability, we recommend keeping your data model focused on what you actually need.
+</Accordion>
+
+<Accordion title="Can I rename a standard object?">
+Standard objects (People, Companies, Opportunities) cannot be renamed. You can deactivate them if they don't fit your use case and create custom objects with your preferred names.
+</Accordion>
+
+<Accordion title="Can I change an object's icon?">
+Yes, you can change the icon for both standard and custom objects in Settings → Data Model.
+</Accordion>
+</AccordionGroup>
+
+## Fields
+
+<AccordionGroup>
+<Accordion title="Can I change a field type after creation?">
+No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+</Accordion>
+
+<Accordion title="Can I rename a relation field?">
+No, relation field names cannot be updated after creation because they affect the API structure. Plan your relation names carefully before creating them.
+</Accordion>
+
+<Accordion title="What happens when I deactivate a field?">
+- The field is hidden from the interface
+- Existing data is preserved
+- You can still access the field via API
+- Existing relations remain but you can't create new ones
+- You can reactivate the field later
+</Accordion>
+
+<Accordion title="Can I make a field required?">
+Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+</Accordion>
+
+<Accordion title="What's the difference between unique and required?">
+- **Unique**: No two records can have the same value in this field
+- **Required**: The field must have a value (not currently supported for custom fields)
+</Accordion>
+</AccordionGroup>
+
+## Relations
+
+<AccordionGroup>
+<Accordion title="Can I have multiple relations between the same objects?">
+Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+</Accordion>
+
+<Accordion title="What happens to relations when I delete a record?">
+When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+</Accordion>
+
+<Accordion title="Can I create circular relations?">
+While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+</Accordion>
+</AccordionGroup>
+
+## Data Management
+
+<AccordionGroup>
+<Accordion title="Is there a limit to how many records I can have?">
+There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+</Accordion>
+
+<Accordion title="Can I import data into custom objects?">
+Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields.
+</Accordion>
+
+<Accordion title="Can I export my data model configuration?">
+Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+</Accordion>
+</AccordionGroup>

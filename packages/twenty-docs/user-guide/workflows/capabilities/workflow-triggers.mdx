@@ -1,9 +1,102 @@
 ---
 title: Workflow Triggers
-description: Understanding workflow triggers.
+description: Learn about the different triggers that start your workflows.
+image: /images/user-guide/workflows/workflow.png
 ---
 
-# Workflow Triggers
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Workflow Triggers" />
+</Frame>
 
-*Content to be added*
+## About Triggers
 
+Workflows always start with a single trigger that defines when the automation should run.
+
+## Record Triggers
+
+### Record is Created
+Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+
+**Configuration**: Select the object type to monitor for new records.
+
+### Record is Updated
+Starts the workflow when changes are made to an existing record.
+
+**Configuration**:
+- Select the object type
+- Optionally specify which fields to monitor for changes
+
+### Record is Updated or Created
+Starts the workflow when a record is either created or updated in a selected object.
+
+**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+- **API/CSV imports**: Records are created with all fields populated immediately
+- **Manual creation**: Records are created first, then fields are added in subsequent updates
+
+**Configuration**:
+- Select the object type to monitor
+- Optionally specify which fields to monitor for changes
+- The workflow will trigger both on initial creation and any subsequent updates
+
+### Record is Deleted
+Starts the workflow when a record is removed from an object.
+
+**Configuration**: Select the object type to monitor for deletions.
+
+## Manual Trigger
+
+### Launch Manually
+Starts the workflow when triggered by a user action. This trigger can be accessed through the Cmd+K menu or via a custom button in the top navbar.
+
+**Availability Configuration**:
+Choose how the workflow should handle record selection:
+
+- **Global**: No record is required to trigger this workflow. The workflow is triggered from anywhere (from any object) and does not use record(s) as input.
+
+- **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run as many times as there are records selected.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an Iterator action. This is best for people who want to optimize/limit the number of workflow runs.
+
+**Additional Configuration**:
+- Select the target object (for Single and Bulk availability)
+- Choose a command icon for the workflow trigger
+- Configure navbar placement (Pinned or Not Pinned)
+
+**Access Methods**:
+- Cmd+K menu to find and launch manual workflows
+- Custom button in the top navbar (if configured)
+
+## Time-Based Trigger
+
+### On a Schedule
+Starts the workflow on a recurring basis you define.
+
+**Configuration**:
+- Select time unit (minutes, hours, days)
+- Enter a value or use custom cron expressions for advanced scheduling
+
+## External Trigger
+
+### Webhook
+Starts the workflow when a GET or POST request is received from an external service.
+
+**Configuration**:
+- Receive a unique webhook URL
+- For POST requests, define the expected body structure
+- Configure authentication if needed
+
+## Choosing the Right Trigger
+
+| Use Case | Recommended Trigger |
+|----------|---------------------|
+| New leads need processing | Record is Created |
+| Data changes need sync | Record is Updated |
+| Import/manual data handling | Record is Updated or Created |
+| Cleanup after deletion | Record is Deleted |
+| User-initiated action | Launch Manually |
+| Recurring reports | On a Schedule |
+| External integration | Webhook |

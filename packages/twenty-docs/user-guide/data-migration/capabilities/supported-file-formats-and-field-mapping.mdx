@@ -1,9 +1,106 @@
 ---
 title: Supported File Formats and Field Mapping
-description: Understanding supported file formats and how field mapping works.
+description: Understand the file formats and field mapping options for data import.
+image: /images/user-guide/import-export-data/cloud.png
 ---
 
-# Supported File Formats and Field Mapping
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Data Migration" />
+</Frame>
 
-*Content to be added*
+## Supported File Formats
 
+### CSV Files
+Twenty primarily supports CSV (Comma-Separated Values) files for data import.
+
+**Requirements:**
+- UTF-8 encoding
+- Comma or semicolon delimiter
+- First row must contain column headers
+- Maximum file size: 10MB per import
+
+**Tips:**
+- Export from Excel or Google Sheets as CSV
+- Ensure no special characters in headers
+- Remove empty rows at the end of the file
+
+## Field Mapping
+
+When importing data, you map your CSV columns to Twenty fields.
+
+### Automatic Mapping
+Twenty attempts to automatically match columns based on:
+- Column header names
+- Data type detection
+- Common field patterns
+
+### Manual Mapping
+For columns that aren't auto-mapped:
+1. Review each unmapped column
+2. Select the corresponding Twenty field
+3. Or skip the column if not needed
+
+### Field Type Compatibility
+
+| CSV Data | Compatible Twenty Fields |
+|----------|-------------------------|
+| Text | Text, Long Text, Email, Phone, Link |
+| Numbers | Number, Currency |
+| Dates | Date, Date & Time |
+| True/False | Checkbox |
+| Lists | Select, Multi-Select |
+
+## Data Formatting Requirements
+
+### Text Fields
+- No special formatting required
+- Leading/trailing spaces are trimmed
+
+### Date Fields
+Supported formats:
+- `YYYY-MM-DD` (recommended)
+- `MM/DD/YYYY`
+- `DD/MM/YYYY`
+- ISO 8601 format
+
+### Currency Fields
+- Use numbers only (no currency symbols)
+- Decimals use period: `1234.56`
+- Don't use thousands separators
+
+### Phone Fields
+- Include country code when possible
+- Formats: `+1234567890` or `(123) 456-7890`
+
+### Select Fields
+- Value must match an existing option exactly
+- Case-sensitive matching
+- Create new options in settings first if needed
+
+### Relation Fields
+When importing relations between objects:
+- Use the related record's ID or unique identifier
+- Ensure the related record exists before import
+- See [Import relations via CSV](/user-guide/data-migration/how-tos/how-to-import-relations-between-objects-via-csv)
+
+## Common Import Issues
+
+### Duplicate Detection
+- Twenty may flag potential duplicates during import
+- Review and decide to skip or merge
+
+### Missing Required Fields
+- Ensure all required fields have values
+- Check field settings for required fields
+
+### Format Errors
+- Dates in wrong format
+- Numbers with text characters
+- Invalid email addresses
+
+## Best Practices
+
+1. **Test with small batches**: Import a few records first
+2. **Clean data beforehand**: Fix formatting issues in your spreadsheet
+3. **Document your mapping**: Keep track of column mappings for future imports
+4. **Backup existing data**: Export current data before large imports

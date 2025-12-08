@@ -1,9 +1,70 @@
 ---
-title: Domains Settings
-description: Understanding domain settings.
+title: Domain Settings
+description: Configure custom domains for your Twenty workspace.
+image: /images/user-guide/setup/settings.png
 ---
 
-# Domains Settings
+<Frame>
+  <img src="/images/user-guide/setup/settings.png" alt="Domain Settings" />
+</Frame>
 
-*Content to be added*
+## About Custom Domains
 
+Custom domains allow you to access your Twenty workspace through your own domain name, providing a more professional and branded experience.
+
+## Setting Up a Custom Domain
+
+### Prerequisites
+- Organization plan or higher
+- Access to your domain's DNS settings
+- Admin access to your Twenty workspace
+
+### Configuration Steps
+
+1. **Access Domain Settings**
+   - Go to **Settings → Domains**
+   - Click **Add Custom Domain**
+
+2. **Enter Your Domain**
+   - Enter the domain you want to use (e.g., `crm.yourcompany.com`)
+   - Click **Verify**
+
+3. **Configure DNS**
+   - Add the provided CNAME record to your DNS settings
+   - Wait for DNS propagation (can take up to 48 hours)
+
+4. **Verify and Activate**
+   - Return to Domain Settings
+   - Click **Verify** to confirm DNS configuration
+   - Enable the custom domain
+
+## SSL Certificates
+
+Twenty automatically provisions SSL certificates for custom domains:
+- Certificates are issued automatically after DNS verification
+- Renewal is handled automatically
+- HTTPS is enforced for all connections
+
+## Best Practices
+
+### Choosing a Domain
+- Use a subdomain (e.g., `crm.company.com`) rather than your root domain
+- Choose a memorable, clear name
+- Consider your team's needs (internal vs. external access)
+
+### DNS Management
+- Keep DNS records documented
+- Allow time for propagation before troubleshooting
+- Contact your DNS provider if you encounter issues
+
+## Troubleshooting
+
+### Domain Not Verifying
+- Ensure CNAME record is correctly configured
+- Wait for DNS propagation (up to 48 hours)
+- Verify there are no conflicting records
+
+### SSL Certificate Issues
+- Certificate provisioning can take up to 24 hours
+- Ensure no CAA records are blocking certificate issuance
+- Contact support if issues persist

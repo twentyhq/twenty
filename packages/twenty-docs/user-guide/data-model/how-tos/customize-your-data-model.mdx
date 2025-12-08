@@ -1,9 +1,102 @@
 ---
 title: Customize Your Data Model
-description: How to customize your data model in Twenty.
+description: Step-by-step guide to customizing objects and fields in Twenty.
+image: /images/user-guide/fields/custom_data_model.png
 ---
 
-# Customize Your Data Model
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Customize Data Model" />
+</Frame>
 
-*Content to be added*
+## Planning Your Data Model
 
+Before making changes, consider:
+- What information do you need to track?
+- How do different data types relate to each other?
+- Who needs access to what information?
+
+## Creating a Custom Object
+
+### When to Create a Custom Object
+Create custom objects when you need to track:
+- Entities unique to your business (e.g., Projects, Products, Tickets)
+- Information with its own lifecycle
+- Data that needs relations to other objects
+
+### Steps
+1. Go to **Settings → Data Model**
+2. Click **+ New object**
+3. Enter the singular and plural names
+4. Choose an icon
+5. Add a description
+6. Click **Save**
+
+Your new object appears in the sidebar immediately.
+
+## Adding Custom Fields
+
+### Steps
+1. Go to **Settings → Data Model**
+2. Select the object to customize
+3. Click **+ Add Field**
+4. Choose field type
+5. Enter field name and description
+6. Configure field settings
+7. Click **Save**
+
+### Quick Method
+1. Open any object table view
+2. Click the **+** button in the header
+3. Select **Customize fields**
+4. You're taken directly to Data Model settings
+
+## Creating Relations
+
+### Steps
+1. Go to **Settings → Data Model**
+2. Select the source object
+3. Click **+ Add Field**
+4. Select **Relation** as field type
+5. Choose the target object
+6. Configure relation type
+7. Click **Save**
+
+### Relation Types
+- **One-to-Many**: One record links to many (e.g., Company → People)
+- **Many-to-One**: Many records link to one
+- **Many-to-Many**: Multiple records on both sides
+
+## Deactivating Objects or Fields
+
+### When to Deactivate
+- Object/field is no longer needed
+- Simplifying the interface
+- Testing changes
+
+### Steps
+1. Go to **Settings → Data Model**
+2. Find the object or field
+3. Click the toggle to deactivate
+4. Data is preserved but hidden
+
+### Reactivating
+1. Look for grayed-out items in Data Model
+2. Click the toggle to reactivate
+3. All data is restored
+
+## Best Practices
+
+### Naming
+- Use clear, descriptive names
+- Follow consistent conventions
+- Consider how names appear in the UI
+
+### Organization
+- Start with standard objects
+- Add custom objects only when needed
+- Keep field counts manageable
+
+### Planning
+- Document your data model
+- Plan relations before creating them
+- Test changes in a development workspace first

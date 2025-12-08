@@ -1,9 +1,138 @@
 ---
 title: Migrating from Other CRMs
-description: How to migrate your data from other CRM systems.
+description: Guide to migrating your data from other CRM systems to Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
 ---
 
-# Migrating from Other CRMs
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="CRM Migration" />
+</Frame>
 
-*Content to be added*
+## Migration Overview
 
+Migrating to Twenty involves:
+1. Exporting data from your current CRM
+2. Preparing the data for import
+3. Setting up your Twenty data model
+4. Importing data into Twenty
+5. Verifying the migration
+
+## Pre-Migration Planning
+
+### Assess Your Data
+- Identify what data to migrate
+- Clean up duplicates and outdated records
+- Document your current data structure
+- Map your data to Twenty's model
+
+### Plan Your Data Model
+- Review Twenty's standard objects (People, Companies, Opportunities)
+- Identify what custom objects you'll need
+- Plan custom fields for each object
+- Define relationships between objects
+
+## Migration Steps
+
+### Step 1: Export from Your Current CRM
+
+Most CRMs allow data export to CSV. Export:
+- Contacts/People
+- Companies/Accounts
+- Deals/Opportunities
+- Notes and Activities
+- Custom objects
+
+### Step 2: Prepare Your Data
+
+**Clean your data**:
+- Remove duplicates
+- Fix formatting issues
+- Standardize field values
+- Remove unnecessary columns
+
+**Format for Twenty**:
+- Ensure UTF-8 encoding
+- Use consistent date formats (YYYY-MM-DD recommended)
+- Match field names to Twenty fields
+
+### Step 3: Set Up Twenty
+
+Before importing:
+1. Create custom objects if needed
+2. Add custom fields to match your data
+3. Configure relations between objects
+4. Set up select field options
+
+### Step 4: Import Data
+
+**Import order matters**:
+1. Companies first (no dependencies)
+2. People second (link to companies)
+3. Opportunities (link to companies and people)
+4. Notes and activities (link to records)
+5. Custom objects as needed
+
+**For each import**:
+1. Navigate to the object
+2. Click Options → Import
+3. Upload your CSV
+4. Map columns to fields
+5. Review and confirm
+
+### Step 5: Verify Migration
+
+After importing:
+- Spot check records for accuracy
+- Verify relations are correct
+- Check that all fields populated
+- Test searching and filtering
+
+## Common Migration Sources
+
+### Salesforce
+- Export using Data Export or Reports
+- Map Account → Company
+- Map Contact → People
+- Map Opportunity → Opportunity
+
+### HubSpot
+- Export from each object separately
+- Map Company → Company
+- Map Contact → People
+- Map Deal → Opportunity
+
+### Pipedrive
+- Export from Data Export settings
+- Map Organization → Company
+- Map Person → People
+- Map Deal → Opportunity
+
+### Spreadsheets (Excel/Google Sheets)
+- Save as CSV
+- Ensure clean headers
+- Remove formulas (export values only)
+
+## Troubleshooting
+
+### Import Errors
+- Check file encoding (use UTF-8)
+- Verify date formats
+- Ensure required fields have values
+- Check for special characters
+
+### Missing Relations
+- Verify related records exist before importing
+- Use correct ID or unique field for matching
+- Import in the correct order
+
+### Duplicate Records
+- Clean data before import
+- Use unique fields to identify duplicates
+- Merge duplicates after import if needed
+
+## Getting Help
+
+For complex migrations, consider:
+- [Professional services](/user-guide/getting-started/implementation-services)
+- Community support on Discord
+- Contacting Twenty support

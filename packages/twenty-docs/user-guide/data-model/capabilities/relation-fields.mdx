@@ -1,9 +1,87 @@
 ---
 title: Relation Fields
-description: Understanding relation fields and how to link objects.
+description: Connect records across different objects using relation fields.
+image: /images/user-guide/fields/field.png
 ---
 
-# Relation Fields
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Relation Fields" />
+</Frame>
 
-*Content to be added*
+## About Relation Fields
 
+Relation fields connect records from different objects together. They're essential for building a connected data model where you can see relationships between your data.
+
+## Types of Relations
+
+### One-to-Many
+One record in Object A can be linked to many records in Object B.
+
+**Example:** One Company can have many People (contacts).
+
+### Many-to-One
+Many records in Object A can be linked to one record in Object B.
+
+**Example:** Many People can belong to one Company.
+
+### Many-to-Many
+Many records in Object A can be linked to many records in Object B.
+
+**Example:** Many People can be linked to many Projects, and vice versa.
+
+## Creating a Relation Field
+
+1. Go to **Settings → Data Model**
+2. Select the object where you want to add the relation
+3. Click **+ Add Field**
+4. Select **Relation** as the field type
+5. Choose the target object to relate to
+6. Configure the relation settings:
+   - Relation name
+   - Relation type (one-to-many, many-to-one)
+7. Click **Save**
+
+## Standard Relations
+
+Twenty comes with pre-built relations between standard objects:
+
+| From Object | To Object | Relation Type |
+|-------------|-----------|---------------|
+| People | Companies | Many-to-One |
+| Opportunities | Companies | Many-to-One |
+| Tasks | People | Many-to-One |
+| Notes | People | Many-to-One |
+
+## Using Relations in Views
+
+### In Table View
+- Relation fields appear as columns
+- Click on a related record to open it
+- Filter by related records
+
+### In Record Detail
+- Related records appear in tabs
+- Add or remove related records
+- Navigate between related records
+
+## Best Practices
+
+### Planning Relations
+- **Map your data model**: Plan relations before creating them
+- **Consider direction**: Think about which object "owns" the relationship
+- **Avoid circular dependencies**: Keep your data model clean
+
+### Naming Relations
+- **Use clear names**: Make it obvious what the relation represents
+- **Be consistent**: Use similar naming patterns across relations
+- **Consider both sides**: Name both sides of the relation appropriately
+
+### Performance
+- **Don't over-relate**: Too many relations can slow down your workspace
+- **Use indexes**: Relations with many records benefit from proper indexing
+
+## Limitations
+
+- **Relation names cannot be changed** after creation (this affects the API)
+- **Deleting relations** removes the link but not the related records
+- **Circular relations** should be avoided for data integrity

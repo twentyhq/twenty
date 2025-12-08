@@ -1,9 +1,76 @@
 ---
-title: Kanban Views
-description: Understanding Kanban board views in Twenty.
+title: Kanban Board Views
+description: Learn how to use Kanban views to visualize and manage your workflows.
+image: /images/user-guide/kanban-views/kanban.png
 ---
 
-# Kanban Views
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-*Content to be added*
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Kanban Views" />
+</Frame>
 
+## About Kanban Views
+
+Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+
+## Move Cards between Stages
+
+You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Add and Delete Stages
+
+You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+
+### Add Stages
+
+To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+### Remove Stages
+
+To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+
+<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
+
+## Display Fields
+
+You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Hover the field you want to hide to bring up the `-` button. Click on it to hide the field.
+
+You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}}/>
+
+## Compact View
+
+You can also hide all the fields and get an overview of all the opportunities at a glance. To do so, click on **Options** on the top right and turn on the toggle for **Compact view** after selecting layout in Kanban view.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>
+
+## When to Use Kanban Views
+
+Kanban views are ideal for:
+- **Sales pipelines**: Track deals through stages from lead to close
+- **Project management**: Monitor tasks through workflow states
+- **Recruitment**: Track candidates through hiring stages
+- **Any staged process**: Visualize any workflow with defined stages
+
+## Best Practices
+
+### Organize Your Stages
+- **Limit stages**: 5-7 stages is ideal for visibility
+- **Clear naming**: Use descriptive stage names
+- **Logical order**: Arrange stages in process order
+
+### Optimize Card Display
+- **Show key fields**: Display only the most important information
+- **Use compact view**: For high-level overviews
+- **Color coding**: Use stage colors to quickly identify status
+
+### Maintain Data Quality
+- **Update regularly**: Keep cards moving through stages
+- **Archive completed**: Move closed items out of active view
+- **Review stale cards**: Follow up on cards stuck in stages
