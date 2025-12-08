@@ -82,7 +82,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
     const name = propertyKey.toString();
     const label = options.label.message ?? '';
-    const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
+    const isLabelSyncedWithName = computeMetadataNameFromLabel({label}) === name;
 
     metadataArgsStorage.addFields({
       target: object.constructor,
