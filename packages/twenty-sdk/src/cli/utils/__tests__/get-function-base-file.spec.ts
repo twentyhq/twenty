@@ -1,4 +1,4 @@
-import { getFunctionBaseFile } from '../get-function-base-file';
+import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
 
 describe('getFunctionBaseFile', () => {
   it('should render proper file', () => {

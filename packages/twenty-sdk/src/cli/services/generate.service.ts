@@ -1,8 +1,8 @@
 import { generate } from '@genql/cli';
 import chalk from 'chalk';
 import { join, resolve } from 'path';
-import { ApiService } from './api.service';
-import { ConfigService } from './config.service';
+import { ApiService } from '@/cli/services/api.service';
+import { ConfigService } from '@/cli/services/config.service';
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
