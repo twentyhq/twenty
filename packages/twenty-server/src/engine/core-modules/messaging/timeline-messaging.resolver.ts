@@ -93,6 +93,7 @@ export class TimelineMessagingResolver {
       await this.getMessagesFromPersonIdsService.getMessagesFromPersonIds(
         workspaceMember.id,
         [personId],
+        workspace.id,
         page,
         pageSize,
       );
@@ -119,6 +120,7 @@ export class TimelineMessagingResolver {
       await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
         workspaceMember.id,
         companyId,
+        workspace.id,
         page,
         pageSize,
       );
@@ -146,6 +148,7 @@ export class TimelineMessagingResolver {
       await this.getMessagesFromPersonIdsService.getMessagesFromOpportunityId(
         workspaceMember.id,
         opportunityId,
+        workspace.id,
         page,
         pageSize,
       );

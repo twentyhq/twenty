@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageFolderPendingSyncAction,
@@ -19,7 +19,7 @@ export class MessagingProcessFolderActionsService {
   );
 
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingDeleteFolderMessagesService: MessagingDeleteFolderMessagesService,
   ) {}
 
@@ -86,12 +86,16 @@ export class MessagingProcessFolderActionsService {
     }
 
     if (processedFolderIds.length > 0 || folderIdsToDelete.length > 0) {
-      const workspaceDataSource = await this.twentyORMManager.getDatasource();
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId,
+        });
 
       await workspaceDataSource?.transaction(
         async (transactionManager: WorkspaceEntityManager) => {
           const messageFolderRepository =
-            await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+              workspaceId,
               'messageFolder',
             );
 

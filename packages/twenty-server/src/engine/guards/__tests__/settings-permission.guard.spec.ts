@@ -2,9 +2,9 @@ import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 

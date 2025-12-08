@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,7 +30,6 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutWidgetRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-widget-rest-api-exception.filter';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Controller('rest/metadata/pageLayoutWidgets')
 @UseGuards(WorkspaceAuthGuard)

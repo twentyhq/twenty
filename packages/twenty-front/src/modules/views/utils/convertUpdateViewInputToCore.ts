@@ -49,5 +49,8 @@ export const convertUpdateViewInputToCore = (
     ...(isDefined(view.shouldHideEmptyGroups) && {
       shouldHideEmptyGroups: view.shouldHideEmptyGroups,
     }),
+    ...(view.mainGroupByFieldMetadataId !== undefined && {
+      mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
+    }),
   };
 };

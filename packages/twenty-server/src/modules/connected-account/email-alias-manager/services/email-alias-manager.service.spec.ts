@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
@@ -28,9 +28,9 @@ describe('Email Alias Manager Service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: TwentyORMManager,
+          provide: TwentyORMGlobalManager,
           useValue: {
-            getRepository: jest
+            getRepositoryForWorkspace: jest
               .fn()
               .mockResolvedValue(connectedAccountRepository),
           },
@@ -86,6 +86,7 @@ describe('Email Alias Manager Service', () => {
 
       await emailAliasManagerService.refreshHandleAliases(
         mockConnectedAccount as ConnectedAccountWorkspaceEntity,
+        'test-workspace-id',
       );
 
       expect(

@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
-import { ApiService } from '../services/api.service';
-import { ConfigService } from '../services/config.service';
+import { ApiService } from '@/cli/services/api.service';
+import { ConfigService } from '@/cli/services/config.service';
 
 export class AuthCommand {
   private configService = new ConfigService();

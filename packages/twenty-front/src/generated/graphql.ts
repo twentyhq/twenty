@@ -888,6 +888,7 @@ export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToApplications?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -3633,6 +3634,7 @@ export type Role = {
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlag>>;
   standardId?: Maybe<Scalars['UUID']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -4189,6 +4191,7 @@ export type UpdateRolePayload = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToApplications?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;

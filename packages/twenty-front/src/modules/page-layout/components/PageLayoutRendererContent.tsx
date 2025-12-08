@@ -18,12 +18,12 @@ import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibl
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -120,7 +120,7 @@ export const PageLayoutRendererContent = () => {
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
           <StyledPageLayoutTabList
             tabs={sortedTabs}
-            behaveAsLinks={false}
+            behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
             componentInstanceId={tabListInstanceId}
             onAddTab={handleAddTab}
             isReorderEnabled={isPageLayoutInEditMode}

@@ -97,9 +97,11 @@ export class WorkflowToolWorkspaceService {
       createUpdateWorkflowVersionPositionsTool(this.deps, context);
     const activateWorkflowVersion = createActivateWorkflowVersionTool(
       this.deps,
+      context,
     );
     const deactivateWorkflowVersion = createDeactivateWorkflowVersionTool(
       this.deps,
+      context,
     );
     const computeStepOutputSchema = createComputeStepOutputSchemaTool(
       this.deps,
