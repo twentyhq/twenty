@@ -1,6 +1,7 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
+import { calculateNextExecutionsForMinuteInterval } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/calculateNextExecutionsForMinuteInterval';
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
 import { normalizeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
@@ -11,9 +12,26 @@ import { useRecoilValue } from 'recoil';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
-const getNextExecutions = (cronExpression: string): Date[] => {
+const getNextExecutions = (
+  cronExpression: string,
+  trigger?: WorkflowCronTrigger,
+): Date[] => {
   try {
     const normalized = normalizeCronExpression(cronExpression);
+
+    /* For MINUTES type with interval > 30, calculate manually
+     because cron's N pattern resets at hour boundaries and doesn't
+     represent true continuous intervals for values > 30
+     */
+    if (
+      trigger?.settings.type === 'MINUTES' &&
+      trigger.settings.schedule.minute > 30
+    ) {
+      return calculateNextExecutionsForMinuteInterval(
+        trigger.settings.schedule.minute,
+      );
+    }
+
     const interval = CronExpressionParser.parse(normalized, {
       tz: 'UTC',
     });
@@ -112,7 +130,7 @@ export const CronExpressionHelper = ({
     );
   }
 
-  const nextExecutions = getNextExecutions(cronExpression);
+  const nextExecutions = getNextExecutions(cronExpression, trigger);
 
   return (
     <StyledContainer>
