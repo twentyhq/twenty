@@ -28,10 +28,11 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'taskTarget',
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
 
+// TODO: once we have finished migrating, we can delete custom code
 // once we migrate timeline activity to morph relations, we can add it.
-const DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS = [
-  'timelineActivity',
-] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
+// another way to check if an object is migrated to morph relations is to check if the feature flag is enabled
+const DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS =
+  [] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
 
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFeatureFlagsMap: FeatureFlagMap;
@@ -58,10 +59,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   workspaceId,
   workspaceCustomApplicationId,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
-  const isTimelineActivityMorphMigrated =
-    existingFeatureFlagsMap[FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED] ??
-    false;
-
   const objectIdByNameSingular = Object.values(
     existingFlatObjectMetadataMaps.byId,
   ).reduce<Record<string, string>>((acc, flatObject) => {
@@ -89,107 +86,16 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   const result =
     DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
       (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
-        if (
-          objectMetadataNameSingular === 'timelineActivity' &&
-          isTimelineActivityMorphMigrated
-        ) {
-          return sourceAndTargetFlatFieldMetadatasRecord;
-        }
-
-        const targetFlatObjectMetadataId =
-          objectIdByNameSingular[objectMetadataNameSingular];
-
-        if (!isDefined(targetFlatObjectMetadataId)) {
-          throw new ObjectMetadataException(
-            `Standard target object metadata id ${targetFlatObjectMetadataId} not found in cache`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        const isObjectMigratedFromOlderReleases =
+          DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS.map(toString).includes(
+            objectMetadataNameSingular,
           );
-        }
-
-        const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityMaps: existingFlatObjectMetadataMaps,
-          flatEntityId: targetFlatObjectMetadataId,
-        });
-
-        if (!isDefined(targetFlatObjectMetadata)) {
-          throw new ObjectMetadataException(
-            `Standard target object metadata of id ${targetFlatObjectMetadataId} not found in cache`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        const standardId =
-          CUSTOM_OBJECT_STANDARD_FIELD_IDS[
-            targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
-          ];
-
-        if (!isDefined(standardId)) {
-          throw new ObjectMetadataException(
-            `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
-        const icon =
-          STANDARD_OBJECT_ICONS[
-            targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
-          ] || 'IconBuildingSkyscraper';
-
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-          name: sourceFlatObjectMetadata.nameSingular,
-        });
-
-        const { flatFieldMetadatas } =
-          generateMorphOrRelationFlatFieldMetadataPair({
-            sourceFlatObjectMetadata,
-            targetFlatObjectMetadata,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
-            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
-            workspaceId,
-            workspaceCustomApplicationId,
-            sourceFlatObjectMetadataJoinColumnName: joinColumnName,
-            targetFieldName: sourceFlatObjectMetadata.nameSingular,
-            createFieldInput: {
-              icon: 'IconBuildingSkyscraper',
-              type: FieldMetadataType.RELATION,
-              name: targetFlatObjectMetadata.nameSingular,
-              label: capitalize(targetFlatObjectMetadata.labelSingular),
-              objectMetadataId: sourceFlatObjectMetadata.id,
-              standardId,
-              relationCreationPayload: {
-                type: RelationType.ONE_TO_MANY,
-                targetObjectMetadataId: targetFlatObjectMetadata.id,
-                targetFieldLabel: capitalize(
-                  sourceFlatObjectMetadata.nameSingular,
-                ),
-                targetFieldIcon: icon,
-              },
-            },
-          });
-
-        return {
-          standardSourceFlatFieldMetadatas: [
-            ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,
-            flatFieldMetadatas[0],
-          ],
-          standardTargetFlatFieldMetadatas: [
-            ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
-            flatFieldMetadatas[1],
-          ],
-        };
-      },
-      EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD,
-    );
-
-  const resultForMigratedToMorphRelations =
-    DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
-      (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
-        if (
-          objectMetadataNameSingular === 'timelineActivity' &&
-          !isTimelineActivityMorphMigrated
-        ) {
-          return sourceAndTargetFlatFieldMetadatasRecord;
-        }
+        const isFeatureFlagEnabled =
+          existingFeatureFlagsMap[
+            FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
+          ] ?? false;
+        const isObjectMigratedToMorphRelations =
+          isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;
 
         const targetFlatObjectMetadataId =
           objectIdByNameSingular[objectMetadataNameSingular];
@@ -231,8 +137,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           ] || 'IconBuildingSkyscraper';
 
         const morphFieldName = `target${capitalize(sourceFlatObjectMetadata.nameSingular)}`;
+        const fieldName = isObjectMigratedToMorphRelations
+          ? morphFieldName
+          : sourceFlatObjectMetadata.nameSingular;
         const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-          name: morphFieldName,
+          name: fieldName,
         });
 
         const morphId =
@@ -243,12 +152,14 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             sourceFlatObjectMetadata,
             targetFlatObjectMetadata,
             sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
-            targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
+            targetFlatFieldMetadataType: isObjectMigratedToMorphRelations
+              ? FieldMetadataType.MORPH_RELATION
+              : FieldMetadataType.RELATION,
             workspaceId,
             workspaceCustomApplicationId,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,
-            targetFieldName: morphFieldName,
+            targetFieldName: fieldName,
             createFieldInput: {
               icon: 'IconBuildingSkyscraper',
               type: FieldMetadataType.RELATION,
@@ -281,14 +192,5 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
       EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD,
     );
 
-  return {
-    standardSourceFlatFieldMetadatas: [
-      ...result.standardSourceFlatFieldMetadatas,
-      ...resultForMigratedToMorphRelations.standardSourceFlatFieldMetadatas,
-    ],
-    standardTargetFlatFieldMetadatas: [
-      ...result.standardTargetFlatFieldMetadatas,
-      ...resultForMigratedToMorphRelations.standardTargetFlatFieldMetadatas,
-    ],
-  };
+  return result;
 };
