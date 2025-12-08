@@ -130,7 +130,8 @@ export const useTestHttpRequest = (actionId: string) => {
       let language: 'json' | 'plaintext' = 'plaintext';
 
       const jsonMessage = parseJson(errorMessage);
-      if (jsonMessage != null) {
+
+      if (isDefined(jsonMessage)) {
         errorMessage = JSON.stringify(jsonMessage, null, 2);
         language = 'json';
       }
