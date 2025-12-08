@@ -83,13 +83,9 @@ export class HistoricalImporter {
             plan,
           );
 
-        if (summaryReady === false) {
+        const isPendingSummary = summaryReady === false;
+        if (isPendingSummary) {
           summaryPending += 1;
-          statuses.push({
-            meetingId,
-            title: meetingData.title,
-            status: 'pending_summary',
-          });
         }
 
         if (dryRun) {
@@ -98,7 +94,8 @@ export class HistoricalImporter {
           statuses.push({
             meetingId,
             title: meetingData.title,
-            status: 'dry_run',
+            status: isPendingSummary ? 'pending_summary' : 'dry_run',
+            reason: isPendingSummary ? 'summary not ready' : undefined,
           });
           continue;
         }
@@ -133,7 +130,8 @@ export class HistoricalImporter {
         statuses.push({
           meetingId,
           title: meetingData.title,
-          status: 'imported',
+          status: isPendingSummary ? 'pending_summary' : 'imported',
+          reason: isPendingSummary ? 'summary not ready' : undefined,
         });
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);

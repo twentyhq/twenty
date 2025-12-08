@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -10,7 +11,12 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3000';
 const API_KEY = process.env.TWENTY_API_KEY;
 const meetingId = process.argv[2];
 
-async function main() {
+const main = async (): Promise<void> => {
+  if (!API_KEY) {
+    console.error('❌ TWENTY_API_KEY is required');
+    process.exit(1);
+  }
+
   if (!meetingId) {
     console.error('Usage: yarn delete:meeting <meetingId>');
     process.exit(1);
@@ -34,6 +40,10 @@ async function main() {
   } else {
     console.log('✅ Deleted meeting:', meetingId);
   }
-}
+};
 
-main();
+main().catch((error) => {
+  console.error('❌ Failed to delete meeting');
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});

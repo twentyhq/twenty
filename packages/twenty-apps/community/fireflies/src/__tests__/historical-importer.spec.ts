@@ -76,8 +76,8 @@ describe('HistoricalImporter', () => {
     expect(result.summaryPending).toBe(1);
     expect(twentyService.createMeeting).not.toHaveBeenCalled();
     expect(twentyService.createNoteOnly).not.toHaveBeenCalled();
+    expect(result.statuses).toHaveLength(1);
     expect(result.statuses[0].status).toBe('pending_summary');
-    expect(result.statuses[1].status).toBe('dry_run');
   });
 });
 

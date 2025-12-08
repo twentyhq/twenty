@@ -4,7 +4,7 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 
 ### Current Status
 - Doesn't work with Fireflies webhook yet due to missing headers forwarding in twenty serverless func
-- Meeting ingestion utility script are available for individual meeting insertion and historical meetings with filters with yarn meeting:all
+- Meeting ingestion utility scripts are available for individual meeting insertion and historical meetings with filters with yarn meeting:all
 
 ## Integration Overview
 

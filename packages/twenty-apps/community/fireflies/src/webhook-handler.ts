@@ -22,7 +22,8 @@ export class WebhookHandler {
 
   private addDebugLogs(result: ProcessResult): ProcessResult {
     if (process.env.CAPTURE_LOGS === 'true') {
-      result.debug = getAllCapturedLogs();
+      const captured = getAllCapturedLogs();
+      result.debug = [...this.debug, ...captured];
     } else {
       delete result.debug;
     }

@@ -380,7 +380,7 @@ export class FirefliesApiClient {
       return { data: meetingData, summaryReady: ready };
     }
 
-    // immediate_with_retry: retry with exponential backoff
+    // immediate_with_retry: retry with linear backoff
     logger.debug(`fetching meeting ${meetingId} (strategy: immediate_with_retry, maxAttempts: ${config.retryAttempts})`);
 
     for (let attempt = 1; attempt <= config.retryAttempts; attempt++) {

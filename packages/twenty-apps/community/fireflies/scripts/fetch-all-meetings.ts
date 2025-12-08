@@ -59,6 +59,12 @@ type CliArgs = {
 const parseArgs = (argv: string[]): CliArgs => {
   const args: CliArgs = {};
 
+  const parseNumberArg = (value?: string): number | undefined => {
+    if (!value) return undefined;
+    const parsed = Number.parseInt(value, 10);
+    return Number.isNaN(parsed) ? undefined : parsed;
+  };
+
   for (let i = 0; i < argv.length; i += 1) {
     const current = argv[i];
     const next = argv[i + 1];
@@ -94,15 +100,15 @@ const parseArgs = (argv: string[]): CliArgs => {
         args.dryRun = true;
         break;
       case '--page-size':
-        args.pageSize = next ? Number.parseInt(next, 10) : undefined;
+        args.pageSize = parseNumberArg(next);
         i += 1;
         break;
       case '--max-records':
-        args.maxRecords = next ? Number.parseInt(next, 10) : undefined;
+        args.maxRecords = parseNumberArg(next);
         i += 1;
         break;
       case '--limit':
-        args.limit = next ? Number.parseInt(next, 10) : undefined;
+        args.limit = parseNumberArg(next);
         i += 1;
         break;
       default:
