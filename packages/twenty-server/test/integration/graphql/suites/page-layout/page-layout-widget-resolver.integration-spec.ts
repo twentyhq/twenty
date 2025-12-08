@@ -28,13 +28,13 @@ import { assertPageLayoutWidgetStructure } from 'test/integration/utils/page-lay
 import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
-import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
+import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
-} from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
 
 describe('Page Layout Widget Resolver', () => {
   let testObjectMetadataId: string;

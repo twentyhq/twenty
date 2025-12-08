@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { PAGE_LAYOUT_WIDGET_GQL_FIELDS } from 'test/integration/constants/page-layout-gql-fields.constants';
 
-import { type UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
+import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 
 type UpdatePageLayoutWidgetOperationFactoryParams = {
   gqlFields?: string;

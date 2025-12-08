@@ -1,11 +1,11 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/utils/is-sync-stale.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
@@ -22,15 +22,19 @@ export type CalendarOngoingStaleJobData = {
   scope: Scope.REQUEST,
 })
 export class CalendarOngoingStaleJob {
+  private readonly logger = new Logger(CalendarOngoingStaleJob.name);
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   @Process(CalendarOngoingStaleJob.name)
-  async handle(): Promise<void> {
+  async handle(data: CalendarOngoingStaleJobData): Promise<void> {
+    const { workspaceId } = data;
+
     const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
+        workspaceId,
         'calendarChannel',
       );
 
@@ -50,21 +54,30 @@ export class CalendarOngoingStaleJob {
         calendarChannel.syncStageStartedAt &&
         isSyncStale(calendarChannel.syncStageStartedAt)
       ) {
-        await this.calendarChannelSyncStatusService.resetSyncStageStartedAt([
-          calendarChannel.id,
-        ]);
+        await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
+          [calendarChannel.id],
+          workspaceId,
+        );
 
         switch (calendarChannel.syncStage) {
           case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING:
           case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
-            await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+            this.logger.log(
+              `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENT_LIST_FETCH_PENDING`,
+            );
+            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
               [calendarChannel.id],
+              workspaceId,
             );
             break;
           case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING:
           case CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED:
-            await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+            this.logger.log(
+              `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENTS_IMPORT_PENDING`,
+            );
+            await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
               [calendarChannel.id],
+              workspaceId,
             );
             break;
           default:

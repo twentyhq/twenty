@@ -3,8 +3,9 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
@@ -24,7 +25,8 @@ export class MessagingMessagesImportJob {
   constructor(
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(MessagingMessagesImportJob.name)
@@ -38,7 +40,8 @@ export class MessagingMessagesImportJob {
     });
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -64,18 +67,24 @@ export class MessagingMessagesImportJob {
     }
 
     if (
-      isThrottled(
-        messageChannel.syncStageStartedAt,
-        messageChannel.throttleFailureCount,
-      )
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
     ) {
       return;
     }
 
     if (
-      messageChannel.syncStage !==
-      MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+      isThrottled(
+        messageChannel.syncStageStartedAt,
+        messageChannel.throttleFailureCount,
+      )
     ) {
+      await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+        [messageChannel.id],
+        workspaceId,
+        true,
+      );
+
       return;
     }
 

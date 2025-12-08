@@ -1,3 +1,4 @@
+import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -22,14 +23,24 @@ export class GraphqlQuerySelectedFieldsRelationParser {
   }
 
   parseRelationField(
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata:
+      | FlatFieldMetadata<FieldMetadataType.RELATION>
+      | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
     fieldKey: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
     accumulator: GraphqlQuerySelectedFieldsResult,
+    isFromOneToManyRelation?: boolean,
   ): void {
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
+    }
+
+    const isOneToManyRelation =
+      fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
+
+    if (isFromOneToManyRelation && isOneToManyRelation) {
+      accumulator.hasAtLeastTwoNestedOneToManyRelations = true;
     }
 
     accumulator.relations[fieldKey] = true;
@@ -52,6 +63,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     const relationAccumulator = fieldParser.parse(
       fieldValue,
       targetObjectMetadata,
+      isFromOneToManyRelation || isOneToManyRelation,
     );
 
     accumulator.select[fieldKey] = {
@@ -60,5 +72,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     };
     accumulator.relations[fieldKey] = relationAccumulator.relations;
     accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
+    accumulator.relationFieldsCount =
+      accumulator.relationFieldsCount +
+      relationAccumulator.relationFieldsCount +
+      1;
+    accumulator.hasAtLeastTwoNestedOneToManyRelations =
+      accumulator.hasAtLeastTwoNestedOneToManyRelations ||
+      relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
   }
 }

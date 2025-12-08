@@ -9,6 +9,34 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import { IconCircleOff } from 'twenty-ui/display';
+import {
+  convertCurrencyAmountToCurrencyMicros,
+  convertCurrencyMicrosToCurrencyAmount,
+} from '~/utils/convertCurrencyToCurrencyMicros';
+
+const formatMicrosToDisplayAmount = (
+  amountMicros: string | number | null | undefined,
+): string | number => {
+  if (amountMicros == null) {
+    return '';
+  }
+  if (Number.isFinite(+amountMicros)) {
+    return convertCurrencyMicrosToCurrencyAmount(+amountMicros);
+  }
+  return amountMicros;
+};
+
+const parseDisplayAmountToMicros = (
+  displayAmount: string | number | null,
+): number | null => {
+  if (displayAmount == null) {
+    return null;
+  }
+  if (Number.isFinite(+displayAmount)) {
+    return convertCurrencyAmountToCurrencyMicros(Number(displayAmount));
+  }
+  return null;
+};
 
 type FormCurrencyFieldInputProps = {
   label?: string;
@@ -41,7 +69,7 @@ export const FormCurrencyFieldInput = ({
   ) => {
     onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
-      amountMicros: newAmountMicros ?? null,
+      amountMicros: parseDisplayAmountToMicros(newAmountMicros),
     });
   };
 
@@ -65,11 +93,11 @@ export const FormCurrencyFieldInput = ({
           readonly={readonly}
         />
         <FormNumberFieldInput
-          label="Amount Micros"
-          defaultValue={defaultValue?.amountMicros ?? ''}
+          label="Amount"
+          defaultValue={formatMicrosToDisplayAmount(defaultValue?.amountMicros)}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          placeholder="Set 3210000 for $3.21"
+          placeholder="Set 3.21 for $3.21"
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>

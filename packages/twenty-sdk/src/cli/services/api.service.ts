@@ -5,12 +5,13 @@ import {
   getIntrospectionQuery,
   printSchema,
 } from 'graphql/index';
+import { createClient } from 'graphql-sse';
+import { type ApiResponse } from '@/cli/types/api-response.types';
+import { ConfigService } from '@/cli/services/config.service';
 import {
-  type ApiResponse,
-  type AppManifest,
   type PackageJson,
-} from '../types/config.types';
-import { ConfigService } from './config.service';
+  type ApplicationManifest,
+} from 'twenty-shared/application';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -93,7 +94,7 @@ export class ApiService {
   }: {
     packageJson: PackageJson;
     yarnLock: string;
-    manifest: AppManifest;
+    manifest: ApplicationManifest;
   }): Promise<ApiResponse> {
     try {
       const mutation = `
@@ -234,5 +235,54 @@ export class ApiService {
       }
       throw error;
     }
+  }
+
+  async subscribeToLogs({
+    applicationUniversalIdentifier,
+    functionUniversalIdentifier,
+    functionName,
+  }: {
+    applicationUniversalIdentifier: string;
+    functionUniversalIdentifier?: string;
+    functionName?: string;
+  }) {
+    const twentyConfig = await this.configService.getConfig();
+
+    const wsClient = createClient({
+      url: twentyConfig.apiUrl + '/graphql',
+      headers: {
+        Authorization: `Bearer ${twentyConfig.apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      },
+    });
+
+    const query = `
+        subscription SubscribeToLogs($input: ServerlessFunctionLogsInput!) {
+          serverlessFunctionLogs(input: $input) {
+            logs
+          }
+        }
+      `;
+
+    const variables = {
+      input: {
+        applicationUniversalIdentifier,
+        universalIdentifier: functionUniversalIdentifier,
+        name: functionName,
+      },
+    };
+
+    wsClient.subscribe<{ serverlessFunctionLogs: { logs: string } }>(
+      {
+        query,
+        variables,
+      },
+      {
+        next: ({ data }) => console.log(data?.serverlessFunctionLogs.logs),
+        error: (err: unknown) => console.error(err),
+        complete: () => console.log('Completed'),
+      },
+    );
   }
 }

@@ -60,7 +60,6 @@ export const getDefaultFlatFieldMetadata = ({
     morphId: null,
     applicationId: workspaceCustomApplicationId,
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

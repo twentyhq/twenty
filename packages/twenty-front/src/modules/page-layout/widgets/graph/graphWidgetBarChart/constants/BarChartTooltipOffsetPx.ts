@@ -1,0 +1,1 @@
+export const BAR_CHART_TOOLTIP_OFFSET_PX = 2;

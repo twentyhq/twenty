@@ -2,17 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { IsNull, Not, type EntityManager, type Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
-import { standardRoleDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles';
+import { STANDARD_ROLE_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/standard-role-definitions';
 
 @Injectable()
 export class WorkspaceSyncRoleService {
@@ -47,7 +47,7 @@ export class WorkspaceSyncRoleService {
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(
-      standardRoleDefinitions,
+      STANDARD_ROLE_DEFINITIONS,
       context,
       existingStandardRoleEntities,
     );
@@ -72,7 +72,7 @@ export class WorkspaceSyncRoleService {
             workspaceId: context.workspaceId,
           });
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToCreate.standardId,
           );
 
@@ -98,7 +98,7 @@ export class WorkspaceSyncRoleService {
 
           await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToUpdate.standardId,
           );
 

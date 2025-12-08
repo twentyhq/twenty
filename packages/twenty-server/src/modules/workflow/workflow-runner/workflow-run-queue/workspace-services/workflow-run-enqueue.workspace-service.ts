@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -42,13 +41,20 @@ export class WorkflowRunEnqueueWorkspaceService {
 
   async enqueueRunsForWorkspace({
     workspaceId,
-    priorityWorkflowRunId,
     isCacheMode,
   }: {
     workspaceId: string;
-    priorityWorkflowRunId?: string;
     isCacheMode: boolean;
   }) {
+    const lockAcquired =
+      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock(
+        workspaceId,
+      );
+
+    if (!lockAcquired) {
+      return;
+    }
+
     try {
       const workflowRunRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -66,11 +72,9 @@ export class WorkflowRunEnqueueWorkspaceService {
           );
 
       if (notStartedRunsCount <= 0) {
-        if (!isCacheMode) {
-          await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
-            workspaceId,
-          );
-        }
+        await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
+          workspaceId,
+        );
 
         return;
       }
@@ -81,23 +85,6 @@ export class WorkflowRunEnqueueWorkspaceService {
         );
 
       const workflowRunIdsToEnqueue: string[] = [];
-
-      if (isDefined(priorityWorkflowRunId)) {
-        const priorityRun = await workflowRunRepository.findOne({
-          where: {
-            id: priorityWorkflowRunId,
-            status: WorkflowRunStatus.NOT_STARTED,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        if (isDefined(priorityRun)) {
-          workflowRunIdsToEnqueue.push(priorityRun.id);
-          remainingWorkflowRunToEnqueueCount--;
-        }
-      }
 
       if (remainingWorkflowRunToEnqueueCount > 0) {
         const additionalRunsToEnqueue = await workflowRunRepository.find({
@@ -172,6 +159,10 @@ export class WorkflowRunEnqueueWorkspaceService {
       this.logger.error(
         `Failed to enqueue workflow runs for workspace: ${workspaceId}`,
         error,
+      );
+    } finally {
+      await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
+        workspaceId,
       );
     }
   }

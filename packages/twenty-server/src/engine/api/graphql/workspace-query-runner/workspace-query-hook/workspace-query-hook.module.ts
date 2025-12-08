@@ -10,7 +10,6 @@ import { CalendarQueryHookModule } from 'src/modules/calendar/common/query-hooks
 import { ConnectedAccountQueryHookModule } from 'src/modules/connected-account/query-hooks/connected-account-query-hook.module';
 import { DashboardQueryHookModule } from 'src/modules/dashboard/query-hooks/dashboard-query-hook.module';
 import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hooks/messaging-query-hook.module';
-import { MessageChannelQueryHookModule } from 'src/modules/messaging/message-channel-manager/query-hooks/message-channel-query-hook.module';
 import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
 
 @Module({
@@ -20,7 +19,6 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
     ConnectedAccountQueryHookModule,
     DashboardQueryHookModule,
     BlocklistQueryHookModule,
-    MessageChannelQueryHookModule,
     WorkspaceMemberQueryHookModule,
     DiscoveryModule,
   ],

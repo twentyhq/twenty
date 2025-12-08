@@ -2,20 +2,14 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
+import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelPendingGroupEmailsAction,
-  MessageChannelSyncStage,
-  MessageChannelSyncStatus,
-  MessageChannelType,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
@@ -43,12 +37,12 @@ describe('ImapSmtpCalDavAPIService', () => {
     transaction: jest.fn((callback) => callback({})),
   };
 
-  const mockMessageQueueService = {
-    add: jest.fn(),
+  const mockCreateMessageChannelService = {
+    createMessageChannel: jest.fn().mockResolvedValue('mocked-uuid'),
   };
 
-  const mockCalendarQueueService = {
-    add: jest.fn(),
+  const mockCreateCalendarChannelService = {
+    createCalendarChannel: jest.fn().mockResolvedValue('mocked-uuid'),
   };
 
   beforeEach(async () => {
@@ -76,12 +70,12 @@ describe('ImapSmtpCalDavAPIService', () => {
           },
         },
         {
-          provide: getQueueToken(MessageQueue.messagingQueue),
-          useValue: mockMessageQueueService,
+          provide: CreateMessageChannelService,
+          useValue: mockCreateMessageChannelService,
         },
         {
-          provide: getQueueToken(MessageQueue.calendarQueue),
-          useValue: mockCalendarQueueService,
+          provide: CreateCalendarChannelService,
+          useValue: mockCreateCalendarChannelService,
         },
       ],
     }).compile();
@@ -113,27 +107,10 @@ describe('ImapSmtpCalDavAPIService', () => {
       } as EmailAccountConnectionParameters,
     };
 
-    it('should create new account with message and calendar channels when account does not exist', async () => {
+    it('should create new account with message channel when account does not exist and IMAP is configured', async () => {
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
-
-      const expectedMessageChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-        type: MessageChannelType.EMAIL,
-        handle: 'test@example.com',
-        isSyncEnabled: true,
-        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-        syncCursor: '',
-        syncStageStartedAt: null,
-      };
-
-      mockMessageChannelRepository.save.mockResolvedValue(
-        expectedMessageChannel,
-      );
 
       await service.processAccount(baseInput);
 
@@ -146,25 +123,21 @@ describe('ImapSmtpCalDavAPIService', () => {
           accountOwnerId: 'workspace-member-id',
         },
         {},
-      );
-
-      expect(mockMessageChannelRepository.save).toHaveBeenCalledWith(
-        {
-          id: 'mocked-uuid',
-          connectedAccountId: 'mocked-uuid',
-          type: MessageChannelType.EMAIL,
-          handle: 'test@example.com',
-          isSyncEnabled: true,
-          syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-          syncCursor: '',
-          syncStageStartedAt: null,
-        },
         {},
       );
 
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        connectedAccountId: 'mocked-uuid',
+        handle: 'test@example.com',
+        manager: {},
+      });
+
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).not.toHaveBeenCalled();
     });
 
     it('should preserve existing channels when updating account credentials', async () => {
@@ -178,10 +151,6 @@ describe('ImapSmtpCalDavAPIService', () => {
       const existingMessageChannel = {
         id: 'existing-message-channel-id',
         connectedAccountId: 'existing-account-id',
-        type: MessageChannelType.EMAIL,
-        handle: 'test@example.com',
-        isSyncEnabled: true,
-        syncStatus: MessageChannelSyncStatus.ONGOING,
       } as MessageChannelWorkspaceEntity;
 
       const existingCalendarChannel = {
@@ -213,12 +182,15 @@ describe('ImapSmtpCalDavAPIService', () => {
           accountOwnerId: 'workspace-member-id',
         },
         {},
+        {},
       );
 
-      expect(mockMessageChannelRepository.save).not.toHaveBeenCalled();
-      expect(mockCalendarChannelRepository.save).not.toHaveBeenCalled();
-
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).not.toHaveBeenCalled();
     });
 
     it('should only create message channel when only IMAP is configured', async () => {
@@ -238,30 +210,17 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
-      const expectedMessageChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-        type: MessageChannelType.EMAIL,
-        handle: 'test@example.com',
-        isSyncEnabled: true,
-        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-      };
-
-      mockMessageChannelRepository.save.mockResolvedValue(
-        expectedMessageChannel,
-      );
-
       await service.processAccount(imapOnlyInput);
 
-      expect(mockMessageChannelRepository.save).toHaveBeenCalled();
-      expect(mockCalendarChannelRepository.save).not.toHaveBeenCalled();
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
-
-      expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).not.toHaveBeenCalled();
     });
 
-    it('should create both channels when only CALDAV is configured but disable message sync', async () => {
+    it('should only create calendar channel when only CALDAV is configured', async () => {
       const caldavOnlyInput = {
         ...baseInput,
         connectionParameters: {
@@ -279,38 +238,14 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
-      const expectedCalendarChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-
-        handle: 'test@example.com',
-      };
-
-      mockCalendarChannelRepository.save.mockResolvedValue(
-        expectedCalendarChannel,
-      );
-
       await service.processAccount(caldavOnlyInput);
 
-      expect(mockMessageChannelRepository.save).toHaveBeenCalledWith(
-        {
-          id: 'mocked-uuid',
-          connectedAccountId: 'mocked-uuid',
-          type: MessageChannelType.EMAIL,
-          handle: 'test@example.com',
-          isSyncEnabled: false,
-          syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-          syncCursor: '',
-          syncStageStartedAt: null,
-        },
-        {},
-      );
-      expect(mockCalendarChannelRepository.save).toHaveBeenCalled();
-
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
-      expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).toHaveBeenCalled();
     });
 
     it('should handle IMAP + SMTP configuration without CALDAV', async () => {
@@ -337,26 +272,14 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
-      const expectedMessageChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-        type: MessageChannelType.EMAIL,
-        handle: 'test@example.com',
-        isSyncEnabled: true,
-        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-      };
-
-      mockMessageChannelRepository.save.mockResolvedValue(
-        expectedMessageChannel,
-      );
-
       await service.processAccount(imapSmtpInput);
 
-      expect(mockMessageChannelRepository.save).toHaveBeenCalled();
-      expect(mockCalendarChannelRepository.save).not.toHaveBeenCalled();
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
-      expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).not.toHaveBeenCalled();
     });
 
     it('should handle full IMAP + SMTP + CALDAV configuration', async () => {
@@ -390,35 +313,14 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
-      const expectedMessageChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-        type: MessageChannelType.EMAIL,
-        handle: 'test@example.com',
-        isSyncEnabled: true,
-        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-      };
-
-      const expectedCalendarChannel = {
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-        handle: 'test@example.com',
-      };
-
-      mockMessageChannelRepository.save.mockResolvedValue(
-        expectedMessageChannel,
-      );
-      mockCalendarChannelRepository.save.mockResolvedValue(
-        expectedCalendarChannel,
-      );
-
       await service.processAccount(fullConfigInput);
 
-      expect(mockMessageChannelRepository.save).toHaveBeenCalled();
-      expect(mockCalendarChannelRepository.save).toHaveBeenCalled();
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
-      expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).toHaveBeenCalled();
     });
 
     it('should handle account found by handle when connectedAccountId is not provided', async () => {
@@ -454,11 +356,12 @@ describe('ImapSmtpCalDavAPIService', () => {
           accountOwnerId: 'workspace-member-id',
         },
         {},
+        {},
       );
     });
 
-    it('should not enqueue sync jobs when channels are disabled', async () => {
-      const disabledInput = {
+    it('should not create channels when neither IMAP nor CALDAV is configured', async () => {
+      const smtpOnlyInput = {
         ...baseInput,
         connectionParameters: {
           SMTP: {
@@ -475,20 +378,20 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
-      await service.processAccount(disabledInput);
+      await service.processAccount(smtpOnlyInput);
 
-      expect(mockMessageQueueService.add).not.toHaveBeenCalled();
-      expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
+      expect(
+        mockCreateMessageChannelService.createMessageChannel,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockCreateCalendarChannelService.createCalendarChannel,
+      ).not.toHaveBeenCalled();
     });
 
     it('should handle transaction correctly', async () => {
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
       mockMessageChannelRepository.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.save.mockResolvedValue({
-        id: 'mocked-uuid',
-        connectedAccountId: 'mocked-uuid',
-      });
 
       await service.processAccount(baseInput);
 

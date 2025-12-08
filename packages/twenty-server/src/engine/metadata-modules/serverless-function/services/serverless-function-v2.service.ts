@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import type { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
@@ -49,17 +48,6 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatServerlessFunctionMaps'],
-        },
-      );
-
-    const existingFlatServerlessFunctionMaps =
-      flatEntityMaps.flatServerlessFunctionMaps;
-
     const flatServerlessFunctionToCreate =
       fromCreateServerlessFunctionInputToFlatServerlessFunction({
         createServerlessFunctionInput,
@@ -71,18 +59,15 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          workspaceId,
-          fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatServerlessFunctionMaps,
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
               flatEntityToCreate: [flatServerlessFunctionToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
+            },
           },
-          buildOptions: {
-            isSystemBuild: false,
-          },
+          workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -113,7 +98,7 @@ export class ServerlessFunctionV2Service {
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -121,30 +106,24 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const existingFlatServerlessFunctionMaps =
-      flatEntityMaps.flatServerlessFunctionMaps;
-
     const optimisticallyUpdatedFlatServerlessFunction =
       fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow({
-        flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
+        flatServerlessFunctionMaps,
         updateServerlessFunctionInput: serverlessFunctionInput,
       });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          workspaceId,
-          fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatServerlessFunctionMaps,
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunction],
-            }),
+            },
           },
-          buildOptions: {
-            isSystemBuild: false,
-          },
+          workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -206,20 +185,17 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatServerlessFunctionMaps,
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [
                 optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt,
               ],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild,
+            },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
@@ -278,21 +254,15 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatServerlessFunctionMaps,
+          allFlatEntityOperationByMetadataName: {
+            serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatServerlessFunction],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild,
-            inferDeletionFromMissingEntities: {
-              serverlessFunction: true,
             },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
