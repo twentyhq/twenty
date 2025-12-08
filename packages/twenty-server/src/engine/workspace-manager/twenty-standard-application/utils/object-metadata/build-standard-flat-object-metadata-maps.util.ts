@@ -4,7 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type BuildStandardFlatObjectMetadatasArgs,
   STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-flat-object-metadata.util';
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util';
 
 const createEmptyFlatObjectMetadataMaps =
   (): FlatEntityMaps<FlatObjectMetadata> => ({
