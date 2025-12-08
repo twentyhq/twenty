@@ -8,9 +8,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const mapViewGroupsToRecordGroupDefinitions = ({
+  mainGroupByFieldMetadataId,
   objectMetadataItem,
   viewGroups,
 }: {
+  mainGroupByFieldMetadataId: string;
   objectMetadataItem: ObjectMetadataItem;
   viewGroups: ViewGroup[];
 }): RecordGroupDefinition[] => {
@@ -18,10 +20,10 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
     return [];
   }
 
-  const fieldMetadataId = viewGroups?.[0]?.fieldMetadataId;
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) =>
-      field.id === fieldMetadataId && field.type === FieldMetadataType.SELECT,
+      field.id === mainGroupByFieldMetadataId &&
+      field.type === FieldMetadataType.SELECT,
   );
 
   if (!selectFieldMetadataItem) {
@@ -36,10 +38,6 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
 
   const recordGroupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
-      if (viewGroup.fieldMetadataId !== selectFieldMetadataItem.id) {
-        return null;
-      }
-
       const selectedOption = selectFieldMetadataItem.options?.find(
         (option) => option.value === viewGroup.fieldValue,
       );
@@ -50,7 +48,6 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
 
       return {
         id: viewGroup.id,
-        fieldMetadataId: viewGroup.fieldMetadataId,
         type: !isDefined(selectedOption)
           ? RecordGroupDefinitionType.NoValue
           : RecordGroupDefinitionType.Value,

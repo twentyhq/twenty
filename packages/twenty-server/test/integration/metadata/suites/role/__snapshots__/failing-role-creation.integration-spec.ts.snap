@@ -12,6 +12,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -46,6 +47,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -75,6 +77,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -109,6 +112,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -138,6 +142,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -172,6 +177,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -201,6 +207,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -235,6 +242,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -264,6 +272,7 @@ exports[`Role creation should fail when label already exists 1`] = `
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -298,6 +307,7 @@ exports[`Role creation should fail when label already exists 1`] = `
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

@@ -91,5 +91,5 @@ export class UpdateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  mainGroupByFieldMetadataId?: string;
+  mainGroupByFieldMetadataId?: string | null;
 }

@@ -1,8 +1,8 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 import { createStandardObjectFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-object-flat-metadata.util';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export type BuildStandardFlatObjectMetadatasArgs = {
   createdAt: Date;
@@ -14,11 +14,6 @@ export type StandardFlatObjectMetadataBuilder = (
   args: BuildStandardFlatObjectMetadatasArgs,
 ) => FlatObjectMetadata;
 
-/**
- * Record mapping each standard object name to its corresponding object metadata builder.
- * Using `satisfies` ensures type safety: if a new standard object is added to STANDARD_OBJECTS,
- * TypeScript will error until a builder is added here.
- */
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({

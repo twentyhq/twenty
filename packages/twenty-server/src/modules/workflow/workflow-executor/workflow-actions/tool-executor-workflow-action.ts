@@ -4,16 +4,27 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class ToolExecutorWorkflowAction implements WorkflowAction {
-  constructor(private readonly toolRegistry: ToolRegistryService) {}
+  private readonly toolsByActionType: Map<WorkflowActionType, Tool>;
+
+  constructor(
+    private readonly httpTool: HttpTool,
+    private readonly sendEmailTool: SendEmailTool,
+  ) {
+    this.toolsByActionType = new Map<WorkflowActionType, Tool>([
+      [WorkflowActionType.HTTP_REQUEST, this.httpTool],
+      [WorkflowActionType.SEND_EMAIL, this.sendEmailTool],
+    ]);
+  }
 
   async execute({
     currentStepId,
@@ -26,20 +37,10 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       throw new Error('Step not found');
     }
 
-    const toolType = this.mapWorkflowActionTypeToToolType(step.type);
-
-    if (!toolType) {
-      throw new Error(
-        `No tool mapping found for workflow action type: ${step.type}`,
-      );
-    }
-
-    const tool = this.toolRegistry.getTool(toolType);
+    const tool = this.toolsByActionType.get(step.type);
 
     if (!tool) {
-      throw new Error(
-        `Tool for action type ${step.type} not found in registry`,
-      );
+      throw new Error(`No tool found for workflow action type: ${step.type}`);
     }
 
     const toolInput = resolveInput(step.settings.input, context) as ToolInput;
@@ -50,16 +51,5 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       result: toolOutput.result as object,
       error: toolOutput.error,
     };
-  }
-
-  private mapWorkflowActionTypeToToolType(
-    actionType: WorkflowActionType,
-  ): ToolType | null {
-    const mapping: Partial<Record<WorkflowActionType, ToolType>> = {
-      [WorkflowActionType.HTTP_REQUEST]: ToolType.HTTP_REQUEST,
-      [WorkflowActionType.SEND_EMAIL]: ToolType.SEND_EMAIL,
-    };
-
-    return mapping[actionType] || null;
   }
 }

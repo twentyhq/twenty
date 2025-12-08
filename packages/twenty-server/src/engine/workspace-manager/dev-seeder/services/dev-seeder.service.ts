@@ -135,6 +135,7 @@ export class DevSeederService {
       workspaceId,
       objectMetadataItems,
       isDashboardV2Enabled,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.devSeederDataService.seed({

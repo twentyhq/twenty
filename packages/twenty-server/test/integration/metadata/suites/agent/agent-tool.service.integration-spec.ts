@@ -1,7 +1,5 @@
 import { type ToolSet } from 'ai';
 
-import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
-
 import {
   type AgentToolTestContext,
   createAgentToolTestModule,
@@ -68,49 +66,15 @@ describe('AgentToolGeneratorService Integration', () => {
 
   describe('Tool Generation', () => {
     it('should generate complete tool set for agent with full permissions', async () => {
-      // Arrange
-      const roleWithFullPermissions = {
-        ...context.testRole,
-        canDestroyAllObjectRecords: true,
-      };
-
-      jest
-        .spyOn(context.roleRepository, 'find')
-        .mockResolvedValue([roleWithFullPermissions]);
-      jest
-        .spyOn(context.workspaceCacheService, 'getOrRecompute')
-        .mockResolvedValue({
-          rolesPermissions: {
-            [context.testRoleId]: {
-              [context.testObjectMetadata.id]: {
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: true,
-                canDestroyObjectRecords: true,
-                restrictedFields: {},
-              },
-            },
-          },
-        } as any);
-      jest
-        .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([
-          fromObjectMetadataEntityToFlatObjectMetadata(
-            context.testObjectMetadata,
-          ),
-        ]);
-
-      // Configure perObjectToolGeneratorService to return the expected tools
-      jest
-        .spyOn(context.perObjectToolGeneratorService, 'generate')
-        .mockResolvedValue(
-          createMockTools('testObject', {
-            canRead: true,
-            canCreate: true,
-            canUpdate: true,
-            canDelete: true,
-          }),
-        );
+      // Configure toolProviderService to return the expected tools
+      jest.spyOn(context.toolProviderService, 'getTools').mockResolvedValue(
+        createMockTools('testObject', {
+          canRead: true,
+          canCreate: true,
+          canUpdate: true,
+          canDelete: true,
+        }),
+      );
 
       // Act
       const tools = await context.agentToolService.generateToolsForAgent(
@@ -132,44 +96,15 @@ describe('AgentToolGeneratorService Integration', () => {
     });
 
     it('should generate read-only tools for agent with read permissions only', async () => {
-      // Arrange
-      jest
-        .spyOn(context.roleRepository, 'find')
-        .mockResolvedValue([context.testRole]);
-      jest
-        .spyOn(context.workspaceCacheService, 'getOrRecompute')
-        .mockResolvedValue({
-          rolesPermissions: {
-            [context.testRoleId]: {
-              [context.testObjectMetadata.id]: {
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: false,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-                restrictedFields: {},
-              },
-            },
-          },
-        } as any);
-      jest
-        .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([
-          fromObjectMetadataEntityToFlatObjectMetadata(
-            context.testObjectMetadata,
-          ),
-        ]);
-
-      // Configure perObjectToolGeneratorService to return read-only tools
-      jest
-        .spyOn(context.perObjectToolGeneratorService, 'generate')
-        .mockResolvedValue(
-          createMockTools('testObject', {
-            canRead: true,
-            canCreate: false,
-            canUpdate: false,
-            canDelete: false,
-          }),
-        );
+      // Configure toolProviderService to return read-only tools
+      jest.spyOn(context.toolProviderService, 'getTools').mockResolvedValue(
+        createMockTools('testObject', {
+          canRead: true,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        }),
+      );
 
       // Act
       const tools = await context.agentToolService.generateToolsForAgent(
@@ -189,6 +124,9 @@ describe('AgentToolGeneratorService Integration', () => {
     });
 
     it('should return no tool for agent without role', async () => {
+      // Configure toolProviderService to return empty tools when no role
+      jest.spyOn(context.toolProviderService, 'getTools').mockResolvedValue({});
+
       // Act
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -200,49 +138,16 @@ describe('AgentToolGeneratorService Integration', () => {
     });
 
     it('should filter out workflow-run objects', async () => {
-      // Arrange
-      const workflowObject = {
-        ...context.testObjectMetadata,
-        nameSingular: 'workflow',
-        namePlural: 'workflows',
-      };
-
-      jest
-        .spyOn(context.roleRepository, 'find')
-        .mockResolvedValue([context.testRole]);
-      jest
-        .spyOn(context.workspaceCacheService, 'getOrRecompute')
-        .mockResolvedValue({
-          rolesPermissions: {
-            [context.testRoleId]: {
-              [workflowObject.id]: {
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: true,
-                canDestroyObjectRecords: false,
-                restrictedFields: {},
-              },
-            },
-          },
-        } as any);
-      jest
-        .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([
-          fromObjectMetadataEntityToFlatObjectMetadata(workflowObject),
-        ]);
-
-      // Note: workflow objects are filtered out by PerObjectToolGeneratorService,
+      // Note: workflow objects are filtered out by ToolProviderService,
       // so the mock returns tools for testObject (non-workflow) to simulate this behavior
-      jest
-        .spyOn(context.perObjectToolGeneratorService, 'generate')
-        .mockResolvedValue(
-          createMockTools('testObject', {
-            canRead: true,
-            canCreate: true,
-            canUpdate: true,
-            canDelete: true,
-          }),
-        );
+      jest.spyOn(context.toolProviderService, 'getTools').mockResolvedValue(
+        createMockTools('testObject', {
+          canRead: true,
+          canCreate: true,
+          canUpdate: true,
+          canDelete: true,
+        }),
+      );
 
       // Act
       const tools = await context.agentToolService.generateToolsForAgent(

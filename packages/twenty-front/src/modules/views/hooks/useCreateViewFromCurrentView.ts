@@ -11,9 +11,9 @@ import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -28,7 +28,10 @@ import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  type CoreViewGroup,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -47,7 +50,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewSorts } = usePersistViewSortRecords();
 
-  const { createViewGroups } = usePersistViewGroupRecords();
+  const { triggerViewGroupOptimisticEffect } =
+    useTriggerViewGroupOptimisticEffect();
 
   const { createViewFilters } = usePersistViewFilterRecords();
 
@@ -182,7 +186,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (type === ViewType.Kanban) {
-          if (!isDefined(mainGroupByFieldMetadataId)) {
+          if (
+            !isDefined(mainGroupByFieldMetadataId) ||
+            mainGroupByFieldMetadataId === ''
+          ) {
             throw new Error('Kanban view must have a kanban field');
           }
 
@@ -194,33 +201,38 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',
-                    fieldMetadataId: mainGroupByFieldMetadataId,
                     fieldValue: option.value,
                     isVisible: true,
                     position: index,
                   }) satisfies ViewGroup,
               ) ?? [];
 
-          viewGroupsToCreate.push({
-            __typename: 'ViewGroup',
-            id: v4(),
-            fieldValue: '',
-            position: viewGroupsToCreate.length,
-            isVisible: true,
-            fieldMetadataId: mainGroupByFieldMetadataId,
-          } satisfies ViewGroup);
-
-          const groupResult = await createViewGroups({
-            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              ...viewGroup,
-              viewId: newViewId,
-            })),
-          });
-
-          if (groupResult.status === 'failed') {
-            set(isPersistingViewFieldsState, false);
-            return undefined;
+          if (
+            objectMetadataItem.fields.find(
+              (field) => field.id === mainGroupByFieldMetadataId,
+            )?.isNullable === true
+          ) {
+            viewGroupsToCreate.push({
+              __typename: 'ViewGroup',
+              id: v4(),
+              fieldValue: '',
+              position: viewGroupsToCreate.length,
+              isVisible: true,
+            } satisfies ViewGroup);
           }
+
+          triggerViewGroupOptimisticEffect({
+            createdViewGroups: viewGroupsToCreate.map(
+              ({ __typename, ...viewGroup }) =>
+                ({
+                  ...viewGroup,
+                  viewId: newViewId,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  deletedAt: null,
+                }) as Omit<CoreViewGroup, 'workspaceId'>,
+            ),
+          });
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
@@ -292,7 +304,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       anyFieldFilterValue,
       objectMetadataItem.fields,
       objectMetadataItem.id,
-      createViewGroups,
       currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
@@ -300,6 +311,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFilters,
       createViewSorts,
       refreshCoreViewsByObjectMetadataId,
+      triggerViewGroupOptimisticEffect,
     ],
   );
 
