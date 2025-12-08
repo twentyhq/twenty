@@ -66,7 +66,12 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/calendar-emails/how-tos/connect-email-calendar"
+                      "user-guide/calendar-emails/how-tos/how-to-connect-several-mailboxes-per-user",
+                      "user-guide/calendar-emails/how-tos/how-to-limit-emails-imported",
+                      "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
+                      "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
+                      "user-guide/calendar-emails/how-tos/can-i-book-meetings-from-twenty",
+                      "user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records"
                     ]
                   }
                 ]

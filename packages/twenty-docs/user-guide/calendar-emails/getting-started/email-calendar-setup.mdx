@@ -1,12 +1,7 @@
 ---
 title: Email & Calendar Setup
 description: Connect your email and calendar accounts to Twenty.
-image: /images/user-guide/emails/emails_header.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Email & Calendar Setup" />
-</Frame>
 
 ## Connection Options
 
@@ -15,14 +10,18 @@ image: /images/user-guide/emails/emails_header.png
 2. Click **Add account**
 3. Select **Continue with Google**
 4. Authorize Twenty to access your Gmail and Google Calendar
-5. Your emails and calendar events will start syncing automatically
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
 
 ### Microsoft Account (Outlook & Microsoft Calendar)
 1. Go to **Settings → Accounts**
 2. Click **Add account**
 3. Select **Continue with Microsoft**
 4. Authorize Twenty to access your Outlook and Microsoft Calendar
-5. Your emails and calendar events will start syncing automatically
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. Your emails and calendar events will start syncing automatically
 
 ### SMTP/CalDAV Setup (Other Providers)
 For other email and calendar providers:
@@ -58,6 +57,8 @@ Choose different levels of visibility for your emails:
 - **For messages sent only**: Create contacts only for emails you send
 - **Note**: Internal emails (same domain) are never synced to maintain privacy
 
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
 ### Control which emails get sync with Message Folder Selection (Lab Feature)
 Control which email folders sync with Twenty:
 1. Go to **Settings → Releases → Lab** and enable **Message Folder**
@@ -90,6 +91,7 @@ Choose what will be visible to other users in your workspace:
 - **Yes**: Automatically create contacts for meeting participants not in your CRM
 - **No**: Only link meetings to existing contacts
 
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
 
 ### Control which events get sync
 - **Meeting Import**: Automatically import calendar events
@@ -105,3 +107,7 @@ Choose what will be visible to other users in your workspace:
 ## Sync Frequency
 
 **Updates every 5 minutes**: Both email and calendar data sync automatically every 5 minutes after the initial import.
+
+<Note>
+**Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+</Note>
