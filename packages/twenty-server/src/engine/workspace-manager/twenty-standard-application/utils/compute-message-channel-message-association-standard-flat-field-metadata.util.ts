@@ -131,8 +131,18 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         isNullable: false,
         defaultValue: `'${MessageDirection.INCOMING}'`,
         options: [
-          { value: MessageDirection.INCOMING, label: 'Incoming', position: 0, color: 'green' },
-          { value: MessageDirection.OUTGOING, label: 'Outgoing', position: 1, color: 'blue' },
+          {
+            value: MessageDirection.INCOMING,
+            label: 'Incoming',
+            position: 0,
+            color: 'green',
+          },
+          {
+            value: MessageDirection.OUTGOING,
+            label: 'Outgoing',
+            position: 1,
+            color: 'blue',
+          },
         ],
         createdAt,
       },
