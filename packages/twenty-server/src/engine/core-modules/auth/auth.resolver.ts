@@ -706,7 +706,7 @@ export class AuthResolver {
       userId: impersonatorUserWorkspace.user.id,
     });
 
-    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_attempt`,
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
@@ -717,7 +717,7 @@ export class AuthResolver {
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
-        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        auditService.insertWorkspaceEvent(MONITORING_EVENT, {
           eventName: 'server.impersonation.token_exchange_failed',
           message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
         });
@@ -728,7 +728,7 @@ export class AuthResolver {
         );
       }
 
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `server.impersonation.token_exchange_success`,
         message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -750,7 +750,7 @@ export class AuthResolver {
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'workspace.impersonation.token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -760,7 +760,7 @@ export class AuthResolver {
       );
     }
 
-    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'workspace.impersonation.token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });
