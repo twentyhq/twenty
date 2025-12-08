@@ -1,7 +1,6 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
@@ -14,7 +13,7 @@ import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-a
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   indexName: AllStandardObjectIndexName<O>;
@@ -25,25 +24,14 @@ export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
 
 export type CreateStandardIndexArgs<
   O extends AllStandardObjectName = AllStandardObjectName,
-> = {
-  objectName: O;
-  workspaceId: string;
-  options: CreateStandardIndexOptions<O>;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-  now: Date;
-  workspaceTwentyStandardApplicationId: string;
-  dependencyFlatEntityMaps: Pick<
-    AllFlatEntityMaps,
-    'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
-  >;
-};
+> = StandardBuilderArgs<'index', O, CreateStandardIndexOptions<O>>;
 
 export const createStandardIndexFlatMetadata = <
   O extends AllStandardObjectName,
 >({
-  objectName,
   workspaceId,
-  options: {
+  objectName,
+  context: {
     indexName,
     relatedFieldNames,
     indexType = IndexType.BTREE,
@@ -52,7 +40,7 @@ export const createStandardIndexFlatMetadata = <
   },
   standardFieldMetadataIdByObjectAndFieldName,
   dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
-  workspaceTwentyStandardApplicationId,
+  twentyStandardApplicationId,
   now,
 }: CreateStandardIndexArgs<O>): FlatIndexMetadata => {
   const objectIndexes = STANDARD_OBJECTS[objectName].indexes;
@@ -88,7 +76,7 @@ export const createStandardIndexFlatMetadata = <
   return generateFlatIndexMetadataWithNameOrThrow({
     flatIndex: {
       createdAt: now,
-      applicationId: workspaceTwentyStandardApplicationId,
+      applicationId: twentyStandardApplicationId,
       indexType,
       indexWhereClause,
       isCustom: false,
