@@ -17,7 +17,7 @@ export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
   }
 
   try {
-    return computeMetadataNameFromLabelCore(label);
+    return computeMetadataNameFromLabelCore({label});
   } catch (error) {
     if (error instanceof Error) {
       throw new InvalidMetadataException(
