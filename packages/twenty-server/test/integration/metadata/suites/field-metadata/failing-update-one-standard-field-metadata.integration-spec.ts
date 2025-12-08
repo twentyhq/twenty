@@ -103,3 +103,60 @@ describe('Standard field metadata update should be ignored', () => {
     },
   );
 });
+
+// TODO: Enable this test once isUnique set as editable on standard fields
+xdescribe('Standard field with standard unique index update should fail on isUnique change', () => {
+  let companyDomainNameFieldMetadataId: string;
+
+  beforeAll(async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 100 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+          label
+          isCustom
+          isUnique
+        }
+      `,
+    });
+
+    const companyObject = objects.find((o) => o.nameSingular === 'company');
+
+    jestExpectToBeDefined(companyObject);
+
+    const companyDomainNameField = companyObject.fieldsList?.find(
+      (field) => field.name === 'domainName' && !field.isCustom,
+    );
+
+    jestExpectToBeDefined(companyDomainNameField);
+    companyDomainNameFieldMetadataId = companyDomainNameField.id;
+  });
+
+  it('should fail when trying to remove unique constraint on standard field with standard index', async () => {
+    const { errors } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: companyDomainNameFieldMetadataId,
+        updatePayload: {
+          isUnique: false,
+        },
+      },
+      gqlFields: `
+        id
+        name
+        isUnique
+      `,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
+  });
+});
