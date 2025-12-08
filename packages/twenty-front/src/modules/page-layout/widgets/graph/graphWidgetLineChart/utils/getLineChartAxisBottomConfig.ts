@@ -52,17 +52,15 @@ export const getLineChartAxisBottomConfig = (
       ? computeLineChartCategoryTickValues({ width, data })
       : undefined;
 
-  // Calculate available width per tick for rotation decision
   const availableWidth = width
     ? width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT)
     : 0;
 
-  // For rotation decision, we need to consider the actual number of data points,
-  // not just the filtered tick values, because each data point takes space
   const actualDataPointCount =
     data && data.length > 0 && data[0].data.length > 0
       ? data[0].data.length
       : FALLBACK_DATA_POINT_COUNT;
+
   const widthPerDataPoint =
     actualDataPointCount > 0 && availableWidth > 0
       ? availableWidth / actualDataPointCount
