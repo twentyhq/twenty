@@ -1,4 +1,3 @@
-import { type PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
@@ -10,6 +9,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -18,6 +18,8 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
+import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
@@ -33,11 +35,6 @@ import {
   type DeleteAgentAction,
   type UpdateAgentAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/types/workspace-migration-v2-agent-action-builder.service';
-import {
-  type CreatePageLayoutTabAction,
-  type DeletePageLayoutTabAction,
-  type UpdatePageLayoutTabAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action-v2.type';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -62,6 +59,16 @@ import {
   type DeleteObjectAction,
   type UpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
+import {
+  type CreatePageLayoutTabAction,
+  type DeletePageLayoutTabAction,
+  type UpdatePageLayoutTabAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action-v2.type';
+import {
+  type CreatePageLayoutWidgetAction,
+  type DeletePageLayoutWidgetAction,
+  type UpdatePageLayoutWidgetAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action-v2.type';
 import {
   type CreateRoleTargetAction,
   type DeleteRoleTargetAction,
@@ -229,6 +236,15 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatAgent;
     entity: AgentEntity;
+  };
+  pageLayoutWidget: {
+    actions: {
+      created: CreatePageLayoutWidgetAction;
+      updated: UpdatePageLayoutWidgetAction;
+      deleted: DeletePageLayoutWidgetAction;
+    };
+    flatEntity: FlatPageLayoutWidget;
+    entity: PageLayoutWidgetEntity;
   };
   pageLayoutTab: {
     actions: {

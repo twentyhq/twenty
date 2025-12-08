@@ -11,6 +11,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
     "index": [],
     "objectMetadata": [],
     "pageLayoutTab": [],
+    "pageLayoutWidget": [],
     "role": [],
     "roleTarget": [],
     "routeTrigger": [],
@@ -23,8 +24,8 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
         "errors": [
           {
             "code": "INVALID_VIEW_DATA",
-            "message": "Field metadata not found",
-            "userFriendlyMessage": "Field metadata not found",
+            "message": "Field value is required",
+            "userFriendlyMessage": "Field value is required",
           },
         ],
         "flatEntityMinimalInformation": {
@@ -46,6 +47,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
     "invalidIndex": 0,
     "invalidObjectMetadata": 0,
     "invalidPageLayoutTab": 0,
+    "invalidPageLayoutWidget": 0,
     "invalidRole": 0,
     "invalidRoleTarget": 0,
     "invalidRouteTrigger": 0,

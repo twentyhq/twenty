@@ -27,6 +27,7 @@ import { CleanNullEquivalentValuesCommand } from 'src/database/commands/upgrade-
 import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
+import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { BackfillSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-backfill-search-field-metadata.command';
@@ -99,6 +100,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.13 Commands
     protected readonly deduplicateRoleTargetsCommand: DeduplicateRoleTargetsCommand,
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
+    protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
 
     // 1.14 Commands
     protected readonly backfillSearchFieldMetadataCommand: BackfillSearchFieldMetadataCommand,
@@ -173,6 +175,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.deduplicateRoleTargetsCommand,
         this.updateRoleTargetsUniqueConstraintMigrationCommand,
+        this.backfillPageLayoutUniversalIdentifiersCommand,
       ],
       afterSyncMetadata: [],
     };

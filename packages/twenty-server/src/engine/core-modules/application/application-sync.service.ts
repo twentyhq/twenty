@@ -26,10 +26,8 @@ import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/datab
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
@@ -990,54 +988,37 @@ export class ApplicationSyncService {
         application.id,
       );
 
-    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatObjectMetadataMapsByApplicationId.map((obj) => obj.id),
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-    });
-
     const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatIndexMetadataMaps,
       application.id,
     );
-
-    const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
-        (field) => field.id,
-      ),
-      flatEntityMaps: existingFlatIndexMetadataMaps,
-    });
 
     const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatFieldMetadataMaps,
       application.id,
     );
 
-    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-    });
-
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: fromFlatObjectMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+        allFlatEntityOperationByMetadataName: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatIndexMaps: {
-            from: fromFlatIndexMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatFieldMetadataMaps: {
-            from: fromFlatFieldMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
         },
         workspaceId,
-        buildOptions: {
-          isSystemBuild: true,
-          inferDeletionFromMissingEntities: true,
-        },
+        isSystemBuild: true,
       },
     );
 
