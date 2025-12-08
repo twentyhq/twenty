@@ -26,7 +26,6 @@ export const computeEffectiveValueRange = ({
 }: ComputeEffectiveValueRangeParams): EffectiveValueRangeResult => {
   const hasOnlyNonNegativeValues =
     calculatedMinimum >= 0 && calculatedMaximum >= 0;
-  const hasOnlyZeroValues = calculatedMinimum === 0 && calculatedMaximum === 0;
   const hasNoData = dataLength === 0;
 
   const baseMinimumValue = isDefined(rangeMin)
