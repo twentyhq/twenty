@@ -3,108 +3,174 @@ import { type GmailApiError } from 'src/modules/messaging/message-import-manager
 const gmailApiErrorMocks = {
   // 400 Bad Request - Invalid query parameters
   badRequest: {
-    code: '400',
+    code: 400,
     message: 'badRequest',
   },
 
   // 400 Invalid Grant
   invalidGrant: {
-    code: '400',
+    code: 400,
     message: 'invalid_grant',
   },
 
   // 400 Failed Precondition
   failedPrecondition: {
-    code: '400',
+    code: 400,
     message: 'failedPrecondition',
   },
 
   invalidCredentials: {
-    code: '401',
+    code: 401,
     message: 'authError',
   },
 
   notFound: {
-    code: '404',
+    code: 404,
     message: 'notFound',
   },
 
   gone: {
-    code: '410',
+    code: 410,
     message: 'resourceGone',
   },
 
   dailyLimitExceeded: {
-    code: '403',
+    code: 403,
     message: 'dailyLimitExceeded',
   },
 
   userRateLimitExceeded: {
-    code: '403',
+    code: 403,
     message: 'userRateLimitExceeded',
   },
 
   rateLimitExceeded: {
-    code: '403',
+    code: 403,
     message: 'rateLimitExceeded',
   },
 
   domainPolicyError: {
-    code: '403',
+    code: 403,
     message: 'domainPolicy',
   },
 
   tooManyConcurrentRequests: {
-    code: '429',
+    code: 429,
     message: 'tooManyConcurrentRequests',
   },
 
   backendError: {
-    code: '500',
+    code: 500,
     message: 'backendError',
   },
 
-  getError: function (code: number, type?: string): GmailApiError {
+  convertToErrorWithErrorCodeStringOrNumber: function ({
+    error,
+    errorCodeAsString,
+  }: {
+    error: GmailApiError;
+    errorCodeAsString: boolean;
+  }): GmailApiError {
+    return {
+      code: errorCodeAsString ? error.code.toString() : error.code,
+      message: error.message,
+    };
+  },
+
+  getError: function ({
+    code,
+    type,
+    errorCodeAsString = false,
+  }: {
+    code: number;
+    type?: string;
+    errorCodeAsString?: boolean;
+  }): GmailApiError {
     switch (code) {
       case 400:
         switch (type) {
           case 'invalid_grant':
-            return this.invalidGrant;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.invalidGrant,
+              errorCodeAsString,
+            });
           case 'failedPrecondition':
-            return this.failedPrecondition;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.failedPrecondition,
+              errorCodeAsString,
+            });
           default:
-            return this.badRequest;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.badRequest,
+              errorCodeAsString,
+            });
         }
       case 401:
-        return this.invalidCredentials;
+        return this.convertToErrorWithErrorCodeStringOrNumber({
+          error: this.invalidCredentials,
+          errorCodeAsString,
+        });
       case 403:
         switch (type) {
           case 'dailyLimit':
-            return this.dailyLimitExceeded;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.dailyLimitExceeded,
+              errorCodeAsString,
+            });
           case 'userRateLimit':
-            return this.userRateLimitExceeded;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.userRateLimitExceeded,
+              errorCodeAsString,
+            });
           case 'rateLimit':
-            return this.rateLimitExceeded;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.rateLimitExceeded,
+              errorCodeAsString,
+            });
           case 'domainPolicy':
-            return this.domainPolicyError;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.domainPolicyError,
+              errorCodeAsString,
+            });
           default:
-            return this.rateLimitExceeded;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.rateLimitExceeded,
+              errorCodeAsString,
+            });
         }
       case 404:
-        return this.notFound;
+        return this.convertToErrorWithErrorCodeStringOrNumber({
+          error: this.notFound,
+          errorCodeAsString,
+        });
       case 410:
-        return this.gone;
+        return this.convertToErrorWithErrorCodeStringOrNumber({
+          error: this.gone,
+          errorCodeAsString,
+        });
       case 429:
         switch (type) {
           case 'concurrent':
-            return this.tooManyConcurrentRequests;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.tooManyConcurrentRequests,
+              errorCodeAsString,
+            });
           case 'mailSending':
-            return this.mailSendingLimitExceeded;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.mailSendingLimitExceeded,
+              errorCodeAsString,
+            });
           default:
-            return this.tooManyConcurrentRequests;
+            return this.convertToErrorWithErrorCodeStringOrNumber({
+              error: this.tooManyConcurrentRequests,
+              errorCodeAsString,
+            });
         }
       case 500:
-        return this.backendError;
+        return this.convertToErrorWithErrorCodeStringOrNumber({
+          error: this.backendError,
+          errorCodeAsString,
+        });
       default:
         throw new Error(`Unknown error code: ${code}`);
     }
