@@ -2,7 +2,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import {
-  CreateStandardIndexArgs,
+  type CreateStandardIndexArgs,
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
