@@ -6,7 +6,11 @@ import { ChannelSyncResolver } from 'src/modules/connected-account/channel-sync/
 import { ChannelSyncService } from 'src/modules/connected-account/channel-sync/services/channel-sync.service';
 
 @Module({
-  imports: [PermissionsModule, WorkspaceDataSourceModule],
+  imports: [
+    PermissionsModule,
+    WorkspaceDataSourceModule,
+    MessagingCommonModule,
+  ],
   providers: [ChannelSyncResolver, ChannelSyncService],
   exports: [ChannelSyncService],
 })
