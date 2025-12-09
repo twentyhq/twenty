@@ -48,7 +48,7 @@ export const fromCreateAgentInputToFlatAgent = ({
     standardId,
     name: isNonEmptyString(createAgentInput.name)
       ? createAgentInput.name
-      : computeMetadataNameFromLabel(createAgentInput.label),
+      : computeMetadataNameFromLabel({ label: createAgentInput.label }),
     label: createAgentInput.label,
     icon: createAgentInput.icon ?? null,
     description: createAgentInput.description ?? null,

@@ -1,3 +1,6 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 export const messagingGetMessagesServiceGetMessages = [
@@ -8,15 +11,15 @@ export const messagingGetMessagesServiceGetMessages = [
     text: 'Just a test',
     headerMessageId: '<d45b9f1c@PR0P264MB2911.FRAP264.PROD.OUTLOOK.COM>',
     messageThreadExternalId: 'AAQkAGZlMDQ1NjU5Lk=',
-    direction: 'OUTGOING',
+    direction: MessageDirection.OUTGOING,
     participants: [
       {
-        role: 'from',
+        role: MessageParticipantRole.FROM,
         handle: 'from@acme.com',
         displayName: 'From',
       },
       {
-        role: 'to',
+        role: MessageParticipantRole.TO,
         handle: 'to@acme.com',
         displayName: 'To',
       },
@@ -30,15 +33,15 @@ export const messagingGetMessagesServiceGetMessages = [
     text: 'Just a test',
     headerMessageId: '<d45b9f1c@PR0P264MB2911.FRAP264.PROD.OUTLOOK.COM>',
     messageThreadExternalId: 'AAQkAGZlMDQ1NjU5Lk=',
-    direction: 'OUTGOING',
+    direction: MessageDirection.OUTGOING,
     participants: [
       {
-        role: 'from',
+        role: MessageParticipantRole.FROM,
         handle: 'from@acme.com',
         displayName: 'From',
       },
       {
-        role: 'to',
+        role: MessageParticipantRole.TO,
         handle: 'to@external.com',
         displayName: 'To',
       },
@@ -52,19 +55,19 @@ export const messagingGetMessagesServiceGetMessages = [
     text: 'Learn with interactive sandboxes, curated collections, and bookmarks',
     headerMessageId: '<AC70000@mails.microsoft.com>',
     messageThreadExternalId: 'AAQkAGZlMDQ1NNc=',
-    direction: 'INCOMING',
+    direction: MessageDirection.INCOMING,
     participants: [
       {
-        role: 'from',
+        role: MessageParticipantRole.FROM,
         handle: 'learn@mails.microsoft.com',
         displayName: 'Microsoft Learn',
       },
       {
-        role: 'to',
+        role: MessageParticipantRole.TO,
         handle: 'to@gmail.com',
         displayName: 'To',
       },
     ],
     attachments: [],
   },
-] as MessageWithParticipants[];
+] satisfies MessageWithParticipants[];
