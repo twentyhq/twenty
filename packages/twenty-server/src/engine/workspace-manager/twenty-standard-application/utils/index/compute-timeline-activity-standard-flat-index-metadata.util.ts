@@ -33,7 +33,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'personIdIndex',
-      relatedFieldNames: ['person'],
+      relatedFieldNames: ['targetPerson'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -45,7 +45,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'companyIdIndex',
-      relatedFieldNames: ['company'],
+      relatedFieldNames: ['targetCompany'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -57,7 +57,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'opportunityIdIndex',
-      relatedFieldNames: ['opportunity'],
+      relatedFieldNames: ['targetOpportunity'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -69,7 +69,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'noteIdIndex',
-      relatedFieldNames: ['note'],
+      relatedFieldNames: ['targetNote'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -81,7 +81,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'taskIdIndex',
-      relatedFieldNames: ['task'],
+      relatedFieldNames: ['targetTask'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -93,7 +93,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workflowIdIndex',
-      relatedFieldNames: ['workflow'],
+      relatedFieldNames: ['targetWorkflow'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -105,7 +105,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workflowVersionIdIndex',
-      relatedFieldNames: ['workflowVersion'],
+      relatedFieldNames: ['targetWorkflowVersion'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -117,7 +117,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workflowRunIdIndex',
-      relatedFieldNames: ['workflowRun'],
+      relatedFieldNames: ['targetWorkflowRun'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
@@ -129,7 +129,7 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'dashboardIdIndex',
-      relatedFieldNames: ['dashboard'],
+      relatedFieldNames: ['targetDashboard'],
     },
     standardFieldMetadataIdByObjectAndFieldName,
     dependencyFlatEntityMaps,
