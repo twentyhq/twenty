@@ -75,6 +75,7 @@ export const UpdateMultipleRecordsContainer = ({
               disabled={isUpdating}
               values={fieldUpdates}
               onChange={handleFieldChange}
+              objectNameSingular={objectNameSingular}
             />
           </StyledContentContainer>
           <UpdateMultipleRecordsFooter

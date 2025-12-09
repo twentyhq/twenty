@@ -1,12 +1,11 @@
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
+import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
+import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
+import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import styled from '@emotion/styled';
-import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledSection = styled(Section)`
@@ -17,96 +16,67 @@ const StyledSection = styled(Section)`
   width: auto;
 `;
 
-const StyledFieldRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-type UpdateMultipleRecordsFormProps = {
+export type UpdateMultipleRecordsFormProps = {
+  objectNameSingular: string;
   disabled?: boolean;
-  values: Record<string, any>;
+  values: UpdateMultipleRecordsState;
   onChange: (fieldName: string, value: any) => void;
 };
 
 export const UpdateMultipleRecordsForm = ({
+  objectNameSingular,
   disabled = false,
   values,
   onChange,
 }: UpdateMultipleRecordsFormProps) => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
-  const handleCheckboxChange = (fieldName: string, checked: boolean) => {
-    if (checked) {
-      onChange(fieldName, null);
-    } else {
-      onChange(fieldName, undefined);
-    }
-  };
+  const fields = objectMetadataItem.fields.filter(
+    shouldDisplayFormMultiEditField,
+  );
 
-  const handleValueChange = (fieldName: string, value: any) => {
-    onChange(fieldName, value);
-  };
-
-  const inlineFieldMetadataItems = objectMetadataItem?.fields
-    .filter((fieldMetadataItem) =>
-      shouldDisplayFormField({
-        fieldMetadataItem,
-        actionType: 'UPDATE_RECORD',
-      }),
-    )
+  const inlineFieldDefinitions = fields
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    )
+    .map((fieldMetadataItem) =>
+      formatFieldMetadataItemAsFieldDefinition({
+        field: fieldMetadataItem,
+        objectMetadataItem,
+        showLabel: true,
+        labelWidth: 90,
+      }),
     );
-
-  const inlineFieldDefinitions = isDefined(objectMetadataItem)
-    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
-        formatFieldMetadataItemAsFieldDefinition({
-          field: fieldMetadataItem,
-          objectMetadataItem,
-          showLabel: true,
-          labelWidth: 90,
-        }),
-      )
-    : [];
 
   return (
     <StyledSection>
-      {inlineFieldMetadataItems.map((field) => {
-        const isSelected = values[field.name] !== undefined;
+      {inlineFieldDefinitions.map((fieldDefinition) => {
+        const fieldName = fieldDefinition.metadata.fieldName;
+        const isRelation = isFieldRelation(fieldDefinition);
+        const fieldNameOrRelationIdName = isRelation
+          ? `${fieldName}Id`
+          : fieldName;
 
-        const fieldDefinition = inlineFieldDefinitions.find((definition) => {
-          const isFieldRelationManyToOne =
-            isFieldRelation(definition) &&
-            definition.metadata.relationType === RelationType.MANY_TO_ONE;
+        const value = values[fieldNameOrRelationIdName];
 
-          const value = isFieldRelationManyToOne
-            ? `${definition.metadata.fieldName}Id`
-            : definition.metadata.fieldName;
-
-          return value === field.name;
-        });
-
-        if (!isDefined(fieldDefinition)) {
-          return null;
-        }
+        const handleValueChange = (newValue: any) => {
+          if (isUpdateRecordValueEmpty(newValue)) {
+            onChange(fieldNameOrRelationIdName, undefined);
+          } else {
+            onChange(fieldNameOrRelationIdName, newValue);
+          }
+        };
 
         return (
-          <StyledFieldRow key={`${field.id}-selected-${isSelected}`}>
-            <Checkbox
-              disabled={disabled}
-              checked={isSelected}
-              onChange={(event) =>
-                handleCheckboxChange(field.name, !!event.target.checked)
-              }
-            />
-            <FormFieldInput
-              readonly={!isSelected || disabled}
-              field={fieldDefinition}
-              defaultValue={values[field.name]}
-              onChange={(value) => handleValueChange(field.name, value)}
-            />
-          </StyledFieldRow>
+          <FormFieldInput
+            key={fieldDefinition.metadata.fieldName}
+            readonly={disabled}
+            field={fieldDefinition}
+            defaultValue={value}
+            onChange={handleValueChange}
+          />
         );
       })}
     </StyledSection>

@@ -23,6 +23,10 @@ const StyledFooterActions = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledApplyButton = styled(Button)`
+  min-width: ${({ theme }) => theme.spacing(10)};
+`;
+
 type UpdateMultipleRecordsFooterProps = {
   isUpdating: boolean;
   onUpdate: () => void;
@@ -58,7 +62,7 @@ export const UpdateMultipleRecordsFooter = ({
           size="small"
           onClick={onCancel}
         />
-        <Button
+        <StyledApplyButton
           title={isUpdating ? undefined : t`Apply`}
           variant="primary"
           accent="blue"
