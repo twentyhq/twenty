@@ -90,25 +90,16 @@ export const useGraphWidgetAggregateQuery = ({
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
 
-  if (isRatioQuery && !isDefined(ratioField)) {
-    return {
-      value: '-',
-      label: t`Ratio`,
-      loading: false,
-      error: undefined,
-    };
-  }
-
   if (isRatioQuery) {
-    const isLoading = ratioNumeratorLoading || ratioDenominatorLoading;
-    const hasData =
+    const isRatioLoading = ratioNumeratorLoading || ratioDenominatorLoading;
+    const hasRatioData =
       isDefined(ratioNumeratorData) && isDefined(ratioDenominatorData);
 
-    if (isLoading || !hasData) {
+    if (isRatioLoading || !hasRatioData) {
       return {
         value: '-',
         label: t`Ratio`,
-        loading: isLoading,
+        loading: isRatioLoading,
         error: ratioNumeratorError ?? ratioDenominatorError,
       };
     }
@@ -129,7 +120,7 @@ export const useGraphWidgetAggregateQuery = ({
         denominatorCount: Number(denominatorCount),
       }),
       label: t`Ratio`,
-      loading: isLoading,
+      loading: false,
       error: ratioNumeratorError ?? ratioDenominatorError,
     };
   }
