@@ -64,8 +64,7 @@ export const createStandardRelationFieldFlatMetadata = <
 }: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
-  const fieldIds =
-    standardObjectMetadataRelatedEntityIds[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const targetFieldIds =
     standardObjectMetadataRelatedEntityIds[targetObjectName].fields;
@@ -76,8 +75,7 @@ export const createStandardRelationFieldFlatMetadata = <
     standardId: null,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    objectMetadataId:
-      standardObjectMetadataRelatedEntityIds[objectName].id,
+    objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
     type: FieldMetadataType.RELATION,
     name: fieldName.toString(),
     label,

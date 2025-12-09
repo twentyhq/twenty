@@ -61,8 +61,7 @@ export const createStandardViewGroupFlatMetadata = <
     );
   }
 
-  const fieldIds =
-    standardObjectMetadataRelatedEntityIds[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   return {
     id: v4(),

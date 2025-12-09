@@ -73,8 +73,7 @@ export const createStandardViewFlatMetadata = <
 
   const objectMetadataId =
     standardObjectMetadataRelatedEntityIds[objectName].id;
-  const fieldIds =
-    standardObjectMetadataRelatedEntityIds[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName

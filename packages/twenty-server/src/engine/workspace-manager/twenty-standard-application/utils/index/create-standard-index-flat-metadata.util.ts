@@ -67,8 +67,7 @@ export const createStandardIndexFlatMetadata = <
 
   const relatedFieldIds = relatedFieldNames.map(
     (fieldName) =>
-      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName]
-        .id,
+      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
   );
   const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityIds: relatedFieldIds,
