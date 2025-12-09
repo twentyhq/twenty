@@ -19,7 +19,10 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
   standardFieldMetadataIdByObjectAndFieldName,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'workflowAutomatedTrigger'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'workflowAutomatedTrigger'>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'workflowAutomatedTrigger'>,
   FlatFieldMetadata
 > => ({
