@@ -114,6 +114,7 @@ export const CurrencyInput = ({
         mask={Number}
         thousandsSeparator=","
         radix="."
+        scale={5}
         onAccept={(value: string) => handleChange(value)}
         inputRef={wrapperRef}
         autoComplete="off"
