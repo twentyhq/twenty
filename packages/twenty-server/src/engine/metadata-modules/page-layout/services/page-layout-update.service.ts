@@ -11,6 +11,10 @@ import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-la
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import {
+  type FlatPageLayoutWithTabsAndWidgets,
+  reconstructFlatPageLayoutWithTabsAndWidgets,
+} from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
@@ -41,7 +45,7 @@ export class PageLayoutUpdateService {
     id,
     workspaceId,
     input,
-  }: UpdatePageLayoutWithTabsParams): Promise<FlatPageLayout> {
+  }: UpdatePageLayoutWithTabsParams): Promise<FlatPageLayoutWithTabsAndWidgets> {
     const {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
@@ -137,17 +141,30 @@ export class PageLayoutUpdateService {
       );
     }
 
-    const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutMaps'],
-        },
-      );
+    const {
+      flatPageLayoutMaps: recomputedFlatPageLayoutMaps,
+      flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps: recomputedFlatPageLayoutWidgetMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatPageLayoutMaps',
+          'flatPageLayoutTabMaps',
+          'flatPageLayoutWidgetMaps',
+        ],
+      },
+    );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: id,
       flatEntityMaps: recomputedFlatPageLayoutMaps,
+    });
+
+    return reconstructFlatPageLayoutWithTabsAndWidgets({
+      layout: flatLayout,
+      flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps: recomputedFlatPageLayoutWidgetMaps,
     });
   }
 
