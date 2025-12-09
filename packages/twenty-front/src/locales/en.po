@@ -4385,6 +4385,8 @@ msgstr "Failed to upload image: "
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "False"
 
@@ -7534,6 +7536,14 @@ msgstr "Queue: {queueName}"
 msgid "Quick model for routing decisions"
 msgstr "Quick model for routing decisions"
 
+#. js-lingui-id: iaocTt
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "Ratio"
+msgstr "Ratio"
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -8120,6 +8130,11 @@ msgstr "Search objects"
 msgid "Search operations"
 msgstr "Search operations"
 
+#. js-lingui-id: 996xRf
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Search options"
+msgstr "Search options"
+
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8348,6 +8363,11 @@ msgstr "Select the events you wish to send to this endpoint"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Select the sheet to use"
+
+#. js-lingui-id: iWf0Zj
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Select value"
+msgstr "Select value"
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -9512,6 +9532,8 @@ msgstr "Triggers the function with Http request"
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "True"
 
