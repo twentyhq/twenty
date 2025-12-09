@@ -33,13 +33,10 @@ export type CreateStandardRelationFieldContext<
 export type CreateStandardRelationFieldArgs<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
-> = {
+> = StandardBuilderArgs<'fieldMetadata'> & {
   objectName: O;
   context: CreateStandardRelationFieldContext<O, T>;
-} & Omit<
-  StandardBuilderArgs<'fieldMetadata', O, unknown>,
-  'context' | 'objectName'
->;
+};
 
 export const createStandardRelationFieldFlatMetadata = <
   O extends AllStandardObjectName,

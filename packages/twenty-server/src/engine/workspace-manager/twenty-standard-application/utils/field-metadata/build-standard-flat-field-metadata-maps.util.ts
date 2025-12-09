@@ -33,6 +33,10 @@ import { buildWorkflowVersionStandardFlatFieldMetadatas } from 'src/engine/works
 import { buildWorkspaceMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util';
 import { type CreateStandardFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 
+type StandardFieldBuilder<P extends AllStandardObjectName> = (
+  args: Omit<CreateStandardFieldArgs<P>, 'context'>,
+) => Record<string, FlatFieldMetadata>;
+
 const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: buildAttachmentStandardFlatFieldMetadatas,
   blocklist: buildBlocklistStandardFlatFieldMetadatas,
@@ -68,9 +72,7 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflowVersion: buildWorkflowVersionStandardFlatFieldMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatFieldMetadatas,
 } satisfies {
-  [P in AllStandardObjectName]: (
-    args: Omit<CreateStandardFieldArgs<P>, 'context'>,
-  ) => Record<string, FlatFieldMetadata>;
+  [P in AllStandardObjectName]: StandardFieldBuilder<P>;
 };
 
 const createEmptyFlatFieldMetadataMaps =
@@ -88,7 +90,7 @@ export const buildStandardFlatFieldMetadataMaps = (
       STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
     ) as (keyof typeof STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME)[]
   ).flatMap((objectName) => {
-    const builder =
+    const builder: StandardFieldBuilder<typeof objectName> =
       STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
 
     const result = builder({

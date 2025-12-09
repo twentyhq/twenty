@@ -24,7 +24,10 @@ export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
 
 export type CreateStandardIndexArgs<
   O extends AllStandardObjectName = AllStandardObjectName,
-> = StandardBuilderArgs<'index', O, CreateStandardIndexOptions<O>>;
+> = StandardBuilderArgs<'index'> & {
+  objectName: O;
+  context: CreateStandardIndexOptions<O>;
+};
 
 export const createStandardIndexFlatMetadata = <
   O extends AllStandardObjectName,
