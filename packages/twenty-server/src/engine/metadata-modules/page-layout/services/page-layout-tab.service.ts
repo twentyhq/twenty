@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
 import { fromDeletePageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
@@ -14,6 +15,11 @@ import {
   fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow,
   type UpdatePageLayoutTabInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util';
+import {
+  reconstructFlatPageLayoutTabWithWidgets,
+  type FlatPageLayoutTabWithWidgets,
+} from 'src/engine/metadata-modules/flat-page-layout-tab/utils/reconstruct-flat-page-layout-tab-with-widgets.util';
+import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
 import {
@@ -36,34 +42,30 @@ export class PageLayoutTabService {
   async findByPageLayoutId(
     workspaceId: string,
     pageLayoutId: string,
-  ): Promise<FlatPageLayoutTab[]> {
-    const { flatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
+  ): Promise<FlatPageLayoutTabWithWidgets[]> {
+    const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
+      await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
     return Object.values(flatPageLayoutTabMaps.byId)
       .filter(isDefined)
       .filter(
         (tab) => tab.pageLayoutId === pageLayoutId && !isDefined(tab.deletedAt),
       )
-      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      .map((tab) =>
+        reconstructFlatPageLayoutTabWithWidgets({
+          tab,
+          flatPageLayoutWidgetMaps,
+        }),
+      );
   }
 
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
-  ): Promise<FlatPageLayoutTab> {
-    const { flatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
+  ): Promise<FlatPageLayoutTabWithWidgets> {
+    const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
+      await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
     const flatTab = flatPageLayoutTabMaps.byId[id];
 
@@ -77,7 +79,22 @@ export class PageLayoutTabService {
       );
     }
 
-    return flatTab;
+    return reconstructFlatPageLayoutTabWithWidgets({
+      tab: flatTab,
+      flatPageLayoutWidgetMaps,
+    });
+  }
+
+  private async getPageLayoutTabFlatEntityMaps(workspaceId: string): Promise<{
+    flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
+  }> {
+    return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatPageLayoutTabMaps', 'flatPageLayoutWidgetMaps'],
+      },
+    );
   }
 
   async create(
