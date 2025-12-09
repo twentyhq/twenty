@@ -16,7 +16,6 @@ export type IndexFieldMetadataEntityRelationProperties =
     MetadataEntitiesRelationTarget
   >;
 
-// Can't use FlatEntityFrom here because IndexFieldMetadataEntity is not a SyncableEntity
 export type FlatIndexFieldMetadata = FlatEntityFrom<
   IndexFieldMetadataEntity,
   IndexFieldMetadataEntityRelationProperties
