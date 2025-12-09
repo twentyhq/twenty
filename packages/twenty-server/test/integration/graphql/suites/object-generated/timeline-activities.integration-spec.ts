@@ -25,9 +25,9 @@ describe('timelineActivitiesResolver (e2e)', () => {
                 targetCompanyId
                 targetOpportunityId
                 targetNoteId
-                targettaskId
+                targetTaskId
                 targetWorkflowId
-                targetworkflowVersionId
+                targetWorkflowVersionId
                 targetWorkflowRunId
                 targetPetId
                 targetSurveyResultId
