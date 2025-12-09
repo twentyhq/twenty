@@ -25,9 +25,9 @@ export const fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow = ({
 
   return {
     ...existingFlatRouteTrigger,
+    updatedAt: new Date().toISOString(),
     path: updateRouteTriggerInput.update.path,
     isAuthRequired: updateRouteTriggerInput.update.isAuthRequired,
     httpMethod: updateRouteTriggerInput.update.httpMethod,
-    updatedAt: new Date(),
   };
 };

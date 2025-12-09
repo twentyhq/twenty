@@ -36,6 +36,6 @@ export const fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
 
   return {
     ...existingFlatPageLayoutWidgetToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };

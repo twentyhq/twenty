@@ -152,6 +152,7 @@ export type AggregateChartConfiguration = {
   graphType: GraphType;
   label?: Maybe<Scalars['String']>;
   prefix?: Maybe<Scalars['String']>;
+  ratioAggregateConfig?: Maybe<RatioAggregateConfig>;
   suffix?: Maybe<Scalars['String']>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -3693,6 +3694,17 @@ export type QueueRetentionConfig = {
   completedMaxCount: Scalars['Float'];
   failedMaxAge: Scalars['Float'];
   failedMaxCount: Scalars['Float'];
+};
+
+export type RatioAggregateConfig = {
+  __typename?: 'RatioAggregateConfig';
+  fieldMetadataId: Scalars['UUID'];
+  optionValue: Scalars['String'];
+};
+
+export type RatioAggregateConfigInput = {
+  fieldMetadataId: Scalars['UUID'];
+  optionValue: Scalars['String'];
 };
 
 export type Relation = {
