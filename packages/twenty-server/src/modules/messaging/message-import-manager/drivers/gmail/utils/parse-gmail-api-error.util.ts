@@ -9,8 +9,10 @@ export const parseGmailApiError = (
 ): MessageImportDriverException => {
   const { code, message } = error;
 
-  switch (code) {
-    case '400':
+  const codeAsNumber = Number(code);
+
+  switch (codeAsNumber) {
+    case 400:
       if (message === 'invalid_grant') {
         return new MessageImportDriverException(
           message,
@@ -36,19 +38,19 @@ export const parseGmailApiError = (
         MessageImportDriverExceptionCode.UNKNOWN,
       );
 
-    case '404':
+    case 404:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
       );
 
-    case '429':
+    case 429:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
-    case '403':
+    case 403:
       if (
         message === 'rateLimitExceeded' ||
         message === 'userRateLimitExceeded' ||
@@ -68,21 +70,21 @@ export const parseGmailApiError = (
 
       break;
 
-    case '401':
+    case 401:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
-    case '503':
+    case 503:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
-    case '500':
-    case '502':
-    case '504':
+    case 500:
+    case 502:
+    case 504:
       if (message === 'backendError') {
         return new MessageImportDriverException(
           message,

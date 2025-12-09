@@ -26,6 +26,7 @@ type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
   fromFlatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
+  isSystemBuild: boolean;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 // Note: Standard override is way too complex we should land a smoother implemenentation once we standardize
 // them across every flat entities
@@ -34,11 +35,13 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   rawUpdateFieldInput,
   flatFieldMetadataMaps,
   flatObjectMetadata,
+  isSystemBuild,
 }: ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs): ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType => {
   const { standardOverrides, updatedEditableFieldProperties } =
     sanitizeRawUpdateFieldInput({
       existingFlatFieldMetadata: fromFlatFieldMetadata,
       rawUpdateFieldInput,
+      isSystemBuild,
     });
 
   const isStandardField = isStandardMetadata(fromFlatFieldMetadata);
@@ -48,7 +51,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
       existing: fromFlatFieldMetadata,
       properties:
         FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
-          isStandardField ? 'standard' : 'custom'
+          isStandardField && !isSystemBuild ? 'standard' : 'custom'
         ],
       update: updatedEditableFieldProperties,
     }),
@@ -104,7 +107,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
       >((relatedFlatFieldMetadataFrom) => {
         const relatedMorphPropertiesToUpdateTo =
           FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_RELATION_UPDATE_CONSTANT[
-            isStandardField ? 'standard' : 'custom'
+            isStandardField && !isSystemBuild ? 'standard' : 'custom'
           ];
         const relatedFlatFieldMetadataTo = {
           ...mergeUpdateInExistingRecord({

@@ -146,7 +146,10 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
@@ -318,7 +321,10 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,

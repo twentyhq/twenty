@@ -5,6 +5,7 @@ import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/comm
 import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-view-main-group-by-field-metadata-id.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
+import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
 import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-timeline-activity-to-morph-relations.command';
 import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-rename-unique-index.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
@@ -14,6 +15,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -51,6 +53,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     WorkspaceMetadataVersionModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
+    FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
   ],
@@ -60,6 +63,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     RenameIndexNameCommand,
+    MigrateStandardInvalidEntitiesCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
   ],
@@ -69,6 +73,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     RenameIndexNameCommand,
+    MigrateStandardInvalidEntitiesCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
   ],

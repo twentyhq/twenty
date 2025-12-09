@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -115,7 +116,9 @@ export class TimelineMessagingService {
       .where('message.messageThreadId = ANY(:messageThreadIds)', {
         messageThreadIds,
       })
-      .andWhere('messageParticipant.role = :role', { role: 'from' })
+      .andWhere('messageParticipant.role = :role', {
+        role: MessageParticipantRole.FROM,
+      })
       .orderBy('message.messageThreadId')
       .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
       .getMany();

@@ -22,6 +22,7 @@ import {
   ViewGroupException,
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
+import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -138,7 +139,7 @@ export class ViewGroupService {
     return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatViewGroupsToCreate.map((el) => el.id),
       flatEntityMaps: recomputedExistingFlatViewGroupMaps,
-    });
+    }).map(fromFlatViewGroupToViewGroupDto);
   }
 
   async updateOne({
@@ -192,10 +193,12 @@ export class ViewGroupService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatViewGroup.id,
-      flatEntityMaps: recomputedExistingFlatViewGroupMaps,
-    });
+    return fromFlatViewGroupToViewGroupDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewGroup.id,
+        flatEntityMaps: recomputedExistingFlatViewGroupMaps,
+      }),
+    );
   }
 
   async deleteOne({
@@ -251,10 +254,12 @@ export class ViewGroupService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatViewGroupWithDeletedAt.id,
-      flatEntityMaps: recomputedExistingFlatViewGroupMaps,
-    });
+    return fromFlatViewGroupToViewGroupDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewGroupWithDeletedAt.id,
+        flatEntityMaps: recomputedExistingFlatViewGroupMaps,
+      }),
+    );
   }
 
   async destroyOne({
@@ -300,7 +305,7 @@ export class ViewGroupService {
       );
     }
 
-    return existingViewGroupToDelete;
+    return fromFlatViewGroupToViewGroupDto(existingViewGroupToDelete);
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
