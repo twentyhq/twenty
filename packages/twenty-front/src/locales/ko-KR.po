@@ -1063,6 +1063,11 @@ msgstr "파일 및 첨부파일 업로드 허용"
 msgid "Allow users to sign in with an email and password."
 msgstr "이메일과 비밀번호로 로그인 허용."
 
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr ""
+
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
@@ -1075,9 +1080,6 @@ msgstr "메시지를 처리하는 중 오류가 발생했습니다"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
@@ -3811,8 +3813,12 @@ msgstr "0에서 23 사이의 숫자를 입력하세요"
 msgid "Enter number between 0 and 59"
 msgstr "0에서 59 사이의 숫자를 입력하세요"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr ""
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -6015,6 +6021,11 @@ msgstr "최소"
 msgid "Min range"
 msgstr "최소 범위"
 
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
+
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Minutes"
@@ -7070,6 +7081,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
 msgstr "페이지"
+
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr ""
 
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

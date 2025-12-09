@@ -17,8 +17,8 @@ export class ToolAdapterService {
   ) {}
 
   async getTools(
+    workspaceId: string,
     rolePermissionConfig?: RolePermissionConfig,
-    workspaceId?: string,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
@@ -26,8 +26,8 @@ export class ToolAdapterService {
       const tool = this.toolRegistry.getTool(toolType);
 
       if (!tool.flag) {
-        tools[toolType.toLowerCase()] = this.createToolSet(tool);
-      } else if (rolePermissionConfig && workspaceId) {
+        tools[toolType.toLowerCase()] = this.createToolSet(tool, workspaceId);
+      } else if (rolePermissionConfig) {
         const hasPermission = await this.permissionsService.hasToolPermission(
           rolePermissionConfig,
           workspaceId,
@@ -35,7 +35,7 @@ export class ToolAdapterService {
         );
 
         if (hasPermission) {
-          tools[toolType.toLowerCase()] = this.createToolSet(tool);
+          tools[toolType.toLowerCase()] = this.createToolSet(tool, workspaceId);
         }
       }
     }
@@ -43,12 +43,12 @@ export class ToolAdapterService {
     return tools;
   }
 
-  private createToolSet(tool: Tool) {
+  private createToolSet(tool: Tool, workspaceId: string) {
     return {
       description: tool.description,
       inputSchema: tool.inputSchema,
       execute: async (parameters: { input: ToolInput }) =>
-        tool.execute(parameters.input),
+        tool.execute(parameters.input, workspaceId),
     };
   }
 }

@@ -6,7 +6,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
@@ -32,7 +32,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -43,7 +43,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
@@ -99,6 +102,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
         await this.messageParticipantService.saveMessageParticipants(
           participantsWithMessageId,
+          workspaceId,
           transactionManager,
         );
 

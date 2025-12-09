@@ -17,7 +17,6 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -34,7 +33,6 @@ import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workfl
 export class FindRecordsWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
@@ -62,14 +60,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowFindRecordsActionInput;
 
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new RecordCrudException(
-        'Failed to read: Workspace ID is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const { workspaceId } = runInfo;
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
@@ -29,7 +29,7 @@ export class ConnectedAccountRefreshTokensService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async refreshAndSaveTokens(
@@ -76,7 +76,8 @@ export class ConnectedAccountRefreshTokensService {
     );
 
     const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspaceId,
         'connectedAccount',
       );
 

@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull, type Repository } from 'typeorm';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -18,6 +19,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 describe('PageLayoutService', () => {
   let pageLayoutService: PageLayoutService;
   let pageLayoutRepository: Repository<PageLayoutEntity>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockPageLayout = {
@@ -53,6 +55,12 @@ describe('PageLayoutService', () => {
           },
         },
         {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: {
+            findOneOrFail: jest.fn(),
+          },
+        },
+        {
           provide: TwentyORMGlobalManager,
           useValue: {
             getRepositoryForWorkspace: jest.fn(),
@@ -64,6 +72,9 @@ describe('PageLayoutService', () => {
     pageLayoutService = module.get<PageLayoutService>(PageLayoutService);
     pageLayoutRepository = module.get<Repository<PageLayoutEntity>>(
       getRepositoryToken(PageLayoutEntity),
+    );
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
@@ -170,6 +181,10 @@ describe('PageLayoutService', () => {
     };
 
     it('should create a page layout successfully', async () => {
+      jest.spyOn(workspaceRepository, 'findOneOrFail').mockResolvedValue({
+        id: 'workspace-id',
+        workspaceCustomApplicationId: 'application-id',
+      } as WorkspaceEntity);
       jest.spyOn(pageLayoutRepository, 'insert').mockResolvedValue({
         identifiers: [{ id: 'page-layout-id' }],
         generatedMaps: [],
@@ -184,9 +199,15 @@ describe('PageLayoutService', () => {
         'workspace-id',
       );
 
+      expect(workspaceRepository.findOneOrFail).toHaveBeenCalledWith({
+        where: { id: 'workspace-id' },
+        select: ['workspaceCustomApplicationId'],
+      });
       expect(pageLayoutRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutData,
         workspaceId: 'workspace-id',
+        universalIdentifier: expect.any(String),
+        applicationId: 'application-id',
       });
       expect(result).toEqual(mockPageLayout);
     });
