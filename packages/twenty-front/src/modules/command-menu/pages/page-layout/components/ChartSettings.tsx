@@ -20,7 +20,8 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { GraphType } from '~/generated/graphql';
 
 const StyledCommandMenuContainer = styled.div`
   display: flex;

@@ -19,7 +19,10 @@ export const useFieldsWidgetSectionsWithFields = (
   const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
 
   const sectionsWithFields = filterAndOrderFieldsFromConfiguration({
-    configuration: temporaryConfiguration ?? { sections: [] },
+    configuration: temporaryConfiguration ?? {
+      __typename: 'FieldsConfiguration',
+      sections: [],
+    },
     availableFieldMetadataItems: fieldMetadataItems,
     context,
   });

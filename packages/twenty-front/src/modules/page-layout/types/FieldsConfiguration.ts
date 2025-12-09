@@ -14,5 +14,6 @@ export type FieldsConfigurationSection = {
 };
 
 export type FieldsConfiguration = {
+  __typename: 'FieldsConfiguration';
   sections: FieldsConfigurationSection[];
 };

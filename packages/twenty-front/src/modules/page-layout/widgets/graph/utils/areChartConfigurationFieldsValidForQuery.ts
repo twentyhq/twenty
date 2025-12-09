@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 const fieldExists = (
   fieldId: string | undefined | null,

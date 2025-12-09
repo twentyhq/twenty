@@ -26,9 +26,17 @@ export const CommandMenuPageLayoutIframeSettings = () => {
     throw new Error('Widget ID must be present while editing the widget');
   }
 
+  const widgetConfiguration = widgetInEditMode.configuration;
+
+  if (widgetConfiguration?.__typename !== 'IframeConfiguration') {
+    throw new Error(
+      'IframeWidgetConfiguration expected in iframe widget settings',
+    );
+  }
+
   const configUrl =
-    widgetInEditMode.configuration && 'url' in widgetInEditMode.configuration
-      ? widgetInEditMode.configuration.url
+    widgetConfiguration && 'url' in widgetConfiguration
+      ? widgetConfiguration.url
       : null;
 
   const [url, setUrl] = useState<string | null>(
@@ -60,7 +68,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
       const trimmedValue = value.trim();
       updatePageLayoutWidget(widgetInEditMode.id, {
         configuration: {
-          ...widgetInEditMode.configuration,
+          ...widgetConfiguration,
           url: trimmedValue || null,
         },
       });
