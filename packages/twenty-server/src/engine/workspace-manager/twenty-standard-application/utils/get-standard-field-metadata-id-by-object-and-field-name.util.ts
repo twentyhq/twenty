@@ -3,9 +3,9 @@ import { v4 } from 'uuid';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { AllStandardObjectViewFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field.type';
-import { AllStandardObjectViewGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-group.type';
-import { AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
+import { type AllStandardObjectViewFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field.type';
+import { type AllStandardObjectViewGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-group.type';
+import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 
 type StandardObjectViewIds<O extends AllStandardObjectName> = {
   [V in AllStandardObjectViewName<O>]: {
@@ -113,6 +113,7 @@ export const getStandardFieldMetadataIdByObjectAndFieldName =
       const viewIds = computeStandardViewObjectIds({
         objectName,
       });
+
       result[objectName] = {
         // @ts-expect-error ignore this
         fields: fieldIds,

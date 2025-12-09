@@ -9,9 +9,10 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewArgs<P>, 'context'>,
 ) => Record<string, FlatView>;
 
-const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {} as const satisfies {
-  [P in AllStandardObjectName]?: StandardViewBuilder<P>;
-};
+const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME =
+  {} as const satisfies {
+    [P in AllStandardObjectName]?: StandardViewBuilder<P>;
+  };
 
 export const buildStandardFlatViewMetadataMaps = (
   args: Omit<CreateStandardViewArgs, 'context' | 'objectName'>,

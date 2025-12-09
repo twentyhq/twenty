@@ -44,4 +44,3 @@ export const buildStandardFlatViewFilterMetadataMaps = (
 
   return flatViewFilterMaps;
 };
-

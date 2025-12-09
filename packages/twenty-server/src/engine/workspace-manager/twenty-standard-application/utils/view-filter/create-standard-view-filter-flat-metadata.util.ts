@@ -6,7 +6,7 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { AllStandardObjectViewFilterName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-filter-name.type';
+import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-filter-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
