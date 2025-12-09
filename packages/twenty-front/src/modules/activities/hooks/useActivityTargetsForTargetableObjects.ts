@@ -16,6 +16,7 @@ export const useActivityTargetsForTargetableObjects = ({
   skip,
   onCompleted,
   activityTargetsOrderByVariables,
+  limit,
 }: {
   objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
   targetableObjects: Pick<
@@ -25,6 +26,7 @@ export const useActivityTargetsForTargetableObjects = ({
   skip?: boolean;
   onCompleted?: (activityTargets: (TaskTarget | NoteTarget)[]) => void;
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
+  limit: number;
 }) => {
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects: targetableObjects,
@@ -45,6 +47,8 @@ export const useActivityTargetsForTargetableObjects = ({
     records: activityTargets,
     loading: loadingActivityTargets,
     totalCount: totalCountActivityTargets,
+    fetchMoreRecords: fetchMoreActivityTargets,
+    hasNextPage,
   } = useFindManyRecords<TaskTarget | NoteTarget>({
     skip,
     objectNameSingular:
@@ -53,11 +57,14 @@ export const useActivityTargetsForTargetableObjects = ({
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
     onCompleted,
     orderBy: activityTargetsOrderByVariables,
+    limit,
   });
 
   return {
     activityTargets,
     loadingActivityTargets,
     totalCountActivityTargets: totalCountActivityTargets ?? 0,
+    fetchMoreActivityTargets,
+    hasNextPage,
   };
 };

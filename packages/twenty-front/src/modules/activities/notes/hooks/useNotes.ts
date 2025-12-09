@@ -20,10 +20,17 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     [],
   );
 
-  const { activities, loading, totalCountActivities } = useActivities<Note>({
+  const {
+    activities,
+    loading,
+    totalCountActivities,
+    fetchMoreActivities,
+    hasNextPage,
+  } = useActivities<Note>({
     objectNameSingular: CoreObjectNameSingular.Note,
     activityTargetsOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],
+    limit: 10,
   });
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
@@ -44,5 +51,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     notes: activities as Note[],
     loading,
     totalCountNotes: totalCountActivities,
+    fetchMoreNotes: fetchMoreActivities,
+    hasNextPage,
   };
 };
