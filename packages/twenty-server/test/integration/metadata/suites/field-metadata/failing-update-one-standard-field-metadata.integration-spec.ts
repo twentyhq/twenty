@@ -104,8 +104,7 @@ describe('Standard field metadata update should be ignored', () => {
   );
 });
 
-// TODO: Enable this test once isUnique set as editable on standard fields
-xdescribe('Standard field with standard unique index update should fail on isUnique change', () => {
+describe('Standard field with standard unique index update should fail on isUnique change', () => {
   let companyDomainNameFieldMetadataId: string;
 
   beforeAll(async () => {
@@ -140,23 +139,28 @@ xdescribe('Standard field with standard unique index update should fail on isUni
     companyDomainNameFieldMetadataId = companyDomainNameField.id;
   });
 
-  it('should fail when trying to remove unique constraint on standard field with standard index', async () => {
-    const { errors } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: companyDomainNameFieldMetadataId,
-        updatePayload: {
-          isUnique: false,
+  // TODO: Enable this test once isUnique set as editable on standard fields
+
+  it.failing(
+    'should fail when trying to remove unique constraint on standard field with standard index',
+    async () => {
+      const { errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: companyDomainNameFieldMetadataId,
+          updatePayload: {
+            isUnique: false,
+          },
         },
-      },
-      gqlFields: `
+        gqlFields: `
         id
         name
         isUnique
       `,
-    });
+      });
 
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-    });
-  });
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
+    },
+  );
 });
