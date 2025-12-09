@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    FlatEntityMapsException,
-    FlatEntityMapsExceptionCode,
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
@@ -12,7 +12,9 @@ type AddFlatEntityToFlatEntityMapsOrThrowArgs<T extends SyncableFlatEntity> = {
   flatEntityMaps: FlatEntityMaps<T>;
 };
 
-export const addFlatEntityToFlatEntityMapsOrThrow = <T extends SyncableFlatEntity>({
+export const addFlatEntityToFlatEntityMapsOrThrow = <
+  T extends SyncableFlatEntity,
+>({
   flatEntity,
   flatEntityMaps,
 }: AddFlatEntityToFlatEntityMapsOrThrowArgs<T>): FlatEntityMaps<T> => {

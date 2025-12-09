@@ -1,9 +1,5 @@
-export type ExtractRecordTypeOrmNullableDateProperties<T> = NonNullable<
+export type ExtractRecordTypeOrmNonNullableDateProperties<T> = NonNullable<
   {
-    [P in keyof T]: null extends T[P]
-      ? NonNullable<T[P]> extends Date
-        ? P
-        : never
-      : never;
+    [P in keyof T]: null extends T[P] ? never : T[P] extends Date ? P : never;
   }[keyof T]
 >;
