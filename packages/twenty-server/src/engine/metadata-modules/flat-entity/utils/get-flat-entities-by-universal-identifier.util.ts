@@ -3,7 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
-export const getFlatEntityByUniversalIdentifier = <T extends SyncableFlatEntity>(
+export const getFlatEntityByUniversalIdentifier = <
+  T extends SyncableFlatEntity,
+>(
   maps: FlatEntityMaps<T>,
   universalIdentifier: string,
 ): T | undefined => {
