@@ -55,7 +55,7 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  if (loading) {
+  if (loading && isNotesEmpty) {
     return <SkeletonLoader />;
   }
 
