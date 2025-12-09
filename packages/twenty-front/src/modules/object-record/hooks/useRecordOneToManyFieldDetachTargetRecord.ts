@@ -5,7 +5,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
-
 import { CustomError } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldDetachTargetRecord = () => {
