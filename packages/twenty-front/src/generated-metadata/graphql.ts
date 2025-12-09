@@ -1909,6 +1909,7 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateMessageFoldersSyncStatus: UpdateMessageFoldersSyncStatusSuccess;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
@@ -2678,6 +2679,11 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateMessageFoldersSyncStatusArgs = {
+  input: UpdateMessageFoldersSyncStatusInput;
 };
 
 
@@ -4284,6 +4290,17 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
+export type UpdateMessageFoldersSyncStatusInput = {
+  isSynced: Scalars['Boolean'];
+  messageChannelId: Scalars['UUID'];
+  messageFolderIds: Array<Scalars['UUID']>;
+};
+
+export type UpdateMessageFoldersSyncStatusSuccess = {
+  __typename?: 'UpdateMessageFoldersSyncStatusSuccess';
+  success: Scalars['Boolean'];
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -5580,6 +5597,13 @@ export type StartChannelSyncMutationVariables = Exact<{
 
 
 export type StartChannelSyncMutation = { __typename?: 'Mutation', startChannelSync: { __typename?: 'ChannelSyncSuccess', success: boolean } };
+
+export type UpdateMessageFoldersSyncStatusMutationVariables = Exact<{
+  input: UpdateMessageFoldersSyncStatusInput;
+}>;
+
+
+export type UpdateMessageFoldersSyncStatusMutation = { __typename?: 'Mutation', updateMessageFoldersSyncStatus: { __typename?: 'UpdateMessageFoldersSyncStatusSuccess', success: boolean } };
 
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
   id: Scalars['UUID'];
@@ -10202,6 +10226,39 @@ export function useStartChannelSyncMutation(baseOptions?: Apollo.MutationHookOpt
 export type StartChannelSyncMutationHookResult = ReturnType<typeof useStartChannelSyncMutation>;
 export type StartChannelSyncMutationResult = Apollo.MutationResult<StartChannelSyncMutation>;
 export type StartChannelSyncMutationOptions = Apollo.BaseMutationOptions<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
+export const UpdateMessageFoldersSyncStatusDocument = gql`
+    mutation UpdateMessageFoldersSyncStatus($input: UpdateMessageFoldersSyncStatusInput!) {
+  updateMessageFoldersSyncStatus(input: $input) {
+    success
+  }
+}
+    `;
+export type UpdateMessageFoldersSyncStatusMutationFn = Apollo.MutationFunction<UpdateMessageFoldersSyncStatusMutation, UpdateMessageFoldersSyncStatusMutationVariables>;
+
+/**
+ * __useUpdateMessageFoldersSyncStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateMessageFoldersSyncStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMessageFoldersSyncStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMessageFoldersSyncStatusMutation, { data, loading, error }] = useUpdateMessageFoldersSyncStatusMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateMessageFoldersSyncStatusMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMessageFoldersSyncStatusMutation, UpdateMessageFoldersSyncStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateMessageFoldersSyncStatusMutation, UpdateMessageFoldersSyncStatusMutationVariables>(UpdateMessageFoldersSyncStatusDocument, options);
+      }
+export type UpdateMessageFoldersSyncStatusMutationHookResult = ReturnType<typeof useUpdateMessageFoldersSyncStatusMutation>;
+export type UpdateMessageFoldersSyncStatusMutationResult = Apollo.MutationResult<UpdateMessageFoldersSyncStatusMutation>;
+export type UpdateMessageFoldersSyncStatusMutationOptions = Apollo.BaseMutationOptions<UpdateMessageFoldersSyncStatusMutation, UpdateMessageFoldersSyncStatusMutationVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = gql`
     query GetConnectedImapSmtpCaldavAccount($id: UUID!) {
   getConnectedImapSmtpCaldavAccount(id: $id) {
