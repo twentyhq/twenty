@@ -157,9 +157,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     label: relationCreationPayload.targetFieldLabel,
     name:
       targetFieldName ??
-      computeMetadataNameFromLabel({
-        label: relationCreationPayload.targetFieldLabel,
-      }),
+      computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
