@@ -35,24 +35,6 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    widgetInEditMode?.configuration?.__typename !==
-    'AggregateChartConfiguration'
-  ) {
-    throw new Error('Ratio is only available for AggregateChartConfiguration');
-  }
-
-  const currentRatioConfig =
-    widgetInEditMode.configuration.ratioAggregateConfig;
-
-  const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
-  );
-
-  const selectedField = sourceObjectMetadataItem?.fields.find(
-    (field) => field.id === currentFieldMetadataId,
-  );
-
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -65,6 +47,24 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { closeDropdown } = useCloseDropdown();
+
+  if (
+    widgetInEditMode?.configuration?.__typename !==
+    'AggregateChartConfiguration'
+  ) {
+    return null;
+  }
+
+  const currentRatioConfig =
+    widgetInEditMode.configuration.ratioAggregateConfig;
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === widgetInEditMode.objectMetadataId,
+  );
+
+  const selectedField = sourceObjectMetadataItem?.fields.find(
+    (field) => field.id === currentFieldMetadataId,
+  );
 
   if (!isDefined(sourceObjectMetadataItem) || !isDefined(selectedField)) {
     return null;

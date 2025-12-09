@@ -90,6 +90,15 @@ export const useGraphWidgetAggregateQuery = ({
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
 
+  if (isRatioQuery && !isDefined(ratioField)) {
+    return {
+      value: '-',
+      label: t`Ratio`,
+      loading: false,
+      error: undefined,
+    };
+  }
+
   if (isRatioQuery) {
     const numeratorCount =
       ratioNumeratorData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[

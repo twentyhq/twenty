@@ -45,6 +45,14 @@ const buildFieldFilter = (
     };
   }
 
+  if (fieldType === FieldMetadataType.MULTI_SELECT) {
+    return {
+      [fieldName]: {
+        containsAny: [optionValue],
+      },
+    };
+  }
+
   return {
     [fieldName]: {
       eq: optionValue,
