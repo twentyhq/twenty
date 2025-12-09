@@ -12,7 +12,7 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
   dependencyFlatEntityMaps,
-  twentyStandardApplicationId
+  twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'company'>, 'context'>): Record<
   AllStandardObjectIndexName<'company'>,
   FlatIndexMetadata

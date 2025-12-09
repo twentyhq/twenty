@@ -10,7 +10,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
@@ -36,7 +36,10 @@ export type CreateStandardRelationFieldArgs<
 > = {
   objectName: O;
   context: CreateStandardRelationFieldContext<O, T>;
-} & Omit<StandardBuilderArgs<'fieldMetadata', O, any>, 'context' | 'objectName'>;
+} & Omit<
+  StandardBuilderArgs<'fieldMetadata', O, unknown>,
+  'context' | 'objectName'
+>;
 
 export const createStandardRelationFieldFlatMetadata = <
   O extends AllStandardObjectName,

@@ -19,7 +19,10 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
   standardFieldMetadataIdByObjectAndFieldName,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'calendarEventParticipant'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'calendarEventParticipant'>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'calendarEventParticipant'>,
   FlatFieldMetadata
 > => ({

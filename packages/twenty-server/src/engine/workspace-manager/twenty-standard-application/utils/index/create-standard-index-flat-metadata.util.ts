@@ -13,7 +13,7 @@ import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-a
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   indexName: AllStandardObjectIndexName<O>;
@@ -50,7 +50,7 @@ export const createStandardIndexFlatMetadata = <
       `Invalid index configuration ${objectName} ${indexName.toString()}`,
     );
   }
-  // TODO investigate why never is pain here
+  // @ts-expect-error ignore
   const indexDefinition = objectIndexes[indexName] as unknown as {
     universalIdentifier: string;
   };
