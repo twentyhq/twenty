@@ -12,8 +12,7 @@ export const useTasks = ({ targetableObjects }: UseTasksProps) => {
   const { activities: tasks, loading: tasksLoading } = useActivities<Task>({
     objectNameSingular: CoreObjectNameSingular.Task,
     targetableObjects,
-    activitiesFilters: {},
-    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    activityTargetsOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
   });
 
   return {

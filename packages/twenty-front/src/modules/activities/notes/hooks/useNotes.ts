@@ -15,7 +15,6 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notesQueryVariables = useMemo(
     () =>
       ({
-        filter: {},
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
       }) as RecordGqlOperationVariables,
     [],
@@ -23,8 +22,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
 
   const { activities, loading, totalCountActivities } = useActivities<Note>({
     objectNameSingular: CoreObjectNameSingular.Note,
-    activitiesFilters: notesQueryVariables.filter ?? {},
-    activitiesOrderByVariables: notesQueryVariables.orderBy ?? [{}],
+    activityTargetsOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],
   });
 

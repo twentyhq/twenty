@@ -7,6 +7,7 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useActivityTargetsForTargetableObjects = ({
@@ -14,14 +15,16 @@ export const useActivityTargetsForTargetableObjects = ({
   targetableObjects,
   skip,
   onCompleted,
+  activityTargetsOrderByVariables,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
   targetableObjects: Pick<
     ActivityTargetableObject,
     'id' | 'targetObjectNameSingular'
   >[];
   skip?: boolean;
   onCompleted?: (activityTargets: (TaskTarget | NoteTarget)[]) => void;
+  activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
 }) => {
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects: targetableObjects,
@@ -49,6 +52,7 @@ export const useActivityTargetsForTargetableObjects = ({
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
     onCompleted,
+    orderBy: activityTargetsOrderByVariables,
   });
 
   return {
