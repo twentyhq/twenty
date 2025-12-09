@@ -54,14 +54,14 @@ export const createStandardFieldFlatMetadata = <
     settings = null,
     options: fieldOptions = null,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardFieldArgs<O>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
   const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+    standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const name = fieldName.toString();
 
@@ -72,7 +72,7 @@ export const createStandardFieldFlatMetadata = <
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[objectName].id,
+      standardObjectMetadataRelatedEntityIds[objectName].id,
     type,
     name,
     label,

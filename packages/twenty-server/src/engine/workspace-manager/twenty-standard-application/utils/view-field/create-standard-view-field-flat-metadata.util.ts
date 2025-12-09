@@ -48,7 +48,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation = null,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFieldArgs<O, V>): FlatViewField => {
@@ -65,7 +65,7 @@ export const createStandardViewFieldFlatMetadata = <
   }
 
   const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+    standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   return {
     id: v4(),

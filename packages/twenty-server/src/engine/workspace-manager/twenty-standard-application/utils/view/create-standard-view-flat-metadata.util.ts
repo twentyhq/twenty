@@ -56,7 +56,7 @@ export const createStandardViewFlatMetadata = <
     mainGroupByFieldName,
     calendarFieldName,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewArgs<O>): FlatView => {
@@ -72,9 +72,9 @@ export const createStandardViewFlatMetadata = <
   }
 
   const objectMetadataId =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].id;
+    standardObjectMetadataRelatedEntityIds[objectName].id;
   const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+    standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName

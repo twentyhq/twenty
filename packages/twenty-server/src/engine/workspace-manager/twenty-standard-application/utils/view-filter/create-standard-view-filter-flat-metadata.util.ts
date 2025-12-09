@@ -50,7 +50,7 @@ export const createStandardViewFilterFlatMetadata = <
     viewFilterGroupId = null,
     positionInViewFilterGroup = null,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFilterArgs<O, V>): FlatViewFilter => {
@@ -67,7 +67,7 @@ export const createStandardViewFilterFlatMetadata = <
   }
 
   const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+    standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   return {
     id: v4(),

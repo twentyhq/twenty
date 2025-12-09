@@ -10,7 +10,7 @@ export const buildDashboardStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'dashboard'>, 'context'>): Record<
@@ -25,7 +25,7 @@ export const buildDashboardStandardFlatIndexMetadatas = ({
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

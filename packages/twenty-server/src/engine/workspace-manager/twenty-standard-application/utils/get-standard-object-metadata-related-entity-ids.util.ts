@@ -15,7 +15,7 @@ type StandardObjectViewIds<O extends AllStandardObjectName> = {
   };
 };
 
-export type StandardFieldMetadataIdByObjectAndFieldName = {
+export type StandardObjectMetadataRelatedEntityIds = {
   [O in AllStandardObjectName]: {
     id: string;
     fields: Record<AllStandardObjectFieldName<O>, { id: string }>;
@@ -90,9 +90,9 @@ const computeStandardViewObjectIds = <O extends AllStandardObjectName>({
 };
 
 // TODO remove once we have refactored the builder to iterate over universalIdentifier only
-export const getStandardFieldMetadataIdByObjectAndFieldName =
-  (): StandardFieldMetadataIdByObjectAndFieldName => {
-    const result = {} as StandardFieldMetadataIdByObjectAndFieldName;
+export const getStandardObjectMetadataRelatedEntityIds =
+  (): StandardObjectMetadataRelatedEntityIds => {
+    const result = {} as StandardObjectMetadataRelatedEntityIds;
 
     for (const objectName of Object.keys(
       STANDARD_OBJECTS,

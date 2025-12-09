@@ -47,7 +47,7 @@ export const createStandardObjectFlatMetadata = <
     labelIdentifierFieldMetadataName,
   },
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
@@ -73,7 +73,7 @@ export const createStandardObjectFlatMetadata = <
   duplicateCriteria: null,
   shortcut,
   labelIdentifierFieldMetadataId:
-    standardFieldMetadataIdByObjectAndFieldName[nameSingular].fields[
+    standardObjectMetadataRelatedEntityIds[nameSingular].fields[
       labelIdentifierFieldMetadataName
     ].id,
   imageIdentifierFieldMetadataId: null,
@@ -83,5 +83,5 @@ export const createStandardObjectFlatMetadata = <
   viewIds: [],
   createdAt: now,
   updatedAt: now,
-  id: standardFieldMetadataIdByObjectAndFieldName[nameSingular].id,
+  id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
 });
