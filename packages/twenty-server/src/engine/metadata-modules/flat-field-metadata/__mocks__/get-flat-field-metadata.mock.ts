@@ -6,10 +6,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<
-    FlatFieldMetadata,
-    'universalIdentifier' | 'objectMetadataId' | 'type'
-  >
+  Pick<FlatFieldMetadata, 'universalIdentifier' | 'objectMetadataId' | 'type'>
 > &
   Partial<FlatFieldMetadata<T>>;
 
