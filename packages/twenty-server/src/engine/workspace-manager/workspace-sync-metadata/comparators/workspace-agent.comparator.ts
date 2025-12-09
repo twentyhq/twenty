@@ -35,7 +35,7 @@ export class WorkspaceAgentComparator {
   }: WorkspaceAgentComparatorArgs): AgentComparatorResult[] {
     const results: AgentComparatorResult[] = [];
 
-    const keyFactory = (agent: FlatAgent) => agent.universalIdentifier;
+    const keyFactory = (agent: FlatAgent) => agent.universalIdentifier ?? '';
 
     const fromAgentMap = transformMetadataForComparison(fromFlatAgents, {
       shouldIgnoreProperty: (property) =>

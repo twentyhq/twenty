@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -55,7 +56,7 @@ export class MessagingDeleteGroupEmailMessagesService {
           'message.messageParticipants',
           'participant',
           'participant.role = :role',
-          { role: 'from' },
+          { role: MessageParticipantRole.FROM },
         )
         .where('mcma.messageChannelId = :messageChannelId', {
           messageChannelId,

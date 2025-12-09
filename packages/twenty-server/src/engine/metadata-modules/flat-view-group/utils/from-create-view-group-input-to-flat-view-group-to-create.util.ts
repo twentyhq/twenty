@@ -21,7 +21,7 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
       ['fieldValue', 'id', 'viewId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewGroupId = createViewGroupInput.id ?? v4();
 
   return {
