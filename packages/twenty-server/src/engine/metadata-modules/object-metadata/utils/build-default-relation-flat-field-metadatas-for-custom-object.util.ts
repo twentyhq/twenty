@@ -174,8 +174,8 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             createFieldInput: {
               icon: 'IconBuildingSkyscraper',
               type: FieldMetadataType.RELATION,
-              name: targetFlatObjectMetadata.nameSingular,
-              label: capitalize(targetFlatObjectMetadata.labelSingular),
+              name: targetFlatObjectMetadata.namePlural,
+              label: capitalize(targetFlatObjectMetadata.labelPlural),
               objectMetadataId: sourceFlatObjectMetadata.id,
               standardId,
               relationCreationPayload: {
