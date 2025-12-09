@@ -9,20 +9,20 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewArgs<P>, 'context'>,
 ) => Record<string, FlatView>;
 
+const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {} as const satisfies {
+  [P in AllStandardObjectName]?: StandardViewBuilder<P>;
+};
+
 export const buildStandardFlatViewMetadataMaps = (
   args: Omit<CreateStandardViewArgs, 'context' | 'objectName'>,
-  standardFlatViewMetadataBuildersByObjectName: {
-    [P in AllStandardObjectName]?: StandardViewBuilder<P>;
-  },
 ): FlatEntityMaps<FlatView> => {
   const allViewMetadatas: FlatView[] = (
     Object.keys(
-      standardFlatViewMetadataBuildersByObjectName,
-    ) as (keyof typeof standardFlatViewMetadataBuildersByObjectName)[]
+      STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME,
+    ) as (keyof typeof STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME)[]
   ).flatMap((objectName) => {
-    const builder = standardFlatViewMetadataBuildersByObjectName[
-      objectName
-    ] as StandardViewBuilder<typeof objectName>;
+    const builder: StandardViewBuilder<typeof objectName> =
+      STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
 
     const result = builder({
       ...args,

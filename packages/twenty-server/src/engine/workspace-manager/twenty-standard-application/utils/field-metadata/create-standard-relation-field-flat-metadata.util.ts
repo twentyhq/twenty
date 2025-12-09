@@ -71,7 +71,7 @@ export const createStandardRelationFieldFlatMetadata = <
     standardFieldMetadataIdByObjectAndFieldName[targetObjectName].fields;
 
   return {
-    id: fieldIds[fieldName as keyof typeof fieldIds],
+    id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
     standardId: null,
     applicationId: twentyStandardApplicationId,
@@ -94,7 +94,7 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue,
     settings,
     options: fieldOptions,
-    relationTargetFieldMetadataId: targetFieldIds[targetFieldName],
+    relationTargetFieldMetadataId: targetFieldIds[targetFieldName].id,
     relationTargetObjectMetadataId:
       standardFieldMetadataIdByObjectAndFieldName[targetObjectName].id,
     morphId: null,

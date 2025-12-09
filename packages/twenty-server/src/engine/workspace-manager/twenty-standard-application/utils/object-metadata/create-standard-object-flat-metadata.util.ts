@@ -75,7 +75,7 @@ export const createStandardObjectFlatMetadata = <
   labelIdentifierFieldMetadataId:
     standardFieldMetadataIdByObjectAndFieldName[nameSingular].fields[
       labelIdentifierFieldMetadataName
-    ],
+    ].id,
   imageIdentifierFieldMetadataId: null,
   targetTableName: 'DEPRECATED',
   fieldMetadataIds: [],

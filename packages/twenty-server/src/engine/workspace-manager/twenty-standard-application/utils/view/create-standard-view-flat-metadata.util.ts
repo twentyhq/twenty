@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'class-validator';
+import { v4 } from 'uuid';
 
 import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -78,15 +78,15 @@ export const createStandardViewFlatMetadata = <
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName
-      ? fieldIds[kanbanAggregateOperationFieldName]
+      ? fieldIds[kanbanAggregateOperationFieldName].id
       : null;
 
   const mainGroupByFieldMetadataId = mainGroupByFieldName
-    ? fieldIds[mainGroupByFieldName]
+    ? fieldIds[mainGroupByFieldName].id
     : null;
 
   const calendarFieldMetadataId = calendarFieldName
-    ? fieldIds[calendarFieldName]
+    ? fieldIds[calendarFieldName].id
     : null;
 
   return {

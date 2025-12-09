@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
@@ -70,7 +70,7 @@ export const createStandardViewGroupFlatMetadata = <
     applicationId: twentyStandardApplicationId,
     workspaceId,
     viewId,
-    fieldMetadataId: fieldIds[fieldName],
+    fieldMetadataId: fieldIds[fieldName].id,
     isVisible,
     fieldValue,
     position,
