@@ -18,8 +18,6 @@ test('Create workflow', async ({ page }) => {
     name: 'Create new workflow',
   });
 
-  await createWorkflowButton.click();
-
   const [createWorkflowResponse] = await Promise.all([
     page.waitForResponse(async (response) => {
       if (!response.url().endsWith('/graphql')) {
