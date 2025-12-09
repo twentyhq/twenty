@@ -301,7 +301,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       description: 'Workflow version linked to the run.',
       icon: 'IconVersions',
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'runs',
       settings: {
@@ -311,6 +310,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -321,7 +323,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       description: 'Workflow linked to the run.',
       icon: 'IconSettingsAutomation',
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'runs',
       settings: {
@@ -331,6 +332,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -342,7 +346,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'workflowRun',
       settings: {
@@ -350,6 +353,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -361,7 +367,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workflowRun',
       settings: {
@@ -369,5 +374,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

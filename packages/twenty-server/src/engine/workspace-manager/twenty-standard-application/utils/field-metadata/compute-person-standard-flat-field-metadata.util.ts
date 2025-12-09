@@ -321,7 +321,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       description: "Contact's company",
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'people',
       settings: {
@@ -331,6 +330,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   pointOfContactForOpportunities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -342,7 +344,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
         'List of opportunities for which that person is the point of contact',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'pointOfContact',
       settings: {
@@ -350,6 +351,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   taskTargets: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -361,7 +365,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isUIReadOnly: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'person',
       settings: {
@@ -369,6 +372,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   noteTargets: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -380,7 +386,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconNotes',
       isUIReadOnly: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'person',
       settings: {
@@ -388,6 +393,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -399,7 +407,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'person',
       settings: {
@@ -407,6 +414,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -418,7 +428,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'person',
       settings: {
@@ -426,6 +435,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -437,7 +449,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconUserCircle',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'person',
       settings: {
@@ -445,6 +456,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -456,7 +470,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'person',
       settings: {
@@ -464,6 +477,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -475,7 +491,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'person',
       settings: {
@@ -483,6 +498,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
     objectName,

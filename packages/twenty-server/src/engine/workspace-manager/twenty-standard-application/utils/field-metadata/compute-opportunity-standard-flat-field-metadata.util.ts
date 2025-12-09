@@ -252,7 +252,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       description: 'Opportunity point of contact',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'pointOfContactForOpportunities',
       settings: {
@@ -262,6 +261,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -272,7 +274,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       description: 'Opportunity company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'opportunities',
       settings: {
@@ -282,6 +283,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -293,7 +297,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'opportunity',
       settings: {
@@ -301,6 +304,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   taskTargets: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -312,7 +318,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isUIReadOnly: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'opportunity',
       settings: {
@@ -320,6 +325,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   noteTargets: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -331,7 +339,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconNotes',
       isUIReadOnly: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'opportunity',
       settings: {
@@ -339,6 +346,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -350,7 +360,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'opportunity',
       settings: {
@@ -358,6 +367,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -369,7 +381,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'opportunity',
       settings: {
@@ -377,5 +388,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

@@ -142,7 +142,6 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Channel ID',
       icon: 'IconCalendar',
       isNullable: false,
-      createdAt,
       targetObjectName: 'calendarChannel',
       targetFieldName: 'calendarChannelEventAssociations',
       settings: {
@@ -152,6 +151,9 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarEvent: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -162,7 +164,6 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       description: 'Event ID',
       icon: 'IconCalendar',
       isNullable: false,
-      createdAt,
       targetObjectName: 'calendarEvent',
       targetFieldName: 'calendarChannelEventAssociations',
       settings: {
@@ -172,5 +173,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

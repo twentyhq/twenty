@@ -218,7 +218,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'WorkflowVersion workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'versions',
       settings: {
@@ -228,6 +227,9 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   runs: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -238,7 +240,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       description: 'Workflow runs linked to the version.',
       icon: 'IconRun',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -246,6 +247,9 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -257,7 +261,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -265,6 +268,9 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -276,7 +282,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workflowVersion',
       settings: {
@@ -284,5 +289,8 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

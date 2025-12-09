@@ -192,7 +192,6 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message Thread Id',
       icon: 'IconHash',
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageThread',
       targetFieldName: 'messages',
       settings: {
@@ -202,6 +201,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -212,7 +214,6 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'message',
       settings: {
@@ -220,6 +221,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -230,7 +234,6 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'message',
       settings: {
@@ -238,5 +241,8 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

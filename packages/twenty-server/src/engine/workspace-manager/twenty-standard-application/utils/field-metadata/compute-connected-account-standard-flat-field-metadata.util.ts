@@ -268,7 +268,6 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       description: 'Account Owner',
       icon: 'IconUserCircle',
       isNullable: false,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'connectedAccounts',
       settings: {
@@ -278,6 +277,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageChannels: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -288,7 +290,6 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       description: 'Message Channels',
       icon: 'IconMessage',
       isNullable: false,
-      createdAt,
       targetObjectName: 'messageChannel',
       targetFieldName: 'connectedAccount',
       settings: {
@@ -296,6 +297,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarChannels: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -306,7 +310,6 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       description: 'Calendar Channels',
       icon: 'IconCalendar',
       isNullable: false,
-      createdAt,
       targetObjectName: 'calendarChannel',
       targetFieldName: 'connectedAccount',
       settings: {
@@ -314,5 +317,8 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

@@ -262,7 +262,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconArrowUpRight',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'task',
       settings: {
@@ -270,6 +269,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -281,7 +283,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'task',
       settings: {
@@ -289,6 +290,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   assignee: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -299,7 +303,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       description: 'Task assignee',
       icon: 'IconUserCircle',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'assignedTasks',
       settings: {
@@ -309,6 +312,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -320,7 +326,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'task',
       settings: {
@@ -328,6 +333,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -339,7 +347,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'task',
       settings: {
@@ -347,5 +354,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

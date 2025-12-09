@@ -209,7 +209,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -219,6 +218,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -229,7 +231,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -239,6 +240,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -249,7 +253,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -259,6 +262,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -269,7 +275,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -279,6 +284,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   note: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -289,7 +297,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event note',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -299,6 +306,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   task: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -309,7 +319,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event task',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'task',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -319,6 +328,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -329,7 +341,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -339,6 +350,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflowVersion: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -349,7 +363,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow version',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -359,6 +372,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflowRun: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -369,7 +385,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event workflow run',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -379,6 +394,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -389,7 +407,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Event dashboard',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -399,6 +416,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   custom: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -409,7 +429,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       description: 'Timeline Activity custom object',
       icon: 'IconTimeline',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -419,5 +438,8 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

@@ -194,7 +194,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'dashboard',
       settings: {
@@ -202,6 +201,9 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -213,7 +215,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'dashboard',
       settings: {
@@ -221,6 +222,9 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -232,7 +236,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'dashboard',
       settings: {
@@ -240,5 +243,8 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

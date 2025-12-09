@@ -215,7 +215,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconArrowUpRight',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'note',
       settings: {
@@ -223,6 +222,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -234,7 +236,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'note',
       settings: {
@@ -242,6 +243,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -253,7 +257,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'note',
       settings: {
@@ -261,6 +264,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -272,7 +278,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'note',
       settings: {
@@ -280,5 +285,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });
