@@ -6,6 +6,7 @@ import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/comm
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-timeline-activity-to-morph-relations.command';
+import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-rename-unique-index.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -13,6 +14,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
@@ -33,6 +35,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
       WorkspaceEntity,
       ObjectMetadataEntity,
       FieldMetadataEntity,
+      IndexMetadataEntity,
       ViewEntity,
       ViewGroupEntity,
       FeatureFlagEntity,
@@ -56,6 +59,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     BackfillViewMainGroupByFieldMetadataIdCommand,
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
+    RenameIndexNameCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
   ],
@@ -64,6 +68,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     BackfillViewMainGroupByFieldMetadataIdCommand,
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
+    RenameIndexNameCommand,
     UpdateRoleTargetsUniqueConstraintMigrationCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
   ],
