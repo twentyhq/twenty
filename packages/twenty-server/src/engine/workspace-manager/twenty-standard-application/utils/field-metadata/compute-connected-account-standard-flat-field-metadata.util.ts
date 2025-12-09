@@ -6,26 +6,27 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildConnectedAccountStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'connectedAccount'>, 'context'>): Record<
   AllStandardObjectFieldName<'connectedAccount'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -35,14 +36,16 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +55,16 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -69,14 +74,16 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -85,28 +92,32 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   handle: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'handle',
       type: FieldMetadataType.TEXT,
       label: 'handle',
       description: 'The account handle (email, username, phone number, etc.)',
       icon: 'IconMail',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   provider: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'provider',
       type: FieldMetadataType.TEXT,
       label: 'provider',
@@ -114,126 +125,144 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       icon: 'IconSettings',
       isNullable: false,
       defaultValue: "'google'",
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   accessToken: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'accessToken',
       type: FieldMetadataType.TEXT,
       label: 'Access Token',
       description: 'Messaging provider access token',
       icon: 'IconKey',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   refreshToken: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'refreshToken',
       type: FieldMetadataType.TEXT,
       label: 'Refresh Token',
       description: 'Messaging provider refresh token',
       icon: 'IconKey',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   lastSyncHistoryId: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'lastSyncHistoryId',
       type: FieldMetadataType.TEXT,
       label: 'Last sync history ID',
       description: 'Last sync history ID',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   authFailedAt: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'authFailedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Auth failed at',
       description: 'Auth failed at',
       icon: 'IconX',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   lastCredentialsRefreshedAt: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'lastCredentialsRefreshedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last credentials refreshed at',
       description: 'Last credentials refreshed at',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   handleAliases: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'handleAliases',
       type: FieldMetadataType.TEXT,
       label: 'Handle Aliases',
       description: 'Handle Aliases',
       icon: 'IconMail',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   scopes: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'scopes',
       type: FieldMetadataType.ARRAY,
       label: 'Scopes',
       description: 'Scopes',
       icon: 'IconSettings',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   connectionParameters: createStandardFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'connectionParameters',
       type: FieldMetadataType.RAW_JSON,
       label: 'Custom Connection Parameters',
       description: 'JSON object containing custom connection parameters',
       icon: 'IconSettings',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   accountOwner: createStandardRelationFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'accountOwner',
       label: 'Account Owner',
       description: 'Account Owner',
@@ -251,9 +280,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageChannels: createStandardRelationFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageChannels',
       label: 'Message Channels',
       description: 'Message Channels',
@@ -269,9 +298,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarChannels: createStandardRelationFieldFlatMetadata({
-    objectName: 'connectedAccount',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarChannels',
       label: 'Calendar Channels',
       description: 'Calendar Channels',

@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildOpportunityStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'opportunity'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'opportunity'>, 'context'>): Record<
+  AllStandardObjectFieldName<'opportunity'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +58,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -71,14 +79,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -89,58 +99,66 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Opportunity-specific fields
   name: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
       label: 'Name',
       description: 'The opportunity name',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   amount: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'amount',
       type: FieldMetadataType.CURRENCY,
       label: 'Amount',
       description: 'Opportunity amount',
       icon: 'IconCurrencyDollar',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   closeDate: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'closeDate',
       type: FieldMetadataType.DATE_TIME,
       label: 'Close date',
       description: 'Opportunity close date',
       icon: 'IconCalendarEvent',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   stage: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'stage',
       type: FieldMetadataType.SELECT,
       label: 'Stage',
@@ -165,14 +183,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
         },
         { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   position: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
@@ -181,14 +201,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
       label: 'Created by',
@@ -196,14 +218,16 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
       label: 'Search vector',
@@ -211,16 +235,18 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   pointOfContact: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'pointOfContact',
       label: 'Point of Contact',
       description: 'Opportunity point of contact',
@@ -238,9 +264,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: 'Opportunity company',
@@ -258,9 +284,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the opportunity',
@@ -277,9 +303,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   taskTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'taskTargets',
       label: 'Tasks',
       description: 'Tasks tied to the opportunity',
@@ -296,9 +322,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   noteTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'noteTargets',
       label: 'Notes',
       description: 'Notes tied to the opportunity',
@@ -315,9 +341,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the opportunity',
@@ -334,9 +360,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'opportunity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the opportunity.',

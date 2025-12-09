@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildPersonStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'person'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'person'>, 'context'>): Record<
+  AllStandardObjectFieldName<'person'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +58,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -71,14 +79,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -89,44 +99,50 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Person-specific fields
   name: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.FULL_NAME,
       label: 'Name',
       description: "Contact's name",
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   email: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'email',
       type: FieldMetadataType.TEXT,
       label: 'Email',
       description: "Contact's Email (deprecated)",
       icon: 'IconMail',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   emails: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'emails',
       type: FieldMetadataType.EMAILS,
       label: 'Emails',
@@ -137,70 +153,80 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         maxNumberOfValues: 1,
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   linkedinLink: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'linkedinLink',
       type: FieldMetadataType.LINKS,
       label: 'Linkedin',
       description: "Contact's Linkedin account",
       icon: 'IconBrandLinkedin',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   xLink: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'xLink',
       type: FieldMetadataType.LINKS,
       label: 'X',
       description: "Contact's X/Twitter account",
       icon: 'IconBrandX',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   jobTitle: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'jobTitle',
       type: FieldMetadataType.TEXT,
       label: 'Job Title',
       description: "Contact's job title",
       icon: 'IconBriefcase',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   phone: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'phone',
       type: FieldMetadataType.TEXT,
       label: 'Phone',
       description: "Contact's phone number (deprecated)",
       icon: 'IconPhone',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   phones: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'phones',
       type: FieldMetadataType.PHONES,
       label: 'Phones',
@@ -210,28 +236,32 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         maxNumberOfValues: 1,
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   city: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'city',
       type: FieldMetadataType.TEXT,
       label: 'City',
       description: "Contact's city",
       icon: 'IconMap',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   avatarUrl: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
       label: 'Avatar',
@@ -239,14 +269,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   position: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
@@ -255,14 +287,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
       label: 'Created by',
@@ -270,16 +304,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: "Contact's company",
@@ -297,9 +333,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   pointOfContactForOpportunities: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'pointOfContactForOpportunities',
       label: 'Opportunities',
       description:
@@ -316,9 +352,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   taskTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'taskTargets',
       label: 'Tasks',
       description: 'Tasks tied to the contact',
@@ -335,9 +371,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   noteTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'noteTargets',
       label: 'Notes',
       description: 'Notes tied to the contact',
@@ -354,9 +390,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the contact',
@@ -373,9 +409,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the contact.',
@@ -392,9 +428,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -411,9 +447,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
@@ -430,9 +466,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timelineActivities',
       label: 'Events',
       description: 'Events linked to the person',
@@ -449,9 +485,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'person',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
       label: 'Search vector',
@@ -459,8 +495,10 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

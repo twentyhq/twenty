@@ -6,26 +6,27 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildCalendarChannelStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'calendarChannel'>, 'context'>): Record<
   AllStandardObjectFieldName<'calendarChannel'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -35,14 +36,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +55,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -69,14 +74,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -85,28 +92,32 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   handle: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'handle',
       type: FieldMetadataType.TEXT,
       label: 'Handle',
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   visibility: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'visibility',
       type: FieldMetadataType.SELECT,
       label: 'Visibility',
@@ -123,14 +134,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
           color: 'orange',
         },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   isContactAutoCreationEnabled: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'isContactAutoCreationEnabled',
       type: FieldMetadataType.BOOLEAN,
       label: 'Is Contact Auto Creation Enabled',
@@ -138,14 +151,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       icon: 'IconUserCircle',
       isNullable: false,
       defaultValue: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   contactAutoCreationPolicy: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'contactAutoCreationPolicy',
       type: FieldMetadataType.SELECT,
       label: 'Contact auto creation policy',
@@ -175,14 +190,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
         },
         { value: 'NONE', label: 'None', color: 'red', position: 3 },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   isSyncEnabled: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'isSyncEnabled',
       type: FieldMetadataType.BOOLEAN,
       label: 'Is Sync Enabled',
@@ -190,14 +207,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       icon: 'IconRefresh',
       isNullable: false,
       defaultValue: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   syncCursor: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'syncCursor',
       type: FieldMetadataType.TEXT,
       label: 'Sync Cursor',
@@ -205,14 +224,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
         'Sync Cursor. Used for syncing events from the calendar provider',
       icon: 'IconReload',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   syncStatus: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'syncStatus',
       type: FieldMetadataType.SELECT,
       label: 'Sync status',
@@ -241,14 +262,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
           color: 'red',
         },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   syncStage: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'syncStage',
       type: FieldMetadataType.SELECT,
       label: 'Sync stage',
@@ -301,42 +324,48 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
           color: 'gray',
         },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   syncStageStartedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'syncStageStartedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Sync stage started at',
       description: 'Sync stage started at',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   syncedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'syncedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last sync date',
       description: 'Last sync date',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   throttleFailureCount: createStandardFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'throttleFailureCount',
       type: FieldMetadataType.NUMBER,
       label: 'Throttle Failure Count',
@@ -344,14 +373,16 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       icon: 'IconX',
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   connectedAccount: createStandardRelationFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'connectedAccount',
       label: 'Connected Account',
       description: 'Connected Account',
@@ -369,9 +400,9 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
-    objectName: 'calendarChannel',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarChannelEventAssociations',
       label: 'Calendar Channel Event Associations',
       description: 'Calendar Channel Event Associations',

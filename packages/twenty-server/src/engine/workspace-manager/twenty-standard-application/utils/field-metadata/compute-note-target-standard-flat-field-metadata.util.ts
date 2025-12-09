@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildNoteTargetStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'noteTarget'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'noteTarget'>, 'context'>): Record<
+  AllStandardObjectFieldName<'noteTarget'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +58,16 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -71,14 +79,16 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -89,16 +99,18 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   note: createStandardRelationFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'note',
       label: 'Note',
       description: 'NoteTarget note',
@@ -116,9 +128,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   person: createStandardRelationFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'person',
       label: 'Person',
       description: 'NoteTarget person',
@@ -136,9 +148,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: 'NoteTarget company',
@@ -156,9 +168,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'NoteTarget opportunity',
@@ -176,9 +188,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   custom: createStandardRelationFieldFlatMetadata({
-    objectName: 'noteTarget',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'custom',
       label: 'Custom',
       description: 'NoteTarget custom object',

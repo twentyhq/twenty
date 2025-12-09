@@ -8,13 +8,9 @@ import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-
-const TWENTY_STANDARD_APPLICATION_ID =
-  TWENTY_STANDARD_APPLICATION.universalIdentifier;
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardFieldOptions<O extends AllStandardObjectName> = {
   fieldName: AllStandardObjectFieldName<O>;
@@ -29,25 +25,18 @@ export type CreateStandardFieldOptions<O extends AllStandardObjectName> = {
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings?: Record<string, unknown> | null;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
-  createdAt: Date;
 };
 
-export type CreateStandardFieldArgs<O extends AllStandardObjectName> = {
-  objectName: O;
-  workspaceId: string;
-  options: CreateStandardFieldOptions<O>;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
+export type CreateStandardFieldArgs<
+  O extends AllStandardObjectName = AllStandardObjectName,
+> = StandardBuilderArgs<'fieldMetadata', O, CreateStandardFieldOptions<O>>;
 
 export const createStandardFieldFlatMetadata = <
   O extends AllStandardObjectName,
 >({
   objectName,
   workspaceId,
-  options,
-  standardFieldMetadataIdByObjectAndFieldName,
-}: CreateStandardFieldArgs<O>): FlatFieldMetadata => {
-  const {
+  context: {
     fieldName,
     type,
     label,
@@ -60,9 +49,11 @@ export const createStandardFieldFlatMetadata = <
     defaultValue = null,
     settings = null,
     options: fieldOptions = null,
-    createdAt,
-  } = options;
-
+  },
+  standardFieldMetadataIdByObjectAndFieldName,
+  twentyStandardApplicationId,
+  now,
+}: CreateStandardFieldArgs<O>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
   const fieldIds =
@@ -74,7 +65,7 @@ export const createStandardFieldFlatMetadata = <
     id: fieldIds[fieldName],
     universalIdentifier: fieldDefinition.universalIdentifier,
     standardId: null,
-    applicationId: TWENTY_STANDARD_APPLICATION_ID,
+    applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId:
       standardFieldMetadataIdByObjectAndFieldName[objectName].id,
@@ -102,7 +93,7 @@ export const createStandardFieldFlatMetadata = <
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: now,
+    updatedAt: now,
   };
 };

@@ -6,23 +6,27 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildWorkflowRunStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'workflowRun'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'workflowRun'>, 'context'>): Record<
+  AllStandardObjectFieldName<'workflowRun'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -32,14 +36,16 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -49,14 +55,16 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -66,14 +74,16 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -82,70 +92,80 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   name: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
       label: 'Name',
       description: 'Name of the workflow run',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   enqueuedAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'enqueuedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Workflow run enqueued at',
       description: 'Workflow run enqueued at',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   startedAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'startedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Workflow run started at',
       description: 'Workflow run started at',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   endedAt: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'endedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Workflow run ended at',
       description: 'Workflow run ended at',
       icon: 'IconHistory',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   status: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'status',
       type: FieldMetadataType.SELECT,
       label: 'Workflow run status',
@@ -167,70 +187,80 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
         { value: 'STOPPING', label: 'Stopping', position: 5, color: 'orange' },
         { value: 'STOPPED', label: 'Stopped', position: 6, color: 'gray' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
       label: 'Executed by',
       description: 'The executor of the workflow',
       icon: 'IconCreativeCommonsSa',
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   state: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'state',
       type: FieldMetadataType.RAW_JSON,
       label: 'State',
       description: 'State of the workflow run',
       icon: 'IconHierarchy2',
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   context: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'context',
       type: FieldMetadataType.RAW_JSON,
       label: 'Context',
       description: 'Context of the workflow run',
       icon: 'IconHierarchy2',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   output: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'output',
       type: FieldMetadataType.RAW_JSON,
       label: 'Output',
       description: 'Output of the workflow run',
       icon: 'IconHierarchy2',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   position: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
@@ -239,14 +269,16 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
       label: 'Search vector',
@@ -254,14 +286,16 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflowVersion: createStandardRelationFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflowVersion',
       label: 'Workflow version',
       description: 'Workflow version linked to the run.',
@@ -279,9 +313,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Workflow linked to the run.',
@@ -299,9 +333,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workflow run',
@@ -318,9 +352,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'workflowRun',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline activities linked to the run',

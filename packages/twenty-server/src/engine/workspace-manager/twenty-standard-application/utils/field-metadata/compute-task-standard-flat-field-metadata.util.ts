@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildTaskStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'task'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'task'>, 'context'>): Record<
+  AllStandardObjectFieldName<'task'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +58,16 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -71,14 +79,16 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -89,16 +99,18 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Task-specific fields
   position: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
@@ -107,70 +119,80 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   title: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'title',
       type: FieldMetadataType.TEXT,
       label: 'Title',
       description: 'Task title',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   body: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'body',
       type: FieldMetadataType.TEXT,
       label: 'Body (deprecated)',
       description: 'Task body (deprecated - use bodyV2)',
       icon: 'IconFilePencil',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   bodyV2: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'bodyV2',
       type: FieldMetadataType.RICH_TEXT_V2,
       label: 'Body',
       description: 'Task body',
       icon: 'IconFilePencil',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   dueAt: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'dueAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Due Date',
       description: 'Task due date',
       icon: 'IconCalendarEvent',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   status: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'status',
       type: FieldMetadataType.SELECT,
       label: 'Status',
@@ -188,14 +210,16 @@ export const buildTaskStandardFlatFieldMetadatas = ({
         },
         { value: 'DONE', label: 'Done', position: 2, color: 'green' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
       label: 'Created by',
@@ -203,14 +227,16 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
       label: 'Search vector',
@@ -218,16 +244,18 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   taskTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'taskTargets',
       label: 'Relations',
       description: 'Task targets',
@@ -244,9 +272,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Task attachments',
@@ -263,9 +291,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   assignee: createStandardRelationFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'assignee',
       label: 'Assignee',
       description: 'Task assignee',
@@ -283,9 +311,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the task.',
@@ -302,9 +330,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'task',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the task',

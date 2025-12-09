@@ -2,23 +2,27 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildCalendarEventStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'calendarEvent'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'calendarEvent'>, 'context'>): Record<
+  AllStandardObjectFieldName<'calendarEvent'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -28,14 +32,16 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -45,14 +51,16 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -62,14 +70,16 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -78,28 +88,32 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   title: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'title',
       type: FieldMetadataType.TEXT,
       label: 'Title',
       description: 'Title',
       icon: 'IconH1',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   isCanceled: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'isCanceled',
       type: FieldMetadataType.BOOLEAN,
       label: 'Is canceled',
@@ -107,14 +121,16 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarCancel',
       isNullable: false,
       defaultValue: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   isFullDay: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'isFullDay',
       type: FieldMetadataType.BOOLEAN,
       label: 'Is Full Day',
@@ -122,140 +138,160 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconHours24',
       isNullable: false,
       defaultValue: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   startsAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'startsAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Start Date',
       description: 'Start Date',
       icon: 'IconCalendarClock',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   endsAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'endsAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'End Date',
       description: 'End Date',
       icon: 'IconCalendarClock',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   externalCreatedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'externalCreatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation DateTime',
       description: 'Creation DateTime',
       icon: 'IconCalendarPlus',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   externalUpdatedAt: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'externalUpdatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Update DateTime',
       description: 'Update DateTime',
       icon: 'IconCalendarCog',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   description: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'description',
       type: FieldMetadataType.TEXT,
       label: 'Description',
       description: 'Description',
       icon: 'IconFileDescription',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   location: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'location',
       type: FieldMetadataType.TEXT,
       label: 'Location',
       description: 'Location',
       icon: 'IconMapPin',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   iCalUid: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'iCalUid',
       type: FieldMetadataType.TEXT,
       label: 'iCal UID',
       description: 'iCal UID',
       icon: 'IconKey',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   conferenceSolution: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'conferenceSolution',
       type: FieldMetadataType.TEXT,
       label: 'Conference Solution',
       description: 'Conference Solution',
       icon: 'IconScreenShare',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   conferenceLink: createStandardFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'conferenceLink',
       type: FieldMetadataType.LINKS,
       label: 'Meet Link',
       description: 'Meet Link',
       icon: 'IconLink',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarChannelEventAssociations',
       label: 'Calendar Channel Event Associations',
       description: 'Calendar Channel Event Associations',
@@ -271,9 +307,9 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'calendarEvent',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarEventParticipants',
       label: 'Event Participants',
       description: 'Event Participants',

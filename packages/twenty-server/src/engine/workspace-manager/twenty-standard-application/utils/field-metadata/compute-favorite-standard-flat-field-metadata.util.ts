@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildFavoriteStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'favorite'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'favorite'>, 'context'>): Record<
+  AllStandardObjectFieldName<'favorite'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -50,14 +56,16 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -67,14 +75,16 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -83,16 +93,18 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Favorite-specific fields
   position: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.NUMBER,
       label: 'Position',
@@ -101,30 +113,34 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   view: createStandardFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'view',
       type: FieldMetadataType.UUID,
       label: 'ViewId',
       description: 'ViewId',
       icon: 'IconView',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   forWorkspaceMember: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'forWorkspaceMember',
       label: 'Workspace Member',
       description: 'Favorite workspace member',
@@ -142,9 +158,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   person: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'person',
       label: 'Person',
       description: 'Favorite person',
@@ -162,9 +178,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: 'Favorite company',
@@ -182,9 +198,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Favorite opportunity',
@@ -202,9 +218,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Favorite workflow',
@@ -222,9 +238,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowVersion: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflowVersion',
       label: 'Workflow',
       description: 'Favorite workflow version',
@@ -242,9 +258,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowRun: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflowRun',
       label: 'Workflow',
       description: 'Favorite workflow run',
@@ -262,9 +278,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   task: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'task',
       label: 'Task',
       description: 'Favorite task',
@@ -282,9 +298,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   note: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'note',
       label: 'Note',
       description: 'Favorite note',
@@ -302,9 +318,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Favorite dashboard',
@@ -322,9 +338,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favoriteFolder: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favoriteFolder',
       label: 'Favorite Folder',
       description: 'The folder this favorite belongs to',
@@ -342,9 +358,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   custom: createStandardRelationFieldFlatMetadata({
-    objectName: 'favorite',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'custom',
       label: 'Custom',
       description: 'Favorite custom object',
