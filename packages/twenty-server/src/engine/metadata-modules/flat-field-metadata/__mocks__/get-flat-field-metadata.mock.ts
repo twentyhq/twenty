@@ -7,7 +7,7 @@ type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
   Pick<
-    FlatFieldMetadata<T>,
+    FlatFieldMetadata,
     'universalIdentifier' | 'objectMetadataId' | 'type'
   >
 > &
