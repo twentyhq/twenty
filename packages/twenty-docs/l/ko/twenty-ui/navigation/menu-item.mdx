@@ -1,0 +1,458 @@
+---
+title: 메뉴 항목
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+메뉴 또는 탐색 목록에서 사용할 수 있도록 설계된 다용도 메뉴 항목입니다.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형       | 설명                                                                                                           |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| 왼쪽 아이콘   | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘                                                                                |
+| 강조       | 문자열      | 메뉴 항목의 강조 색상을 지정합니다. Options include: `default`, `danger`, and `placeholder` |
+| 텍스트      | 문자열      | 메뉴 항목의 텍스트 콘텐츠                                                                                               |
+| 아이콘 버튼   | 배열       | 메뉴 항목과 연결된 추가 아이콘 버튼을 나타내는 객체 배열                                                                             |
+| 툴팁 열림 여부 | 부울       | 메뉴 항목과 연결된 툴팁의 가시성을 제어합니다                                                                                    |
+| 테스트ID    | 문자열      | 테스트 목적의 데이터-testid 속성                                                                                        |
+| onClick  | function | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수                                                                                     |
+| 클래스 네임   | 문자열      | 추가 스타일을 위한 선택적 이름                                                                                            |
+
+</Tab>
+</Tabs>
+
+## 변형
+
+메뉴 항목 컴포넌트의 다양한 변형은 다음과 같습니다.
+
+### 명령
+
+키보드 단축키를 나타내기 위한 명령 스타일 메뉴 항목
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형       | 설명                              |
+| -------- | -------- | ------------------------------- |
+| 왼쪽 아이콘   | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘   |
+| 텍스트      | 문자열      | 메뉴 항목의 텍스트 콘텐츠                  |
+| 첫 번째 단축키 | 문자열      | 명령어와 연결된 첫 번째 키보드 단축키           |
+| 두 번째 단축키 | 문자열      | 명령어와 연결된 두 번째 키보드 단축키           |
+| 선택됨      | 부울       | 메뉴 항목이 선택되었거나 강조 되었는지 여부를 나타냅니다 |
+| onClick  | function | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수        |
+| 클래스 네임   | 문자열      | 추가 스타일링을 위한 선택적 이름              |
+
+</Tab>
+</Tabs>
+
+### 드래그 가능한
+
+아이콘 버튼을 통해 추가 작업을 수행할 수 있도록 드래그 가능한 메뉴 항목 컴포넌트
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형       | 설명                                                                              |
+| -------- | -------- | ------------------------------------------------------------------------------- |
+| 왼쪽 아이콘   | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘                                                   |
+| 강조       | 문자열      | 메뉴 항목의 강조 색상입니다. 기본, 플레이스홀더, 위험 중 하나가 될 수 있습니다. |
+| 아이콘 버튼   | 배열       | 메뉴 항목과 연결된 추가 아이콘 버튼을 나타내는 객체 배열                                                |
+| 툴팁 열림 여부 | 부울       | 메뉴 항목과 연결된 툴팁의 가시성을 제어합니다                                                       |
+| onClick  | function | 링크가 클릭될 때 트리거되는 콜백 함수                                                           |
+| 텍스트      | 문자열      | 메뉴 항목의 텍스트 콘텐츠                                                                  |
+| 드래그 비활성화 | 부울       | 드래그가 비활성화 되었는지 여부를 나타냅니다                                                        |
+| 클래스 네임   | 문자열      | 추가 스타일링을 위한 선택적 이름                                                              |
+
+</Tab>
+</Tabs>
+
+### 다중 선택
+
+체크박스와 연결된 멀티 선택 기능을 구현하는 방법을 제공합니다.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티    | 유형       | 설명                                                           |
+| ------- | -------- | ------------------------------------------------------------ |
+| 왼쪽 아이콘  | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘                                |
+| 텍스트     | 문자열      | 메뉴 항목의 텍스트 콘텐츠                                               |
+| 선택됨     | 부울       | 메뉴 항목이 선택(체크)되었는지를 나타냅니다. |
+| 선택 변경 시 | function | 체크박스 상태가 변경되었을 때 호출되는 콜백 함수                                  |
+| 클래스 네임  | 문자열      | 추가 스타일링을 위한 선택적 이름                                           |
+
+</Tab>
+</Tabs>
+
+### 다중 선택 아바타
+
+아바타, 선택할 수 있는 체크박스를 포함한 다중 선택 메뉴 아이템
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티    | 유형          | 설명                                                           |
+| ------- | ----------- | ------------------------------------------------------------ |
+| 아바타     | `ReactNode` | 메뉴 항목의 왼쪽에 표시될 아바타 또는 아이콘                                    |
+| 텍스트     | 문자열         | 메뉴 항목의 텍스트 콘텐츠                                               |
+| 선택됨     | 부울          | 메뉴 항목이 선택(체크)되었는지를 나타냅니다. |
+| 선택 변경 시 | function    | 체크박스 상태가 변경되었을 때 호출되는 콜백 함수                                  |
+| 클래스 네임  | 문자열         | 추가 스타일을 위한 선택적 이름                                            |
+
+</Tab>
+</Tabs>
+
+### 탐색
+
+왼쪽에 선택적 아이콘, 텍스트 콘텐츠 및 오른쪽 화살표 아이콘을 포함한 메뉴 항목
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티   | 유형       | 설명                            |
+| ------ | -------- | ----------------------------- |
+| 왼쪽 아이콘 | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘 |
+| 텍스트    | 문자열      | 메뉴 항목의 텍스트 콘텐츠                |
+| 클릭 시   | function | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수      |
+| 클래스 네임 | 문자열      | 추가 스타일링을 위한 선택적 이름            |
+
+</Tab>
+</Tabs>
+
+### 선택
+
+선택적 왼쪽 콘텐츠(아이콘 및 텍스트)와 상태 표시기(체크 아이콘)를 포함한 선택 가능한 메뉴 항목
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형       | 설명                                                           |
+| -------- | -------- | ------------------------------------------------------------ |
+| 왼쪽 아이콘   | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘                                |
+| 텍스트      | 문자열      | 메뉴 항목의 텍스트 콘텐츠                                               |
+| 선택됨      | 부울       | 메뉴 항목이 선택(체크)되었는지를 나타냅니다. |
+| disabled | 부울       | 메뉴 항목이 비활성화되었는지를 나타냅니다.                      |
+| 호버됨      | 부울       | 메뉴 항목에 현재 커서가 오버되어 있는지를 나타냅니다.               |
+| onClick  | function | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수                                     |
+| 클래스 네임   | 문자열      | 추가 스타일링을 위한 선택적 이름                                           |
+
+</Tab>
+</Tabs>
+
+### 선택 아바타
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형          | 설명                                                           |
+| -------- | ----------- | ------------------------------------------------------------ |
+| 아바타      | `ReactNode` | 메뉴 항목의 왼쪽에 표시될 아바타 또는 아이콘                                    |
+| 텍스트      | 문자열         | 메뉴 항목의 텍스트 콘텐츠                                               |
+| 선택됨      | 부울          | 메뉴 항목이 선택(체크)되었는지를 나타냅니다. |
+| disabled | 부울          | 메뉴 항목이 비활성화되었는지를 나타냅니다.                      |
+| 호버됨      | 부울          | 메뉴 항목에 현재 커서가 오버되어 있는지를 나타냅니다.               |
+| 테스트ID    | 문자열         | 테스트 목적의 데이터-testid 속성                                        |
+| 클릭 시     | function    | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수                                     |
+| 클래스 네임   | 문자열         | 추가 스타일을 위한 선택적 이름                                            |
+
+</Tab>
+</Tabs>
+
+### 색상 선택
+
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티     | 유형       | 설명                                                                                                                                                             |
+| -------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 색상       | 문자열      | 메뉴 항목에 샘플로 표시할 테마 색상입니다. 옵션에는 `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray`가 포함됩니다. |
+| 선택됨      | 부울       | 메뉴 항목이 선택(체크)되었는지를 나타냅니다.                                                                                                   |
+| disabled | 부울       | 메뉴 항목이 비활성화되었는지를 나타냅니다.                                                                                                                        |
+| 호버됨      | 부울       | 메뉴 항목에 현재 커서가 오버되어 있는지를 나타냅니다.                                                                                                                 |
+| 변형       | 문자열      | 색상 샘플의 변형입니다. `default` 또는 `pipeline` 중 하나일 수 있습니다.                                                                            |
+| onClick  | function | 메뉴 항목을 클릭할 때 트리거되는 콜백 함수                                                                                                                                       |
+| 클래스 네임   | 문자열      | 추가 스타일링을 위한 선택적 이름                                                                                                                                             |
+
+</Tab>
+</Tabs>
+
+### 토글
+
+사용자가 특정 기능을 활성화하거나 비활성화할 수 있도록 전환 스위치가 있는 메뉴 항목
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티           | 유형       | 설명                                                 |
+| -------------- | -------- | -------------------------------------------------- |
+| 왼쪽 아이콘         | 아이콘 컴포넌트 | 메뉴 항목의 텍스트 앞에 표시되는 선택적 왼쪽 아이콘                      |
+| 텍스트            | 문자열      | 메뉴 항목의 텍스트 콘텐츠                                     |
+| 토글됨            | 부울       | 전환 스위치가 "켬"인지 "끔"인지 상태를 나타냅니다.     |
+| onToggleChange | function | 토글 스위치 상태가 변경될 때 트리거되는 콜백 함수                       |
+| 토글 크기          | 문자열      | 토글 스위치의 크기입니다. It can be either \ |
+| 클래스 네임         | 문자열      | 추가 스타일을 위한 선택적 이름                                  |
+
+</Tab>
+</Tabs>

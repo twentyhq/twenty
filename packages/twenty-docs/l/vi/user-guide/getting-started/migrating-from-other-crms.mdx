@@ -1,0 +1,91 @@
+---
+title: Di chuyển từ CRM khác
+info: Hướng dẫn từng bước để di chuyển dữ liệu và quy trình từ các hệ thống CRM khác sang Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Hướng dẫn ngắn để nắm bắt những điều cơ bản về Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Trước khi bạn bắt đầu
+
+### 1. Kiểm tra Dữ liệu Hiện tại của Bạn
+
+- **Chọn một vài đối tượng và trường để di chuyển:** việc di chuyển này là cơ hội để bắt đầu mới.
+- **Xuất dữ liệu này** từ CRM hiện tại của bạn
+- **Xóa các bản sao** và các bản ghi lỗi thời
+- **Liệt kê các quy trình làm việc** và tự động hóa đang hoạt động
+
+### 2. Tạo Mô hình Dữ liệu Mới của Bạn
+
+Thực hiện theo [hướng dẫn mô hình dữ liệu](/l/vi/user-guide/data-model/customize-your-data-model) của chúng tôi để:
+
+- **Thiết kế mô hình dữ liệu** mà bạn cần
+- **Ánh xạ các trường hiện có** sang các đối tượng / trường tiêu chuẩn của Twenty
+- **Xác định các đối tượng / trường tùy chỉnh** mà bạn cần
+- **Tạo chúng** trong Cài đặt → Mô hình dữ liệu
+
+## Quá trình di chuyển
+
+### 1. Nhập Dữ liệu của Bạn
+
+**Thứ tự đề nghị:**
+
+1. **Công ty** trước tiên (như các bản hồ sơ cơ sở)
+2. **Người** thứ hai (liên kết với công ty)
+3. **Cơ hội** thứ ba (liên kết với người / công ty)
+
+Sử dụng nhập CSV qua Menu Lệnh  `Cmd + K` (Mac) hoặc `Ctrl + K` (Windows). Xem [hướng dẫn nhập dữ liệu](/l/vi/user-guide/getting-started/import-export-data) của chúng tôi để biết hướng dẫn chi tiết.
+
+### 2. Tái tạo Quy trình làm việc
+
+- **Start simple** - recreate your most critical automations first
+- **Sử dụng trình xây dựng quy trình công việc của Twenty** để thay thế việc tự động hóa hiện có
+
+## Thách thức Chung
+
+### Vấn đề Định dạng Dữ liệu
+
+- **Địa chỉ email** - xóa các bản sao (yêu cầu đối tượng Người)
+- **Tên miền** - xóa các bản sao (yêu cầu đối tượng Công ty)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Định dạng ngày** - đảm bảo định dạng nhất quán (YYYY-MM-DD) hoặc chỉnh sửa định dạng này trong Cài đặt → Trải nghiệm
+- **Số điện thoại** - sử dụng định dạng quốc tế (+1234567890)
+
+### Ánh xạ Quan hệ
+
+Để nhập quan hệ giữa các bản ghi sử dụng chức năng nhập csv, bạn có thể sử dụng các trường sau
+
+- **Sử dụng ID của Twenty** cho các mối quan hệ phức tạp
+- **Sử dụng địa chỉ email** để liên kết các bản ghi Người
+- **Sử dụng tên miền** để liên kết các bản ghi Công ty
+- **Sử dụng bất kỳ trường nào khác bạn đã đặt là duy nhất**, điều này có thể thực hiện trong phần Mô hình Dữ liệu.
+  Đọc [hướng dẫn nhập xuất dữ liệu](/l/vi/user-guide/getting-started/import-export-data) của chúng tôi để biết hướng dẫn chi tiết về việc tạo quan hệ trong khi nhập CSV.
+
+## Trợ giúp chuyên nghiệp
+
+### Dịch vụ của Chúng tôi
+
+- **Gói đào tạo nhập môn 4 giờ** cho việc di chuyển có hướng dẫn
+- **Đối tác triển khai** cho các dự án tiên tiến hơn
+
+Khám phá [dịch vụ triển khai](/l/vi/user-guide/getting-started/implementation-services) của chúng tôi.
+
+## Di chuyển từ Tự quản lý sang Đám mây
+
+Nếu bạn đang chuyển từ Twenty tự quản lý sang Twenty Cloud:
+
+1. **Xuất dữ liệu của bạn** từ phiên bản tự quản lý của bạn
+2. **Thực hiện theo quy trình di chuyển tiêu chuẩn** ở trên
+3. **Chúng tôi có thể cung cấp sự hỗ trợ di chuyển**, hãy liên hệ với đội ngũ của chúng tôi
+
+## Danh sách kiểm tra sau di chuyển
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

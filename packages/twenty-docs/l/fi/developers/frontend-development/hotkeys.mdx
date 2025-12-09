@@ -1,0 +1,183 @@
+---
+title: Pikanäppäimet
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Esittely
+
+Kun sinun tarvitsee kuunnella pikanäppäintä, käytät yleensä `onKeyDown`-tapahtumakuuntelijaa.
+
+`Twenty-front` -ohjelmassa sinulla voi olla ristiriitoja samojen pikanäppäinten kanssa, joita käytetään eri komponenteissa, jotka ovat asennettuna samanaikaisesti.
+
+For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
+
+## The `useScopedHotkeys` hook
+
+Tämän ongelman käsittelemiseksi meillä on mukautettu hook, joka mahdollistaa pikanäppäinten kuuntelemisen ilman ristiriitoja.
+
+Asetat sen komponenttiin, ja se kuuntelee pikanäppäimiä vain silloin, kun komponentti on asennettuna JA kun määritetty **pikanäppäinalue** on aktiivinen.
+
+## Miten kuunnella pikanäppäimiä käytännössä?
+
+On kaksi vaihetta pikanäppäin kuuntelun asettamiseen:
+
+1. Aseta [pikanäppäinalue](#what-is-a-hotkey-scope-), joka kuuntelee pikanäppäimiä
+2. Käytä `useScopedHotkeys` hookia pikanäppäinten kuuntelemiseen
+
+Pikanäppäinten alueiden asettaminen on vaadittua jopa yksinkertaisilla sivuilla, koska muut käyttöliittymäelementit, kuten vasen valikko tai komentovalikko, voivat myös kuunnella pikanäppäimiä.
+
+## Pikanäppäinten käyttötilanteet
+
+Yleisesti ottaen sinulla on kaksi käyttötilannetta, jotka vaativat pikanäppäimiä:
+
+1. Sivulla tai komponentissa, joka on asennettu sivulle
+2. In a modal-type component that takes the focus due to a user action
+
+Toinen käyttötilanne voi esiintyä rekursiivisesti: esimerkiksi avattava valikko modalissa.
+
+### Pikanäppäinten kuunteleminen sivulla
+
+Esimerkki:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Listening to hotkeys in a modal-type component
+
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+
+Here the user interaction is changing the scope.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Sitten modalikomponentissa:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+On tärkeää käyttää tätä mallia, kun et ole varma, riittääkö pelkän useEffectin käyttö asennettaessa/poistettaessa ristiriitojen välttämiseksi.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## Mikä on pikanäppäinalue?
+
+Pikanäppäinalue on merkkijono, joka edustaa kontekstia, jossa pikanäppäimet ovat aktiivisia. Se on yleensä enkoodattu enumiksi.
+
+When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
+
+Voit asettaa vain yhden alueen kerrallaan.
+
+Esimerkkinä pikanäppäinalueista, jotka on määritelty jokaiselle sivulle `PageHotkeyScope`-enumissa:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+But this Recoil state should never be handled manually ! Näemme, kuinka sitä käytetään seuraavassa osiossa.
+
+## Miten se toimii sisäisesti?
+
+We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
+
+Luoimme myös Recoil-tilan pikanäppäinalue-tilan käsittelemiseksi ja teimme sen saatavilla koko sovelluksessa.

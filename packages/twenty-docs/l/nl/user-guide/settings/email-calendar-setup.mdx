@@ -1,0 +1,118 @@
+---
+title: E-mail- en agenda-instellingen
+info: "Verbind uw e-mail- en agendaaccounts."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Configureer uw Twenty-werkruimte-instellingen en voorkeuren
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Verbindingsopties
+
+### Google-account (Gmail & Google Agenda)
+
+1. Ga naar **Instellingen → Accounts**
+2. Klik op **Account toevoegen**
+3. Selecteer **Doorgaan met Google**
+4. Autoriseer Twenty om toegang te krijgen tot uw Gmail en Google Agenda.
+5. Uw e-mails en agenda-items worden automatisch gesynchroniseerd.
+
+### Microsoft-account (Outlook & Microsoft Agenda)
+
+1. Ga naar **Instellingen → Accounts**
+2. Klik op **Account toevoegen**
+3. Selecteer **Doorgaan met Microsoft**
+4. Autoriseer Twenty om toegang te krijgen tot uw Outlook en Microsoft Agenda.
+5. Uw e-mails en agenda-items worden automatisch gesynchroniseerd.
+
+### SMTP/CalDAV-instellingen (andere providers)
+
+Voor andere e-mail- en agenda-aanbieders:
+
+1. Ga naar **Instellingen → Releases → Lab** om de functie in te schakelen.
+2. Ga terug naar **Instellingen → Accounts**
+3. Configureer SMTP-instellingen voor e-mail.
+4. Configureer CalDAV-instellingen voor agenda.
+5. Test de verbinding.
+
+### Meerdere postvakken
+
+- **Onbeperkte accounts**: Verbind meerdere e-mailaccounts per gebruiker.
+- **Accountbeheer**: Wissel tussen verschillende postvakken.
+- **Synchronisatie-instellingen**: Configureer verschillende instellingen per postvak.
+
+<Warning>
+Er kunnen alleen echte postvakken verbonden worden (bijv. support@domain.com met eigen inbox). E-mailaliassen die naar een ander postvak doorsturen, kunnen niet aan Twenty worden gekoppeld.
+</Warning>
+
+## E-mailconfiguratie
+
+### Berichtzichtbaarheid
+
+Kies verschillende zichtbaarheidsniveaus voor uw e-mails:
+
+- **Alleen metadata**: Deel alleen basisinformatie (verzender, ontvanger, datum, tijd).
+- **Onderwerp en metadata**: Deel de onderwerpregel samen met metadata.
+- **Alle e-mailinhoud**: Deel de volledige e-mailinhoud inclusief bijlagen.
+
+### Automatische contactcreatie
+
+- **Gedeactiveerd**: Geen automatische contactcreatie.
+- **Voor verzonden & ontvangen berichten**: Creëer contacten voor alle externe e-mailinteracties.
+- **Alleen voor verzonden berichten**: Creëer contacten alleen voor e-mails die u verzendt.
+- **Opmerking**: Interne e-mails (zelfde domein) worden nooit gesynchroniseerd om privacy te behouden.
+
+### Controleer welke e-mails worden gesynchroniseerd met de berichtmapselectie (Lab-functie).
+
+Controleer welke e-mailmappen synchroniseren met Twenty:
+
+1. Ga naar **Instellingen → Releases → Lab** en schakel **Berichtmap** in.
+2. Ga terug naar **Instellingen → Accounts** en selecteer uw verbonden e-mailaccount.
+3. Kies welke mappen gesynchroniseerd worden:
+   - **Inbox**: Primaire inkomende e-mails.
+   - **Verzonden**: Uitgaande e-mails die u hebt verzonden.
+   - **Aangepaste mappen**: Specifieke mappen die u wilt opnemen.
+   - **Mappen uitsluiten**: Sla mappen over zoals Spam, Prullenbak of persoonlijke mappen.
+
+Dit geeft u precieze controle over welke e-mails in uw CRM komen zonder alles te synchroniseren.
+
+**Wat wordt gesynchroniseerd:**
+
+- **Externe e-mails**: Alle e-mails met externe contacten uit geselecteerde mappen.
+- **Interne e-mails**: Niet gesynchroniseerd (e-mails met hetzelfde domein blijven privé).
+- **Bijlagen**: Komt in H1 2026.
+
+**Opmerking**: We bieden geen CC-e-mailadres voor selectieve synchronisatie. Gebruik in plaats daarvan de functie Berichtmap hierboven voor hetzelfde niveau van controle over welke e-mails met Twenty synchroniseren.
+
+## Agenda-configuratie
+
+### Gebeurteniszichbaarheid
+
+Kies wat zichtbaar is voor andere gebruikers in uw werkruimte:
+
+- **Alles**: De volledige evenementdetails worden gedeeld met uw team.
+- **Metadata**: Alleen datum en deelnemers worden gedeeld met uw team.
+
+### Automatische contactcreatie voor vergaderingen
+
+- **Ja**: Maak automatisch contacten aan voor vergaderdeelnemers die niet in uw CRM staan.
+- **Nee**: Koppel vergaderingen alleen met bestaande contacten.
+
+### Controleer welke evenementen worden gesynchroniseerd.
+
+- **Vergaderimport**: Importeer automatisch kalendergebeurtenissen.
+- **Contactkoppeling**: Koppel vergaderingen aan Persoon- en Bedrijfsrecords.
+
+**Wat wordt gesynchroniseerd:**
+
+- **Vergaderingen**: Kalendergebeurtenissen met externe deelnemers.
+- **Contactkoppeling**: Evenementen automatisch gekoppeld aan CRM-records.
+- **Teamevenementen**: Gedeelde kalenderzichtbaarheid.
+
+## Synchronisatiefrequentie
+
+**Updates elke 5 minuten**: Zowel e-mail als agendagegevens worden automatisch om de 5 minuten na de eerste import gesynchroniseerd.
+
+

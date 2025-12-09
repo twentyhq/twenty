@@ -803,7 +803,10 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { multiSelectField: { is: 'NULL' } },
       restFilterInput: 'multiSelectField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return record.multiSelectField === null;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
     {
@@ -923,7 +926,9 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { arrayField: { is: 'NULL' } },
       restFilterInput: 'arrayField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return record.arrayField === null;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
     //TODO - null and empty array should be equivalent

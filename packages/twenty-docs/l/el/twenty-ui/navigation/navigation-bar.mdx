@@ -1,0 +1,52 @@
+---
+title: Γραμμή Πλοήγησης
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Αποδίδει μια γραμμή πλοήγησης που περιέχει πολλαπλά στοιχεία `NavigationBarItem`.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Ιδιότητες      | Τύπος         | Περιγραφή                                                                                                                                                                                                                                                                |
+| -------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| activeItemName | αλφαριθμητικό | Το όνομα του τρέχοντος ενεργού στοιχείου πλοήγησης                                                                                                                                                                                                                       |
+| items          | σειρά         | Ένας πίνακας αντικειμένων που αντιπροσωπεύει κάθε στοιχείο πλοήγησης. Κάθε αντικείμενο περιέχει το `name` του στοιχείου, το στοιχείο `Icon` που θα εμφανίζεται, και μια συνάρτηση `onClick` που θα καλείται όταν το στοιχείο κλικάρεται. |
+
+</Tab>
+</Tabs>

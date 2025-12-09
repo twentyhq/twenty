@@ -1,0 +1,96 @@
+---
+title: Команди фронтенду
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## Корисні команди
+
+### Запуск додатка
+
+```bash
+npx nx start twenty-front
+```
+
+### Перегенерувати GraphQL схему, спираючись на API GraphQL схему
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+АБО
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Лінт
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Переклади
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Тест
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Технічний стек
+
+Проект має чистий і простий стек з мінімальним кодом-шаблоном.
+
+**Додаток**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Тестування**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Інструменти**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Архітектура
+
+### Маршрутизація
+
+[React Router](https://reactrouter.com/) відповідає за маршрутизацію.
+
+Щоб уникнути непотрібних [перемальовувань](/l/uk/developers/frontend-development/best-practices-front#managing-re-renders), вся логіка маршрутизації знаходиться в `useEffect` у `PageChangeEffect`.
+
+### Управління станом
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) відповідає за управління станом.
+
+Будь ласка, відвідайте [кращі практики](/l/uk/developers/frontend-development/best-practices-front#state-management) для отримання додаткової інформації про управління станом.
+
+## Тестування
+
+[Jest](https://jestjs.io/) слугує інструментом для юніт-тестування, а [Storybook](https://storybook.js.org/) — для тестування компонентів.
+
+Jest в основному використовується для тестування утиліт-функцій, а не самих компонентів.
+
+Storybook призначений для тестування поведінки ізольованих компонентів, а також для демонстрації дизайн-системи.
+

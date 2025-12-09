@@ -1,4 +1,4 @@
-import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { type RelationOnDeleteAction } from 'twenty-shared/types';
 
 export const convertOnDeleteActionToOnDelete = (
   onDeleteAction: RelationOnDeleteAction | undefined,

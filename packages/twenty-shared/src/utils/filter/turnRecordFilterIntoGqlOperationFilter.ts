@@ -70,13 +70,11 @@ type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies?: RecordFilterValueDependencies;
   recordFilter: RecordFilter;
   fieldMetadataItems: FieldShared[];
-  recordIdsForUuid?: string[];
 };
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
   fieldMetadataItems,
-  recordIdsForUuid,
   filterValueDependencies,
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
@@ -417,6 +415,14 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             [correspondingFieldMetadataItem.name]: {
               eq: parseFloat(recordFilter.value),
             } as FloatFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                eq: parseFloat(recordFilter.value),
+              } as FloatFilter,
+            },
           };
         default:
           throw new Error(
@@ -1303,7 +1309,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       };
     }
     case 'UUID': {
-      const recordIds = recordIdsForUuid;
+      const recordIds = arrayOfUuidOrVariableSchema.parse(recordFilter.value);
 
       if (!isDefined(recordIds) || recordIds.length === 0) return;
 

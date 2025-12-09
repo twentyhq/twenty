@@ -8,8 +8,8 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -36,7 +36,6 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -45,13 +44,35 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
-  private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
   protected readonly logger = new Logger(WorkspaceService.name);
+
+  private readonly WORKSPACE_FIELD_PERMISSIONS: Record<
+    string,
+    PermissionFlagType
+  > = {
+    subdomain: PermissionFlagType.WORKSPACE,
+    customDomain: PermissionFlagType.WORKSPACE,
+    displayName: PermissionFlagType.WORKSPACE,
+    logo: PermissionFlagType.WORKSPACE,
+    trashRetentionDays: PermissionFlagType.WORKSPACE,
+    inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
+    isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
+    allowImpersonation: PermissionFlagType.SECURITY,
+    isGoogleAuthEnabled: PermissionFlagType.SECURITY,
+    isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
+    isPasswordAuthEnabled: PermissionFlagType.SECURITY,
+    editableProfileFields: PermissionFlagType.SECURITY,
+    isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
+    defaultRoleId: PermissionFlagType.ROLES,
+    fastModel: PermissionFlagType.WORKSPACE,
+    smartModel: PermissionFlagType.WORKSPACE,
+  };
 
   constructor(
     @InjectRepository(WorkspaceEntity)
@@ -94,14 +115,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.validateSecurityPermissions({
-      payload,
-      userWorkspaceId,
-      workspaceId: workspace.id,
-      apiKey,
-    });
-
-    await this.validateWorkspacePermissions({
+    await this.validateWorkspaceUpdatePermissions({
       payload,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -227,8 +241,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
+    await this.featureFlagService.enableFeatureFlags(
+      DEFAULT_FEATURE_FLAGS,
+      workspace.id,
+    );
+
     await this.workspaceManagerService.init({
-      workspaceId: workspace.id,
+      workspace,
       userId: user.id,
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
@@ -247,7 +266,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
-    await this.userWorkspaceRepository.delete({ workspaceId: workspace.id });
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId: workspace.id,
+    });
 
     if (this.billingService.isBillingEnabled()) {
       await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
@@ -259,12 +280,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
-    //TODO: delete all logs when #611 closed
-
-    this.logger.log(
-      `${softDelete ? 'Soft' : 'Hard'} deleting workspace ${id} ...`,
-    );
-
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -335,71 +350,36 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     userId: string,
     softDelete = false,
   ) {
-    if (softDelete) {
-      await this.userWorkspaceRepository.softDelete({
-        userId,
-        workspaceId,
-      });
-    } else {
-      await this.userWorkspaceRepository.delete({
-        userId,
-        workspaceId,
-      });
-    }
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId,
       },
     });
 
-    if (userWorkspaces.length === 0) {
+    const userWorkspaceOfRemovedWorkspaceMember = userWorkspaces?.find(
+      (userWorkspace: UserWorkspaceEntity) =>
+        userWorkspace.workspaceId === workspaceId,
+    );
+
+    if (isDefined(userWorkspaceOfRemovedWorkspaceMember)) {
+      await this.userWorkspaceService.deleteUserWorkspace({
+        userWorkspaceId: userWorkspaceOfRemovedWorkspaceMember.id,
+        softDelete,
+      });
+    }
+
+    const hasOtherUserWorkspaces = isDefined(
+      userWorkspaceOfRemovedWorkspaceMember,
+    )
+      ? userWorkspaces.length > 1
+      : userWorkspaces.length > 0;
+
+    if (!hasOtherUserWorkspaces) {
       await this.userRepository.softDelete(userId);
     }
   }
 
-  private async validateSecurityPermissions({
-    payload,
-    userWorkspaceId,
-    workspaceId,
-    apiKey,
-  }: {
-    payload: Partial<WorkspaceEntity>;
-    userWorkspaceId?: string;
-    workspaceId: string;
-    apiKey?: string;
-  }) {
-    if (
-      'isGoogleAuthEnabled' in payload ||
-      'isMicrosoftAuthEnabled' in payload ||
-      'isPasswordAuthEnabled' in payload ||
-      'isPublicInviteLinkEnabled' in payload
-    ) {
-      if (!userWorkspaceId) {
-        throw new Error('Missing userWorkspaceId in authContext');
-      }
-
-      const userHasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          setting: PermissionFlagType.SECURITY,
-          workspaceId: workspaceId,
-          apiKeyId: apiKey,
-        });
-
-      if (!userHasPermission) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-          {
-            userFriendlyMessage: msg`You do not have permission to manage security settings. Please contact your workspace administrator.`,
-          },
-        );
-      }
-    }
-  }
-
-  private async validateWorkspacePermissions({
+  private async validateWorkspaceUpdatePermissions({
     payload,
     userWorkspaceId,
     workspaceId,
@@ -413,36 +393,63 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
-      'displayName' in payload ||
-      'subdomain' in payload ||
-      'customDomain' in payload ||
-      'logo' in payload ||
-      'trashRetentionDays' in payload
+      workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
     ) {
-      if (!userWorkspaceId) {
-        throw new Error('Missing userWorkspaceId in authContext');
+      return;
+    }
+
+    const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
+
+    const fieldsBeingUpdated = Object.keys(payload).filter(
+      (field) => !systemFields.has(field),
+    );
+
+    if (fieldsBeingUpdated.length === 0) {
+      return;
+    }
+
+    if (!userWorkspaceId) {
+      throw new Error('Missing userWorkspaceId in authContext');
+    }
+
+    const fieldsByPermission = new Map<PermissionFlagType, string[]>();
+
+    for (const field of fieldsBeingUpdated) {
+      const requiredPermission = this.WORKSPACE_FIELD_PERMISSIONS[field];
+
+      if (!requiredPermission) {
+        throw new PermissionsException(
+          `Field "${field}" is not allowed to be updated`,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`The field "${field}" cannot be updated. Please contact your workspace administrator.`,
+          },
+        );
       }
 
-      if (
-        workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
-      ) {
-        return;
+      if (!fieldsByPermission.has(requiredPermission)) {
+        fieldsByPermission.set(requiredPermission, []);
       }
+      fieldsByPermission.get(requiredPermission)!.push(field);
+    }
 
-      const userHasPermission =
+    for (const [permission, fields] of fieldsByPermission.entries()) {
+      const hasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
-          setting: PermissionFlagType.WORKSPACE,
+          setting: permission,
           apiKeyId: apiKey,
         });
 
-      if (!userHasPermission) {
+      if (!hasPermission) {
+        const fieldsList = fields.join(', ');
+
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage: msg`You do not have permission to manage workspace settings. Please contact your workspace administrator.`,
+            userFriendlyMessage: msg`You do not have permission to update these fields: ${fieldsList}. Please contact your workspace administrator.`,
           },
         );
       }

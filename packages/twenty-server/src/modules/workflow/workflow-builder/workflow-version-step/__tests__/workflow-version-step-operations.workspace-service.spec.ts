@@ -1,11 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
@@ -21,8 +23,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let serverlessFunctionService: jest.Mocked<ServerlessFunctionService>;
   let agentRepository: jest.Mocked<any>;
+  let roleTargetRepository: jest.Mocked<any>;
+  let roleRepository: jest.Mocked<any>;
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
+  let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
 
   beforeEach(async () => {
     serverlessFunctionService = {
@@ -38,6 +43,16 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       delete: jest.fn(),
     };
 
+    roleTargetRepository = {
+      findOne: jest.fn(),
+      count: jest.fn(),
+    };
+
+    roleRepository = {
+      findOne: jest.fn(),
+      delete: jest.fn(),
+    };
+
     objectMetadataRepository = {
       findOne: jest.fn(),
     };
@@ -45,6 +60,10 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     workflowCommonWorkspaceService = {
       getObjectMetadataItemWithFieldsMaps: jest.fn(),
     } as unknown as jest.Mocked<WorkflowCommonWorkspaceService>;
+
+    aiAgentRoleService = {
+      deleteAgentOnlyRoleIfUnused: jest.fn(),
+    } as unknown as jest.Mocked<AiAgentRoleService>;
 
     twentyORMGlobalManager = {
       getRepositoryForWorkspace: jest.fn(),
@@ -66,6 +85,14 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: agentRepository,
         },
         {
+          provide: getRepositoryToken(RoleTargetEntity),
+          useValue: roleTargetRepository,
+        },
+        {
+          provide: getRepositoryToken(RoleEntity),
+          useValue: roleRepository,
+        },
+        {
           provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: objectMetadataRepository,
         },
@@ -74,8 +101,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: workflowCommonWorkspaceService,
         },
         {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: {},
+          provide: AiAgentRoleService,
+          useValue: aiAgentRoleService,
         },
       ],
     }).compile();
@@ -151,6 +178,50 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
       expect(agentRepository.delete).toHaveBeenCalledWith({
         id: 'agent-id',
+        workspaceId: mockWorkspaceId,
+      });
+    });
+
+    it('should delete attached role when it is agent-only and unassigned elsewhere', async () => {
+      const step = {
+        id: 'step-id',
+        name: 'AI Agent Step',
+        type: WorkflowActionType.AI_AGENT,
+        valid: true,
+        nextStepIds: [],
+        settings: {
+          input: {
+            agentId: 'agent-id',
+            prompt: '',
+          },
+          outputSchema: {},
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      agentRepository.findOne.mockResolvedValue({ id: 'agent-id' });
+      roleTargetRepository.findOne.mockResolvedValue({
+        id: 'role-target-id',
+        roleId: 'role-id',
+      });
+
+      await service.runWorkflowVersionStepDeletionSideEffects({
+        step,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(agentRepository.delete).toHaveBeenCalledWith({
+        id: 'agent-id',
+        workspaceId: mockWorkspaceId,
+      });
+      expect(
+        aiAgentRoleService.deleteAgentOnlyRoleIfUnused,
+      ).toHaveBeenCalledWith({
+        roleId: 'role-id',
+        roleTargetId: 'role-target-id',
         workspaceId: mockWorkspaceId,
       });
     });
@@ -258,14 +329,17 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         mockNewServerlessFunction,
       );
 
-      const result = await service.createStepForDuplicate({
+      const clonedStep = await service.cloneStep({
         step: originalStep,
         workspaceId: mockWorkspaceId,
       });
+      const duplicateStep = service.markStepAsDuplicate({
+        step: clonedStep,
+      });
 
-      expect(result.id).not.toBe('original-id');
-      expect(result.name).toBe('Original Step (Duplicate)');
-      const codeResult = result as unknown as {
+      expect(duplicateStep.id).not.toBe('original-id');
+      expect(duplicateStep.name).toBe('Original Step (Duplicate)');
+      const codeResult = duplicateStep as unknown as {
         settings: {
           input: {
             serverlessFunctionId: string;
@@ -279,7 +353,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       );
       expect(codeResult.settings.input.serverlessFunctionVersion).toBe('draft');
 
-      expect(result.nextStepIds).toEqual([]);
+      expect(duplicateStep.nextStepIds).toEqual([]);
     });
 
     it('should duplicate non-code step', async () => {
@@ -294,15 +368,67 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         nextStepIds: ['next-step'],
       } as unknown as WorkflowAction;
 
-      const result = await service.createStepForDuplicate({
+      const clonedStep = await service.cloneStep({
+        step: originalStep,
+        workspaceId: mockWorkspaceId,
+      });
+      const duplicateStep = service.markStepAsDuplicate({
+        step: clonedStep,
+      });
+
+      expect(duplicateStep.id).not.toBe('original-id');
+      expect(duplicateStep.name).toBe('Original Step (Duplicate)');
+      expect(duplicateStep.settings).toEqual(originalStep.settings);
+      expect(duplicateStep.nextStepIds).toEqual([]);
+    });
+
+    it('should duplicate iterator step with cleared initialLoopStepIds', async () => {
+      const originalStep = {
+        id: 'original-iterator-id',
+        type: WorkflowActionType.ITERATOR,
+        name: 'Iterator Step',
+        valid: true,
+        position: { x: 100, y: 200 },
+        settings: {
+          input: {
+            items: ['item1', 'item2', 'item3'],
+            initialLoopStepIds: ['loop-step-1', 'loop-step-2'],
+          },
+          outputSchema: {},
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+        },
+        nextStepIds: ['next-step'],
+      } as unknown as WorkflowAction;
+
+      const clonedStep = await service.cloneStep({
         step: originalStep,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(result.id).not.toBe('original-id');
-      expect(result.name).toBe('Original Step (Duplicate)');
-      expect(result.settings).toEqual(originalStep.settings);
-      expect(result.nextStepIds).toEqual([]);
+      expect(clonedStep.id).not.toBe('original-iterator-id');
+      expect(clonedStep.type).toBe(WorkflowActionType.ITERATOR);
+      expect(clonedStep.nextStepIds).toEqual([]);
+      expect(clonedStep.position).toEqual({ x: 100, y: 200 });
+
+      const iteratorResult = clonedStep as unknown as {
+        settings: {
+          input: {
+            items: string[];
+            initialLoopStepIds: string[];
+          };
+        };
+      };
+
+      expect(iteratorResult.settings.input.items).toEqual([
+        'item1',
+        'item2',
+        'item3',
+      ]);
+
+      expect(iteratorResult.settings.input.initialLoopStepIds).toEqual([]);
     });
   });
 });

@@ -1,0 +1,83 @@
+---
+title: Icones
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Una llista d'icones utilitzades a la nostra aplicació.
+
+## Icones Tabler
+
+Utilitzem icones Tabler per a React a tota l'aplicació.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Podeu importar cada icona com a component. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propietats | Tipus  | Descripció                                 | Per defecte  |
+| ---------- | ------ | ------------------------------------------ | ------------ |
+| tamany     | número | L'altura i l'amplada de la icona en píxels | 24           |
+| color      | cadena | El color de les icones                     | currentColor |
+| traç       | número | L'ample del traç de la icona en píxels     | 2            |
+
+</Tab>
+
+</Tabs>
+
+## Icones Personalitzades
+
+A més de les icones Tabler, l'aplicació també utilitza algunes icones personalitzades.
+
+### Icona de Llibreta d'Adreces
+
+Mostra una icona de llibreta d'adreces.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propietats | Tipus  | Descripció                                 | Per defecte |
+| ---------- | ------ | ------------------------------------------ | ----------- |
+| tamany     | número | L'altura i l'amplada de la icona en píxels | 24          |
+| traç       | número | L'ample del traç de la icona en píxels     | 2           |
+
+</Tab>
+
+</Tabs>

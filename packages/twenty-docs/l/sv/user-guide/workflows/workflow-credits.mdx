@@ -1,0 +1,93 @@
+---
+title: Arbetsflödeskrediter
+info: Förstå konsumtion av arbetsflödeskrediter, övervakning och kostnadshantering för dina automationer.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatisera processer och integrera med externa verktyg
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Arbetsflödeskrediter driver dina automationer i Twenty. Att förstå hur de fungerar hjälper dig optimera kostnader och hantera din automationsbudget effektivt.
+
+## Kreditfördelning efter plan
+
+Arbetsflödeskrediter tilldelas per arbetsyta baserat på din prenumerationsplan:
+
+- **Provperiod**: 5 miljoner krediter
+- **Pro Plan**: 10 miljoner krediter per månad
+- **Organisationsplan**: 20 miljoner krediter per månad
+
+## Så fungerar kreditkonsumtion
+
+Krediter används när arbetsflöden exekveras, inte när du skapar dem. Varje arbetsflödesåtgärd förbrukar krediter baserat på dess komplexitet:
+
+### Kreditförbrukning per åtgärdstyp
+
+- **Grundläggande interna operationer**: Mycket låg kreditförbrukning
+  - Sök poster
+  - Skapa post
+  - Uppdatera post
+  - Ta bort post
+  - Forma åtgärder
+
+- **Komplexa operationer**: Högre kreditförbrukning
+  - Kodåtgärder (JavaScript exekvering)
+  - HTTP-förfrågningar till externa tjänster
+
+- **AI-funktioner**: Betydande kreditförbrukning (kommer snart)
+  - AI-frågor och bearbetning kommer att använda krediter baserat på användning
+
+### Realtidsavdrag
+
+Krediter dras i realtid när arbetsflöden exekveras. Detta betyder:
+
+- Utkast till arbetsflöden förbrukar inte krediter
+- Endast aktiva, körande arbetsflöden använder din kredittilldelning
+- Misslyckade arbetsflöden förbrukar fortfarande krediter för fullständiga steg
+
+## Hantering av krediter
+
+### Kontrollera kreditanvändning
+
+1. Gå till **Inställningar → Fakturering**
+2. Visa din nuvarande kreditförbrukning och återstående saldo
+3. Övervaka användningsmönster för att optimera dina arbetsflöden
+
+### Köpa ytterligare krediter
+
+Om du behöver fler krediter utöver din planallokering:
+
+1. Gå till **Inställningar → Fakturering**
+2. Klicka på alternativet för att köpa ytterligare krediter. Paket av olika storlekar finns tillgängliga.
+3. Krediter läggs till ditt nuvarande saldo
+
+## Bästa praxis
+
+### Effektiv arbetsflödesdesign
+
+- **Börja enkelt**: Börja med grundläggande åtgärder och lägg till komplexitet gradvis
+- **Testa i utkast**: Testa arbetsflöden noggrant innan aktivering för att undvika att slösa krediter på fel
+- **Minimera HTTP-förfrågningar**: Använd effektiva sökkriterier och kombinera operationer där det är möjligt
+- **Batchbearbetning**: Använd bulkoperationer och Iterator-åtgärder effektivt
+- **Felhantering**: Implementera korrekt felhantering för att förhindra onödiga försök
+- **Manuell triggares optimering**: För manuella triggers, välj `Bulk` tillgänglighet för att behandla flera poster i ett enda arbetsflöde (se [Arbetsflödesfunktioner](/l/sv/user-guide/workflows/workflow-features) för detaljer)
+
+### Åtgärdsoptimering
+
+- Använd grundläggande interna operationer när möjligt (lägre kreditförbrukning)
+- Optimera kodåtgärder för effektivitet
+- Överväg manuella triggers för icke-brådskande processer
+- Batchoperationer för att minska individuella åtgärdsanrop
+
+### Kredithantering
+
+- **Regelbunden övervakning**: Kontroller din kreditanvändning veckovis i Inställningar → Fakturering
+- **Användningsspårning**: Håll koll på konsumtionsmönster för att undvika oväntade övertrasseringar
+- **Planera därefter**: Överväg att uppgradera din plan om du konsekvent behöver fler krediter
+- **Arbetsflödesöversyn**: Granska regelbundet arbetsflöden med hög konsumtion och avaktivera de som inte används
+- **Strategisk planering**: Planera arbetsflödesdistribution baserat på kreditåtkomst
+
+För detaljerad faktureringsinformation och kredithantering, besök **Inställningar → Fakturering** i ditt Twenty arbetsyta.
+

@@ -1,0 +1,42 @@
+---
+title: כניסת תמונה
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+מאפשר למשתמשים להעלות ולהסיר תמונה.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות       | סוג      | תיאור                                                                                          |
+| ------------ | -------- | ---------------------------------------------------------------------------------------------- |
+| תמונה        | מחרוזת   | URL המקור של התמונה                                                                            |
+| onUpload     | פונקציה  | הפונקציה שנקראת כאשר משתמש מעלה תמונה חדשה. היא מקבלת את אובייקט `File` כפרמטר |
+| onRemove     | פונקציה  | הפונקציה שנקראת כאשר המשתמש לוחץ על כפתור ההסרה                                                |
+| onAbort      | function | הפונקציה שנקראת כאשר המשתמש לוחץ על כפתור הביטול בעת העלאת התמונה                              |
+| isUploading  | בוליאני  | מציין האם תמונה נמצאת כרגע בתהליך העלאה                                                        |
+| errorMessage | מחרוזת   | הודעת שגיאה אופציונלית להצגה מתחת לשדה כניסת התמונה                                            |
+| לא פעיל      | בוליאני  | If `true`, the entire input is disabled, and the buttons are not clickable                     |
+
+</Tab>
+</Tabs>

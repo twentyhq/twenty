@@ -8,8 +8,6 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -20,10 +18,10 @@ import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/r
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
-import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
+
+import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
+import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -39,16 +37,13 @@ import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledTrContainer = styled.div<{ shouldDisplayBorderBottom: boolean }>`
+const StyledTrContainer = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
 
   div:not(:first-of-type) {
-    border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
-      shouldDisplayBorderBottom
-        ? `1px solid ${theme.border.color.light}`
-        : 'none'};
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   }
 `;
 
@@ -103,19 +98,14 @@ const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   z-index: ${TABLE_Z_INDEX.groupSection.normalCell};
 `;
 
-const StyledRecordTableDragAndDropPlaceholderCell = styled.div<{
-  shouldDisplayBorderBottom: boolean;
-}>`
+const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   background-color: ${({ theme }) => theme.background.primary};
 
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
-    shouldDisplayBorderBottom
-      ? `1px solid ${theme.background.primary}`
-      : 'none'};
+  border-bottom: 1px solid ${({ theme }) => theme.background.primary};
 
   position: sticky;
   left: 0;
@@ -129,8 +119,19 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { aggregateValue, aggregateLabel } =
-    useAggregateRecordsForRecordTableSection();
+  const recordGroup = useRecoilValue(
+    recordGroupDefinitionFamilyState(currentRecordGroupId),
+  );
+
+  const recordIndexAggregateDisplayValueForGroupValue =
+    useRecoilComponentFamilyValue(
+      recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
+      { groupValue: recordGroup?.value ?? '' },
+    );
+
+  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+    recordIndexAggregateDisplayLabelComponentState,
+  );
 
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -157,10 +158,6 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
-  const recordGroup = useRecoilValue(
-    recordGroupDefinitionFamilyState(currentRecordGroupId),
-  );
-
   const handleDropdownToggle = useCallback(() => {
     setIsRecordGroupTableSectionToggled((prevState) => !prevState);
   }, [setIsRecordGroupTableSectionToggled]);
@@ -181,46 +178,13 @@ export const RecordTableRecordGroupSection = () => {
     sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
     sumOfBorderWidthForFields;
 
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
-  const recordIdsOfThisGroup = useRecoilComponentFamilyValue(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-    recordGroup?.id ?? '',
-  );
-
-  const indexOfFirstRowOfThisGroup = allRecordIds.findIndex(
-    (value) => value === recordIdsOfThisGroup[0],
-  );
-
-  const isFirstRowActive = useRecoilComponentFamilyValue(
-    isRecordTableRowActiveComponentFamilyState,
-    indexOfFirstRowOfThisGroup,
-  );
-
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    indexOfFirstRowOfThisGroup,
-  );
-
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
-
-  const shouldDisplayBorderBottom =
-    !isFirstRowActiveOrFocused || !isRecordGroupTableSectionToggled;
-
   if (!isDefined(recordGroup)) {
     return null;
   }
 
   return (
-    <StyledTrContainer
-      onClick={handleDropdownToggle}
-      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-    >
-      <StyledRecordTableDragAndDropPlaceholderCell
-        shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-      />
+    <StyledTrContainer onClick={handleDropdownToggle}>
+      <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledChevronContainer>
         <StyledAnimatedLightIconButton
           Icon={IconChevronDown}
@@ -249,10 +213,10 @@ export const RecordTableRecordGroupSection = () => {
           weight="medium"
         />
         <RecordBoardColumnHeaderAggregateDropdown
-          aggregateValue={aggregateValue}
+          aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
           dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
           objectMetadataItem={objectMetadataItem}
-          aggregateLabel={aggregateLabel}
+          aggregateLabel={recordIndexAggregateDisplayLabel}
         />
       </StyledRecordGroupSection>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />

@@ -7,6 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -68,7 +69,7 @@ export const NotesCard = () => {
         {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
-            title="New note"
+            title={t`New note`}
             variant="secondary"
             onClick={() =>
               openCreateActivity({
@@ -84,7 +85,7 @@ export const NotesCard = () => {
   return (
     <StyledNotesContainer>
       <NoteList
-        title="All"
+        title={t`All`}
         notes={notes}
         button={
           hasObjectUpdatePermissions && (
@@ -92,7 +93,7 @@ export const NotesCard = () => {
               Icon={IconPlus}
               size="small"
               variant="secondary"
-              title="Add note"
+              title={t`Add note`}
               onClick={() =>
                 openCreateActivity({
                   targetableObjects: [targetRecord],

@@ -1,0 +1,118 @@
+---
+title: E-post & Kalenderoppsett
+info: "Koble til e-post- og kalenderkontoene dine."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Konfigurer innstillinger og preferanser for Twenty-arbeidsområde.
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Tilkoblingsalternativer
+
+### Google-konto (Gmail & Google Kalender)
+
+1. Gå til **Innstillinger → Kontoer**
+2. Klikk på **Legg til konto**
+3. Select **Continue with Google**
+4. Autoriser Twenty til å få tilgang til din Gmail og Google Kalender
+5. E-postene dine og kalendereventene begynner å synkronisere automatisk
+
+### Microsoft-konto (Outlook & Microsoft Kalender)
+
+1. Gå til **Innstillinger → Kontoer**
+2. Klikk på **Legg til konto**
+3. Select **Continue with Microsoft**
+4. Autoriser Twenty til å få tilgang til din Outlook og Microsoft Kalender
+5. E-postene dine og kalendereventene begynner å synkronisere automatisk
+
+### SMTP/CalDAV-oppsett (Andre leverandører)
+
+For andre e-post og kalenderleverandører:
+
+1. Gå til **Innstillinger → Versjoner → Lab** for å aktivere funksjonen
+2. Gå tilbake til **Innstillinger → Kontoer**
+3. Konfigurer SMTP-innstillinger for e-post
+4. Konfigurer CalDAV-innstillinger for kalender
+5. Test tilkoblingen
+
+### Flere postbokser
+
+- **Ubegrensede kontoer**: Koble til flere e-postkontoer per bruker
+- **Kontoadministrasjon**: Bytt mellom ulike postbokser
+- **Sync-innstillinger**: Konfigurer ulike innstillinger per postboks
+
+<Warning>
+Kun ekte postbokser kan kobles til (f.eks., support@domain.com med egen innboks). E-post-aliasser som videresender til en annen postboks kan ikke kobles til Twenty.
+</Warning>
+
+## E-postkonfigurasjon
+
+### Meldingssynlighet
+
+Velg forskjellige nivåer med synlighet for e-postene dine:
+
+- **Kun metadata**: Del kun grunnleggende informasjon (avsender, mottaker, dato, tid)
+- **Emne og metadata**: Del emnelinjen sammen med metadata
+- **Alt e-postinnhold**: Del hele e-postinnholdet inkludert vedlegg
+
+### Automatisk oppretting av kontakter
+
+- **Deaktivert**: Ingen automatisk oppretting av kontakter
+- **For messages sent & received**: Create contacts for all external email interactions
+- **For messages sent only**: Create contacts only for emails you send
+- **Merk**: Interne e-poster (samme domene) synkroniseres aldri for å opprettholde personvernet
+
+### Kontroller hvilke e-poster som synkroniseres ved hjelp av meldingsmappevalg (Lab-funksjon)
+
+Kontroller hvilke e-postmapper som synkroniseres med Twenty:
+
+1. Gå til **Innstillinger → Versjoner → Lab** og aktiver **Meldingsmappe**
+2. Gå tilbake til **Innstillinger → Kontoer** og velg den tilkoblede e-postkontoen din
+3. Velg hvilke mapper som skal synkroniseres:
+   - **Innboks**: Primære innkommende e-poster
+   - **Sendt**: Utgående e-poster du har sendt
+   - **Egendefinerte mapper**: Eventuelle spesifikke mapper du vil inkludere
+   - **Ekskluder mapper**: Hopp over mapper som søppelpost, papirkurv eller personlige mapper
+
+Dette gir deg presis kontroll over hvilke e-poster som vises i din CRM uten å synkronisere alt.
+
+**Hva som blir synkronisert:**
+
+- **Eksterne e-poster**: Alle e-poster med eksterne kontakter fra valgte mapper
+- **Interne e-poster**: Ikke synkroniserbart (samme domene e-poster forblir private)
+- **Vedlegg**: Kommer i H1 2026
+
+**Merk**: Vi gir ikke en CC e-postadresse for selektiv synkronisering. Bruk meldingsmappefunksjonen ovenfor for å oppnå samme grad av kontroll over hvilke e-poster som synkroniseres med Twenty.
+
+## Kalenderkonfigurasjon
+
+### Hendelsessynlighet
+
+Velg hva som blir synlig for andre brukere i arbeidsområdet ditt:
+
+- **Alt**: Hele hendelsesdetaljene deles med teamet ditt
+- **Metadata**: Kun dato & deltakere deles med teamet ditt
+
+### Automatisk oppretting av kontakter for møter
+
+- **Ja**: Opprett automatisk kontakter for møtedeltakere som ikke er i CRM-en din
+- **Nei**: Knytt møter kun til eksisterende kontakter
+
+### Kontroller hvilke hendelser som synkroniseres
+
+- **Møteimport**: Automatisk import av kalenderhendelser
+- **Kontaktkobling**: Knytt møter til person- og selskapsregistre
+
+**Hva som blir synkronisert:**
+
+- **Møter**: Kalenderhendelser med eksterne deltakere
+- **Kontaktkobling**: Hendelser blir automatisk koblet til CRM-oppføringer
+- **Teammøter**: Synlig kalender for teamet
+
+## Synkroniseringsfrekvens
+
+**Oppdateres hvert 5. minutt**: Både e-post og kalenderdata synkroniseres automatisk hvert 5. minutt etter den første importen.
+
+

@@ -1,0 +1,47 @@
+---
+title: Casella de selecció
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+S'utilitza quan un usuari necessita seleccionar múltiples valors entre diverses opcions.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props              | Tipus   | Descripció                                                                                                            |
+| ------------------ | ------- | --------------------------------------------------------------------------------------------------------------------- |
+| seleccionat        | boolean | Indica si la casella de selecció està marcada                                                                         |
+| indeterminat       | boolean | Indica si la casella de selecció està en un estat indeterminat (ni marcada ni desmarcada)          |
+| onChange           | funció  | The callback function you want to trigger when the checkbox state changes                                             |
+| canviDeSeleccionat | funció  | The callback function you want to trigger when the `checked` state changes                                            |
+| variant            | cadena  | L'estil visual de la caixa. Les opcions inclouen: `primari`, `secundari` i `terciari` |
+| tamany             | cadena  | La mida de la casella de selecció. Has two options: `small` and `large`               |
+| forma              | cadena  | La forma de la casella de selecció. Té dues opcions: `quadrada` i `arrodonida`        |
+
+</Tab>
+</Tabs>

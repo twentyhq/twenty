@@ -1,0 +1,153 @@
+---
+title: テキスト
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## テキスト入力
+
+ユーザーがテキストを入力および編集できるようにします。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ          | タイプ         | 説明                                                                                                                          |
+| -------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
+| className      | string      | 追加のスタイリングのためのオプション名                                                                                                         |
+| ラベル            | string      | 入力のラベルを表します。                                                                                                                |
+| onChange       | 機能          | 入力値が変わるときに呼び出される関数                                                                                                          |
+| fullWidth      | ブール型        | Indicates whether the input should take up 100% of the width                                                                |
+| disableHotkeys | ブール型        | Indicates whether hotkeys are enabled for the input                                                                         |
+| エラー            | string      | 表示されるエラーメッセージを表します。 表示されるエラーメッセージを表します。 指定された場合、入力の右側にアイコンエラーも追加されます。                                                       |
+| onKeyDown      | 機能          | 入力フィールドにフォーカスがあるときにキーが押されたときに呼び出されます。 入力フィールドにフォーカスがあるときにキーが押されたときに呼び出されます。 Receives a `React.KeyboardEvent` as an argument |
+| 右アイコン          | アイコンコンポーネント | 入力の右側に表示されるオプションのアイコンコンポーネント                                                                                                |
+
+コンポーネントは、他の HTML 入力要素のプロパティも受け入れます。
+
+</Tab>
+
+</Tabs>
+
+## オートサイズテキスト入力
+
+コンテンツに基づいて高さを自動調整するテキスト入力コンポーネント。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ      | タイプ    | 説明                                                                                       |
+| ---------- | ------ | ---------------------------------------------------------------------------------------- |
+| onValidate | 機能     | ユーザーが入力を検証するときにトリガーされるコールバック関数                                                           |
+| 最小行数       | 数      | The minimum number of rows for the text area                                             |
+| プレースホルダー   | string | The placeholder text you want to display when the text area is empty                     |
+| onFocus    | 機能     | テキストエリアにフォーカスが当たったときにトリガーされるコールバック関数                                                     |
+| バリアント      | string | The variant of the input. オプションには `default`、 `icon`、および `button` が含まれます。 |
+| ボタンタイトル    | string | ボタンのタイトル（ボタンのバリアントの場合のみ適用可能）                                                             |
+| 値          | string | テキストエリアの初期値                                                                              |
+
+</Tab>
+
+</Tabs>
+
+## テキストエリア
+
+複数行のテキスト入力を作成できます。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ    | タイプ    | 説明                                 |
+| -------- | ------ | ---------------------------------- |
+| disabled | ブール型   | テキストエリアが無効かどうかを示します                |
+| 最小行数     | 数      | テキストエリアの最小可視行数。                    |
+| onChange | 機能     | テキストエリアの内容が変更されたときにトリガーされるコールバック関数 |
+| プレースホルダー | string | テキストエリアが空のときに表示されるプレースホルダーテキスト     |
+| 値        | string | テキストエリアの現在の値                       |
+
+</Tab>
+</Tabs>

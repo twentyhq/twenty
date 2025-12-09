@@ -1,0 +1,89 @@
+---
+title: Migration depuis d'autres CRM
+info: Guide étape par étape pour migrer les données et processus depuis d'autres systèmes CRM vers Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Un guide rapide pour comprendre les bases de Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Avant de démarrer
+
+### 1. Auditez vos données actuelles
+
+- **Sélectionnez quelques objets et champs à migrer** : cette migration est l'opportunité d'un nouveau départ.
+- **Exportez ces données** de votre CRM actuel
+- **Supprimez les doublons** et les enregistrements obsolètes
+- **Liste active des workflows** et automatisations
+
+### 2. Créez votre nouveau modèle de données
+
+Suivez notre [guide du modèle de données](/l/fr/user-guide/data-model/customize-your-data-model) pour :
+
+- **Concevez le modèle de données** dont vous avez besoin
+- **Attribuez les champs existants** aux objets/champs standards de Twenty
+- **Identifiez les objets/champs personnalisés** dont vous aurez besoin
+- **Créez-les** sous Paramètres → Modèle de données
+
+## Processus de migration
+
+### 1. Importez vos données
+
+**Ordre recommandé :**
+
+1. **Entreprises** en premier (comme enregistrements de base)
+2. **Personnes** en second (liées aux entreprises)
+3. **Opportunités** en troisième (liées aux personnes/entreprises)
+
+Utilisez l'importation CSV via le menu Commande `Cmd + K` (Mac) ou `Ctrl + K` (Windows). Consultez notre [guide d'importation de données](/l/fr/user-guide/getting-started/import-export-data) pour des instructions détaillées.
+
+### 2. Recréez les workflows
+
+- **Commencez simplement** - recréez d'abord vos automatisations les plus critiques
+- **Utilisez le créateur de workflow de Twenty** pour remplacer les automatisations existantes
+
+## Défis communs
+
+### Problèmes de formattage des données
+
+- **Adresses email** - supprimez les doublons (exigence de l'objet Personnes)
+- **Domaine** - supprimez les doublons (exigence de l'objet Entreprises) <Warning>
+
+<Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning>Veuillez noter que les URL de domaine créées par la synchronisation avec votre boîte aux lettres et votre calendrier ont le format suivant `https://domain.com` </Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning></Warning>
+
+- **Formats de date** - assurez une uniformité (JJJJ-MM-JJ) ou modifiez ce format sous Paramètres → Expérience
+- **Numéros de téléphone** - utilisez le format international (+1234567890)
+
+### Cartographie des relations
+
+Pour importer des relations entre enregistrements via la fonction d'importation CSV, vous pouvez utiliser les champs suivants
+
+- **Utilisez les IDs Twenty** pour les relations complexes
+- **Utilisez les adresses email** pour lier les enregistrements Personnes
+- **Utilisez les noms de domaine** pour lier les enregistrements Entreprise
+- **Utilisez tout autre champ que vous définissez comme unique**, ce qui peut être fait dans la section Modèle de données.
+  Lisez notre [guide d'import-export de données](/l/fr/user-guide/getting-started/import-export-data) pour des instructions détaillées sur la création de relations lors de l'importation CSV.
+
+## Aide professionnelle
+
+### Nos Services
+
+- **Packs de 4 heures d'intégration** pour une migration guidée
+- **Partenaires de mise en œuvre** pour des projets plus avancés
+
+Découvrez nos [services d'implémentation](/l/fr/user-guide/getting-started/implementation-services).
+
+## Migration de l'hébergement local vers le cloud
+
+Si vous passez de Twenty auto-hébergé à Twenty Cloud :
+
+1. **Exportez vos données** de votre instance auto-hébergée
+2. **Suivez le processus de migration standard** ci-dessus
+3. **Nous pouvons fournir une assistance à la migration**, contactez notre équipe
+
+## Liste de vérification post-migration
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

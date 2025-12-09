@@ -1,0 +1,108 @@
+---
+title: Camps
+info: "Entendre el paper dels camps i com gestionar-los."
+image: /images/user-guide/fields/field.png
+sectionInfo: Model de dades flexible dissenyat per donar suport als teus processos empresarials únics
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Sobre Camps
+
+Els camps són com columnes en un full de càlcul. Emmagatzemen diferents tipus de dades, com text, números o dates. Els camps poden ser estàndard (predefinits) o personalitzats (els que creeu).
+
+### Camps Estàndard
+
+Els camps estàndard vénen predefinits amb Twenty per gestionar les necessitats comercials habituals.
+
+Per exemple, `Nom` i `Cognom` són camps estàndard en l'objecte `Persones`. Emmagatzemen dades de text per a noms individuals.
+
+No podeu esborrar camps estàndard, però podeu desactivar-los si no els necessiteu.
+
+També podeu personalitzar les opcions dels camps de tipus `SELECT` estàndard, per exemple les opcions per l'`Etapa` en Oportunitats.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Camps Personalitzats
+
+Els camps personalitzats es poden afegir a qualsevol objecte. Podeu emmagatzemar text, números, dates, seleccions desplegables i més. Utilitzeu camps personalitzats per seguir informació que és específica per al vostre negoci.
+
+Per exemple, un camp personalitzat per SpaceX podria ser `Estat Actiu del Coet`, indicant si un coet està operatiu.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Crear un Camp Personalitzat
+
+To add a custom field to any object, follow these steps:
+1.	Aneu a `Configuració` a la barra lateral esquerra.
+2.	Aneu a `Model de Dades`, després seleccioneu l'objecte que voleu personalitzar.
+3.	Procediu fent clic a `Afegir Camp`.
+4.	Trieu un nom i tipus de camp que s'ajusti als vostres requisits. Considereu afegir una descripció del camp per a una millor comprensió.
+
+El vostre camp acabat de crear ara està disponible dins dels camps de l'aplicació. Per mostrar-lo en una vista específica, feu clic al menú d'opcions i, després, seleccioneu `Camps`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Forma ràpida:** Feu clic al botó **+** a la part superior dreta de qualsevol taula d'objectes, després seleccioneu `Personalitza camps`. Això us porta directament a la configuració del Model de Dades.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Desactiva un camp
+
+Podeu desactivar un camp per amagar-lo de l'aplicació sense perdre dades. Considereu-ho com amagar el camp en lloc d'esborrar-lo.
+
+Això és com podeu fer-ho:
+
+1. Cerqueu el camp que voleu desactivar en la configuració de l'objecte.
+
+2. Feu clic als tres punts `⋮` al costat del camp per obrir el menú.
+
+3. Seleccioneu `Desactiva` del menú desplegable.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Què passa quan desactiveu un camp?
+
+1. **A l'aplicació:** El camp desapareix i no podeu afegir nous valors a aquest.
+
+2. **Relacions existents:** Si es tracta d'un camp de relació, les connexions existents romanen, però no podeu crear-ne de noves.
+
+3. **Accés a l'API:** Encara podeu accedir al camp i les seves dades mitjançant l'API.
+
+Podeu reactivar els Camps Estàndard i Personalitzats o teniu l'opció d'eliminar-los permanentment.
+
+## Fes Únics Els Camps
+
+Fes un camp únic per assegurar que registres diferents no puguin tenir el mateix valor. Per exemple, les adreces de correu electrònic són úniques per a cada persona.
+
+Si obteniu un error en establir la singularitat, comproveu els valors duplicats en les vostres dades (inclosos els registres suprimits).
+
+## Millors Pràctiques de Configuració de Camps
+
+### Millors Pràctiques de Configuració de Camps
+
+- **Els noms dels camps de relació no es poden actualitzar** després de la creació (impacta l'estructura de l'API)
+- **Els noms singulars i plurals han de ser diferents**: La nostra API de GraphQL necessita noms diferents per a les mutacions
+- **Noms de camps protegits**: alguns noms estan reservats per a l'ús del sistema (ex., `Tipus`)
+
+### Camps de Moneda i Telèfon
+
+- **Moneda per defecte**: es pot configurar a través del model de dades
+- **Codis de país per defecte**: es poden configurar per a camps de telèfon a través del model de dades
+
+### Selecciona Camps
+
+- **Es pot seleccionar una opció per defecte** per a cada camp de Selecció
+
+### Registra Camps de Text
+
+- **Cada objecte té un camp principal de visualització**: Aquest camp apareix a la columna més a l'esquerra i representa el registre quan es vincula a altres objectes. Ha de ser un camp de text. Per exemple, Gent utilitza `Nom` com el camp principal, de manera que quan vinculeu una persona a una empresa, veureu el seu nom a la vista de l'empresa.
+
+### Camps de Relació
+
+- **Connecteu objectes junts**: Els camps de relació vinculen registres de diferents objectes. Per obtenir informació detallada sobre com crear i gestionar relacions, consulteu el nostre article sobre [Camps de Relació](/l/ca/user-guide/data-model/relation-fields).
+

@@ -11,13 +11,18 @@ export interface ViewDefinition {
   type: string;
   key: string | null;
   position: number;
+  applicationId: string;
+  universalIdentifier: string;
   icon?: string;
   isCustom?: boolean;
   openRecordIn?: ViewOpenRecordInType;
-  kanbanFieldMetadataId?: string;
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataId?: string;
+  mainGroupByFieldMetadataId?: string;
+  calendarFieldMetadataId?: string;
+  calendarLayout?: string;
   fields?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     position: number;
     isVisible: boolean;
@@ -25,12 +30,14 @@ export interface ViewDefinition {
     aggregateOperation?: AggregateOperations;
   }[];
   filters?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     displayValue: string;
     operand: ViewFilterOperand;
     value: string;
   }[];
   groups?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     isVisible: boolean;
     fieldValue: string;

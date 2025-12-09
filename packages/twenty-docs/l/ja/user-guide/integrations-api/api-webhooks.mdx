@@ -1,0 +1,85 @@
+---
+title: APIキーとWebhooks
+info: "Create and manage API keys for authentication and set up webhooks for real-time notifications."
+image: /images/user-guide/api/api.png
+sectionInfo: Twentyを他のツールに接続する方法を学ぶ。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## APIキー
+
+APIキーにより、CRMデータへの自動アクセスが可能となり、他のシステムとデータを同期したり、カスタム統合やソリューションを作成したりできます。
+
+### APIキーを作成
+
+1. **Settings → APIs & Webhooks**に移動
+2. 右上の\*\*+ Create key\*\*をクリック
+3. APIキーを設定します：
+   - **名前**： APIキーに記述的な名前を付けます
+   - **有効期限**： キーの期限を設定します
+4. **保存**をクリックしてAPIキーを生成
+5. **重要**：APIキーをすぐにコピーして保存してください。一度しか表示されません
+
+作成後、APIキーはカスタムAPIドキュメントおよびプレイグラウンドへのアクセスを提供し、実際のデータモデルでエンドポイントをテストできます。
+
+<Warning>
+
+APIキーは機密情報へのアクセスを提供するため、完全に信頼できないサービスと共有すべきではありません。 漏洩した場合、不正に使用される可能性があります。 APIキーのセキュリティが侵害された場合、直ちに無効化し、新しいキーを生成してください。
+ 漏洩した場合、不正に使用される可能性があります。 APIキーのセキュリティが侵害された場合、直ちに無効化し、新しいキーを生成してください。
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### APIキーの管理
+
+**APIキーを再生成**：
+
+1. **Settings → APIs & Webhooks**に移動
+2. 再生成したいAPIキーをクリック
+3. **再生成**ボタンをクリック
+4. 新しいAPIキーを即座にコピーして保存します。
+
+**APIキーを削除:**
+
+1. リストでAPIキーを見つけます。
+2. キーをクリックして詳細を開きます。
+3. **削除**をクリックして完全に削除します。
+
+## Webhooks
+
+Webhooksは顧客データに関連する変更またはイベントを指定したURLに即時に通知します。
+
+例として、商談が「Closed Won」に移動した際に、Webhooksが自動で請求書作成を会計システムで起動できます。 例として、商談が「Closed Won」に移動した際に、Webhooksが自動で請求書作成を会計システムで起動できます。 Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/ja/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
+
+Webhooksは外部システムとの統合に最適で、ワークフロー機能は内部自動化と外部ツール接続をWebhookトリガー、コードノード、HTTPノードでサポートします。
+
+### Webhookを作成
+
+1. **Settings → APIs & Webhooks → Webhooks**に移動
+2. **+ Webhookを作成**をクリック
+3. Webhook URL（通知を受け取りたい場所）を入力します。
+4. **保存**をクリック
+
+Webhookは即時にCRMデータの変更に関するリアルタイム通知を受信し始めます。
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Webhookを管理
+
+**Webhookを削除:**
+
+1. **Settings → APIs & Webhooks → Webhooks**に移動
+2. 削除したいWebhookを見つけます。
+3. Webhookをクリック
+4. **削除**をクリックし、ポップアップで確認します。
+
+**Webhookを編集:**
+
+1. 変更したいWebhookをクリック
+2. URLやその他の設定を更新します。
+3. **保存**をクリックして変更を適用
+

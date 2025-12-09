@@ -72,15 +72,6 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleText = await canvas.findByText('Create Record');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Create Record');
-    expect(titleInput).not.toBeInTheDocument();
-
     const objectSelectCurrentValue = await canvas.findByText('People');
 
     await userEvent.click(objectSelectCurrentValue);

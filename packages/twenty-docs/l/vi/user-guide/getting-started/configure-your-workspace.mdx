@@ -1,0 +1,86 @@
+---
+title: Cấu hình Không Gian Làm Việc của bạn
+info: "Bắt đầu cấu hình không gian làm việc của bạn với ba bước này."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Khám phá Twenty, một CRM mã nguồn mở.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Mỗi doanh nghiệp hoạt động khác nhau. Đó là lý do Twenty cho phép bạn tạo ra CRM phù hợp với nhu cầu của mình, thay vì áp đặt quá trình của chúng tôi lên bạn.
+**Bắt đầu với ba bước này để thiết lập theo cách của bạn.**
+
+**Kết quả nhanh**: Bắt đầu bằng cách kết nối hộp thư của bạn và tùy chỉnh mô hình dữ liệu với vài trường chính. Điều này mang lại giá trị ngay lập tức và giúp nhóm của bạn thấy Twenty đang hoạt động với dữ liệu thực tế. Bạn có thể thực hiện điều này trong Cài đặt → Tài khoản.
+
+## 1. Tùy chỉnh mô hình dữ liệu của bạn
+
+Twenty cung cấp sự linh hoạt bạn cần để định hình mô hình dữ liệu tốt nhất hỗ trợ cho công việc hàng ngày của bạn.
+Tạo các đối tượng và trường của mọi loại, bao gồm các mối quan hệ giữa các đối tượng khác nhau của bạn. Bạn có thể thực hiện điều này trong Cài đặt → Mô hình dữ liệu.
+Đây là một vài mẹo:
+
+- **Bạn không bị giới hạn số trường tùy chỉnh hoặc đối tượng tùy chỉnh**. Thêm đối tượng và trường tùy chỉnh sẽ không dẫn đến việc nâng cấp gói của bạn.
+- **Người, Công ty và Cơ hội là ba đối tượng từ đó bạn có thể truy cập email và cuộc họp được đồng bộ từ hộp thư/ lịch của mình**. Chúng tôi khuyến nghị sử dụng chúng càng nhiều càng tốt, thêm trường để phân loại hồ sơ của bạn nếu cần thiết. Dưới đây là một ví dụ:
+  - Tốt nhất là sử dụng đối tượng Người cho khách hàng tiềm năng và đối tác của bạn, tạo một trường trên đối tượng Người có tên `Loại người`, thay vì tạo một đối tượng Tùy chỉnh đối tác. Bởi vì bạn sẽ không thể truy cập email trao đổi với người này từ hồ sơ Đối tác.
+  - Tạo các dạng xem khác nhau dưới Người, một để hiển thị đối tác và một để hiển thị khách hàng tiềm năng.
+- Hai Người không thể có cùng địa chỉ email. Hai Công ty không thể có cùng miền.
+- Bạn có thể vô hiệu hóa các trường tiêu chuẩn và đối tượng mà bạn không muốn sử dụng.
+- Bạn có thể ẩn các trường khỏi dạng xem: đừng ngại tạo trường, bạn không phải hiển thị tất cả chúng.
+
+Đọc [bài viết này](https://docs.twenty.com/l/vi/user-guide/data-model/customize-your-data-model) để tìm hiểu cách thiết kế mô hình dữ liệu của bạn.
+
+## 2. Đem dữ liệu của bạn vào
+
+Đưa dữ liệu hiện có của bạn vào Twenty cung cấp cho nhóm của bạn bối cảnh từ lúc bắt đầu.
+
+### Kết nối hộp thư của bạn
+
+Nếu bạn chưa làm điều đó khi tạo không gian làm việc của mình, hãy kết nối tài khoản **Google hoặc Microsoft** của bạn trong Cài đặt → Tài khoản. Điều này cho phép Twenty:
+
+- Nhập tin nhắn và cuộc họp của bạn
+- Tự động tạo liên hệ dựa trên tương tác (tùy chọn)
+- Giữ lịch sử giao tiếp hiển thị cho nhóm của bạn
+
+**Sử dụng nhà cung cấp khác?**
+Bạn có thể thêm hộp thư khác qua SMTP hoặc lịch khác qua CalDAV. Bạn sẽ cần kích hoạt tính năng này trong Cài đặt → Phát hành → Phòng thí nghiệm, sau đó quay lại tab Cài đặt → Tài khoản.
+
+### Nhập dữ liệu qua csv
+
+Sử dụng menu Lệnh (`Cmd + K` or `Ctrl + K`) để nhập Người, Công ty, Cơ hội, hoặc bất kỳ đối tượng tùy chỉnh nào qua CSV.
+
+**Hướng dẫn chính**:
+
+- Tải xuống tệp mẫu để hiểu định dạng mong đợi
+- Giới hạn mỗi tệp có tối đa 10 nghìn hồ sơ
+- Xóa email trùng lặp cho Người hoặc tên miền trùng lặp cho Công ty
+- Xem xét và sửa lỗi (nổi bật bằng màu vàng) trước khi nhập
+
+Đọc [bài viết này](/l/vi/user-guide/getting-started/import-export-data) để tìm hiểu thêm về việc nhập dữ liệu.
+
+## 3. Tạo dạng xem đầu tiên của bạn
+
+Tạo các dạng xem khác nhau là chìa khóa để biến dữ liệu trở nên hữu dụng cho nhóm của bạn.
+Dưới đây là cách thực hiện:
+
+- **Thêm hoặc ẩn cột**
+  Quản lý các trường hiển thị trong một dạng xem cụ thể bằng cách nhấp vào Tùy chọn → Trường (ở góc trên cùng bên phải). Bạn có thể hiển thị/ ẩn các trường từ đó.
+
+- **Sắp xếp lại trường**
+  Sắp xếp lại các trường từ một dạng xem cụ thể bằng cách nhấp vào Tùy chọn → Trường (ở góc trên cùng bên phải). Kéo và thả các trường để sắp xếp lại chúng.
+
+- **Lọc dạng xem của bạn**
+  Thu hẹp hồ sơ hiển thị bằng cách sử dụng Bộ lọc từ góc trên cùng bên phải.
+
+- **Sắp xếp hồ sơ**
+  Sắp xếp lại hồ sơ hiển thị bằng cách sử dụng chức năng Sắp xếp từ góc trên cùng bên phải, hoặc bằng cách nhấp trực tiếp vào tên cột.
+
+- **Chọn bố cục**
+  Bạn có thể chuyển đổi sang bố cục **Kanban** hoặc bố cục danh sách **Nhóm Theo**, chỉ khi đối tượng có trường chọn kiểu `Giai đoạn` hoặc tương tự.
+
+- **Lưu dạng xem của bạn làm Mục yêu thích**
+  Điều này có thể được thực hiện bằng cách sử dụng menu thả xuống hiển thị các dạng xem khác nhau.
+
+## Tiếp theo là gì?
+
+Bắt đầu tạo các quy trình tự động sử dụng [luồng công việc](https://docs.twenty.com/l/vi/user-guide/workflows/getting-started-workflows).

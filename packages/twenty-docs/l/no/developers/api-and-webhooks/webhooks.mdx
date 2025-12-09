@@ -1,0 +1,87 @@
+---
+title: Webhooks
+image: /images/docs/getting-started/webhooks.png
+info: Discover how to use our Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Oversikt
+
+Webhooks i Twenty utfyller API-en ved å gi **sanntidsvarslinger** til dine egne applikasjoner når visse hendelser skjer i ditt CRM. I stedet for å kontinuerlig hente data fra API-en for endringer, kan du sette opp webhooks slik at Twenty **skyver** data til systemet ditt når spesifikke hendelser oppstår (for eksempel når en ny post opprettes, eller en eksisterende post oppdateres). Dette hjelper med å holde eksterne systemer oppdatert med Twenty umiddelbart og effektivt.
+
+Med webhooks vil Twenty sende en HTTP POST-forespørsel til en URL du spesifiserer, som inneholder detaljer om hendelsen. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
+
+## Sette opp en Webhook
+
+For å opprette en webhook i Twenty, bruk **API-er & Webhooks**-innstillingene i Twenty-appen din:
+
+1. **Naviger til Innstillinger:** I Twenty-applikasjonen din, gå til **Innstillinger → API-er & Webhooks**.
+2. **Opprett en Webhook:** Under **Webhooks** klikker du på **+ Opprett webhook**.
+3. **Skriv inn URL:** Oppgi den endepunkt-URL-en på serveren din hvor du ønsker at Twenty skal sende webhook-forespørsler til. Dette skal være en offentlig tilgjengelig URL som kan håndtere POST-forespørsler.
+4. **Lagre:** Klikk **Lagre** for å opprette webhook-en. Den nye webhook-en vil være aktiv umiddelbart.
+
+Du kan opprette flere webhooks hvis du trenger å sende forskjellige hendelser til forskjellige endepunkter. Hver webhook er egentlig en abonnement for alle relevante hendelser (på dette tidspunktet sender Twenty alle hendelsestyper til den angitte URL-en; konfigurering av spesifikke hendelsestyper kan bli muliggjort i UI-en). If you ever need to remove a webhook, you can delete it from the same settings page (select the webhook and choose delete).
+
+## Hendelser og nyttelast
+
+Når en webhook er satt opp, vil Twenty sende en HTTP POST-forespørsel til den spesifiserte URL-en din hver gang en triggende hendelse oppstår i din CRM-data. Vanlige hendelser som trigger webhooks inkluderer:
+
+- **Post opprettet:** f.eks. en ny person legges til (`person.created`), et nytt selskap opprettes (`company.created`), et notat opprettes (`note.created`), etc.
+- **Post oppdatert:** f.eks. en eksisterende persons informasjon oppdateres (`person.updated`), et selskaps post redigeres (`company.updated`), etc.
+- **Post slettet:** f.eks. en person eller selskap slettes (`person.deleted`, `company.deleted`).
+- **Andre hendelser:** Hvis aktuelt, andre objekthendelser eller egne triggere (for eksempel, hvis oppgaver eller andre objekter oppdateres, vil lignende hendelsetyper bli brukt som `task.created`, `note.updated`, etc.).
+
+Webhook-POST-forespørselen inneholder en JSON-nyttelast i kroppen. Nyttelasten vil generelt inkludere minst to ting: hendelsestypen, og dataene knyttet til den hendelsen (ofte posten som ble opprettet/oppdatert). For eksempel, en webhook for en nyopprettet person kan sende en nyttelast som:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+I dette eksempelet:
+
+- `"event"` spesifiserer hva som skjedde (`person.created`).
+- `"data"` inneholder de nye postdetaljene (den samme informasjonen du ville fått hvis du ba om den personen via API-en).
+- `"timestamp"` er når hendelsen skjedde (i UTC).
+
+Endepunktet ditt må være forberedt på å motta slik JSON-data via POST. Vanligvis vil du analysere JSON-en, se på `"event"`-typen for å forstå hva som skjedde, og deretter bruke `"data"`en tilsvarende (f.eks. opprette en ny kontakt i systemet ditt, eller oppdatere en eksisterende).
+
+**Merk:** Det er viktig å svare med en **2xx HTTP-status** fra webhook-endepunktet ditt for å bekrefte mottakelsen. Hvis Twenty-webhook-senderen ikke får en 2xx-respons, kan den anse leveringen som mislykket. (I fremtiden kan retry-logikk forsøke å sende mislykkede webhooks på nytt, så prøv alltid å returnere en 200 OK så raskt som mulig etter å ha behandlet dataene.)
+
+## Webhook-validering
+
+For å sikre sikkerheten til dine webhook-endepunkter, inkluderer Twenty en signatur i `X-Twenty-Webhook-Signature`-headeren.
+
+Denne signaturen er en HMAC SHA256-hash av forespørselens nyttelast, beregnet ved å bruke din webhook-hemmelighet.
+
+For å validere signaturen, må du:
+
+1. Koble sammen tidsstempelet (fra `X-Twenty-Webhook-Timestamp`-headeren), et kolon, og JSON-strengen av nyttelasten
+2. Beregne HMAC SHA256-hashen ved å bruke webhook-hemmeligheten din som nøkkel ()
+3. Sammenligne den resulterende hex-digesten med signatur-headeren
+
+Her er et eksempel i Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

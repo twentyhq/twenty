@@ -1,25 +1,13 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
-import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
+import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import {
-  H2Title,
-  IconCode,
-  IconHierarchy,
-  IconKey,
-  IconLockOpen,
-  IconSettings,
-  IconSettingsAutomation,
-  IconShield,
-  IconSpy,
-  IconUsers,
-} from 'twenty-ui/display';
+import { H2Title, IconSettings } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -47,84 +35,42 @@ export const SettingsRolePermissionsSettingsSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const settingsPermissionsConfig: SettingsRolePermissionsSettingPermission[] =
-    [
-      {
-        key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-        name: t`API Keys & Webhooks`,
-        description: t`Manage API keys and webhooks`,
-        Icon: IconCode,
-      },
-      {
-        key: PermissionFlagType.WORKSPACE,
-        name: t`Workspace`,
-        description: t`Set global workspace preferences`,
-        Icon: IconSettings,
-      },
-      {
-        key: PermissionFlagType.WORKSPACE_MEMBERS,
-        name: t`Users`,
-        description: t`Add or remove users`,
-        Icon: IconUsers,
-      },
-      {
-        key: PermissionFlagType.ROLES,
-        name: t`Roles`,
-        description: t`Define user roles and access levels`,
-        Icon: IconLockOpen,
-      },
-      {
-        key: PermissionFlagType.DATA_MODEL,
-        name: t`Data Model`,
-        description: t`Edit CRM data structure and fields`,
-        Icon: IconHierarchy,
-      },
-      {
-        key: PermissionFlagType.SECURITY,
-        name: t`Security`,
-        description: t`Manage security policies`,
-        Icon: IconKey,
-      },
-      {
-        key: PermissionFlagType.WORKFLOWS,
-        name: t`Workflows`,
-        description: t`Manage workflows`,
-        Icon: IconSettingsAutomation,
-      },
-      {
-        key: PermissionFlagType.SSO_BYPASS,
-        name: t`SSO Bypass`,
-        description: t`Enable bypass options`,
-        Icon: IconShield,
-      },
-      {
-        key: PermissionFlagType.IMPERSONATE,
-        name: t`Impersonate`,
-        description: t`Impersonate workspace users`,
-        Icon: IconSpy,
-      },
-    ];
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
+    assignmentCapabilities: {
+      canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+      canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+      canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+    },
+  });
+
+  const shouldShowAllAccessToggle =
+    !settingsDraftRole.canBeAssignedToAgents ||
+    settingsDraftRole.canBeAssignedToUsers;
 
   return (
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
-      <StyledCard rounded>
-        <SettingsOptionCardContentToggle
-          Icon={IconSettings}
-          title={t`Settings All Access`}
-          description={t`Ability to edit all settings`}
-          checked={settingsDraftRole.canUpdateAllSettings}
-          disabled={!isEditable}
-          onChange={() => {
-            setSettingsDraftRole({
-              ...settingsDraftRole,
-              canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-            });
-          }}
-        />
-      </StyledCard>
+      {shouldShowAllAccessToggle && (
+        <StyledCard rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconSettings}
+            title={t`Settings All Access`}
+            description={t`Ability to edit all settings`}
+            checked={settingsDraftRole.canUpdateAllSettings}
+            disabled={!isEditable}
+            onChange={() => {
+              setSettingsDraftRole({
+                ...settingsDraftRole,
+                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+              });
+            }}
+          />
+        </StyledCard>
+      )}
       <AnimatedExpandableContainer
-        isExpanded={!settingsDraftRole.canUpdateAllSettings}
+        isExpanded={
+          !shouldShowAllAccessToggle || !settingsDraftRole.canUpdateAllSettings
+        }
         dimension="height"
         animationDurations={{
           opacity: 0.2,

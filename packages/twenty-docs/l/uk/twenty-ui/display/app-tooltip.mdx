@@ -1,0 +1,88 @@
+---
+title: Підказка програми
+image: '"/images/user-guide/tips/light-bulb.png"'
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Коротке повідомлення, яке відображає додаткову інформацію, коли користувач взаємодіє з елементом.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості      | Тип                                        | Опис                                                                                                                                                                                                            |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className        | рядок                                      | Опційний клас CSS для додаткового стилювання                                                                                                                                                                    |
+| anchorSelect     | CSS селектор                               | Селектор для якоря підказки (елемент, що активує підказку)                                                                                                                                   |
+| content          | рядок                                      | Контент, який ви хочете відобразити у підказці                                                                                                                                                                  |
+| delayHide        | число                                      | Затримка у секундах перед приховуванням підказки після того, як курсор залишить якір                                                                                                                            |
+| offset           | число                                      | Зміщення у пікселях для позиціювання підказки                                                                                                                                                                   |
+| noArrow          | булевий тип                                | Якщо `true`, приховує стрілку на підказці                                                                                                                                                                       |
+| isOpen           | булевий тип                                | Якщо `true`, підказка відкрита за замовчуванням                                                                                                                                                                 |
+| place            | `PlacesType` рядок з `react-tooltip`       | Визначає розміщення підказки. Значення включають `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start` та `left-end` |
+| positionStrategy | `PositionStrategy` рядок з `react-tooltip` | Стратегія позиціювання для підказки. Має два значення: `absolute` та `fixed`                                                                                                    |
+
+</Tab>
+
+</Tabs>
+
+## Overflowing Text with Tooltip
+
+Handles overflowing text and displays a tooltip when the text overflows.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості | Тип   | Опис                                                                   |
+| ----------- | ----- | ---------------------------------------------------------------------- |
+| текст       | рядок | Контент, який ви хочете відобразити в області тексту, що переливається |
+
+</Tab>
+
+</Tabs>

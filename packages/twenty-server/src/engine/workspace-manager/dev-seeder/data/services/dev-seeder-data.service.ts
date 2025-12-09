@@ -8,7 +8,8 @@ import { DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -85,6 +86,10 @@ import {
   PET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
+  ROCKET_DATA_SEED_COLUMNS,
+  ROCKET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/rocket-data-seeds.constant';
+import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
@@ -125,6 +130,11 @@ const getRecordSeedsBatches = (
       tableName: '_surveyResult',
       pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
       recordSeeds: SURVEY_RESULT_DATA_SEEDS,
+    },
+    {
+      tableName: '_rocket',
+      pgColumns: ROCKET_DATA_SEED_COLUMNS,
+      recordSeeds: ROCKET_DATA_SEEDS,
     },
   ];
 
@@ -259,6 +269,7 @@ export class DevSeederDataService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
     private readonly fileStorageService: FileStorageService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   public async seed({
@@ -272,6 +283,14 @@ export class DevSeederDataService {
   }) {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
 
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
@@ -291,7 +310,12 @@ export class DevSeederDataService {
 
         await this.seedAttachmentFiles(workspaceId);
 
-        await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
+        await prefillWorkflows(
+          entityManager,
+          schemaName,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
       },
     );
   }
@@ -307,7 +331,7 @@ export class DevSeederDataService {
     schemaName: string;
     workspaceId: string;
     featureFlags?: Record<FeatureFlagKey, boolean>;
-    objectMetadataItems: ObjectMetadataEntity[];
+    objectMetadataItems: FlatObjectMetadata[];
   }) {
     const batches = getRecordSeedsBatches(workspaceId, featureFlags);
 
@@ -370,7 +394,7 @@ export class DevSeederDataService {
     const sampleFilesDir = IS_BUILT
       ? join(
           __dirname,
-          '../../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
+          '../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
         )
       : join(__dirname, '../sample-files');
 

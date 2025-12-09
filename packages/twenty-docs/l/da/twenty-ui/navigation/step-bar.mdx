@@ -1,0 +1,38 @@
+---
+title: Trinbjælke
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Viser fremskridt gennem en sekvens af nummererede trin ved at fremhæve det aktive trin. Den gengiver en container med trin, hver repræsenteret af `Step`-komponenten.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type | Beskrivelse                                                                                                     |
+| ---------- | ---- | --------------------------------------------------------------------------------------------------------------- |
+| aktivtTrin | tal  | Indekset for det nuværende aktive trin. Dette bestemmer hvilket trin der skal fremhæves visuelt |
+
+</Tab>
+</Tabs>

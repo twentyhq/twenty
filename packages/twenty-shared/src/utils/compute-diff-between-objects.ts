@@ -4,6 +4,7 @@ import deepEqual from 'deep-equal';
 type Diff<T extends { id: string }> = {
   toCreate: T[];
   toUpdate: T[];
+  toRestoreAndUpdate: T[];
   idsToDelete: string[];
 };
 
@@ -29,7 +30,7 @@ type ComputeDiffBetweenObjectsParams<
 };
 
 export const computeDiffBetweenObjects = <
-  T extends { id: string },
+  T extends { id: string; deletedAt: Date | null },
   K extends { id: string },
 >({
   existingObjects,
@@ -38,6 +39,7 @@ export const computeDiffBetweenObjects = <
 }: ComputeDiffBetweenObjectsParams<T, K>): Diff<K> => {
   const toCreate: K[] = [];
   const toUpdate: K[] = [];
+  const toRestoreAndUpdate: K[] = [];
 
   const existingEntitiesMap = new Map(
     existingObjects.map((entity) => [entity.id, entity]),
@@ -50,18 +52,22 @@ export const computeDiffBetweenObjects = <
     const existingEntity = existingEntitiesMap.get(receivedObject.id);
 
     if (isDefined(existingEntity)) {
-      const comparableExistingEntity = extractProperties(
-        existingEntity,
-        propertiesToCompare,
-      );
+      if (isDefined(existingEntity.deletedAt)) {
+        toRestoreAndUpdate.push(receivedObject);
+      } else {
+        const comparableExistingEntity = extractProperties(
+          existingEntity,
+          propertiesToCompare,
+        );
 
-      const comparableReceivedEntity = extractProperties(
-        receivedObject,
-        propertiesToCompare,
-      );
+        const comparableReceivedEntity = extractProperties(
+          receivedObject,
+          propertiesToCompare,
+        );
 
-      if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
-        toUpdate.push(receivedObject);
+        if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
+          toUpdate.push(receivedObject);
+        }
       }
     } else {
       toCreate.push(receivedObject);
@@ -69,12 +75,14 @@ export const computeDiffBetweenObjects = <
   }
 
   const idsToDelete = existingObjects
+    .filter((existingEntity) => !isDefined(existingEntity.deletedAt))
     .filter((existingEntity) => !receivedEntitiesMap.has(existingEntity.id))
     .map((entity) => entity.id);
 
   return {
     toCreate,
     toUpdate,
+    toRestoreAndUpdate,
     idsToDelete,
   };
 };

@@ -1,0 +1,251 @@
+---
+title: Cài đặt
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Quản lý cấu hình
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/vi/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty cung cấp **hai chế độ cấu hình** phù hợp với các nhu cầu triển khai khác nhau:
+
+**Truy cập bảng điều khiển quản trị:** Chỉ những người dùng có quyền quản trị (`canAccessFullAdminPanel: true`) mới có thể truy cập giao diện cấu hình.
+
+## 1. Cấu hình Bảng Điều Khiển Quản Trị (Mặc định)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**Hầu hết cấu hình xảy ra thông qua giao diện người dùng** sau khi cài đặt:
+
+1. Truy cập phiên bản Twenty của bạn (thường là `http://localhost:3000`)
+2. Đi tới **Cài đặt / Bảng Điều Khiển Quản Trị / Các Biến Cấu Hình**
+3. Cấu hình tích hợp, email, lưu trữ và nhiều hơn nữa
+4. Các thay đổi có hiệu lực ngay lập tức (trong vòng 15 giây cho các triển khai đa container)
+
+<Warning>
+**Triển khai Đa Container:** Khi sử dụng cấu hình cơ sở dữ liệu (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), cả các container máy chủ và worker đọc từ cùng cơ sở dữ liệu. Thay đổi bảng điều khiển quản trị ảnh hưởng đồng thời, không cần thiết lập lại các biến môi trường giữa các container (trừ các biến về hạ tầng).
+</Warning>
+
+**Những gì bạn có thể cấu hình thông qua bảng điều khiển quản trị:**
+
+- **Xác thực** - Google/Microsoft OAuth, cài đặt mật khẩu
+- **Email** - Cài đặt SMTP, mẫu, xác minh
+- **Lưu trữ** - Cấu hình S3, đường dẫn lưu trữ cục bộ
+- **Tích hợp** - Gmail, Lịch Google, Dịch vụ Microsoft
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **Và nhiều điều khác...**
+
+![Các biến cấu hình Bảng Điều Khiển Quản Trị](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Mỗi biến đều có mô tả trong bảng điều khiển quản trị của bạn tại **Cài đặt → Bảng Điều Khiển Quản Trị → Các Biến Cấu Hình**.
+Một số cài đặt hạ tầng như kết nối cơ sở dữ liệu (`PG_DATABASE_URL`), các URL máy chủ (`SERVER_URL`) và bí mật ứng dụng (`APP_SECRET`) chỉ có thể được cấu hình qua tệp `.env`.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. Cấu hình chỉ môi trường
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Tất cả cấu hình được quản lý thông qua tệp `.env`:**
+
+1. Thiết lập `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` trong tệp `.env` của bạn
+2. Thêm tất cả các biến cấu hình vào tệp `.env` của bạn
+3. Khởi động lại các container để các thay đổi có hiệu lực
+4. Bảng điều khiển quản trị sẽ hiển thị giá trị hiện tại nhưng không thể sửa đổi chúng
+
+## Tích hợp Gmail & Lịch Google
+
+### Tạo Dự Án trên Google Cloud
+
+1. Đi tới [Google Cloud Console](https://console.cloud.google.com/)
+2. Tạo một dự án mới hoặc chọn dự án hiện tại
+3. Kích hoạt các API sau:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Cấu hình OAuth
+
+1. Đi tới [Thông tin xác thực](https://console.cloud.google.com/apis/credentials)
+2. Tạo ID Client OAuth 2.0
+3. Thêm các URI chuyển hướng này:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Cấu hình trong Twenty
+
+1. Đi tới **Cài đặt → Bảng Điều Khiển Quản Trị → Các Biến Cấu Hình**
+2. Tìm phần **Google Auth**
+3. Thiết lập các biến này:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**Phạm vi yêu cầu** (được cấu hình tự động):
+[Xem mã nguồn liên quan](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### Nếu ứng dụng của bạn đang ở chế độ thử nghiệm
+
+Nếu ứng dụng của bạn đang ở chế độ thử nghiệm, bạn sẽ cần thêm người dùng thử nghiệm vào dự án của mình.
+
+Dưới [màn hình hiển thị sự đồng ý OAuth](https://console.cloud.google.com/apis/credentials/consent), thêm người dùng thử nghiệm của bạn vào mục "Người dùng thử nghiệm".
+
+## Tích hợp Microsoft 365
+
+<Warning>
+Người dùng phải có [Giấy phép Microsoft 365](https://admin.microsoft.com/Adminportal/Home) để có thể sử dụng API Lịch và Nhắn tin. Họ không thể đồng bộ hóa tài khoản của mình trên Twenty mà không có giấy phép.
+</Warning>
+
+### Tạo dự án trong Microsoft Azure
+
+Bạn sẽ cần tạo một dự án trong [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) và lấy thông tin xác thực.
+
+### Kích hoạt APIs
+
+Trên Bảng điều khiển Microsoft Azure, hãy kích hoạt các API sau trong mục "Quyền hạn":
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+Lưu ý: "Mail.ReadWrite" và "Mail.Send" chỉ bắt buộc nếu bạn muốn gửi email bằng các hành động trong quy trình của chúng tôi. Bạn có thể sử dụng "Mail.Read" nếu bạn chỉ muốn nhận email.
+
+### URI chuyển hướng được ủy quyền
+
+Bạn cần thêm các URI chuyển hướng sau vào dự án của mình:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Cấu hình trong Twenty
+
+1. Đi tới **Cài đặt → Bảng Điều Khiển Quản Trị → Các Biến Cấu Hình**
+2. Tìm phần **Microsoft Auth**
+3. Thiết lập các biến này:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Cấu hình phạm vi
+
+[Xem mã nguồn liên quan](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'thư điện tử'
+- 'hồ sơ'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### Nếu ứng dụng của bạn đang ở chế độ thử nghiệm
+
+Nếu ứng dụng của bạn đang ở chế độ thử nghiệm, bạn sẽ cần thêm người dùng thử nghiệm vào dự án của mình.
+
+Thêm người dùng thử nghiệm của bạn vào phần "Người dùng và nhóm".
+
+## Công việc nền cho Lịch & Nhắn tin
+
+Sau khi cấu hình tích hợp Gmail, Lịch Google hoặc Microsoft 365, bạn cần bắt đầu các công việc nền để đồng bộ dữ liệu.
+
+Đăng ký các công việc định kỳ sau trong container worker của bạn:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## Cấu Hình Email
+
+1. Đi tới **Cài đặt → Bảng Điều Khiển Quản Trị → Các Biến Cấu Hình**
+2. Tìm phần **Email**
+3. Cấu hình các cài đặt SMTP của bạn:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+Bạn sẽ cần tạo [Mật khẩu ứng dụng](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** là một máy chủ SMTP giả định cho phát triển và thử nghiệm.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** là một máy chủ SMTP giả định cho phát triển và thử nghiệm.
+
+- Chạy hình ảnh smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Truy cập giao diện smtp4dev ở đây: [http://localhost:8090](http://localhost:8090)
+- Thiết lập các biến sau:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

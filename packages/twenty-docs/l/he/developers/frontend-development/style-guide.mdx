@@ -1,0 +1,295 @@
+---
+title: מדריך סגנון
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+מסמך זה כולל את הכללים שיש לעקוב אחריהם בעת כתיבת קוד.
+
+המטרה כאן היא לקבל בסיס קוד עקבי, שקל לקרוא ומקל על תחזוקה.
+
+For this, it's better to be a bit more verbose than to be too concise.
+
+תמיד זכרו שאנשים קוראים קוד יותר מכפי שהם כותבים אותו, במיוחד בפרויקט קוד פתוח, שבו כל אחד יכול לתרום.
+
+יש הרבה כללים שאינם מוגדרים כאן אך נבדקים אוטומטית על ידי כלים לניתוח קוד.
+
+## ריאקט
+
+### השתמשו ברכיבים פונקציונליים
+
+תמיד השתמשו ברכיבי TSX פונקציונליים.
+
+אל תשתמשו בייבוא ברירת מחדל עם `const`, כי זה קשה לקריאה וקשה לייבוא עם השלמת קוד.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### תכונות
+
+צרו את סוג הפרופס וקראו לו `(ComponentName)Props` אם אין צורך לייצא אותו.
+
+Use props destructuring.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### הימנעו משימוש ב-`React.FC` או ב-`React.FunctionComponent` כדי להגדיר סוגי פרופס
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */ 
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### אין פרופסי הפצה משתנים ב-GSX Elements
+
+Avoid using single variable prop spreading in JSX elements, like `{...props}`. הפרקטיקה הזו בדרך כלל יכולה לגרום לקוד פחות קורא ויותר קשה לתחזוקה כי לא ברור איזה פרופס הרכיב מקבל.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */ 
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+סיבה:
+
+- במבט חטוף, ברור יותר אילו פרופסים מועברים בקוד, מה שמקל על הבנה ותחזוקה.
+- זה עוזר למנוע צימוד הדוק בין רכיבים באמצעות הפרופים שלהם.
+- כלי ניתוח קוד מקלים על זיהוי פרופסים מאוייתים לא נכון או שאינם בשימוש כאשר מפרטים פרופסים בצורה ברורה.
+
+## JavaScript
+
+### השתמשו במפעיל הערכה נול `??`
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### השתמשו בבדיקת ״?״
+
+```tsx
+// ❌ Bad 
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### השתמשו ב-`type` במקום `interface`
+
+תמיד השתמשו ב-`type` במקום `interface`, כי הם כמעט תמיד חופפים, ו-`type` גמיש יותר.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### השתמשו במקורות מחרוזות במקום enums
+
+[מחרוזות מותאמות](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) הן הדרכים המודפות לטיפול בערכים דמויי-Enum ב-TypeScript. הן קלות להרחבה עם Pick ו-Omit, ונותנות חווית מפתחים טובה יותר, במיוחד עם השלמת קוד.
+
+ניתן לראות מדוע TypeScript ממליץ לא להשתמש ב-enums [כאן](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL וספריות פנימיות
+
+יש להשתמש ב-enums שמיוצרים על ידי GraphQL codegen.
+
+גם כדאי להשתמש ב-enum כאשר משתמשים בספריה פנימית, כדי שהספריה לא תצטרך לחשוף סוג מחרוזת מותאמת שלא קשור ל-API הפנימי.
+
+דוגמא:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## סטיילינג
+
+### השתמשו ב-StyledComponents
+
+עצבו את הרכיבים עם [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+קדמו רכיבים מעוצבים עם "Styled" כדי להבדילם מ"רכיבים אמיתיים".
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### מערכות נושא
+
+שימוש בנושא לצורך עיצוב רכיבים הוא הגישה המועדפת.
+
+#### יחידות מידה
+
+הימנעו משימוש בערכי `px` או `rem` ישירות בתוך רכיבים מעוצבים. הערכים הנדרשים כבר מוגדרים בדרך כלל בנושא, ולכן מומלץ להשתמש בנושא לכך.
+
+#### צבעים
+
+הימנעו מהכנסת צבעים חדשים, במקום זאת השתמשו בפלטה קיימת מתוך הנושא. אם יש מצב שהפלטה לא מתאימה, יש להשאיר תגובה כדי שהצוות יוכל לתקן.
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## אכיפת ייבואים ללא סוגים
+
+הימנעו מייבוא סוגים. כדי לאכוף סטנדרט זה, חוק ESLint בודק ומדווח על ייבוא סוגים כלשהו. זה מסייע לשמור על עקביות וקריאות בקוד ה-TypeScript.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### למה לא לעשות ייבוא סוג
+
+- **עקביות**: על ידי הימנעות מייבוא סוגים ושימוש בגישה אחת גם לייבוא סוגים וגם לייבוא ערכים, בסיס הקוד נותר עקבי בסגנון גישה למודולים.
+
+- **קריאות**: ייבוא ללא סוג משפר את קריאות הקוד בכך שהוא מבהיר מתי מייבאים ערכים או סוגים. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+
+- **תחזוקה**: זה משפר את תחזוקת בסיס הקוד משום שזה מאפשר למפתחים לזהות ולאתר ייבוא סוגים בלבד בעת בדיקה או שינוי קוד.
+
+### חוק ESLint
+
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. חוק זה ייצור שגיאות או אזהרות על כל חריגות מייבוא סוגים.
+
+שים לב שחוק זה עוסק בעיקר במקרים נדירים של ייבוא סוגים לא מכוון. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+
+To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.

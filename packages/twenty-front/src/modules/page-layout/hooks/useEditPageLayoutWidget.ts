@@ -37,6 +37,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         navigatePageLayoutCommandMenu({
           commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
+          resetNavigationStack: true,
         });
       }
 
@@ -44,6 +45,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         navigatePageLayoutCommandMenu({
           commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
           pageTitle: t`Edit Graph`,
+          resetNavigationStack: true,
         });
       }
     },

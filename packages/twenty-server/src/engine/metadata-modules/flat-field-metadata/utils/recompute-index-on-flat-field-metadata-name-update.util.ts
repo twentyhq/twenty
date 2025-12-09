@@ -42,13 +42,11 @@ export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
     },
   );
 
-  return relatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
-    const newIndex = generateFlatIndexMetadataWithNameOrThrow({
+  return relatedFlatIndexMetadata.map((flatIndex) =>
+    generateFlatIndexMetadataWithNameOrThrow({
       flatIndex,
       flatObjectMetadata,
       objectFlatFieldMetadatas: optimisticObjectFlatFieldMetadatas,
-    });
-
-    return newIndex;
-  });
+    }),
+  );
 };

@@ -21,10 +21,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  WorkspaceSSOIdentityProviderEntity,
-  IdentityProviderType,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
@@ -36,9 +32,14 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import {
+  IdentityProviderType,
+  WorkspaceSSOIdentityProviderEntity,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth')
@@ -56,7 +57,11 @@ export class SSOAuthController {
   ) {}
 
   @Get('saml/metadata/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, PublicEndpointGuard)
+  @UseGuards(
+    EnterpriseFeaturesEnabledGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
@@ -73,27 +78,47 @@ export class SSOAuthController {
   }
 
   @Get('oidc/login/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
+  @UseGuards(
+    EnterpriseFeaturesEnabledGuard,
+    OIDCAuthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async oidcAuth() {
     // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
     return;
   }
 
   @Get('saml/login/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
+  @UseGuards(
+    EnterpriseFeaturesEnabledGuard,
+    SAMLAuthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async samlAuth() {
     // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow
     return;
   }
 
   @Get('oidc/callback')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
+  @UseGuards(
+    EnterpriseFeaturesEnabledGuard,
+    OIDCAuthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async oidcAuthCallback(@Req() req: OIDCRequest, @Res() res: Response) {
     return await this.authCallback(req, res);
   }
 
   @Post('saml/callback/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
+  @UseGuards(
+    EnterpriseFeaturesEnabledGuard,
+    SAMLAuthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async samlAuthCallback(@Req() req: SAMLRequest, @Res() res: Response) {
     try {
       return await this.authCallback(req, res);

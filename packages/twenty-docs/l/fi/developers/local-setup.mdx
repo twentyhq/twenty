@@ -1,0 +1,330 @@
+---
+title: Paikallinen Asennus
+description: "The guide for contributors (or curious developers) who want to run Twenty locally."
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Esivaatimukset
+
+<Tabs>
+<Tab title="Linux and MacOS">
+
+Before you can install and use Twenty, make sure you install the following on your computer:
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<Warning>
+`npm` ei toimi, sinun pitäisi käyttää `yarn` sen sijaan. Yarn toimitetaan nyt Node.js:n kanssa, joten sinun ei tarvitse asentaa sitä erikseen.
+Sinun tarvitsee vain suorittaa `corepack enable` aktivoidaksesi Yarnin, jos et ole vielä tehnyt sitä.
+</Warning>
+
+</Tab>
+
+<Tab title="Windows (WSL)">
+
+1. Asenna WSL
+   Avaa PowerShell järjestelmänvalvojana ja suorita:
+
+```powershell
+wsl --install
+```
+
+Sinun pitäisi nyt nähdä kehote käynnistää tietokoneesi uudelleen. Jos ei, käynnistä se uudelleen manuaalisesti.
+
+Käynnistyessä avautuu PowerShell-ikkuna ja asennetaan Ubuntu. Tämä saattaa viedä jonkin aikaa.
+You'll see a prompt to create a username and password for your Ubuntu installation.
+
+2. Asenna ja konfiguroi git
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. Asenna nvm, node.js ja yarn
+
+<Warning>
+Use `nvm` to install the correct `node` version. `.nvmrc` varmistaa, että kaikki osallistujat käyttävät samaa versiota.
+</Warning>
+
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+Sulje ja avaa terminaalisi uudelleen käyttääksesi nvm:ää. Suorita sitten seuraavat komennot.
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+corepack enable
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## Step 1: Git Clone
+
+Suorita päätelaitteessasi seuraava komento.
+
+<Tabs>
+<Tab title="SSH (Recommended)">
+Jos et ole vielä määrittänyt SSH-avaimia, voit oppia, miten se tehdään [täällä](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</Tab>
+</Tabs>
+
+## Vaihe 2: Sijaitse projektin juuressa
+
+```bash
+cd twenty
+```
+
+You should run all commands in the following steps from the root of the project.
+
+## Vaihe 3: Aseta PostgreSQL-tietokanta
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your database locally with `brew`:
+
+````
+```bash
+  brew install postgresql@16
+  export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+  brew services start postgresql@16
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+You can verify if the PostgreSQL server is running by executing:
+```bash
+  brew services list
+```
+
+The installer might not create the `postgres` user by default when installing
+via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+username (e.g., "john").
+To check and create the `postgres` user if necessary, follow these steps:
+```bash
+  # Connect to PostgreSQL
+  psql postgres
+  or
+  psql -U $(whoami) -d postgres
+```
+
+Once at the psql prompt (postgres=#), run:
+ ```bash
+  # List existing PostgreSQL roles
+  \du
+```
+You'll see output similar to:
+ ```bash
+  Role name | Attributes  | Member of
+  -----------+-------------+-----------
+  john      | Superuser   | {}
+```
+
+If you do not see a `postgres` role listed, proceed to the next step.
+Create the `postgres` role manually:
+ ```bash
+  CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+This creates a superuser role named `postgres` with login access.
+
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
+````
+**Option 1:** To provision your Postgresql locally:
+Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+```bash
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+**Option 2:** If you have docker installed:
+Running Docker on WSL adds an extra layer of complexity.
+Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+Voit nyt käyttää tietokantaa osoitteessa [localhost:5432](localhost:5432), käyttäjällä `postgres` ja salasanalla `postgres`.
+
+## Step 4: Set up a Redis Database (cache)
+
+Twenty tarvitsee redis-välimuistin parhaan suorituskyvyn antamiseksi
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+    Start your redis server:
+    ```brew services start redis```
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+
+## Vaihe 5: Aseta ympäristömuuttujat
+
+Käytä ympäristömuuttujia tai `.env`-tiedostoja projektisi konfiguroimiseen. Lisätietoja [täältä](https://docs.twenty.com/l/fi/developers/self-hosting/setup)
+
+Kopioi `.env.example` tiedostot hakemistoihin `/front` ja `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## Vaihe 6: Riippuvuuksien asentaminen
+
+Rakentaaksesi Twenty-palvelimen ja siementääksesi tietoa tietokantaasi, suorita seuraava komento:
+
+```bash
+yarn
+```
+
+Huomaa, että `npm` tai `pnpm` eivät toimi
+
+## Vaihe 7: Projektin suorittaminen
+
+<Tabs>
+  <Tab title="Linux">
+    Riippuen Linux-järjestelmästäsi, Redis-palvelin saattaa käynnistyä automaattisesti.
+    Jos ei, tarkista [Redis asennusopas](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) jakeluversiollesi.
+  </Tab>
+  <Tab title="Mac OS">
+  Redis pitäisi olla jo käynnissä. If not, run:
+    ```bash
+    brew services start redis
+    ```  
+</Tab>
+  <Tab title="Windows (WSL)">
+    Riippuen Linux-järjestelmästäsi, Redis-palvelin saattaa käynnistyä automaattisesti.
+    Jos ei, tarkista [Redis asennusopas](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) jakeluversiollesi.
+  </Tab>
+</Tabs>
+
+Määritä tietokantasi seuraavalla komennolla:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Käynnistä palvelin, työntekijä ja frontend-palvelut:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Vaihtoehtoisesti voit käynnistää kaikki palvelut kerralla:
+
+```bash
+npx nx start
+```
+
+## Vaihe 8: Käytä Twenty
+
+**Frontend**
+
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
+You can log in using the default demo account: `tim@apple.dev` (password: `tim@apple.dev`)
+
+**Backend**
+
+- Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000)
+- GraphQL API on käytettävissä osoitteessa [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- REST API on saavutettavissa osoitteessa [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Vianmääritys
+
+Jos kohtaat ongelmia, tarkista [Vianmääritys](https://docs.twenty.com/l/fi/developers/self-hosting/troubleshooting) ratkaisujen saamiseksi.

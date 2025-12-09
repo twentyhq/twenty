@@ -1,0 +1,106 @@
+---
+title: Oikeudet
+info: "Opi hallitsemaan pääsyä: määritä rooleja ja aseta käyttöoikeuksia."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Määritä Twenty-työtilasi asetukset ja mieltymykset.
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Twentyn käyttöoikeusjärjestelmän avulla voit hallita pääsyä kolmeen pääalueeseen:
+
+- **Objektit ja kentät**: Hallitse, ketkä voivat nähdä, muokata tai poistaa tietueita ja yksittäisiä kenttiä
+- **Asetukset**: Hallitse käyttöoikeuksia työtilan konfigurointiin ja hallinnollisiin toimintoihin
+- **Toiminnot**: Hallitse yleisiä työtilatoimintoja, kuten datan tuomista tai sähköpostien lähettämistä
+
+## Luo rooli
+
+Uuden roolin luominen:
+
+1. Siirry kohtaan **Asetukset → Roolit**
+2. Klikkaa **+ Luo rooli** kohdassa **Kaikki roolit**
+3. Syötä roolin nimi
+4. Määritä käyttöoikeudet oletuksena olevan **Käyttöoikeudet**-välilehden kautta
+5. Click **Save** to finish
+
+## Poista rooli
+
+Roolin poistaminen:
+
+1. Siirry kohtaan **Asetukset → Roolit**
+2. Klikkaa poistettavaa roolia
+3. Avaa **Asetukset**-välilehti ja valitse **Poista rooli**
+4. Klikkaa **Vahvista** modaalissa
+
+Huom: Jos rooli poistetaan, kaikki sille määritetyt työtilan jäsenet siirretään automaattisesti oletusrooliin. Kaikki paitsi **Admin**-rooli voidaan poistaa. Aina on oltava vähintään yksi **Admin**-rooliin liitetty jäsen.
+
+## Määritä rooleja jäsenille
+
+### Näytä nykyiset määritykset
+
+- Siirry kohtaan **Asetukset → Roolit**
+- Katso kaikki roolit ja kuinka monta jäsentä on kullekin määritetty
+- Näytä, millä jäsenillä on mitkäkin roolit
+
+### Määritä rooli jäsenelle
+
+1. Siirry kohtaan **Asetukset → Roolit**
+2. Klikkaa määritettävää roolia
+3. Avaa **Määritys**-välilehti
+4. Klikkaa **+ Määritä jäsenelle**
+5. Valitse työtilan jäsen listalta
+6. Vahvista määritys
+
+### Aseta oletusrooli
+
+1. Siirry kohtaan **Asetukset → Roolit**
+2. **Vaihtoehdot**-kohdasta löydä **Oletusrooli**
+3. Valitse, minkä roolin uudet jäsenet saavat automaattisesti
+4. Uudet työtilan jäsenet saavat tämän roolin liittyessään
+
+**Huom**: Roolit voidaan määrittää vain olemassa oleville työtilan jäsenille. Kutsuttaaksesi uusia jäseniä käytä [Jäsenhallinta](/l/fi/user-guide/settings/member-management).
+
+## Mukauta käyttöoikeuksia
+
+Käyttöoikeudet määrittävät, mihin roolit voivat päästä tai mitä muokata työtilassasi, mukaan lukien työtilan objektitietueet, asetukset ja toiminnot.
+
+### Object and Field Permissions
+
+Hallitse pääsyä tietueisiin ja yksittäisiin kenttiin:
+
+#### Objektitaso käyttöoikeudet
+
+- Sovella käyttöoikeuksia kaikille objekteille kohdassa **Kaikki objektit**, kuten **Näytä tietue**, **Muokkaa tietueita**, **Poista tietueita** tai **Hävitä tietueita**
+- Konfiguroi poikkeukset yksittäisille objekteille kohdassa **Objektitaso käyttöoikeudet**. Nämä ohittavat asetukset **Kaikilta objekteilta**
+
+#### Kenttätason käyttöoikeudet
+
+- Määritä käyttöoikeudet yksittäisille kentille kussakin objektissa
+- Hallitse, kuka voi **Nähdä kentän**, **Muokata kenttää** tai kenellä ei ole **Pääsyä** tiettyihin kenttiin
+- Kenttäoikeudet toimivat samalla tavalla kuin objekti-oikeudet perimisen ja ohitusten kanssa
+
+#### Käyttöoikeusohitusten hallinta
+
+Ohittaaksesi vanhempien käyttöoikeudet ja sovellettaaksesi tiukempia sääntöjä:
+
+- Klikkaa **X** poistaaksesi perityn säännön
+- Valitse tietylle objektille tai kentälle tarkoitetut käyttöoikeudet
+- Klikkaa oranssia **Kumoa**-ikonia (pyöreä nuoli) peruuttaaksesi muutokset
+
+Kun olet valmis, klikkaa **Valmis**, ja valitse **Tallenna** uudelleenohjauksen jälkeen roolisivulle.
+
+### Työtilan asetusoikeudet
+
+Hallitse pääsyä työtilan asetuksiin kahdella tavalla:
+
+- Vaihda **Asetukset Kaikki Pääsy** myöntääksesi täydet käyttöoikeudet
+- Tai aktivoi tietyt käyttöoikeudet (esim. API-avaimen luominen, työtilan asetukset, roolimääritelyt, tietomallien konfigurointi, tietoturva-asetukset ja työnkulkujen hallinta)
+
+### Työtilatoimintojen käyttöoikeudet
+
+Hallitse pääsyä yleisiin työtilatoimintoihin:
+
+- Toggle **Application All Access** to grant full permissions
+- Tai aktivoi yksittäiset toiminnot kuten **Lähetä sähköposti**, **Tuo CSV** ja **Vie CSV**

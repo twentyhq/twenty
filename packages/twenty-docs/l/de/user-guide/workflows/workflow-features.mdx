@@ -1,0 +1,319 @@
+---
+title: Workflow-Funktionen
+info: Vollständige Referenz für alle verfügbaren Workflow-Auslöser, Aktionen und Verwaltungsfunktionen.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatisieren Sie Prozesse und integrieren Sie externe Werkzeuge
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Workflow Triggers
+
+Workflows always start with a single trigger that defines when the automation should run.
+
+### Datensatz wird erstellt
+
+Startet den Workflow, wenn ein neuer Datensatz in einem ausgewählten Objekt (Personen, Unternehmen, Gelegenheiten oder ein benutzerdefiniertes Objekt) erstellt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf neue Datensätze überwacht werden soll.
+
+### Datensatz wird aktualisiert
+
+Startet den Workflow, wenn Änderungen an einem bestehenden Datensatz vorgenommen werden.
+
+**Konfiguration**:
+
+- Wählen Sie den Objekttyp aus
+- Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+
+### Datensatz wird aktualisiert oder erstellt
+
+Startet den Workflow, wenn ein Datensatz in einem ausgewählten Objekt entweder erstellt oder aktualisiert wird.
+
+**Warum das wichtig ist**: Dieser Auslöser ist besonders hilfreich, da auf verschiedene Arten erstellte Datensätze sich unterschiedlich verhalten:
+
+- **API/CSV-Imports**: Datensätze werden mit allen Feldern sofort gefüllt erstellt
+- **Manuelle Erstellung**: Datensätze werden zuerst erstellt, dann werden Felder in nachfolgenden Aktualisierungen hinzugefügt
+
+**Konfiguration**:
+
+- Wählen Sie den Objekttyp aus, der überwacht werden soll
+- Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+- Der Workflow wird sowohl bei der ersten Erstellung als auch bei nachfolgenden Aktualisierungen ausgelöst
+
+### Datensatz wird gelöscht
+
+Startet den Workflow, wenn ein Datensatz aus einem Objekt entfernt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf Löschungen überwacht werden soll.
+
+### Manuell auslösen
+
+Startet den Workflow, wenn er durch eine Benutzeraktion ausgelöst wird. Dieser Auslöser kann über das Cmd+K-Menü oder über einen benutzerdefinierten Button in der oberen Navigationsleiste aufgerufen werden.
+
+**Verfügbarkeitskonfiguration**: Wählen Sie aus, wie der Workflow die Datensatzauswahl handhaben soll:
+
+- **Global**: No record is required to trigger this workflow. The workflow is triggered from anywhere (from any object) and does not use record(s) as input.
+
+- **Einzeln**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird so oft ausgeführt, wie Datensätze ausgewählt sind.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird einmal ausgeführt, wobei die gesamte Liste der Datensätze als Eingabe verwendet wird. Dies bedeutet, dass der Workflow eine Iterator-Aktion enthalten muss. Dies ist am besten für Personen, die die Anzahl der Workflow-Ausführungen optimieren/begrenzen möchten.
+
+**Zusätzliche Konfiguration**:
+
+- Wählen Sie das Zielobjekt aus (für Einzel- und Bulk-Verfügbarkeit)
+- Wählen Sie ein Befehls-Symbol für den Workflow-Trigger
+- Navbar-Platzierung konfigurieren (gepinnt oder nicht gepinnt)
+
+**Zugriffsmethoden**:
+
+- Cmd+K-Menü zum Finden und Starten manueller Workflows
+- Benutzerdefinierte Schaltfläche in der oberen Navigationsleiste (falls konfiguriert)
+
+### Auf einen Zeitplan
+
+Startet den Workflow auf regelmäßiger Basis, die Sie definieren.
+
+**Konfiguration**:
+
+- Zeiteinheit auswählen (Minuten, Stunden, Tage)
+- Geben Sie einen Wert ein oder verwenden Sie benutzerdefinierte Cron-Ausdrücke für erweitertes Scheduling
+
+### Webhook
+
+Startet den Workflow, wenn eine GET- oder POST-Anfrage von einem externen Dienst empfangen wird.
+
+**Konfiguration**:
+
+- Erhalten Sie eine eindeutige Webhook-URL
+- Bei POST-Anfragen die erwartete Body-Struktur definieren
+- Konfigurieren Sie die Authentifizierung, falls erforderlich
+
+## Workflow-Aktionen
+
+Aktionen definieren, was nach dem Auslösen passiert. Sie können mehrere Aktionen miteinander verketten.
+
+### Einen Datensatz erstellen
+
+Fügt einem ausgewählten Objekt einen neuen Datensatz hinzu.
+
+**Konfiguration**:
+
+- Wählen Sie das Zielobjekt aus
+- Füllen Sie die erforderlichen und optionalen Felder aus
+- Verwenden Sie Daten aus vorherigen Schritten, um Felder zu füllen
+
+**Ausgabe**: Die neu erstellten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensatz aktualisieren
+
+Ändert einen bestehenden Datensatz in einem ausgewählten Objekt.
+
+**Konfiguration**:
+
+- Wählen Sie das Zielobjekt aus
+- Wählen Sie den spezifischen Datensatz zum Aktualisieren aus
+- Wählen Sie zu ändernde Felder aus und geben Sie neue Werte ein
+
+**Ausgabe**: Die aktualisierten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensatz löschen
+
+Entfernt einen Datensatz aus einem ausgewählten Objekt.
+
+**Konfiguration**:
+
+- Wählen Sie das Zielobjekt aus
+- Wählen Sie den spezifischen Datensatz zum Löschen aus
+
+**Ausgabe**: Die gelöschten Datensatzdaten stehen in nachfolgenden Schritten zur Verfügung.
+
+### Datensätze durchsuchen
+
+Findet Datensätze innerhalb eines ausgewählten Objekts mittels Filterkonditionen.
+
+**Konfiguration**:
+
+- Wählen Sie das Objekt aus, das Sie durchsuchen möchten.
+- Legen Sie Filterkriterien fest, um Ergebnisse einzugrenzen.
+- Konfigurieren Sie Sortierung und Begrenzungen.
+
+**Ausgabe**: Gibt passende Datensätze zurück, die in nachfolgenden Schritten verwendet werden können.
+
+**Best Practice**: Verwenden Sie Verzweigungen nach dem Durchsuchen von Datensätzen, um "gefunden" vs. "nicht gefunden" Szenarien zu bearbeiten.
+
+### Iterator
+
+Schleift durch ein Array von Datensätzen, die von einem vorherigen Schritt zurückgegeben wurden, und ermöglicht es Ihnen, Aktionen auf jedem Datensatz einzeln durchzuführen.
+
+**Konfiguration**:
+
+- Wählen Sie das Array von Datensätzen aus einem vorherigen Schritt (z. B. Ergebnisse aus dem Durchsuchen von Datensätzen)
+- Definieren Sie die Aktionen, die für jeden Datensatz in der Schleife ausgeführt werden sollen
+- Konfigurieren Sie den Variablennamen, um auf jeden Datensatz in der Iteration zu verweisen
+
+**Beispiel**: Durchsuchen von Datensätzen gibt 5 Personen zurück, dann verwenden Sie einen Iterator, um jeder Person eine E-Mail zu senden oder jeden Datensatz einzeln zu aktualisieren.
+
+**Hinweis**: Der Iterator befindet sich derzeit in der Beta-Phase. Aktivieren Sie es unter Einstellungen → Releases → Lab.
+
+### Filter
+
+Filtert ein Array von Datensätzen basierend auf festgelegten Bedingungen und lässt nur Datensätze durch, die die Kriterien erfüllen.
+
+**Konfiguration**:
+
+- Wählen Sie das Array von Datensätzen, das gefiltert werden soll
+- Definieren Sie Filterbedingungen und Kriterien
+- Konfigurieren Sie, welche Datensätze in nachfolgende Schritte übergehen sollen
+
+**Ausgabe**: Gibt nur die Datensätze zurück, die die festgelegten Filterbedingungen erfüllen.
+
+### E-Mail senden
+
+Sendet eine E-Mail aus Ihrem Workflow.
+
+**Voraussetzungen**: Fügen Sie ein E-Mail-Konto unter Einstellungen > Konten hinzu
+
+**Konfiguration**:
+
+- E-Mail-Adresse des Empfängers eingeben
+- Betreffzeile festlegen
+- Nachrichtentext verfassen
+- Verweisen Sie auf Variablen aus vorhergehenden Schritten zur Personalisierung
+
+**Hinweis**: E-Mail-Anhänge werden ab Q1 2026 verfügbar sein.
+
+### Code
+
+Führt benutzerdefiniertes JavaScript in Ihrem Workflow aus.
+
+**Konfiguration**:
+
+- Schreiben Sie JavaScript-Code im Editor
+- Greifen Sie auf Variablen aus vorherigen Schritten zu
+- Variablen zurückgeben, um sie in nachfolgenden Schritten zu verwenden
+- Code direkt im Schritt testen
+
+**Zugriff**: Verwalten Sie API-Schlüssel unter Einstellungen → API & Webhooks
+
+### Formular
+
+Fordert während der Workflow-Ausführung ein Formular an, um Benutzereingaben zu sammeln.
+
+**Konfiguration**:
+
+- Eingabefelder mit Typen, Labels und Platzhaltern definieren
+- Validierungsregeln konfigurieren
+- Formulartitel und -beschreibung festlegen
+
+**Ausgabe**: Formularantworten sind für nachfolgende Schritte verfügbar.
+
+<Warning>
+Formulare sind derzeit nur für manuelle Trigger konzipiert. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
+</Warning>
+
+### HTTP-Anfrage
+
+Sendet eine Anfrage an eine externe API als Teil Ihres Workflows.
+
+**Konfiguration**:
+
+- Geben Sie die API-Endpunkt-URL ein
+- Wählen Sie die HTTP-Methode aus (GET, POST, PUT, PATCH, DELETE)
+- Erforderliche Header und Werte hinzufügen
+- Anfrageinhalt für POST/PUT/PATCH-Anfragen einschließen
+- Beispielantwort zur Strukturvorschau bereitstellen
+
+## Workflow-Management
+
+### Workflows erstellen
+
+1. Klicken Sie auf "+ Einen Workflow hinzufügen", um zu beginnen
+2. Klicken Sie auf "Unbenannt", um Ihren Workflow zu benennen
+3. Wählen und konfigurieren Sie Ihren Workflow-Trigger
+4. Fügen Sie Aktionen zu Ihrem Workflow hinzu
+5. Testen und iterieren
+6. Aktivieren Sie Ihren Workflow (derzeit im Entwurfsmodus), sobald Sie mit der Bearbeitung fertig sind
+
+**Hinweis**: Wenn Sie den Workflow-Bereich nicht sehen, liegt dies an einem Berechtigungsproblem. Kontaktieren Sie Ihren Workspace-Administrator, um Ihnen Zugriff auf Workflows zu gewähren.
+
+### Workflow-Status
+
+- **Entwurf**: Wird bearbeitet, noch nicht veröffentlicht
+- **Aktiv**: Live-Version reagiert auf Trigger
+- **Deaktiviert**: Zuvor aktiv, aber manuell gestoppt
+- **Archiviert**: Vergangene Versionen für die Historie beibehalten
+
+### Workflows aktivieren
+
+Klicken Sie auf **Aktivieren**, um Ihren Entwurf als neue Version zu veröffentlichen. Dies macht den Workflow bereit für die Ausführung bei Auslösung, führt ihn jedoch nicht sofort aus.
+
+### Workflows testen
+
+Testen Sie Workflows vor der Aktivierung mit:
+
+- Manuelle Trigger (wenn kein Datensatz ausgewählt ist)
+- Individuelle Aktionstestung (besonders Code-Aktionen)
+- Testmodus für Entwürfe, der den Workflow nicht aktiviert
+
+### Workflow-Läufe
+
+Ein **Lauf** ist ein Protokoll der Workflow-Ausführung, das Folgendes enthält:
+
+- Status (erfolgreich, fehlgeschlagen, läuft)
+- Ausgabedaten aus jedem Schritt
+- Autor und Zeitstempel
+- Fehlermeldungen, falls zutreffend
+
+**Läufe anzeigen**:
+
+- Überprüfen Sie das **Läufe**-Panel im Workflow-Editor
+- Öffnen Sie die **Workflow-Läufe** Ansicht, um alle Workflows zu überwachen.
+
+**Leistungstipp**: Verstecken Sie Workflow-Läufe von der "Alle Workflows" Seite und anderen Workflow-Seiten, um die Ladeleistung zu verbessern, da große Mengen an Läufen die Seitenladegeschwindigkeit verlangsamen können.
+
+### Versionsverlauf
+
+- Alle Versionen unter dem Feld **Versionen** anzeigen
+- Klicken Sie auf eine beliebige Version, um Details anzuzeigen
+- Verwenden Sie **Als Entwurf verwenden**, um frühere Versionen wiederherzustellen
+- Behandeln Sie Entwurfskonflikte mit Überschreitungs- oder Rückgabeoptionen
+
+## Beste Praktiken
+
+### Workflow-Organisation
+
+- **Beschreibende Namen**: Verwenden Sie klare, spezifische Workflow-Namen
+- **Schrittnamen**: Benennen Sie Schritte um, um ihre Funktion zu beschreiben
+- **Dokumentation**: Fügen Sie Kommentare in Code-Aktionen hinzu
+- **Kategorisierung**: Gruppieren Sie verwandte Workflows logisch
+- **Benutzerdefinierte Felder**: Fügen Sie Felder zum Workflow-Objekt in Ihrem Datenmodell hinzu (ähnlich wie andere Objekte), um Workflows mit benutzerdefinierten Eigenschaften zu organisieren und zu kategorisieren
+
+### Leistungsoptimierung
+
+- **API-Aufrufe minimieren**: Stapeloperationen durchführen, wenn möglich
+- **Effiziente Suchen**: Verwenden Sie spezifische Filterkriterien
+- **Fehlerbehandlung**: Planen Sie für Fehlerzustände
+- **Ratenlimitierung**: Respektieren Sie Grenzen externer APIs
+
+### Datenflussmanagement
+
+- **Verzweigungslogik**: Verwenden Sie Verzweigungen nach dem Durchsuchen von Datensätzen
+- **Variablennutzung**: Nutzen Sie Daten aus vorhergehenden Schritten
+- **Datenvalidierung**: Überprüfen Sie Eingaben in Code-Aktionen
+- **Feldzuordnung**: Planen Sie Datenumwandlungen sorgfältig
+
+### Überwachung und Wartung
+
+- **Regelmäßige Überwachung**: Überprüfen Sie Workflow-Läufe auf Fehler
+- **Leistungsbesprechung**: Analysieren Sie Ausführungszeiten und Erfolgsraten
+- **Update-Management**: Änderungen im Entwurf testen, bevor sie aktiviert werden
+- **Teamkoordination**: Dokumentieren Sie Workflows für Teammitglieder
+
+Für praktische Beispiele dieser Funktionen in Aktion, lesen Sie unsere [Interne Automatisierungen](/l/de/user-guide/workflows/internal-automations) und [Externe Tool-Integration](/l/de/user-guide/workflows/external-tool-integration) Leitfäden.

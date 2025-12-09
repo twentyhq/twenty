@@ -1,0 +1,121 @@
+---
+title: Zarządzanie widokami
+info: "Twórz i dostosuj widoki do organizowania danych przy użyciu filtrów, sortowania i różnych układów."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Podstawowe funkcje CRM do zarządzania leadami, sprzedażą i klientami"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Opcje układu
+
+Możesz wyświetlać swoje dane w trzech różnych układach, z których każdy jest dostosowany do różnych celów. W grudniu 2025 r. zostaną udostępnione niestandardowe układy, aby dostosować wygląd strony dla każdego typu rekordu.
+
+### Domyślny widok
+
+Każdy obiekt ma widok znany jako Domyślny, który jest niefiltrowany, niesortowany i nieusuwalny. Jest nazwany na podstawie liczby mnogiej obiektu, jak „Wszystkie firmy”, „Wszyscy ludzie” czy „Wszystkie szanse”.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Układ listy
+
+Standardowy format tabeli, który wyświetla rekordy w wierszach i kolumnach. To doskonałe rozwiązanie, aby na pierwszy rzut oka zobaczyć szczegółowe informacje i porównać rekordy obok siebie.
+
+### List Group By Layout
+
+Organizuje twoje rekordy, grupując je na podstawie wybranego pola. Na przykład, możesz grupować szanse według etapu, firmy według lokalizacji czy jakiekolwiek inne wybrane pole. To pomaga zobaczyć wzorce i zorganizować powiązane rekordy razem.
+
+### Układ Kanban
+
+Tablica wizualna, gdzie każda kolumna reprezentuje etap, a każdy rekord jest wyświetlany jako karta. This layout is ideal for managing pipelines and workflows where records move through different stages. For more details on using Kanban views for pipeline management, see our [Pipeline](/l/pl/user-guide/crm-essentials/pipeline) article.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Tworzenie nowych widoków
+
+Są trzy sposoby tworzenia nowego widoku:
+
+### Korzystając z menu poleceń
+
+Use `Cmd+K` on Mac (or `Ctrl+K` on Windows) to open the command menu, then click `Create a new view`.
+
+### Korzystając z menu rozwijanego widoków
+
+Kliknij na menu rozwijane widoków (w lewym górnym rogu), a następnie kliknij `Dodaj widok` na dole. Z tego menu możesz:
+
+- Wybrać ikonę i nazwę dla swojego widoku
+- Wybrać typ układu (Lista lub Kanban)
+
+<Warning>
+Ważne: Najpierw musisz wybrać układ Listy, a następnie dodać Grupuj według. You cannot create a List Group By directly from there.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Tworzenie widoków z istniejących filtrów
+
+When you modify the sorting and filtering of an existing view, a `Save as new view` button appears. To pozwala na stworzenie nowego widoku na podstawie bieżących dostosowań.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Uczynienie widoków działającymi
+
+Poniższe wskazówki pokazują, jak dostosować kolumny swoich widoków. Nie zalecamy utrzymywania wszystkich kolumn: te widoki można uprościć i uczynić działającymi, dodając warunki sortowania i wyświetlając tylko niektóre kolumny istotne dla Twojego konkretnego przypadku użycia.
+
+## Dostosowywanie widoków
+
+Wszystkie układy obsługują te same opcje dostosowywania: sortowanie, filtrowanie i wybór pól. Możesz dokonywać szybkich jednokrotnych zmian, klikając bezpośrednio na nazwę kolumny, lub użyć „Menu Opcji” do pełniejszej edycji.
+
+### Szybkie akcje vs Menu Opcji
+
+**For one-time changes**: Click directly on column headers to sort, or use the `Move Left`, `Move Right` buttons.
+
+**Dla wielu edycji**: Użyj „Menu Opcji” (w prawym górnym rogu), gdy chcesz dokonać wielu zmian z rzędu. To menu daje dostęp do:
+
+- **Wybór układu** (Lista, Lista według grupowania, Kanban)
+- **Opcje grupowania** (dla układu Lista według grupowania)
+- **Zarządzanie polami** (pokazywanie/ukrywanie i zmiana kolejności kolumn)
+
+### Filtrowanie danych
+
+Możesz zastosować filtry, aby wyświetlić tylko rekordy spełniające twoje kryteria. Kliknij `Filtr` na pasku narzędzi, wybierz pole, ustaw warunek i wartość. Możesz dodać wiele filtrów do zaawansowanego filtrowania na podstawie kilku warunków.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Sortowanie twoich rekordów
+
+Możesz kontrolować kolejność rekordów, klikając na nagłówku kolumny, aby sortować według tego pola. Kliknij ponownie, aby odwrócić kolejność sortowania. Możesz zastosować wiele sortowań do złożonej organizacji.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Zarządzanie polami i kolumnami
+
+Możesz wybrać, które pola wyświetlić i zmienić ich kolejność. Dla szybkich zmian kliknij bezpośrednio na nazwę kolumny. Dla wielu edycji użyj „Menu Opcji → Pola”, gdzie możesz:
+
+- Pokazuj lub ukrywaj pola za pomocą ikony oka
+- Zmieniaj kolejność pól przez przeciąganie i upuszczanie
+- Dokonaj wielu zmian sprawnie w jednym miejscu
+
+## Zarządzanie widokami
+
+### Funkcje menu rozwijanego widoków
+
+Menu rozwijane widoków (w lewym górnym rogu) to twoje centralne miejsce zarządzania widokami. Stąd możesz:
+
+- **Edytować nazwy i ikony widoków**: kliknij trzy kropki obok dowolnego widoku
+- **Zmieniaj kolejność widoków**: przeciągaj i upuszczaj widoki, aby zorganizować je według priorytetów
+- **Zapisuj widoki jako ulubione**: ulubione pojawiają się bezpośrednio pod ustawieniami, aby szybko do nich przejść
+
+### Edycja i usuwanie widoków
+
+Aby zmodyfikować lub usunąć widoki, otwórz menu rozwijane widoków i najedź kursorem na widok, który chcesz zmienić. Kliknij trzy kropki, które się pojawią, aby uzyskać dostęp do opcji edycji i usuwania.
+
+### Ulubione i organizacja
+
+Widoki zapisane jako ulubione pojawiają się bezpośrednio pod Ustawieniami w nawigacji, zapewniając szybki dostęp do najważniejszych widoków. Użyj menu rozwijanego widoków, aby zorganizować swoje widoki, przeciągając je w kolejność najbardziej odpowiadającą twojemu przepływowi pracy.
+
+Aby uzyskać bardziej zaawansowaną organizację danych, zobacz naszą sekcję [Model danych](/l/pl/user-guide/data-model/customize-your-data-model), aby dowiedzieć się, jak dostosowywać pola i obiekty.

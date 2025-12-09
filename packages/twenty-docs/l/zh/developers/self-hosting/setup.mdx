@@ -1,0 +1,255 @@
+---
+title: 設定
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# 配置管理
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/zh/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty 提供 **兩種配置模式** 以滿足不同的部署需求：
+
+**管理面板訪問：** 只有具有管理員權限的用戶 (`canAccessFullAdminPanel: true`) 才能訪問配置界面。
+
+## 1. 管理面板配置（默認）
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**大多數配置在安裝後通過 UI 進行：**
+
+1. 訪問你的 Twenty 實例（通常是 `http://localhost:3000`）
+2. Go to **Settings / Admin Panel / Configuration Variables**
+3. 配置集成、電子郵件、存儲等
+4. Changes take effect immediately (within 15 seconds for multi-container deployments)
+
+<Warning>
+
+**多容器部署：** 使用數據庫配置（`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`）時，服務器和工作器容器從同一數據庫中讀取。 管理面板更改會自動影響兩者，無需在容器之間重複環境變量（基礎設施變量除外）。
+ 管理面板更改會自動影響兩者，無需在容器之間重複環境變量（基礎設施變量除外）。
+</Warning>
+
+**通過管理面板可以配置的內容：**
+
+- **身份驗證** - Google/Microsoft OAuth，密碼設置
+- **電子郵件** - SMTP 設定、模板、驗證
+- **存儲** - S3 配置，本地存儲路徑
+- **集成** - Gmail、Google 日曆、Microsoft 服務
+- **工作流程和速率限制** - 執行限制，API 節流
+- **還有更多...**
+
+![管理面板配置變量](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Each variable is documented with descriptions in your admin panel at **Settings → Admin Panel → Configuration Variables**.
+某些基礎設施設置如數據庫連接（`PG_DATABASE_URL`）、服務器 URL（`SERVER_URL`）和應用密鑰（`APP_SECRET`）只能通過 `.env` 文件配置。
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. 僅環境配置
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**所有配置通過 `.env` 文件管理：**
+
+1. 在您的 `.env` 文件中設置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+2. 將所有配置變量添加到您的 `.env` 文件中
+3. 重啟容器以使更改生效
+4. 管理面板會顯示當前值但無法修改它們
+
+## Gmail 和 Google 日曆集成
+
+### 創建 Google Cloud 項目
+
+1. 前往 [Google Cloud 控制台](https://console.cloud.google.com/)
+2. 創建新項目或選擇現有項目
+3. 啟用這些 API：
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google 日曆 API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### 配置 OAuth
+
+1. 前往 [憑證](https://console.cloud.google.com/apis/credentials)
+2. 創建 OAuth 2.0 客戶端 ID
+3. 添加這些重定向 URI：
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### 在 Twenty 中配置
+
+1. 前往 **設定 → 管理面板 → 配置變量**
+2. 找到 **Google 驗證** 部分
+3. 設置這些變量：
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**所需範圍**（自動配置）：
+[查看相關源代碼](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### 如果您的應用處於測試模式
+
+如果您的應用處於測試模式，您需要將測試用戶添加到您的項目中。
+
+在 [OAuth 同意屏幕](https://console.cloud.google.com/apis/credentials/consent)下，將測試用戶添加到 "測試用戶" 部分。
+
+## Microsoft 365 集成
+
+<Warning>
+
+用戶必須擁有 [Microsoft 365 許可](https://admin.microsoft.com/Adminportal/Home) 才能使用日曆和消息 API。 沒有許可，將無法在 Twenty 上同步帳戶。
+ 沒有許可，將無法在 Twenty 上同步帳戶。
+</Warning>
+
+### 在 Microsoft Azure 中創建項目
+
+您需要在 [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) 中創建項目並獲取憑證。
+
+### 啟用 API
+
+在 Microsoft Azure 控制台 "權限" 中啟用以下 API：
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+注意： "Mail.ReadWrite" 和 "Mail.Send" 只有在希望通過我們的工作流程操作發送電子郵件時才是必需的。 如果只想接收電子郵件，可以改用 "Mail.Read"。 如果只想接收電子郵件，可以改用 "Mail.Read"。
+
+### 授權重定向 URI
+
+您需要將以下重定向 URI 添加到項目中：
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### 在 Twenty 中配置
+
+1. 前往 **設定 → 管理面板 → 配置變量**
+2. 找到 **Microsoft 驗證** 部分
+3. 設置這些變量：
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Configure scopes
+
+[查看相關源代碼](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- '電子郵件'
+- '個人資料'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### 如果您的應用處於測試模式
+
+如果您的應用處於測試模式，您需要將測試用戶添加到您的項目中。
+
+將測試用戶添加到 "用戶和群組" 部分。
+
+## 日曆和消息的背景任務
+
+配置 Gmail、Google 日曆或 Microsoft 365 集成後，您需要啟動同步數據的背景任務。
+
+在您的工作容器中註冊以下定期任務：
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## 電子郵件配置
+
+1. 前往 **設定 → 管理面板 → 配置變量**
+2. 找到 **電子郵件** 部分
+3. 配置您的 SMTP 設置：
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+您需要提供 [應用密碼](https://support.google.com/accounts/answer/185833)。
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+請注意，如果啟用了雙重認證，您需要提供 [應用密碼](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)。
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** 是用於開發和測試的虛擬 SMTP 電子郵件服務器。
+
+- 運行 smtp4dev 圖像：`docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- 訪問 smtp4dev UI：[http://localhost:8090](http://localhost:8090)
+- 設置以下變量：
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

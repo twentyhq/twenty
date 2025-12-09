@@ -33,15 +33,15 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
-  authContext?: AuthContext;
-  featureFlagMap?: FeatureFlagMap;
+  authContext: AuthContext;
+  featureFlagMap: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext?: AuthContext,
-    featureFlagMap?: FeatureFlagMap,
+    authContext: AuthContext,
+    featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
@@ -85,7 +85,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return {
@@ -114,7 +115,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult;
@@ -163,7 +165,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult;
@@ -188,7 +191,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return formattedResult[0];
@@ -230,7 +234,8 @@ export class WorkspaceSelectQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return [formattedResult, count];
@@ -325,7 +330,9 @@ export class WorkspaceSelectQueryBuilder<
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
     });
   }

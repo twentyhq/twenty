@@ -6,13 +6,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
+import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class SubscriptionsResolver {
@@ -42,6 +44,6 @@ export class SubscriptionsResolver {
     },
   })
   onDbEvent(@Args('input') _: OnDbEventInput) {
-    return this.pubSub.asyncIterator('onDbEvent');
+    return this.pubSub.asyncIterator(ON_DB_EVENT_TRIGGER);
   }
 }

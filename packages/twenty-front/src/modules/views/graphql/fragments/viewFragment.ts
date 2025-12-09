@@ -24,9 +24,12 @@ export const VIEW_FRAGMENT = gql`
     openRecordIn
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
+    mainGroupByFieldMetadataId
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarLayout
+    visibility
+    createdByUserWorkspaceId
     viewFields {
       ...ViewFieldFragment
     }

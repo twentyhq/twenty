@@ -1,4 +1,5 @@
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type WorkflowExecutionContext = {

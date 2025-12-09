@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "Bruker Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "Komme i gang"
+        },
+        "dataModel": {
+          "label": "Datamodell"
+        },
+        "crmEssentials": {
+          "label": "CRM Essentials"
+        },
+        "views": {
+          "label": "Visninger"
+        },
+        "workflows": {
+          "label": "Arbeidsflyter"
+        },
+        "collaboration": {
+          "label": "Samarbeid"
+        },
+        "integrationsApi": {
+          "label": "Integrasjoner & API"
+        },
+        "reporting": {
+          "label": "Rapportering"
+        },
+        "settings": {
+          "label": "Innstillinger"
+        },
+        "pricing": {
+          "label": "Priser"
+        },
+        "resources": {
+          "label": "Ressurser"
+        }
+      }
+    },
+    "developers": {
+      "label": "Utviklere",
+      "groups": {
+        "developersGroup": {
+          "label": "Utviklere"
+        },
+        "devGettingStarted": {
+          "label": "Komme i gang",
+          "groups": {
+            "selfHosting": {
+              "label": "Egen hosting"
+            },
+            "apiAndWebhooks": {
+              "label": "API og Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Bidra",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Frontend utvikling",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Visning"
+                    },
+                    "feedback": {
+                      "label": "Tilbakemelding"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Backend utvikling"
+            }
+          }
+        }
+      }
+    }
+  }
+}

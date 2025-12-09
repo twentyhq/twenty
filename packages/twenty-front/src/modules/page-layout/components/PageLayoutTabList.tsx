@@ -9,13 +9,12 @@ import {
 } from '@hello-pangea/dnd';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
@@ -35,8 +34,11 @@ import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/component
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -67,16 +69,18 @@ const StyledAddButton = styled.div`
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
-type PageLayoutTabListProps = TabListProps & {
+type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
+  tabs: PageLayoutTab[];
   isReorderEnabled: boolean;
   onAddTab?: () => void;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
+  behaveAsLinks: boolean;
 };
 
 export const PageLayoutTabList = ({
   tabs,
   loading,
-  behaveAsLinks = true,
+  behaveAsLinks,
   isInRightDrawer,
   className,
   componentInstanceId,
@@ -85,7 +89,14 @@ export const PageLayoutTabList = ({
   isReorderEnabled,
   onReorder,
 }: PageLayoutTabListProps) => {
-  const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hide), [tabs]);
+  const { getIcon } = useIcons();
+
+  const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
+    id: tab.id,
+    title: tab.title,
+    Icon: tab.icon ? getIcon(tab.icon) : undefined,
+  }));
+
   const navigate = useNavigate();
 
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
@@ -103,7 +114,7 @@ export const PageLayoutTabList = ({
     onMoreButtonWidthChange,
     onAddButtonWidthChange,
   } = useTabListMeasurements({
-    visibleTabs,
+    visibleTabs: tabsWithIcons,
     hasAddButton: isDefined(onAddTab),
   });
 
@@ -193,6 +204,10 @@ export const PageLayoutTabList = ({
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
   );
+  const tabSettingsOpenTabId = useRecoilComponentValue(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
   const setTabSettingsOpenTabId = useSetRecoilComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
@@ -204,10 +219,13 @@ export const PageLayoutTabList = ({
       setTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+        resetNavigationStack: true,
       });
     },
     [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
+
+  const isTabSettingsOpen = isDefined(tabSettingsOpenTabId);
 
   const handleSelectTab = useCallback(
     (tabId: string) => {
@@ -215,9 +233,18 @@ export const PageLayoutTabList = ({
         openTabSettings(tabId);
         return;
       }
+      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+        openTabSettings(tabId);
+      }
       selectTab(tabId);
     },
-    [isPageLayoutInEditMode, activeTabId, openTabSettings, selectTab],
+    [
+      isPageLayoutInEditMode,
+      activeTabId,
+      isTabSettingsOpen,
+      openTabSettings,
+      selectTab,
+    ],
   );
 
   const handleSelectTabFromDropdown = useCallback(
@@ -227,18 +254,22 @@ export const PageLayoutTabList = ({
         closeOverflowDropdown();
         return;
       }
+      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+        openTabSettings(tabId);
+      }
       selectTabFromDropdown(tabId);
     },
     [
       isPageLayoutInEditMode,
       activeTabId,
+      isTabSettingsOpen,
       openTabSettings,
       closeOverflowDropdown,
       selectTabFromDropdown,
     ],
   );
 
-  if (visibleTabs.length === 0) {
+  if (tabsWithIcons.length === 0) {
     return null;
   }
 
@@ -254,12 +285,12 @@ export const PageLayoutTabList = ({
     >
       <TabListFromUrlOptionalEffect
         isInRightDrawer={!!isInRightDrawer}
-        tabListIds={tabs.map((tab) => tab.id)}
+        tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 
-      {visibleTabs.length > 1 && (
+      {tabsWithIcons.length > 1 && (
         <TabListHiddenMeasurements
-          visibleTabs={visibleTabs}
+          visibleTabs={tabsWithIcons}
           activeTabId={activeTabId}
           loading={loading}
           onTabWidthChange={onTabWidthChange}
@@ -284,7 +315,7 @@ export const PageLayoutTabList = ({
           >
             <StyledContainer className={className}>
               <PageLayoutTabListVisibleTabs
-                visibleTabs={visibleTabs}
+                visibleTabs={tabsWithIcons}
                 visibleTabCount={visibleTabCount}
                 activeTabId={activeTabId}
                 behaveAsLinks={behaveAsLinks}
@@ -323,7 +354,7 @@ export const PageLayoutTabList = ({
         ) : (
           <StyledContainer className={className}>
             <PageLayoutTabListVisibleTabs
-              visibleTabs={visibleTabs}
+              visibleTabs={tabsWithIcons}
               visibleTabCount={visibleTabCount}
               activeTabId={activeTabId}
               behaveAsLinks={behaveAsLinks}

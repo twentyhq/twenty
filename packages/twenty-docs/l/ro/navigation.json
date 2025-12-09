@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "Ghid de utilizator",
+      "groups": {
+        "gettingStarted": {
+          "label": "Noțiuni de bază"
+        },
+        "dataModel": {
+          "label": "Model de date"
+        },
+        "crmEssentials": {
+          "label": "Elemente esențiale CRM"
+        },
+        "views": {
+          "label": "Vizualizări"
+        },
+        "workflows": {
+          "label": "Fluxuri de lucru"
+        },
+        "collaboration": {
+          "label": "Colaborare"
+        },
+        "integrationsApi": {
+          "label": "Integrări & API"
+        },
+        "reporting": {
+          "label": "Raportare"
+        },
+        "settings": {
+          "label": "Setări"
+        },
+        "pricing": {
+          "label": "Prețuri"
+        },
+        "resources": {
+          "label": "Resurse"
+        }
+      }
+    },
+    "developers": {
+      "label": "Dezvoltatori",
+      "groups": {
+        "developersGroup": {
+          "label": "Dezvoltatori"
+        },
+        "devGettingStarted": {
+          "label": "Noțiuni de bază",
+          "groups": {
+            "selfHosting": {
+              "label": "Găzduire proprie"
+            },
+            "apiAndWebhooks": {
+              "label": "API și Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Contribuții",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Dezvoltare Frontend",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Afișare"
+                    },
+                    "feedback": {
+                      "label": "Feedback"
+                    },
+                    "input": {
+                      "label": "Intrare"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Dezvoltare Backend"
+            }
+          }
+        }
+      }
+    }
+  }
+}

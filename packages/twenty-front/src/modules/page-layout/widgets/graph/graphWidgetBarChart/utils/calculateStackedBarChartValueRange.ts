@@ -1,46 +1,32 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-
-type ValueRange = {
-  min: number;
-  max: number;
-};
+import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
+import { type BarDatum } from '@nivo/bar';
 
 export const calculateStackedBarChartValueRange = (
-  data: BarChartDataItem[],
+  data: BarDatum[],
   keys: string[],
-): ValueRange => {
-  let min = 0;
-  let max = 0;
+): ChartValueRange => {
+  const stackedValues: number[] = [];
 
   for (const item of data) {
-    let positiveSum = 0;
-    let negativeSum = 0;
+    let positiveSummation = 0;
+    let negativeSummation = 0;
 
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
-      if (!Number.isNaN(value)) {
-        if (value >= 0) {
-          positiveSum += value;
-        } else {
-          negativeSum += value;
-        }
+      if (Number.isNaN(value)) {
+        continue;
+      }
+
+      if (value >= 0) {
+        positiveSummation += value;
+      } else {
+        negativeSummation += value;
       }
     }
 
-    if (positiveSum > max) {
-      max = positiveSum;
-    }
-    if (negativeSum < min) {
-      min = negativeSum;
-    }
+    stackedValues.push(positiveSummation, negativeSummation);
   }
 
-  if (min > 0) {
-    min = 0;
-  }
-  if (max < 0) {
-    max = 0;
-  }
-
-  return { min, max };
+  return calculateValueRangeFromValues(stackedValues);
 };

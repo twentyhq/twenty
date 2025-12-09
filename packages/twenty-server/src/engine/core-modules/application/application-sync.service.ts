@@ -2,8 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { parse } from 'path';
 
-import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { Sources } from 'twenty-shared/types';
+import {
+  ApplicationManifest,
+  FieldManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
+} from 'twenty-shared/application';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -12,29 +19,30 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import {
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
-} from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -44,7 +52,8 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -52,6 +61,11 @@ export class ApplicationSyncService {
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly roleService: RoleService,
+    private readonly roleTargetService: RoleTargetService,
+    private readonly objectPermissionService: ObjectPermissionService,
+    private readonly fieldPermissionService: FieldPermissionService,
+    private readonly permissionService: PermissionFlagService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -75,13 +89,22 @@ export class ApplicationSyncService {
       applicationId: application.id,
     });
 
-    await this.syncServerlessFunctions({
-      serverlessFunctionsToSync: manifest.serverlessFunctions,
-      code: manifest.sources,
-      workspaceId,
-      applicationId: application.id,
-      serverlessFunctionLayerId: application.serverlessFunctionLayerId,
-    });
+    if (manifest.serverlessFunctions.length > 0) {
+      if (!isDefined(application.serverlessFunctionLayerId)) {
+        throw new ApplicationException(
+          `Failed to sync serverless function, could not find a serverless function layer.`,
+          ApplicationExceptionCode.FIELD_NOT_FOUND,
+        );
+      }
+
+      await this.syncServerlessFunctions({
+        serverlessFunctionsToSync: manifest.serverlessFunctions,
+        code: manifest.sources,
+        workspaceId,
+        applicationId: application.id,
+        serverlessFunctionLayerId: application.serverlessFunctionLayerId,
+      });
+    }
 
     this.logger.log('✅ Application sync from manifest completed');
   }
@@ -94,56 +117,51 @@ export class ApplicationSyncService {
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.application.universalIdentifier,
-      workspaceId,
-    );
-
     const name = manifest.application.displayName ?? packageJson.name;
-
-    if (!isDefined(application)) {
-      const serverlessFunctionLayer =
-        await this.serverlessFunctionLayerService.create(
-          {
-            packageJson,
-            yarnLock,
-          },
-          workspaceId,
-        );
-
-      const application = await this.applicationService.create({
+    const application =
+      (await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      })) ??
+      (await this.applicationService.create({
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        serverlessFunctionLayerId: serverlessFunctionLayer.id,
+        serverlessFunctionLayerId: null,
         workspaceId,
-      });
+      }));
 
-      await this.applicationVariableService.upsertManyApplicationVariableEntities(
+    let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
+
+    await this.syncApplicationRole({
+      applicationId: application.id,
+      manifest,
+      workspaceId,
+    });
+
+    if (manifest.serverlessFunctions.length > 0) {
+      if (!isDefined(serverlessFunctionLayerId)) {
+        serverlessFunctionLayerId = (
+          await this.serverlessFunctionLayerService.create(
+            {
+              packageJson,
+              yarnLock,
+            },
+            workspaceId,
+          )
+        ).id;
+      }
+
+      await this.serverlessFunctionLayerService.update(
+        serverlessFunctionLayerId,
         {
-          applicationVariables: manifest.application.applicationVariables,
-          applicationId: application.id,
+          packageJson,
+          yarnLock,
         },
       );
-
-      return application;
     }
-
-    await this.serverlessFunctionLayerService.update(
-      application.serverlessFunctionLayerId,
-      {
-        packageJson,
-        yarnLock,
-      },
-    );
-
-    await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      version: packageJson.version,
-    });
 
     await this.applicationVariableService.upsertManyApplicationVariableEntities(
       {
@@ -152,7 +170,246 @@ export class ApplicationSyncService {
       },
     );
 
-    return application;
+    return await this.applicationService.update(application.id, {
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
+      serverlessFunctionLayerId,
+    });
+  }
+
+  private async syncApplicationRole({
+    manifest,
+    applicationId,
+    workspaceId,
+  }: {
+    manifest: ApplicationManifest;
+    applicationId: string;
+    workspaceId: string;
+  }) {
+    const applicationRole = manifest.application.applicationRole;
+
+    if (
+      isDefined(applicationRole) &&
+      isDefined(applicationRole.universalIdentifier)
+    ) {
+      let role = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: applicationRole.universalIdentifier,
+        workspaceId,
+      });
+
+      if (role) {
+        await this.roleService.updateRole({
+          input: {
+            id: role.id,
+            update: {
+              ...applicationRole,
+              canAccessAllTools: false,
+              canUpdateAllSettings: false,
+              canBeAssignedToAgents: false,
+              canBeAssignedToUsers: false,
+              canBeAssignedToApiKeys: false,
+              canBeAssignedToApplications: true,
+            },
+          },
+          workspaceId,
+        });
+      } else {
+        role = await this.roleService.createRole({
+          input: {
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: false,
+            canSoftDeleteAllObjectRecords: false,
+            canDestroyAllObjectRecords: false,
+            ...applicationRole,
+            canAccessAllTools: false,
+            canUpdateAllSettings: false,
+            canBeAssignedToAgents: false,
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
+            canBeAssignedToApplications: true,
+          },
+          workspaceId,
+          applicationId: applicationId,
+        });
+
+        await this.roleTargetService.create({
+          createRoleTargetInput: {
+            roleId: role.id,
+            applicationId: applicationId,
+            universalIdentifier: role.universalIdentifier,
+            targetMetadataForeignKey: 'targetApplicationId',
+            targetId: applicationId,
+          },
+          workspaceId,
+        });
+      }
+
+      if (
+        isDefined(applicationRole.objectPermissions) &&
+        applicationRole.objectPermissions.length > 0
+      ) {
+        await this.objectPermissionService.upsertObjectPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            objectPermissions: applicationRole.objectPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.fieldPermissions) &&
+        applicationRole.fieldPermissions.length > 0
+      ) {
+        await this.fieldPermissionService.upsertFieldPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            fieldPermissions: applicationRole.fieldPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.permissionFlags) &&
+        applicationRole.permissionFlags.length > 0
+      ) {
+        await this.permissionService.upsertPermissionFlags({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            permissionFlagKeys: applicationRole.permissionFlags,
+          },
+        });
+      }
+    }
+  }
+
+  private async syncFields({
+    objectId,
+    fieldsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    objectId: string;
+    workspaceId: string;
+    applicationId: string;
+    fieldsToSync?: FieldManifest[];
+  }) {
+    if (!isDefined(fieldsToSync)) {
+      return;
+    }
+
+    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const existingFields = Object.values(
+      existingFlatFieldMetadataMaps.byId,
+    ).filter(
+      (field) => isDefined(field) && field.objectMetadataId === objectId,
+    ) as FlatFieldMetadata[];
+
+    const fieldsToSyncUniversalIds = fieldsToSync.map(
+      (field) => field.universalIdentifier,
+    );
+
+    const existingFieldsStandardIds = existingFields.map(
+      (field) => field.universalIdentifier,
+    );
+
+    const fieldsToDelete = existingFields.filter(
+      (field) =>
+        isDefined(field.universalIdentifier) &&
+        !fieldsToSyncUniversalIds.includes(field.universalIdentifier) &&
+        field.isCustom === true,
+    );
+
+    const fieldsToUpdate = existingFields.filter(
+      (field) =>
+        isDefined(field.universalIdentifier) &&
+        fieldsToSyncUniversalIds.includes(field.universalIdentifier),
+    );
+
+    const fieldsToCreate = fieldsToSync.filter(
+      (fieldToSync) =>
+        !existingFieldsStandardIds.includes(fieldToSync.universalIdentifier),
+    );
+
+    for (const fieldToDelete of fieldsToDelete) {
+      await this.fieldMetadataService.updateOneField({
+        updateFieldInput: {
+          id: fieldToDelete.id,
+          isActive: false,
+        },
+        workspaceId,
+      });
+      await this.fieldMetadataService.deleteOneField({
+        deleteOneFieldInput: { id: fieldToDelete.id },
+        workspaceId,
+      });
+    }
+
+    for (const fieldToUpdate of fieldsToUpdate) {
+      const fieldToSync = fieldsToSync.find(
+        (field) =>
+          field.universalIdentifier === fieldToUpdate.universalIdentifier,
+      );
+
+      if (!fieldToSync) {
+        throw new ApplicationException(
+          `Failed to find field to sync with universalIdentifier ${fieldToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.FIELD_NOT_FOUND,
+        );
+      }
+
+      const updateFieldInput = {
+        id: fieldToUpdate.id,
+        label: fieldToSync.label,
+        description: fieldToSync.description ?? undefined,
+        icon: fieldToSync.icon ?? undefined,
+        defaultValue: fieldToSync.defaultValue ?? undefined,
+        options: fieldToSync.options ?? undefined,
+        settings: fieldToSync.settings ?? undefined,
+        isNullable: fieldToSync.isNullable ?? true,
+      };
+
+      await this.fieldMetadataService.updateOneField({
+        updateFieldInput,
+        workspaceId,
+      });
+    }
+
+    for (const fieldToCreate of fieldsToCreate) {
+      const createFieldInput: CreateFieldInput = {
+        name: computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
+        type: fieldToCreate.type,
+        label: fieldToCreate.label,
+        description: fieldToCreate.description ?? undefined,
+        icon: fieldToCreate.icon ?? undefined,
+        defaultValue: fieldToCreate.defaultValue ?? undefined,
+        options: fieldToCreate.options ?? undefined,
+        settings: fieldToCreate.settings ?? undefined,
+        isNullable: fieldToCreate.isNullable ?? true,
+        objectMetadataId: objectId,
+        universalIdentifier: fieldToCreate.universalIdentifier,
+        standardId: fieldToCreate.universalIdentifier,
+        applicationId,
+        isCustom: true,
+        workspaceId,
+      };
+
+      await this.fieldMetadataService.createOneField({
+        createFieldInput,
+        workspaceId,
+        applicationId,
+      });
+    }
   }
 
   private async syncObjects({
@@ -208,7 +465,7 @@ export class ApplicationSyncService {
     );
 
     for (const objectToDelete of objectsToDelete) {
-      await this.objectMetadataServiceV2.deleteOne({
+      await this.objectMetadataService.deleteOneObject({
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -239,9 +496,16 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOne({
+      await this.objectMetadataService.updateOneObject({
         updateObjectInput,
         workspaceId,
+      });
+
+      await this.syncFields({
+        fieldsToSync: objectToSync.fields,
+        objectId: objectToUpdate.id,
+        workspaceId,
+        applicationId,
       });
     }
 
@@ -264,9 +528,17 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      await this.objectMetadataServiceV2.createOne({
+      const createdObject = await this.objectMetadataService.createOneObject({
         createObjectInput,
+        applicationId,
         workspaceId,
+      });
+
+      await this.syncFields({
+        fieldsToSync: objectToCreate.fields,
+        objectId: createdObject.id,
+        workspaceId,
+        applicationId,
       });
     }
   }
@@ -379,18 +651,21 @@ export class ApplicationSyncService {
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
 
@@ -414,24 +689,28 @@ export class ApplicationSyncService {
         await this.serverlessFunctionV2Service.createOne({
           createServerlessFunctionInput,
           workspaceId,
+          applicationId,
         });
 
       await this.syncDatabaseEventTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
   }
@@ -440,10 +719,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const databaseEventTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'databaseEvent',
@@ -548,6 +829,7 @@ export class ApplicationSyncService {
       await this.databaseEventTriggerV2Service.createOne(
         createDatabaseEventTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -556,10 +838,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const cronTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'cron',
@@ -661,6 +945,7 @@ export class ApplicationSyncService {
       await this.cronTriggerV2Service.createOne(
         createCronTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -669,10 +954,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const routeTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'route',
@@ -775,11 +1062,12 @@ export class ApplicationSyncService {
       await this.routeTriggerV2Service.createOne(
         createRouteTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
 
-  public async deleteApplication({
+  public async uninstallApplication({
     workspaceId,
     applicationUniversalIdentifier,
   }: {
@@ -802,8 +1090,7 @@ export class ApplicationSyncService {
     );
 
     const application = await this.applicationService.findByUniversalIdentifier(
-      applicationUniversalIdentifier,
-      workspaceId,
+      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
 
     if (!isDefined(application)) {
@@ -813,68 +1100,50 @@ export class ApplicationSyncService {
       );
     }
 
+    if (!application.canBeUninstalled) {
+      throw new ApplicationException(
+        'This application cannot be uninstalled.',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
     const flatObjectMetadataMapsByApplicationId =
       getFlatEntitiesByApplicationId(
         existingFlatObjectMetadataMaps,
         application.id,
       );
 
-    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatObjectMetadataMapsByApplicationId.map((obj) => obj.id),
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-    });
-
     const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatIndexMetadataMaps,
       application.id,
     );
-
-    const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
-        (field) => field.id,
-      ),
-      flatEntityMaps: existingFlatIndexMetadataMaps,
-    });
 
     const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatFieldMetadataMaps,
       application.id,
     );
 
-    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-    });
-
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: fromFlatObjectMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+        allFlatEntityOperationByMetadataName: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatIndexMaps: {
-            from: fromFlatIndexMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatFieldMetadataMaps: {
-            from: fromFlatFieldMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
         },
         workspaceId,
-        buildOptions: {
-          isSystemBuild: true,
-          inferDeletionFromMissingEntities: {
-            ...Object.values(ALL_METADATA_NAME).reduce(
-              (acc, metadataName) => ({
-                ...acc,
-                [metadataName]: true,
-              }),
-              {} as Partial<Record<AllMetadataName, boolean>>,
-            ),
-          },
-        },
+        isSystemBuild: true,
       },
     );
 

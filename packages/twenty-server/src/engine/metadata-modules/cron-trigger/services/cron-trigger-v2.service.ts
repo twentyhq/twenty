@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/create-cron-trigger.input';
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
@@ -13,7 +14,6 @@ import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/
 import { fromCreateCronTriggerInputToFlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/utils/from-create-cron-trigger-input-to-flat-cron-trigger.util';
 import { fromUpdateCronTriggerInputToFlatCronTriggerToUpdateOrThrow } from 'src/engine/metadata-modules/cron-trigger/utils/from-update-cron-trigger-input-to-flat-cron-trigger-to-update-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
@@ -23,48 +23,46 @@ export class CronTriggerV2Service {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne(
     cronTriggerInput: CreateCronTriggerInput,
     workspaceId: string,
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string,
   ) {
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
         },
       );
-
-    const existingFlatCronTriggerMaps = flatEntityMaps.flatCronTriggerMaps;
 
     const flatCronTriggerToCreate = fromCreateCronTriggerInputToFlatCronTrigger(
       {
         createCronTriggerInput: cronTriggerInput,
         workspaceId,
+        workspaceCustomApplicationId:
+          applicationId ?? workspaceCustomFlatApplication.id,
       },
     );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          workspaceId,
-          fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatCronTriggerMaps,
+          allFlatEntityOperationByMetadataName: {
+            cronTrigger: {
               flatEntityToCreate: [flatCronTriggerToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
+            },
           },
-          dependencyAllFlatEntityMaps: {
-            flatServerlessFunctionMaps:
-              flatEntityMaps.flatServerlessFunctionMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-          },
+          workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -93,41 +91,32 @@ export class CronTriggerV2Service {
     cronTriggerInput: UpdateCronTriggerInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatCronTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
-    const existingFlatCronTriggerMaps = flatEntityMaps.flatCronTriggerMaps;
-
     const optimisticallyUpdatedFlatCronTrigger =
       fromUpdateCronTriggerInputToFlatCronTriggerToUpdateOrThrow({
-        flatCronTriggerMaps: existingFlatCronTriggerMaps,
+        flatCronTriggerMaps,
         updateCronTriggerInput: cronTriggerInput,
       });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          workspaceId,
-          fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatCronTriggerMaps,
+          allFlatEntityOperationByMetadataName: {
+            cronTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [optimisticallyUpdatedFlatCronTrigger],
-            }),
+            },
           },
-          dependencyAllFlatEntityMaps: {
-            flatServerlessFunctionMaps:
-              flatEntityMaps.flatServerlessFunctionMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-          },
+          workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -159,19 +148,16 @@ export class CronTriggerV2Service {
     destroyCronTriggerInput: CronTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatCronTrigger> {
-    const {
-      flatCronTriggerMaps: existingFlatCronTriggerMaps,
-      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
-    } =
+    const { flatCronTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
     const existingFlatCronTrigger =
-      existingFlatCronTriggerMaps.byId[destroyCronTriggerInput.id];
+      flatCronTriggerMaps.byId[destroyCronTriggerInput.id];
 
     if (!isDefined(existingFlatCronTrigger)) {
       throw new CronTriggerException(
@@ -183,24 +169,15 @@ export class CronTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatCronTriggerMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatCronTriggerMaps,
+          allFlatEntityOperationByMetadataName: {
+            cronTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatCronTrigger],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              cronTrigger: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

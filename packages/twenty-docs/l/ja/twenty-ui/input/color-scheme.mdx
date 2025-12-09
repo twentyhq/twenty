@@ -1,0 +1,73 @@
+---
+title: カラースキーム
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## 配色カード
+
+異なる配色を表し、ライトおよびダークテーマに特化されています。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ    | タイプ                                     | 説明                                                                    | デフォルト |
+| -------- | --------------------------------------- | --------------------------------------------------------------------- | ----- |
+| バリアント    | string                                  | 配色のバリエーション。 配色のバリエーション。 オプションには `ダーク`、`ライト`、および `システム` が含まれています       | ライト   |
+| selected | ブール型                                    | If `true`, displays a checkmark to indicate the selected color scheme |       |
+| 追加のプロパティ | `React.ComponentPropsWithoutRef<'div'>` | 標準の HTML `div` エレメントのプロパティ                                            |       |
+
+</Tab>
+
+</Tabs>
+
+## 配色ピッカー
+
+ユーザーが異なる配色を選択できます。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ    | タイプ       | 説明                             |
+| -------- | --------- | ------------------------------ |
+| 値        | `カラースキーム` | 現在選択されている配色                    |
+| onChange | 機能        | ユーザーが配色を選択したときにトリガーされるコールバック関数 |
+
+</Tab>
+
+</Tabs>

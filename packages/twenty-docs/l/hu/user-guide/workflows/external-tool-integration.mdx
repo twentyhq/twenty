@@ -1,0 +1,220 @@
+---
+title: Külső Eszköz Integráció
+info: Ezek a munkafolyamatok az adatok API hívások és webhookok használatával történő be- és kivitelére összpontosítanak Twenty rendszerben.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automatizálja a folyamatokat és integrálja külső eszközökkel
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Az alábbiakban néhány munkafolyamat példa található, amelyek segítségével a Twenty integrálható a stack többi részével.
+
+## Adatbevitel Használati Esetek
+
+### Webűrlap beküldések
+
+**Probléma**: Szükség van az űrlapokból származó érdeklődők közvetlen rögzítésére a Twenty rendszerben, legyen szó honlapűrlapokról, céloldalakról vagy kapcsolatfelvételi űrlapokról.
+
+**Solution**: Use webhook triggers to automatically create records from form submissions.
+
+**Beállítás**:
+
+- Hozzon létre egy munkafolyamatot egy Webhook triggerrel
+- A webhookot konfigurálni kell az űrlap adatok (név, email, cég, stb.) fogadására
+- Állítsa a webhook módszerét POST-ra
+- Határozza meg az elvárt törzsszerkezetet a triggerben
+
+**Trigger**: Webhook (POST kérés az űrlapodról)
+
+**Műveletek**:
+
+- Keresés rekordokban annak ellenőrzésére, hogy a személy/cég már létezik-e
+- Elágazás: Ha létezik → Rekord frissítése, Ha nem → Rekord létrehozása
+- Létrehoz egy rekordot az utánkövetési feladathoz, amelyet az értékesítési képviselőnek osztanak ki
+- Email értesítés küldése az értékesítési csapatnak
+
+### Termékadatok szinkronizációja
+
+**Problem**: Your sales team needs visibility into product usage, billing, or feature adoption data stored in your data warehouse.
+
+**Solution**: Regularly sync product data into Twenty to give sellers context about their accounts.
+
+**Trigger**: Ütemezés alapján (napi vagy heti)
+
+**Műveletek**:
+
+- HTTP Request to your data warehouse API
+- Kód akció az adatok feldolgozására és formázására
+- Használja az Iterator funkciót a következő lépésekhez
+- Keresés rekordokban a megfelelő vállalati rekordok megtalálásához
+- Rekord frissítése a termékhasználati metrikák hozzáadásához
+- Rekord létrehozása a feladatokhoz, ha a használat a küszöb alá csökken
+
+### Meeting Notes from Call Recorders
+
+**Probléma**: Fontos betekintések az értékesítési hívásokból elveszhetnek vagy nem dokumentálódnak megfelelően a CRM-ben.
+
+**Megoldás**: Automatikusan hozzon létre jegyzeteket és akció tétel listákat a hívásfelvételi rendszerekből.
+
+**Trigger**: Webhook (a hívásfelvételi platformról)
+
+**Műveletek**:
+
+- Kód akció a meeting másolatának és az akció tételek kivonására
+- Keresés rekordokban a kapcsolódó lehetőség vagy kapcsolat megtalálásához
+- Rekord létrehozása egy jegyzethez a meeting összegzésével
+- Rekord létrehozása az akció tételek alapján végrehajtandó feladatokra
+- Email küldése a résztvevőknek a jegyzettel és a következő lépésekkel
+
+### Adatbővítés
+
+**Problem**: Your contact and company records lack important demographic and firmographic information.
+
+**Solution**: Automatically enrich records using external data providers.
+
+**Trigger**: Rekord létrejön (Emberek vagy Cégek objektum)
+
+**Műveletek**:
+
+- HTTP kérés a bővítési API-hoz
+- Kód akció a bővítési válasz feldolgozására
+- Használja az Iterator funkciót a következő lépésekhez
+- Rekord frissítése további cég/kapcsolat információk hozzáadásával
+- Rekord létrehozása értékesítési feladathoz, ha nagy értékű potenciális ügyfél azonosításra kerül
+- Email figyelmeztetés küldése, ha a bővítés kulcsfontosságú vásárlási jeleket tár fel
+
+## Adatmegosztási Használati Esetek
+
+### Hírlevél Feliratkozó Kezelés
+
+**Probléma**: Marketing e-maileket szeretne küldeni a CRM adatbázisának specifikus szegmenseire szakosodott e-mail eszközökkel.
+
+**Megoldás**: Exportálja az előfizetői listákat az e-mail marketing platformjára, amikor szükséges.
+
+**Beállítás**: Hozzon létre egy nézetet a Twenty-ben az összes hírlevél címzett számára
+
+**Trigger**: Indítás kézzel (ha nincs rekord kiválasztva)
+
+**Műveletek**:
+
+- Rekordok keresése a hírlevél szempontjainak megfelelően
+- Code action to format email addresses for your email platform
+- HTTP Kérés az előfizetők hozzáadásához az e-mail marketing eszközhöz
+- Rekord létrehozása kampánykövetéshez
+- E-mail visszaigazolás küldése a marketing csapatnak
+
+### Email Sequence Triggers
+
+**Probléma**: Kifinomult e-mail sorozatok indítására van szüksége a CRM események alapján, dedikált email automatizálási eszközök használatával.
+
+**Megoldás**: Új leadeket vagy ügyfeleket küldjön az e-mail automatizálási platformjára, amikor meghatározott események történnek.
+
+**Trigger**: Record is Created (People object with specific criteria)
+
+**Műveletek**:
+
+- Code action to determine appropriate email sequence
+- HTTP Request to add contact to email automation platform
+- Rekord frissítése a sorozatba való beiratkozás követéséhez
+- Rekord létrehozása utókövetési feladathoz az elkötelezettség figyelésére
+
+### Lead Scoring Integration
+
+**Probléma**: Fejlett értékpontszám szükséges, amely a CRM adatokat külső jelekkel kombinálja.
+
+**Solution**: Send lead data to external scoring tools or implement scoring logic within workflows.
+
+**Opció 1 - Külső eszköz**:
+
+**Trigger**: Rekord frissítve (Ember objektum)
+
+**Műveletek**:
+
+- HTTP Kérés a lead adatok küldésére a pontozási platformra
+- Kód akció a pontszám válasz feldolgozásához
+- Rekord frissítése a lead pontszámmal
+- Rekord létrehozása értékesítési feladathoz, ha a pontszám meghaladja a küszöböt
+
+**Opció 2 - Belső logika**:
+
+**Trigger**: Rekord frissítve (Ember objektum)
+
+**Műveletek**:
+
+- Kód akció a pontozó algoritmussal (vállalat mérete, iparág, viselkedés)
+- Rekord frissítése a számított pontszámmal
+- Email értesítés küldése az értékesítési munkatársnak a magas pontszámú leadek számára
+
+### Számlagenerálás
+
+**Probléma**: Amikor az üzletek zárulnak, a számlázási rendszerét frissíteni kell az ügyfél és az üzleti információkkal.
+
+**Megoldás**: Automatikusan küldje el az üzleti adatokat a számlázási rendszerébe, amikor lehetőségek nyerésre kerülnek.
+
+**Trigger**: Rekord frissítve (Lehetőségek objektum, Stádium = "Zárva Nyert")
+
+**Műveletek**:
+
+- Rekordok keresése a teljes ügyfélinformáció megszerzéséhez
+- Kód akció az adatok formázására számlázási rendszerekhez
+- HTTP Kérés az ügyfél létrehozásához a számlázási platformon
+- HTTP Kérés a számla generálásához
+- Rekord frissítése a számla hivatkozás tárolásához
+- Email küldése a pénzügyi csapatnak a számla részletekkel
+
+## Fejlett Integrációs Minták
+
+### Kétirányú Szinkronizáció
+
+**Probléma**: Az adatok szinkronizálására van szüksége a Twenty és egy másik rendszer között mindkét irányba.
+
+**Solution**: Combine scheduled workflows with webhook triggers for real-time sync.
+
+**A Twenty-ből a Külső Rendszerbe**:
+
+**Trigger**: Rekord frissítve (bármely releváns objektum)
+
+**Műveletek**:
+
+- HTTP Kérés a külső rendszer frissítéséhez
+- Rekord frissítése a szinkronizálási állapot és az időbélyeg követéséhez
+
+**From External System to Twenty**:
+
+**Trigger**: Webhook (a külső rendszerből)
+
+**Műveletek**:
+
+- Rekordok keresése a megfelelő rekord megtalálásához
+- Rekord frissítése a külső rendszerből származó új adatokkal
+- Rekord létrehozása konfliktuskezelési feladathoz, ha szükséges
+
+### Többlépcsős Adatfeldolgozás
+
+**Probléma**: Külső forrásokból származó adatok összetett feldolgozásra szorulnak, mielőtt a Twenty-be kerülnek.
+
+**Megoldás**: Használja a kód műveleteket az adatok átalakítására és validálására.
+
+**Trigger**: Webhook vagy Ütemezett
+
+**Műveletek**:
+
+- Kód akció a beérkező adatformátum validálásához
+- Kód akció az adatszerkezet átalakításához
+- Kód akció az üzleti szabályok alkalmazására és a kalkulációkra
+- Rekordok keresése duplikációk ellenőrzésére
+- Rekord létrehozása vagy frissítése a feldolgozott adatokkal
+- Email értesítés küldése, ha adatminőségi problémák észlelhetők
+
+## Megvalósítási Tippek
+
+- Tárolja biztonságosan az API kulcsokat a Beállítások → API & Webhooks részben
+- HTTPS-t használjon minden külső API híváshoz
+- Vigyázzon az API ütemezési korlátokra - használjon ütemezett munkafolyamatokat, amikor csak lehetséges
+- Fontolja meg a kötegelt frissítéseket "Ütemezett" módban, amikor nincs szükség valós idejű feldolgozásra
+- Emlékezzen a 100 egyidejű munkafolyamat korlátra munkaterületenként - használjon "Tömeges" elérhetőséget manuális triggerekhez, amikor több rekordot dolgoz fel (részletekért lásd [Workflow Features](/l/hu/user-guide/workflows/workflow-features))
+- Teszteljen mintaadatokkal, mielőtt aktiválná a munkafolyamatokat
+
+A beépítési problémák hibaelhárításához, lásd a [Workflow Troubleshooting](/l/hu/user-guide/workflows/workflow-troubleshooting) útmutatónkat. Ha segítségre van szüksége az összetett integrációk megvalósításában, tekintse meg [Professional Services](/l/hu/user-guide/workflows/professional-services) szolgáltatásunkat.

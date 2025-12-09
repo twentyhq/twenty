@@ -1,0 +1,129 @@
+---
+title: Resolución de problemas de flujo de trabajo
+info: Depura y optimiza tus flujos de trabajo con técnicas de resolución de problemas y consejos de optimización de rendimiento.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatiza procesos e integra con herramientas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Depuración con Ejecuciones de Flujos de Trabajo
+
+Use la interfaz de **Ejecuciones de Flujos de Trabajo** para depurar problemas:
+
+- Accede a través del panel de **Ejecuciones** en el editor de flujos de trabajo
+- Haz clic en las ejecuciones individuales para ver los datos de entrada/salida de cada paso
+- Verifica el estado de ejecución, los mensajes de error y el flujo de datos entre los pasos
+
+## Problemas Comunes y Soluciones
+
+### Flujo de trabajo no se activa
+
+**Problema**: El flujo de trabajo no se ejecuta cuando se espera.
+
+**Soluciones**:
+
+- Verifica que el flujo de trabajo esté **Activo** (no en modo Borrador)
+- Verifique que la configuración del activador coincida con la estructura de sus datos
+- Para los activadores de registro, asegúrese de que el objeto y los campos correctos estén seleccionados
+- Para disparadores de Webhook, verifica la URL y el formato de datos esperado
+- Para disparadores Programados, revisa la configuración de horarios
+
+### Formularios No Accesibles
+
+**Problema**: Las acciones de formulario son difíciles de encontrar o acceder en flujos de trabajo automatizados.
+
+<Warning>
+Los formularios están diseñados actualmente solo para disparadores manuales. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo, lo cual no es la experiencia de usuario esperada. Un centro de notificaciones se lanzará en 2026 para soportar adecuadamente los formularios en flujos de trabajo automatizados.
+</Warning>
+
+**Solución Alternativa**: Usa disparadores manuales cuando se requieran formularios o restructura flujos de trabajo para evitar formularios en flujos automáticos.
+
+### Alto Consumo de Créditos
+
+**Problema**: Los flujos de trabajo consumen más créditos de lo esperado.
+
+**Causas Comunes y Soluciones**:
+
+- **Llamadas API Ineficientes**: Agrupa las llamadas API cuando sea posible en lugar de solicitudes individuales
+- **Configuración de Disparador Manual Incorrecta**: Usa disponibilidad `Masiva` en lugar de `Individual` para procesar múltiples registros en una ejecución de flujo de trabajo
+- **Filtros Faltantes**: Agrega lógica condicional para detener flujos de trabajo cuando no se cumplen criterios
+- **Pasos Innecesarios**: Elimina acciones redundantes y optimiza la lógica de flujo de trabajo
+- **Tiempo Real vs. Programado**: Utiliza flujos de trabajo programados para procesos no urgentes
+
+### Límites de Flujo de Trabajo Concurrente
+
+**Problema**: Se alcanza el límite de 100 flujos de trabajo concurrentes por espacio de trabajo.
+
+<Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning><Warning>No puedes ejecutar más de 100 flujos de trabajo en paralelo en cualquier momento por espacio de trabajo.</Warning></Warning>
+
+**Soluciones**:
+
+- Usa disponibilidad `Masiva` para disparadores manuales para procesar múltiples registros en una sola ejecución
+- Implementa retrasos entre ejecuciones de flujos de trabajo utilizando disparadores programados
+- Optimiza los flujos de trabajo para que se ejecuten más rápido y reduzcan el tiempo de ejecución concurrente
+- Considera el procesamiento en bloque durante horas de baja demanda
+
+### Limitación de Tasa de API
+
+**Problema**: Las llamadas de API externas fallan debido a límites de tasa.
+
+**Soluciones**:
+
+- Usa flujos de trabajo programados en lugar de disparadores en tiempo real cuando sea posible
+- Implementa retrasos entre llamadas API en acciones de Código
+- Agrupa solicitudes API cuando el servicio externo lo soporte
+- Monitorea ejecuciones de flujos de trabajo para errores de límite de tasa y ajusta la temporización
+
+### Problemas con Iterator
+
+**Problema**: Las acciones del Iterator no funcionan como se espera.
+
+**Soluciones**:
+
+- **Nota**: El Iterator está actualmente en beta. Actívalo en Configuración → Lanzamientos → Lab
+- Verifica que la entrada sea un arreglo de registros de un paso anterior
+- Revisa que las acciones dentro del Iterator estén configuradas correctamente
+- Utiliza Iterator con disparadores manuales `Masivos` para un rendimiento óptimo
+
+### Permisos Faltantes
+
+**Problema**: No se puede acceder a la sección de flujos de trabajo.
+
+<Warning>
+Si no ves la sección de Flujos de Trabajo, esto se debe a un problema de permisos. Contacta a tu administrador de espacio de trabajo para que te otorgue acceso a los flujos de trabajo.
+</Warning>
+
+## Consejos de Optimización
+
+### Mejores Prácticas de Rendimiento
+
+- **Empieza simple** y añade complejidad gradualmente
+- **Usa disponibilidad `Masiva`** para disparadores manuales para procesar múltiples registros eficientemente
+- **Agrega filtros temprano** para detener flujos de trabajo cuando no se cumplan criterios
+- **Agrupa llamadas API** y usa flujos de trabajo programados para procesos no urgentes
+- **Oculta ejecuciones de flujo de trabajo** de las páginas que muestran todos los flujos para mejorar el rendimiento de carga
+- **Monitorea el uso de créditos** regularmente en Configuración → Facturación
+
+### Prevención de Errores
+
+- **Prueba en modo borrador** antes de activar flujos de trabajo
+- **Valida las respuestas API** e implementa acciones de respaldo
+- **Usa nombres descriptivos en los pasos** para un mantenimiento más fácil
+- **Documenta la lógica compleja** para los miembros del equipo
+
+## Obtención de Ayuda
+
+### Recursos de Auto-Servicio
+
+- Revisa [Características de Flujos de Trabajo](/l/es/user-guide/workflows/workflow-features) para detalles técnicos
+- Consulta [Créditos de Flujos de Trabajo](/l/es/user-guide/workflows/workflow-credits) para consejos de optimización
+- Explora [Automatizaciones Internas](/l/es/user-guide/workflows/internal-automations) e [Integración con Herramientas Externas](/l/es/user-guide/workflows/external-tool-integration) para ejemplos
+
+### Soporte Profesional
+
+- Contacta nuestros [Servicios Profesionales](/l/es/user-guide/workflows/professional-services) para resolución de problemas complejos
+- Ponte en contacto con el soporte a través de contact@twenty.com para asistencia técnica
+

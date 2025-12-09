@@ -1,0 +1,131 @@
+---
+title: İş Akışı Sorun Giderme
+info: Sorun giderme teknikleri ve performans optimizasyon ipuçları ile iş akışlarınızı hata ayıklayın ve optimize edin.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Süreçleri otomatikleştirin ve harici araçlarla entegre edin
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## İş Akışı Çalıştırmaları ile Hata Ayıklama
+
+Sorunları gidermek için **İş Akışı Çalıştırmaları** arayüzünü kullanın:
+
+- İş akışı düzenleyicisindeki **Çalıştırmalar** paneli aracılığıyla erişim
+- Her adım için veri giriş/çıkışını görmek için bireysel çalıştırmalara tıklayın
+- Adımlar arasındaki yürütme durumu, hata mesajları ve veri akışını kontrol edin
+
+## Sık Görülen Sorunlar ve Çözümleri
+
+### İş Akışı Tetiklenmiyor
+
+**Sorun**: İş akışı beklenildiği zamanda yürütülmüyor.
+
+**Çözümler**:
+
+- İş akışının **Aktif** olduğundan emin olun (Taslak modunda değil)
+- Tetikleyici yapılandırmasının veri yapınızla eşleştiğini kontrol edin
+- Kayıt tetikleyicileri için doğru nesne ve alanların seçildiğinden emin olun
+- Webhook tetikleyicileri için URL'yi ve beklenen veri biçimini doğrulayın
+- Zamanlanmış tetikleyiciler için zamanlama yapılandırmasını kontrol edin
+
+### Formlar Erişilemiyor
+
+**Sorun**: Form eylemleri otomatik iş akışlarında bulmak veya erişmek zor.
+
+<Warning>
+Formlar şu anda yalnızca manuel tetikleyiciler için tasarlanmıştır. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
+</Warning>
+
+**Geçici Çözüm**: Formlar gerektiğinde manuel tetikleyiciler kullanın veya iş akışlarını otomatik akışlarda form kullanmadan yeniden yapılandırın.
+
+### Yüksek Kredi Tüketimi
+
+**Sorun**: İş akışları beklenenden daha fazla kredi tüketiyor.
+
+**Yaygın Nedenler & Çözümler**:
+
+- **Verimsiz API Çağrıları**: Tek tek istekler yerine mümkün olduğunda toplu API çağrıları yapın
+- **Yanlış Manuel Tetikleyici Yapılandırması**: Tek bir kayıt yerine birçok kaydı işlemek için `Toplu` kullanılabilirliğini kullanın
+- **Eksik Filtreler**: Kriterler karşılanmadığında iş akışlarını durdurmak için koşullu mantık ekleyin
+- **Gereksiz Adımlar**: Gereksiz işlemleri kaldırın ve iş akışı mantığını optimize edin
+- **Gerçek Zamanlı vs. Zamanlanmış**: Acil olmayan işlemler için zamanlanmış iş akışlarını kullanın
+
+### Eşzamanlı İş Akışı Sınırları
+
+**Sorun**: Her çalışma alanı için 100 eşzamanlı iş akışı sınırına ulaşıldı.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Çözümler**:
+
+- Bir çalıştırmada birden fazla kaydı işlemek için manuel tetikleyiciler için `Toplu` kullanılabilirliğini kullanın
+- Zamanlanmış tetikleyiciler kullanarak iş akışları yürütmeleri arasında gecikmeler uygulayın
+- İş akışlarını daha hızlı çalıştırmak ve eşzamanlı yürütme süresini azaltmak için optimize edin
+- Zirve olmayan saatlerde toplu işlem yapmayı düşünün
+
+### API Hız Sınırlandırması
+
+**Sorun**: Dış API çağrıları hız sınırları nedeniyle başarısız oluyor.
+
+**Çözümler**:
+
+- Mümkün olduğunda gerçek zamanlı tetikleyiciler yerine zamanlanmış iş akışlarını kullanın
+- Kod eylemlerinde API çağrıları arasında gecikmeler ekleyin
+- Dış hizmet destekliyorsa toplu API istekleri yapın
+- Hız sınırı hatalarını izleyerek zamanlamayı ayarlayın
+
+### Döngüleyici Sorunları
+
+**Sorun**: Döngüleyici işlemleri beklenildiği gibi çalışmıyor.
+
+**Çözümler**:
+
+- **Not**: Döngüleyici şu anda beta aşamasındadır. Ayarlardan → Sürümler → Lab bölümüne giderek aktif hale getirin
+- Girdinin önceki bir adımın kayıtlarından bir dizin olduğundan emin olun
+- Döngüleyici içindeki işlemlerin doğru yapılandırıldığını kontrol edin
+- En iyi performans için `Toplu` manuel tetikleyicilerle Döngüleyici kullanın
+
+### Eksik Yetkiler
+
+**Sorun**: İş akışları bölümüne erişilemiyor.
+
+<Warning>
+İş Akışları bölümünü göremiyorsanız, bu bir yetki sorunudur. İş akışlarına erişim sağlamak için çalışma alanı yöneticinizle iletişime geçin.
+</Warning>
+
+## Optimizasyon İpuçları
+
+### Performans En İyi Uygulamaları
+
+- **Basit başlayın** ve karmaşıklığı kademeli olarak artırın
+- Bir çalıştırmada birden fazla kaydı verimli bir şekilde işlemek için manuel tetikleyiciler için **`Toplu` kullanılabilirliğini** kullanın
+- Karşılanmadığında iş akışlarını durdurmak için **erken filtre ekleyin**
+- **API çağrılarını toplu hale getirin** ve acil olmayan işlemler için zamanlanmış iş akışlarını kullanın
+- Yükleme performansını artırmak için sayfalarda tüm iş akışlarını gösteren çalıştırmaları **gizleyin**
+- Ayarlar → Faturalama bölümünde kredi kullanımını düzenli olarak **izleyin**
+
+### Hata Önleme
+
+- İş akışlarını etkinleştirmeden önce **taslak modunda test edin**
+- API yanıtlarını **doğrulayın** ve geri dönüş eylemleri uygulayın
+- Kolay bakım için **açıklayıcı adım adları** kullanın
+- Ekip üyeleri için karmaşık mantığı **belgeleyin**
+
+## Yardım Alma
+
+### Kendi Kendine Hizmet Kaynakları
+
+- Teknik detaylar için [İş Akışı Özelliklerini](/l/tr/user-guide/workflows/workflow-features) gözden geçirin
+- Optimizasyon ipuçları için [İş Akışı Kredilerini](/l/tr/user-guide/workflows/workflow-credits) kontrol edin
+- Örnekler için [Dahili Otomasyonlar](/l/tr/user-guide/workflows/internal-automations) ve [Harici Araç Entegrasyonu](/l/tr/user-guide/workflows/external-tool-integration) bölümlerini inceleyin
+
+### Profesyonel Destek
+
+- Karmaşık sorun giderme için [Profesyonel Hizmetlerimiz](/l/tr/user-guide/workflows/professional-services) ile iletişime geçin
+- Teknik destek için contact@twenty.com adresinden destek ekibimize ulaşın
+

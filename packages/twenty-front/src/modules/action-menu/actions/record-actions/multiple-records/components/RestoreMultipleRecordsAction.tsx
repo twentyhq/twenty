@@ -8,10 +8,12 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export const RestoreMultipleRecordsAction = () => {
@@ -27,6 +29,8 @@ export const RestoreMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
+  const { removeSelectedRecordsFromRecordBoard } =
+    useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -74,6 +78,7 @@ export const RestoreMultipleRecordsAction = () => {
   });
 
   const handleRestoreClick = async () => {
+    removeSelectedRecordsFromRecordBoard();
     const recordsToRestore = await fetchAllRecordIds();
     const recordIdsToRestore = recordsToRestore.map((record) => record.id);
 
@@ -86,10 +91,10 @@ export const RestoreMultipleRecordsAction = () => {
 
   return (
     <ActionModal
-      title="Restore Records"
-      subtitle="Are you sure you want to restore these records?"
+      title={t`Restore Records`}
+      subtitle={t`Are you sure you want to restore these records?`}
       onConfirmClick={handleRestoreClick}
-      confirmButtonText="Restore Records"
+      confirmButtonText={t`Restore Records`}
       confirmButtonAccent="default"
     />
   );

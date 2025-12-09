@@ -19,13 +19,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     super(ALL_METADATA_NAME.view);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'created'>
-  > {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'created'> {
     const validationResult =
-      await this.flatViewValidatorService.validateFlatViewCreation(args);
+      this.flatViewValidatorService.validateFlatViewCreation(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -45,11 +43,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'deleted'>
-  > {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'deleted'> {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewDeletion(args);
 
@@ -71,11 +67,9 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): Promise<
-    FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'updated'>
-  > {
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'updated'> {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewUpdate(args);
 

@@ -36,7 +36,7 @@
       "dependsOn": ["^build"]
     },
     "start": {
-      "cache": true,
+      "cache": false,
       "dependsOn": ["^build"]
     },
     "lint": {
@@ -133,7 +133,7 @@
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true storybook build --test",
+        "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
@@ -234,7 +234,7 @@
             "command": "nx storybook:build {projectName}",
             "forwardAllArgs": false
           },
-          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+          "chromatic --storybook-build-dir=storybook-static {args.ci}"
         ],
         "parallel": false
       },
@@ -280,7 +280,7 @@
     }
   },
   "installation": {
-    "version": "21.3.11"
+    "version": "22.0.3"
   },
   "generators": {
     "@nx/react": {

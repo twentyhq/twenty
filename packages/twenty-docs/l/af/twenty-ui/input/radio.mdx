@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Word gebruik wanneer gebruikers net een opsie van 'n reeks opsies kan kies.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Eienskappe          | Tipe                   | Beskrywing                                                                                                                             |
+| ------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| styl                | `React.CSS` eienskappe | Addisionele ingevoegde style vir die komponent                                                                                         |
+| klasNaam            | string                 | Opsionele CSS-klas vir addisionele stylering                                                                                           |
+| geselekteer         | booleaanse             | Wys of die radioknoppie geselekteer is                                                                                                 |
+| waarde              | string                 | Die etiket of teks wat met die radioknoppie geassosieer word                                                                           |
+| opVerandering       | funksie                | Die funksie wat geroep word wanneer die geselekteerde radioknoppie verander                                                            |
+| opGekiesVerandering | funksie                | Die funksie wat geroep word wanneer die `geselekteer` toestand van die radioknoppie verander                                           |
+| grootte             | string                 | Die grootte van die radioknoppie. Opsies sluit in: `groot` en `klein`                                  |
+| gedeaktiveer        | booleaanse             | Indien `waar`, is die radioknoppie gedeaktiveer en nie klikbaar nie                                                                    |
+| etiketPosisie       | string                 | Die posisie van die etiket teks in verhouding tot die radioknoppie. Het twee opsies: `links` en `regs` |
+
+</Tab>
+</Tabs>
+
+## Radio Groep
+
+Groepeer verwante radioknoppies saam.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Eienskappe          | Tipe              | Beskrywing                                                                                                       |
+| ------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
+| waarde              | string            | Die waarde van die tans geselekteerde radioknoppie                                                               |
+| opVerandering       | funksie           | Die terugroepfunksie wat geaktiveer word wanneer die radioknoppie verander                                       |
+| opWaardeVerandering | funksie           | Die terugroepfunksie wat geaktiveer word wanneer die geselekteerde waarde in die groep verander. |
+| kinders             | `React.ReactNode` | Laat jou toe om React-komponente (soos Radio) as kinders aan die Radio Groep te bied          |
+
+</Tab>
+
+</Tabs>

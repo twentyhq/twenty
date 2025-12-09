@@ -19,7 +19,9 @@ import {
   CommonQueryNames,
   DestroyOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -65,11 +67,18 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
 
   async processQueryResult(
     queryResult: ObjectRecord,
-    _objectMetadataItemId: string,
-    _objectMetadataMaps: ObjectMetadataMaps,
-    _authContext: WorkspaceAuthContext,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
-    return queryResult;
+    return this.commonResultGettersService.processRecord(
+      queryResult,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   async validate(

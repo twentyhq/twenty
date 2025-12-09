@@ -1,22 +1,15 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { type ViewType } from '@/views/types/ViewType';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
 import { useRecoilCallback } from 'recoil';
 
-type UseRecordGroupVisibilityParams = {
-  viewType: ViewType;
-};
-
-export const useRecordGroupVisibility = ({
-  viewType,
-}: UseRecordGroupVisibilityParams) => {
-  const objectOptionsDropdownRecordGroupHideFamilyState =
+export const useRecordGroupVisibility = () => {
+  const recordIndexShouldHideEmptyRecordGroupsCallbackState =
     useRecoilComponentCallbackState(
-      recordIndexRecordGroupHideComponentFamilyState,
+      recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
@@ -38,11 +31,11 @@ export const useRecordGroupVisibility = ({
     ({ set }) =>
       async () => {
         set(
-          objectOptionsDropdownRecordGroupHideFamilyState(viewType),
+          recordIndexShouldHideEmptyRecordGroupsCallbackState,
           (currentHideState) => !currentHideState,
         );
       },
-    [viewType, objectOptionsDropdownRecordGroupHideFamilyState],
+    [recordIndexShouldHideEmptyRecordGroupsCallbackState],
   );
 
   return {

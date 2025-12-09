@@ -1,12 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -131,9 +132,11 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           },
         },
         {
-          provide: TwentyORMManager,
+          provide: TwentyORMGlobalManager,
           useValue: {
-            getDatasource: jest.fn().mockResolvedValue(datasourceInstance),
+            getDataSourceForWorkspace: jest
+              .fn()
+              .mockResolvedValue(datasourceInstance),
           },
         },
       ],
@@ -223,36 +226,6 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
             messageId: 'db-message-id-2',
           },
         ],
-      },
-    );
-  });
-
-  it('should not create group emails contacts', async () => {
-    await service.saveMessagesAndEnqueueContactCreation(
-      [
-        {
-          ...mockMessages[0],
-          participants: [
-            {
-              role: 'from',
-              handle: 'contact@group.com',
-              displayName: 'participant that is the Connected Account',
-            },
-          ],
-        },
-      ],
-      mockMessageChannel,
-      mockConnectedAccount,
-      workspaceId,
-    );
-
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      CreateCompanyAndContactJob.name,
-      {
-        workspaceId,
-        connectedAccount: mockConnectedAccount,
-        source: FieldActorSource.EMAIL,
-        contactsToCreate: [],
       },
     );
   });

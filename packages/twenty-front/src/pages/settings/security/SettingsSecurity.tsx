@@ -10,6 +10,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
+import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -137,6 +138,15 @@ export const SettingsSecurity = () => {
                 description={t`Customize your workspace security`}
               />
               <SettingsSecurityAuthProvidersOptionsList />
+            </StyledContainer>
+          </Section>
+          <Section>
+            <StyledContainer>
+              <H2Title
+                title={t`Editable Profile Fields`}
+                description={t`Choose which profile fields users with the Edit Profile permission can modify`}
+              />
+              <SettingsSecurityEditableProfileFields />
             </StyledContainer>
           </Section>
           {shouldShowBypassSection && (

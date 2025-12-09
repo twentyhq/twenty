@@ -1,0 +1,118 @@
+---
+title: Email & Kalenderopsætning
+info: "Forbind dine e-mail- og kalenderkonti."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Konfigurer dine Twenty-arbejdsområdeindstillinger og -præferencer
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Forbindelsesmuligheder
+
+### Google-konto (Gmail & Google Kalender)
+
+1. Gå til **Indstillinger → Konti**
+2. Klik på **Tilføj konto**
+3. Vælg **Fortsæt med Google**
+4. Autoriser Twenty til at få adgang til din Gmail og Google Kalender
+5. Dine e-mails og kalenderbegivenheder vil begynde at synkronisere automatisk
+
+### Microsoft-konto (Outlook & Microsoft Kalender)
+
+1. Gå til **Indstillinger → Konti**
+2. Klik på **Tilføj konto**
+3. Vælg **Fortsæt med Microsoft**
+4. Autoriser Twenty til at få adgang til din Outlook og Microsoft Kalender
+5. Dine e-mails og kalenderbegivenheder vil begynde at synkronisere automatisk
+
+### SMTP/CalDAV Opsætning (Andre udbydere)
+
+For andre e-mail- og kalenderudbydere:
+
+1. Gå til **Indstillinger → Releases → Lab** for at aktivere funktionen
+2. Vend tilbage til **Indstillinger → Konti**
+3. Konfigurer SMTP-indstillinger for e-mail
+4. Konfigurer CalDAV-indstillinger for kalender
+5. Test forbindelsen
+
+### Flere postkasser
+
+- **Ubegrænsede konti**: Forbind flere e-mail-konti pr. bruger
+- **Kontoadministration**: Skift mellem forskellige postkasser
+- **Synkroniseringsindstillinger**: Konfigurer forskellige indstillinger pr. postkasse
+
+<Warning>
+Kun rigtige postkasser kan forbindes (f.eks. support@domain.com med sin egen indbakke). E-mail-aliaser, der videresender til en anden postkasse, kan ikke forbindes til Twenty.
+</Warning>
+
+## E-mail-konfiguration
+
+### Besked-synlighed
+
+Vælg forskellige niveauer af synlighed for dine e-mails:
+
+- **Kun metadata**: Del kun grundlæggende information (afsender, modtager, dato, tid)
+- **Emne og metadata**: Del emnelinjen sammen med metadata
+- **Hele e-mailens indhold**: Del hele e-mailens indhold inklusiv vedhæftninger
+
+### Automatisk kontakt-oprettelse
+
+- **Deaktiveret**: Ingen automatisk kontakt-oprettelse
+- **For beskeder sendt & modtaget**: Opret kontakter for alle eksterne e-mail-interaktioner
+- **For beskeder kun sendt**: Opret kontakter kun for e-mails, du sender
+- **Bemærk**: Interne e-mails (samme domæne) synkroniseres aldrig for at opretholde privatliv
+
+### Kontrollér, hvilke e-mails der synkroniseres med Beskedmappevalg (Lab-funktion)
+
+Kontrollér, hvilke e-mailmapper der synkroniseres med Twenty:
+
+1. Gå til **Indstillinger → Releases → Lab** og aktivér **Beskedmappe**
+2. Vend tilbage til **Indstillinger → Konti** og vælg din tilkoblede e-mail-konto
+3. Vælg, hvilke mapper der skal synkroniseres:
+   - **Indbakke**: Primære indkommende e-mails
+   - **Sendt**: Udgående e-mails, du har sendt
+   - **Tilpassede mapper**: Enhver specifik mappe, du vil inkludere
+   - **Udelad mapper**: Spring mapper som Spam, Papirkurv eller personlige mapper over
+
+Dette giver dig præcis kontrol over, hvilke e-mails der vises i din CRM uden at synkronisere alt.
+
+**Hvad synkroniseres:**
+
+- **Eksterne e-mails**: Alle e-mails med eksterne kontakter fra valgte mapper
+- **Interne e-mails**: Ikke synkroniseret (e-mails fra samme domæne forbliver private)
+- **Vedhæftninger**: Kommer i H1 2026
+
+**Bemærk**: Vi tilbyder ikke en CC-e-mail-adresse til selektiv synkronisering. Brug i stedet funktionen Beskedmappe ovenfor for at opnå samme kontrol over, hvilke e-mails der synkroniseres med Twenty.
+
+## Kalenderkonfiguration
+
+### Begivenhedssynlighed
+
+Vælg, hvad der vil være synligt for andre brugere i dit arbejdsområde:
+
+- **Alt**: Hele begivenhedsdetaljerne vil blive delt med dit team
+- **Metadata**: Kun dato & deltagere vil blive delt med dit team
+
+### Automatisk kontakt-oprettelse for møder
+
+- **Ja**: Opret automatisk kontakter for mødedeltagere, der ikke er i din CRM
+- **Nej**: Link kun møder til eksisterende kontakter
+
+### Kontrollér, hvilke begivenheder der synkroniseres
+
+- **Mødeimport**: Importer automatisk kalenderbegivenheder
+- **Kontakt-linking**: Link møder til Folk- og Firmaposter
+
+**Hvad synkroniseres:**
+
+- **Møder**: Kalenderbegivenheder med eksterne deltagere
+- **Kontakt-linking**: Begivenheder automatisk linket til CRM-poster
+- **Teambegivenheder**: Fælles kalender-synlighed
+
+## Synkroniseringsfrekvens
+
+**Opdaterer hvert 5. minut**: Både e-mail og kalenderdata synkroniseres automatisk hvert 5. minut efter den første import.
+
+

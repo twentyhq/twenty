@@ -3,17 +3,19 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -26,13 +28,13 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
-  let objectMetadataService: ObjectMetadataService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
-  let roleTargetsRepository: Repository<RoleTargetsEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
+  let objectMetadataService: ObjectMetadataService;
 
   beforeEach(async () => {
     mockDataSource = {
@@ -81,7 +83,7 @@ describe('WorkspaceManagerService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             delete: jest.fn(),
           },
@@ -105,6 +107,10 @@ describe('WorkspaceManagerService', () => {
           useValue: {},
         },
         {
+          provide: ApplicationService,
+          useValue: {},
+        },
+        {
           provide: UserRoleService,
           useValue: {},
         },
@@ -118,11 +124,10 @@ describe('WorkspaceManagerService', () => {
           provide: WorkspaceSyncMetadataService,
           useValue: {},
         },
-
         {
           provide: ObjectMetadataService,
           useValue: {
-            deleteObjectsMetadata: jest.fn(),
+            deleteWorkspaceAllObjectMetadata: jest.fn(),
           },
         },
         {
@@ -141,13 +146,16 @@ describe('WorkspaceManagerService', () => {
             }),
           },
         },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            invalidateEntireCache: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<WorkspaceManagerService>(WorkspaceManagerService);
-    objectMetadataService = module.get<ObjectMetadataService>(
-      ObjectMetadataService,
-    );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
     >(getRepositoryToken(WorkspaceMigrationEntity));
@@ -157,11 +165,14 @@ describe('WorkspaceManagerService', () => {
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
-    roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity),
+    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
+      getRepositoryToken(RoleTargetEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
+    );
+    objectMetadataService = module.get<ObjectMetadataService>(
+      ObjectMetadataService,
     );
   });
 
@@ -172,14 +183,16 @@ describe('WorkspaceManagerService', () => {
   describe('delete', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
-      expect(objectMetadataService.deleteObjectsMetadata).toHaveBeenCalled();
+      expect(
+        objectMetadataService.deleteWorkspaceAllObjectMetadata,
+      ).toHaveBeenCalled();
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(dataSourceRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(roleTargetsRepository.delete).toHaveBeenCalledWith({
+      expect(roleTargetRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(roleRepository.delete).toHaveBeenCalledWith({

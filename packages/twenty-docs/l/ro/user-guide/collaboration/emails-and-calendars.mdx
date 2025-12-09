@@ -1,0 +1,114 @@
+---
+title: E-mailuri și calendare
+info: "Vizualizați și gestionați conversațiile prin e-mail în cadrul înregistrărilor CRM."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Centralizați comunicările și colaborarea echipei
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+<strong>Notă</strong>: Pentru a conecta conturile de e-mail și a configura setările de sincronizare, vizitați <a href="/l/ro/user-guide/settings/email-calendar-setup">Configurare e-mail și calendar</a>.
+
+## Cum funcționează integrarea e-mailului
+
+Twenty leagă automat e-mailurile din căsuțele poștale conectate la înregistrările CRM relevante, păstrând toate istoricul comunicațiilor într-un singur loc.
+
+### Unde să găsiți e-mailuri
+
+Conversațiile prin e-mail apar în trei obiecte principale:
+
+- <strong>Persoane</strong>: Vizualizați toate e-mailurile schimbate cu un contact specific
+- <strong>Companii</strong>: Vizualizați toate e-mailurile legate de o companie și de angajații săi
+- <strong>Oportunități</strong>: Accesați conversațiile prin e-mail legate de compania asociată acestei oportunități. Firurile de e-mail de la persoanele individuale din oportunitate nu sunt afișate încă.
+
+### Vizualizarea conversațiilor prin e-mail
+
+1. <strong>Navigați la o înregistrare</strong>: Accesați înregistrarea oricărei persoane, companii sau oportunități
+2. <strong>Selectați fila E-mailuri</strong>: Faceți clic pe fila `E-mailuri` pentru a vizualiza e-mailurile sincronizate
+3. <strong>Deschideți un fir de e-mail</strong>: Faceți clic pe orice e-mail pentru a deschide și a citi întreaga conversație
+4. <strong>Răsfoiți istoricul</strong>: Derulați prin întregul istoric al e-mailurilor cu acel contact
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}}/>
+
+## Ce veți vedea
+
+### Vizualizarea firului de e-mail
+
+Când deschideți un fir de e-mail, puteți:
+
+- <strong>Citiți conversații complete</strong>: Vizualizați întregul schimb de e-mailuri
+- <strong>Vizualizați participanții</strong>: Vedeți toate persoanele implicate în firul de e-mail
+- <strong>Verificați marcajele de timp</strong>: Aflați exact când a fost trimis fiecare e-mail
+- <strong>Accesați contextul</strong>: Înțelegeți întregul istoric al comunicațiilor
+
+### Vizibilitatea e-mailurilor
+
+În funcție de setările căsuței poștale, este posibil să vedeți:
+
+- <strong>Conținut complet</strong>: Textul complet al e-mailului și detaliile
+- <strong>Subiect + Metadate</strong>: Linia subiectului, expeditor, destinatar și marcaj de timp
+- <strong>Doar Metadate</strong>: Informații de bază fără conținutul e-mailului
+
+## Comportamentul sincronizării e-mailului
+
+### Ce se sincronizează
+
+- <strong>E-mailuri externe</strong>: Toate e-mailurile cu contacte din afara organizației
+- <strong>Conectare automată</strong>: E-mailuri care se leagă la înregistrări existente de persoane și companii
+- <strong>Adrese multiple</strong>: E-mailurile de la orice adresă se corelează la aceeași înregistrare de contact
+- <strong>Actualizări</strong>: Noile e-mailuri apar în termen de 5 minute
+
+### Ce nu se sincronizează
+
+- <strong>E-mailuri interne</strong>: E-mailurile între colegi (același domeniu) rămân private
+- <strong>E-mailuri de grup</strong>: Liste de distribuție și e-mailuri de grup sunt excluse
+- <strong>Foldere excluse</strong>: Folderele pe care ați ales să nu le sincronizați (configurate sub Setări → Conturi → E-mail)
+
+### Sincronizare selectivă de foldere (Caracteristică de laborator)
+
+Controlați care foldere de e-mail se sincronizează cu Twenty:
+
+1. Activați `Folder Mesaje` în Setări → Lansări → Laborator
+2. Configurați folderele sub Setări → Conturi → E-mail
+3. Alegeți foldere specifice de inclus sau exclus (Inbox, Trimise, Arhivă, foldere personalizate)
+
+## Depanarea sincronizării e-mailurilor
+
+### Probleme comune de sincronizare
+
+- <strong>Întârzieri la sincronizare</strong>: E-mailurile apar în cel mult 5 minute, dar importurile inițiale durează mai mult
+- <strong>E-mailuri lipsă</strong>: Verificați dacă:
+  - Folderele sunt excluse în setările Folder Mesaje
+  - Crearea automată a contactelor este dezactivată (e-mailurile necesită existența înregistrărilor Twenty)
+  - E-mailul este de la colegi (același domeniu) sau liste de grup
+  - Căsuța poștală finalizează încă sincronizarea inițială
+
+### Limitări ale e-mailului
+
+- <strong>Foldere de sistem</strong>: Unele foldere de e-mail s-ar putea să nu fie disponibile pentru sincronizare
+- **Aka**: Numai căsuțele reale de e-mail pot fi conectate (nu aliasurile de e-mail)
+
+## Integrarea calendarului
+
+### Calendar Tab
+
+Lângă fila E-mailuri, veți găsi o filă `Calendar` care conține istoricul întâlnirilor programate cu înregistrarea.
+
+<strong>Disponibil pentru:</strong>
+
+- <strong>Persoane</strong>: Vizualizați toate întâlnirile programate cu un contact specific
+- <strong>Companii</strong>: Vizualizați toate întâlnirile legate de o companie și de angajații săi
+- <strong>Oportunități</strong>: Accesați istoricul întâlnirilor legate de compania asociată acestei oportunități
+
+<strong>Setări de vizibilitate</strong>: Datele din calendar urmează aceleași setări de vizibilitate ca e-mailurile, pentru a asigura controale de confidențialitate constante pe ambele canale de comunicare.
+
+### Vizualizarea istoricului întâlnirilor
+
+1. <strong>Navigați la o înregistrare</strong>: Accesați înregistrarea oricărei persoane, companii sau oportunități
+2. <strong>Selectați fila Calendar</strong>: Faceți clic pe fila `Calendar` lângă fila E-mailuri
+3. <strong>Răsfoiți istoricul întâlnirilor</strong>: Vizualizați toate întâlnirile programate și detaliile acestora
+4. <strong>Accesați contextul întâlnirii</strong>: Vizualizați participanții la întâlnire, orele și informațiile conexe
+
+

@@ -1,0 +1,320 @@
+---
+title: Arbetsflödesfunktioner
+info: Komplett referens för alla tillgängliga arbetsflödesutlösare, åtgärder och hanteringsfunktioner.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatisera processer och integrera med externa verktyg
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Arbetsflödesutlösare
+
+Arbetsflöden börjar alltid med en enda utlösare som definierar när automatiseringen ska köras.
+
+### Record is Created
+
+Startar arbetsflödet när en ny post skapas i ett valt objekt (Människor, Företag, Möjligheter eller valfritt anpassat objekt).
+
+**Konfiguration**: Välj objekttyp att övervaka för nya poster.
+
+### Posten Uppdateras
+
+Startar arbetsflödet när ändringar görs i en befintlig post.
+
+**Konfiguration**:
+
+- Välj objekttyp
+- Valfritt ange vilka fält som ska övervakas för ändringar
+
+### Record is Updated or Created
+
+Startar arbetsflödet när en post antingen skapas eller uppdateras i ett valt objekt.
+
+**Varför detta är viktigt**: Denna utlösare är särskilt hjälpsam eftersom poster skapade via olika metoder beter sig olika:
+
+- **API/CSV import**: Poster skapas med alla fält ifyllda omedelbart
+- **Manuell skapelse**: Poster skapas först, sedan fylls fält i genom efterföljande uppdateringar
+
+**Konfiguration**:
+
+- Välj objekttyp att övervaka
+- Valfritt ange vilka fält som ska övervakas för ändringar
+- Arbetsflödet kommer att utlösas både vid initial skapelse och vid efterföljande uppdateringar
+
+### Posten Raderas
+
+Startar arbetsflödet när en post tas bort från ett objekt.
+
+**Konfiguration**: Välj objekttyp att övervaka för raderingar.
+
+### Starta Manuellt
+
+Startar arbetsflödet när det utlöses av en användaråtgärd. Denna utlösare kan nås via Cmd+K-menyn eller via en anpassad knapp i den övre navigeringsfältet.
+
+**Tillgänglighetskonfiguration**:
+Välj hur arbetsflödet ska hantera val av poster:
+
+- **Global**: Ingen post krävs för att utlösa detta arbetsflöde. Arbetsflödet utlöses från var som helst (från valfritt objekt) och använder inte poster som input.
+
+- **Enkel**: Den valda posten/posterna kommer att skickas till ditt arbetsflöde. Detta är konfigurerat för ett givet objekt. Flera poster kan väljas innan arbetsflödet utlöses. Arbetsflödet kommer att köras så många gånger som det finns valda poster.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: De valda posterna kommer att skickas till ditt arbetsflöde. Detta är konfigurerat för ett givet objekt. Flera poster kan väljas innan arbetsflödet aktiveras. Arbetsflödet kommer att köras en gång, med hela listan över poster som indata. Detta innebär att arbetsflödet behöver innehålla en Iterator-åtgärd. Detta är bäst för personer som vill optimera/begränsa antalet körningar av arbetsflöden.
+
+**Ytterligare Konfiguration**:
+
+- Välj målobjekt (för Enkel och Bulk tillgänglighet)
+- Välj en kommandosymbol för arbetsflödesutlösaren
+- Konfigurera navbar-placering (Fäst eller Inte Fäst)
+
+**Åtkomstmetoder**:
+
+- Cmd+K-menyn för att hitta och starta manuella arbetsflöden
+- Anpassad knapp i översta navbaren (om konfigurerad)
+
+### På ett Schema
+
+Startar arbetsflödet regelbundet enligt dina inställningar.
+
+**Konfiguration**:
+
+- Välj tidsenhet (minuter, timmar, dagar)
+- Ange ett värde eller använd anpassade cron-uttryck för avancerad schemaläggning
+
+### Webkrok
+
+Startar arbetsflödet när en GET eller POST-begäran tas emot från en extern tjänst.
+
+**Konfiguration**:
+
+- Mottag en unik webhook-URL
+- För POST-begäran, definiera den förväntade kroppstrukturen
+- Konfigurera autentisering vid behov
+
+## Arbetsflödesaktioner
+
+Åtgärder definierar vad som händer efter att en utlösare aktiveras. Du kan kedja flera åtgärder tillsammans.
+
+### Skapa en post
+
+Lägger till en ny post till ett valt objekt.
+
+**Konfiguration**:
+
+- Välj målobjektet
+- Fyll i de obligatoriska och frivilliga fälten
+- Använd data från tidigare steg för att fylla i fälten
+
+**Utdata**: Den nyupprättade postinformationen är tillgänglig för användning i efterföljande steg.
+
+### Uppdatera post
+
+Modifierar en befintlig post i ett valt objekt.
+
+**Konfiguration**:
+
+- Välj målobjektet
+- Välj den specifika posten att uppdatera
+- Välj fält att modifiera och ange nya värden
+
+**Utdata**: Den uppdaterade postinformationen är tillgänglig för användning i efterföljande steg.
+
+### Radera post
+
+Tar bort en post från ett valt objekt.
+
+**Konfiguration**:
+
+- Välj målobjektet
+- Välj den specifika posten att radera
+
+**Utdata**: Den raderade postinformationen förblir tillgänglig för användning i efterföljande steg.
+
+### Sök poster
+
+Hittar poster inom ett valt objekt med hjälp av filtervillkor.
+
+**Konfiguration**:
+
+- Välj objektet att söka
+- Ange filterkriterier för att begränsa resultat
+- Konfigurera sorteringen och begränsningar
+
+**Utdata**: Returnerar matchande poster som kan användas i efterföljande steg.
+
+**Bäst praxis**: Använd grenar efter Sök poster för att hantera ”hittad” vs ”inte hittad” scenarier.
+
+### Iterator
+
+Loopar genom en lista av poster som returnerats från ett tidigare steg, vilket möjliggör åtgärder på varje post individuellt.
+
+**Konfiguration**:
+
+- Välj listan av poster från ett tidigare steg (t.ex. resultat från Sök poster)
+- Definiera åtgärderna att utföra på varje post i loopen
+- Konfigurera det variabelnamn som refererar till varje post i iterationen
+
+**Exempel**: Sök poster returnerar 5 personer, använd sedan iteratorn för att skicka ett e-postmeddelande till varje person eller uppdatera varje post individuellt.
+
+**Obs**: Iterator är för närvarande i beta. Activate it under Settings > Releases > Lab.
+
+### Filtrera
+
+Filtrerar en lista av poster baserat på specificerade villkor, vilket endast låter poster som uppfyller kriterierna passera.
+
+**Konfiguration**:
+
+- Välj listan av poster att filtrera
+- Definiera filtervillkor och kriterier
+- Konfigurera vilka poster som ska passera till efterföljande steg
+
+**Utdata**: Returnerar bara posterna som matchar de angivna filtervillkoren.
+
+### Skicka e-post
+
+Skickar ett e-postmeddelande från ditt arbetsflöde.
+
+**Förutsättningar**: Lägg till ett e-postkonto i Inställningar > Konton
+
+**Konfiguration**:
+
+- Ange mottagarens e-postadress
+- Ange ämnesrad
+- Skriv meddelandets innehåll
+- Referera variabler från tidigare steg för personalisering
+
+**Obs**: E-postbilagor kommer att finnas tillgängliga under första kvartalet 2026.
+
+### Kod
+
+Kör anpassad JavaScript i ditt arbetsflöde.
+
+**Konfiguration**:
+
+- Skriv JavaScript-kod i redigeraren
+- Åtkomst till variabler från tidigare steg
+- Returnera variabler för användning i efterföljande steg
+- Testa kod direkt i steget
+
+**Åtkomst**: Hantera API-nycklar i Inställningar → API & Webhooks
+
+### Formulär
+
+Framkallar ett formulär under arbetsflödesexekvering för att samla in användarinmatningar.
+
+**Konfiguration**:
+
+- Definiera inmatningsfält med typer, etiketter och platshållare
+- Konfigurera valideringsregler
+- Ange formulärtitel och beskrivning
+
+**Utdata**: Formulärsvar är tillgängliga för användning i efterföljande steg.
+
+<Warning>
+Formulär är för närvarande utformade för endast manuella utlösare. För arbetsflöden med andra utlösare (post skapad, uppdaterad, etc.), är formulär endast tillgängliga via arbetsflödeskörningsgränssnittet, vilket inte är den förväntade användarupplevelsen. Ett meddelandecenter kommer att släppas 2026 för att korrekt stödja formulär i automatiserade arbetsflöden.
+</Warning>
+
+### HTTP-förfrågan
+
+Skickar en förfrågan till en extern API som en del av ditt arbetsflöde.
+
+**Konfiguration**:
+
+- Ange API-slutpunktens URL
+- Välj HTTP-metod (GET, POST, PUT, PATCH, DELETE)
+- Lägg till nödvändiga headers och värden
+- Inkludera förfrågningskropp för POST/PUT/PATCH-begäran
+- Lämna provsvar för strukturförhandsvisning
+
+## Arbetsflödeshantering
+
+### Skapa arbetsflöden
+
+1. Klicka "+ Lägg till ett arbetsflöde" för att börja
+2. Click "Untitled" to name your workflow
+3. Välj och konfigurera din arbetsflödesutlösare
+4. Lägg till åtgärder till ditt arbetsflöde
+5. Testa och iterera
+6. Aktivera ditt arbetsflöde (för närvarande i utkastläge) när du är klar med redigeringen
+
+**Obs**: Om du inte ser arbetsflödesavsnittet beror detta på en behörighetsfråga. Kontakta din arbetsytas administratör för att ge dig åtkomst till arbetsflöden.
+
+### Arbetsflödesstatusar
+
+- **Utkast**: Redigeras, ännu inte publicerad
+- **Active**: Live version responding to triggers
+- **Inaktiverad**: Tidigare aktiv men stoppad manuellt
+- **Arkiverad**: Tidigare versioner sparas för historik
+
+### Aktivera arbetsflöden
+
+Klicka **Aktivera** för att publicera ditt utkast som en ny version. Detta gör att arbetsflödet kan köras när det aktiveras men kör det inte omedelbart.
+
+### Testa arbetsflöden
+
+Testa arbetsflöden innan aktivering genom att:
+
+- Manuella utlösare (när ingen post har valts)
+- Individuell åtgärdstestning (särskilt Kod-åtgärder)
+- Utkastlägestestning som inte aktiverar arbetsflödet
+
+### Arbetsflödeskörningar
+
+En **Körning** är en post av arbetsflödesexekvering som innehåller:
+
+- Status (framgång, misslyckad, körs)
+- Utdata från varje steg
+- Författare och tidsstämplar
+- Felmeddelanden om tillämpligt
+
+**Viewing Runs**:
+
+- Kontrollera **Körningar**-panelen i arbetsflödesredigeraren
+- Öppna **Arbetsflödeskörningar**-vyn för övervakning över alla arbetsflöden
+
+**Prestandatips**: Dölj arbetsflödeskörningarna från "Alla arbetsflöden" och andra arbetsflödessidor för att förbättra laddningsprestandan, eftersom ett stort antal körningar kan sakta ner sidladdningstiden.
+
+### Versionshistorik
+
+- Visa alla versioner under **Versions**-fältet
+- Klicka på valfri version för att se detaljer
+- Använd **Använd som utkast** för att återställa tidigare versioner
+- Handle draft conflicts with override or return options
+
+## Bästa praxis
+
+### Organisering av arbetsflöden
+
+- **Beskrivande namn**: Använd tydliga, specifika arbetsflödesnamn
+- **Stegnamn**: Byt namn på steg för att beskriva deras funktion
+- **Dokumentation**: Lägg till kommentarer i Kod-åtgärder
+- **Kategorisering**: Gruppera relaterade arbetsflöden logiskt
+- **Anpassade fält**: Lägg till fält till arbetsflödesobjektet i din datamodell (liknande andra objekt) för att organisera och kategorisera arbetsflöden med anpassade egenskaper
+
+### Prestandaoptimering
+
+- **Minimera API-anrop**: Batchoperationer när det är möjligt
+- **Effektiva sökningar**: Använd specifika filterkriterier
+- **Felinhantering**: Planera för failscenarier
+- **Hastighetsbegränsningar**: Respektera externa API-begränsningar
+
+### Hantering av dataflöde
+
+- **Grenlogik**: Använd grenar efter Sök poster
+- **Variable Usage**: Leverage data from previous steps
+- **Data Validation**: Validate inputs in Code actions
+- **Fältmappning**: Planera dataomvandlingar noggrant
+
+### Övervakning och underhåll
+
+- **Regelbunden övervakning**: Kontrollera arbetsflödeskörningar efter fel
+- **Prestandagenomgång**: Analysera exekveringstider och framgångsfrekvenser
+- **Uppdateringshantering**: Testa ändringar i utkast innan aktivering
+- **Team Coordination**: Document workflows for team members
+
+For practical examples of these features in action, see our [Internal Automations](/l/sv/user-guide/workflows/internal-automations) and [External Tool Integration](/l/sv/user-guide/workflows/external-tool-integration) guides.

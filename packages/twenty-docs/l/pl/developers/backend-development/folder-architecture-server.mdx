@@ -1,0 +1,130 @@
+---
+title: Architektura folderów
+info: Szczegółowe spojrzenie na naszą architekturę folderów serwera
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Struktura katalogów zaplecza wygląda następująco:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+Definiuje uprawnienia i zawiera obsługę dla każdej encji.
+
+## Dekoratory
+
+Definiuje niestandardowe dekoratory w NestJS dla dodatkowej funkcjonalności.
+
+Zobacz [dekoratory niestandardowe](https://docs.nestjs.com/custom-decorators) po więcej szczegółów.
+
+## Filtry
+
+Zawiera filtry wyjątków do obsługi wyjątków, które mogą wystąpić na końcówkach GraphQL.
+
+## Guards
+
+Zobacz [ochrony](https://docs.nestjs.com/guards) po więcej szczegółów.
+
+## Zdrowie
+
+Zawiera publicznie dostępne REST API (healthz), które zwraca JSON w celu potwierdzenia, czy baza danych działa zgodnie z oczekiwaniami.
+
+## Metadane
+
+Definiuje niestandardowe obiekty i udostępnia API GraphQL (graphql/metadata).
+
+## Przestrzeń robocza
+
+Generuje i obsługuje niestandardowy schemat GraphQL oparty na metadanych.
+
+### Struktura katalogów przestrzeni roboczej
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+W korzeniu katalogu przestrzeni roboczej znajduje się `workspace.factory.ts`, plik zawierający funkcję `createGraphQLSchema`. Ta funkcja generuje specyficzny schemat dla przestrzeni roboczej, dostosowując schemat na podstawie metadanych dla indywidualnych przestrzeni roboczych. Dzięki oddzieleniu konstrukcji schematu i resolverów używamy funkcji `makeExecutableSchema`, która łączy te dyskretne elementy.
+
+Ta strategia dotyczy nie tylko organizacji, ale także optymalizacji, takich jak buforowanie generowanych definicji typów w celu poprawy wydajności i skalowalności.
+
+### Budowniczy schematów przestrzeni roboczej
+
+Generuje schemat GraphQL i zawiera:
+
+#### Fabryki:
+
+Specjalizowane konstruktory do generowania struktur związanych z GraphQL.
+
+- type.factory tłumaczy metadane pola na typy GraphQL używając `TypeMapperService`.
+- type-definition.factory tworzy obiekty wejściowe lub wyjściowe GraphQL pochodzące z `objectMetadata`.
+
+#### Typy GraphQL
+
+Zawiera enumeracje, wejścia, obiekty i skalary, i służą jako elementy konstrukcyjne dla budowy schematu.
+
+#### Interfejsy i Definicje Obiektów
+
+Zawiera plany dla jednostek GraphQL oraz obejmuje zarówno predefiniowane, jak i niestandardowe typy, takie jak `MONEY` lub `URL`.
+
+#### Usługi
+
+Zawiera usługę odpowiedzialną za skojarzenie FieldMetadataType z odpowiednim skalarem GraphQL lub modyfikatorami zapytań.
+
+#### Magazyn
+
+Zawiera klasę `TypeDefinitionsStorage`, która zawiera wielokrotnego użytku definicje typów, zapobiegając duplikacji typów GraphQL.
+
+### Budowniczy Resolverów Przestrzeni Roboczej
+
+Tworzy funkcje resolverów do zapytywania i modyfikowania schematu GraphQL.
+
+Każda fabryka w tym katalogu jest odpowiedzialna za produkcję odmiennego typu resolvera, takiego jak `FindManyResolverFactory`, zaprojektowanego do elastycznego zastosowania w różnych tabelach.
+
+### Uruchamiacz Zapytania Przestrzeni Roboczej
+
+Uruchamia wygenerowane zapytania do bazy danych i analizuje wynik.

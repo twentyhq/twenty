@@ -1,0 +1,226 @@
+---
+title: Xử lý sự cố
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Xử lý sự cố
+
+Nếu bạn gặp bất kỳ vấn đề nào trong quá trình thiết lập môi trường cho phát triển, nâng cấp phiên bản hoặc tự lưu trữ, đây là một số giải pháp cho các vấn đề thường gặp.
+
+### Tự lưu trữ
+
+#### Cài đặt đầu tiên dẫn đến lỗi `password authentication failed for user "postgres"`
+
+🚨 **QUAN TRỌNG: Giải pháp này CHỈ dành cho các cài đặt mới** 🚨
+Nếu bạn có một phiên bản Twenty hiện có với dữ liệu sản xuất, **ĐỪNG** thực hiện các bước này vì chúng sẽ xóa vĩnh viễn cơ sở dữ liệu của bạn!
+
+Trong khi cài đặt Twenty lần đầu tiên, bạn có thể muốn thay đổi mật khẩu cơ sở dữ liệu mặc định.
+Mật khẩu bạn đặt trong quá trình cài đặt đầu tiên sẽ được lưu trữ vĩnh viễn trong không gian lưu trữ cơ sở dữ liệu. Nếu sau đó bạn cố gắng thay đổi mật khẩu này trong cấu hình mà không xóa không gian lưu trữ cũ, bạn sẽ gặp lỗi xác thực vì cơ sở dữ liệu vẫn đang sử dụng mật khẩu ban đầu.
+
+⚠️ CẢNH BÁO: Các bước sau sẽ XÓA VĨNH VIỄN tất cả dữ liệu của cơ sở dữ liệu! ⚠️
+Chỉ thực hiện nếu đây là một cuộc cài đặt mới không có dữ liệu quan trọng.
+
+Để cập nhật `PG_DATABASE_PASSWORD` bạn cần:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### Đã tìm thấy ngắt dòng CR [Windows]
+
+Điều này là do các ký tự ngắt dòng của Windows và cấu hình git. Thử chạy:
+
+```
+git config --global core.autocrlf false
+```
+
+Sau đó xóa kho lưu trữ và sao chép lại.
+
+#### Missing metadata schema
+
+Trong quá trình cài đặt Twenty, bạn cần chuẩn bị cơ sở dữ liệu postgres với đúng các sơ đồ, phần mở rộng và người dùng.
+Nếu bạn thành công trong việc chạy phần chuẩn bị này, bạn nên có các sơ đồ `default` và `metadata` trong cơ sở dữ liệu của mình.
+Nếu không, hãy đảm bảo rằng bạn không có nhiều hơn một phiên bản postgres đang chạy trên máy tính của bạn.
+
+#### Không thể tìm thấy mô-đun 'twenty-emails' hoặc các khai báo kiểu tương ứng của nó.
+
+Bạn phải xây dựng gói `twenty-emails` trước khi chạy khởi tạo cơ sở dữ liệu với `npx nx run twenty-emails:build`
+
+#### Thiếu gói twenty-x
+
+Hãy chắc chắn rằng đã chạy yarn trong thư mục gốc và sau đó chạy `npx nx server:dev twenty-server`. Nếu điều này vẫn không hoạt động, hãy thử xây dựng gói bị thiếu một cách thủ công.
+
+#### Lint trên Save không hoạt động
+
+Điều này sẽ hoạt động ngay lập tức với tiện ích mở rộng eslint đã được cài đặt. Nếu điều này không hoạt động, hãy thử thêm vào cài đặt vscode của bạn (trong phạm vi container phát triển):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Trong khi chạy `npx nx start` hoặc `npx nx start twenty-front`, lỗi Out of memory được ném ra
+
+Trong `packages/twenty-front/.env` bỏ chú thích `VITE_DISABLE_TYPESCRIPT_CHECKER=true` và `VITE_DISABLE_ESLINT_CHECKER=true` để vô hiệu hoá các kiểm tra nền, do đó giảm lượng RAM cần thiết.
+
+**Nếu nó không hoạt động:**  
+Chỉ chạy các dịch vụ bạn cần, thay vì `npx nx start`. Ví dụ, nếu bạn làm việc trên máy chủ, chỉ cần chạy `npx nx worker twenty-server`
+
+**Nếu nó không hoạt động:**  
+Nếu bạn đã thử chỉ chạy `npx nx run twenty-server:start` trên WSL và gặp lỗi bộ nhớ dưới đây:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+Giải pháp là thực hiện lệnh dưới đây trong terminal hoặc thêm vào hồ sơ .bashrc để tự động thiết lập:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+Tham số --max-old-space-size=8192 đặt giới hạn trên của bộ nhớ heap Node.js là 8GB; sử dụng sẽ tăng theo nhu cầu ứng dụng.
+Tham khảo: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**Nếu nó không hoạt động:**  
+Điều tra những quy trình nào đang tiêu hao hầu hết RAM máy của bạn. Tại Twenty, chúng tôi nhận thấy rằng một số tiện ích mở rộng VScode tiêu hao rất nhiều RAM, vì vậy chúng tôi tạm thời vô hiệu hóa chúng.
+
+**Nếu nó không hoạt động:**  
+Khởi động lại máy của bạn giúp xóa các quy trình ma.
+
+#### Trong khi chạy `npx nx start` có những [0] và [1] kỳ lạ trong nhật ký
+
+Điều này được dự đoán trước vì lệnh `npx nx start` đang chạy nhiều lệnh khác bên dưới
+
+#### Không có email nào được gửi
+
+Phần lớn thời gian, điều này là do `worker` không chạy ở nền. Thử chạy
+
+```
+npx nx worker twenty-server
+```
+
+#### Không thể kết nối tài khoản Microsoft 365 của tôi
+
+Phần lớn thời gian, điều này là do quản trị viên của bạn chưa cấp phép Microsoft 365 cho tài khoản của bạn. Kiểm tra [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Nếu bạn có mã lỗi `AADSTS50020`, thường là do bạn đang sử dụng tài khoản Microsoft cá nhân. Điều này chưa được hỗ trợ. Thêm thông tin [tại đây](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### Trong khi chạy `yarn` cảnh báo xuất hiện trong console
+
+Cảnh báo thông báo về việc kéo thêm các phụ thuộc không được nêu rõ trong `package.json`, miễn là không có lỗi gì lớn xảy ra, mọi thứ vẫn hoạt động như mong đợi.
+
+#### Khi người dùng truy cập trang đăng nhập, lỗi về người dùng không được ủy quyền cố truy cập không gian làm việc xuất hiện trong nhật ký
+
+Điều này là bình thường vì người dùng không được ủy quyền khi đã đăng xuất vì danh tính của họ chưa được xác minh.
+
+#### Làm thế nào để kiểm tra xem worker của bạn có đang chạy không?
+
+- Truy cập [webhook-test.com](https://webhook-test.com/) và sao chép **URL Webhook Duy Nhất của Bạn**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Mở ứng dụng Twenty của bạn, điều hướng tới `/settings`, và bật công tắc **Đã Nâng Cao** ở dưới cùng bên trái của màn hình.
+- Tạo một webhook mới.
+- Dán **URL Webhook Duy Nhất của Bạn** vào trường **Endpoint Url** trong Twenty. Đặt **Bộ Lọc** thành `Công ty` và `Đã Tạo`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Đi tới `/objects/companies` và tạo một bản ghi công ty mới.
+- Quay lại [webhook-test.com](https://webhook-test.com/) và kiểm tra nếu một **yêu cầu POST** mới đã được nhận.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- Nếu một **yêu cầu POST** được nhận, worker của bạn đang chạy thành công. Nếu không, bạn cần khắc phục sự cố worker của bạn.
+
+#### Giao diện trước không khởi động được và trả về lỗi TS5042: Tùy chọn 'project' không thể kết hợp với tệp nguồn trên dòng lệnh
+
+Bỏ chú thích plugin checker trong `packages/twenty-ui/vite-config.ts` như trong ví dụ bên dưới
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Bảng điều khiển quản trị không thể truy cập
+
+Chạy `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` trong container cơ sở dữ liệu để truy cập bảng điều khiển quản trị.
+
+### Docker compose 1 lần nhấp
+
+#### Không thể đăng nhập
+
+Nếu bạn không thể đăng nhập sau khi thiết lập:
+
+1. Chạy các lệnh sau:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Khởi động lại các container Docker:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Lưu ý rằng lệnh database:reset sẽ xóa hoàn toàn cơ sở dữ liệu của bạn và tạo lại từ đầu.
+
+#### Vấn đề kết nối sau proxy ngược
+
+Nếu bạn đang chạy Twenty sau proxy ngược và gặp vấn đề kết nối:
+
+1. **Xác minh SERVER_URL:**
+
+   Đảm bảo `SERVER_URL` trong tệp `.env` của bạn khớp với URL truy cập bên ngoài của bạn, bao gồm cả `https` nếu SSL được bật.
+
+2. **Kiểm tra Cài đặt Proxy Ngược:**
+
+   - Xác nhận rằng proxy ngược của bạn đang chuyển tiếp đúng yêu cầu đến máy chủ Twenty.
+   - Đảm bảo rằng các tiêu đề như `X-Forwarded-For` và `X-Forwarded-Proto` được đặt đúng.
+
+3. **Khởi động lại dịch vụ:**
+
+   Sau khi thực hiện thay đổi, khởi động lại cả proxy ngược và các container Twenty.
+
+#### Lỗi khi tải lên hình ảnh - bị từ chối quyền truy cập
+
+Đổi quyền sở hữu thư mục dữ liệu trên máy chủ từ root sang người dùng và nhóm khác giải quyết vấn đề này.
+
+## Nhận sự giúp đỡ
+
+Nếu bạn gặp vấn đề không được đề cập trong hướng dẫn này:
+
+- Kiểm tra Nhật ký:
+
+  Xem nhật ký container để biết thông báo lỗi:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Hỗ trợ cộng đồng:
+
+  Liên hệ với [cộng đồng Twenty](https://github.com/twentyhq/twenty/issues) hoặc [các kênh hỗ trợ](https://discord.gg/cx5n4Jzs57) để được trợ giúp.

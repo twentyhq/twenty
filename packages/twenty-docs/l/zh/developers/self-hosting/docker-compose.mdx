@@ -1,0 +1,214 @@
+---
+title: 一鍵啟動與 Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/zh/developers/local-setup).
+</Warning>
+
+## 概覽
+
+本指南提供了使用 Docker Compose 安裝和配置 Twenty 應用程序的逐步指南。 目的是使過程簡單明瞭，並避免可能損壞設置的常見陷阱。 目的是使過程簡單明瞭，並避免可能損壞設置的常見陷阱。
+
+\*\*重要事項：\*\*僅修改指南中明確提到的設置。 更改其他配置可能會導致問題。
+
+See docs [Setup Environment Variables](https://docs.twenty.com/l/zh/developers/self-hosting/setup) for advanced configuration. 所有環境變量必須在 docker-compose.yml 文件中聲明，具體取決於變量是在服務器還是工作者層級。
+
+## 系統要求
+
+- RAM：確保您的環境至少有 2GB 的 RAM。 內存不足可能會導致進程崩潰。 內存不足可能會導致進程崩潰。
+- Docker 和 Docker Compose：確保它們都已安裝並且是最新版本。
+
+## 選項 1：單行腳本
+
+使用單個命令安裝最新穩定版的 Twenty：
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+要安裝特定版本或分支：
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- 用所需版本號替換 x.y.z。
+- 用您想安裝的分支名替換 branch-name。
+
+## 選項 2：手動步驟
+
+按照以下步驟進行手動設置。
+
+### 步驟 1：設置環境文件
+
+1. **建立 .env 文件**
+
+   將示例環境文件複製到您的工作目錄中的新 .env 文件：
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **生成安全令牌**
+
+   運行以下命令生成唯一的隨機字串：
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   \*\*重要事項：\*\*保持該值的機密性/不要對其進行分享。
+
+3. **更新 `.env`**
+
+   用生成的令牌替換 .env 文件中的佔位符：
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **設置 Postgres 密碼**
+
+   使用不帶特殊字符的強密碼更新.env文件中的`PG_DATABASE_PASSWORD`值。
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### 步驟 2：獲取 Docker Compose 文件
+
+下載`docker-compose.yml`文件到您的工作目錄：
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### 步驟 3：啟動應用程序
+
+啟動 Docker 容器：
+
+```bash
+docker compose up -d
+```
+
+### 步驟 4：訪問應用程式
+
+如果您在自己的電腦上托管 twentyCRM，請打開瀏覽器並導航至[http://localhost:3000](http://localhost:3000)。
+
+如果您在服務器上托管它，請檢查服務器是否運行正常，并確認一切是否正常。
+
+```bash
+curl http://localhost:3000
+```
+
+## 配置
+
+### 將 Twenty 開放給外部訪問
+
+默認情況下，Twenty 在 `localhost` 上運行，端口為 `3000`。 要通過外部域或 IP 地址訪問它，您需要在 `.env` 文件中配置 `SERVER_URL`。
+
+#### 瞭解 `SERVER_URL`
+
+- \*\*協議：\*\*根據您的設置使用 `http` 或 `https`。
+  - 如果尚未設置 SSL，請使用 `http`。
+  - 如果您已配置 SSL，請使用 `https`。
+- \*\*域名/IP 地址：\*\*這是您的應用程式可訪問的域名或 IP 地址。
+- \*\*端口：\*\*如果您未使用默認端口（`http`為 `80`，`https`為 `443`），請包括端口號。
+
+### SSL 要求
+
+某些瀏覽器功能需要 SSL (HTTPS) 才能正常工作。 某些瀏覽器功能需要 SSL (HTTPS) 才能正常工作。 儘管在本地開發過程中這些功能可能正常運作（因為瀏覽器對待 localhost 不同），但在常規域名上托管 Twenty 時需要正確配置 SSL。
+
+例如，剪貼板 API 可能需要安全上下文——應用程式中的某些功能（例如複製按鈕）可能需要啟用 HTTPS。
+
+We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+
+#### 配置 `SERVER_URL`
+
+1. **確定您的訪問 URL**
+   - **無反向代理（直接訪問）：**
+
+     如果您在沒有反向代理的情況下直接訪問應用程式：
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **具有反向代理（標準端口）：**
+
+     如果您使用像 Nginx 或 Traefik 這樣的反向代理並配置了 SSL：
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **具有反向代理（自定義端口）：**
+
+     如果您使用非標準端口：
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **更新 `.env` 文件**
+
+   打開您的 `.env` 文件並更新 `SERVER_URL`：
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **示例：**
+
+   - 未啟用 SSL 的直接訪問：
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - 通過域名訪問並啟用 SSL：
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **重啟應用程式**
+
+   為使更改生效，請重啟 Docker 容器：
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### 考量因素
+
+- **反向代理設置:**
+
+  確保您的反向代理將請求轉發到正確的內部端口（默認為 `3000`）。 配置 SSL 終止和任何必要的標頭。
+
+- **防火牆設定:**
+
+  在防火牆中打開必要的端口以允許外部訪問。
+
+- **一致性:**
+
+  `SERVER_URL` 必須與用戶在瀏覽器中訪問您的應用程序的方式匹配。
+
+#### Persistence
+
+- **數據卷:**
+
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+- **無狀態環境:**
+
+  如果部署至無狀態環境（例如某些雲服務），請配置外部存儲以持續保存數據。
+
+## 疑難排解
+
+如果您遇到任何問題，請查看[疑難排解](https://docs.twenty.com/l/zh/developers/self-hosting/troubleshooting)找出解決方案。
+

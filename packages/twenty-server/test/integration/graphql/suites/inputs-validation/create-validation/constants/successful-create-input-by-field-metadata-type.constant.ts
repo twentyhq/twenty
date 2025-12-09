@@ -134,7 +134,7 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: {},
       },
       validateInput: (record: Record<string, any>) => {
-        return Object.keys(record.rawJsonField).length === 0;
+        return record.rawJsonField === null;
       },
     },
     {
@@ -143,6 +143,14 @@ export const successfulCreateInputByFieldMetadataType: {
       },
       validateInput: (record: Record<string, any>) => {
         return record.rawJsonField === null;
+      },
+    },
+    {
+      input: {
+        rawJsonField: '{"key": "value"}',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.rawJsonField.key === 'value';
       },
     },
   ],
@@ -161,10 +169,22 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
+        arrayField: 'item1',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.arrayField.length === 1 && record.arrayField.includes('item1')
+        );
+      },
+    },
+    {
+      input: {
         arrayField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField.length === 0;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
     {
@@ -172,7 +192,9 @@ export const successfulCreateInputByFieldMetadataType: {
         arrayField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField === null;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
   ],
@@ -211,7 +233,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField.length === 0;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
     {
@@ -219,7 +244,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField === null;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
   ],

@@ -1,0 +1,130 @@
+---
+title: ארכיטקטורת תיקיות
+info: מבט מעמיק על ארכיטקטורת תיקיות השרת שלנו
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+מבנה ספריית ה-backend הוא כמתואר להלן:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## יכולת
+
+מגדיר הרשאות ומכיל מטפלים עבור כל ישות.
+
+## קישוטים
+
+מגדיר קישוטים מותאמים אישית ב-NestJS לשיפור פונקציונאליות.
+
+ראה [קישוטים מותאמים אישית](https://docs.nestjs.com/custom-decorators) למידע נוסף.
+
+## מסננים
+
+Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+
+## שומרים
+
+ראה [שומרים](https://docs.nestjs.com/guards) למידע נוסף.
+
+## בריאות
+
+כולל ממשק API REST שזמין לציבור (healthz) שמחזיר JSON לאישור האם מסד הנתונים פועל כראוי.
+
+## מטה-נתונים
+
+מגדיר אובייקטים מותאמים אישית ומספק API של GraphQL (graphql/metadata).
+
+## סביבת עבודה
+
+מייצר ומספק סכמות GraphQL מותאמות אישית בהתבסס על המטא נתונים.
+
+### מבנה ספריית מרחב העבודה
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+השורש של ספריית מרחב העבודה כולל את `workspace.factory.ts`, קובץ שמכיל את הפונקציה `createGraphQLSchema`. פונקציה זו מייצרת סכמות ייחודיות למרחב עבודה על ידי שימוש במטא נתונים להתאמה אישית של סכמה עבור כל מרחב עבודה. על ידי הפרדת יצירת הסכמות והפותר, אנו משתמשים בפונקציה `makeExecutableSchema`, שמאחדת אלמנטים נפרדים אלה.
+
+אסטרטגיה זו אינה רק עבור ארגון, אלא גם תורמת לאופטימיזציה, כגון קאש על הגדרות סוגים שנוצרו כדי לשפר ביצועים וסקלאביליות.
+
+### בונה סכמות מרחב עבודה
+
+מייצר את סכמת ה-GraphQL, וכולל:
+
+#### מפעלים:
+
+קונסטרוקציות מותמחות ליצירת מבני GraphQL קשורים.
+
+- factory.type מתרגם מטא נתוני שדות לסוגי GraphQL באמצעות `TypeMapperService`.
+- factory.type-definition יוצר אובייקטי קלט או פלט של GraphQL מתוך `objectMetadata`.
+
+#### סוגי GraphQL
+
+כולל אנומרציות, קלטים, אובייקטים, וסקלרים, ומשרת כתשתית לבניית סכמות.
+
+#### ממשקים והגדרות אובייקטים
+
+מכיל תוכניות עבור ישויות GraphQL, וכולל גם סוגים מראש וגם סוגים מותאמים אישית כגון `MONEY` או `URL`.
+
+#### שירותים
+
+Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+
+#### אחסון
+
+כולל את המחלקה `TypeDefinitionsStorage` שמכילה הגדרות סוגים לשימוש חוזר, המונעת שכפול סוגי GraphQL.
+
+### בונה פותר מרחב עבודה
+
+מייצר פונקציות פותר לשאילתות ועדכונים של סכמת ה-GraphQL.
+
+כל מפעל במאגר זה אחראי לייצר סוג פותר ייחודי, כמו `FindManyResolverFactory`, המעוצב ליישום אדפטיבי על פני טבלאות שונות.
+
+### Workspace Query Runner
+
+מריץ את השאלות שנוצרו על מסד הנתונים ומפרש את התוצאה.

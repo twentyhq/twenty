@@ -1,0 +1,106 @@
+---
+title: 권한
+info: "Learn how to control access: assign roles and set permissions."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Twenty 워크스페이스 설정 및 환경설정을 구성하세요.
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Twenty의 권한 시스템은 세 가지 주요 영역에 대한 접근을 제어할 수 있게 해줍니다:
+
+- **객체 및 필드**: 기록 및 개별 필드를 누가 볼 수 있고, 편집하거나 삭제할 수 있는지 제어
+- **Settings**: Manage access to workspace configuration and administrative functions
+- **작업**: 데이터 가져오기나 이메일 보내기와 같은 일반 작업 공간 작업을 제어
+
+## 역할 생성
+
+새로운 역할 생성하기:
+
+1. **설정 → 역할**로 이동
+2. **모든 역할**에서 **+ 역할 생성** 클릭
+3. 역할 이름 입력
+4. 기본 **권한** 탭에서 권한 구성
+5. **저장** 클릭하여 완료
+
+## 역할 삭제
+
+역할을 삭제하려면:
+
+1. **설정 → 역할**로 이동
+2. Click on the role you want to remove
+3. **설정** 탭 열고 **역할 삭제** 클릭
+4. 모달에서 **확인** 클릭
+
+Note: If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. **Admin** 역할을 제외한 모든 역할을 삭제할 수 있습니다. There must always be at least one member assigned to the **Admin** role.
+
+## Assign Roles to Members
+
+### View Current Assignments
+
+- **설정 → 역할**로 이동
+- 모든 역할과 각 역할에 지정된 멤버 수 확인
+- 어떤 회원이 어떤 역할을 가지고 있는지 보기
+
+### Assign a Role to a Member
+
+1. **설정 → 역할**로 이동
+2. 할당할 역할 클릭
+3. **배정** 탭 열기
+4. **+ 멤버에게 할당** 클릭
+5. Select the workspace member from the list
+6. 할당 확인
+
+### 기본 역할 설정
+
+1. **설정 → 역할**로 이동
+2. In the **Options** section, find **Default Role**
+3. 새로운 멤버가 자동으로 받을 역할 선택
+4. 새 작업 공간 회원이 가입 시 이 역할이 할당됩니다.
+
+**참고**: 기존 작업 공간 회원에게만 역할을 할당할 수 있습니다. To invite new members, use [Member Management](/l/ko/user-guide/settings/member-management).
+
+## 권한 사용자 정의
+
+권한은 각 역할이 작업 공간 내에서 접근하거나 수정할 수 있는 항목을 결정합니다. 여기에는 작업 공간 객체 기록, 설정 및 작업이 포함됩니다.
+
+### 객체 및 필드 권한
+
+Control access to records and individual fields:
+
+#### 객체 수준 권한
+
+- **모든 객체**에서 모든 객체에 **기록 보기**, **기록 편집**, **기록 삭제**, 또는 **기록 파괴**와 같은 권한 적용
+- **객체 수준 권한**에서 개별 객체에 대한 예외 구성. 이는 **모든 객체**의 설정을 무시합니다.
+
+#### 필드 수준 권한
+
+- 각 객체 내 개별 필드에 대한 권한 구성
+- 누가 **필드 보기**, **필드 편집** 및 특정 필드에 대한 **접근 불가**를 가질 수 있는지 제어
+- Field permissions work the same way as object permissions with inheritance and overrides
+
+#### 권한 무시 관리
+
+상위 권한을 무시하고 더 엄격한 규칙 적용:
+
+- 상속된 규칙 제거하려면 **X** 클릭
+- 선택한 객체나 필드에 특정 권한 선택
+- 변경 사항을 되돌리려면 주황색 **실행 취소** 아이콘(원형 화살표)을 클릭
+
+완료되면 **마침**, 역할 페이지로 리디렉션되면 **저장** 클릭.
+
+### 작업 공간 설정 권한
+
+Control access to workspace settings in two ways:
+
+- Toggle **Settings All Access** to grant full access
+- Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+
+### Workspace Action Permissions
+
+Control access to general workspace actions:
+
+- Toggle **Application All Access** to grant full permissions
+- Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**

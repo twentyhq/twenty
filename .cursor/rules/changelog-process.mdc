@@ -1,0 +1,324 @@
+---
+description: Process and guidelines for creating release changelogs for Twenty CRM
+globs: ["**/releases/*.mdx", "**/releases/**"]
+alwaysApply: false
+---
+# Twenty Release Changelog Process
+
+Complete guide for creating release changelogs, including codebase research, file structure, and content guidelines.
+
+## Prerequisites
+
+Before starting, gather the following information:
+
+### Required Information
+
+**Version Number**: `{VERSION}` (e.g., 1.9.0, 2.0.0, 2.1.0)
+
+**Release Date**: Use today's date in format: YYYY-MM-DD
+
+### Changes/Features to Document
+
+List the features and changes to include in this release:
+
+1. **Feature Name**: ______________________________
+   - Brief description: ______________________________
+   - Related area (workflow, UI, backend, etc.): ______________________________
+
+2. **Feature Name**: ______________________________
+   - Brief description: ______________________________
+   - Related area: ______________________________
+
+3. **Feature Name**: ______________________________
+   - Brief description: ______________________________
+   - Related area: ______________________________
+
+## Codebase Research Guide
+
+If feature descriptions are not provided or need enhancement, research the codebase:
+
+### Where to Look
+
+**For Workflow Features:**
+- Frontend: `packages/twenty-front/src/modules/workflow/`
+- Backend: `packages/twenty-server/src/modules/workflow/`
+- Components: `packages/twenty-front/src/modules/workflow/components/`
+
+**For UI/UX Changes:**
+- Components: `packages/twenty-front/src/modules/ui/`
+- Layout: `packages/twenty-front/src/modules/layout/`
+- Design system: `packages/twenty-ui/src/`
+
+**For Backend/API Features:**
+- Server modules: `packages/twenty-server/src/modules/`
+- Entities: `packages/twenty-server/src/entities/`
+- Services: Look for `*.service.ts` files
+
+**For Database/ORM Changes:**
+- Migrations: `packages/twenty-server/src/database/typeorm/`
+- Entities: `packages/twenty-server/src/entities/`
+
+### Research Commands
+
+```bash
+# Find recent merged PRs (adjust date as needed)
+gh pr list --search "merged:>2025-10-01" --limit 50 --state merged
+
+# View recent commits
+git log --since="2 weeks ago" --oneline --no-merges
+
+# View commits between releases (replace with actual release tags)
+git log v1.7.0..v1.8.0 --oneline
+
+# Search for specific feature keywords in code
+grep -r "iterator" packages/twenty-front/src/modules/workflow/
+grep -r "bulk select" packages/twenty-front/src/modules/workflow/
+
+# Find recent changes in specific directory
+git log --since="2 weeks ago" --oneline -- packages/twenty-front/src/modules/workflow/
+```
+
+### Using Codebase Search
+
+Use the AI codebase search to find:
+- "How does the workflow iterator node work?"
+- "Where is bulk select implemented for workflows?"
+- "What changes were made to the search node limit?"
+
+## Step-by-Step Process
+
+### 1. Setup Git Branch
+
+**IMPORTANT**: Always start from an up-to-date main branch to avoid merge conflicts and ensure the changelog is based on the latest code.
+
+```bash
+cd /Users/thomascolasdesfrancs/code/twenty
+git checkout main
+git pull origin main
+git checkout -b {VERSION}
+```
+
+Replace `{VERSION}` with the actual version number (e.g., `1.9.0`)
+
+⚠️ **Do this first** before making any file changes. This ensures your branch is based on the latest main.
+
+### 2. Create File Structure
+
+**Create changelog file:**
+- Path: `packages/twenty-website/src/content/releases/{VERSION}.mdx`
+- Example: `packages/twenty-website/src/content/releases/1.9.0.mdx`
+
+**Create image folder:**
+- Path: `packages/twenty-website/public/images/releases/{MINOR_VERSION}/`
+- Example for version 1.9.0: `packages/twenty-website/public/images/releases/1.9/`
+- Example for version 2.0.0: `packages/twenty-website/public/images/releases/2.0/`
+
+```bash
+# Create the image folder
+mkdir -p packages/twenty-website/public/images/releases/{MINOR_VERSION}
+```
+
+### 3. Move Illustration Files
+
+**Source:** `/Users/thomascolasdesfrancs/Downloads/🆕`
+
+**Destination:** `packages/twenty-website/public/images/releases/{MINOR_VERSION}/`
+
+**Naming Convention:** `{VERSION}-descriptive-name.png`
+
+Examples:
+- `1.9.0-feature-name.png`
+- `1.9.0-another-feature.png`
+
+```bash
+# Move and rename files
+cp ~/Downloads/🆕/source-file.png packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-name.png
+```
+
+### 4. Research Features (if needed)
+
+If descriptions are not provided:
+1. Use the research commands above to find recent PRs and commits
+2. Search the codebase for feature-related code
+3. Read PR descriptions for context
+4. Check component comments and documentation
+
+### 5. Write Changelog Content
+
+Create the MDX file with this structure:
+
+```markdown
+---
+release: {VERSION}
+Date: {YYYY-MM-DD}
+---
+
+# Feature 1 Name
+
+Short description explaining what the feature does and why it's useful. Keep it user-focused and concise (1-2 sentences).
+
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.png)
+
+# Feature 2 Name
+
+Another short description of the second feature.
+
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.png)
+
+# Feature 3 Name
+
+Description of the third feature.
+
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-3.png)
+```
+
+**Style Guidelines:**
+- Use H1 (`#`) for feature names
+- Keep descriptions to 1-2 sentences
+- Focus on user benefits, not technical implementation
+- Use active voice
+- Start with what the user can now do
+- **NEVER mention the brand name "Twenty"** in changelog text - use "your workspace", "the platform", or similar neutral references instead
+
+**Reference Previous Changelogs:**
+- Check `packages/twenty-website/src/content/releases/` for examples
+- Recent releases: 1.7.0.mdx, 1.6.0.mdx, 1.5.0.mdx
+
+### 6. Review
+
+Open the changelog file for review:
+```bash
+# Open in Cursor
+cursor packages/twenty-website/src/content/releases/{VERSION}.mdx
+
+# Open image folder to verify illustrations
+open packages/twenty-website/public/images/releases/{MINOR_VERSION}
+```
+
+Review checklist:
+- [ ] Version number is correct in frontmatter
+- [ ] Date is today's date
+- [ ] All features are documented
+- [ ] Image paths are correct
+- [ ] Image files exist in the folder
+- [ ] Descriptions are clear and user-focused
+- [ ] Spelling and grammar are correct
+
+### 7. Present Changelog for User Approval
+
+**IMPORTANT**: Before committing and creating the PR, always show the complete changelog content to the user and wait for explicit approval.
+
+**What to show:**
+1. Display the full MDX content of the changelog file
+2. Confirm that illustration files were moved to the correct location
+3. List the image file names and paths
+
+**What to say:**
+```
+I've created the changelog for version {VERSION}. Here's the content for your review:
+
+[Show full MDX content]
+
+Images moved to:
+- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.png
+- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.png
+
+Please review the content. Once you approve, I'll commit the changes and create the pull request.
+```
+
+**Wait for user approval before proceeding to step 8.**
+
+Possible user responses:
+- "Looks good" / "Approve" / "Create the PR" → Proceed to step 8
+- Requests changes → Make the requested edits, then show content again
+- Asks questions → Answer them, then wait for approval
+
+### 8. Commit Changes
+
+```bash
+# Check status
+git status
+
+# Add files
+git add packages/twenty-website/src/content/releases/{VERSION}.mdx
+git add packages/twenty-website/public/images/releases/{MINOR_VERSION}/
+
+# Commit
+git commit -m "Add {VERSION} release changelog"
+
+# Push branch
+git push -u origin {VERSION}
+```
+
+### 9. Create Pull Request
+
+```bash
+# Create PR using GitHub CLI
+gh pr create \
+  --title "Release {VERSION}" \
+  --body "## Release {VERSION}
+
+This release includes:
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+Changelog file: \`packages/twenty-website/src/content/releases/{VERSION}.mdx\`
+Release date: {DATE}" \
+  --base main \
+  --head {VERSION}
+```
+
+Or visit: `https://github.com/twentyhq/twenty/pull/new/{VERSION}`
+
+## File Naming Conventions
+
+### Changelog Files
+- **Format**: `{MAJOR}.{MINOR}.{PATCH}.mdx`
+- **Convention**: One file per complete version
+- **Examples**: `1.6.0.mdx`, `1.7.0.mdx`, `2.0.0.mdx`
+- **Location**: `packages/twenty-website/src/content/releases/`
+
+### Image Folders
+- **Format**: `{MAJOR}.{MINOR}/`
+- **Convention**: One folder per minor version (shared across patches)
+- **Examples**: `1.6/`, `1.7/`, `2.0/`
+- **Location**: `packages/twenty-website/public/images/releases/`
+
+### Image Files
+- **Format**: `{VERSION}-descriptive-name.png`
+- **Convention**: Kebab-case descriptive names
+- **Examples**: 
+  - `1.8.0-workflow-iterator.png`
+  - `1.8.0-bulk-select.png`
+  - `1.9.0-new-feature.png`
+
+## Quick Reference Template
+
+Copy and fill this for each release:
+
+```
+VERSION: ___________
+DATE: ___________
+MINOR_VERSION: ___________
+
+Features to document:
+1. ___________________________
+2. ___________________________
+3. ___________________________
+
+Branch name: {VERSION}
+Changelog path: packages/twenty-website/src/content/releases/{VERSION}.mdx
+Images path: packages/twenty-website/public/images/releases/{MINOR_VERSION}/
+```
+
+## Tips
+
+- **Start early**: Begin documenting features as they're developed
+- **User perspective**: Write for users, not developers
+- **Be concise**: 1-2 sentences per feature
+- **Visual first**: Illustrations should showcase the feature clearly
+- **Consistent style**: Match tone and structure of previous changelogs
+- **Test links**: Verify all image paths work before committing
+- **Research thoroughly**: Use codebase search to understand features deeply

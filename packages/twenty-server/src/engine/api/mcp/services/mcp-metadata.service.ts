@@ -1,39 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
-import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
+import { type ToolSet } from 'ai';
 import { type Request } from 'express';
-import { type JSONSchema7 } from 'json-schema';
 
-import { CreateToolsService } from 'src/engine/api/mcp/services/tools/create.tools.service';
-import { DeleteToolsService } from 'src/engine/api/mcp/services/tools/delete.tools.service';
-import { GetToolsService } from 'src/engine/api/mcp/services/tools/get.tools.service';
-import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
-import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
+import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class MCPMetadataService {
-  schemas: Record<string, JSONSchema7>;
-
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly createToolsService: CreateToolsService,
-    private readonly updateToolsService: UpdateToolsService,
-    private readonly deleteToolsService: DeleteToolsService,
-    private readonly getToolsService: GetToolsService,
+    private readonly toolProvider: ToolProviderService,
     private readonly metricsService: MetricsService,
   ) {}
-
-  async onModuleInit() {
-    this.schemas = validationMetadatasToSchemas() as Record<
-      string,
-      JSONSchema7
-    >;
-  }
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
     const isAiEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -64,25 +49,28 @@ export class MCPMetadataService {
     });
   }
 
-  get tools() {
-    return [
-      ...this.createToolsService.tools,
-      ...this.updateToolsService.tools,
-      ...this.deleteToolsService.tools,
-      ...this.getToolsService.tools,
-    ];
+  async getTools(workspaceId: string): Promise<ToolSet> {
+    return this.toolProvider.getTools({
+      workspaceId,
+      categories: [ToolCategory.METADATA],
+      wrapWithErrorContext: false,
+    });
   }
 
   async handleToolCall(
     request: Request,
+    workspaceId: string,
   ): Promise<Parameters<typeof wrapJsonRpcResponse>[1]> {
-    const tool = this.tools.find(
-      ({ name }) => name === request.body.params.name,
-    );
+    const tools = await this.getTools(workspaceId);
+    const toolName = request.body.params.name as keyof typeof tools;
+    const tool = tools[toolName];
 
-    if (tool) {
+    if (tool && tool.execute) {
       try {
-        const result = await tool.execute(request);
+        const result = await tool.execute(
+          { input: request.body.params.arguments },
+          { toolCallId: '1', messages: [] },
+        );
 
         await this.metricsService.incrementCounter({
           key: MetricsKeys.AIToolExecutionSucceeded,
@@ -111,13 +99,33 @@ export class MCPMetadataService {
     };
   }
 
-  async listTools(request: Request) {
+  async listTools(request: Request, workspaceId: string) {
+    const tools = await this.getTools(workspaceId);
+
+    const toolsArray = Object.entries(tools)
+      .filter(([, def]) => !!def.inputSchema)
+      .map(([name, def]) => {
+        const inputSchema = def.inputSchema;
+        const unwrappedSchema =
+          inputSchema &&
+          typeof inputSchema === 'object' &&
+          'jsonSchema' in inputSchema
+            ? inputSchema.jsonSchema
+            : inputSchema;
+
+        return {
+          name,
+          description: def.description,
+          inputSchema: unwrappedSchema,
+        };
+      });
+
     return wrapJsonRpcResponse(request.body.id, {
       result: {
         capabilities: {
           tools: { listChanged: false },
         },
-        tools: Object.values(this.tools),
+        tools: toolsArray,
         resources: [],
         prompts: [],
       },
@@ -154,12 +162,12 @@ export class MCPMetadataService {
       if (request.body.method === 'tools/call' && request.body.params) {
         return wrapJsonRpcResponse(
           request.body.id,
-          await this.handleToolCall(request),
+          await this.handleToolCall(request, workspace.id),
         );
       }
 
       if (request.body.method === 'tools/list') {
-        return this.listTools(request);
+        return await this.listTools(request, workspace.id);
       }
 
       if (request.body.method === 'prompts/list') {

@@ -1,0 +1,114 @@
+---
+title: ארכיטקטורת תיקיות
+info: A detailed look into our folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+במדריך זה תחקרו את פרטי מבנה תיקיות הפרויקט וכיצד הם תורמים לארגון והתחזוקה של Twenty.
+
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## דפים
+
+Includes the top-level components defined by the application routes. הם מייבאים רכיבי דרגה נמוכה יותר מתיקיית המודולים (פרטים נוספים בהמשך).
+
+## מודולים
+
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+כולם צריכים לעקוב אחר המבנה שלמטה. ניתן לשלב מודולים בתוך מודולים (מתייחסים להן כמודולי משנה) וחלים עליהם אותם כללים.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### הקשרים
+
+הקשר הוא דרך להעברת נתונים דרך עץ רכיבים מבלי להעביר מאפיינים ידנית בכל רמה.
+
+ראו [React Context](https://react.dev/reference/react#context-hooks) לפרטים נוספים.
+
+### GraphQL
+
+Includes fragments, queries, and mutations.
+
+ראו [GraphQL](https://graphql.org/learn/) לפרטים נוספים.
+
+- קטעים
+
+קטע הוא חלק שניתן להשתמש בו מחדש של שאילתה, שבו ניתן להשתמש במקומות שונים. על ידי שימוש בקטעים, קל יותר להימנע מחזרה על קוד.
+
+ראו [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) לפרטים נוספים.
+
+- שאלות
+
+ראו [GraphQL Queries](https://graphql.org/learn/queries/) לפרטים נוספים.
+
+- Mutations
+
+ראו [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) לפרטים נוספים.
+
+### Hooks
+
+ראו [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) לפרטים נוספים.
+
+### מצבים
+
+מכיל את לוגיקת ניהול המצב. [RecoilJS](https://recoiljs.org) מטפל בזה.
+
+- בחרים: ראו [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) לפרטים נוספים.
+
+ניהול המצב המובנה של React עדיין מטפל במצב בתוך רכיב.
+
+### Utils
+
+Should just contain reusable pure functions. אחרת, צור קרסים מותאמים אישית בתיקיית `hooks`.
+
+## UI
+
+מכיל את כל רכיבי UI הניתנים לשימוש חוזר המשמשים באפליקציה.
+
+תיקייה זו יכולה להכיל תת-תיקיות כמו `data`, `display`, `feedback`, ו `input` לצורך סוגי רכיבים ספציפיים. כל רכיב צריך להיות עצמאי וניתן לשימוש חוזר, כך שניתן להשתמש בו בחלקים שונים של האפליקציה.
+
+על ידי הפרדת רכיבי ה-UI מהמרכיבים האחרים בתיקיית `modules`, קל יותר לשמור על עיצוב עקבי ולעשות שינויים ב-UI מבלי להשפיע על חלקים אחרים (לוגיקה עסקית) של קוד הבסיס.
+
+## ממשקים ותלויות
+
+ניתן לייבא קוד מודולים אחרים מכל מודול למעט התיקייה `ui`. זה ישמור על קלות הקוד לבדיקה.
+
+### פנימיים
+
+כל חלק (קרסים, מצבים, ...) של מודול יכול להכיל תיקיית `internal`, שמכילה חלקים שמשמשים רק בתוך המודול.

@@ -1,0 +1,60 @@
+---
+title: Obiekty
+info: "Dowiedz się o standardowych obiektach i jak tworzyć niestandardowe, aby spełnić potrzeby firmy."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Elastyczny model danych zaprojektowany tak, aby wspierać unikalne procesy biznesowe
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standardowe obiekty
+
+Standardowe obiekty to zdefiniowane wcześniej jednostki w Twoim środowisku pracy, które pomagają rozpocząć pracę. Są częścią wspólnego modelu danych dostępnego dla wszystkich użytkowników Twenty. Możesz z nich korzystać w ich oryginalnej formie, dostosować lub dezaktywować.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### "Osoby"
+
+Obiekt `Osoby` przechowuje Twoje kontakty. Zawiera szczegóły kontaktowe i historię interakcji, dzięki czemu możesz zobaczyć wszystkie interakcje z klientami w jednym miejscu.
+
+### Firma
+
+The `Companies` object stores your business accounts. Zawiera takie informacje, jak branża, wielkość i lokalizacja. Companies connect to both `People` and `Opportunities` objects.
+
+### Szanse
+
+The `Opportunities` object stores deal-related data. Śledzi postęp potencjalnych sprzedaży, od poszukiwań do zamknięcia, rejestrując etapy, wielkość transakcji, powiązane konto oraz oczekiwaną datę zakończenia. Możesz zobaczyć swoją sprzedaż w układzie kanban.
+
+## Obiekty niestandardowe
+
+Obiekty niestandardowe pozwalają przechowywać informacje unikalne dla Twojej organizacji, których standardowe obiekty nie mogą obsłużyć. Na przykład, jeśli jesteś SpaceX, możesz chcieć utworzyć niestandardowy obiekt dla Rakiet i Startów.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Tworzenie nowego obiektu niestandardowego
+
+Aby stworzyć nowy obiekt niestandardowy:
+
+1. Przejdź do Ustawienia w panelu bocznym po lewej.
+2. W sekcji Środowisko przejdź do Model danych. Tutaj będziesz mieć wgląd we wszystkie istniejące standardowe i niestandardowe obiekty (zarówno aktywne, jak i wyłączone).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Kliknij `+ Nowy obiekt` u góry. Wpisz nazwę (zarówno pojedynczą, jak i mnogą), wybierz ikonę, dodaj opis swojego obiektu niestandardowego i kliknij Zapisz (w prawym górnym rogu). Używając Listings jako przykładu obiektu niestandardowego, liczba pojedyncza to "listing", a mnoga to "listings" wraz z opisem takim jak "Ogłoszenia utworzone przez gospodarzy w celu prezentacji ich nieruchomości."
+
+<Warning>
+Nazwy w liczbie pojedynczej i mnogiej muszą się różnić. Jest to wymagane, aby nasz GraphQL API funkcjonował poprawnie.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Po utworzeniu obiektu niestandardowego będziesz mógł nim zarządzać. Możesz edytować nazwę, ikonę i opis, przeglądać różne pola lub dodawać kolejne pola.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Uwaga:** Jeśli nie jesteś pewien, czy potrzebny jest nowy obiekt lub pole, sprawdź [ten artykuł](/l/pl/user-guide/data-model/customize-your-data-model) w celu uzyskania wskazówek dotyczących projektowania modelu danych.
+

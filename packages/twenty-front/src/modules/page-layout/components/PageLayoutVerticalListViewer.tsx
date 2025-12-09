@@ -1,11 +1,12 @@
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type PageLayoutVerticalListViewerProps = {
@@ -19,11 +20,7 @@ export const PageLayoutVerticalListViewer = ({
     <StyledVerticalListContainer>
       {widgets.map((widget) => (
         <div key={widget.id}>
-          <WidgetRenderer
-            widget={widget}
-            pageLayoutType={PageLayoutType.RECORD_PAGE}
-            layoutMode="vertical-list"
-          />
+          <WidgetRenderer widget={widget} />
         </div>
       ))}
     </StyledVerticalListContainer>

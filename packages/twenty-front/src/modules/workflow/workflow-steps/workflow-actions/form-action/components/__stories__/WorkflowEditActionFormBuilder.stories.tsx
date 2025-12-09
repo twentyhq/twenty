@@ -159,15 +159,6 @@ export const DisabledWithEmptyValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const titleText = await canvas.findByText('Form');
-
-    expect(window.getComputedStyle(titleText).cursor).toBe('default');
-
-    await userEvent.click(titleText);
-
-    const titleInput = canvas.queryByDisplayValue('Form');
-    expect(titleInput).not.toBeInTheDocument();
-
     await canvas.findByText('Company');
 
     const addFieldButton = canvas.queryByText('Add Field');

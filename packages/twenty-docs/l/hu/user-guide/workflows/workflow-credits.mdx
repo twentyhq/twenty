@@ -1,0 +1,93 @@
+---
+title: Workflow Credits
+info: Understand workflow credit consumption, monitoring, and cost management for your automations.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatizálja a folyamatokat és integrálja külső eszközökkel
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Workflow credits power your automations in Twenty. Az, hogy megérti, hogyan működnek, segíthet optimalizálni a költségeket és hatékonyan kezelni az automatizálási költségvetést.
+
+## Credit Allocation by Plan
+
+A munkafolyamat-jóváírásokat munkaterület szerint osztják ki az előfizetési terv alapján:
+
+- **Próba**: 5 millió jóváírás
+- **Pro Terv**: 10 millió jóváírás havonta
+- **Szervezeti Terv**: 20 millió jóváírás havonta
+
+## How Credit Consumption Works
+
+A jóváírások akkor fogynak el, amikor a munkafolyamatok futnak, nem pedig amikor létrehozza őket. Minden munkafolyamat-művelet jóváírást fogyaszt a bonyolultsága alapján:
+
+### Credit Consumption by Action Type
+
+- **Alapvető belső műveletek**: Nagyon alacsony jóváírás felhasználás
+  - Rekordok Keresése
+  - Rekord létrehozása
+  - Rekord frissítése
+  - Rekord törlése
+  - Űrlap műveletek
+
+- **Bonyolult műveletek**: Magasabb jóváírás felhasználás
+  - Kód műveletek (JavaScript futtatás)
+  - HTTP Requests to external services
+
+- **AI funkciók**: Jelentős jóváírás felhasználás (hamarosan)
+  - AI prompts and processing will consume credits based on usage
+
+### Valós Idejű Levonás
+
+A jóváírásokat valós időben vonják le, amikor a munkafolyamatok futnak. Ez azt jelenti:
+
+- A vázlat munkafolyamatok nem fogyasztanak jóváírást
+- Csak az aktív, futó munkafolyamatok használják fel a jóváírás kiosztását
+- Failed workflows still consume credits for completed steps
+
+## Jóváírások Kezelése
+
+### Check Credit Usage
+
+1. Go to **Settings → Billing**
+2. View your current credit consumption and remaining balance
+3. Monitor usage patterns to optimize your workflows
+
+### További Jóváírások Megvásárlása
+
+Ha több jóváírásra van szüksége a terv megosztásán túl:
+
+1. Go to **Settings → Billing**
+2. Kattintson a további jóváírások vásárlási lehetőségére. Különböző méretű csomagok érhetők el.
+3. A jóváírások hozzáadódnak a jelenlegi egyenlegéhez
+
+## Legjobb Gyakorlatok
+
+### Hatékony Munkafolyamat Tervezés
+
+- **Start Simple**: Begin with basic actions and add complexity gradually
+- **Tesztelés Vázlatban**: Alaposan tesztelje a munkafolyamatokat aktiválás előtt, hogy elkerülje a hibák miatti jóváírás pazarlást
+- **Minimize HTTP Requests**: Use efficient search criteria and combine operations where possible
+- **Tömbfeldolgozás**: Használjon tömegműveleteket és iterátor akciókat hatékonyan
+- **Hibakezelés**: Alkalmazzon megfelelő hibakezelést a felesleges újrapróbálkozások megelőzésére
+- **Kézi Indítási Optimalizálás**: A kézi indításokhoz válassza a `Tömeg` elérhetőséget, hogy több rekordot feldolgozhasson egyetlen munkafolyamat futásban (részletekért lásd: [Munkafolyamat Funkciók](/l/hu/user-guide/workflows/workflow-features))
+
+### Művelet Optimalizálás
+
+- Használjon alapvető belső műveleteket, amikor csak lehet (alacsonyabb jóváírás felhasználás)
+- Optimalizálja a kód műveleteket a hatékonyság érdekében
+- Fontolja meg a kézi indításokat a nem sürgős folyamatokhoz
+- Tömegműveletek a különálló műveletek csökkentéséért
+
+### Jóváírás Kezelés
+
+- **Regular Monitoring**: Check your credit usage weekly in Settings → Billing
+- **Használat Nyomon Követése**: Kövesse a fogyasztási mintázatokat, hogy elkerülje a váratlan túllépéseket
+- **Tervezze Meg Alaposan**: Fontolja meg a terv frissítését, ha folyamatosan több jóváírásra van szüksége
+- **Munkafolyamat Felülvizsgálat**: Rendszeresen vizsgálja felül a nagy fogyasztású munkafolyamatokat, és inaktiválja a nem használtakat
+- **Stratégiai Tervezés**: Tervezze meg a munkafolyamat telepítést a jóváírás rendelkezésre állása alapján
+
+For detailed billing information and credit management, visit **Settings → Billing** in your Twenty workspace.
+

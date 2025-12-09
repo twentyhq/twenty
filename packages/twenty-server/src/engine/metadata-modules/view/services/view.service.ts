@@ -1,197 +1,289 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
+import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
+import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
+import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
+import { DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
+import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
+import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewService {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
     private readonly i18nService: I18nService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
-    });
-  }
-
-  async findByObjectMetadataId(
-    workspaceId: string,
-    objectMetadataId: string,
-  ): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
-      where: {
-        workspaceId,
-        objectMetadataId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
-    });
-  }
-
-  async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
-    });
-
-    return view || null;
-  }
-
-  async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
-    if (!isDefined(viewData.workspaceId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        ViewExceptionCode.INVALID_VIEW_DATA,
+  async createOne({
+    createViewInput,
+    workspaceId,
+    createdByUserWorkspaceId,
+  }: {
+    createViewInput: CreateViewInput;
+    workspaceId: string;
+    createdByUserWorkspaceId?: string;
+  }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-          ),
+          workspaceId,
         },
       );
-    }
 
-    if (!isDefined(viewData.objectMetadataId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-        ),
-        ViewExceptionCode.INVALID_VIEW_DATA,
+    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-          ),
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
         },
       );
+
+    const { flatViewToCreate, flatViewGroupsToCreate } =
+      fromCreateViewInputToFlatViewToCreate({
+        createViewInput,
+        workspaceId,
+        createdByUserWorkspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: [flatViewToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+
+            viewGroup: {
+              flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating view',
+      );
     }
 
-    const view = this.viewRepository.create({
-      ...viewData,
-      isCustom: true,
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewToCreate.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
+  }
+
+  async updateOne({
+    updateViewInput,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    updateViewInput: UpdateViewInput;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ViewDTO> {
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+          'flatViewGroupMaps',
+        ],
+      },
+    );
+
+    const { flatViewToUpdate, flatViewGroupsToDelete, flatViewGroupsToCreate } =
+      fromUpdateViewInputToFlatViewToUpdateOrThrow({
+        updateViewInput,
+        flatViewMaps: existingFlatViewMaps,
+        flatViewGroupMaps: existingFlatViewGroupMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        userWorkspaceId,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatViewToUpdate],
+            },
+            viewGroup: {
+              flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: flatViewGroupsToDelete,
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating view',
+      );
+    }
+
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: updateViewInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
+  }
+
+  async deleteOne({
+    deleteViewInput,
+    workspaceId,
+  }: {
+    deleteViewInput: DeleteViewInput;
+    workspaceId: string;
+  }): Promise<ViewDTO> {
+    const { flatViewMaps: existingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    const optimisticallyUpdatedFlatViewWithDeletedAt =
+      fromDeleteViewInputToFlatViewOrThrow({
+        deleteViewInput,
+        flatViewMaps: existingFlatViewMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deleting view',
+      );
+    }
+
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: deleteViewInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
+  }
+
+  async destroyOne({
+    destroyViewInput,
+    workspaceId,
+  }: {
+    destroyViewInput: DestroyViewInput;
+    workspaceId: string;
+  }): Promise<ViewDTO> {
+    const { flatViewMaps: existingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    const flatViewFromDestroyInput = fromDestroyViewInputToFlatViewOrThrow({
+      destroyViewInput,
+      flatViewMaps: existingFlatViewMaps,
     });
 
-    const savedView = await this.viewRepository.save(view);
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [flatViewFromDestroyInput],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
 
-    await this.flushGraphQLCache(viewData.workspaceId);
-
-    return savedView;
-  }
-
-  async update(
-    id: string,
-    workspaceId: string,
-    updateData: Partial<ViewEntity>,
-  ): Promise<ViewEntity> {
-    const existingView = await this.findById(id, workspaceId);
-
-    if (!isDefined(existingView)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while destroying view',
       );
     }
 
-    const updatedView = await this.viewRepository.save({
-      id,
-      ...updateData,
-    });
-
-    await this.flushGraphQLCache(workspaceId);
-
-    return { ...existingView, ...updatedView };
-  }
-
-  async delete(id: string, workspaceId: string): Promise<ViewEntity> {
-    const view = await this.findById(id, workspaceId);
-
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    await this.viewRepository.softDelete(id);
-
-    await this.flushGraphQLCache(workspaceId);
-
-    return view;
-  }
-
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const view = await this.findById(id, workspaceId);
-
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    await this.viewRepository.delete(id);
-    await this.flushGraphQLCache(workspaceId);
-
-    return true;
+    return flatViewFromDestroyInput;
   }
 
   processViewNameWithTemplate(
@@ -232,10 +324,121 @@ export class ViewService {
     return viewName;
   }
 
-  async flushGraphQLCache(workspaceId: string): Promise<void> {
-    await this.workspaceCacheStorageService.flushGraphQLOperation({
-      operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
-      workspaceId,
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId?: string,
+  ): Promise<ViewEntity[]> {
+    const views = await this.viewRepository.find({
+      where: {
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+      order: { position: 'ASC' },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
     });
+
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  async findByObjectMetadataId(
+    workspaceId: string,
+    objectMetadataId: string,
+    userWorkspaceId?: string,
+  ): Promise<ViewEntity[]> {
+    const views = await this.viewRepository.find({
+      where: {
+        workspaceId,
+        objectMetadataId,
+        deletedAt: IsNull(),
+      },
+      order: { position: 'ASC' },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+    });
+
+    // Apply visibility filtering
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+    });
+
+    return view || null;
+  }
+
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+      withDeleted: true,
+    });
+
+    return view || null;
   }
 }

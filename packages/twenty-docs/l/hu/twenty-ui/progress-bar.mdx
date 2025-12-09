@@ -1,0 +1,77 @@
+---
+title: Visszajelzés
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Jelzi az előrehaladást vagy a visszaszámlálást, és jobbról balra mozog.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok      | Típus   | Leírás                                                                                   | Alapértelmezett |
+| ------------------ | ------- | ---------------------------------------------------------------------------------------- | --------------- |
+| időtartam          | szám    | A folyamatjelző animáció teljes időtartama milliszekundumban                             | 3               |
+| késleltetés        | szám    | A késleltetés a folyamatjelző animáció elindításában milliszekundumban                   | 0               |
+| easing             | string  | A lazítófüggvény a folyamatjelző animációhoz                                             | easeInOut       |
+| sávmagasság        | szám    | A sáv magassága pixelben                                                                 | 24              |
+| sávszíne           | string  | A sáv színe                                                                              | gray80          |
+| automatikusIndítás | boolean | Ha `true`, a folyamatjelző animáció automatikusan elindul, amikor a komponens betöltődik | `igaz`          |
+
+</Tab>
+</Tabs>
+
+## Kör alakú folyamatjelző sáv
+
+Jelzi egy feladat előrehaladását, gyakran használják betöltési képernyőkön vagy olyan területeken, ahol a folyamatokat szeretnénk kommunikálni a felhasználó felé.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus  | Leírás                               | Alapértelmezett |
+| ------------- | ------ | ------------------------------------ | --------------- |
+| méret         | szám   | A kör alakú folyamatjelző sáv mérete | 50              |
+| sávszélesség  | szám   | A folyamatjelző vonalának szélessége | 5               |
+| sávszíne      | string | A folyamatjelző sáv színe            | currentColor    |
+
+</Tab>
+
+</Tabs>

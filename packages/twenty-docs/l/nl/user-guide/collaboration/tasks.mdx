@@ -1,0 +1,118 @@
+---
+title: Taken
+info: Begrijp hoe u taken effectief kunt beheren in Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Ontdek hoe u Notities en Taken kunt gebruiken om beter samen te werken met uw team.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Manage all tasks within your workspace using the **Tasks** feature. Deze gids laat u zien hoe u taken kunt aanmaken en beheren, schakelen tussen aankomende en voltooide taken, taakdetails bewerken en veel meer.
+
+## Veelvoorkomende Gebruiksgevallen
+
+### Opvolging van Verkoop
+
+- **Meeting Next Steps**: Create tasks for action items discussed during client calls
+- **Opvolging Voorstellen**: Stel herinneringen in om te controleren op openstaande voorstellen
+- **Contract Beoordelingen**: Plan taken voor contractonderhandelingen en goedkeuringen
+
+### Customer Success
+
+- **Onboarding Tasks**: Automatically create onboarding checklists when deals close
+- **Herinneringen voor Check-in**: Plan regelmatige controles met klanten
+- **Voorbereiding op Vernieuwing**: Stel taken in voor het voorbereiden van contractvernieuwingen 90 dagen van tevoren
+
+### Interne Projectmanagement
+
+Naast verkoop en klantensucces ondersteunen Taken breder organisatienoden:
+
+- **Productontwikkeling**: Volg productreleases, bugfixes en ontwikkelingsmijlpalen
+- **Marketingcampagnes**: Beheer campagne lanceringen, contentcreatie en promotionele activiteiten
+- **HR Operaties**: Beheer wervingsprocessen, onboarding van medewerkers en functioneringsgesprekken
+- **Finance Tasks**: Schedule budget reviews, invoice processing, and financial reporting
+- **Operaties**: Coördineer facilitair beheer, leveranciersrelaties en procesverbeteringen
+
+### Automatische Taakaanmaak
+
+Gebruik [Workflows](/l/nl/user-guide/workflows/getting-started-workflows) om automatisch taken te creëren:
+
+- **Deal Won Triggers**: Creëer automatisch onboarding taken die aan het CS team worden toegewezen wanneer kansen sluiten
+- **E-mailherinneringen**: Stel wekelijkse e-mailherinneringen in voor taken die deze week moeten worden uitgevoerd (verzonden elke maandag)
+- **Pijplijn Automatisering**: Creëer opvolgtaken wanneer deals vastlopen in specifieke stadia
+- **Vergadering Integratie**: Genereer automatisch taken vanuit vergaderingsopnamen of kalendergebeurtenissen
+
+## Takenkenmerken
+
+### Relatieveld
+
+Taken bevatten een `Relaties` veld waarmee u een enkele taak aan meerdere records over verschillende objecten kunt koppelen. Bijvoorbeeld, u kunt één opvolgtaak koppelen aan:
+
+- De Persoon die u moet contacteren
+- Het Bedrijf dat zij vertegenwoordigen
+- De Kans die wordt nagejaagd
+- Alle relevante Notities of andere records
+
+Deze morph many relatie zorgt ervoor dat taken toegankelijk zijn vanaf alle relevante recordpagina's en biedt volledige context.
+
+### Gebruiker Tagging
+
+**Let op**: Het taggen van gebruikers binnen taken is momenteel niet beschikbaar. Deze functie staat gepland voor 2026, waardoor u teamleden kunt vermelden en meldingen kunt activeren bij het toewijzen of bijwerken van taken.
+
+## Taken Aanmaken
+
+Taken aanmaken in Twenty is naadloos. U kunt het volgende doen:
+
+- Ga naar het `Taakentabblad` en druk op de `+` knop rechtsboven op de pagina.
+- Gebruik de zoekfunctie door `cmd/ctrl + k` in te drukken, selecteer vervolgens 'Taak aanmaken' uit de lijst met snelle acties.
+- Go to a `Record page` and press `+` at the top right of the page, or go to the Task tab and press the `Add Task` button.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Adding Task Content
+
+Zodra u een taak heeft aangemaakt, kunt u deze verrijken met uitgebreide inhoud, zoals titels, opsommingstekens of zelfs afbeeldingen. Om dit te doen, drukt u op `/` en voert u de gewenste opdracht in.
+
+## Taken Bekijken
+
+De **Taken** pagina toont al uw taken in uw werkruimte. Hier kunt u:
+
+- Taken filteren die aan een specifieke gebruiker zijn toegewezen door op de knop met uw naam rechtsboven in het scherm te klikken.
+- Schakel tussen aankomende (`Te doen`) en voltooide (`Gedaan`) taken om te zien wat aandacht nodig heeft en wat u heeft bereikt.
+
+U kunt ook taken voor een gegeven Record op zijn `Recordpagina` zien.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Taken Bewerken
+
+Om een taak te bewerken, moet u op zijn kaart klikken. Hierdoor wordt een zijpaneel geopend met de volgende functies:
+
+- **Toegewezene en Vervaldatum**: Werk de toegewezene bij of bewerk de vervaldatum.
+- **Opmerkingen**: Werk samen met uw teamleden door opmerkingen toe te voegen aan taken om updates of feedback te geven.
+- **Automatiseringen**: Dankzij de API en Webhooks kunt u ook automatisch taken aanmaken die worden getriggerd door specifieke activiteiten in uw werkruimte.
+
+## Taken Markeren als Voltooid
+
+Om een taak als voltooid te markeren:
+
+1. Lokaliseer de taak op uw `Taken` pagina of binnen een `Recordpagina`.
+2. Klik op de cirkel links van de taakkaart, deze zal veranderen om voltooiing aan te geven.
+3. De taakstatus wordt automatisch bijgewerkt naar `Gedaan`.
+
+Deze procedure zal helpen een bijgewerkt overzicht van uw prestaties te behouden.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Een taak verwijderen
+
+Om een taak permanent te verwijderen:
+
+1. Open de taak die u wilt verwijderen door op zijn kaart te klikken, zowel vanaf de `Taken` pagina als binnen een `Recordpagina`.
+2. Klik op het prullenbakpictogram rechtsboven in het taakdetailpaneel.
+
+Houd er rekening mee dat het verwijderen van een taak permanent is en niet ongedaan kan worden gemaakt. Overweeg om taken te markeren als `Gedaan` als er een kans is dat u er later nog naar wilt verwijzen.

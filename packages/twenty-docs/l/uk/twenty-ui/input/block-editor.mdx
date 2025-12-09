@@ -1,0 +1,34 @@
+---
+title: Редактор блоків
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Використовує редактор форматованого тексту на основі блоків від [BlockNote](https://www.blocknotejs.org/) для надання користувачам можливості редагувати та переглядати блоки вмісту.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості | Тип               | Опис                                          |
+| ----------- | ----------------- | --------------------------------------------- |
+| редактор    | `BlockNoteEditor` | Екземпляр або конфігурація блочного редактора |
+
+</Tab>
+</Tabs>

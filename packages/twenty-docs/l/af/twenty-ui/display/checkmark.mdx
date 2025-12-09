@@ -1,0 +1,69 @@
+---
+title: Merkie
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Verteenwoordig 'n suksesvolle of voltooide aksie.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Brei `React.ComponentPropsWithoutRef<'div'>` uit en aanvaar al die eienskappe van 'n gewone `div`-element.
+
+</Tab>
+
+</Tabs>
+
+## Geanimeerde Merkie
+
+Represents a checkmark icon with the added feature of animation.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe  | Tipe       | Beskrywing                            | Standaard                    |
+| ----------- | ---------- | ------------------------------------- | ---------------------------- |
+| isAnimating | booleaanse | Beheer of die merkie animeer          | vals                         |
+| kleur       | string     | Kleur van die merkie                  |                              |
+| duur        | nommer     | Die duur van die animasie in sekondes | 0.5 sekondes |
+| grootte     | nommer     | Die grootte van die merkie            | 28 piksel                    |
+
+</Tab>
+
+</Tabs>

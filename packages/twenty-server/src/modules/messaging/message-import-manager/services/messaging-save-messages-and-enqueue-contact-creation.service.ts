@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
@@ -21,7 +22,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -32,7 +32,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -43,7 +43,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
@@ -78,15 +81,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   messageChannel.excludeNonProfessionalEmails &&
                   !isWorkEmail(participant.handle);
 
-                const isExcludedByGroupEmails =
-                  messageChannel.excludeGroupEmails &&
-                  isGroupEmail(participant.handle);
-
                 const shouldCreateContact =
                   !!participant.handle &&
                   !isParticipantConnectedAccount &&
                   !isExcludedByNonProfessionalEmails &&
-                  !isExcludedByGroupEmails &&
                   (messageChannel.contactAutoCreationPolicy ===
                     MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
                     (messageChannel.contactAutoCreationPolicy ===
@@ -104,6 +102,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
         await this.messageParticipantService.saveMessageParticipants(
           participantsWithMessageId,
+          workspaceId,
           transactionManager,
         );
 

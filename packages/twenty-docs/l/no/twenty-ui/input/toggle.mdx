@@ -1,0 +1,39 @@
+---
+title: Veksle
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| <span>Egenskaper</span>      | Type                  | Beskrivelse                                                                                                                                        | Standard                  |
+| ---------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| verdi                        | <span>boolean</span>  | The current state of the toggle                                                                                                                    | `usann`                   |
+| <span>onChange</span>        | <span>funksjon</span> | Callback function triggered when the toggle state changes                                                                                          |                           |
+| farge                        | <span>streng</span>   | <span>Fargen på vekslingen når den</span>                                                                                                          | <span>er blå farge</span> |
+| <span>veksleStørrelse</span> | <span>streng</span>   | <span>Størrelsen på vekslingen, som påvirker både høyde og bredde.</span> Har to alternativer: `small` og `medium` | <span>medium</span>       |
+
+</Tab>
+</Tabs>

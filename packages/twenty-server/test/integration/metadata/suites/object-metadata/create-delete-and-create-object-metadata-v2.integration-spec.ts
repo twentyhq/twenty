@@ -2,7 +2,6 @@ import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suite
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { type CreateOneObjectFactoryInput } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -12,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 describe('Handle same object sequential operations test suite', () => {
   let createdObjectMetadataId: string | undefined = undefined;
+  const uniqueSuffix = Date.now().toString().slice(-8);
 
   afterEach(async () => {
     if (!isDefined(createdObjectMetadataId)) {
@@ -35,19 +35,12 @@ describe('Handle same object sequential operations test suite', () => {
     createdObjectMetadataId = undefined;
   });
   it('It should handle creation deletion and creation of the same metadata entity gracefully', async () => {
-    const {
-      labelPlural,
-      description,
-      labelSingular,
-      namePlural,
-      nameSingular,
-    } = CUSTOM_OBJECT_DISHES;
     const createObjectInput: CreateOneObjectFactoryInput = {
-      labelPlural,
-      description,
-      labelSingular,
-      namePlural,
-      nameSingular,
+      namePlural: `dishes${uniqueSuffix}`,
+      nameSingular: `dish${uniqueSuffix}`,
+      labelPlural: `Dishes ${uniqueSuffix}`,
+      labelSingular: `Dish ${uniqueSuffix}`,
+      description: 'My favorite dishes',
       icon: 'IconBuildingSkyscraper',
       isLabelSyncedWithName: false,
     };

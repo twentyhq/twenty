@@ -2,39 +2,44 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
+  "watchOptions": {
+    "ignored": ["**/node_modules/**", "**/dist/**", "**/.git/**", "**/.nx/**"]
+  },
   "compilerOptions": {
     "builder": "swc",
     "typeCheck": false,
+    "watchAssets": true,
     "assets": [
       {
-        "include": "**/serverless/drivers/constants/base-typescript-project/**",
+        "include": "engine/core-modules/serverless/drivers/constants/base-typescript-project/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "**/serverless/drivers/layers/*/package.json",
+        "include": "engine/core-modules/serverless/drivers/layers/*/package.json",
         "outDir": "dist/assets"
       },
       {
-        "include": "**/serverless/drivers/layers/*/yarn.lock",
+        "include": "engine/core-modules/serverless/drivers/layers/*/yarn.lock",
         "outDir": "dist/assets"
       },
       {
-        "include": "**/serverless/drivers/layers/engine/**",
+        "include": "engine/core-modules/serverless/drivers/layers/engine/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "**/serverless/drivers/constants/executor/index.mjs",
+        "include": "engine/core-modules/serverless/drivers/constants/executor/index.mjs",
         "outDir": "dist/assets"
       },
       {
-        "include": "**/database/clickHouse/migrations/*.sql",
-        "outDir": "dist/src"
+        "include": "database/clickHouse/migrations/*.sql",
+        "outDir": "dist"
       },
       {
-        "include": "**/dev-seeder/data/sample-files/**",
+        "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
         "outDir": "dist/assets"
       }
-    ],
-    "watchAssets": true
-  }
+    ]
+  },
+  "monorepo": false,
+  "root": "src"
 }

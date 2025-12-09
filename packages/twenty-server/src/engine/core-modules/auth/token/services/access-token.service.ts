@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
@@ -96,6 +97,9 @@ export class AccessTokenService {
         new AuthException(
           'User is not a member of the workspace',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`User is not a member of the workspace.`,
+          },
         ),
       );
 

@@ -31,7 +31,7 @@ export class ImapSmtpCaldavService {
       port: params.port,
       secure: params.secure ?? true,
       auth: {
-        user: handle,
+        user: params.username ?? handle,
         pass: params.password,
       },
       logger: false,
@@ -139,7 +139,7 @@ export class ImapSmtpCaldavService {
       }
 
       throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
-        userFriendlyMessage: msg`Invalid credentials. Please check your username and password.`,
+        userFriendlyMessage: msg`Invalid CALDAV credentials. Please check your username and password.`,
       });
     }
 

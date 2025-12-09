@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "Guide de l'utilisateur",
+      "groups": {
+        "gettingStarted": {
+          "label": "Commencer"
+        },
+        "dataModel": {
+          "label": "Modèle de données"
+        },
+        "crmEssentials": {
+          "label": "Essentiels du CRM"
+        },
+        "views": {
+          "label": "Vues"
+        },
+        "workflows": {
+          "label": "Flux de travail"
+        },
+        "collaboration": {
+          "label": "Collaboration"
+        },
+        "integrationsApi": {
+          "label": "Intégrations & API"
+        },
+        "reporting": {
+          "label": "Rapports"
+        },
+        "settings": {
+          "label": "Paramètres"
+        },
+        "pricing": {
+          "label": "Tarifs"
+        },
+        "resources": {
+          "label": "Ressources"
+        }
+      }
+    },
+    "developers": {
+      "label": "Développeurs",
+      "groups": {
+        "developersGroup": {
+          "label": "Développeurs"
+        },
+        "devGettingStarted": {
+          "label": "Commencer",
+          "groups": {
+            "selfHosting": {
+              "label": "Auto-hébergement"
+            },
+            "apiAndWebhooks": {
+              "label": "API et webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Contribuer",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Développement du frontend",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Afficher"
+                    },
+                    "feedback": {
+                      "label": "Vos commentaires"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Développement du backend"
+            }
+          }
+        }
+      }
+    }
+  }
+}

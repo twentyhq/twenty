@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
@@ -8,6 +7,7 @@ import {
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
+import { css } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
@@ -72,22 +72,24 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, showLabel, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
-  const isDisplayModeContentEmpty = useIsFieldEmpty();
+  const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
     isHovered &&
     !readonly &&
-    !isDisplayModeContentEmpty &&
+    !isFieldEmpty &&
     !editModeContentOnly;
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const shouldDisplayEditModeOnFocus = isHovered && isFieldInputOnly;
+  const emptyPlaceHolder = label ?? t`Empty`;
 
-  const emptyPlaceHolder = showLabel ? t`Empty` : label;
+  const shouldShowValue = !isFieldEmpty || isFieldInputOnly;
+
+  const shouldShowEmptyPlaceholder = isFieldEmpty;
 
   return (
     <>
@@ -97,12 +99,11 @@ export const RecordInlineCellDisplayMode = ({
         onClick={onClick}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
-          !children ? (
-            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
-          ) : (
+          {shouldShowValue ? (
             children
-          )}
+          ) : shouldShowEmptyPlaceholder ? (
+            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+          ) : null}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
       {showEditButton && (

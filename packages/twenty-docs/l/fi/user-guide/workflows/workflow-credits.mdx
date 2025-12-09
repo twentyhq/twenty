@@ -1,0 +1,93 @@
+---
+title: Työnkulkujen krediitit
+info: Ymmärrä työnkulkujen krediittikulut, seuranta ja kustannusten hallinta automaatioillesi.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatisoi prosessit ja integroi ulkoisten työkalujen kanssa
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Työnkulkujen krediitit pitävät automaatiosi käynnissä Twentyssä. Ymmärtäminen siitä, miten ne toimivat, auttaa sinua optimoimaan kustannuksia ja hallitsemaan automaatiobudjettisi tehokkaasti.
+
+## Krediittien jakaminen suunnitelman mukaan
+
+Työnkulkujen krediitit jaetaan tilauspakettisi mukaan per työtila:
+
+- **Kokeilujakso**: 5 miljoonaa krediittiä
+- **Pro-suunnitelma**: 10 miljoonaa krediittiä kuukaudessa
+- **Organisaatiosuunnitelma**: 20 miljoonaa krediittiä kuukaudessa
+
+## Miten krediittikulutus toimii
+
+Kreditejä kulutetaan, kun työnkulut suoritetaan, ei kun niitä luodaan. Jokainen työnkulun toiminto kuluttaa kreditejä monimutkaisuutensa perusteella:
+
+### Krediittikulutus toimintatyypin mukaan
+
+- **Perustoiminnot**: Hyvin alhainen krediittikulutus
+  - Etsi tietueita
+  - Luo tietue
+  - Päivitä tietue
+  - Poista tietue
+  - Lomaketoiminnot
+
+- **Monimutkaiset toiminnot**: Korkeampi krediittikulutus
+  - Kooditoiminnot (JavaScriptin suoritus)
+  - HTTP-pyynnöt ulkoisiin palveluihin
+
+- **AI-ominaisuudet**: Merkittävä krediittikulutus (tulossa pian)
+  - AI-kehotteet ja käsittely kuluttavat kreditejä käytön mukaan
+
+### Reaaliaikainen vähennys
+
+Kreditejä vähennetään reaaliaikaisesti työnkulkujen suorittamisen aikana. Tämä tarkoittaa:
+
+- Luonnos työnkulut eivät kuluta kreditejä
+- Vain aktiiviset, toiminnassa olevat työnkulut käyttävät krediittikiintiötäsi
+- Epäonnistuneet työnkulut kuluttavat silti kreditejä suoritetuista vaiheista
+
+## Kredittien hallinta
+
+### Tarkista krediittikäyttö
+
+1. Siirry **Asetukset → Laskutus**
+2. Näytä nykyinen krediittikulutuksesi ja jäljellä oleva saldo
+3. Seuraa käyttötapoja optimoidaksesi työnkulkujasi
+
+### Lisäkrediittien ostaminen
+
+Jos tarvitset enemmän kreditejä kuin pakettisi sallii:
+
+1. Siirry **Asetukset → Laskutus**
+2. Napsauta vaihtoehtoa ostaaksesi lisää kreditejä. Eri kokoisia paketteja on saatavilla.
+3. Kreditit lisätään nykyiseen saldoosi
+
+## Parhaat käytännöt
+
+### Tehokas työnkulkusuunnittelu
+
+- **Aloita yksinkertaisesti**: Aloita perustoiminnoilla ja lisää monimutkaisuutta asteittain
+- **Testaa luonnoksella**: Testaa työnkulut perusteellisesti ennen aktivointia, jotta vältät krediittien tuhlauksen virheisiin
+- **Minimoi HTTP-pyynnöt**: Käytä tehokkaita hakukriteereitä ja yhdistä toimintoja aina kun mahdollista
+- **Eräajot**: Käytä laajoja toimintoja ja iterointitoimintoja tehokkaasti
+- **Virheen käsittely**: Ota käyttöön oikea virheiden käsittely estääksesi turhat uusinnat
+- **Manuaalisten laukaisujen optimointi**: Manuaalisille laukaisuille valitse `Bulkk`-saatavuus käsitelläksesi useita tietueita yhdellä työnkulun ajolla (katso [Työnkulkuominaisuudet](/l/fi/user-guide/workflows/workflow-features) saadaksesi lisätietoja)
+
+### Toimintojen optimointi
+
+- Käytä perustoimintoja mahdollisuuksien mukaan (alhaisempi krediittikulutus)
+- Optimoi kooditoiminnot tehokkuuden vuoksi
+- Harkitse manuaalisten laukaisujen käyttöä ei-kiireellisissä prosesseissa
+- Eräajot vähentämään yksittäisiä toimintokutsuja
+
+### Krediittihallinta
+
+- **Säännöllinen seuranta**: Tarkista krediittikulutuksesi viikoittain kohdassa Asetukset → Laskutus
+- **Kulutuksen seuranta**: Pidä kirjaa kulutustottumuksista vältetäksesi odottamattomia ylityksiä
+- **Suunnittele sen mukaisesti**: Harkitse pakettisi päivittämistä, jos tarvitsemasi kreditit ovat jatkuvasti suuremmat
+- **Työnkulun tarkistus**: Tarkista säännöllisesti suurikulutuksellisia työnkulkuja ja poista käyttämättömät
+- **Strateginen suunnittelu**: Suunnittele työnkulun käyttöönotto krediittien saatavuuden mukaan
+
+Yksityiskohtaista laskutusta ja krediittien hallintaa varten vieraile **Asetukset → Laskutus** Twenty-työtilassasi.
+

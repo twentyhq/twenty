@@ -1,0 +1,104 @@
+---
+title: Importer/Exporter des Données
+info: "Apprenez à importer et exporter des données."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Découvrez Twenty, un CRM open-source.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Importer des Données
+
+- Vous pouvez importer des données pour n'importe quel objet en utilisant un fichier .csv, .xlsx, ou .xls.
+- Chacun des fichiers que vous chargez doit contenir **seulement un type d'objet** (par exemple, uniquement des enregistrements Personnels).
+- Vous pouvez utiliser l'importation pour **créer ou mettre à jour des enregistrements**.
+
+### Téléchargez le fichier exemple pour comprendre le format attendu
+
+1. Allez dans une vue avec l'objet que vous êtes sur le point d'importer.
+2. Cliquez sur l'icône `⋮` en haut à droite puis sélectionnez `Importer les enregistrements`.
+3. Cliquez sur `Télécharger le fichier d'exemple`.
+
+### Préparez votre fichier csv
+
+Voici quelques éléments à vérifier avant de charger votre fichier.
+
+- Limitez le nombre d'enregistrements à **10,000 par fichier**.
+- **Supprimez les doublons** de votre fichier.
+  - L'unicité sur `Personnes` est définie par défaut par l'`id` et l'`email`. Vous avez également la possibilité de définir des champs personnalisés à partir de `Personnes` comme uniques lors de la configuration de votre modèle de données.
+  - L'unicité sur `Entreprises` est définie par défaut par l'`id` et le `domaine`. Vous avez également la possibilité de définir des champs personnalisés à partir de `Entreprises` comme uniques lors de la configuration de votre modèle de données.
+  - Pour tout autre objet, y compris les objets personnalisés, vous avez la possibilité de définir certains champs comme uniques. Assurez-vous de ne pas inclure de doublons lors de la préparation de vos fichiers.
+- Nous recommandons d'utiliser la syntaxe `https://domain.com` lors du chargement de vos domaines, car c'est celle utilisée par notre connecteur avec votre boîte aux lettres et votre calendrier.
+- Vous pouvez **importer les relations entre les objets** en fournissant l'un des champs uniques de l'enregistrement associé.
+  - Exemple : Vous souhaitez attacher une personne à une entreprise. Ajoutez une colonne dans le fichier contenant tous les enregistrements `Personnes` qui contient l'`id` de l'entreprise — ou son `domaine`. Vous pourrez mapper ce champ lors du téléversement.
+    <Warning>
+
+**Note importante :**
+
+- Les relations entre les objets dans Twenty sont "Un à Plusieurs". Cela signifie que chaque enregistrement de l'objet A peut être attaché à plusieurs enregistrements de l'objet B. Mais chaque enregistrement de l'objet B peut appartenir à un seul enregistrement de l'objet A.
+  _Par exemple, une entreprise peut être attachée à plusieurs personnes. Et une personne ne peut appartenir qu'à une seule entreprise._
+
+- Pour téléverser des relations via la fonction d'importation, vous devez fournir l'`id` (ou tout autre champ unique) de l'objet attaché dans le fichier contenant les enregistrements du "côté Multiples" de la relation.  
+  _Par exemple, vous fournissez l'`id` ou le `domaine` de l'entreprise lors du téléversement d'enregistrements de personnes. Vous ne fournissez pas l'`id` (ou `email`) des personnes lors du téléversement du fichier des entreprises._ </Warning>
+  </Warning>
+
+### Téléversez votre fichier
+
+1. Allez dans une vue avec l'objet que vous êtes sur le point d'importer.
+2. Cliquez sur l'icône `⋮` en haut à droite puis sélectionnez `Importer les enregistrements`.
+3. Cliquez sur `Sélectionner le fichier`.
+4. Validez la correspondance des champs.
+
+- Vous n'avez pas besoin de tous les importer, vous pouvez choisir l'option "Ne pas mapper".
+- Pour les relations, il est recommandé de ne mapper qu'un des champs uniques.
+- Vous devrez peut-être aussi mapper les valeurs de vos champs de type sélection et multi-sélection.
+
+5. Cliquez sur `Étapes suivantes` et `Vérifiez les lignes avec erreurs`. Les cellules avec un problème sont surlignées. **Vous pouvez soit supprimer la ligne, soit mettre à jour la cellule directement depuis là**.
+6. Une fois terminé, cliquez sur `Confirmer`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### FAQ Importation
+
+<details><summary>Je vois des problèmes de doublons lors du téléversement de mon fichier, que dois-je faire?</summary>
+
+Veuillez vous référer à la section **Préparer votre csv** ci-dessus dans cet article, elle contient des instructions sur ce qui sera considéré comme un doublon.
+
+</details>
+
+<details><summary>Puis-je importer des relations entre objets?</summary>
+
+Oui, veuillez vous référer à la section **Préparer votre csv** ci-dessus dans cet article, elle contient une section sur l'importation des relations.
+
+</details>
+
+<details><summary>Puis-je mettre à jour des enregistrements existants en utilisant la fonction d'importation?</summary>
+
+Oui, vous pouvez mettre à jour des enregistrements existants en utilisant la fonction d'importation. Assurez-vous de fournir l'id (ou tout autre champ unique) lors du re-téléversement de vos enregistrements.
+
+</details>
+
+<details><summary>Puis-je migrer l'`id` de mon (mes) autre(s) outil(s)?</summary>
+
+Oui. Vous devez créer un champ que vous définissez comme unique dans votre modèle de données qui contiendra l'`id` de votre (vos) autre(s) outil(s). Veuillez noter que le nom `id` est protégé car il est utilisé pour l'ID Twenty.  
+Si vous souhaitez créer des relations entre objets à l'aide de ce champ, consultez la section **Préparer votre csv** ci-dessus dans cet article. Elle contient une section sur l'importation des relations.
+
+</details>
+
+## Exporter des Données
+
+Vous pouvez télécharger des données de la plupart de vos objets et jusqu'à 20 000 enregistrements par export.
+Pour exporter des données à partir d'un objet :
+
+1. Visitez l'index de l'objet.
+2. Choisissez la vue pour l'exportation des données. Configurez les colonnes que vous souhaitez télécharger en cachant ou ajoutant des colonnes et trouvez les enregistrements dont vous avez besoin en filtrant votre vue.
+3. Accédez au panneau latéral via l'icône `⋮` en haut à droite.
+4. Cliquez sur `Exporter la vue`.
+5. Sélectionnez l'emplacement d'enregistrement pour les données CSV. Notez que l'exportation peut prendre du temps avec un grand nombre d'enregistrements.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

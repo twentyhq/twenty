@@ -1,0 +1,20 @@
+export const VimeoEmbed = ({ videoId, title = 'Video' }) => (
+  <div style={{padding:'69.01% 0 0 0', position:'relative', margin: '32px 0px'}}>
+    <iframe
+      src={`https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&autopause=0&background=1&app_id=58479`}
+      frameBorder="0"
+      allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+      style={{
+        position:'absolute',
+        top:0,
+        left:0,
+        width:'100%',
+        height:'100%',
+        borderRadius: '16px',
+        border:'2px solid black'
+      }}
+      title={title}
+    />
+  </div>
+);
+

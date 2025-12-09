@@ -16,8 +16,10 @@ import {
   CreateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -51,36 +53,45 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonInput<CreateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<CreateOneQueryArgs>> {
-    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
+      queryRunnerContext;
+
+    const coercedData = await this.dataArgProcessor.process({
+      partialRecordInputs: [args.data],
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     return {
       ...args,
-      data: (
-        await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
-          partialRecordInputs: [args.data],
-          authContext,
-          objectMetadataItemWithFieldMaps,
-        })
-      )[0],
+      data: coercedData[0],
     };
   }
 
   async processQueryResult(
     queryResult: ObjectRecord,
-    _objectMetadataItemId: string,
-    _objectMetadataMaps: ObjectMetadataMaps,
-    _authContext: WorkspaceAuthContext,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
-    return queryResult;
+    return this.commonResultGettersService.processRecord(
+      queryResult,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      authContext.workspace.id,
+    );
   }
 
   async validate(
     args: CommonInput<CreateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata } = queryRunnerContext;
 
-    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
+    assertMutationNotOnRemoteObject(flatObjectMetadata);
 
     if (args.data?.id) {
       assertIsValidUuid(args.data.id);

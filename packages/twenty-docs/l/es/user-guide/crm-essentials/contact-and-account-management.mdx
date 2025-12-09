@@ -1,0 +1,95 @@
+---
+title: Gestión de Contactos y Cuentas
+info: "Cree y gestione los registros de Personas y Compañías para construir su base de datos de clientes."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Características esenciales de CRM para gestionar clientes potenciales, ventas y clientes"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Introducción de datos en su CRM
+
+Cuando empiece a usar Twenty, querrá ingresar sus contactos y compañías en el sistema. Hay varias formas de poblar su CRM dependiendo de su flujo de trabajo y fuentes de datos.
+
+### Entrada manual
+
+El enfoque más sencillo es agregar registros directamente a través de la interfaz de Twenty. Vaya a la sección ´Personas´ y haga clic en el botón ´+´ para añadir un nuevo contacto. Complete su nombre, correo electrónico, teléfono y vincúlelos a su empresa. Para compañías, diríjase a la sección ´Compañías´ y agregue los detalles de la organización: nombre de la empresa, dominio, industria y tamaño.
+
+El campo de dominio es particularmente importante para la identificación de la compañía, y el campo de email es esencial para la identificación de la persona.
+
+### Importaciones CSV
+
+Cuando tiene datos existentes de hojas de cálculo u otros sistemas, la importación CSV es su opción más rápida. Puede preparar sus datos en Excel o Google Sheets, y luego cargarlos todos de una vez. Esto es particularmente útil al migrar desde otro CRM o cuando alguien ha estado rastreando contactos en hojas de cálculo. Nuestra guía [Importación/Exportación de datos](/l/es/user-guide/getting-started/import-export-data) lo guía a través del proceso.
+
+### Captura de datos automatizada
+
+Para la generación de clientes potenciales continua, puede configurar flujos de trabajo automatizados que llevan datos directamente a Twenty:
+
+**Formularios en el sitio web**: Cuando alguien completa un formulario en su sitio web, puede configurarlo para enviar la información a Twenty automáticamente. La presentación del formulario activa un webhook que activa un flujo de trabajo en Twenty, creando el nuevo registro de contacto sin ningún trabajo manual.
+
+**Integración con otros sistemas**: Si utiliza otras herramientas empresariales, puede conectarlas a Twenty utilizando llamadas API y flujos de trabajo. Esto le permite sincronizar datos automáticamente entre sistemas: por ejemplo, ingresando nuevos clientes desde su sistema de facturación o clientes potenciales desde su plataforma de marketing.
+
+Para obtener más información sobre cómo configurar estos flujos de datos automatizados, consulte nuestra sección [Flujos de trabajo](/l/es/user-guide/workflows/getting-started-workflows).
+
+### Sincronización de correo electrónico y calendario
+
+Cuando conecta su buzón de correo y calendario a Twenty, el sistema puede crear automáticamente registros de Personas y Compañías para las personas con las que envía correos electrónicos o se encuentra. Si envía un correo electrónico a alguien que aún no está en su CRM, Twenty puede crear un nuevo registro de Persona para ellos. Lo mismo ocurre cuando programa reuniones con nuevos contactos a través de su calendario.
+
+Esto es particularmente útil para equipos de ventas y desarrollo comercial que constantemente están conociendo gente nueva. En lugar de agregar manualmente cada nuevo contacto, Twenty los captura automáticamente mientras se comunica. Aprenda cómo configurarlo en nuestra guía [Emails y Calendarios](/l/es/user-guide/collaboration/emails-and-calendars).
+
+### Reducción de trabajo manual
+
+Incluso al agregar datos manualmente, puede usar flujos de trabajo para agilizar el proceso. Por ejemplo, puede configurar la automatización que asigna nuevos contactos a miembros del equipo según su ubicación, o que crea automáticamente tareas de seguimiento cuando se agregan ciertos tipos de contactos.
+
+## Organización de sus contactos
+
+### Manteniendo los datos únicos y limpios
+
+Twenty aplica automáticamente la unicidad para mantener sus datos organizados. La dirección de correo electrónico de cada persona sirve como identificador único: no puede tener dos personas con el mismo correo. Del mismo modo, los dominios de las empresas son únicos, por lo que no creará accidentalmente empresas duplicadas.
+
+Si su negocio necesita otros campos para ser únicos (como números de teléfono o códigos de referencia), puede configurar esto en su modelo de datos. Diríjase a nuestra sección [Modelo de Datos](/l/es/user-guide/data-model/customize-your-data-model) para aprender cómo configurar restricciones de unicidad adicionales para sus necesidades específicas.
+
+### Manejo de duplicados
+
+A veces terminará con registros duplicados. Twenty tiene una función de fusión para tanto Personas como Compañías: puede combinar registros duplicados para mantener su base de datos limpia sin perder ningún dato.
+
+Para fusionar registros, seleccione 2 registros, abra el menú de comandos `Cmd+K` en Mac, `Ctrl+K` en Windows y haga clic en `Fusionar Registros`.
+
+### Creación de jerarquías de compañías
+
+Si trabaja con grandes organizaciones que tienen subsidiarias o divisiones múltiples, puede crear relaciones entre compañías. Configure campos de relación entre registros de Compañías para mapear estas conexiones. Esto le ayuda a entender la estructura organizativa completa con la que está tratando.
+
+### Personalización de sus vistas
+
+Diferentes miembros del equipo podrían necesitar ver información diferente. Puede crear vistas personalizadas que muestren diferentes columnas para diferentes propósitos: quizá su equipo de ventas necesite ver etapas de negociación mientras que su equipo de soporte se centra en los detalles de contacto. Aprenda más sobre esto en nuestro artículo [Gestión de Vistas](/l/es/user-guide/crm-essentials/view-management).
+
+## Trabajando con registros
+
+### Qué encontrará en cada registro
+
+Cuando abre un registro de Persona o Compañía, verá toda su información organizada en pestañas:
+
+- **Campos**: La información básica como nombre, correo electrónico, teléfono y cualquier campo personalizado que haya agregado
+- **Relaciones**: Muestra las conexiones entre este registro y registros de otros objetos
+- **Cronología**: Una vista cronológica de todas las interacciones y actualizaciones de este registro
+- **Tareas**: Cualquier tarea de seguimiento relacionada con este contacto
+- **Notas**: Notas y observaciones del equipo sobre esta persona o compañía
+- **Archivos**: Documentos y adjuntos relacionados con este registro
+- **Correos**: Hilos de correo electrónico con este contacto (cuando su equipo haya conectado sus buzones)
+- **Calendario**: Reuniones y citas con este contacto
+
+Las pestañas de Correo Electrónico y Calendario son particularmente poderosas: muestran automáticamente todos los intercambios de correo electrónico y reuniones que cualquier persona de su equipo ha tenido con este contacto, siempre que hayan conectado su buzón a Twenty. Aprenda más sobre como configurarlo en nuestra guía [Emails y Calendarios](/l/es/user-guide/collaboration/emails-and-calendars).
+
+### Añadiendo los campos que necesita
+
+Los campos estándar podrían no capturar todo lo importante para su negocio. Si necesita información adicional: como segmentos de clientes, fuentes de referencias o datos específicos de la industria: puede agregar campos personalizados o modificar los existentes. Diríjase a nuestra sección [Modelo de Datos](/l/es/user-guide/data-model/customize-your-data-model) para aprender cómo personalizar su configuración.
+
+## Gestionando registros eliminados
+
+Cuando elimina un registro en Twenty, no desaparece para siempre. Los registros se "eliminan suavemente", lo que significa que están ocultos pero pueden restaurarse si es necesario.
+
+Para acceder a los registros eliminados, abra el menú de comando `Cmd+K` en Mac, `Ctrl+K` en Windows, luego haga clic en `Ver registros eliminados`. Desde ahí, puede restaurar los registros o eliminarlos permanentemente si está seguro de que no los necesita.
+
+Esta red de seguridad significa que puede limpiar su base de datos sin preocuparse por la pérdida accidental de información importante.

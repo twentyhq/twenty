@@ -1,0 +1,56 @@
+---
+title: Изборник икона
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Изборник икона заснован на падајућем менију који омогућава корисницима да изаберу икону из листе.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Својства        | Тип               | Опис                                                                                                                                                           |
+| --------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| онемогућено     | булевска вредност | Онемогућава изборник икона ако је постављено на `true`.                                                                                        |
+| приПромени      | функција          | Функција повратног позива се покреће када корисник изабере икону. It receives an object with `iconKey` and `Icon` properties                   |
+| selectedIconKey | низ               | The key of the initially selected icon                                                                                                                         |
+| onClickOutside  | функција          | Функција повратног позива се покреће када корисник кликне ван падајућег менија.                                                                |
+| onClose         | функција          | Функција повратног позива се покреће када се падајући мени затвори.                                                                            |
+| onOpen          | функција          | Функција повратног позива се покреће када се падајући мени отвори.                                                                             |
+| variant         | низ               | Визуелни стил варијанте иконе која се може кликнути. Опције укључују: `примарни`, `секундарни` и `терцијарни`. |
+
+</Tab>
+</Tabs>

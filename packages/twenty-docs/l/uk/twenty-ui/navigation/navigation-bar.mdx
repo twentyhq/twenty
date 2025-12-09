@@ -1,0 +1,52 @@
+---
+title: Навігаційна панель
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Відображає панель навігації, яка містить декілька компонентів `NavigationBarItem`.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості    | Тип   | Опис                                                                                                                                                                                                               |
+| -------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| activeItemName | рядок | Назва поточного активного елемента навігації                                                                                                                                                                       |
+| items          | масив | Масив об'єктів, що представляють кожен елемент навігації. Кожен об'єкт містить `name` елемента, компонент `Icon` для відображення та функцію `onClick`, яка викликається при натисканні на елемент |
+
+</Tab>
+</Tabs>

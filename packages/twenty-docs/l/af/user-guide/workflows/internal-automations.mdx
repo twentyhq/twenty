@@ -1,0 +1,170 @@
+---
+title: Interne Outomatisasies
+info: "Outomatiseer herhalende take om handmatige werk te verminder en jou data akkuraat te hou."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Outomatiseer prosesse en integreer met eksterne gereedskap
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Hieronder is werkvloei voorbeelde wat u kan implementeer om herhalende take outomaties te maak, om handearbeid te verminder en u data op datum te hou.
+
+## Databestuur Outomatisasies
+
+### Auto-Merk Persoonlike E-posse
+
+**Probleem**: Jou span moet persoonlike vs. besigheids e-posadresse identifiseer vir beter teiken en nakoming.
+
+**Oplossing**: Skep 'n werkvloei wat outomaties 'n "is persoonlike e-pos" veld opdateer wanneer 'n e-posadres gevoeg of opgedateer word.
+
+**Sneller**: Rekord is Opdateer (Persone-objek, E-posveld)
+
+**Aksies**:
+
+- Kode aksie om te kontroleer of e-pos domein ooreenstem met algemene persoonlike verskaffers (gmail.com, yahoo.com, ens.)
+- Opdateer Rekord om die "is persoonlike e-pos" vlag te stel
+
+### Prospekte Toewysing - Omdraai
+
+**Probleem**: Nuwe prospekte moet regverdig oor jou verkoopspan versprei word om gebalanseerde werklading te verseker.
+
+**Oplossing**: Ken nuwe leidrade outomaties toe aan verkoopspersoneel met behulp van 'n rondgaande stelsel.
+
+**Sneller**: Rekord is Geskep (Persone-objek)
+
+**Aksies**:
+
+- Soek Rekords om die laaste toegewysde verteenwoordiger te vind
+- Kode aksie om die volgende verteenwoordiger in rotasie te bepaal
+- Opdateer Rekord om die vooruitsig aan die geselekteerde verteenwoordiger toe te wys
+- Stuur E-pos aan om die toegewysde verteenwoordiger in te lig
+
+### Prospekte Toewysing - Gebiedgebaseer
+
+**Probleem**: Prospekte moet toegewys word volgens geografiese gebiede of maatskappykenmerke.
+
+**Oplossing**: Gee prospekte deur aan die toepaslike verkoopsverteenwoordiger gebaseer op ligging, maatskappygrootte of nywerheid.
+
+**Sneller**: Rekord is Geskep (Person- of Maatskappy-objek)
+
+**Aksies**:
+
+- Kode aksie om die gebied te bepaal gebaseer op ligging/nywerheidsreëls
+- Soek Rekords om die gebiedseienaar te vind
+- Opdateer Rekord om die vooruitsig toe te wys
+- Skep Rekord vir 'n opvolgtaak
+
+## Verkoopproses Outomatisasies
+
+### Geleentheidstapbestuur - Gesluit Gewen
+
+**Probleem**: Wanneer transaksies gesluit word, is veelvuldige handmatige opdaterings oor verskillende rekords en spanlede nodig.
+
+**Oplossing**: Hanteer outomaties alle na-win aktiwiteite wanneer 'n geleentheid na "Gesluit Gewen" beweeg.
+
+**Sneller**: Rekord is Opdateer (Geleenthede-objek, Faseveld = "Geslote Gewen")
+
+**Aksies**:
+
+- Opdateer Rekord om maatskappytipes te verander van "Voorspelling" na "Kliënt"
+- Skep Rekord vir vertroude take toegeken aan rekeningbestuurder
+- Stuur e-pos kennisgewing aan die kliëntsucces span
+- HTTP Versoek om eksterne faktureringsisteem op te dateer
+
+### Geleentheidstapbestuur - Verlore Hernuwing
+
+**Probleem**: Wanneer hernuwingsgeleenthede verlore gaan, moet die klantstatus vir behoorlike rekeningsbestuur opdateer word.
+
+**Oplossing**: Opdateer outomaties die klantstatus wanneer hernuwingsverkope verlore gaan.
+
+**Sneller**: Rekord is Opdateer (Geleenthede-objek, Fase = "Geslote Verlore" EN Tipe = "Hernuwing")
+
+**Aksies**:
+
+- Opdateer Rekord om maatskappytipes te verander van "Kliënt" na "Kliënt wat afgehaak het"
+- Skep Rekord vir churn-analise taak
+- Stuur E-pos waarskuwing aan die kliëntsukses bestuurder
+- Opdateer Rekord om churn datum en rede by te voeg
+
+### Stagnant Geleentheid Waarskuwings
+
+**Probleem**: Geleenthede lê stil sonder opdaterings, wat transaksies koud en voorspellings onbetroubaar maak.
+
+**Oplossing**: Stuur outomatiese waarskuwings wanneer geleenthede onlangs nie opdateer is nie.
+
+**Sneller**: Op 'n Skedule (daagliks)
+
+**Aksies**:
+
+- Soek Rekords vir geleenthede wat nie in X dae opdateer is nie
+- Kode aksie om alarmboodskap met geleentheidbesonderhede te formateer
+- Stuur E-pos aan geleentheidseienaar en bestuurder
+- Skep Rekord vir opvolgtaak as daar geen reaksie is nie
+
+## Produktiwiteit Outomatisasies
+
+### Weeklikse Taak Samevatting
+
+**Probleem**: Spanne ontstaan porte van hul komende take en sperdatums.
+
+**Oplossing**: Stuur outomatiese weeklikse e-pos herinneringe met taakopsommings.
+
+**Sneller**: Op 'n Skedule (elke Maandag om 8am)
+
+**Aksies**:
+
+- Soek Rekords vir take wat hierdie week deur geaffekteerde toegeken is
+- Kode aksie om taaklys per persoon te formateer
+- Stuur E-pos aan elke spanlid met hul taakopgawe
+- Stuur E-pos aan bestuurders met spanoorzicht
+
+### Kontak-ná-vergadering Outomatisasie
+
+**Probleem**: Belangrike aksie-items van vergaderings word vergeet of verlaat.
+
+**Oplossing**: Skep outomaties opvolgtake wanneer vergaderings geskeduleer of voltooi is.
+
+**Sneller**: Rekord is Geskep (Aktiwiteite-objek, Tipe = "Vergadering")
+
+**Aksies**:
+
+- Skep Rekord vir vóór-vergadering voorbereidingstaak
+- Skep Rekord vir ná-vergadering opvolgingstaak
+- Stuur E-pos herinnering aan bywoners
+- Opdateer Rekord om take aan die vergadering te koppel
+
+### Kruis-Objek Veld Sinchronisasie
+
+**Probleem**: Jy benodig inligting van verwante rekords wat maklik toeganklik is (bv. hoofkontak-e-pos op geleentheidsrekord).
+
+**Oplossing**: Sinchroniseer outomatiese velde tussen verwante objekte totdat geneste velde beskikbaar is.
+
+**Sneller**: Rekord is Opdateer (Geleenthede-objek, Kontakpunt veld)
+
+**Aksies**:
+
+- Soek Rekords om die gekoppelde persoon se besonderhede te vind
+- Opdateer Rekord om e-posadres na geleentheid te kopieer
+- Opdateer Rekord om telefoonnommer na geleentheid te kopieer
+- Opdateer Rekord om maatskappy-inligting te kopieer
+
+## Data Validasie en Opskerping
+
+### Telefoonnommer Standardisering
+
+**Probleem**: Telefoonnommers word in verskillende formate ingevoer, wat hulle moeilik maak om te gebruik vir bel of boodskappe.
+
+**Oplossing**: Formateer telefoonnommers outomaties na 'n standaardformaat wanneer hulle ingevoer word.
+
+**Sneller**: Rekord is Opdateer (Persone-objek, Telefoonveld)
+
+**Aksies**:
+
+- Kode aksie om telefoonnommer te ontleed en te formateer
+- Opdateer Rekord met gestandaardiseerde telefoonnommerformaat
+- Opdateer Rekord om die landkode by te voeg indien dit ontbreek
+
+Vir meer komplekse outomasiebehoeftes, oorweeg ons [Professionele Dienste](/l/af/user-guide/workflows/professional-services) of verken [Eksterne Instrument Integrasie](/l/af/user-guide/workflows/external-tool-integration).
+

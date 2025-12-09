@@ -22,7 +22,7 @@ export function generateFrontConfig(): void {
     </script>
     <!-- END: Twenty Config -->`;
 
-  const distPath = path.join(__dirname, '../..', 'front');
+  const distPath = path.join(__dirname, '..', 'front');
   const indexPath = path.join(distPath, 'index.html');
 
   try {

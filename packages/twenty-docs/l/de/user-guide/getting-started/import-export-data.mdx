@@ -1,0 +1,103 @@
+---
+title: Daten importieren/exportieren
+info: "Lernen Sie, wie Sie Daten importieren und exportieren können."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Entdecken Sie Twenty, ein Open-Source-CRM.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Daten importieren
+
+- Sie können Daten für jedes Objekt mit einer .csv-, .xlsx- oder .xls-Datei importieren.
+- Each of the files you upload needs to contain **only one type of object** (for example, only People records).
+- Sie können den Import verwenden, um **Datensätze zu erstellen oder zu aktualisieren**.
+
+### Download a sample file to match the expected formatting
+
+1. Gehen Sie zu einer Ansicht mit dem Objekt, das Sie importieren möchten.
+2. Klicken Sie oben rechts auf das `⋮`-Symbol und wählen Sie dann `Datensätze importieren` aus.
+3. Click on `Download sample file`.
+
+### Bereiten Sie Ihr CSV vor
+
+Unten sind einige Punkte aufgeführt, die Sie vor dem Hochladen Ihrer Datei überprüfen sollten.
+
+- Beschränken Sie die Anzahl der Datensätze auf **10.000 pro Datei**.
+- **Entfernen Sie Duplikate** aus Ihrer Datei.
+  - The unicity on `People` is set by default by the `id` and the `email`. You also have the ability to define custom fields from `People` as unique when configuring your data model.
+  - Die Einzigartigkeit bei `Unternehmen` wird standardmäßig durch die `ID` und die `Domain` festgelegt. Sie haben auch die Möglichkeit, benutzerdefinierte Felder von `Unternehmen` als eindeutig zu definieren, wenn Sie Ihr Datenmodell konfigurieren.
+  - Für jedes andere Objekt, einschließlich benutzerdefinierter Objekte, können Sie einige Felder als eindeutig definieren. Stellen Sie sicher, dass beim Vorbereiten Ihrer Dateien keine Duplikate enthalten sind.
+- Wir empfehlen die Syntax `https://domain.com` zu verwenden, wenn Sie Ihre Domains hochladen, da diese von unserem Connector mit Ihrem Postfach und Kalender verwendet wird.
+- Sie können **die Beziehungen zwischen Objekten importieren**, indem Sie eines der eindeutigen Felder des zugehörigen Datensatzes bereitstellen.
+  - Beispiel: Sie möchten eine Person einem Unternehmen zuordnen. Add a column in the file containing all the `People` records that contains the `id` of the company -- or its `domain`. Sie können dieses Feld während des Uploads zuordnen.
+    <Warning>
+
+**Wichtiger Hinweis:**
+
+- Beziehungen zwischen Objekten in Twenty sind "Eins zu Viele". Das bedeutet, dass jeder Datensatz des Objekts A an mehrere Datensätze des Objekts B angehängt werden kann. Aber jeder Datensatz des Objekts B kann nur zu einem Datensatz des Objekts A gehören. _Zum Beispiel kann ein Unternehmen mehreren Personen zugeordnet werden. Und eine Person kann nur einem Unternehmen zugehören._
+
+- Um Beziehungen über die Importfunktion hochzuladen, müssen Sie die `ID` (oder ein anderes eindeutiges Feld) des angehängten Objekts in der Datei bereitstellen, die die Datensätze auf der "Viele-Seite" der Beziehung enthält.  
+  _Zum Beispiel geben Sie die `ID` oder `Domain` des Unternehmens an, wenn Sie Personen-Datensätze hochladen. Sie geben die `ID` (oder `E-Mail`) der Personen nicht an, wenn Sie die Datei mit Unternehmen hochladen._ </Warning>
+  </Warning>
+
+### Datei hochladen
+
+1. Gehen Sie zu einer Ansicht mit dem Objekt, das Sie importieren möchten.
+2. Klicken Sie oben rechts auf das `⋮`-Symbol und wählen Sie dann `Datensätze importieren` aus.
+3. Klicken Sie auf `Datei auswählen`.
+4. Validieren Sie die Zuordnung der Felder.
+
+- You don't have to import all of them, you can choose the "Do not map" option.
+- Für Beziehungen wird empfohlen, nur eines der einzigartigen Felder zuzuordnen.
+- Möglicherweise müssen Sie auch die Werte Ihrer Auswahl- und Mehrfachauswahlfelder zuordnen.
+
+5. Click on `Next Steps` and `Review the rows with errors`. Zellen mit einem Problem werden hervorgehoben. **Sie können entweder die Zeile entfernen oder die Zelle direkt von dort aus aktualisieren**.
+6. Wenn Sie fertig sind, klicken Sie auf `Bestätigen`.
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### Import-FAQ
+
+<details><summary>Ich sehe Duplikatprobleme beim Hochladen meiner Datei, was soll ich tun?</summary>
+
+Bitte beziehen Sie sich in diesem Artikel auf den Abschnitt **Bereiten Sie Ihr CSV vor**, der Richtlinien dazu enthält, was als Duplikat angesehen wird.
+
+</details>
+
+<details><summary>Kann ich Beziehungen zwischen Objekten importieren?</summary>
+
+Ja, bitte beziehen Sie sich auf den Abschnitt **Bereiten Sie Ihr CSV vor** oben in diesem Artikel, der einen Abschnitt über den Import von Beziehungen enthält.
+
+</details>
+
+<details><summary>Kann ich bestehende Datensätze mit der Importfunktion aktualisieren?</summary>
+
+Ja, Sie können bestehende Datensätze mit der Importfunktion aktualisieren. Stellen Sie sicher, dass Sie die ID (oder ein anderes eindeutiges Feld) angeben, wenn Sie Ihre Datensätze erneut hochladen.
+
+</details>
+
+<details><summary>Kann ich die `ID` aus meinen anderen Werkzeug(en) migrieren?</summary>
+
+Ja. Sie müssen ein Feld erstellen, das Sie in Ihrem Datenmodell als eindeutig definieren, das die `ID` aus Ihren anderen Werkzeug(en) enthält. Bitte beachten Sie, dass der Name `ID` geschützt ist, da er für die Twenty-ID verwendet wird.  
+Wenn Sie Beziehungen zwischen Objekten mit diesem Feld erstellen möchten, beachten Sie den Abschnitt **Bereiten Sie Ihr CSV vor** oben in diesem Artikel. Es enthält einen Abschnitt über den Import von Beziehungen.
+
+</details>
+
+## Daten exportieren
+
+Sie können Daten aus den meisten Ihrer Objekte und bis zu 20.000 Datensätze pro Export herunterladen.
+Um Daten aus einem Objekt zu exportieren:
+
+1. Besuchen Sie den Objektindex.
+2. Wählen Sie die Ansicht für den Datenexport aus. Konfigurieren Sie die Spalten, die Sie herunterladen möchten, indem Sie Spalten ausblenden oder hinzufügen und die benötigten Datensätze durch Filtern Ihrer Ansicht finden.
+3. Access the side panel through the `⋮` icon on the top right.
+4. Klicken Sie auf `Ansicht exportieren`.
+5. Wählen Sie den Speicherort für die CSV-Daten aus. Beachten Sie, dass der Export bei einer großen Anzahl von Datensätzen Zeit in Anspruch nehmen kann.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

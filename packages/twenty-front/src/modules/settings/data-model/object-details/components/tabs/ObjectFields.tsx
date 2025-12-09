@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -9,7 +10,8 @@ import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { useRecoilValue } from 'recoil';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -22,8 +24,11 @@ type ObjectFieldsProps = {
 };
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
-  const readonly = isObjectMetadataReadOnly({
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
   });
 
   const { t } = useLingui();

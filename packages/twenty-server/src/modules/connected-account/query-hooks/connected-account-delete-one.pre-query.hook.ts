@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -9,18 +9,19 @@ import { type DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`connectedAccount.destroyOne`)
 export class ConnectedAccountDeleteOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -38,7 +39,8 @@ export class ConnectedAccountDeleteOnePreQueryHook
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspace.id,
         'messageChannel',
       );
 
@@ -46,18 +48,23 @@ export class ConnectedAccountDeleteOnePreQueryHook
       connectedAccountId,
     });
 
-    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
-      where: {
-        nameSingular: 'messageChannel',
-        workspaceId: workspace.id,
-      },
-    });
+    const objectMetadataEntity =
+      await this.objectMetadataRepository.findOneOrFail({
+        where: {
+          nameSingular: 'messageChannel',
+          workspaceId: workspace.id,
+        },
+        relations: ['fields', 'indexMetadatas', 'views'],
+      });
+
+    const flatObjectMetadata =
+      fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataEntity);
 
     // TODO: handle cascade events for delete
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'messageChannel',
       action: DatabaseEventAction.DESTROYED,
-      objectMetadata,
+      objectMetadata: flatObjectMetadata,
       events: messageChannels.map((messageChannel) => ({
         recordId: messageChannel.id,
         properties: {

@@ -1,0 +1,168 @@
+---
+title: 链接
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## 联系链接
+
+用于显示联系信息的样式化链接组件。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 类型                | 描述            |
+| ---- | ----------------- | ------------- |
+| 类名   | 字符串               | 用于附加样式的可选名称   |
+| href | 字符串               | 链接的目标网址或路径    |
+| 點擊   | function          | 链接被点击时触发的回调函数 |
+| 子元素  | `React.ReactNode` | 在链接中显示的内容     |
+
+</Tab>
+
+</Tabs>
+
+## 原始链接
+
+用于显示链接的风格化链接组件。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 类型                | 描述            |
+| ---- | ----------------- | ------------- |
+| 类名   | 字符串               | 用于附加样式的可选名称   |
+| href | 字符串               | 链接的目标网址或路径    |
+| 點擊   | function          | 链接被点击时触发的回调函数 |
+| 子元素  | `React.ReactNode` | 在链接中显示的内容     |
+
+</Tab>
+</Tabs>
+
+## 圆形链接
+
+以 Chip 组件风格显示的圆形链接。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 屬性   | 类型                | 描述            |
+| ---- | ----------------- | ------------- |
+| href | 字符串               | 链接的目标网址或路径    |
+| 子元素  | `React.ReactNode` | 在链接中显示的内容     |
+| 點擊   | function          | 链接被点击时触发的回调函数 |
+
+</Tab>
+</Tabs>
+
+## 社交链接
+
+风格化的社交链接，支持各种社交链接类型，如网址、LinkedIn 和 X（或 Twitter）。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 类型                | 描述                                                                                                                                                                                                                                                                                                                  |
+| ---- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| href | 字符串               | 链接的目标网址或路径                                                                                                                                                                                                                                                                                                          |
+| 子元素  | `React.ReactNode` | 在链接中显示的内容                                                                                                                                                                                                                                                                                                           |
+| 类型   | 字符串               | 社交連結的類型。 社交連結的類型。 選項包括：`url`、`LinkedIn`和`Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` 社交链接的类型。 选项包括：`url`、`LinkedIn` 和 `Twitter` |
+| 點擊   | function          | 链接被点击时触发的回调函数                                                                                                                                                                                                                                                                                                       |
+
+</Tab>
+</Tabs>

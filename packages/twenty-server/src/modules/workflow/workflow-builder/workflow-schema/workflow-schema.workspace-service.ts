@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
@@ -11,9 +12,11 @@ import {
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
+import { Repository } from 'typeorm';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -42,6 +45,8 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    @InjectRepository(AgentEntity)
+    private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 
   async computeStepOutputSchema({
@@ -122,6 +127,39 @@ export class WorkflowSchemaWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.AI_AGENT: {
+        const agentId = step.settings.input.agentId;
+
+        if (!isDefined(agentId) || agentId === '') {
+          return {};
+        }
+
+        const agent = await this.agentRepository.findOne({
+          where: { id: agentId, workspaceId },
+        });
+
+        if (
+          !isDefined(agent) ||
+          agent.responseFormat?.type !== 'json' ||
+          !isDefined(agent.responseFormat.schema)
+        ) {
+          return {};
+        }
+
+        return Object.fromEntries(
+          Object.entries(agent.responseFormat.schema.properties).map(
+            ([key, field]) => [
+              key,
+              {
+                isLeaf: true,
+                type: field.type,
+                label: field.description || key,
+                value: null,
+              },
+            ],
+          ),
+        ) as OutputSchema;
+      }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
         return {};
@@ -139,13 +177,12 @@ export class WorkflowSchemaWorkspaceService {
   }): Promise<WorkflowAction> {
     // We don't enrich on the fly for code and HTTP request workflow actions.
     // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests and AI agent, OutputSchema is determined by the example response input
+    // For HTTP requests, OutputSchema is determined by the example response input
+    // AI agent OutputSchema is enriched from agent's responseFormat
     if (
-      [
-        WorkflowActionType.CODE,
-        WorkflowActionType.HTTP_REQUEST,
-        WorkflowActionType.AI_AGENT,
-      ].includes(step.type)
+      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
+        step.type,
+      )
     ) {
       return step;
     }
@@ -179,7 +216,7 @@ export class WorkflowSchemaWorkspaceService {
     }
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         nameSingular,
         workspaceId,
       );
@@ -204,14 +241,14 @@ export class WorkflowSchemaWorkspaceService {
     });
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
 
     const first: Node = {
       isLeaf: false,
-      label: `First ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular ?? 'Record'}`,
+      label: `First ${objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record'}`,
       icon: 'IconAlpha',
       type: 'object',
       value: recordOutputSchema,
@@ -219,7 +256,7 @@ export class WorkflowSchemaWorkspaceService {
 
     const all: Leaf = {
       isLeaf: true,
-      label: `All ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural ?? 'Records'}`,
+      label: `All ${objectMetadataInfo.flatObjectMetadata.labelPlural ?? 'Records'}`,
       type: 'array',
       icon: 'IconListDetails',
       value: 'Returns an array of records',
@@ -246,7 +283,7 @@ export class WorkflowSchemaWorkspaceService {
     maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
@@ -265,14 +302,18 @@ export class WorkflowSchemaWorkspaceService {
     formFieldMetadataItems: FormFieldMetadata[];
     workspaceId: string;
   }): Promise<OutputSchema> {
-    const objectMetadataMaps =
-      await this.workflowCommonWorkspaceService.getObjectMetadataMaps(
-        workspaceId,
-      );
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } =
+      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
 
     return generateFakeFormResponse({
       formFieldMetadataItems,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
     });
   }
 
@@ -300,20 +341,18 @@ export class WorkflowSchemaWorkspaceService {
 
     if (availability.type === 'BULK_RECORDS') {
       const objectMetadataInfo =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
           availability.objectNameSingular,
           workspaceId,
         );
 
       return {
-        [objectMetadataInfo.objectMetadataItemWithFieldsMaps.namePlural]: {
-          label:
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
+        [objectMetadataInfo.flatObjectMetadata.namePlural]: {
+          label: objectMetadataInfo.flatObjectMetadata.labelPlural,
           isLeaf: true,
           type: 'array',
           value:
-            'Array of ' +
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
+            'Array of ' + objectMetadataInfo.flatObjectMetadata.labelPlural,
         },
       };
     }
@@ -380,7 +419,7 @@ export class WorkflowSchemaWorkspaceService {
         case WorkflowTriggerType.MANUAL: {
           if (trigger.settings.availability?.type === 'BULK_RECORDS') {
             const objectMetadataInfo =
-              await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+              await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
                 trigger.settings.availability.objectNameSingular,
                 workspaceId,
               );
@@ -388,8 +427,7 @@ export class WorkflowSchemaWorkspaceService {
             return {
               label:
                 'Current Item (' +
-                objectMetadataInfo.objectMetadataItemWithFieldsMaps
-                  .labelSingular +
+                objectMetadataInfo.flatObjectMetadata.labelSingular +
                 ')',
               isLeaf: false,
               type: 'object',
@@ -431,7 +469,7 @@ export class WorkflowSchemaWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.FIND_RECORDS: {
         const objectMetadataInfo =
-          await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
             step.settings.input.objectName,
             workspaceId,
           );
@@ -439,7 +477,7 @@ export class WorkflowSchemaWorkspaceService {
         return {
           label:
             'Current Item (' +
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular +
+            objectMetadataInfo.flatObjectMetadata.labelSingular +
             ')',
           isLeaf: false,
           type: 'object',

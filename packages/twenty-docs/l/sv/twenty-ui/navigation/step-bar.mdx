@@ -1,0 +1,38 @@
+---
+title: Steglist
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Visar framsteg genom en sekvens av numrerade steg genom att markera det aktiva steget. Den renderar en behållare med steg, där varje steg representeras av `Steg`-komponenten.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaper | Typ    | Beskrivning                                                                                                                               |
+| ---------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| aktivtSteg | nummer | Indexet för det för närvarande aktiva steget. Detta bestämmer vilket steg som ska vara visuellt markerat. |
+
+</Tab>
+</Tabs>

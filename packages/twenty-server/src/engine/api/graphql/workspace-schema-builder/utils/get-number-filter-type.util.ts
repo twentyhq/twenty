@@ -1,6 +1,5 @@
 import { type GraphQLInputObjectType } from 'graphql';
-
-import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { NumberDataType } from 'twenty-shared/types';
 
 import {
   BigIntFilterType,

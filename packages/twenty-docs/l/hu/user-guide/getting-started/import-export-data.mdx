@@ -1,0 +1,103 @@
+---
+title: Adat importálása/exportálása
+info: "Ismerje meg az adatok importálását és exportálását."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Fedezd fel a Twenty-t, egy nyílt forráskódú CRM-et.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Adat importálása
+
+- Bármely objektumhoz importálhat adatokat .csv, .xlsx vagy .xls fájl használatával.
+- Az Ön által feltöltött fájloknak **csak egy típusú objektumot** kell tartalmazniuk (például csak emberek rekordjait).
+- Az Importálást a rekordok **létrehozására vagy frissítésére** használhatja.
+
+### Töltse le a mintafájlt a várt formátum követéséhez.
+
+1. Lépjen arra a nézetre, amely az importálandó objektumot tartalmazza.
+2. Kattintson a jobb felső sarokban található `⋮` ikonra, majd válassza ki az `Rekordok importálása` opciót.
+3. Kattintson a `Mintafájl letöltése` opcióra.
+
+### Prepare your csv
+
+Íme néhány szempont, amire figyelnie kell, mielőtt feltöltené a fájlját.
+
+- Korlátozza a rekordok számát **10,000 fájlonként**.
+- **Távolítsa el a duplikátumokat** a fájljából.
+  - A `People` esetében az alapértelmezett egyediség a `id` és az `email` határozza meg. Ön is meghatározhat egyedi mezőket a `People` esetében, amikor az adatszerkezetét konfigurálja.
+  - A `Companies` esetében az alapértelmezett egyediség a `id` és a `domain` határozza meg. Ön is meghatározhat egyedi mezőket a `Companies` esetében, amikor az adatszerkezetét konfigurálja.
+  - Bármely más objektum esetében, beleértve az egyedi objektumokat is, megadhatja, hogy egyes mezők egyediek legyenek. Ügyeljen arra, hogy ne legyenek duplikációk a fájlok előkészítése során.
+- Javasoljuk, hogy a `https://domain.com` szintaxist használja, amikor a domaineket tölti fel, mivel ezt használja a csatlakozó a postafiókjával és a naptárával.
+- Az objektumok közötti **kapcsolatok importálása** lehetőséget nyújt egy azonosító mező megadásával a kapcsolódó rekordból.
+  - Példa: Csatolni szeretne egy személyt egy vállalathoz. Adjon hozzá egy oszlopot a fájlhoz, amely az összes `People` rekordot tartalmazza, és amely a vállalat `id`-ját vagy `domain`-jét tartalmazza. Az importálás során képes lesz ezt a mezőt feltérképezni.
+    <Warning>
+
+**Fontos megjegyzés:**
+
+- A kapcsolatok a Twenty-ben "Egy-többhöz" jellegűek. Ez azt jelenti, hogy az A objektum minden rekordját több B objektum rekordjához csatolhatja, de a B objektum minden rekordja csak egy A objektum rekordjához tartozhat. Például egy vállalat több személyhez csatolható. És egy személy csak egy vállalathoz tartozhat.
+
+- A kapcsolatok feltöltése az Importálás funkcióval: meg kell adnia a "Több oldal" kapcsolatokkal rendelkező rekordok fájljában található társított objektum `id`-ját (vagy bármely más egyedi mezőt).  
+  Például, adja meg a vállalat `id`-ját vagy `domain`-jét, amikor emberek rekordjait tölti fel. Ne adja meg a személyek `id`-ját (vagy `email`-jét), amikor vállalatokkal rendelkező fájlt tölt fel.
+  </Warning>
+
+### Fájl feltöltése
+
+1. Lépjen arra a nézetre, amely az importálandó objektumot tartalmazza.
+2. Kattintson a jobb felső sarokban található `⋮` ikonra, majd válassza ki az `Rekordok importálása` opciót.
+3. Kattintson a `Fájl kiválasztása` opcióra.
+4. Érvényesítse a mezők feltérképezését.
+
+- Nem szükséges mindet importálnia, választhatja a "Ne térképezze" opciót is.
+- Kapcsolatok esetén ajánlott csak az egyik egyedi mezőt feltérképezni.
+- Lehet, hogy a választási és több választási típus mezők értékeit is fel kell térképeznie.
+
+5. Kattintson a következő lépésekre és ellenőrizze a hibával rendelkező sorokat. A hibás cellák ki vannak emelve. **Törölheti a sort, vagy közvetlenül onnan frissítheti a cellát**.
+6. Ha kész, kattintson a `Megerősítés` gombra.
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### Importálási GYIK
+
+<details><summary>Duplikált problémákat látok fájlom feltöltésekor, mit tegyek?</summary>
+
+Please refer to the section **Prepare your csv** above in this article, it contains guideline about what will be considered a duplicate.
+
+</details>
+
+<details><summary>Képes vagyok importálni az objektumok közötti kapcsolatokat?</summary>
+
+Yes, please refer to the section **Prepare your csv** above in this article, it contains a section about the import of relations.
+
+</details>
+
+<details><summary>Képes vagyok meglévő rekordok frissítésére az Importálás funkcióval?</summary>
+
+Igen, az Importálás funkcióval frissítheti a meglévő rekordokat. Győződjön meg róla, hogy megadja az id-t (vagy bármely más egyedi mezőt) a rekordok újrafeltöltésekor.
+
+</details>
+
+<details><summary>Migrálhatom az `id` mezőt más eszközeimről?</summary>
+
+Igen. Olyan mezőt kell létrehoznia, amelyet egyedinek határoz meg az adatszerkezetében, amely tartalmazza az `id`-t más eszközeiről. Please note that the name `id` is protected as it is used for the Twenty id.  
+Ha kapcsolatokat szeretne létrehozni objektumok között ezen a mezőn keresztül, tekintse meg a cikk fentebb található **Csv készítése** részét. Ez tartalmazza a kapcsolatok importálásának részét.
+
+</details>
+
+## Adatok Exportálása
+
+Többnyire az objektumai adatait töltheti le, akár 20,000 rekordot exportálásonként.
+Íme, hogyan exportálhat adatokat egy objektumból:
+
+1. Látogassa meg az objektumindexet.
+2. Válassza ki a nézetet az adatexportáláshoz. Állítsa be a letöltendő oszlopokat úgy, hogy oszlopokat rejt, vagy hozzáad, és szűrje a nézetet a szükséges rekordok megtalálásához.
+3. Hozzon hozzáférést az oldalsó panelhez a jobb felső sarokban lévő `⋮` ikonon keresztül.
+4. Kattintson az `Export nézet` opcióra.
+5. Válassza ki, hová szeretné menteni a CSV adatokat. Vegye figyelembe, hogy az exportálás időt vehet igénybe nagyobb mennyiségű rekord esetén.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

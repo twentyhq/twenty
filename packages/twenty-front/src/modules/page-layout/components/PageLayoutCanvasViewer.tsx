@@ -1,7 +1,7 @@
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledCanvasContainer = styled.div`
   display: grid;
@@ -23,11 +23,7 @@ export const PageLayoutCanvasViewer = ({
 
   return (
     <StyledCanvasContainer>
-      <WidgetRenderer
-        widget={widget}
-        pageLayoutType={PageLayoutType.RECORD_PAGE}
-        layoutMode="canvas"
-      />
+      <WidgetRenderer widget={widget} />
     </StyledCanvasContainer>
   );
 };

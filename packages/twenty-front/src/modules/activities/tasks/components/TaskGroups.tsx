@@ -10,6 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -86,7 +87,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
         {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
-            title="New task"
+            title={t`New task`}
             variant="secondary"
             onClick={() =>
               openCreateActivity({

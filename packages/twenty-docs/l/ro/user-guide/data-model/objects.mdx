@@ -1,0 +1,60 @@
+---
+title: Obiecte
+info: "Învață despre obiectele standard și cum să creezi unele personalizate pentru nevoile afacerii tale."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Model de date flexibil proiectat pentru a susține procesele unice ale afacerii tale
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standard Objects
+
+Obiectele standard sunt entități predefinite în spațiul tău de lucru care te ajută să începi. Fac parte dintr-un model de date comun accesibil tuturor utilizatorilor Twenty. Le poți folosi așa cum sunt, le poți personaliza sau le poți dezactiva.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Persoane
+
+Obiectul `People` stochează contactele tale. Include detalii de contact și istoricul interacțiunilor, astfel încât să poți vedea toate interacțiunile cu clienții într-un singur loc.
+
+### Companie
+
+Obiectul `Companies` stochează conturile tale de afaceri. Include detalii precum industria, dimensiunea și locația. Companiile se conectează la obiectele `People` și `Opportunities`.
+
+### Oportunități
+
+Obiectul `Opportunities` stochează datele legate de afaceri. Urmărește progresia posibilelor vânzări, de la prospectare la încheiere, înregistrând etapele, dimensiunile tranzacțiilor, contul asociat și data anticipată de închidere. Poți vizualiza fluxul de vânzări într-un layout kanban.
+
+## Obiecte personalizate
+
+Obiectele personalizate îți permit să stochezi informații specifice organizației tale și pe care obiectele standard nu le pot gestiona. De exemplu, dacă ești SpaceX, poți dori să creezi un obiect personalizat pentru Rachete și Lansări.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Crearea unui obiect personalizat nou
+
+Pentru a crea un obiect personalizat nou:
+
+1. Mergi la Setări, în bara laterală din stânga.
+2. Sub Spațiu de lucru, mergi la Model de date. Aici vei putea vedea o prezentare generală a tuturor obiectelor tale Standard și Personalizate (atât active, cât și dezactivate).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Fă clic pe `+ Obiect nou` în partea de sus. Introduceți numele (singular și plural), alegeți o pictogramă, adăugați o descriere pentru obiectul personalizat și apăsați Salvare (în dreptul sus). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+<Warning>
+Numele singular și plural trebuie să fie diferite. Acest lucru este necesar pentru ca API-ul nostru GraphQL să funcționeze corect.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Odată ce ai creat obiectul personalizat, vei putea să-l gestionezi. Poți edita numele, pictograma și descrierea, vizualiza câmpurile diferite și să adaugi mai multe câmpuri.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Notă:** Dacă nu ești sigur(ă) dacă este necesar un nou obiect sau câmp, verifică [acest articol](/l/ro/user-guide/data-model/customize-your-data-model) pentru sfaturi despre proiectarea modelului tău de date.
+

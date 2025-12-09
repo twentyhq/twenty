@@ -27,11 +27,11 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 const restApiCoreResolvers = [
   RestApiCreateOneHandler,
@@ -61,12 +61,12 @@ const restApiCoreResolvers = [
     HttpModule,
     TwentyORMModule,
     RecordTransformerModule,
-    WorkspacePermissionsCacheModule,
-    WorkspaceMetadataCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ActorModule,
     FeatureFlagModule,
     CoreCommonApiModule,
     WorkspaceDomainsModule,
+    WorkspaceCacheModule,
   ],
   controllers: [RestApiCoreController],
   providers: [

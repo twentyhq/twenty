@@ -1,0 +1,86 @@
+---
+title: Konfigurálja a munkafelületét
+info: "Kezdje el konfigurálni a munkafelületét ezzel a három lépéssel."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Fedezd fel a Twenty-t, egy nyílt forráskódú CRM-et.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Minden vállalkozás másképp működik. Ezért a Twenty lehetővé teszi, hogy a CRM-et az Ön igényeihez igazítsa, és ne a mi folyamatainkat erőltesse rá.
+**Kezdje ezzel a három lépéssel saját igényei szerint.**
+
+**Gyors Győzelem**: Kezdje azzal, hogy csatlakoztatja postafiókját és testreszabja az adatmodellt néhány kulcsfontosságú mezővel. Ez azonnali értéket biztosít Önnek, és segíti csapatát abban, hogy valós adatokkal lássa a Twenty-t működés közben. Ezt megteheti a Beállítások → Fiókok menüpontban.
+
+## 1. Testreszabhatja az adatmodelljét
+
+A Twenty rugalmas megoldást kínál, amely lehetővé teszi, hogy olyan adatmodellt alakítson ki, amely legjobban támogatja mindennapi munkáját.
+Hozzon létre bármilyen típusú objektumokat és mezőket, beleértve a különböző objektumok közötti kapcsolatokat is. Ezt megteheti a Beállítások → Adatmodell menüpontban.
+Íme néhány tipp:
+
+- **Nincs korlátozva az egyedi mezők vagy egyedi objektumok száma**. Egyedi objektumok és mezők hozzáadása nem jár a csomagszint emelésével.
+- **A Személyek, Cégek és Lehetőségek a három objektum, ahonnan hozzáférhet az e-mailekhez és a naptárból szinkronizált találkozókhoz**. Javasoljuk, hogy ezek használatát maximalizálja, szükség esetén mezőket adjon hozzá a rekordok kategorizálásához. Íme egy példa:
+  - It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Mert nem tudná elérni az e-mailjeit, amelyeket ezzel a személlyel váltott a Partner rekordokból.
+  - Hozzon létre különböző nézeteket a Személyek alatt, egyet a partnerek és egyet a kilátások megjelenítésére.
+- Két Személy nem rendelkezhet ugyanazzal az e-mail címmel. Két Cég nem rendelkezhet ugyanazzal a domain-nel.
+- Deaktiválhatja azokat a standard mezőket és objektumokat, amelyeket nem kíván használni.
+- Elrejtheti a mezőket a nézetekben: ne féljen mezőket létrehozni, nem kell mindet megjelenítenie.
+
+Olvassa el [ezt a cikket](https://docs.twenty.com/l/hu/user-guide/data-model/customize-your-data-model) hogy megtanulja, hogyan tervezze meg adatmodelljét.
+
+## 2. Hozza be az adatait
+
+Az adatok bevitele a Twenty-be azonnali kontextust biztosít csapata számára.
+
+### Csatlakoztassa postafiókját
+
+Ha ezt nem tette meg a munkaterület létrehozásakor, csatlakoztassa **Google vagy Microsoft fiókját** a Beállítások → Fiókok menüpontban. Ez lehetővé teszi a Twenty számára, hogy:
+
+- Importálja az üzeneteket és találkozókat
+- Automatikusan létrehozhat kapcsolatokat az interakciók alapján (opcionális)
+- Tartsa láthatóan a kommunikációs történetet csapata számára
+
+**Egy másik szolgáltatót használ?**
+SMTP-n keresztül hozzáadhat egy másik postafiókot, vagy CalDAV segítségével egy másik naptárat. Aktiválnia kell a funkciót a Beállítások → Kiadások → Lab menüpontban, majd térjen vissza a Beállítások → Fiókok fülre.
+
+### Adatimportálás CSV formátumban
+
+A Parancs menüt (`Cmd + K` vagy `Ctrl + K`) használva CSV-n keresztül importálhatja a Személyeket, Cégeket, Lehetőségeket vagy bármely egyedi objektumot.
+
+**Kulcsfontosságú útmutatások**:
+
+- Töltse le a mintafájlt a várt formátum megértéséhez
+- Korlátozza minden fájlt 10k rekordra
+- Távolítsa el a duplikált e-maileket a Személyek vagy a duplikált domainek a Cégek esetében
+- Nézze át és javítsa ki a hibákat (sárgával kiemelve) importálás előtt
+
+Olvassa el [ezt a cikket](/l/hu/user-guide/getting-started/import-export-data) hogy többet megtudjon az adatimportálásról.
+
+## 3. Hozza létre az első nézetét
+
+Különböző nézetek létrehozása kulcsfontosságú ahhoz, hogy az adatok felhasználhatóvá váljanak csapata számára.
+Így folytassa:
+
+- **Add or hide columns**
+  Manage the fields visible in a given view clicking on Options → Fields (from the top right). Innen tudja megjeleníteni/elrejteni a mezőket.
+
+- **Reorder fields**
+  Reorder the fields from a given view clicking on Options → Fields (from the top right). Húzza és dobja el a mezőket az átrendezéshez.
+
+- **Nézet szűrése**
+  Szűkítse le a megjelenítendő rekordokat a jobb felső sarokban található Szűrők segítségével.
+
+- **Rekordok rendezése**
+  Rendezze a megadott rekordokat a Rendezés funkcióval a jobb felső sarokban, vagy kattintson közvetlenül az oszlop nevére.
+
+- **Choose the layout**
+  You can switch to a **Kanban layout** or a list **Group By** layout, as long as the object has a `Stage` or similar select-type field.
+
+- **Mentse kedvencként a nézetét**
+  Ezt a különböző nézeteket megjelenítő legördülő menüből teheti meg.
+
+## Mi a következő lépés?
+
+Kezdje meg az automatizálások létrehozását munkafolyamatok segítségével [workflows](https://docs.twenty.com/l/hu/user-guide/workflows/getting-started-workflows).

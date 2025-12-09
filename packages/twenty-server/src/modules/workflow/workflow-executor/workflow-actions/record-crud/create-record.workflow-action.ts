@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -9,11 +10,6 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import {
-  type ActorMetadata,
-  FieldActorSource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -25,7 +21,6 @@ import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workf
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly createRecordService: CreateRecordService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
@@ -40,14 +35,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       stepId: currentStepId,
     });
 
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new RecordCrudException(
-        'Failed to create: Workspace ID is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const { workspaceId } = runInfo;
 
     const workflowActionInput = resolveInput(
       step.settings.input,

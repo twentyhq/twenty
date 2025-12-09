@@ -1,0 +1,157 @@
+name: 'Pull docs translations from Crowdin'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '0 */2 * * *' # Every two hours
+  workflow_dispatch:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of status'
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      force_pull:
+        description: 'Force pull translations regardless of status'
+        required: false
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - 'packages/twenty-docs/**'
+      - 'crowdin.yml'
+      - '.github/workflows/docs-i18n-pull.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  pull_docs_translations:
+    name: Pull docs translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Setup i18n branch
+        if: github.event_name != 'pull_request'
+        run: |
+          git fetch origin i18n || true
+          git checkout -B i18n origin/i18n || git checkout -b i18n
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+
+      - name: Stash any changes before pulling translations
+        if: github.event_name != 'pull_request'
+        run: |
+          git add .
+          git stash || true
+
+      - name: Pull translated docs from Crowdin
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          source: 'packages/twenty-docs/**/*.mdx'
+          translation: 'packages/twenty-docs/l/%two_letters_code%/**/%original_file_name%'
+          export_only_approved: false
+          localization_branch_name: i18n
+          base_url: 'https://twenty.api.crowdin.com'
+          skip_untranslated_files: true
+          push_translations: false
+          create_pull_request: false
+          skip_ref_checkout: true
+          dryrun_action: false
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CROWDIN_PROJECT_ID: '1'
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Fix file permissions
+        if: github.event_name != 'pull_request'
+        run: sudo chown -R runner:docker . || true
+
+      - name: Fix translated documentation links
+        run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+
+      - name: Regenerate navigation template
+        if: github.event_name == 'pull_request'
+        run: yarn docs:generate-navigation-template
+
+      - name: Regenerate docs.json
+        run: yarn docs:generate
+
+      - name: Commit artifacts to pull request branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json
+          if git diff --staged --quiet --exit-code; then
+            echo "No navigation/doc changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: sync docs artifacts"
+          git push origin "HEAD:$HEAD_REF"
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+
+      - name: Check for changes and commit
+        if: github.event_name != 'pull_request'
+        id: check_changes
+        run: |
+          git add .
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: update docs translations from Crowdin and fix internal links"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        run: git push origin HEAD:i18n
+
+      - name: Create pull request
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        run: |
+          if git diff --name-only origin/main..HEAD | grep -q .; then
+            gh pr create -B main -H i18n --title 'i18n - docs translations' --body 'Created by Github action' || true
+          else
+            echo "No file differences between branches, skipping PR creation"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

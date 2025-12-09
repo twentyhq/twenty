@@ -1,5 +1,5 @@
-import { expect, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -15,12 +15,14 @@ import {
 
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { SupportDriver } from '~/generated-metadata/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 
 const meta: Meta<typeof SupportDropdown> = {
   title: 'Modules/Support/SupportDropdown',
   component: SupportDropdown,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const setCurrentUser = useSetRecoilState(currentUserState);
       const setSupportChat = useSetRecoilState(supportChatState);

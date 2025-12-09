@@ -1,0 +1,104 @@
+---
+title: データモデルFAQ
+info: "データモデルの設定、制限、今後の機能に関するよくある質問。"
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: 柔軟なデータモデルは、独自のビジネスプロセスをサポートするよう設計されています
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## オブジェクト管理
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+まだできません。 
+まだできません。 ナビゲーションでのオブジェクトの順序は現在固定されていますが、この機能は将来のリリースで予定されています。
+
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+すべてのアクティブなオブジェクトがナビゲーションに表示されます。 
+すべてのアクティブなオブジェクトがナビゲーションに表示されます。 必須でないオブジェクトは、**設定 → データモデル** から非アクティブ化できます。
+
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## フィールドの機能
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+数式フィールドは**2026年Q1**に提供されます。 
+数式フィールドは**2026年Q1**に提供されます。 その間、自動で計算してフィールド値を更新するワークフローを使用できます。
+
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+ネストされたフィールドは**2026年Q1**に提供されます。 現在、関連オブジェクトからフィールド値を取得するためのワークフローを使用できます。 例えば、人のレコードに会社の業界を表示するには、[People] にカスタムフィールドを作成し、ワークフローを使って値を同期します。
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+
+関連フィールド名はAPIの構造に影響を与えるため、作成後は変更できません。 関連フィールドを改名する必要がある場合は、新しいフィールドを作成して古いフィールドを削除してください。
+ 関連フィールドを改名する必要がある場合は、新しいフィールドを作成して古いフィールドを削除してください。
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+単数形と複数形が同じ場合に制限が発生しますが、開発者の体験を向上させます。 </Accordion> </Accordion>
+
+<Accordion title="Why are some field names protected?">
+
+`Type` や `Application` のようないくつかのフィールド名はシステム用に予約されています。 代わりに`Category`や`Classification`のような代替名を選択してください。
+ 代わりに`Category`や`Classification`のような代替名を選択してください。
+</Accordion>
+</AccordionGroup>
+
+## 高度な機能
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+多対多の関係は**2026年Q1**に提供されます。 現在、中間オブジェクトを作成し、2つの1対多の関係を作成することで代替できます。
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+
+Morph Many関係（**2025年Q4**に提供予定）は、1つのオブジェクトが異なる多くのオブジェクトタイプに関連付けることができます。 例えば、機会は人または会社に関連付けることができます。
+ 例えば、機会は人または会社に関連付けることができます。
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+
+フィールドの並び替えは**2025年Q4**のカスタムレイアウトで利用可能になります。 現在、フィールドはアルファベット順で表示されます。
+ 現在、フィールドはアルファベット順で表示されます。
+</Accordion>
+</AccordionGroup>
+
+## アクセスと権限
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+ワークスペースの管理者にお問い合わせください。 データモデルへのアクセスは通常、管理者に制限されています。
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## さらなるヘルプが必要ですか？
+
+複雑なデータモデル設計の手助けをするために、 [実装サービス](/l/ja/user-guide/getting-started/implementation-services)をご覧ください。
+

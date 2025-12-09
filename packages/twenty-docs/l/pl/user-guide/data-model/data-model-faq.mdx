@@ -1,0 +1,90 @@
+---
+title: Model danych FAQ
+info: "Najczęściej zadawane pytania dotyczące konfiguracji modelu danych, ograniczeń i nadchodzących funkcji."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Elastyczny model danych zaprojektowany tak, aby wspierać unikalne procesy biznesowe
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Zarządzanie obiektami
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Jeszcze nie. Kolejność obiektów w nawigacji jest obecnie stała, ale ta funkcja jest planowana w przyszłych wersjach.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Wszystkie aktywne obiekty są widoczne w nawigacji. Możesz dezaktywować niepotrzebne obiekty w **Ustawienia → Model Danych**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Możliwości pól
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Pola formuły będą dostępne w **I kwartale 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Zagnieżdżone pola będą dostępne w **I kwartale 2026**. Currently, you can use workflows to bring field values from related objects. Na przykład, aby wyświetlić branżę firmy w rekordzie osoby, stwórz niestandardowe pole dla Ludzi i użyj przepływu pracy do synchronizacji wartości.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Nazwy pól relacji wpływają na strukturę API i nie można ich zmienić po utworzeniu. Aby zmienić nazwę pola relacji, należy utworzyć nowe i usunąć stare.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+To tworzy ograniczenia, gdy formy pojedyncze i mnogie są takie same, ale poprawia doświadczenia deweloperów. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Pewne nazwy pól, takie jak `Typ` lub `Aplikacja`, są zarezerwowane do użytku systemowego. Wybierz alternatywne nazwy, takie jak `Kategoria` lub `Klasyfikacja`.
+</Accordion>
+</AccordionGroup>
+
+## Zaawansowane funkcje
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Relacje wiele-do-wielu będą dostępne w **I kwartale 2026**. Obecnie można zastosować obejście, tworząc pośredni obiekt z dwoma relacjami jeden-do-wielu.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Relacje Morph Many pozwalają jednemu obiektowi odnosić się do wielu różnych typów obiektów. Na przykład, szansa może odnosić się zarówno do osoby, jak i firmy. Ta funkcja jest już dostępna.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Zamiana kolejności pól będzie dostępna wraz z niestandardowymi układami w **IV kwartale 2025**. Obecnie pola są wyświetlane w porządku alfabetycznym.
+</Accordion>
+</AccordionGroup>
+
+## Dostęp i uprawnienia
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Skontaktuj się z administratorem swojego miejsca pracy. Dostęp do modelu danych jest zwykle ograniczony tylko do administratorów.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Potrzebujesz więcej pomocy?
+
+Sprawdź nasze [usługi wdrożeniowe](/l/pl/user-guide/getting-started/implementation-services) w celu uzyskania pomocy z projektowaniem złożonych modeli danych.
+

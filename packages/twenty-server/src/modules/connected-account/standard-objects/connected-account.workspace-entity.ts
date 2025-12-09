@@ -1,10 +1,11 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   FieldMetadataType,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -18,13 +19,13 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
+
   namePlural: 'connectedAccounts',
   labelSingular: msg`Connected Account`,
   labelPlural: msg`Connected Accounts`,
@@ -41,7 +42,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The account handle (email, username, phone number, etc.)`,
     icon: 'IconMail',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
@@ -49,6 +51,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`provider`,
     description: msg`The account provider`,
     icon: 'IconSettings',
+    defaultValue: `'${ConnectedAccountProvider.GOOGLE}'`,
   })
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
@@ -59,7 +62,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider access token`,
     icon: 'IconKey',
   })
-  accessToken: string;
+  @WorkspaceIsNullable()
+  accessToken: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
@@ -68,7 +72,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider refresh token`,
     icon: 'IconKey',
   })
-  refreshToken: string;
+  @WorkspaceIsNullable()
+  refreshToken: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
@@ -87,7 +92,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync history ID`,
     icon: 'IconHistory',
   })
-  lastSyncHistoryId: string;
+  @WorkspaceIsNullable()
+  lastSyncHistoryId: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
@@ -106,7 +112,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle Aliases`,
     icon: 'IconMail',
   })
-  handleAliases: string;
+  @WorkspaceIsNullable()
+  handleAliases: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,

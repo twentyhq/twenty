@@ -1,0 +1,23 @@
+{
+  "name": "rollup-engine",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "smoke": "node --import tsx scripts/run-rollup-smoke.ts",
+    "setup:metadata": "node scripts/setup-company-rollup-fields.mjs"
+  },
+  "dependencies": {
+    "twenty-sdk": "0.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.20.6"
+  }
+}

@@ -8,12 +8,8 @@ export type AgentChatContextValue = {
   isLoading: boolean;
   error?: Error;
 
-  input: string;
-  handleInputChange: (value: string) => void;
-
   handleSendMessage: (records?: ObjectRecord[]) => Promise<void>;
 
-  scrollWrapperId: string;
   handleRetry: () => void;
 };
 

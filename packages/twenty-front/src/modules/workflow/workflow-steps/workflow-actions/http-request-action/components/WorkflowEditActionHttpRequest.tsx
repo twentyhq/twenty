@@ -1,11 +1,8 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { HTTP_REQUEST_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/HttpRequestAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -18,8 +15,9 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
   JSON_RESPONSE_PLACEHOLDER,
@@ -90,17 +88,12 @@ export const WorkflowEditActionHttpRequest = ({
   action,
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: HTTP_REQUEST_ACTION.defaultLabel,
-    });
 
   const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
     action,
@@ -140,20 +133,6 @@ export const WorkflowEditActionHttpRequest = ({
         tabs={tabs}
         behaveAsLinks={false}
         componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
-      />
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-          actionOptions.onActionUpdate?.({ ...action, name: newName });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-        iconTooltip={HTTP_REQUEST_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
@@ -229,7 +208,7 @@ export const WorkflowEditActionHttpRequest = ({
             activeTabId === WorkflowHttpRequestTabId.TEST
               ? [
                   <CmdEnterActionButton
-                    title="Test"
+                    title={t`Test`}
                     onClick={handleTestRequest}
                     disabled={isTesting}
                   />,

@@ -1,0 +1,56 @@
+---
+title: Pictogram Kiezer
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Een vervolgkeuzelijst-gebaseerde pictogramkiezer waarmee gebruikers een pictogram uit een lijst kunnen selecteren.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props                         | Soort      | Beschrijving                                                                                                                                                           |
+| ----------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| uitgeschakeld                 | booleaan   | Schakelt de pictogramkiezer uit als ingesteld op `true`                                                                                                                |
+| onChange                      | functie    | De callback-functie die wordt geactiveerd wanneer de gebruiker een pictogram selecteert. Het ontvangt een object met `iconKey` en `Icon` eigenschappen |
+| geselecteerdePictogramSleutel | tekenreeks | De sleutel van het oorspronkelijk geselecteerde pictogram                                                                                                              |
+| onClickOutside                | functie    | Callback-functie die wordt geactiveerd wanneer de gebruiker buiten de vervolgkeuzelijst klikt                                                                          |
+| onClose                       | functie    | Callback-functie die wordt geactiveerd wanneer de vervolgkeuzelijst wordt gesloten                                                                                     |
+| onOpen                        | functie    | Callback-functie die wordt geactiveerd wanneer de vervolgkeuzelijst wordt geopend                                                                                      |
+| variant                       | tekenreeks | De visuele stijlvariant van het klikbare pictogram. Opties omvatten: `primair`, `secundair` en `tertiair`                              |
+
+</Tab>
+</Tabs>

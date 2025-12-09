@@ -1,0 +1,114 @@
+---
+title: Архитектура фасцикли
+info: Детаљан преглед наше архитектуре фасцикли
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+У овом водичу ћете истражити детаље структуре пројектног директоријума и како она доприноси организацији и одрживости Twenty.
+
+Пратећи ову конвенцију архитектуре фасцикли, лакше је пронаћи датотеке везане за специфичне карактеристике и обезбедити да је апликација скалабилна и одржива.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Странице
+
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+
+## Модули
+
+Сваки модул представља функционалност или групу функционалности, састављен од специфичних компоненти, стања и оперативне логике.
+Сви би требало да прате наведену структуру. Можете угнездити модуле унутар модула (названи подмодули) и исте ће се применити правила.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Контексти
+
+Контекст је начин преношења података кроз дрво компоненти без потребе за ручним преносом пропса на сваком нивоу.
+
+Погледајте [React Context](https://react.dev/reference/react#context-hooks) за више детаља.
+
+### ГрафКуЕл
+
+Обухвата фрагменте, упите и мутације.
+
+Погледајте [GraphQL](https://graphql.org/learn/) за више детаља.
+
+- Фрагменти
+
+Фрагмент је поново употребљив део упита, који можете користити на различитим местима. Коришћењем фрагмената, избегава се дуплирање кода.
+
+Погледајте [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) за више детаља.
+
+- Упити
+
+Погледајте [GraphQL Queries](https://graphql.org/learn/queries/) за више детаља.
+
+- Мутације
+
+Погледајте [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) за више детаља.
+
+### Хукови
+
+Погледајте [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) за више детаља.
+
+### Стања
+
+Садржи логику управљања стањем. [RecoilJS](https://recoiljs.org) се носи са овим.
+
+- Селектори: Погледајте [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) за више детаља.
+
+React-ово уграђено управљање стањем још увек обрађује стање унутар компоненте.
+
+### Алатке
+
+Треба да садржи само поново употребљиве чисте функције. Otherwise, create custom hooks in the `hooks` folder.
+
+## UI
+
+Садржи све поново употребљиве UI компоненте које се користе у апликацији.
+
+Ова фасцикла може садржати подфасцикле, као што су `data`, `display`, `feedback`, и `input` за специфичне типове компоненти. Свака компонента треба да буде самостална и поново употребљива, тако да је можете користити у различитим деловима апликације.
+
+By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
+
+## Интерфејс и зависности
+
+Можете увезти други модулски код из било ког модула осим `ui` фасцикле. Ово ће задржати његов код лак за тестирање.
+
+### Интерно
+
+Сваки део (хукови, стања, ...) модула може имати `internal` фасциклу, која садржи делове који се користе само унутар модула.

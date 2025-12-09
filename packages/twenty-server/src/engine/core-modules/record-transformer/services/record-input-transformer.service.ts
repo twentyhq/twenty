@@ -1,37 +1,44 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectRecord,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import {
-  type RichTextV2Metadata,
-  richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class RecordInputTransformerService {
   async process({
     recordInput,
-    objectMetadataMapItem,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recordInput: Record<string, any>;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }): Promise<Record<string, any>> {
-    if (!recordInput) {
-      return recordInput;
-    }
-
+    recordInput: Partial<ObjectRecord>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<Partial<ObjectRecord>> {
     let transformedEntries = {};
 
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
     for (const [key, value] of Object.entries(recordInput)) {
-      const fieldMetadataId = objectMetadataMapItem.fieldIdByName[key];
-      const fieldMetadata = objectMetadataMapItem.fieldsById[fieldMetadataId];
+      const fieldMetadataId = fieldIdByName[key];
+      const fieldMetadata = fieldMetadataId
+        ? flatFieldMetadataMaps.byId[fieldMetadataId]
+        : undefined;
 
       if (!fieldMetadata) {
         transformedEntries = { ...transformedEntries, [key]: value };
@@ -72,83 +79,16 @@ export class RecordInputTransformerService {
           'Rich text is not supported, please use RICH_TEXT_V2 instead',
         );
       case FieldMetadataType.RICH_TEXT_V2:
-        return this.transformRichTextV2Value(value);
+        return await transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
         return transformLinksValue(value);
       case FieldMetadataType.EMAILS:
-        return this.transformEmailsValue(value);
+        return transformEmailsValue(value);
       case FieldMetadataType.PHONES:
         return transformPhonesValue({ input: value });
       default:
         return value;
     }
-  }
-
-  private async transformRichTextV2Value(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    richTextValue: any,
-  ): Promise<RichTextV2Metadata> {
-    const parsedValue = richTextV2ValueSchema.parse(richTextValue);
-
-    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
-
-    const serverBlockNoteEditor = ServerBlockNoteEditor.create();
-
-    // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
-    // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
-    let convertedMarkdown: string | null = null;
-
-    try {
-      convertedMarkdown = isDefined(parsedValue.blocknote)
-        ? await serverBlockNoteEditor.blocksToMarkdownLossy(
-            JSON.parse(parsedValue.blocknote),
-          )
-        : null;
-    } catch {
-      convertedMarkdown = parsedValue.blocknote || null;
-    }
-
-    const convertedBlocknote = parsedValue.markdown
-      ? JSON.stringify(
-          await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-            parsedValue.markdown,
-          ),
-        )
-      : null;
-
-    return {
-      markdown: parsedValue.markdown || convertedMarkdown,
-      blocknote: parsedValue.blocknote || convertedBlocknote,
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private transformEmailsValue(value: any): any {
-    if (!value) {
-      return value;
-    }
-
-    let additionalEmails = value?.additionalEmails;
-    const primaryEmail = value?.primaryEmail
-      ? value.primaryEmail.toLowerCase()
-      : '';
-
-    if (additionalEmails) {
-      try {
-        const emailArray = JSON.parse(additionalEmails) as string[];
-
-        additionalEmails = JSON.stringify(
-          emailArray.map((email) => email.toLowerCase()),
-        );
-      } catch {
-        /* empty */
-      }
-    }
-
-    return {
-      primaryEmail,
-      additionalEmails,
-    };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

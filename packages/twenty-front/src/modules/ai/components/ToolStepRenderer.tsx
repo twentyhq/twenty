@@ -3,11 +3,10 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { JsonTree } from 'twenty-ui/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { type ToolInput } from '@/ai/types/ToolInput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
@@ -30,9 +29,18 @@ const StyledLoadingContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(3)};
   border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  min-width: 0;
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledJsonTreeContainer = styled.div`
+  overflow-x: auto;
+
+  ul {
+    min-width: 0;
+  }
 `;
 
 const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
@@ -89,33 +97,27 @@ const StyledTab = styled.div<{ isActive: boolean }>`
   }
 `;
 
-const StyledJsonContainer = styled.div`
-  max-height: 400px;
-  overflow: auto;
-`;
-
 type TabType = 'output' | 'input';
 
-export const ToolStepRenderer = ({
-  input,
-  output,
-  toolName,
-}: {
-  input: ToolInput;
-  output: ToolUIPart['output'];
-  toolName: string;
-}) => {
+export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
-  const isExpandable = isDefined(output);
+  const { input, output, type, errorText } = toolPart;
+  const toolName = type.split('-')[1];
 
-  const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
+  const toolInput =
+    isDefined(input) && typeof input === 'object' && 'input' in input
+      ? input.input
+      : input;
 
-  if (!output) {
+  const hasError = isDefined(errorText);
+  const isExpandable = isDefined(output) || hasError;
+
+  if (!output && !hasError) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
@@ -129,11 +131,12 @@ export const ToolStepRenderer = ({
     );
   }
 
-  const displayMessage =
-    output &&
-    typeof output === 'object' &&
-    'message' in output &&
-    typeof output.message === 'string'
+  const displayMessage = hasError
+    ? 'Tool execution failed'
+    : output &&
+        typeof output === 'object' &&
+        'message' in output &&
+        typeof output.message === 'string'
       ? output.message
       : getToolDisplayMessage(input, toolName, true);
 
@@ -163,35 +166,43 @@ export const ToolStepRenderer = ({
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded}>
+        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
           <StyledContentContainer>
-            <StyledTabContainer>
-              <StyledTab
-                isActive={activeTab === 'output'}
-                onClick={() => setActiveTab('output')}
-              >
-                Output
-              </StyledTab>
-              <StyledTab
-                isActive={activeTab === 'input'}
-                onClick={() => setActiveTab('input')}
-              >
-                Input
-              </StyledTab>
-            </StyledTabContainer>
+            {hasError ? (
+              errorText
+            ) : (
+              <>
+                <StyledTabContainer>
+                  <StyledTab
+                    isActive={activeTab === 'output'}
+                    onClick={() => setActiveTab('output')}
+                  >
+                    Output
+                  </StyledTab>
+                  <StyledTab
+                    isActive={activeTab === 'input'}
+                    onClick={() => setActiveTab('input')}
+                  >
+                    Input
+                  </StyledTab>
+                </StyledTabContainer>
 
-            <StyledJsonContainer>
-              <JsonTree
-                value={(activeTab === 'output' ? result : input) as JsonValue}
-                shouldExpandNodeInitially={isTwoFirstDepths}
-                emptyArrayLabel={t`Empty Array`}
-                emptyObjectLabel={t`Empty Object`}
-                emptyStringLabel={t`[empty string]`}
-                arrowButtonCollapsedLabel={t`Expand`}
-                arrowButtonExpandedLabel={t`Collapse`}
-                onNodeValueClick={copyToClipboard}
-              />
-            </StyledJsonContainer>
+                <StyledJsonTreeContainer>
+                  <JsonTree
+                    value={
+                      (activeTab === 'output' ? result : toolInput) as JsonValue
+                    }
+                    shouldExpandNodeInitially={() => false}
+                    emptyArrayLabel={t`Empty Array`}
+                    emptyObjectLabel={t`Empty Object`}
+                    emptyStringLabel={t`[empty string]`}
+                    arrowButtonCollapsedLabel={t`Expand`}
+                    arrowButtonExpandedLabel={t`Collapse`}
+                    onNodeValueClick={copyToClipboard}
+                  />
+                </StyledJsonTreeContainer>
+              </>
+            )}
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}

@@ -1,0 +1,73 @@
+---
+title: Kleurskema
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Kleurskema Kaart
+
+Verteenwoordig verskillende kleurskemas en is spesiaal aangepas vir ligte en donker temas.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe           | Tipe                                    | Beskrywing                                                                           | Standaard |
+| -------------------- | --------------------------------------- | ------------------------------------------------------------------------------------ | --------- |
+| variant              | string                                  | Die kleurskema-variant. Opsies sluit in `Donker`, `Lig` en `Stelsel` | lig       |
+| geselekteer          | booleaanse                              | As `waar`, vertoon 'n merk om die geselekteerde kleurskema aan te dui                |           |
+| bykomende eienskappe | `React.ComponentPropsWithoutRef<'div'>` | Standaard HTML `div` element eienskappe                                              |           |
+
+</Tab>
+
+</Tabs>
+
+## Kleurskema Kieser
+
+Laat gebruikers toe om tussen verskillende kleurskemas te kies.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe    | Tipe         | Beskrywing                                                                       |
+| ------------- | ------------ | -------------------------------------------------------------------------------- |
+| waarde        | `Kleurskema` | Die tans geselekteerde kleurskema                                                |
+| opVerandering | funksie      | Die terugbel-funksie wat jy wil aktiveer wanneer 'n gebruiker 'n kleurskema kies |
+
+</Tab>
+
+</Tabs>

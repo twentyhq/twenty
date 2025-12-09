@@ -1,0 +1,44 @@
+---
+title: Morzsaútvonal
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Egy morzsaútvonal navigációs sávot jelenít meg.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus  | Leírás                                                                                                                                                                                                                                                                                                                     |
+| ------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className     | string | Opcionális osztálynév további stílushoz                                                                                                                                                                                                                                                                                    |
+| linkek        | tömb   | Olyan objektumok tömbje, amelyek mindegyike egy morzsaútvonal hivatkozást képvisel. Minden objektumnak van egy `children` tulajdonsága (a hivatkozás szövegtartalma) és egy opcionális `href` tulajdonsága (az URL ahová a hivatkozás kattintásakor navigálni lehet) |
+
+</Tab>
+</Tabs>

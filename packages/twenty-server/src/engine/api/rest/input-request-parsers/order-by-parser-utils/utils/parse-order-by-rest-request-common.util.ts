@@ -1,5 +1,3 @@
-//TODO : Refacto-common - remove this comment - This parser is a copy of the OrderByInputFactory without objectMetadata dependency. Validation will be done in common layer
-
 import { OrderByDirection } from 'twenty-shared/types';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -14,7 +12,7 @@ import {
 
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
-export const parseOrderByRestRequestCommon = (
+export const parseOrderBy = (
   orderByQuery: string | string[] | ParsedQs | ParsedQs[] | undefined,
 ): ObjectRecordOrderBy => {
   if (typeof orderByQuery !== 'string') {

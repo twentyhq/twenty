@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,7 +14,8 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -55,19 +56,25 @@ const StyledTitleContainer = styled.div`
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
+  const theme = useTheme();
 
   const { objectNamePlural = '' } = useParams();
-  const { findActiveObjectMetadataItemByNamePlural } =
+  const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilState(
     updatedObjectNamePluralState,
   );
   const objectMetadataItem =
-    findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
-    findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
+    findObjectMetadataItemByNamePlural(objectNamePlural) ??
+    findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -79,21 +86,25 @@ export const SettingsObjectDetailPage = () => {
     FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDefined(objectMetadataItem)) navigateApp(AppPath.NotFound);
+    if (!isDeleting && !isDefined(objectMetadataItem))
+      navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
     navigateApp,
     objectNamePlural,
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
+    isDeleting,
   ]);
 
-  const theme = useTheme();
-
-  if (!isDefined(objectMetadataItem)) return <></>;
+  if (!isDefined(objectMetadataItem)) {
+    return null;
+  }
 
   const tabs = [
     {
@@ -128,7 +139,13 @@ export const SettingsObjectDetailPage = () => {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
         return <ObjectFields objectMetadataItem={objectMetadataItem} />;
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
-        return <ObjectSettings objectMetadataItem={objectMetadataItem} />;
+        return (
+          <ObjectSettings
+            objectMetadataItem={objectMetadataItem}
+            isDeleting={isDeleting}
+            setIsDeleting={setIsDeleting}
+          />
+        );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES:
         return <ObjectIndexes objectMetadataItem={objectMetadataItem} />;
       default:

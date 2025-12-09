@@ -1,0 +1,170 @@
+---
+title: Interne Automatiseringer
+info: "Automatiser repetitive oppgaver for å redusere manuelt arbeid og holde dataene dine nøyaktige."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatiser prosesser og integrer med eksterne verktøy
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Below are workflow examples you could roll out to automate repetitive tasks to reduce manual work and keep your data up-to-date.
+
+## Datastyringsautomatiseringer
+
+### Auto-Flagg Personlige E-postadresser
+
+**Problem**: Teamet ditt må skille mellom personlige og forretnings e-postadresser for bedre målretting og overholdelse.
+
+**Solution**: Create a workflow that automatically updates an "is personal email" field whenever an email address is added or updated.
+
+**Trigger**: Record is Updated (People object, Email field)
+
+**Handlinger**:
+
+- Kodehandling for å sjekke om e-postdomenet samsvarer med vanlige personlige leverandører (gmail.com, yahoo.com, osv.)
+- Oppdater Post for å sette flagget "er personlig e-post"
+
+### Lead-Tildeling - Roterende System
+
+**Problem**: Nye leads må fordeles rettferdig over salgsteamet ditt for å sikre balanserte arbeidsbyrder.
+
+**Løsning**: Tildel automatisk nye leads til salgsrepresentanter ved bruk av et roterende system.
+
+**Trigger**: Posten er Opprettet (Person-objekt)
+
+**Handlinger**:
+
+- Søk i Poster for å finne sist tildelte representant
+- Kodehandling for å avgjøre neste representant i rotasjonen
+- Oppdater Post for å tildele lead til valgt representant
+- Send E-post for å varsle tildelt representant
+
+### Lead-Tildeling - Basert på Geografi
+
+**Problem**: Leads bør tildeles basert på geografiske territorier eller selskapskjennetegn.
+
+**Løsning**: Får leadene til riktig salgsrepresentant basert på plassering, firmastørrelse, eller bransje.
+
+**Utløser**: Post er opprettet (Person eller Firmaobjekt)
+
+**Handlinger**:
+
+- Kodehandling for å bestemme territorium basert på lokasjon/bransjeregler
+- Søk i Poster for å finne territorium eier
+- Oppdater Post for å tildele lead
+- Opprett Post for en oppfølgingsoppgave
+
+## Salgsprosess Automatisering
+
+### Mulighetsstadie Ledelse - Lukket Vunnet
+
+**Problem**: Når avtaler lukkes, kreves det mange manuelle oppdateringer på tvers av forskjellige poster og teammedlemmer.
+
+**Løsning**: Håndter alle etter-vinning aktiviteter automatisk når en mulighet går til "Lukket Vunnet".
+
+**Trigger**: Posten er Oppdatert (Muligheter objekt, Stadium felt = "Lukket Vunnet")
+
+**Handlinger**:
+
+- Oppdater Post for å endre Selskaps type fra "Prospekt" til "Kunde"
+- Opprett Post for onboarding oppgaver tildelt account manager
+- Send E-post varsel til kundenesuksess teamet
+- HTTP-forespørsel for å oppdatere eksternt faktureringssystem
+
+### Mulighetsstadie Ledelse - Lukket Tapt Fornyelse
+
+**Problem**: Når fornyelsesmuligheter går tapt, må kundestatus oppdateres for korrekt kontobehandling.
+
+**Løsning**: Oppdater kundestatus automatisk når fornyelsesavtaler mistes.
+
+**Trigger**: Posten er Oppdatert (Muligheter objekt, Stadium = "Lukket Tapt" OG Type = "Fornyelse")
+
+**Handlinger**:
+
+- Oppdater Post for å endre Selskaps type fra "Kunde" til "Mistede Kunder"
+- Opprett Post for frafallsanalyse oppgave
+- Send E-post varsel til kundenesuksess manager
+- Oppdater Post for å legge til frafallsdato og årsak
+
+### Varsler for Ubenyttede Muligheter
+
+**Problem**: Muligheter forblir uten oppdateringer, noe som gjør at avtaler går kalde og prognoser blir urolige.
+
+**Løsning**: Send automatisk varsler når muligheter ikke har blitt oppdatert nylig.
+
+**Trigger**: På en tidsplan (daglig)
+
+**Handlinger**:
+
+- Søk i Poster for muligheter ikke oppdatert på X dager
+- Kodehandling for å formatere varselmelding med mulighets detaljer
+- Send E-post til mulighets eier og manager
+- Opprett Post for oppfølgingsoppgave hvis ingen respons
+
+## Produktivitets Automatiseringer
+
+### Ukentlig Oppgave Oversikt
+
+**Problem**: Teammedlemmer mister oversikten over sine kommende oppgaver og tidsfrister.
+
+**Løsning**: Send automatiserte ukentlige e-postpåminnelser med oppgavesammendrag.
+
+**Trigger**: På en tidsplan (hver mandag klokken 08.00)
+
+**Handlinger**:
+
+- Søk i Poster for oppgaver som forfaller denne uken per tildelt
+- Kodehandling for å formatere oppgaveliste per person
+- Send E-post til hvert teammedlem med deres oppgaveoversikt
+- Send E-post til ledere med team oversikt
+
+### Automatisering av Møteoppfølging
+
+**Problem**: Viktige handlingselementer fra møter blir glemt eller forsinket.
+
+**Løsning**: Opprett automatisk oppfølgingsoppgaver når møter er planlagt eller ferdigstilt.
+
+**Trigger**: Posten er Opprettet (Aktiviteter objekt, Type = "Møte")
+
+**Handlinger**:
+
+- Opprett Post for forberedelse til pre-møte oppgave
+- Opprett Post for post-møte oppfølging
+- Send E-postpåminnelse til deltakere
+- Oppdater Post for å koble oppgaver til møtet
+
+### Tverrobjekt Felt Synkronisering
+
+**Problem**: Du trenger informasjon fra relaterte poster lett tilgjengelig (f.eks. hovedkontaktens e-post på mulighetspost).
+
+**Løsning**: Synkroniser automatisk felt mellom relaterte objekter inntil innflatede felt er tilgjengelige.
+
+**Trigger**: Posten er Oppdatert (Muligheter objekt, Kontaktpunkt felt)
+
+**Handlinger**:
+
+- Søk i Poster for å finne den koblede personens detaljer
+- Oppdater Post for å kopiere e-postadresse til mulighet
+- Oppdater Post for å kopiere telefonnummer til mulighet
+- Oppdater Post for å kopiere firmainformasjon
+
+## Datavalidering og Opprydding
+
+### Telefonnummer Standardisering
+
+**Problem**: Telefonnummer oppgis i forskjellige formater, noe som gjør dem vanskelige å bruke til å ringe eller sende meldinger.
+
+**Løsning**: Formater telefonnumre automatisk til et standard format når de oppgis.
+
+**Trigger**: Posten er Oppdatert (Person-objekt, Telefonfelt)
+
+**Handlinger**:
+
+- Kodehandling for å analysere og formatere telefonnummer
+- Oppdater Post med standardisert telefonnummerformat
+- Oppdater Post for å legge til landskode hvis den mangler
+
+For more complex automation needs, consider our [Professional Services](/l/no/user-guide/workflows/professional-services) or explore [External Tool Integration](/l/no/user-guide/workflows/external-tool-integration).
+

@@ -1,5 +1,4 @@
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithAcmeMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-acme-member-role.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
@@ -11,7 +10,7 @@ const WORKSPACE_MEMBER_GQL_FIELDS = `
     id
     name {
       firstName
-    } 
+    }
 `;
 
 describe('workspace members permissions', () => {
@@ -64,7 +63,7 @@ describe('workspace members permissions', () => {
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('should throw when user does not have permission (member role)', async () => {
+  it('should throw when calling deleteOne ', async () => {
     const graphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
@@ -77,31 +76,30 @@ describe('workspace members permissions', () => {
     expect(response.body.data).toStrictEqual({ deleteWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
+      'Please use /deleteUserFromWorkspace to remove a workspace member.',
     );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
   });
 
-  // This test is not idempotent
-  it('should allow delete when user is deleting themself (member role)', async () => {
-    const deleteOperation = deleteOneOperationFactory({
+  it('should throw when calling deleteMany', async () => {
+    const graphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-      recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     });
 
-    const deleteResponse =
-      await makeGraphqlAPIRequestWithAcmeMemberRole(deleteOperation);
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-    expect(deleteResponse.body.errors).not.toBeDefined();
-    expect(deleteResponse.body.data).toStrictEqual({
-      deleteWorkspaceMember: {
-        id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        name: {
-          firstName: 'Jony',
-        },
-      },
-    });
-    expect(deleteResponse.body.errors).toBeUndefined();
+    expect(response.body.data).toStrictEqual({ deleteWorkspaceMember: null });
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      'Please use /deleteUserFromWorkspace to remove a workspace member.',
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
   });
 });

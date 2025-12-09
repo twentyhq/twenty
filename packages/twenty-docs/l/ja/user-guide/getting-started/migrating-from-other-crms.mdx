@@ -1,0 +1,92 @@
+---
+title: 他のCRMからの移行
+info: 他のCRMシステムからTwentyへのデータとプロセスを移行するためのステップバイステップガイド。
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Twentyの基本を把握するための簡単なガイド
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## 始める前に
+
+### 1. Audit Your Current Data
+
+- **移行する少数のオブジェクトとフィールドを選択する**: この移行は新しいスタートの機会です
+- 現在のCRMからこのデータを**エクスポートする**
+- 重複と古いレコードを**削除する**
+- アクティブなワークフローと自動化を**リスト化する**
+
+### 2. 新しいデータモデルを作成
+
+[データモデルガイド](/l/ja/user-guide/data-model/customize-your-data-model)に従って:
+
+- 必要な**データモデルを設計する**
+- 既存のフィールドをTwentyの標準オブジェクト/フィールドに**マップする**
+- 必要なカスタムオブジェクト/フィールドを識別する
+- 設定 →データモデルの下でこれらを作成
+
+## 移行プロセス
+
+### 1. データのインポート
+
+**推奨順序：**
+
+1. 最初に**会社**（ベースレコードとして）
+2. 次に**人員**（会社にリンク）
+3. 最後に**機会**（人/会社にリンク）
+
+コマンドメニュー`Cmd + K` (Mac)または`Ctrl + K` (Windows)を使用してCSVインポートを利用します。 詳細な手順については、[データインポートガイド](/l/ja/user-guide/getting-started/import-export-data)を参照してください。 詳細な手順については、[データインポートガイド](/l/ja/user-guide/getting-started/import-export-data)を参照してください。
+
+### 2. ワークフローを再作成
+
+- **シンプルに始める** - 最も重要な自動化を最初に再作成
+- 既存の自動化を置き換えるためにTwentyのワークフロービルダーを使用
+
+## 一般的なチャレンジ
+
+### データフォーマットの問題
+
+- **メールアドレス** - 重複を削除する必要あり（人オブジェクトの要件）
+- **ドメイン** - 重複を削除する必要あり（企業オブジェクトの要件）
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **日付形式** - 一貫したフォーマット（YYYY-MM-DD）を確保するか、この形式を設定→エクスペリエンスで編集する
+- **電話番号** - 国際形式(+1234567890)を使用
+
+### 関係マッピング
+
+csvインポート機能を使用してレコード間の関係をインポートするには、次のフィールドを使用できます
+
+- 複雑な関係には、Twenty IDを使用する
+- 人の記録をリンクするためにメールアドレスを使用する
+- 会社の記録をリンクするためにドメイン名を使用
+- データモデルセクションで一意として設定した任意のフィールドを使用
+  データモデルセクションで一意として設定した任意のフィールドを使用
+  CSVインポート中に関係を構築するための詳細な手順については、[インポートエクスポートデータガイド](/l/ja/user-guide/getting-started/import-export-data)を読んでください。
+
+## プロフェッショナルサポート
+
+### 私たちのサービス
+
+- ガイド付き移行のための**4時間オンボーディングパック**
+- より高度なプロジェクトのための**実装パートナー**
+
+[実装サービス](/l/ja/user-guide/getting-started/implementation-services)を見つけましょう。
+
+## セルフホストからクラウドへの移行
+
+TwentyのセルフホストからTwenty Cloudに移行する場合：
+
+1. セルフホストのインスタンスからデータを**エクスポート**
+2. 上記の標準移行プロセスに従う
+3. **移行支援を提供できます。** チームに連絡して下さい。
+
+## ポスト移行チェックリスト
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

@@ -1,0 +1,458 @@
+---
+title: crwdns62346:0crwdne62346:0
+image: crwdns62348:0crwdne62348:0
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+crwdns62350:0crwdne62350:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62352:0crwdne62352:0 | crwdns62354:0crwdne62354:0 | crwdns62356:0crwdne62356:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62358:0crwdne62358:0 | crwdns62360:0crwdne62360:0 | crwdns62362:0crwdne62362:0                                                            |
+| crwdns62364:0crwdne62364:0 | crwdns62366:0crwdne62366:0 | crwdns62368:0crwdne62368:0 crwdns62370:0crwdne62370:0 |
+| crwdns62372:0crwdne62372:0 | crwdns62374:0crwdne62374:0 | crwdns62376:0crwdne62376:0                                                            |
+| crwdns62378:0crwdne62378:0 | crwdns62380:0crwdne62380:0 | crwdns62382:0crwdne62382:0                                                            |
+| crwdns62384:0crwdne62384:0 | crwdns62386:0crwdne62386:0 | crwdns62388:0crwdne62388:0                                                            |
+| crwdns62390:0crwdne62390:0 | crwdns62392:0crwdne62392:0 | crwdns62394:0crwdne62394:0                                                            |
+| crwdns62396:0crwdne62396:0 | crwdns62398:0crwdne62398:0 | crwdns62400:0crwdne62400:0                                                            |
+| crwdns62402:0crwdne62402:0 | crwdns62404:0crwdne62404:0 | crwdns62406:0crwdne62406:0                                                            |
+
+</Tab>
+</Tabs>
+
+## crwdns62408:0crwdne62408:0
+
+crwdns62410:0crwdne62410:0
+
+### crwdns62412:0crwdne62412:0
+
+crwdns62414:0crwdne62414:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62416:0crwdne62416:0 | crwdns62418:0crwdne62418:0 | crwdns62420:0crwdne62420:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62422:0crwdne62422:0 | crwdns62424:0crwdne62424:0 | crwdns62426:0crwdne62426:0 |
+| crwdns62428:0crwdne62428:0 | crwdns62430:0crwdne62430:0 | crwdns62432:0crwdne62432:0 |
+| crwdns62434:0crwdne62434:0 | crwdns62436:0crwdne62436:0 | crwdns62438:0crwdne62438:0 |
+| crwdns62440:0crwdne62440:0 | crwdns62442:0crwdne62442:0 | crwdns62444:0crwdne62444:0 |
+| crwdns62446:0crwdne62446:0 | crwdns62448:0crwdne62448:0 | crwdns62450:0crwdne62450:0 |
+| crwdns62452:0crwdne62452:0 | crwdns62454:0crwdne62454:0 | crwdns62456:0crwdne62456:0 |
+| crwdns62458:0crwdne62458:0 | crwdns62460:0crwdne62460:0 | crwdns62462:0crwdne62462:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62464:0crwdne62464:0
+
+crwdns62466:0crwdne62466:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62468:0crwdne62468:0 | crwdns62470:0crwdne62470:0 | crwdns62472:0crwdne62472:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62474:0crwdne62474:0 | crwdns62476:0crwdne62476:0 | crwdns62478:0crwdne62478:0                                                            |
+| crwdns62480:0crwdne62480:0 | crwdns62482:0crwdne62482:0 | crwdns62484:0crwdne62484:0 crwdns62486:0crwdne62486:0 |
+| crwdns62488:0crwdne62488:0 | crwdns62490:0crwdne62490:0 | crwdns62492:0crwdne62492:0                                                            |
+| crwdns62494:0crwdne62494:0 | crwdns62496:0crwdne62496:0 | crwdns62498:0crwdne62498:0                                                            |
+| crwdns62500:0crwdne62500:0 | crwdns62502:0crwdne62502:0 | crwdns62504:0crwdne62504:0                                                            |
+| crwdns62506:0crwdne62506:0 | crwdns62508:0crwdne62508:0 | crwdns62510:0crwdne62510:0                                                            |
+| crwdns62512:0crwdne62512:0 | crwdns62514:0crwdne62514:0 | crwdns62516:0crwdne62516:0                                                            |
+| crwdns62518:0crwdne62518:0 | crwdns62520:0crwdne62520:0 | crwdns62522:0crwdne62522:0                                                            |
+
+</Tab>
+</Tabs>
+
+### crwdns62524:0crwdne62524:0
+
+crwdns62526:0crwdne62526:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62528:0crwdne62528:0 | crwdns62530:0crwdne62530:0 | crwdns62532:0crwdne62532:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62534:0crwdne62534:0 | crwdns62536:0crwdne62536:0 | crwdns62538:0crwdne62538:0 |
+| crwdns62540:0crwdne62540:0 | crwdns62542:0crwdne62542:0 | crwdns62544:0crwdne62544:0 |
+| crwdns62546:0crwdne62546:0 | crwdns62548:0crwdne62548:0 | crwdns62550:0crwdne62550:0 |
+| crwdns62552:0crwdne62552:0 | crwdns62554:0crwdne62554:0 | crwdns62556:0crwdne62556:0 |
+| crwdns62558:0crwdne62558:0 | crwdns62560:0crwdne62560:0 | crwdns62562:0crwdne62562:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62564:0crwdne62564:0
+
+crwdns62566:0crwdne62566:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62568:0crwdne62568:0 | crwdns62570:0crwdne62570:0 | crwdns62572:0crwdne62572:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62574:0crwdne62574:0 | crwdns62576:0crwdne62576:0 | crwdns62578:0crwdne62578:0 |
+| crwdns62580:0crwdne62580:0 | crwdns62582:0crwdne62582:0 | crwdns62584:0crwdne62584:0 |
+| crwdns62586:0crwdne62586:0 | crwdns62588:0crwdne62588:0 | crwdns62590:0crwdne62590:0 |
+| crwdns62592:0crwdne62592:0 | crwdns62594:0crwdne62594:0 | crwdns62596:0crwdne62596:0 |
+| crwdns62598:0crwdne62598:0 | crwdns62600:0crwdne62600:0 | crwdns62602:0crwdne62602:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62604:0crwdne62604:0
+
+crwdns62606:0crwdne62606:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62608:0crwdne62608:0 | crwdns62610:0crwdne62610:0 | crwdns62612:0crwdne62612:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62614:0crwdne62614:0 | crwdns62616:0crwdne62616:0 | crwdns62618:0crwdne62618:0 |
+| crwdns62620:0crwdne62620:0 | crwdns62622:0crwdne62622:0 | crwdns62624:0crwdne62624:0 |
+| crwdns62626:0crwdne62626:0 | crwdns62628:0crwdne62628:0 | crwdns62630:0crwdne62630:0 |
+| crwdns62632:0crwdne62632:0 | crwdns62634:0crwdne62634:0 | crwdns62636:0crwdne62636:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62638:0crwdne62638:0
+
+crwdns62640:0crwdne62640:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62642:0crwdne62642:0 | crwdns62644:0crwdne62644:0 | crwdns62646:0crwdne62646:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62648:0crwdne62648:0 | crwdns62650:0crwdne62650:0 | crwdns62652:0crwdne62652:0 |
+| crwdns62654:0crwdne62654:0 | crwdns62656:0crwdne62656:0 | crwdns62658:0crwdne62658:0 |
+| crwdns62660:0crwdne62660:0 | crwdns62662:0crwdne62662:0 | crwdns62664:0crwdne62664:0 |
+| crwdns62666:0crwdne62666:0 | crwdns62668:0crwdne62668:0 | crwdns62670:0crwdne62670:0 |
+| crwdns62672:0crwdne62672:0 | crwdns62674:0crwdne62674:0 | crwdns62676:0crwdne62676:0 |
+| crwdns62678:0crwdne62678:0 | crwdns62680:0crwdne62680:0 | crwdns62682:0crwdne62682:0 |
+| crwdns62684:0crwdne62684:0 | crwdns62686:0crwdne62686:0 | crwdns62688:0crwdne62688:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62690:0crwdne62690:0
+
+crwdns62692:0crwdne62692:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62694:0crwdne62694:0 | crwdns62696:0crwdne62696:0 | crwdns62698:0crwdne62698:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62700:0crwdne62700:0 | crwdns62702:0crwdne62702:0 | crwdns62704:0crwdne62704:0 |
+| crwdns62706:0crwdne62706:0 | crwdns62708:0crwdne62708:0 | crwdns62710:0crwdne62710:0 |
+| crwdns62712:0crwdne62712:0 | crwdns62714:0crwdne62714:0 | crwdns62716:0crwdne62716:0 |
+| crwdns62718:0crwdne62718:0 | crwdns62720:0crwdne62720:0 | crwdns62722:0crwdne62722:0 |
+| crwdns62724:0crwdne62724:0 | crwdns62726:0crwdne62726:0 | crwdns62728:0crwdne62728:0 |
+| crwdns62730:0crwdne62730:0 | crwdns62732:0crwdne62732:0 | crwdns62734:0crwdne62734:0 |
+| crwdns62736:0crwdne62736:0 | crwdns62738:0crwdne62738:0 | crwdns62740:0crwdne62740:0 |
+| crwdns62742:0crwdne62742:0 | crwdns62744:0crwdne62744:0 | crwdns62746:0crwdne62746:0 |
+
+</Tab>
+</Tabs>
+
+### crwdns62748:0crwdne62748:0
+
+crwdns62750:0crwdne62750:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62752:0crwdne62752:0 | crwdns62754:0crwdne62754:0 | crwdns62756:0crwdne62756:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62758:0crwdne62758:0 | crwdns62760:0crwdne62760:0 | crwdns62762:0crwdne62762:0 crwdns62764:0crwdne62764:0 |
+| crwdns62766:0crwdne62766:0 | crwdns62768:0crwdne62768:0 | crwdns62770:0crwdne62770:0                                                            |
+| crwdns62772:0crwdne62772:0 | crwdns62774:0crwdne62774:0 | crwdns62776:0crwdne62776:0                                                            |
+| crwdns62778:0crwdne62778:0 | crwdns62780:0crwdne62780:0 | crwdns62782:0crwdne62782:0                                                            |
+| crwdns62784:0crwdne62784:0 | crwdns62786:0crwdne62786:0 | crwdns62788:0crwdne62788:0 crwdns62790:0crwdne62790:0 |
+| crwdns62792:0crwdne62792:0 | crwdns62794:0crwdne62794:0 | crwdns62796:0crwdne62796:0                                                            |
+| crwdns62798:0crwdne62798:0 | crwdns62800:0crwdne62800:0 | crwdns62802:0crwdne62802:0                                                            |
+
+</Tab>
+</Tabs>
+
+### crwdns62804:0crwdne62804:0
+
+crwdns62806:0crwdne62806:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62808:0crwdne62808:0 | crwdns62810:0crwdne62810:0 | crwdns62812:0crwdne62812:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62814:0crwdne62814:0 | crwdns62816:0crwdne62816:0 | crwdns62818:0crwdne62818:0                                                            |
+| crwdns62820:0crwdne62820:0 | crwdns62822:0crwdne62822:0 | crwdns62824:0crwdne62824:0                                                            |
+| crwdns62826:0crwdne62826:0 | crwdns62828:0crwdne62828:0 | crwdns62830:0crwdne62830:0                                                            |
+| crwdns62832:0crwdne62832:0 | crwdns62834:0crwdne62834:0 | crwdns62836:0crwdne62836:0                                                            |
+| crwdns62838:0crwdne62838:0 | crwdns62840:0crwdne62840:0 | crwdns62842:0crwdne62842:0 crwdns62844:0crwdne62844:0 |
+| crwdns62846:0crwdne62846:0 | crwdns62848:0crwdne62848:0 | crwdns62850:0crwdne62850:0                                                            |
+
+</Tab>
+</Tabs>

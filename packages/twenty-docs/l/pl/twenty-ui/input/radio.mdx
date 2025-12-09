@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Używane, gdy użytkownicy mogą wybrać tylko jedną opcję z szeregu opcji.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Właściwości (Props) | Typ                     | Opis                                                                                                                             |
+| -------------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| styl                                   | właściwości `React.CSS` | Additional inline styles for the component                                                                                       |
+| nazwaKlasy                             | ciąg znaków             | Opcjonalna klasa CSS do dodatkowego stylowania                                                                                   |
+| zaznaczone                             | boolean                 | Indicates whether the radio button is checked                                                                                    |
+| wartość                                | ciąg znaków             | Etykieta lub tekst związany z przyciskiem radiowym                                                                               |
+| onChange                               | funkcja                 | Funkcja wywoływana, gdy wybrany przycisk radiowy zostanie zmieniony                                                              |
+| onCheckedChange                        | funkcja                 | Funkcja wywoływana, gdy stan `checked` przycisku radiowego się zmienia                                                           |
+| rozmiar                                | ciąg znaków             | Rozmiar przycisku radiowego. Opcje to: `large` i `small`                                         |
+| wyłączony                              | boolean                 | If `true`, the radio button is disabled and not clickable                                                                        |
+| labelPosition                          | ciąg znaków             | The position of the label text relative to the radio button. Has two options: `left` and `right` |
+
+</Tab>
+</Tabs>
+
+## Grupa Radio
+
+Grupuje powiązane przyciski radiowe.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Właściwości (Props) | Typ               | Opis                                                                                                 |
+| -------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------- |
+| wartość                                | ciąg znaków       | Wartość obecnie wybranego przycisku radiowego                                                        |
+| onChange                               | funkcja           | Funkcja wywoływana przy zmianie przycisku radiowego                                                  |
+| onValueChange                          | funkcja           | Funkcja wywoływana przy zmianie wybranej wartości w grupie.                          |
+| children                               | `React.ReactNode` | Pozwala przekazywać komponenty React (takie jak Radio) jako dzieci do Grupy Radio |
+
+</Tab>
+
+</Tabs>

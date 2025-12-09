@@ -1,0 +1,83 @@
+---
+title: Klucze API i Webhooks
+info: "Twórz i zarządzaj kluczami API do uwierzytelniania oraz konfiguruj webhooks do powiadomień w czasie rzeczywistym."
+image: /images/user-guide/api/api.png
+sectionInfo: Dowiedz się, jak połączyć Twenty z innymi narzędziami.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## Klucze API
+
+Klucze API umożliwiają zautomatyzowany dostęp do danych CRM, synchronizację danych z innymi systemami i tworzenie dostosowanych integracji lub rozwiązań.
+
+### Create an API Key
+
+1. Go to **Settings → APIs & Webhooks**
+2. Kliknij **+ Utwórz klucz** w prawym górnym rogu
+3. Skonfiguruj swój klucz API:
+   - **Name**: Give your API key a descriptive name
+   - **Expiration Date**: Set when the key should expire
+4. Kliknij **Zapisz**, aby wygenerować klucz API
+5. **Ważne**: Skopiuj i przechowuj klucz API natychmiast, jest on wyświetlany tylko raz
+
+Po utworzeniu klucz API zapewnia dostęp do własnej dokumentacji API i laboratorium, gdzie można testować punkty końcowe z rzeczywistym modelem danych.
+
+<Warning>
+Ponieważ klucz API umożliwia dostęp do poufnych informacji, nie należy go udostępniać usługom, którym nie ufasz w pełni. Jeśli zostanie ujawniony, ktoś może go użyć złośliwie. Jeśli bezpieczeństwo klucza API jest zagrożone, natychmiast go wyłącz i wygeneruj nowy.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### Zarządzaj kluczami API
+
+**Wygeneruj ponownie klucz API:**
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click on the API key you want to regenerate
+3. Kliknij przycisk **Wygeneruj ponownie**
+4. Skopiuj i natychmiast przechowaj nowy klucz API.
+
+**Usuń klucz API:**
+
+1. Znajdź klucz API na swojej liście.
+2. Kliknij na klucz, aby otworzyć jego szczegóły.
+3. Kliknij **Usuń**, aby trwale usunąć.
+
+## Webhooki
+
+Webhooki umożliwiają natychmiastową aktualizację podanego URL o zmiany lub zdarzenia związane z danymi klientów.
+
+For example, when an Opportunity moves to "Closed Won", a webhook can automatically trigger invoice creation in your accounting system. Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/pl/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
+
+Webhooks are ideal for integrating with external systems, while Workflows support both internal automation and external tool connections via webhook triggers, code nodes, and HTTP nodes.
+
+### Stwórz Webhook
+
+1. Przejdź do **Ustawienia → API i Webhooks → Webhooks**
+2. Kliknij **+ Stwórz webhook**
+3. Wprowadź swój URL webhooka (gdzie chcesz otrzymywać powiadomienia)
+4. Kliknij **Zapisz**
+
+Twój webhook natychmiast zacznie otrzymywać powiadomienia w czasie rzeczywistym o zmianach w danych CRM.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Zarządzaj Webhookami
+
+**Usuń webhook:**
+
+1. Przejdź do **Ustawienia → API i Webhooks → Webhooks**
+2. Znajdź webhook, który chcesz usunąć.
+3. Kliknij na webhooka.
+4. Kliknij **Usuń** i potwierdź w wyskakującym oknie.
+
+**Edytuj webhook:**
+
+1. Kliknij na webhooka, który chcesz zmodyfikować.
+2. Zaktualizuj URL lub inne ustawienia.
+3. Kliknij **Zapisz**, aby zastosować zmiany.
+

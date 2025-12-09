@@ -1,5 +1,10 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -9,8 +14,6 @@ import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/f
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
@@ -43,6 +46,8 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
   morphId?: string | null;
+  workspaceCustomApplicationId: string;
+  targetFieldName?: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -55,8 +60,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
+  workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
+  targetFieldName,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -75,6 +82,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       createFieldInput,
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
+      workspaceCustomApplicationId,
     }),
     morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
@@ -90,9 +98,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
-    name: computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    ),
+    name:
+      targetFieldName ??
+      computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
@@ -113,6 +121,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createFieldInput: targetCreateFieldInput,
         workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
+        workspaceCustomApplicationId,
       }),
       type: FieldMetadataType.RELATION,
       defaultValue: null,

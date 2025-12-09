@@ -15,6 +15,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
+  defaultTabIdToFocusOnMobileAndSidePanel: 'workflow-run-tab-flow',
   tabs: [
     // Fields tab (position 100)
     {
@@ -23,6 +24,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
+      icon: 'IconList',
       pageLayoutId: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -56,6 +58,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
       title: 'Flow',
       position: 200,
       layoutMode: 'canvas',
+      icon: 'IconSettings',
       pageLayoutId: DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -131,7 +131,7 @@
       "defaultConfiguration": "data",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "dotenv cross-var graphql-codegen -- --config={args.config}"
+        "command": "dotenv graphql-codegen -- --config={args.config}"
       },
       "configurations": {
         "data": {

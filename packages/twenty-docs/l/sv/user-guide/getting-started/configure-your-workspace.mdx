@@ -1,0 +1,86 @@
+---
+title: Konfigurera din arbetsyta
+info: "Börja konfigurera din arbetsyta med dessa tre steg."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Upptäck Twenty, ett open-source CRM.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Varje företag arbetar på ett unikt sätt. Det är därför Twenty låter dig forma CRM efter dina behov och inte tvinga dina processer in i våra.
+**Börja med dessa tre steg för att ställa in det på ditt sätt.**
+
+**Snabbvinst**: Börja med att ansluta din brevlåda och anpassa din datamodell med några viktiga fält. Detta ger dig omedelbart värde och hjälper ditt team att se Twenty i aktion med verkliga data. Du kan göra det under Inställningar → Konton.
+
+## 1. Anpassa din datamodell
+
+Twenty erbjuder den flexibilitet du behöver för att forma datamodellen som bäst stöder din dagliga verksamhet.
+Skapa objekt och fält av alla typer, inklusive relationer mellan dina olika objekt. Du kan göra det under Inställningar → Datamodell.
+Här är några tips:
+
+- **Du är inte begränsad i antalet anpassade fält eller anpassade objekt**. Adding custom objects and fields will not lead to upgrading your plan.
+- **Personer, Företag och Möjligheter är de tre objekten från vilka du kan komma åt e-postmeddelanden och möten synkroniserade från din brevlåda/kalender**. Vi rekommenderar att använda dessa så mycket som möjligt, lägga till fält för att kategorisera dina register om det behövs. Här är ett exempel:
+  - It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Because you would not be able to access the emails exchanged with this person from the Partner records.
+  - Skapa olika vyer under Personer, en för att visa partners och en för att visa prospekt.
+- Två Personer kan inte ha samma e-postadress. Två Företag kan inte ha samma domän.
+- Du kan inaktivera standardfält och objekt du inte vill använda.
+- Du kan dölja fält från vyer: var inte rädd för att skapa fält, du behöver inte visa alla.
+
+Läs [denna artikel](https://docs.twenty.com/l/sv/user-guide/data-model/customize-your-data-model) för att lära dig hur man designar sin datamodell.
+
+## 2. Importera dina data
+
+Att importera dina befintliga data till Twenty ger ditt team sammanhang från början.
+
+### Anslut din brevlåda
+
+Om du inte gjort det vid skapandet av din arbetsyta, anslut ditt **Google- eller Microsoft-konto** under Inställningar → Konton. Detta tillåter Twenty att:
+
+- Importera dina meddelanden och möten
+- Auto-skapa kontakter baserat på interaktioner (valfritt)
+- Keep communication history visible for your team
+
+**Använder du en annan leverantör?**
+Du kan lägga till en annan brevlåda via SMTP eller en annan kalender via CalDAV. Du behöver aktivera funktionen under Inställningar → Utgåvor → Lab, och sedan gå tillbaka till fliken Inställningar → Konton.
+
+### Importera data via csv
+
+Använd kommandomenyn (`Cmd + K` eller `Ctrl + K`) för att importera Personer, Företag, Möjligheter eller andra anpassade objekt via CSV.
+
+**Huvudriktlinjer**:
+
+- Download the sample file to understand the expected format
+- Begränsa varje fil till 10k poster
+- Remove duplicate emails for People or duplicate domains for Companies
+- Granska och fixa fel (markerade i gult) innan import.
+
+Läs [denna artikel](/l/sv/user-guide/getting-started/import-export-data) för att lära dig mer om dataimport.
+
+## 3. Skapa din första vy
+
+Att skapa olika vyer är nyckeln till att göra data handlingsbar för ditt team.
+Så här går du tillväga:
+
+- **Lägg till eller dölj kolumner**
+  Hantera de fält som visas i en viss vy genom att klicka på Alternativ → Fält (uppe till höger). Du kan visa/dölja fält därifrån.
+
+- **Ändra fältens ordning**
+  Ändra fältens ordning i en viss vy genom att klicka på Alternativ → Fält (uppe till höger). Dra och släpp fälten för att ändra deras ordning.
+
+- **Filtrera din vy**
+  Begränsa de poster som visas med hjälp av Filter-verktyget uppe till höger.
+
+- **Sortera poster**
+  Ändra ordningen på posterna som visas med hjälp av Sortera-funktionen uppe till höger, eller genom att klicka direkt på kolumnens namn.
+
+- **Välj layout**
+  Du kan byta till en **Kanban-layout** eller en **Gruppera efter**-layout, så länge objektet har ett `Steg` eller liknande väljarfält.
+
+- **Save your view as Favorites**
+  This can be done using the dropdown menu showing the different views.
+
+## Vad händer nu?
+
+Börja skapa automatiseringar med [arbetsflöden](https://docs.twenty.com/l/sv/user-guide/workflows/getting-started-workflows).

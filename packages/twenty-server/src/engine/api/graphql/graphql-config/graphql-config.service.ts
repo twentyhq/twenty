@@ -19,10 +19,23 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  ApiConfig,
+  Billing,
+  Captcha,
+  ClientAIModelConfig,
+  NativeModelCapabilities,
+  PublicFeatureFlag,
+  PublicFeatureFlagMetadata,
+  Sentry as SentryConfig,
+  Support,
+} from 'src/engine/core-modules/client-config/client-config.entity';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
+import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -60,6 +73,17 @@ export class GraphQLConfigService
         i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
+      useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
+        this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
+      ),
+      useValidateGraphqlQueryComplexity({
+        maximumAllowedFields:
+          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
+        maximumAllowedRootResolvers: this.twentyConfigService.get(
+          'GRAPHQL_MAX_ROOT_RESOLVERS',
+        ),
+        checkDuplicateRootResolvers: true,
+      }),
     ];
 
     if (Sentry.isInitialized()) {
@@ -69,6 +93,19 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
       include: [CoreEngineModule],
+      buildSchemaOptions: {
+        orphanedTypes: [
+          ApiConfig,
+          Billing,
+          Captcha,
+          ClientAIModelConfig,
+          NativeModelCapabilities,
+          PublicFeatureFlag,
+          PublicFeatureFlagMetadata,
+          SentryConfig,
+          Support,
+        ],
+      },
       conditionalSchema: async (context) => {
         let user: UserEntity | null | undefined;
         let workspace: WorkspaceEntity | undefined;

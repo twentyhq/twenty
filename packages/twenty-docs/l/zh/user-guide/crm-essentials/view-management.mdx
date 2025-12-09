@@ -1,0 +1,121 @@
+---
+title: 視圖管理
+info: "建立和自訂視圖, 以透過篩選、排序和不同佈局來組織您的數據。"
+image: /images/user-guide/table-views/table.png
+sectionInfo: "管理潛在客戶、銷售和客戶的重要 CRM 功能"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## 佈局選項
+
+您可以使用三種不同的佈局顯示您的數據, 各自適合不同用途。 將在2025 年12 月發佈可自訂記錄類型頁面外觀的自訂佈局。
+
+### 預設視圖
+
+每個對象都有一個無篩選、無排序和不可刪除的默認視圖。 它以對象的複數名稱命名，例如 "所有公司", "所有人員", "所有機會"。
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### 列表佈局
+
+標準表格格式, 在行和列中顯示記錄。 這非常適合一目了然地查看詳細信息和并排比較記錄。
+
+### 列表分組佈局
+
+根據選定的字段將記錄分組進行組織。 例如, 您可以按階段分組機會, 按位置分組公司, 或任何其他選擇字段。 這有助於您看到模式並將相關記錄組織在一起。
+
+### 看板佈局
+
+一個視覺板，其中每列代表一個階段，每個記錄顯示為一張卡片。 此佈局非常適合管理工作流程和管道，在不同階段中移動記錄。 有關使用看板視圖進行管道管理的更多詳細信息，請參閱我們的[管道](/l/zh/user-guide/crm-essentials/pipeline) 文章。
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## 創建新視圖
+
+有三種方法可以創建新視圖：
+
+### 使用命令菜單
+
+在 Mac 上使用 `Cmd+K` (或 Windows 上的 `Ctrl+K`) 以開啟命令菜單，然後點擊"創建新視圖"。
+
+### 使用視圖下拉菜單
+
+點擊視圖下拉菜單（左上方），然後在底部點擊"添加視圖"。 從此菜單您可以：
+
+- 為您的視圖選擇圖標和名稱
+- 選擇佈局類型（列表或看板）
+
+<Warning>
+重要提示：您必須先選擇 "列表" 佈局，然後再添加分組。 您無法直接從那裡創建列表分組。
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### 從現有篩選器創建視圖
+
+當您修改現有視圖的排序和篩選時，"另存為新視圖" 按鈕會顯示. This lets you create a new view based on your current customizations.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## 將視圖變得可操作
+
+以下指南將向您展示如何自訂視圖的列。 以下指南將向您展示如何自訂視圖的列。 我們不建議保留所有的列：這些視圖可以通過添加排序條件和僅顯示符合您特定使用案例的列來簡化和使其變得有效。
+
+## 自訂您的視圖
+
+所有佈局都支持相同的自訂選項：排序、篩選和字段選擇。 您可以快速點擊列名進行一次性更改，或使用`選項菜單`進行更全面的編輯。
+
+### 快速動作與選項菜單
+
+**一次性更改**: 直接點擊列標題進行排序，或使用`左移`，`右移`按鈕。
+
+**多次編輯**: 當您想要連續進行多次更改時，使用`選項菜單` (右上角)。 此菜單為您提供：
+
+- **佈局選擇** (列表、列表分組、看板)
+- **分組選項** (針對列表分組佈局)
+- **字段管理** (顯示/隱藏和重新排序列)
+
+### 篩選您的數據
+
+您可以應用篩選器以僅顯示符合條件的記錄。 單擊工具欄中的`篩選器`, 選擇一個字段, 選擇您的條件, 並設置值。 您可以添加多個篩選器，以基於多個條件進行高級篩選。
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### 排序您的記錄
+
+通過單擊任何列的標頭以該字段排序，控制記錄的順序。 再次點擊以反向排序順序。 您可以應用多種排序，以進行複雜的組織。
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### 管理字段和列
+
+您可以選擇顯示哪些字段及重新排序它們。 若要進行快速更改，請直接點擊列名。 若要進行多次編輯，使用`選項菜單 → 字段`，您可以：
+
+- 通過眼睛圖標顯示或隱藏字段
+- 通過拖放重新排序字段
+- 在一個地方高效地進行多次更改
+
+## 管理您的視圖
+
+### 視圖下拉選單功能
+
+視圖下拉菜單（左上方）是您的視圖管理中心。 從這裡您可以：
+
+- **編輯視圖名稱和圖標**: 點擊任何視圖旁邊的三個點
+- **Reorder views**: Drag and drop views to organize them by priority
+- **將視圖保存為收藏夾**: 收藏夾出現在設置下方以供快速訪問
+
+### 編輯和刪除視圖
+
+要修改或刪除視圖，開啟視圖下拉選單，將鼠標懸停在您想更改的視圖上。 點擊懸停時顯示的三個點來編輯和刪除視圖。
+
+### 收藏夾和組織
+
+保存為收藏夾的視圖會在您的導航中緊接設置下方出現，讓您快速訪問到最重要的視圖。 保存為收藏夾的視圖會在您的導航中緊接設置下方出現，讓您快速訪問到最重要的視圖。 Use the view dropdown menu to organize your views by dragging them into the order that works best for your workflow.
+
+For more advanced data organization, see our [Data Model section](/l/zh/user-guide/data-model/customize-your-data-model) to learn about customizing fields and objects.

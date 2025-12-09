@@ -15,36 +15,19 @@ export class ThrottlerService {
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  async throttle(key: string, limit: number, ttl: number): Promise<void> {
-    const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
-
-    if (currentCount >= limit) {
-      throw new ThrottlerException(
-        'Limit reached',
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      );
-    }
-
-    await this.cacheStorage.set(key, currentCount + 1, ttl);
-  }
-
   async tokenBucketThrottleOrThrow(
     key: string,
     tokensToConsume: number,
     maxTokens: number,
     timeWindow: number,
-  ): Promise<void> {
+  ): Promise<number> {
     const now = Date.now();
-    const refillRate = maxTokens / timeWindow;
-
-    const { tokens, lastRefillAt } = (await this.cacheStorage.get<{
-      tokens: number;
-      lastRefillAt: number;
-    }>(key)) || { tokens: maxTokens, lastRefillAt: now };
-
-    const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
-
-    const availableTokens = Math.min(tokens + refillAmount, maxTokens);
+    const availableTokens = await this.getAvailableTokensCount(
+      key,
+      maxTokens,
+      timeWindow,
+      now,
+    );
 
     if (availableTokens < tokensToConsume) {
       throw new ThrottlerException(
@@ -61,5 +44,49 @@ export class ThrottlerService {
       },
       timeWindow * 2,
     );
+
+    return availableTokens - tokensToConsume;
+  }
+
+  async consumeTokens(
+    key: string,
+    tokensToConsume: number,
+    maxTokens: number,
+    timeWindow: number,
+  ) {
+    const now = Date.now();
+    const availableTokens = await this.getAvailableTokensCount(
+      key,
+      maxTokens,
+      timeWindow,
+      now,
+    );
+
+    await this.cacheStorage.set(
+      key,
+      {
+        tokens: availableTokens - tokensToConsume,
+        lastRefillAt: now,
+      },
+      timeWindow * 2,
+    );
+  }
+
+  async getAvailableTokensCount(
+    key: string,
+    maxTokens: number,
+    timeWindow: number,
+    now = Date.now(),
+  ): Promise<number> {
+    const refillRate = maxTokens / timeWindow;
+
+    const { tokens, lastRefillAt } = (await this.cacheStorage.get<{
+      tokens: number;
+      lastRefillAt: number;
+    }>(key)) || { tokens: maxTokens, lastRefillAt: now };
+
+    const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
+
+    return Math.min(tokens + refillAmount, maxTokens);
   }
 }

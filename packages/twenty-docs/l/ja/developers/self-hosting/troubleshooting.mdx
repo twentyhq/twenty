@@ -1,0 +1,231 @@
+---
+title: トラブルシューティング
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## トラブルシューティング
+
+開発環境のセットアップ、バージョンアップまたはセルフホスティング中に問題が発生した場合、こちらによくある問題の解決策を示しています。
+
+### セルフホスティング
+
+#### 初回インストールに`ユーザー "postgres" のパスワード認証失敗`と表示される
+
+🚨 **重要: この解決策は新規インストールの場合のみ適用されます** 🚨
+すでに稼働中のTwentyインスタンスに本番データがある場合、これらの手順に従うとデータベースが完全に削除されますので、絶対に従わないでください。
+
+Twentyを初めてインストールする際には、デフォルトのデータベースパスワードを変更する必要があるかもしれません。
+初回インストール時に設定されたパスワードはデータベースボリュームに永久に保存されます。 後になってこのパスワードを構成で変更しようとしても、古いボリュームを削除しない限り認証エラーが発生します。データベースが元のパスワードを使用しているためです。
+初回インストール時に設定されたパスワードはデータベースボリュームに永久に保存されます。 後になってこのパスワードを構成で変更しようとしても、古いボリュームを削除しない限り認証エラーが発生します。データベースが元のパスワードを使用しているためです。
+
+⚠️ 警告: 以下のステップを実行すると、データベース内のすべてのデータが完全に削除されます! ⚠️
+これは重要なデータのない新規インストールの場合のみ進めてください。
+
+`PG_DATABASE_PASSWORD`を更新するには、以下が必要です:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR行区切り[Windows]が見つかる
+
+これはWindowsの改行文字とgit構成のためです。 次を実行してみてください: 次を実行してみてください:
+
+```
+git config --global core.autocrlf false
+```
+
+その後、リポジトリを削除して再クローンします。
+
+#### メタデータスキーマが見つかりません
+
+Twentyのインストール中に、postgresデータベースを適切なスキーマ、拡張、およびユーザーで準備する必要があります。
+この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
+そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
+この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
+そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
+
+#### モジュール'twenty-emails' またはその対応する型宣言が見つかりません。
+
+データベースの初期化を実行する前に`npx nx run twenty-emails:build`でtwenty-emailsパッケージをビルドする必要があります。
+
+#### twenty-xパッケージが見つかりません
+
+ルートディレクトリでyarnを実行し、その後 `npx nx server:dev twenty-server`を実行してください。 それでも動作しない場合は、足りないパッケージを手動でビルドしてみてください。 それでも動作しない場合は、足りないパッケージを手動でビルドしてみてください。
+
+#### 保存時のLintが機能しない
+
+eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### `npx nx start` または `npx nx start twenty-front` 実行中にメモリエラーが発生
+
+`packages/twenty-front/.env`で`VITE_DISABLE_TYPESCRIPT_CHECKER=true` と `VITE_DISABLE_ESLINT_CHECKER=true` をコメント解除して、バックグラウンドチェックを無効化し、必要なRAMの量を減らします。
+
+**これが機能しない場合:**  
+必要なサービスのみを実行し、`npx nx start`の実行を避けてください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。
+
+**これが機能しない場合:**  
+`npx nx run twenty-server:start`だけをWSLで実行しようとしてメモリエラーで失敗した場合。
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+以下のコマンドをターミナルで実行するか、.bashrcプロファイルに追加して自動セットアップします:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+\--max-old-space-size=8192 フラグはNode.jsヒープの上限を8GBに設定します; 使用量はアプリケーションの要求に応じてスケールします。
+参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**これが機能しない場合:**  
+あなたのマシンのRAMを最も使用しているプロセスを調査してください。 **これが機能しない場合:**  
+あなたのマシンのRAMを最も使用しているプロセスを調査してください。 Twentyでは、一部のVScode拡張機能が多くのRAMを使用していることに気付き、一時的に無効化しました。
+
+**これが機能しない場合:**  
+マシンを再起動すると、ゴーストプロセスがクリーンアップされます。
+
+#### `npx nx start`を実行中にログに謎の[0]や[1]が表示される
+
+`npx nx start`コマンドが複数のコマンドを裏で実行しているため、これは予想された挙動です。
+
+#### メールが送信されない
+
+ほとんどの場合、バックグラウンドで`worker`が動作していないのが原因です。 実行してみてください 実行してみてください
+
+```
+npx nx worker twenty-server
+```
+
+#### Microsoft 365アカウントに接続できない
+
+ほとんどの場合、管理者があなたのアカウントのMicrosoft 365ライセンスを有効化していないことが原因です。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。
+
+エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 詳細は[こちら](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### `yarn`実行中の警告がコンソールに表示される
+
+警告は、`package.json`に明示的に記載されていない追加依存関係の取得を伝えており、破損するエラーがない限り、すべてが期待通りに動作するはずです。
+
+#### ログインページにアクセスした際、未認証ユーザーの作業スペースへのアクセスに関するエラーがログに表示される
+
+これは予想された挙動で、ログアウト中のユーザーはアイデンティティが確認されていないため未認証です。
+
+#### ワーカーが稼働しているかどうかを確認するには?
+
+- [webhook-test.com](https://webhook-test.com/)にアクセスし、**Your Unique Webhook URL**をコピーします。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Open your Twenty app, navigate to `/settings`, and enable the **Advanced** toggle at the bottom left of the screen.
+- Create a new webhook.
+- Paste **Your Unique Webhook URL** in the **Endpoint Url** field in Twenty. **Filters**を`Companies`と`Created`に設定します。
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Go to `/objects/companies` and create a new company record.
+- Return to [webhook-test.com](https://webhook-test.com/) and check if a new **POST request** has been received.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- If a **POST request** is received, your worker is running successfully. そうでない場合は、ワーカーのトラブルシューティングが必要です。
+
+#### フロントエンドが起動に失敗し、エラーTS5042: オプション'プロジェクト'はコマンドライン上でソースファイルと一緒に使用できません
+
+例のように`packages/twenty-ui/vite-config.ts`内のチェッカープラグインをコメントアウトします
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### 管理パネルにアクセスできない
+
+adminパネルにアクセスするには、データベースコンテナで`UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`を実行します。
+
+### 1クリックでDocker構成
+
+#### ログインできない
+
+セットアップ後にログインできない場合:
+
+1. 次のコマンドを実行してください:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Dockerコンテナを再起動してください:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+database:resetコマンドはデータベースを完全に消去し、最初から再構築します。
+
+#### リバースプロキシの背後での接続問題
+
+リバースプロキシの背後でTwentyを実行し、接続問題が発生している場合:
+
+1. **SERVER_URLの確認:**
+
+   `.env`ファイルの`SERVER_URL`が外部アクセスURLと一致するようにし、SSLが有効なら`https`を含めます。
+
+2. **リバースプロキシ設定の確認:**
+
+   - リバースプロキシがTwentyサーバーへのリクエストを正しく転送していることを確認してください。
+   - `X-Forwarded-For`や`X-Forwarded-Proto`といったヘッダーが正しく設定されていることを確認してください。
+
+3. **サービスの再起動:**
+
+   変更を行った後に、リバースプロキシとTwentyコンテナの両方を再起動します。
+
+#### 画像のアップロード時にエラー - アクセス許可が拒否されました
+
+ホストでのデータフォルダの所有権をrootから他のユーザーとグループに切り替えると、この問題が解決されます。
+
+## サポートを受ける
+
+このガイドにカバーされていない問題がある場合:
+
+- ログを確認:
+
+  コンテナログを表示してエラーメッセージを確認します:
+
+  ```bash
+  docker compose logs
+  ```
+
+- コミュニティサポート:
+
+  [Twentyコミュニティ](https://github.com/twentyhq/twenty/issues)または[サポートチャンネル](https://discord.gg/cx5n4Jzs57)に連絡してサポートを受けてください。

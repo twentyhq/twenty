@@ -1,4 +1,3 @@
-import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -45,7 +44,6 @@ export const SummaryCard = ({
       objectRecordId,
     });
 
-  const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isMobile = useIsMobile() || isInRightDrawer;
 
   const recordIdentifier = useRecoilValue(
@@ -74,8 +72,6 @@ export const SummaryCard = ({
       isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-      icon={Icon}
-      iconColor={IconColor}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordCreatedAt ?? ''}
       loading={

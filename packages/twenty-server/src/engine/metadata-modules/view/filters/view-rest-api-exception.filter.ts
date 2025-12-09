@@ -67,6 +67,12 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
             response,
             400,
           );
+        case ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED:
+          return this.httpExceptionHandlerService.handleError(
+            exception as CustomException,
+            response,
+            403,
+          );
         default:
           // TODO: change to 500 when we have input validation
           return this.httpExceptionHandlerService.handleError(

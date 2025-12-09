@@ -1,0 +1,84 @@
+---
+title: FAQ sur le modèle de données
+info: "Questions fréquemment posées concernant la configuration du modèle de données, les limitations et les futures fonctionnalités."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Modèle de données flexible conçu pour soutenir vos processus métier uniques
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Gestion des objets
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Pas encore. L'ordre des objets dans la navigation est actuellement fixe, mais cette fonctionnalité est prévue pour une future version.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Tous les objets actifs apparaissent dans la navigation. Vous pouvez désactiver les objets dont vous n'avez pas besoin sous **Paramètres → Modèle de données**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">Vous pouvez désactiver les objets standard, mais vous ne pouvez pas les supprimer définitivement.</Accordion>
+</AccordionGroup>
+
+## Capacités des champs
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Les champs de formule arrivent en **T1 2026**. En attendant, vous pouvez utiliser les workflows pour calculer et mettre à jour automatiquement les valeurs des champs.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Les champs imbriqués arrivent en **T1 2026**. Actuellement, vous pouvez utiliser des workflows pour extraire des valeurs de champs à partir d'objets connexes. Par exemple, pour afficher le secteur d'une entreprise sur une fiche Personne, créez un champ personnalisé sur Personnes et utilisez un workflow pour synchroniser la valeur.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Les noms des champs de relation influent sur la structure de l'API et ne peuvent pas être modifiés après création. Si vous devez renommer un champ de relation, vous devrez en créer un nouveau et supprimer l'ancien.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Notre API GraphQL utilise les deux formes pour différentes opérations :
+- `createPerson` (singulier) pour les actions sur un seul enregistrement
+- `createPeople` (pluriel) pour les opérations en masse
+
+Cela crée des limitations lorsque les formes singulier et pluriel sont identiques, mais cela améliore l'expérience développeur. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Certains noms de champs comme `Type` ou `Application` sont réservés à l'usage du système. Choisissez des noms alternatifs comme `Catégorie` ou `Classification`.
+</Accordion>
+</AccordionGroup>
+
+## Fonctionnalités avancées
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Les relations plusieurs-à-plusieurs arrivent en **T1 2026**. Actuellement, créez un objet intermédiaire avec deux relations 1-à-plusieurs comme solution de contournement.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Les relations Morph Many permettent à un objet de se lier à plusieurs types d'objets différents. Par exemple, une Opportunité pourrait être liée soit à une Personne soit à une Entreprise. Cette fonctionnalité est maintenant disponible.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Le réagencement des champs sera disponible avec les mises en page personnalisées en **T4 2025**. Actuellement, les champs apparaissent par ordre alphabétique.
+</Accordion>
+</AccordionGroup>
+
+## Accès et Permissions
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">Vous pouvez accéder à votre modèle de données sous **Paramètres → Modèle de données**.</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Contactez votre administrateur d'espace de travail. L'accès au modèle de données est généralement limité aux administrateurs uniquement.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">Vous pouvez créer autant d'objets et de champs personnalisés que vous le souhaitez - le prix ne changera pas.</Accordion>
+</AccordionGroup>
+
+## Besoin de plus d'aide ?
+
+Consultez nos [services de mise en œuvre](/l/fr/user-guide/getting-started/implementation-services) pour obtenir de l'aide pour la conception de modèles de données complexes.
+

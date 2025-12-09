@@ -10,10 +10,11 @@ import {
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -40,7 +41,7 @@ export class WorkflowTriggerController {
   ) {}
 
   @Post('workflows/:workspaceId/:workflowId')
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async runWorkflowByPostRequest(
     @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
@@ -54,7 +55,7 @@ export class WorkflowTriggerController {
   }
 
   @Get('workflows/:workspaceId/:workflowId')
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async runWorkflowByGetRequest(
     @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
@@ -140,6 +141,7 @@ export class WorkflowTriggerController {
           name: 'Webhook',
           context: {},
         },
+        workspaceId,
       });
 
     return {

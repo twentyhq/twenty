@@ -1,10 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -17,12 +17,10 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MESSAGE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export enum MessageFolderPendingSyncAction {
   FOLDER_DELETION = 'FOLDER_DELETION',
-  FOLDER_IMPORT = 'FOLDER_IMPORT',
   NONE = 'NONE',
 }
 
@@ -32,6 +30,7 @@ registerEnumType(MessageFolderPendingSyncAction, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageFolder,
+
   namePlural: 'messageFolders',
   labelSingular: msg`Message Folder`,
   labelPlural: msg`Message Folders`,
@@ -48,7 +47,8 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Folder name`,
     icon: 'IconFolder',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
@@ -69,7 +69,8 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sync Cursor`,
     icon: 'IconHash',
   })
-  syncCursor: string;
+  @WorkspaceIsNullable()
+  syncCursor: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
@@ -127,15 +128,9 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
       {
-        value: MessageFolderPendingSyncAction.FOLDER_IMPORT,
-        label: 'Folder import',
-        position: 1,
-        color: 'green',
-      },
-      {
         value: MessageFolderPendingSyncAction.NONE,
         label: 'None',
-        position: 2,
+        position: 1,
         color: 'blue',
       },
     ],

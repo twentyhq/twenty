@@ -4,7 +4,7 @@ import {
   PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS,
 } from 'test/integration/constants/page-layout-gql-fields.constants';
 
-import { type UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
+import { type UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 
 type UpdatePageLayoutWithTabsOperationFactoryParams = {
   gqlFields?: string;

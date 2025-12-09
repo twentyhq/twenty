@@ -21,12 +21,14 @@ type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   sourceFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 };
 export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   createFieldInput,
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   workspaceId,
+  workspaceCustomApplicationId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: FlatFieldMetadata[];
@@ -42,12 +44,14 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   ) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Relation creation payload is required`,
-        userFriendlyMessage: msg`Relation creation payload is required`,
-        value: rawMorphCreationPayload,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Relation creation payload is required`,
+          userFriendlyMessage: msg`Relation creation payload is required`,
+          value: rawMorphCreationPayload,
+        },
+      ],
     };
   }
 
@@ -90,6 +94,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           targetFlatObjectMetadata,
           workspaceId,
           morphId,
+          workspaceCustomApplicationId,
         });
 
       return {

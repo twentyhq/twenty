@@ -1,0 +1,39 @@
+---
+title: Schakelaar
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props          | Soort      | Beschrijving                                                                                                                                  | Standaard              |
+| -------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| waarde         | booleaan   | De huidige toestand van de schakelaar                                                                                                         | `vals`                 |
+| onChange       | functie    | Callback functie geactiveerd wanneer de staat van de schakelaar verandert                                                                     |                        |
+| kleur          | tekenreeks | Kleur van de schakelaar wanneer het\                                                                                                         | een blauwe kleur heeft |
+| schakelGrootte | tekenreeks | Grootte van de schakelaar, beïnvloedt zowel de hoogte als het gewicht. Heeft twee opties: `klein` en `medium` | medium                 |
+
+</Tab>
+</Tabs>

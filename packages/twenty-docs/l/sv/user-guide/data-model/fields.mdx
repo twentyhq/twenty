@@ -1,0 +1,108 @@
+---
+title: Fält
+info: "Förstå rollen av fält och hur man hanterar dem."
+image: /images/user-guide/fields/field.png
+sectionInfo: Flexibel datamodell utformad för att stödja dina unika affärsprocesser
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## About Fields
+
+Fält är som kolumner i ett kalkylblad. De lagrar olika typer av data som text, siffror eller datum. Fält kan vara standard (inbyggda) eller anpassade (de som du skapar).
+
+### Standardfält
+
+Standardfält är inbyggda i Twenty för att hantera vanliga affärsbehov.
+
+Till exempel, `Förnamn` och `Efternamn` är standardfält i objektet `Personer`. De lagrar textdata för individuella namn.
+
+Du kan inte ta bort standardfält, men du kan inaktivera dem om du inte behöver dem.
+
+You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Anpassade Fält
+
+Anpassade fält kan läggas till i vilket objekt som helst. Du kan lagra text, siffror, datum, rullgardinsval och mer. Använd anpassade fält för att spåra information som är specifik för ditt företag.
+
+Till exempel kan ett anpassat fält för SpaceX vara `Rakets aktiva status`, vilket anger om en raket är operativ.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Create a Custom Field
+
+To add a custom field to any object, follow these steps:
+1.	Gå till `Inställningar` i den vänstra sidpanelen.
+2.	Gå till `Datamodell`, och välj sedan objektet du vill anpassa.
+3.	Fortsätt genom att klicka på `Lägg till Fält`.
+4.	Välj ett fältnamn och typ som passar dina krav. Överväg att lägga till en fältbeskrivning för bättre förståelse.
+
+Ditt nyss skapade fält är nu tillgängligt inom applikationens fält. För att visa det i en specifik vy, klicka på alternativmenyn och välj `Fält`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Snabbt sätt:** Klicka på **+** knappen högst upp till höger i vilken objekttabell som helst och välj sedan `Anpassa fält`. Detta tar dig direkt till Datamodellinställningarna.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Inaktivera ett fält
+
+Du kan inaktivera ett fält för att dölja det i appen utan att förlora dina data. Tänk på det som att dölja fältet istället för att radera det.
+
+Så här gör du det:
+
+1. Hitta det fält du vill inaktivera i dina objektinställningar.
+
+2. Klicka på de tre punkterna `⋮` bredvid fältet för att öppna menyn.
+
+3. Välj `Inaktivera` från rullgardinsmenyn.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Vad händer när du inaktiverar ett fält?
+
+1. **I appen:** Fältet försvinner och du kan inte lägga till nya värden i det.
+
+2. **Befintliga relationer:** Om det är ett relationsfält, förblir befintliga anslutningar men du kan inte skapa nya.
+
+3. **API-åtkomst:** Du kan fortfarande komma åt fältet och dess data genom API.
+
+Du kan återaktivera Standard och Anpassade Fält eller ha möjlighet att permanent ta bort dem.
+
+## Gör Fält Unika
+
+Gör ett fält unikt för att säkerställa att distinkta poster inte kan ha samma värde. Till exempel är e-postadresser unika för varje person.
+
+Om du får ett felmeddelande när du ställer in unicitet, kontrollera efter dubblettvärden i din data (inklusive raderade poster).
+
+## Bästa Praxis för Fältkonfiguration
+
+### Bästa Praxis för Fältkonfiguration
+
+- **Relationsfältnamn kan inte uppdateras** efter skapandet (påverkar API-struktur)
+- **Singulära och plurala namn måste vara distinkta**: Vår GraphQL API behöver distinkta namn för mutationer
+- **Skyddade fältnamn**: vissa namn är reserverade för systemanvändning (t.ex. `Typ`)
+
+### Valuta- och Telefonfält
+
+- **Standardvaluta**: kan konfigureras via datamodellen
+- **Standardlandskoder**: kan konfigureras för telefonfält via datamodellen
+
+### Select Fields
+
+- **Ett standardalternativ kan väljas** för varje Väljfält
+
+### Textfält för Poster
+
+- **Varje objekt har ett huvudvisningsfält**: Detta fält visas i den vänstra kolumnen och representerar posten när den är länkad till andra objekt. Det måste vara ett textfält. Till exempel använder Personer `Namn` som huvudfält, så när du länkar en person till ett företag, kommer du att se deras namn i företagsvyn.
+
+### Relationsfält
+
+- **Koppla ihop objekt**: Relationsfält länkar poster från olika objekt. För detaljerad information om att skapa och hantera relationer, se vår [Relationsfält](/l/sv/user-guide/data-model/relation-fields) artikel.
+

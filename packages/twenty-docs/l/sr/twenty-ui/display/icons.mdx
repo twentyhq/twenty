@@ -1,0 +1,83 @@
+---
+title: Иконе
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+A list of icons used throughout our app.
+
+## Tabler Иконе
+
+Користимо Tabler иконе за React кроз апликацију.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+You can import each icon as a component. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Својства | Тип  | Опис                              | Подразумевано |
+| -------- | ---- | --------------------------------- | ------------- |
+| величина | број | Висина и ширина иконе у пикселима | 24            |
+| боја     | низ  | Боја икона                        | тренутна боја |
+| stroke   | број | Ширина линије иконе у пикселима   | 2             |
+
+</Tab>
+
+</Tabs>
+
+## Прилагођене Иконе
+
+Поред Tabler икона, апликација такође користи и неке прилагођене иконе.
+
+### Икона Адресар
+
+Приказује икону адресара.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Својства | Тип  | Опис                              | Подразумевано |
+| -------- | ---- | --------------------------------- | ------------- |
+| величина | број | Висина и ширина иконе у пикселима | 24            |
+| stroke   | број | Ширина линије иконе у пикселима   | 2             |
+
+</Tab>
+
+</Tabs>

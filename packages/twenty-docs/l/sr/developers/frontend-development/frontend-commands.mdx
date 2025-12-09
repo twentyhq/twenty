@@ -1,0 +1,96 @@
+---
+title: Frontend команде
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## Корисне команде
+
+### Покретање апликације
+
+```bash
+npx nx start twenty-front
+```
+
+### Поново генериши GraphQL шему на основу API GraphQL шеме
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+ИЛИ
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Преводи
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Тест
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Технолошки Скуп
+
+Пројекат има чист и једноставан скуп, са минималним boilerplate кодом.
+
+**Апликација**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Тестирање**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Алатке**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Архитектура
+
+### Рутирање
+
+[React Router](https://reactrouter.com/) управља рутама.
+
+Да би се избегло непотребно [поновно рендеровање](/l/sr/developers/frontend-development/best-practices-front#managing-re-renders) сва логика рутирања је у `useEffect` у `PageChangeEffect`.
+
+### Управљање стањем
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) се бави управљањем стањем.
+
+Погледајте [најбоље праксе](/l/sr/developers/frontend-development/best-practices-front#state-management) за више информација о управљању стањем.
+
+## Тестирање
+
+[Jest](https://jestjs.io/) служи као алат за универзално тестирање, док је [Storybook](https://storybook.js.org/) за тестирање компонента.
+
+Jest је углавном за тестирање утилити функција, а не самих компонента.
+
+Storybook је за тестирање понашања изолованих компонента, као и приказивање дизајн система.
+

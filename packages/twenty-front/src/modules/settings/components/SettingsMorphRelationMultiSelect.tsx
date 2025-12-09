@@ -147,6 +147,9 @@ export const SettingsMorphRelationMultiSelect = ({
   const addOrRemoveFromArray = (array: string[], item: string) => {
     let newArray = new Set(array);
     if (newArray.has(item)) {
+      if (newArray.size <= 1) {
+        return array;
+      }
       newArray.delete(item);
     } else {
       newArray.add(item);

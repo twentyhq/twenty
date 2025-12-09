@@ -1,0 +1,39 @@
+---
+title: Přepínač
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Vlastnosti        | Typ                | Popis                                                                                                                         | Výchozí      |
+| ----------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| hodnota           | booleovská hodnota | Aktuální stav přepínače                                                                                                       | `nepravdivé` |
+| onChange          | funkce             | Callback funkce spuštěná při změně stavu přepínače                                                                            |              |
+| barva             | textový řetězec    | Color of the toggle when it\                                                                                                 | modré barvy  |
+| velikostPřepínače | textový řetězec    | Velikost přepínače, která ovlivňuje jak výšku, tak šířku. Má dvě možnosti: `malé` a `střední` | střední      |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,220 @@
+---
+title: Harici Araç Entegrasyonu
+info: Bu iş akışları, verileri API çağrıları ve webhook'lar aracılığıyla Twenty'ye getirip çıkarmaya odaklanır.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Süreçleri otomatikleştirin ve harici araçlarla entegre edin
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Aşağıda Twenty'yi geri kalan sisteminizle bağlantı kurmanızı sağlayacak iş akışı örnekleri bulunmaktadır.
+
+## Veri Alımı Kullanım Alanları
+
+### Webform Gönderimleri
+
+**Sorun**: Web sitesi formlarından, açılış sayfalarından veya iletişim formlarından doğrudan Twenty'ye başvuru toplamanız gerekiyor.
+
+**Çözüm**: Form gönderimlerinden otomatik olarak kayıt oluşturmak için webhook tetikleyicileri kullanın.
+
+**Kurulum**:
+
+- Webhook tetikleyicisi ile bir iş akışı oluşturun
+- Webhook'u form verilerini bekleyecek şekilde yapılandırın (isim, e-posta, şirket, vb.)
+- Webhook metodunu POST olarak ayarlayın
+- Tetikleyicide beklenen gövde yapısını tanımlayın
+
+**Tetikleyici**: Webhook (formunuzdan gelen POST isteği)
+
+**Eylemler**:
+
+- Kişi/şirket zaten mevcut mu diye kontrol etmek için Kayıtları Arayın
+- Dal: Varsa → Kaydı Güncelleyin, Yoksa → Kayıt Oluşturun
+- Satış temsilcisine atanan takip görevi için Kayıt Oluşturun
+- Satış ekibine e-posta bildirimi gönder
+
+### Ürün Verisi Senkronizasyonu
+
+**Sorun**: Satış ekibinizin, veri ambarınızda saklanan ürün kullanımı, faturalama veya özellik benimseme verilerini görmesi gerekiyor.
+
+**Çözüm**: Satıcıların hesapları hakkında bağlam elde etmesi için ürün verilerini düzenli olarak Twenty'ye senkronize edin.
+
+**Trigger**: On a Schedule (daily or weekly)
+
+**Eylemler**:
+
+- Veri ambarı API'sine HTTP isteği yap
+- Verileri işlemek ve biçimlendirmek için kod eylemi
+- Sonraki adımlar için Yineleyici işlevini kullanın
+- Eşleşen şirket kayıtlarını bulmak için Kayıtları Arayın
+- Ürün kullanım metriği eklemek için Kaydı Güncelleyin
+- Kullanım eşiğin altına düştüğünde görevler için Kayıt Oluşturun
+
+### Görüşme Kaydedicilerden Toplantı Notları
+
+**Sorun**: Satış görüşmelerinden önemli içgörüler kayboluyor veya CRM'e doğru şekilde belgelenmiyor.
+
+**Çözüm**: Görüşme kayıt sistemlerinden otomatik olarak notlar ve eylem maddeleri oluşturun.
+
+**Tetikleyici**: Webhook (görüşme kayıt platformundan)
+
+**Eylemler**:
+
+- Görüşme özeti ve eylem maddelerini çıkarmak için kod eylemi
+- İlgili fırsat veya kontağı bulmak için Kayıtları Arayın
+- Toplantı özeti ile not için Kayıt Oluşturun
+- Eylem maddelerine göre takip görevleri için Kayıt Oluşturun
+- Katılımcılara özet ve bir sonraki adımlarla e-posta gönderin
+
+### Veri Zenginleştirmesi
+
+**Sorun**: Kişi ve şirket kayıtlarınız önemli demografik ve firmografik bilgilerden yoksun.
+
+**Çözüm**: Harici veri sağlayıcıları kullanarak kayıtları otomatik olarak zenginleştirin.
+
+**Tetikleyici**: Kayıt Oluşturulduğu Zaman (Kişiler veya Şirketler nesnesi)
+
+**Eylemler**:
+
+- Veri ambarı API'sine HTTP isteği yap
+- Zenginleştirme yanıtını işlemek için kod eylemi
+- Sonraki adımlar için Yineleyici fonksiyonunu kullanın
+- Ek şirket/kontak bilgileri ile Kaydı Güncelleyin
+- Yüksek değerli müşteri adayı tespit edildiğinde satış görevi için Kayıt Oluşturun
+- Zenginleştirme ana satın alma sinyallerini ortaya çıkarırsa e-posta uyarısı gönderin
+
+## Veri Dağıtım Kullanım Alanları
+
+### Haber Bülteni Abone Yönetimi
+
+**Sorun**: Pazarlama e-postalarını CRM verinizin belirli segmentlerine özel e-posta araçlarını kullanarak göndermek istiyorsunuz.
+
+**Çözüm**: Abone listelerini gerektiğinde e-posta pazarlama platformunuza dışa aktarın.
+
+**Kurulum**: Tüm bülten alıcıları ile Twenty'de bir görünüm oluşturun
+
+**Tetikleme**: Manuel Olarak Başlat (hiçbir kayıt seçilmediğinde)
+
+**Eylemler**:
+
+- Bülten görünümü kriterlerini kullanarak Kayıt Arayın
+- E-posta platformunuz için e-posta adreslerini biçimlendirmek üzere kod eylemi
+- Aboneleri e-posta pazarlama aracınıza eklemek için HTTP İsteği
+- Kampanya takibi için Kayıt Oluşturun
+- Pazarlama ekibine e-posta onayı gönderin
+
+### E-posta Dizisi Tetiklemeleri
+
+**Sorun**: CRM olaylarına dayanarak özel e-posta dizilerini tetiklemek için özel e-posta otomasyon araçlarını kullanmak istiyorsunuz.
+
+**Çözüm**: Belirli olaylar meydana geldiğinde yeni potansiyel veya müşterileri e-posta otomasyon platformunuza gönderin.
+
+**Tetikleme**: Kayıt Oluşturuldu (belirli kriterlere sahip İnsanlar nesnesi)
+
+**Eylemler**:
+
+- Uygun e-posta dizisini belirlemek için kod eylemi
+- E-posta otomasyon platformuna iletişim eklemek için HTTP İsteği
+- Dizi kaydını izlemek için Kayıt Güncellemesi
+- Katılımı izlemek için takip görevi kaydı oluşturun
+
+### Potansiyel Müşteri Puanlaması Entegrasyonu
+
+**Sorun**: CRM verileri ile dış sinyalleri birleştiren gelişmiş bir potansiyel müşteri puanlamasına ihtiyacınız var.
+
+**Çözüm**: Potansiyel müşteri verilerini dış puanlama araçlarına gönderin veya iş akışları içinde puanlama mantığını uygulayın.
+
+**Seçenek 1 - Dış Araç**:
+
+**Tetikleme**: Kayıt Güncellendi (İnsanlar nesnesi)
+
+**Eylemler**:
+
+- Puanlama platformuna potansiyel müşteri verilerini göndermek için HTTP İsteği
+- Puan yanıtını işlemek için kod eylemi
+- Potansiyel müşteri puanı ile kaydı güncelleyin
+- Puan eşik değerini aşarsa satış görevi için kayıt oluşturun
+
+**Seçenek 2 - İç Mantık**:
+
+**Tetikleme**: Kayıt Güncellendi (İnsanlar nesnesi)
+
+**Eylemler**:
+
+- Puanlama algoritması ile kod eylemi (şirket büyüklüğü, sektör, davranış)
+- Hesaplanan puan ile kaydı güncelleyin
+- Yüksek puanlı potansiyeller için satış temsilcisine e-posta uyarısı gönderin
+
+### Fatura Oluşturma
+
+**Sorun**: Anlaşmalar kapandığında, faturalama sisteminizin müşteri ve anlaşma bilgileri ile güncellenmesi gerekiyor.
+
+**Çözüm**: Fırsatlar kazanıldığında, anlaşma verilerini otomatik olarak faturalama sisteminize gönderin.
+
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Won")
+
+**Eylemler**:
+
+- Search Records to get complete customer information
+- Faturalama sistemi için veri biçimlendirme kod eylemi
+- Faturalama platformunda müşteri oluşturmak için HTTP İsteği
+- Fatura oluşturmak için HTTP İsteği
+- Fatura referansını saklamak için kaydı güncelleyin
+- Finans ekibine fatura detaylarıyla e-posta gönderin
+
+## Gelişmiş Entegrasyon Desenleri
+
+### Çift Yönlü Senkronizasyon
+
+**Sorun**: Twenty ile başka bir sistem arasında her iki yönde veri senkronizasyonu sağlamanız gerekiyor.
+
+**Solution**: Combine scheduled workflows with webhook triggers for real-time sync.
+
+**Twenty'den Dış Sisteme**:
+
+**Trigger**: Record is Updated (any relevant object)
+
+**Eylemler**:
+
+- Dış sistemi güncellemek için HTTP İsteği
+- Update Record to track sync status and timestamp
+
+**Dış Sistemden Twenty'ye**:
+
+**Trigger**: Webhook (from external system)
+
+**Eylemler**:
+
+- Eşleşen kaydı bulmak için Kayıt Arayın
+- Dış sistemden yeni verilerle kaydı güncelleyin
+- Gerekirse, çatışma çözümü görevi için kayıt oluşturun
+
+### Çok Aşamalı Veri İşleme
+
+**Sorun**: Dış kaynaklardan gelen veriler, Twenty'de kullanılmadan önce karmaşık işlem gerektiriyor.
+
+**Çözüm**: Veri dönüşümü ve doğrulama için kod eylemleri kullanın.
+
+**Trigger**: Webhook or On a Schedule
+
+**Eylemler**:
+
+- Gelen veri biçimini doğrulamak için kod eylemi
+- Veri yapısını dönüştürmek için kod eylemi
+- İş kuralları ve hesaplamalar uygulamak için kod eylemi
+- Çoğaltmaları kontrol etmek için Kayıt Arayın
+- İşlenen verilerle Kayıt Oluştur veya Güncelle
+- Veri kalitesi sorunları tespit edilirse e-posta uyarısı gönderin
+
+## Uygulama İpuçları
+
+- API anahtarlarını Ayarlar → API & Webhooks bölümünde güvenli bir şekilde saklayın
+- Tüm dış API çağrıları için HTTPS kullanın
+- API hız sınırlarını dikkate alın - mümkün olduğunda zamanlanmış iş akışlarını kullanın
+- Gerçek zamanlı işlem gerektirmediğinde, "Zaman Çizelgesinde" toplu güncellemeleri değerlendirin
+- Her çalışma alanı için 100 eşzamanlı iş akışı sınırını unutmayın - birçok kaydı işlerken manuel tetiklemeler için "Toplu" kullanılabilirliği kullanın (daha fazla bilgi için [İş Akışı Özellikleri](/l/tr/user-guide/workflows/workflow-features) bölümüne bakın)
+- İş akışlarını etkinleştirmeden önce örnek verilerle test edin
+
+Entegrasyon sorunlarını giderme konusunda rehber için [İş Akışı Sorun Giderme](/l/tr/user-guide/workflows/workflow-troubleshooting) kılavuzumuzu inceleyin. Karmaşık entegrasyonların uygulanmasına yardımcı olması için [Profesyonel Hizmetler](/l/tr/user-guide/workflows/professional-services) düşünün.

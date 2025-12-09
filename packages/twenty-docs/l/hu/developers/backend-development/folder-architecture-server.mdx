@@ -1,0 +1,130 @@
+---
+title: Mappa Architektúra
+info: A detailed look into our server folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+A backend könyvtárstruktúra a következő:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Képesség
+
+Meghatározza az engedélyeket, és kezelőket tartalmaz minden entitás számára.
+
+## Dekorátorok
+
+Egyedi dekorátorokat határoz meg NestJS-ben a kiegészítő funkcionalitás érdekében.
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Szűrők
+
+Kivételszűrőket tartalmaz, hogy kezelje a GraphQL végpontokon előforduló kivételeket.
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details.
+
+## Health
+
+Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+
+## Metaadatok
+
+Egyedi objektumokat határoz meg, és egy GraphQL API-t (graphql/metadata) kínál.
+
+## Munkaterület
+
+Egyedi GraphQL sémát generál és szolgál ki a metaadatok alapján.
+
+### Munkaterület könyvtárstruktúra
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+A munkaterület könyvtárának gyökerében található a `munkaterület.gyár.ts`, ami tartalmazza a `createGraphQLSchema` függvényt. Ez a függvény munkaterület-specifikus sémát generál, amely a metaadatok felhasználásával alakítja ki az egyéni munkaterületek sémáját. A séma és megoldó konstrukció különválasztásával használjuk a `makeExecutableSchema` függvényt, amely ezeket az elhatárolt elemeket összefűzi.
+
+This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+
+### Munkaterület séma-építő
+
+Generálja a GraphQL sémát, és tartalmazza:
+
+#### Gyárak:
+
+Speciális konstruktorok a GraphQL-alapú konstrukciók létrehozásához.
+
+- A type.factory az mezőmetaadatokat GraphQL típusokra fordítja a `TypeMapperService` felhasználásával.
+- A type-definition.factory GraphQL bemeneti vagy kimeneti objektumokat hoz létre az `objectMetadata` alapján.
+
+#### GraphQL típusok
+
+Tartalmaz felsorolásokat, bemeneteket, objektumokat és skálákat, amelyek az alapelemeit képezik a séma felépítésének.
+
+#### Interfészek és objektum definíciók
+
+Tartalmazza a tervrajzokat a GraphQL entitásokhoz, és magában foglalja mind az előre meghatározott, mind az egyéni típusokat, mint például `MONEY` vagy `URL`.
+
+#### Szolgáltatások
+
+Tartalmazza a szolgáltatást, amely a FieldMetadataType-ot társítja a megfelelő GraphQL skálával vagy lekérdezés-módosítóval.
+
+#### Tárolás
+
+Tartalmazza a `TypeDefinitionsStorage` osztályt, amely újrafelhasználható típuselemzéseket tartalmaz, megelőzve a GraphQL típusok duplikációját.
+
+### Munkaterület Megoldókészítő
+
+Lekérdező és módosító funkciókat hoz létre a GraphQL sémához.
+
+Ebben a könyvtárban minden gyár felelős egy megkülönböztetett megoldótípus előállításáért, mint például a `FindManyResolverFactory`, amely az alkalmazkodó alkalmazás érdekében lett kialakítva a különféle táblázatok számára.
+
+### Munkaterület Lekérdezés Futtató
+
+Futtatja a generált lekérdezéseket az adatbázison, és elemzi az eredményt.

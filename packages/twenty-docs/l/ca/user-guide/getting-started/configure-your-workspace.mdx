@@ -1,0 +1,86 @@
+---
+title: Configura el teu Espai de Treball
+info: "Comença configurant el teu espai de treball amb aquests tres passos."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Descobriu Twenty, un CRM de codi obert.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Cada empresa treballa de manera diferent. Per això, Twenty et permet adaptar el CRM a les teves necessitats, i no forçar els teus processos a encaixar en el nostre.
+**Comença amb aquests tres passos per configurar-lo a la teva manera.**
+
+**Victòria Ràpida**: Comença connectant la teva bústia de correu i personalitzant el teu model de dades amb alguns camps clau. Això et dóna valor immediat i ajuda el teu equip a veure Twenty en acció amb dades reals. Ho pots fer a Configuració → Comptes.
+
+## 1. Personalitza el teu model de dades
+
+Twenty ofereix la flexibilitat necessària per modelar el model de dades que millor suportarà el teu dia a dia.
+Crea objectes i camps de qualsevol tipus, incloent relacions entre els teus diferents objectes. Ho pots fer a Configuració → Model de Dades.
+Aquí tens alguns consells:
+
+- **No estàs limitat en el nombre de camps personalitzats ni d'objectes personalitzats**. Afegir objectes i camps personalitzats no comportarà l'actualització del teu pla.
+- **Persones, Empreses i Oportunitats són els tres objectes des dels quals pots accedir als correus i reunions sincronitzats des de la teva bústia/calendari**. Recomanem utilitzar-los tant com sigui possible, afegint camps per categoritzar els teus registres si és necessari. Aquí tens un exemple:
+  - És millor utilitzar l'objecte Persones per als teus prospectes i socis, creant un camp a l'objecte Persones anomenat `Tipus de Persona`, en lloc de crear un objecte Personalitzat de Soci. Perquè no podries accedir als correus intercanviats amb aquesta persona des dels registres de Soci.
+  - Crea diferents vistes sota Persones, una per mostrar socis i una altra per mostrar prospectes.
+- Dues Persones no poden tenir la mateixa adreça de correu electrònic. Dues Empreses no poden tenir el mateix domini.
+- Pots desactivar camps i objectes estàndard que no vulguis utilitzar.
+- Pots ocultar camps de les vistes: no tinguis por de crear camps, no hauràs de mostrar-los tots.
+
+Llegeix [aquest article](https://docs.twenty.com/l/ca/user-guide/data-model/customize-your-data-model) per aprendre a dissenyar el teu model de dades.
+
+## 2. Importa les teves dades
+
+Importar les teves dades existents a Twenty proporciona al teu equip context des del principi.
+
+### Connecta la teva bústia de correu
+
+Si no ho has fet al crear el teu espai de treball, connecta el teu compte de **Google o Microsoft** sota Configuració → Comptes. Això permet a Twenty:
+
+- Importar els teus missatges i reunions
+- Crear contactes automàticament basats en interaccions (opcional)
+- Mantenir visible l'historial de comunicació per al teu equip
+
+**Estàs utilitzant un altre proveïdor?**
+Pots afegir una altra bústia de correu via SMTP o un altre calendari via CalDAV. Hauràs d'activar la funció a Configuració → Llançaments → Laboratori, i després tornar a la pestanya Configuració → Comptes.
+
+### Importa dades via csv
+
+Utilitza el menú Comanda (`Cmd + K` o `Ctrl + K`) per importar Persones, Empreses, Oportunitats o qualsevol objecte personalitzat a través de CSV.
+
+**Guies clau**:
+
+- Descarrega el fitxer d'exemple per entendre el format esperat
+- Limita cada fitxer a 10k registres
+- Elimina adreces de correu duplicades per a Persones o dominis duplicats per a Empreses
+- Revisa i corregeix els errors (ressaltats en groc) abans d'importar
+
+Llegeix [aquest article](/l/ca/user-guide/getting-started/import-export-data) per saber més sobre la importació de dades.
+
+## 3. Crea la teva primera vista
+
+Crear diferents vistes és clau per fer les dades accionables per al teu equip.
+Això és com procedir:
+
+- **Afegeix o amaga columnes**
+  Gestiona els camps visibles en una vista determinada fent clic a Opcions → Camps (des de la part superior dreta). Pots mostrar/amagar camps des d'allà.
+
+- **Reordena camps**
+  Reordena els camps d'una vista determinada fent clic a Opcions → Camps (des de la part superior dreta). Arrossega i deixa anar els camps per reordenar-los.
+
+- **Filtra la teva vista**
+  Restringeix els registres mostrats utilitzant els filtres de la part superior dreta.
+
+- **Ordena els registres**
+  Reordena els registres mostrats utilitzant la funció d'ordenar des de la part superior dreta, o fent clic directament sobre el nom de la columna.
+
+- **Tria el disseny**
+  Pots canviar a un disseny **Kanban** o a un disseny de llista **Group By**, sempre que l'objecte tingui un camp de tipus seleccionable, com ara `Estadi`.
+
+- **Desa la teva vista com a Favorits**
+  Això es pot fer utilitzant el menú desplegable que mostra les diferents vistes.
+
+## Què ve després?
+
+Comença a crear automatitzacions utilitzant [workflows](https://docs.twenty.com/l/ca/user-guide/workflows/getting-started-workflows).

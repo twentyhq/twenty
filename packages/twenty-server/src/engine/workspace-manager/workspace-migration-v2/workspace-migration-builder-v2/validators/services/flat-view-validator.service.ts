@@ -1,14 +1,17 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export class FlatViewValidatorService {
   constructor() {}
@@ -39,7 +42,18 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
+
+      return validationResult;
     }
+
+    const partialUpdates = fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+      updates: flatEntityUpdates,
+    });
+
+    const updatedFlatView: FlatView = {
+      ...existingFlatView,
+      ...partialUpdates,
+    };
 
     const kanbanAggregateOperationFieldMetadataIdUpdate =
       findFlatEntityPropertyUpdate({
@@ -62,6 +76,70 @@ export class FlatViewValidatorService {
         message: t`View kanban aggregate field metadata not found`,
         userFriendlyMessage: msg`View kanban aggregate field metadata not found`,
       });
+    }
+
+    const viewBecomesKanban =
+      updatedFlatView.type === ViewType.KANBAN &&
+      existingFlatView.type !== ViewType.KANBAN;
+
+    if (viewBecomesKanban) {
+      if (!isDefined(updatedFlatView.mainGroupByFieldMetadataId)) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban view must have a main group by field`,
+          userFriendlyMessage: msg`Kanban view must have a main group by field`,
+        });
+
+        return validationResult;
+      }
+
+      const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: updatedFlatView.mainGroupByFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(mainGroupByFieldMetadata)) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field metadata not found`,
+          userFriendlyMessage: msg`Kanban main group by field metadata not found`,
+        });
+      } else if (mainGroupByFieldMetadata.type !== FieldMetadataType.SELECT) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field must be a SELECT field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+        });
+      }
+    }
+
+    const updatedMainGroupByFieldMetadataId =
+      updatedFlatView.mainGroupByFieldMetadataId;
+
+    const mainGroupByFieldMetadataIsAddedOrUpdated =
+      isDefined(updatedMainGroupByFieldMetadataId) &&
+      existingFlatView.mainGroupByFieldMetadataId !==
+        updatedMainGroupByFieldMetadataId;
+
+    if (mainGroupByFieldMetadataIsAddedOrUpdated && !viewBecomesKanban) {
+      const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: updatedMainGroupByFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(mainGroupByFieldMetadata)) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field metadata not found`,
+          userFriendlyMessage: msg`Kanban main group by field metadata not found`,
+        });
+      } else if (mainGroupByFieldMetadata.type !== FieldMetadataType.SELECT) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field must be a SELECT field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+        });
+      }
     }
 
     return validationResult;
@@ -96,16 +174,16 @@ export class FlatViewValidatorService {
     return validationResult;
   }
 
-  public async validateFlatViewCreation({
+  public validateFlatViewCreation({
     flatEntityToValidate: flatViewToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
-  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>): Promise<
-    FailedFlatEntityValidation<FlatView>
-  > {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
     const validationResult: FailedFlatEntityValidation<FlatView> = {
       type: 'create_view',
       errors: [],
@@ -148,6 +226,39 @@ export class FlatViewValidatorService {
         message: t`View kanban aggregate field metadata not found`,
         userFriendlyMessage: msg`View kanban aggregate field metadata not found`,
       });
+    }
+
+    const isKanban = flatViewToValidate.type === ViewType.KANBAN;
+
+    if (isKanban) {
+      if (!isDefined(flatViewToValidate.mainGroupByFieldMetadataId)) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban view must have a main group by field`,
+          userFriendlyMessage: msg`Kanban view must have a main group by field`,
+        });
+
+        return validationResult;
+      }
+
+      const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatViewToValidate.mainGroupByFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(mainGroupByFieldMetadata)) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field metadata not found`,
+          userFriendlyMessage: msg`Kanban main group by field metadata not found`,
+        });
+      } else if (mainGroupByFieldMetadata.type !== FieldMetadataType.SELECT) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Kanban main group by field must be a SELECT field`,
+          userFriendlyMessage: msg`Kanban main group by field must be a select field`,
+        });
+      }
     }
 
     return validationResult;

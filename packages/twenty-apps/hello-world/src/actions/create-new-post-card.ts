@@ -1,32 +1,38 @@
-import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
+import { createClient } from '../../generated';
 
-export const main = async (params: { recipient: string }): Promise<string> => {
-  const { recipient } = params;
-
-  const options = {
-    method: 'POST',
-    url: 'http://localhost:3000/rest/postCards',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-    },
-    data: { name: recipient ?? 'Unknown' },
-  };
-
+export const main = async (params: { recipient?: string }) => {
   try {
-    const { data } = await axios.request(options);
+    const client = createClient({
+      url: `${process.env.TWENTY_API_URL}/graphql`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+      },
+    });
 
-    console.log(`New post card to "${recipient}" created`);
+    const createPostCard = await client.mutation({
+      createPostCard: {
+        __args: {
+          data: {
+            name: params.recipient ?? 'Hello-world',
+          },
+        },
+        name: true,
+        id: true,
+      },
+    });
 
-    return data;
+    console.log('createPostCard result', createPostCard);
+
+    return createPostCard;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,

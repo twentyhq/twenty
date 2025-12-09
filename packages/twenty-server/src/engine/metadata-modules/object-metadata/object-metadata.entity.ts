@@ -107,6 +107,7 @@ export class ObjectMetadataEntity
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
+  // TODO create a relation to workspace with cascade delete will also create foreignKey
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

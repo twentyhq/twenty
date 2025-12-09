@@ -6,6 +6,7 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,7 +16,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
-import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -93,12 +93,6 @@ export class MicrosoftGetMessageListService {
         this.logger.error(
           `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
         );
-        if (isAccessTokenRefreshingError(error?.body)) {
-          throw new MessageImportDriverException(
-            error.message,
-            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-          );
-        }
         this.microsoftMessageListFetchErrorHandler.handleError(error);
       });
 
@@ -119,14 +113,15 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
-      if (isAccessTokenRefreshingError(error?.body)) {
-        throw new MessageImportDriverException(
-          error.message,
-          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-        );
-      }
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
+
+    if (!isDefined(messageFolder.syncCursor)) {
+      throw new MessageImportDriverException(
+        'Message folder sync cursor is required',
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+    }
 
     return {
       messageExternalIds,

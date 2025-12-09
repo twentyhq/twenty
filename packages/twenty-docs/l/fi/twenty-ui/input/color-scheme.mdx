@@ -1,0 +1,73 @@
+---
+title: Värimaailma
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Värijärjestelmän kortti
+
+Edustaa eri värijärjestelmiä ja on erityisesti suunniteltu vaaleille ja tummille teemoille.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ominaisuudet     | Tyyppi                                  | Kuvaus                                                                                          | Oletus |
+| ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- | ------ |
+| variantti        | string                                  | Värijärjestelmän muunnelma. Vaihtoehdot ovat `Tumma`, `Vaalea` ja `Järjestelmä` | vaalea |
+| valittu          | looginen                                | Jos `true`, näyttää valintamerkin osoittamaan valittua värijärjestelmää                         |        |
+| lisäominaisuudet | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                                               |        |
+
+</Tab>
+
+</Tabs>
+
+## Värijärjestelmän valitsin
+
+Antaa käyttäjille mahdollisuuden valita eri värijärjestelmien välillä.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Rekvisiitat | Tyyppi        | Kuvaus                                                                        |
+| ----------- | ------------- | ----------------------------------------------------------------------------- |
+| arvo        | `Värimaailma` | Tällä hetkellä valittu värijärjestelmä                                        |
+| onChange    | funktio       | Takaisinkutsufunktio, joka aktivoituu, kun käyttäjä valitsee värijärjestelmän |
+
+</Tab>
+
+</Tabs>

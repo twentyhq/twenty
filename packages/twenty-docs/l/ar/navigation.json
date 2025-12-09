@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "دليل المستخدم",
+      "groups": {
+        "gettingStarted": {
+          "label": "البدء"
+        },
+        "dataModel": {
+          "label": "نموذج البيانات"
+        },
+        "crmEssentials": {
+          "label": "أساسيات CRM"
+        },
+        "views": {
+          "label": "العروض"
+        },
+        "workflows": {
+          "label": "سير العمل"
+        },
+        "collaboration": {
+          "label": "التعاون"
+        },
+        "integrationsApi": {
+          "label": "التكاملات & API"
+        },
+        "reporting": {
+          "label": "التقارير"
+        },
+        "settings": {
+          "label": "الإعدادات"
+        },
+        "pricing": {
+          "label": "التسعير"
+        },
+        "resources": {
+          "label": "الموارد"
+        }
+      }
+    },
+    "developers": {
+      "label": "المطورون",
+      "groups": {
+        "developersGroup": {
+          "label": "المطورين"
+        },
+        "devGettingStarted": {
+          "label": "بدء العمل",
+          "groups": {
+            "selfHosting": {
+              "label": "الاستضافة الذاتية"
+            },
+            "apiAndWebhooks": {
+              "label": "API و Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "المساهمة",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "تطوير الواجهة",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "عرض"
+                    },
+                    "feedback": {
+                      "label": "الملاحظات"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "تطوير الخلفية"
+            }
+          }
+        }
+      }
+    }
+  }
+}

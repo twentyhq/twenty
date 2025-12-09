@@ -1,0 +1,26 @@
+import { inspect } from 'util';
+
+import { isDate, isNull, isNumber, isString } from '@sniptt/guards';
+
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+
+export const validateDateAndDateTimeFieldOrThrow = (
+  value: unknown,
+  fieldName: string,
+) => {
+  if (isNull(value)) return null;
+
+  if (isString(value) || isNumber(value) || isDate(value)) {
+    const date = new Date(value);
+
+    if (!isNaN(date.getTime())) return value;
+  }
+
+  throw new CommonQueryRunnerException(
+    `Invalid value ${inspect(value)} for date or date-time field "${fieldName}"`,
+    CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+  );
+};

@@ -11,20 +11,23 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'viewFields',
   'application',
   'viewFilters',
-  'viewGroups',
   'kanbanAggregateOperationViews',
   'calendarViews',
+  'mainGroupByFieldMetadataViews',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
   (typeof FIELD_METADATA_RELATION_PROPERTIES)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
-  Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
+  Omit<
+    FieldMetadataEntity<T>,
+    FieldMetadataEntityRelationProperties | 'viewGroups'
+  > & {
     universalIdentifier: string;
     viewFieldIds: string[];
     viewFilterIds: string[];
-    viewGroupIds: string[];
     kanbanAggregateOperationViewIds: string[];
     calendarViewIds: string[];
+    mainGroupByFieldMetadataViewIds: string[];
   };

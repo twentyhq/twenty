@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "תחילת העבודה"
+        },
+        "dataModel": {
+          "label": "מודל נתונים"
+        },
+        "crmEssentials": {
+          "label": "CRM Essentials"
+        },
+        "views": {
+          "label": "תצוגות"
+        },
+        "workflows": {
+          "label": "זרימות עבודה"
+        },
+        "collaboration": {
+          "label": "שיתוף פעולה"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "דיווח"
+        },
+        "settings": {
+          "label": "הגדרות"
+        },
+        "pricing": {
+          "label": "תמחור"
+        },
+        "resources": {
+          "label": "משאבים"
+        }
+      }
+    },
+    "developers": {
+      "label": "מפתחים",
+      "groups": {
+        "developersGroup": {
+          "label": "מפתחים"
+        },
+        "devGettingStarted": {
+          "label": "תחילת העבודה",
+          "groups": {
+            "selfHosting": {
+              "label": "אירוח עצמי"
+            },
+            "apiAndWebhooks": {
+              "label": "API ו-Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "תרומה",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "פיתוח Frontend",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "הצגה"
+                    },
+                    "feedback": {
+                      "label": "משוב"
+                    },
+                    "input": {
+                      "label": "קלט"
+                    },
+                    "navigation": {
+                      "label": "ניווט"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "פיתוח Backend"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -42,8 +42,10 @@ export default defineConfig(() => {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
     plugins: [
-      tsconfigPaths(),
-      dts({ entryRoot: 'src', tsconfigPath: tsConfigPath }),
+      tsconfigPaths({
+        root: __dirname
+      }),
+      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],
     build: {
       outDir: 'dist',

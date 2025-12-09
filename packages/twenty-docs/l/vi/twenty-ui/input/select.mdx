@@ -1,0 +1,54 @@
+---
+title: Chọn
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+Cho phép người dùng chọn một giá trị từ danh sách các tùy chọn được xác định trước.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Thuộc Tính  | Loại     | Mô tả                                                                                                                                                                                                                                     |
+| ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className   | string   | Lớp CSS tùy chọn cho phong cách bổ sung                                                                                                                                                                                                   |
+| vô hiệu hóa | boolean  | Khi được đặt là `true`, ngăn chặn tương tác của người dùng với thành phần                                                                                                                                                                 |
+| nhãn        | string   | Nhãn để mô tả mục đích của thành phần `Select`                                                                                                                                                                                            |
+| onChange    | function | Hàm được gọi khi các giá trị chọn thay đổi                                                                                                                                                                                                |
+| tùy chọn    | mảng     | Đại diện cho các tùy chọn có sẵn cho thành phần `Select`. Nó là một mảng các đối tượng, mỗi đối tượng có một `value` (mã định danh duy nhất), `label` (nhãn) và một `Icon` tùy chọn |
+| giá trị     | string   | Đại diện cho giá trị hiện tại được chọn. Nó phải trùng với một trong các thuộc tính `value` trong mảng `options`                                                                                                          |
+
+</Tab>
+</Tabs>

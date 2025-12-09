@@ -1,6 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-
-import { IsValidGraphQLEnumName } from 'src/engine/metadata-modules/field-metadata/validators/is-valid-graphql-enum-name.validator';
+import { IsValidGraphQLEnumName } from 'twenty-shared/types';
 
 export type TagColor =
   | 'green'

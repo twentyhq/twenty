@@ -1,27 +1,41 @@
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getPageLayoutTabListInitialActiveTabId';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useEffect } from 'react';
 
 type PageLayoutTabListEffectProps = Pick<
   TabListProps,
-  'componentInstanceId' | 'tabs' | 'onChangeTab'
->;
+  'componentInstanceId' | 'onChangeTab'
+> & {
+  tabs: PageLayoutTab[];
+  defaultTabIdToFocusOnMobileAndSidePanel?: string;
+};
 
 export const PageLayoutTabListEffect = ({
   tabs,
   onChangeTab,
   componentInstanceId,
+  defaultTabIdToFocusOnMobileAndSidePanel,
 }: PageLayoutTabListEffectProps) => {
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );
 
-  const visibleTabs = tabs.filter((tab) => !tab.hide);
+  const isMobile = useIsMobile();
+  const { isInRightDrawer } = useLayoutRenderingContext();
 
-  const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
+  const initialActiveTabId = getPageLayoutTabListInitialActiveTabId({
+    activeTabId,
+    tabs,
+    defaultTabIdToFocusOnMobileAndSidePanel,
+    isMobile,
+    isInRightDrawer,
+  });
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);

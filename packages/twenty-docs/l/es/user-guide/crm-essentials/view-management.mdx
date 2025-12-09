@@ -1,0 +1,121 @@
+---
+title: Gestión de vistas
+info: "Cree y personalice vistas para organizar sus datos con filtros, ordenación y diferentes diseños."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Características esenciales de CRM para gestionar clientes potenciales, ventas y clientes"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Opciones de diseño
+
+Puede mostrar sus datos en tres diseños diferentes, cada uno adecuado para diferentes propósitos. Los diseños personalizados para personalizar la apariencia de la página para cada tipo de registro se lanzarán en diciembre de 2025.
+
+### Vista predeterminada
+
+Cada objeto viene con una vista sin filtrar, sin ordenar e ineliminable conocida como la vista Predeterminada. It's named after the object's plural name, such as`All Companies`,`All People`, `All Opportunities`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Diseño de lista
+
+El formato estándar de tabla que muestra registros en filas y columnas. Esto es perfecto para ver la información detallada de un vistazo y comparar registros lado a lado.
+
+### Diseño de lista agrupada por
+
+Organiza sus registros agrupándolos en función de un campo seleccionado. Por ejemplo, puede agrupar oportunidades por etapa, empresas por ubicación o cualquier otro campo seleccionado. Esto le ayuda a ver patrones y organizar registros relacionados.
+
+### Diseño Kanban
+
+Un tablero visual donde cada columna representa una etapa y cada registro aparece como una tarjeta. This layout is ideal for managing pipelines and workflows where records move through different stages. Para más detalles sobre el uso de vistas Kanban para la gestión de pipelines, consulte nuestro artículo [Pipeline](/l/es/user-guide/crm-essentials/pipeline).
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Creando nuevas vistas
+
+There are three ways to create a new view:
+
+### Usando el menú de comandos
+
+Use `Cmd+K` en Mac (o `Ctrl+K` en Windows) para abrir el menú de comandos, luego haga clic en `Crear una nueva vista`.
+
+### Usando el menú desplegable de vistas
+
+Haga clic en el menú desplegable de vistas (arriba a la izquierda), luego haga clic en `Agregar vista` al final. Desde este menú puede:
+
+- Elegir un ícono y un nombre para su vista
+- Seleccionar el tipo de diseño (Lista o Kanban)
+
+<Warning>
+Importante: Primero debe seleccionar el diseño de lista y luego agregar una agrupación por. No puede crear una lista agrupada directamente desde allí.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Creando vistas a partir de filtros existentes
+
+Cuando modifica el orden y el filtrado de una vista existente, aparece un botón `Guardar como nueva vista`. Esto le permite crear una nueva vista basada en sus personalizaciones actuales.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Making Views Actionable
+
+La siguiente guía le muestra cómo personalizar las columnas de sus vistas. No recomendamos mantener todas las columnas: esas vistas pueden simplificarse y hacerse ejecutables añadiendo condiciones de clasificación y mostrando solo ciertas columnas relevantes para su caso de uso específico.
+
+## Personalizando sus vistas
+
+Todos los diseños admiten las mismas opciones de personalización: ordenación, filtrado y selección de campos. Puede realizar cambios rápidos puntuales haciendo clic directamente en el nombre de la columna, o usar el `Menú de opciones` para ediciones más completas.
+
+### Acciones rápidas vs Menú de opciones
+
+**Para cambios puntuales**: Haga clic directamente en los encabezados de columna para clasificar, o utilice los botones `Mover a la izquierda`, `Mover a la derecha`.
+
+**Para múltiples ediciones**: Use el `Menú de opciones` (esquina superior derecha) cuando quiera realizar varios cambios seguidos. Este menú le da acceso a:
+
+- **Selección de diseño** (Lista, Lista agrupada por, Kanban)
+- **Opciones de agrupamiento** (para el diseño de lista agrupada por)
+- **Gestión de campos** (mostrar/ocultar y reordenar columnas)
+
+### Filtrando sus datos
+
+Puede aplicar filtros para mostrar solo los registros que cumplan con sus criterios. Haga clic en `Filtro` en la barra de herramientas, seleccione un campo, elija su condición y establezca el valor. Puede agregar múltiples filtros para un filtrado avanzado basado en varias condiciones.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Ordenando sus registros
+
+Controle el orden de sus registros haciendo clic en cualquier encabezado de columna para ordenar por ese campo. Haga clic nuevamente para invertir el orden de clasificación. Puede aplicar múltiples clasificaciones para una organización compleja.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Gestionando campos y columnas
+
+Puede elegir qué campos mostrar y reordenarlos. Para cambios rápidos, haga clic directamente en el nombre de una columna. Para múltiples ediciones, use `Menú de opciones → Campos` donde puede:
+
+- Mostrar u ocultar campos usando el ícono del ojo
+- Reordenar campos arrastrando y soltando
+- Hacer múltiples cambios eficientemente en un solo lugar
+
+## Gestionando sus vistas
+
+### Características del menú desplegable de vistas
+
+El menú desplegable de vistas (arriba a la izquierda) es su centro para la gestión de vistas. Desde aquí usted puede:
+
+- **Editar nombres e íconos de vistas**: Haga clic en los tres puntos junto a cualquier vista.
+- **Reordenar vistas**: Arrastra y suelta vistas para organizarlas por prioridad.
+- **Guardar vistas como favoritas**: Las vistas favoritas aparecen justo debajo de Configuraciones para un acceso rápido.
+
+### Editando y eliminando vistas
+
+Para modificar o eliminar vistas, abra el menú desplegable de vistas y pase el cursor sobre la vista que desea cambiar. Haga clic en los tres puntos que aparecen para acceder a las opciones de edición y eliminación.
+
+### Favoritos y organización
+
+Las vistas guardadas como favoritas aparecen justo debajo de Configuraciones en su navegación, otorgándole acceso instantáneo a sus vistas más importantes. Utilice el menú desplegable de vistas para organizar sus vistas arrastrándolas al orden que funcione mejor para su flujo de trabajo.
+
+Para una organización de datos más avanzada, consulte nuestra [sección de modelo de datos](/l/es/user-guide/data-model/customize-your-data-model) para aprender sobre la personalización de campos y objetos.

@@ -1,0 +1,121 @@
+---
+title: Administrarea vizualizărilor
+info: "Creați și personalizați vizualizările pentru a organiza datele dvs. cu filtre, sortare și diferite machete."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Funcții esențiale CRM pentru gestionarea lead-urilor, vânzărilor și clienților"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Opțiuni de layout
+
+Puteți afișa datele dvs. în trei machete diferite, fiecare adaptată pentru diverse scopuri. Layout-uri personalizate pentru a adapta aspectul paginii pentru fiecare tip de înregistrare vor fi lansate în decembrie 2025.
+
+### Vizualizare Implicită
+
+Fiecare obiect vine cu o vizualizare prestabilită nefiltrată, nesortată și imposibil de șters, cunoscută ca vizualizarea Implicită. Este numită după numele plural al obiectului, de exemplu, `Toate Companiile`, `Toți Oamenii`, `Toate Oportunitățile`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Macheta Listă
+
+Formatul standard de tabel care afișează înregistrările în rânduri și coloane. Acesta este perfect pentru a vedea informații detaliate dintr-o privire și pentru a compara înregistrările unul lângă altul.
+
+### Grupare în Listă
+
+Organizează înregistrările dvs. grupându-le pe baza unui câmp selectat. De exemplu, puteți grupa oportunitățile după stadiu, companiile după locații sau orice alt câmp selectat. Acest lucru vă ajută să vedeți modele și să organizați înregistrările corelate împreună.
+
+### Macheta Kanban
+
+Un panou vizual în care fiecare coloană reprezintă un stadiu și fiecare înregistrare apare ca un card. Această machetă este ideală pentru gestionarea conductelor și a fluxurilor de lucru unde înregistrările trec prin diverse stadii. Pentru mai multe detalii despre utilizarea vizualizărilor Kanban pentru managementul conductelor, consultați articolul nostru [Pipeline](/l/ro/user-guide/crm-essentials/pipeline).
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Crearea de Vizualizări Noi
+
+Există trei modalități de a crea o nouă vizualizare:
+
+### Utilizarea Meniului de Comandă
+
+Utilizați `Cmd+K` pe Mac (sau `Ctrl+K` pe Windows) pentru a deschide meniul de comandă, apoi faceți clic pe `Creați o nouă vizualizare`.
+
+### Utilizarea Meniului Derulant de Vizualizare
+
+Faceți clic pe meniul derulant vizualizare (sus stânga), apoi faceți clic pe `Adăugați Vizualizare` în partea de jos. Din acest meniu puteți:
+
+- Alegeți o pictogramă și un nume pentru vizualizarea dvs.
+- Selectați tipul machetei (Listă sau Kanban)
+
+<Warning>
+Important: Trebuie să selectați mai întâi macheta Listă și apoi să adăugați o Grupare După. Nu se poate crea o Grupare în Listă direct de acolo.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Crearea Vizualizărilor Din Filtrele Existente
+
+Când modificați sortarea și filtrarea unei vizualizări existente, apare un buton `Salvează ca vizualizare nouă`. Acest lucru vă permite să creați o nouă vizualizare pe baza personalizărilor actuale.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Făcând Vizualizările Acționabile
+
+Ghidul de mai jos vă arată cum să personalizați coloanele vizualizărilor dvs. We do not recommend keeping all the columns: those views can be simplified and made actionable by adding sorting conditions and displaying only certain columns that are relevant to your specific use case.
+
+## Personalizarea Vizualizărilor Dvs.
+
+Toate machetele suportă aceleași opțiuni de personalizare: sortare, filtrare și selecție a câmpurilor. Puteți face schimbări rapide unice făcând clic direct pe numele coloanei sau folosiți `Meniul de Opțiuni` pentru o editare mai cuprinzătoare.
+
+### Acțiuni Rapide vs Meniu de Opțiuni
+
+**Pentru schimbări unice**: Faceți clic direct pe antetul coloanelor pentru sortare, sau folosiți butoanele `Mutare stânga`, `Mutare dreapta`.
+
+**Pentru mai multe editări**: Utilizați `Meniul de Opțiuni` (colțul din dreapta sus) atunci când doriți să faceți mai multe schimbări succesive. Acest meniu vă oferă acces la:
+
+- **Selecția layout-ului** (Listă, Grupare în Listă, Kanban)
+- **Opțiuni de grupare** (pentru layout-ul Grupare în Listă)
+- **Gestionarea câmpurilor** (afişaţi/ascundeţi și reordonați coloane)
+
+### Filtrarea Datelor Dvs.
+
+Puteți aplica filtre pentru a afișa doar înregistrările care corespund criteriilor dvs. Faceți clic pe `Filtru` în bara de instrumente, selectați un câmp, alegeți condiția și setați valoarea. Puteți adăuga mai multe filtre pentru o filtrare avansată pe baza mai multor condiții.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Sortarea Registrelor Dvs.
+
+Controlați ordinea înregistrărilor dvs. prin clic pe orice antet de coloană pentru a sorta după acel câmp. Faceți clic din nou pentru a inversa ordinea sortării. Puteți aplica sortări multiple pentru o organizare complexă.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Gestionarea Câmpurilor și Coloanelor
+
+Puteți alege ce câmpuri să afișați și să le reordonați. Pentru schimbări rapide, faceți clic direct pe un nume de coloană. Pentru mai multe editări, utilizați `Meniul de Opțiuni → Câmpuri` unde puteți:
+
+- Afișați sau ascundeți câmpurile folosind pictograma ochi
+- Reordonați câmpurile prin glisare și plasare
+- Faceți mai multe schimbări eficient într-un singur loc
+
+## Gestionarea Vizualizărilor Dvs.
+
+### View Dropdown Menu Features
+
+The view dropdown menu (top left) is your central hub for view management. De aici puteți:
+
+- **Editați numele și iconițele vizualizării**: Faceți clic pe cele trei puncte de lângă orice vizualizare
+- **Reorganizați vizualizările**: Glisați și plasați vizualizările pentru a le organiza după prioritate
+- **Save views as favorites**: Favorites appear just under Settings for quick access
+
+### Editarea și Ștergerea Vizualizărilor
+
+Pentru a modifica sau elimina vizualizările, deschideți meniul derulant vizualizare și plasați cursorul deasupra vizualizării pe care doriți să o modificați. Faceți clic pe cele trei puncte care apar pentru a accesa opțiunile de editare și ștergere.
+
+### Favorite și Organizare
+
+Views saved as favorites appear just under Settings in your navigation, giving you instant access to your most important views. Utilizați meniul derulant vizualizare pentru a organiza vizualizările prin tragerea lor în ordinea care funcționează cel mai bine pentru fluxul dvs. de muncă.
+
+Pentru o organizare mai avansată a datelor, consultați secțiunea noastră [Model de Date](/l/ro/user-guide/data-model/customize-your-data-model) pentru a afla despre personalizarea câmpurilor și obiectelor.

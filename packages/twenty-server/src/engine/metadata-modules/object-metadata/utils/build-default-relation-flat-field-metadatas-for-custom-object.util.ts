@@ -1,4 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -15,17 +16,12 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import {
-  createDeterministicUuid,
-  createRelationDeterministicUuid,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 const generateSourceFlatFieldMetadata = ({
   workspaceId,
@@ -43,13 +39,6 @@ const generateSourceFlatFieldMetadata = ({
     targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
   });
 
-  const createdAt = new Date();
-  const sourceFieldMetadataId = v4();
-  const targetFieldMetadataId = v4();
-  const icon =
-    STANDARD_OBJECT_ICONS[
-      targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
-    ] || 'IconBuildingSkyscraper';
   const standardId =
     CUSTOM_OBJECT_STANDARD_FIELD_IDS[
       targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
@@ -62,12 +51,20 @@ const generateSourceFlatFieldMetadata = ({
     );
   }
 
+  const createdAt = new Date();
+  const sourceFieldMetadataId = v4();
+  const targetFieldMetadataId = v4();
+  const icon =
+    STANDARD_OBJECT_ICONS[
+      targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
+    ] || 'IconBuildingSkyscraper';
+
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
     viewFieldIds: [],
-    viewGroupIds: [],
     createdAt,
     updatedAt: createdAt,
     defaultValue: null,
@@ -93,13 +90,10 @@ const generateSourceFlatFieldMetadata = ({
     standardId,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
-    universalIdentifier: createDeterministicUuid([
-      sourceFlatObjectMetadata.id,
-      standardId,
-    ]),
+    universalIdentifier: sourceFieldMetadataId,
     workspaceId,
     morphId: null,
-    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
+    applicationId: sourceFlatObjectMetadata.applicationId,
   };
 };
 
@@ -134,10 +128,10 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,
@@ -166,11 +160,8 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
-    universalIdentifier: createDeterministicUuid([
-      targetFlatObjectMetadata.id,
-      standardId,
-    ]),
-    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
+    universalIdentifier: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
+    applicationId: sourceFlatObjectMetadata.applicationId,
   };
 };
 

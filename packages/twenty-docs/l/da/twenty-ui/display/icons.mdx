@@ -1,0 +1,83 @@
+---
+title: Ikoner
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+En liste over ikoner brugt i hele vores app.
+
+## Tabler Ikoner
+
+Vi bruger Tabler ikoner for React i hele appen.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Du kan importere hvert ikon som en komponent. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type   | Beskrivelse                      | Standard     |
+| ---------- | ------ | -------------------------------- | ------------ |
+| størrelse  | tal    | Ikonets højde og bredde i pixels | 24           |
+| farve      | string | Farven på ikonerne               | currentColor |
+| stroke     | tal    | Ikonets stregbredde i pixels     | 2            |
+
+</Tab>
+
+</Tabs>
+
+## Brugerdefinerede Ikoner
+
+Foruden Tabler ikoner, bruger appen også nogle brugerdefinerede ikoner.
+
+### Ikon Adressebog
+
+Viser et adressebogsikon.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type | Beskrivelse                      | Standard |
+| ---------- | ---- | -------------------------------- | -------- |
+| størrelse  | tal  | Ikonets højde og bredde i pixels | 24       |
+| stroke     | tal  | Ikonets stregbredde i pixels     | 2        |
+
+</Tab>
+
+</Tabs>

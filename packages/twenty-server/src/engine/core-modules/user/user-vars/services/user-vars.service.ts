@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { type QueryRunner } from 'typeorm';
+
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
@@ -126,40 +128,52 @@ export class UserVarsService<
     return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>(result);
   }
 
-  set<K extends keyof KeyValueTypesMap>({
-    userId,
-    workspaceId,
-    key,
-    value,
-  }: {
-    userId?: string;
-    workspaceId?: string;
-    key: Extract<K, string>;
-    value: KeyValueTypesMap[K];
-  }) {
-    return this.keyValuePairService.set({
-      userId,
-      workspaceId,
-      key: key,
-      value,
-      type: KeyValuePairType.USER_VARIABLE,
-    });
-  }
-
-  async delete({
-    userId,
-    workspaceId,
-    key,
-  }: {
-    userId?: string;
-    workspaceId?: string;
-    key: Extract<keyof KeyValueTypesMap, string>;
-  }) {
-    return this.keyValuePairService.delete({
+  set<K extends keyof KeyValueTypesMap>(
+    {
       userId,
       workspaceId,
       key,
-      type: KeyValuePairType.USER_VARIABLE,
-    });
+      value,
+    }: {
+      userId?: string;
+      workspaceId?: string;
+      key: Extract<K, string>;
+      value: KeyValueTypesMap[K];
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    return this.keyValuePairService.set(
+      {
+        userId,
+        workspaceId,
+        key: key,
+        value,
+        type: KeyValuePairType.USER_VARIABLE,
+      },
+      queryRunner,
+    );
+  }
+
+  async delete(
+    {
+      userId,
+      workspaceId,
+      key,
+    }: {
+      userId?: string;
+      workspaceId?: string;
+      key: Extract<keyof KeyValueTypesMap, string>;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    return this.keyValuePairService.delete(
+      {
+        userId,
+        workspaceId,
+        key,
+        type: KeyValuePairType.USER_VARIABLE,
+      },
+      queryRunner,
+    );
   }
 }

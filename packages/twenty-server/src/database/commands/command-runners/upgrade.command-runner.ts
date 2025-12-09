@@ -12,10 +12,14 @@ import { In, Repository } from 'typeorm';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import {
+  RunOnWorkspaceArgs,
+  WorkspacesMigrationCommandRunner,
+} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import {
@@ -25,8 +29,14 @@ import {
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 export type VersionCommands = {
-  beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-  afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
+  beforeSyncMetadata: (
+    | WorkspacesMigrationCommandRunner
+    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
+  )[];
+  afterSyncMetadata: (
+    | WorkspacesMigrationCommandRunner
+    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
+  )[];
 };
 export type AllCommands = Record<string, VersionCommands>;
 const execPromise = promisify(exec);
@@ -43,9 +53,10 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   private async loadActiveOrSuspendedWorkspace() {
@@ -76,7 +87,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     try {
       this.logger.log('Running core datasource migrations...');
       const coreResult = await execPromise(
-        'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
+        'npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource',
       );
 
       this.logger.log(coreResult.stdout);

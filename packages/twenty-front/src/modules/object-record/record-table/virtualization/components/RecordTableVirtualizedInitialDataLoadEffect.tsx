@@ -13,6 +13,7 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import isEmpty from 'lodash.isempty';
 import { useEffect } from 'react';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
@@ -75,7 +76,16 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
       ) {
         setLastContextStoreVisibleRecordFields(visibleRecordFields);
 
-        await triggerInitialRecordTableDataLoad();
+        const lastFields = lastContextStoreVisibleRecordFields || [];
+        const currentFields = visibleRecordFields || [];
+
+        const shouldRefetchData = currentFields.length > lastFields.length;
+
+        if (shouldRefetchData) {
+          await triggerInitialRecordTableDataLoad({
+            shouldScrollToStart: isEmpty(lastFields),
+          });
+        }
       }
     })();
   }, [

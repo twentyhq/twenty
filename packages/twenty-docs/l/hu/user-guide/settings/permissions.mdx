@@ -1,0 +1,106 @@
+---
+title: Jogosultságok
+info: "Tanulja meg, hogyan szabályozhatja a hozzáférést: szerepek kiosztása és engedélyek beállítása."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Konfigurálja a Twenty munkaterületi beállításokat és preferenciákat
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+A Twenty jogosultsági rendszere lehetővé teszi, hogy három fő területhez szabályozza a hozzáférést:
+
+- **Objektumok és mezők**: Szabályozza, hogy ki tekintheti meg, szerkesztheti vagy törölheti a rekordokat és az egyes mezőket
+- **Settings**: Manage access to workspace configuration and administrative functions
+- **Actions**: Control general workspace actions like importing data or sending emails
+
+## Szerep létrehozása
+
+Új szerep létrehozása:
+
+1. Menjen a **Beállítások → Szerepek** felületre
+2. A **Minden szerep** alatt kattintson a **+ Szerep létrehozása** lehetőségre
+3. Írjon be egy szerepnevet
+4. Az alapértelmezett **Engedélyek** fülön, konfigurálja az engedélyeket
+5. Kattintson a **Mentés** gombra a befejezéshez
+
+## Szerep törlése
+
+Szerep törlése:
+
+1. Menjen a **Beállítások → Szerepek** felületre
+2. Kattintson a törölni kívánt szerepre
+3. Nyissa meg a **Beállítások** fület, majd kattintson a **Szerep törlése** gombra
+4. Kattintson a **Megerősítés** gombra a modális ablakban
+
+Note: If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+
+## Szerepek kiosztása tagoknak
+
+### Jelenlegi hozzárendelések megtekintése
+
+- Menjen a **Beállítások → Szerepek** felületre
+- Tekintse meg az összes szerepet és azt, hogy hány taghoz van hozzárendelve mindegyik
+- Tekintse meg, hogy mely tagoknak milyen szerepei vannak
+
+### Szerep kiosztása tagnak
+
+1. Menjen a **Beállítások → Szerepek** felületre
+2. Kattintson a kiosztani kívánt szerepre
+3. Nyissa meg a **Hozzárendelés** fület
+4. Kattintson a **+ Hozzárendelés taghoz** lehetőségre
+5. A taglistából válassza ki a munkaterületi tagot
+6. Erősítse meg a hozzárendelést
+
+### Alapértelmezett szerep beállítása
+
+1. Menjen a **Beállítások → Szerepek** felületre
+2. Az **Opciók** szekcióban keresse meg az **Alapértelmezett szerep** részt
+3. Válassza ki, hogy az új tagok melyik szerepet kapják meg automatikusan
+4. Az új munkaterületi tagok ehhez a szerephez lesznek hozzárendelve, amikor csatlakoznak
+
+**Megjegyzés**: Csak meglévő munkaterületi tagokhoz rendelhet szerepeket. Új tagok meghívásához használja a [Tagkezelés](/l/hu/user-guide/settings/member-management) lehetőséget.
+
+## Engedélyek testreszabása
+
+Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+
+### Objektum- és mezőengedélyek
+
+A hozzáférés szabályozása a rekordokhoz és az egyes mezőkhöz:
+
+#### Objektumszintű engedélyek
+
+- Az **Minden objektum** alatt alkalmazható engedélyek, mint például **Rekord megtekintése**, **Rekordok szerkesztése**, **Rekordok törlése** vagy **Rekordok megsemmisítése** minden objektumhoz
+- Az **Objektumszintű engedélyek** alatt egyére szabott kivételek konfigurálása az egyes objektumokra. Ezek a beállítások felülírják az **Minden objektum** alatt beállított szabályokat.
+
+#### Mezőszintű engedélyek
+
+- Konfigurálja az egyes objektumokban lévő egyes mezők engedélyeit
+- Szabályozza, hogy ki láthatja a **Mezőt**, szerkesztheti a **Mezőt**, vagy ki nem férhet hozzá az egyes mezőkhöz
+- A mezőengedélyek ugyanúgy működnek, mint az objektumengedélyek örökléssel és felülírásokkal
+
+#### Jogosultságok felülírásának kezelése
+
+Szülői engedélyek felülírása és szigorúbb szabályok alkalmazása:
+
+- Kattintson az **X** ikonra az örökölt szabály eltávolításához
+- Válassza ki a konkrét engedélyeket a kiválasztott objektumhoz vagy mezőhöz
+- Kattintson a narancssárga **Visszavonás** ikonra (kör alakú nyíl), hogy visszaállítsa a módosításokat
+
+Ha kész, kattintson a **Befejezés**, majd a **Mentés** gombra, amikor visszatér a szerep oldalára.
+
+### Munkaterületi beállítások engedélyei
+
+A hozzáférés szabályozása a munkaterületi beállításokhoz kétféleképpen:
+
+- A **Beállítások teljes hozzáférés** kapcsolóval teljes hozzáférést garantálhat
+- Vagy engedélyezze az egyes engedélyeket (pl. API kulcsok generálása, munkaterületi preferenciák, szerepkiosztás, adatmodell konfiguráció, biztonsági beállítások és munkafolyamatok kezelése)
+
+### Munkaterületi műveleti engedélyek
+
+Általános munkaterület-műveletekhez való hozzáférés szabályozása:
+
+- A **Teljes alkalmazáshoz hozzáférés** kapcsolóval megadhatja a teljes jogosultságot
+- Vagy engedélyezzen egyéni műveleteket, mint például **E-mail küldése**, **CSV importálása** és **CSV exportálása**

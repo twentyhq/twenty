@@ -4,11 +4,11 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -47,7 +47,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { currentView } = useGetCurrentViewOnly();
 
   const recordGroupFieldMetadata = useRecoilComponentValue(
-    recordGroupFieldMetadataComponentState,
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const visibleRecordGroupIds = useRecoilComponentFamilyValue(
@@ -59,9 +59,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useRecoilComponentFamilyValue(
-    recordIndexRecordGroupHideComponentFamilyState,
-    viewType,
+  const hideEmptyRecordGroup = useRecoilComponentValue(
+    recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const recordGroupSort = useRecoilComponentValue(
@@ -71,9 +70,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const {
     handleVisibilityChange: handleRecordGroupVisibilityChange,
     handleHideEmptyRecordGroupChange,
-  } = useRecordGroupVisibility({
-    viewType,
-  });
+  } = useRecordGroupVisibility();
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -115,13 +113,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         >
           {currentView?.key !== 'INDEX' && (
             <>
-              <SelectableListItem
-                itemId="GroupBy"
-                onEnter={() => onContentChange('recordGroupFields')}
-              >
+              <SelectableListItem itemId="GroupBy">
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  onClick={() => onContentChange('recordGroupFields')}
+                  disabled
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}

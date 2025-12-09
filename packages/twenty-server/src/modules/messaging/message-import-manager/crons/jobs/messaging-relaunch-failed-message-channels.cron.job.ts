@@ -12,7 +12,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingRelaunchFailedMessageChannelJob,
   type MessagingRelaunchFailedMessageChannelJobData,
@@ -50,7 +53,7 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const failedMessageChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = '${MessageChannelSyncStage.FAILED}'`,
+          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = '${MessageChannelSyncStage.FAILED}' AND "syncStatus" = '${MessageChannelSyncStatus.FAILED_UNKNOWN}'`,
         );
 
         for (const messageChannel of failedMessageChannels) {

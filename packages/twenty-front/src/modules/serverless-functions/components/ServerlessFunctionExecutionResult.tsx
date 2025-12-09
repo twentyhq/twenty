@@ -7,9 +7,11 @@ import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql'
 
 export const ServerlessFunctionExecutionResult = ({
   serverlessFunctionTestData,
+  maxHeight,
   isTesting = false,
 }: {
   serverlessFunctionTestData: ServerlessFunctionTestData;
+  maxHeight?: number;
   isTesting?: boolean;
 }) => {
   const result =
@@ -40,7 +42,10 @@ export const ServerlessFunctionExecutionResult = ({
     <WorkflowStepExecutionResult
       result={result}
       language={serverlessFunctionTestData.language}
-      height={serverlessFunctionTestData.height}
+      height={Math.min(
+        serverlessFunctionTestData.height,
+        maxHeight ?? serverlessFunctionTestData.height,
+      )}
       status={status}
       isTesting={isTesting}
       loadingMessage="Running function"

@@ -6,7 +6,7 @@ import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-quer
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { ApiKeyException } from 'src/engine/core-modules/api-key/api-key.exception';
+import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { authGraphqlApiExceptionHandler } from 'src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util';
@@ -22,7 +22,6 @@ import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
 }
-//TODO : Refacto-common - Should be handle first in common api layer
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: QueryFailedErrorWithCode,

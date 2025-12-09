@@ -1,0 +1,91 @@
+---
+title: Aplikacja Zapier
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Bez wysiłku synchronizuj Twenty z 3000+ aplikacjami za pomocą [Zapier](https://zapier.com/). Automatyzuj zadania, zwiększaj produktywność i wzmacniaj relacje z klientami!
+
+## O Zapier
+
+Zapier to narzędzie, które pozwala automatyzować przepływy pracy, łącząc aplikacje używane przez Twój zespół każdego dnia. Podstawową koncepcją Zapiera są zautomatyzowane przepływy pracy, zwane Zapami, które zawierają wyzwalacze i akcje.
+
+Więcej informacji o tym, jak działa Zapier, można znaleźć [tutaj](https://zapier.com/how-it-works).
+
+## Konfiguracja
+
+### Krok 1: Zainstaluj pakiety Zapier
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Krok 2: Zaloguj się za pomocą CLI
+
+Użyj swoich danych logowania do Zapiera, aby zalogować się za pomocą CLI:
+
+```bash
+zapier login
+```
+
+### Krok 3: Ustaw zmienne środowiskowe
+
+From the `packages/twenty-zapier` folder, run:
+
+```bash
+cp .env.example .env
+```
+
+Run the application locally, go to [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), and generate an API key.
+
+Zastąp wartość **YOUR_API_KEY** w pliku `.env` nowo wygenerowanym kluczem API.
+
+## Development
+
+<Warning>
+
+Upewnij się, że uruchomiłeś `yarn build` przed wykonaniem jakiegokolwiek polecenia `zapier`.
+
+</Warning>
+
+### Test
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Obserwuj i kompiluj po edycji kodu
+
+```bash
+yarn watch
+```
+
+### Zatwierdź swoją aplikację Zapier
+
+```bash
+yarn validate
+```
+
+### Wdróż swoją aplikację Zapier
+
+```bash
+yarn deploy
+```
+
+### Lista wszystkich poleceń Zapier CLI
+
+```bash
+zapier
+```
+

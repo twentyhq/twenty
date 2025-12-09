@@ -1,0 +1,86 @@
+---
+title: Skonfiguruj swoją przestrzeń roboczą
+info: "Rozpocznij konfigurowanie swojej przestrzeni roboczej w trzech krokach."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Poznaj Twenty, otwartoźródłowy CRM.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Każda firma działa inaczej. Dlatego Twenty pozwala dostosować CRM do Twoich potrzeb, a nie zmuszać procesy do naszych.
+**Zacznij od tych trzech kroków, aby skonfigurować je według własnych potrzeb.**
+
+**Szybka wygrana**: Zacznij od połączenia skrzynki pocztowej i dostosowania modelu danych za pomocą kilku kluczowych pól. To daje Ci natychmiastową wartość i pomaga zespołowi zobaczyć działanie Twenty na rzeczywistych danych. Możesz to zrobić w Ustawieniach → Konta.
+
+## 1. Dostosuj swój model danych
+
+Twenty oferuje elastyczność, jakiej potrzebujesz, aby dostosować model danych, który najlepiej wspiera Twoją codzienną działalność.
+Twórz obiekty i pola dowolnego typu, w tym relacje między różnymi obiektami. Możesz to zrobić w Ustawieniach → Model danych.
+Oto kilka wskazówek:
+
+- **You are not limited in the number of custom fields nor custom objects**. Dodawanie niestandardowych obiektów i pól nie wymaga aktualizacji planu.
+- **Osoby, Firmy i Okazje to trzy obiekty, z których można uzyskać dostęp do e-maili i spotkań zsynchronizowanych z twoją skrzynką pocztową/kalendarzem**. Zalecamy używać ich jak najwięcej, dodając pola do kategoryzacji rekordów, jeśli to konieczne. Oto przykład:
+  - Najlepiej użyć obiektu Osoby dla swoich potencjalnych klientów i partnerów, tworząc pole w obiekcie Osoby o nazwie `Typ Osoby`, zamiast tworzyć niestandardowy obiekt Partner. Ponieważ nie mógłbyś uzyskać dostępu do e-maili wymienionych z tą osobą z zapisów Partner.
+  - Twórz różne widoki pod Osoby: jeden do wyświetlania partnerów i jeden do wyświetlania potencjalnych klientów.
+- Dwie osoby nie mogą mieć tego samego adresu e-mail. Dwie firmy nie mogą mieć tej samej domeny.
+- Możesz dezaktywować standardowe pola i obiekty, których nie chcesz używać.
+- Możesz ukryć pola z widoków: nie obawiaj się tworzenia pól, nie musisz wyświetlać wszystkich.
+
+Przeczytaj [ten artykuł](https://docs.twenty.com/l/pl/user-guide/data-model/customize-your-data-model), aby dowiedzieć się, jak zaprojektować swój model danych.
+
+## 2. Wprowadź swoje dane
+
+Wprowadzenie istniejących danych do Twenty daje Twojemu zespołowi kontekst od początku.
+
+### Podłącz swoją skrzynkę pocztową
+
+Jeśli nie zrobiłeś tego podczas tworzenia przestrzeni roboczej, podłącz swoje konto **Google lub Microsoft** w Ustawieniach → Konta. To pozwala Twenty na:
+
+- Importowanie wiadomości i spotkań
+- Automatyczne tworzenie kontaktów na podstawie interakcji (opcjonalnie)
+- Trzymanie historii komunikacji widocznej dla Twojego zespołu
+
+**Korzystasz z innego dostawcy?**
+Możesz dodać inną skrzynkę pocztową za pomocą SMTP lub inny kalendarz za pomocą CalDAV. Będziesz musiał aktywować funkcję w Ustawieniach → Wydania → Laboratorium, a następnie wrócić do karty Ustawienia → Konta.
+
+### Importuj dane przez csv
+
+Użyj menu poleceń (`Cmd + K` lub `Ctrl + K`), aby importować Osoby, Firmy, Okazje lub dowolne niestandardowe obiekty przez CSV.
+
+**Kluczowe wytyczne**:
+
+- Pobierz przykładowy plik, aby zrozumieć oczekiwany format
+- Ogranicz każdy plik do 10 tysięcy rekordów
+- Usuń zduplikowane e-maile dla Osób lub zduplikowane domeny dla Firm
+- Przejrzyj i popraw błędy (podświetlone na żółto) przed importem
+
+Przeczytaj [ten artykuł](/l/pl/user-guide/getting-started/import-export-data), aby dowiedzieć się więcej o imporcie danych.
+
+## 3. Stwórz swój pierwszy widok
+
+Tworzenie różnych widoków jest kluczowe, aby dane były użyteczne dla Twojego zespołu.
+Oto jak postępować:
+
+- **Dodaj lub ukryj kolumny**
+  Zarządzaj polami widocznymi w danym widoku klikając na Opcje → Pola (w prawym górnym rogu). Możesz tam pokazywać/ukrywać pola.
+
+- **Przestaw pola**
+  Przestaw pola z danego widoku klikając na Opcje → Pola (w prawym górnym rogu). Przeciągnij i upuść pola, aby zmienić ich kolejność.
+
+- **Filtrowanie widoku**
+  Zawęź wyświetlane rekordy używając opcji Filtry w prawym górnym rogu.
+
+- **Sortuj rekordy**
+  Zmień kolejność wyświetlanych rekordów używając funkcji Sortuj z górnego prawego rogu lub klikając bezpośrednio na nazwę kolumny.
+
+- **Wybierz układ**
+  Możesz przełączać się między układem **Kanban** a widokiem listy **Grupuj według**, o ile obiekt ma pole typu `Etap` lub podobne.
+
+- **Zapisz widok jako Ulubione**
+  Można to zrobić za pomocą menu rozwijanego pokazującego różne widoki.
+
+## Co dalej?
+
+Zacznij tworzyć automatyzacje za pomocą [Workflows](https://docs.twenty.com/l/pl/user-guide/workflows/getting-started-workflows).

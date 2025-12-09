@@ -3,33 +3,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
-import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
-import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-tool-generator.service';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
-import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
@@ -38,7 +22,8 @@ export interface AgentToolTestContext {
   agentService: AgentService;
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
-  workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  workspaceCacheService: WorkspaceCacheService;
+  toolProviderService: ToolProviderService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
   testAgent: AgentEntity & { roleId: string | null };
   testRole: RoleEntity;
@@ -91,88 +76,16 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {
-            getRolesPermissionsFromCache: jest.fn(),
+            getOrRecompute: jest.fn(),
           },
         },
         {
-          provide: ToolService,
-          useClass: ToolService,
-        },
-        {
-          provide: CreateRecordService,
+          provide: ToolProviderService,
           useValue: {
-            execute: jest.fn(),
+            getTools: jest.fn().mockResolvedValue({}),
           },
-        },
-        {
-          provide: UpdateRecordService,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: DeleteRecordService,
-          useValue: {
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: FindRecordsService,
-          useValue: {
-            execute: jest.fn().mockResolvedValue({
-              success: true,
-              message: 'Records found successfully',
-              result: [],
-            }),
-          },
-        },
-        {
-          provide: RecordInputTransformerService,
-          useValue: {
-            process: jest.fn(async ({ recordInput }) => recordInput),
-          },
-        },
-        {
-          provide: WorkspaceCacheStorageService,
-          useValue: {
-            getObjectMetadataMapsOrThrow: jest.fn(),
-          },
-        },
-        {
-          provide: ToolAdapterService,
-          useClass: ToolAdapterService,
-        },
-        {
-          provide: ToolRegistryService,
-          useClass: ToolRegistryService,
-        },
-        {
-          provide: SendEmailTool,
-          useValue: {
-            description: 'mock',
-            inputSchema: {},
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: SearchArticlesTool,
-          useValue: {
-            description: 'Search for articles and documentation',
-            inputSchema: {},
-            execute: jest.fn(),
-          },
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: {
-            create: jest.fn(() => ({ workspaceId: 'test-workspace-id' })),
-          },
-        },
-        {
-          provide: MessagingSendMessageService,
-          useValue: { sendMessage: jest.fn() },
         },
         {
           provide: PermissionsService,
@@ -180,32 +93,6 @@ export const createAgentToolTestModule =
             hasToolPermission: jest.fn(),
             checkRolePermissions: jest.fn().mockReturnValue(true),
             checkRolesPermissions: jest.fn().mockResolvedValue(true),
-          },
-        },
-        {
-          provide: AgentHandoffService,
-          useValue: {
-            getHandoffTargets: jest.fn().mockResolvedValue([]),
-            canHandoffTo: jest.fn().mockResolvedValue(true),
-            getAgentHandoffs: jest.fn().mockResolvedValue([]),
-          },
-        },
-        {
-          provide: AgentHandoffExecutorService,
-          useValue: {
-            executeHandoff: jest.fn().mockResolvedValue({ success: true }),
-          },
-        },
-        {
-          provide: WorkflowToolWorkspaceService,
-          useValue: {
-            generateWorkflowTools: jest.fn().mockResolvedValue({}),
-          },
-        },
-        {
-          provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn(),
           },
         },
       ],
@@ -221,10 +108,6 @@ export const createAgentToolTestModule =
     const roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    const workspacePermissionsCacheService =
-      module.get<WorkspacePermissionsCacheService>(
-        WorkspacePermissionsCacheService,
-      );
     const twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -243,14 +126,13 @@ export const createAgentToolTestModule =
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',
-      responseFormat: {},
+      evaluationInputs: [],
+      responseFormat: { type: 'text' },
       workspaceId: testWorkspaceId,
       workspace: {} as any,
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
-      incomingHandoffs: [],
-      outgoingHandoffs: [],
       modelConfiguration: {},
     };
 
@@ -299,28 +181,12 @@ export const createAgentToolTestModule =
       fieldPermissions: [],
     });
 
-    // Ensure ToolService input transformation has access to minimal metadata maps
-    const workspaceCacheStorageService =
-      module.get<WorkspaceCacheStorageService>(WorkspaceCacheStorageService);
+    const workspaceCacheService = module.get<WorkspaceCacheService>(
+      WorkspaceCacheService,
+    );
 
-    // Return a barebones object metadata map where fields are unknown (so transformer is a no-op)
-    const getMapsMock =
-      workspaceCacheStorageService.getObjectMetadataMapsOrThrow as jest.Mock;
-
-    getMapsMock.mockResolvedValue({
-      byId: {
-        [testObjectMetadata.id]: {
-          ...testObjectMetadata,
-          fieldsById: {},
-          fieldIdByJoinColumnName: {},
-          fieldIdByName: {},
-          indexMetadatas: [],
-        },
-      },
-      idByNameSingular: {
-        [testObjectMetadata.nameSingular]: testObjectMetadata.id,
-      },
-    });
+    const toolProviderService =
+      module.get<ToolProviderService>(ToolProviderService);
 
     return {
       module,
@@ -328,7 +194,8 @@ export const createAgentToolTestModule =
       agentService,
       objectMetadataService,
       roleRepository,
-      workspacePermissionsCacheService,
+      workspaceCacheService,
+      toolProviderService,
       twentyORMGlobalManager,
       testAgent,
       testRole,
@@ -338,94 +205,3 @@ export const createAgentToolTestModule =
       testRoleId,
     };
   };
-
-export const createMockRepository = () => ({
-  find: jest.fn(),
-  findOne: jest.fn(),
-  save: jest.fn(),
-  update: jest.fn(),
-  softDelete: jest.fn(),
-  remove: jest.fn(),
-  delete: jest.fn(),
-});
-
-export const setupBasicPermissions = (context: AgentToolTestContext) => {
-  jest
-    .spyOn(context.agentService, 'findOneAgent')
-    .mockResolvedValue(context.testAgent);
-  jest
-    .spyOn(context.roleRepository, 'findOne')
-    .mockResolvedValue(context.testRole);
-  jest
-    .spyOn(
-      context.workspacePermissionsCacheService,
-      'getRolesPermissionsFromCache',
-    )
-    .mockResolvedValue({
-      data: {
-        [context.testRoleId]: {
-          [context.testObjectMetadata.id]: {
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: false,
-            restrictedFields: {},
-          },
-        },
-      },
-      version: '1.0',
-    });
-  jest
-    .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-    .mockResolvedValue([context.testObjectMetadata]);
-};
-
-export const setupRepositoryMock = (
-  context: AgentToolTestContext,
-  mockRepository: any,
-) => {
-  jest
-    .spyOn(context.twentyORMGlobalManager, 'getRepositoryForWorkspace')
-    .mockResolvedValue(mockRepository);
-};
-
-export const createTestRecord = (
-  id: string,
-  data: Record<string, any> = {},
-) => ({
-  id,
-  name: `Test Record ${id}`,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ...data,
-});
-
-export const createTestRecords = (
-  count: number,
-  baseData: Record<string, any> = {},
-) => {
-  return Array.from({ length: count }, (_, i) =>
-    createTestRecord(`record-${i + 1}`, baseData),
-  );
-};
-
-export const expectSuccessResult = (result: any, expectedMessage?: string) => {
-  expect(result.success).toBe(true);
-  if (expectedMessage) {
-    expect(result.message).toContain(expectedMessage);
-  }
-};
-
-export const expectErrorResult = (
-  result: any,
-  expectedError?: string,
-  expectedMessage?: string,
-) => {
-  expect(result.success).toBe(false);
-  if (expectedError) {
-    expect(result.error).toBe(expectedError);
-  }
-  if (expectedMessage) {
-    expect(result.message).toContain(expectedMessage);
-  }
-};

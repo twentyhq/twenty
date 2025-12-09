@@ -1,0 +1,106 @@
+---
+title: Permissies
+info: "Leer hoe om toegang te beheer: ken rolle toe en stel toestemmings in."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Stel jou Twenty-werkruimte se instellings en voorkeure op
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Twenty se toestemmingsisteem laat jou toe om toegang tot drie hoofareas te beheer:
+
+- **Objects and Fields**: Control who can view, edit, or delete records and individual fields
+- **Settings**: Manage access to workspace configuration and administrative functions
+- **Aksies**: Beheer algemene werksruimte aksies soos die invoer van data of stuur van e-posse
+
+## Create a Role
+
+Om 'n nuwe rol te skep:
+
+1. Gaan na **Instellings → Rolle**
+2. Onder **Alle Rolle**, klik op **+ Skep Rol**
+3. Voer 'n rolnaam in
+4. In die verstek **Toestemmings**-oortjie, konfigureer toestemmings
+5. Klik **Stoor** om te voltooi
+
+## Vee 'n Rol uit
+
+Om 'n rol uit te vee:
+
+1. Gaan na **Instellings → Rolle**
+2. Klik op die rol wat jy wil verwyder
+3. Open the **Settings** tab, then click **Delete Role**
+4. Klik **Bevestig** in die modale venster
+
+Nota: As 'n rol uitgevee is, sal enige werkslid wat daaraan toegewys is, outomaties na die verstekrol heraangewys word. Alleenlik die **Admin** rol kan nie uitgevee word nie. Daar moet altyd ten minste een lid aan die **Admin** rol toegeken wees.
+
+## Ken Rolle aan Lede Toe
+
+### Kyk na Huidige Toewysings
+
+- Gaan na **Instellings → Rolle**
+- Sien alle rolle en hoeveel lede aan elkeen toegeken is
+- Sien watter lede watter rolle het
+
+### Ken 'n Rol aan 'n Lid Toe
+
+1. Gaan na **Instellings → Rolle**
+2. Klik op die rol wat jy wil toewys
+3. Maak die **Toewysing**-oortjie oop
+4. Klik **+ Ken aan lid toe**
+5. Kies die werksruimte-lid van die lys
+6. Bevestig die toewysing
+
+### Stel Verstekrol in
+
+1. Gaan na **Instellings → Rolle**
+2. In die **Opsies**-afdeling, vind **Verstekrol**
+3. Kies watter rol nuwe lede outomaties moet ontvang
+4. Nuwe werksruimtelede sal hierdie rol ontvang sodra hulle aansluit
+
+**Nota**: Jy kan net rolle aan bestaande werksruimtelede toeken. Om nuwe lede uit te nooi, gebruik [Lid Bestuur](/l/af/user-guide/settings/member-management).
+
+## Pas Toestemmings Aan
+
+Toestemmings bepaal wat elke rol kan toegang en wysig binne jou werksruimte, insluitend werksruimte-objekrekords, instellings, en aksies.
+
+### Objek- en Veldtoestemmings
+
+Beheer toegang tot rekords en individuele velde:
+
+#### Objekvlak Toestemmings
+
+- Onder **Alle Objekte**, pas toestemmings soos **Sien Rekord**, **Wysig Rekords**, **Vee Rekords Uit**, of **Vernietig Rekords** toe op alle objekte
+- Onder **Objekvlak Toestemmings**, konfigureer uitsonderings vir individuele objekte. Hierdie oorheers die instellings van **Alle Objekte**
+
+#### Veldvlak Toestemmings
+
+- Konfigureer toestemmings vir individuele velde binne elke objek
+- Beheer wie kan **Sien Veld**, **Wysig Veld**, of het **Geen Toegang** tot spesifieke velde
+- Veldtoestemmings werk op dieselfde manier as objektoestemmings met erfenis en uitsonderings
+
+#### Bestuur Oorskrywings van Toestemmings
+
+Om ouer toestemmings oor te skryf en strenger reëls toe te pas:
+
+- Klik **X** om die oorgeërfde reël te verwyder
+- Kies die spesifieke toestemmings vir die geselekteerde objek of veld
+- Klik die oranje **Ontdoen**-ikoon (sirkulêre pyl) om veranderinge terug te stel
+
+Wanneer klaar, klik **Voltooi**, dan **Stoor** sodra geredirekteer na die rolbladsy.
+
+### Werksruimte Instellings Toestemmings
+
+Control access to workspace settings in two ways:
+
+- Skakel **Instellings Alle Toegang** aan om volle toegang te verleen
+- Of aktiveer spesifieke toestemmings (bv. API-sleutelgenerasie, werksruimte-voorkeure, roltoewysing, datamodelkonfigurasie, sekuriteitinstellings, en werkvloebestuur)
+
+### Werksruimte Aksietoestemmings
+
+Beheer toegang tot algemene werksruimte aksies:
+
+- Skakel **Alle Toegang Aansoek** aan om volle toestemmings te verleen
+- Of aktiveer individuele aksies soos **Stuur E-pos**, **Voer CSV in**, en **Voer CSV uit**

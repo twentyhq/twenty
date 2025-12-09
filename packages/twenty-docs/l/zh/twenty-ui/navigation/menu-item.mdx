@@ -1,0 +1,458 @@
+---
+title: 選單項目
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+一個多功能的選單項目，設計用於選單或導航列表中。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性            | 類型       | 描述                                                                                              |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| 左圖標           | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前                                                                           |
+| accent        | 字串       | 指定選單項目的強調色。 指定選單項目的強調色。 Options include: `default`, `danger`, and `placeholder` |
+| 文本            | 字串       | 菜單項目的文本內容                                                                                       |
+| iconButtons   | 數組       | 表示附加圖示按鈕的對象陣列與選單項目相關聯                                                                           |
+| isTooltipOpen | 布爾值      | 控制與選單項目關聯的工具提示的可見性                                                                              |
+| 測試識別碼         | 字串       | 用於測試目的的 data-testid 屬性                                                                          |
+| 點擊            | function | 當選單項目被點擊時觸發的回調函數                                                                                |
+| 類名稱           | 字串       | 附加樣式的可選名稱                                                                                       |
+
+</Tab>
+</Tabs>
+
+## 變體
+
+選單項目組件的不同變體包括以下幾種：
+
+### 命令
+
+一個命令樣式的選單項目，用於指示鍵盤快捷鍵。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性           | 類型       | 描述                    |
+| ------------ | -------- | --------------------- |
+| 左圖標          | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前 |
+| 文本           | 字串       | 菜單項目的文本內容             |
+| firstHotKey  | 字串       | 與命令相關的第一個鍵盤快捷鍵        |
+| secondHotKey | 字串       | 與命令相關的第二個鍵盤快捷鍵        |
+| isSelected   | 布爾值      | 指示選單項目是否被選中或突出顯示      |
+| 點擊           | function | 當選單項目被點擊時觸發的回調函數      |
+| 類名稱          | 字串       | 附加樣式的可選名稱             |
+
+</Tab>
+</Tabs>
+
+### 可拖動
+
+設計用於選單或列表中的一個可拖動的選單項目，標籤旁通過圖示按鈕執行額外操作。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性             | 類型       | 描述                                                  |
+| -------------- | -------- | --------------------------------------------------- |
+| 左圖標            | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前                               |
+| accent         | 字串       | 選單項目的重音顏色。 可設為 `default`, `placeholder`, 及 `danger` |
+| iconButtons    | 數組       | 表示附加圖示按鈕的對象陣列與選單項目相關聯                               |
+| isTooltipOpen  | 布爾值      | 控制與選單項目關聯的工具提示的可見性                                  |
+| 點擊             | function | 當點擊連結時觸發的回調函數                                       |
+| 文本             | 字串       | 菜單項目的文本內容                                           |
+| isDragDisabled | 布爾值      | 指示是否禁用拖動                                            |
+| 類名稱            | 字串       | 附加樣式的可選名稱                                           |
+
+</Tab>
+</Tabs>
+
+### 多重選擇
+
+提供一種用於實現多重選擇功能並搭配相關的選框。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性             | 類型       | 描述                    |
+| -------------- | -------- | --------------------- |
+| 左圖標            | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前 |
+| 文本             | 字串       | 菜單項目的文本內容             |
+| 已選定            | 布爾值      | 指示菜單項目是否已選中（已勾選）      |
+| onSelectChange | function | 當選框狀態變化時觸發的回調函數       |
+| 類名稱            | 字串       | 附加樣式的可選名稱             |
+
+</Tab>
+</Tabs>
+
+### 多重選擇頭像
+
+具有頭像、多重選擇選框和文字內容的選單項目。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性             | 類型          | 描述               |
+| -------------- | ----------- | ---------------- |
+| avatar         | `ReactNode` | 將顯示在菜單項目左側的頭像或圖標 |
+| 文本             | 字串          | 菜單項目的文本內容        |
+| 已選定            | 布爾值         | 指示菜單項目是否已選中（已勾選） |
+| onSelectChange | function    | 當選框狀態變化時觸發的回調函數  |
+| 類名稱            | 字串          | 附加樣式的可選名稱        |
+
+</Tab>
+</Tabs>
+
+### 導航
+
+具備可選左側圖示、文字內容及右箭頭圖示的選單項目。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性  | 類型       | 描述                    |
+| --- | -------- | --------------------- |
+| 左圖標 | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前 |
+| 文本  | 字串       | 菜單項目的文本內容             |
+| 點擊  | function | 當菜單項目被點擊時觸發的回調函數      |
+| 類名稱 | 字串       | 附加樣式的可選名稱             |
+
+</Tab>
+</Tabs>
+
+### 選擇
+
+一個可選擇的選單項目，具有可選的左側內容（圖示及文字）和選中狀態的指標（勾選圖示）。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性  | 類型       | 描述                    |
+| --- | -------- | --------------------- |
+| 左圖標 | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前 |
+| 文本  | 字串       | 菜單項目的文本內容             |
+| 已選定 | 布爾值      | 指示菜單項目是否已選中（已勾選）      |
+| 禁用  | 布爾值      | 指示菜單項目是否被禁用           |
+| 懸停  | 布爾值      | 指示菜單項目是否當前被懸停         |
+| 點擊  | function | 當菜單項目被點擊時觸發的回調函數      |
+| 類名稱 | 字串       | 附加樣式的可選名稱             |
+
+</Tab>
+</Tabs>
+
+### 選擇頭像
+
+可選擇的選單項目，具有頭像及左側內容（頭像及文字）及選中狀態的指標（勾選圖示）。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性     | 類型          | 描述                     |
+| ------ | ----------- | ---------------------- |
+| avatar | `ReactNode` | 將顯示在菜單項目左側的頭像或圖標       |
+| 文本     | 字串          | 菜單項目的文本內容              |
+| 已選定    | 布爾值         | 指示菜單項目是否已選中（已勾選）       |
+| 禁用     | 布爾值         | 指示菜單項目是否被禁用            |
+| 懸停     | 布爾值         | 指示菜單項目是否當前被懸停          |
+| 測試識別碼  | 字串          | 用於測試目的的 data-testid 屬性 |
+| 點擊     | function    | 當菜單項目被點擊時觸發的回調函數       |
+| 類名稱    | 字串          | 附加樣式的可選名稱              |
+
+</Tab>
+</Tabs>
+
+### 選擇顏色
+
+一個可選擇的菜單項，帶有顏色樣本，適用於需要用戶從菜單中選擇顏色的場景。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性  | 類型       | 描述                                                                                                                                               |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 顏色  | 字串       | 將顯示為菜單項目中的樣本的主題顏色。 Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
+| 已選定 | 布爾值      | 指示菜單項目是否已選中（已勾選）                                                                                                                                 |
+| 禁用  | 布爾值      | 指示菜單項目是否被禁用                                                                                                                                      |
+| 懸停  | 布爾值      | 指示菜單項目是否當前被懸停                                                                                                                                    |
+| 變體  | 字串       | 顏色樣本的變體。 它可以是 `default` 或 `pipeline`                                                                                                             |
+| 點擊  | function | 當菜單項目被點擊時觸發的回調函數                                                                                                                                 |
+| 類名稱 | 字串       | 附加樣式的可選名稱                                                                                                                                        |
+
+</Tab>
+</Tabs>
+
+### 切換
+
+一個帶有關聯切換開關的菜單項，允許用戶啟用或禁用特定功能
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性             | 類型       | 描述                                                   |
+| -------------- | -------- | ---------------------------------------------------- |
+| 左圖標            | 圖標組件     | 一個可選的左側圖標，顯示在菜單項的文本之前                                |
+| 文本             | 字串       | 菜單項目的文本內容                                            |
+| 切換             | 布爾值      | 指示切換開關是 "開" 還是 "關" 狀態                                |
+| onToggleChange | function | 當切換開關狀態改變時觸發的回調函數                                    |
+| 切換大小           | 字串       | The size of the toggle switch. 可以是\ |
+| 類名稱            | 字串       | 附加樣式的可選名稱                                            |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"Expected type "EmailsCreateInput" to be an object."`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"["Invalid object value 'not-an-email' for field \\"emailsField\\""]"`;

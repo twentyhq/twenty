@@ -1,0 +1,220 @@
+---
+title: Eksterne Gereedskap Integrasie
+info: These workflows focus on bringing data in and out of Twenty through API calls and webhooks.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Outomatiseer prosesse en integreer met eksterne gereedskap
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Below are workflow examples you could roll out to connect Twenty with the rest of your stack.
+
+## Data Inslukingsgebruiksgevalle
+
+### Webvorm Voorleggings
+
+**Problem**: You need to capture leads from website forms, landing pages, or contact forms directly into Twenty.
+
+**Oplossing**: Gebruik webhook-snellers om outomaties rekords van vormvoorleggings te skep.
+
+**Setup**:
+
+- Create a workflow with a Webhook trigger
+- Konfigureer die webhook om vormdata (naam, e-pos, maatskappy, ens.) te verwag
+- Stel die webhook-metode op POST
+- Definieer die verwagte liggaamstruktuur in die sneller
+
+**Sneller**: Webhook (POST-versoek vanaf jou vorm)
+
+**Aksies**:
+
+- Soek Rekords om te kyk of persoon/maatskappy reeds bestaan
+- Vertakking: As dit bestaan → Werk Rekord by, Indien nie → Skep Rekord
+- Skep Rekord vir opvolgtaak toegeken aan verkoopverteenwoordiger
+- Send Email notification to sales team
+
+### Produkdatasinchronisasie
+
+**Probleem**: Jou verkoopspan het sigbaarheid nodig in produkgebruik, fakturering of funksie-aanvaarding data wat in jou data pakhuis gestoor word.
+
+**Oplossing**: Sinchroniseer gereeld produkdata in Twenty om verkopers konteks oor hul rekeninge te gee.
+
+**Sneller**: Op 'n Skedule (daagliks of weekliks)
+
+**Aksies**:
+
+- HTTP-versoek na jou datapakhuis API
+- Kode aksie om die data te verwerk en te vorm
+- Gebruik die Iteratiefunksie vir die volgende stappe
+- Soek Rekords om ooreenstemmende maatskappyrekords te vind
+- Werk Rekord by om produkgebruikstatistieke by te voeg
+- Skep Rekord vir take wanneer gebruik onder drempel daal
+
+### Vergaderingsnotas van Oproepopnemers
+
+**Probleem**: Belangrike insigte vanaf verkoopsoproepe raak verlore of word nie behoorlik in die CRM gedokumenteer nie.
+
+**Oplossing**: Skep outomaties notas en aksie-items van oproepopname-stelsels.
+
+**Sneller**: Webhook (van oproepopname platform)
+
+**Aksies**:
+
+- Kode aksie om vergaderingsopsomming en aksie-items uit te haal
+- Soek Rekords om die verwante geleentheid of kontak te vind
+- Skep Rekord vir 'n nota met vergaderingsopsomming
+- Skep Rekord vir opvolgtake gebaseer op aksie-items
+- Stuur E-pos aan deelnemers met opsomming en volgende stappe
+
+### Data Verryking
+
+**Probleem**: Jou kontak- en maatskappyrekords het belangrike demografiese en firmografiese inligting ontbreek.
+
+**Oplossing**: Verryk outomaties rekords deur eksterne data verskaffers te gebruik.
+
+**Sneller**: Rekord word Geskep (Persone of Maatskappye objek)
+
+**Aksies**:
+
+- HTTP-versoek na verryking API
+- Kode aksie om verryking reaksie te verwerk
+- Gebruik die Iteratiefunksie vir die volgende stappe
+- Werk Rekord by met addisionele maatskappy/kontak inligting
+- Skep Rekord vir verkoopsaksie as 'n hoë-waarde vooruitsig geïdentifiseer is
+- Stuur E-pos alarm as verryking sleutel koopseine openbaar
+
+## Data Verspreidingsgebruiksgevalle
+
+### Nuusbriefintekenaarbestuur
+
+**Probleem**: Jy wil bemarkings-e-posse na spesifieke segmente van jou CRM-data stuur, met behulp van gespesialiseerde e-pos gereedskap.
+
+**Oplossing**: Voer intekenaarslyste uit na jou e-pos bemarkingsplatform wanneer nodig.
+
+**Opstel**: Skep 'n beskouing in Twenty met alle nuusbriefontvangers.
+
+**Sneller**: Begin Handmatig (wanneer geen rekord gekies is nie).
+
+**Aksies**:
+
+- Soek Rekords met die nuusbrief-beskouingskriteria.
+- Kode aksie om e-pos adresse vir jou e-pos platform te formateer.
+- HTTP Versoek om intekenaars by jou e-pos bemarkingsgereedskap te voeg.
+- Skep Rekord vir veldtogopsporing.
+- Stuur E-pos bevestiging aan bemarkingspan.
+
+### E-pos Volgorde Snellers
+
+**Probleem**: Jy wil gesofistikeerde e-pos volgordes sneller gebaseer op CRM-gebeurtenisse met behulp van toegewyde e-pos outomatiseringsgereedskap.
+
+**Oplossing**: Stuur nuwe leidrade of klante na jou e-pos outomatiseringsplatform wanneer spesifieke gebeurtenisse plaasvind.
+
+**Sneller**: Rekord word Geskep (Persone voorwerp met spesifieke kriteria).
+
+**Aksies**:
+
+- Kode aksie om toepaslike e-pos volgorde te bepaal.
+- HTTP Versoek om kontak by e-pos outomatiseringsplatform te voeg.
+- Opdateer Rekord om volgorde-inskrywing op te spoor.
+- Skep Rekord vir opvolgtake om betrokkenheid te monitor.
+
+### Leidraad Telling Integrasie
+
+**Probleem**: Jy benodig gesofistikeerde leidraad telling wat CRM-data met eksterne seine kombineer.
+
+**Oplossing**: Stuur leidraad data na eksterne telling gereedskap of implementeer telling logika binne werkstrome.
+
+**Opsie 1 - Eksterne Gereedskap**:
+
+**Sneller**: Rekord word Opgedateer (Persone voorwerp).
+
+**Aksies**:
+
+- HTTP Versoek om leidraad data na telling platform te stuur.
+- Kode aksie om tel-reaksie te verwerk.
+- Opdateer Rekord met leidraad telling.
+- Skep Rekord vir verkooptask indien telling drempel oorskry.
+
+**Opsie 2 - Interne Logika**:
+
+**Sneller**: Rekord word Opgedateer (Persone voorwerp).
+
+**Aksies**:
+
+- Kode aksie met telling algoritme (maatskappy grootte, industrie, gedrag).
+- Opdateer Rekord met berekende telling.
+- Send Email alert to sales rep for high-scoring leads
+
+### Faktuur Generasie
+
+**Probleem**: Wanneer transaksies gesluit word, moet jou faktureringstelsel bygewerk word met kliënt- en transaksie-inligting.
+
+**Oplossing**: Stuur outomaties transaksiedata na jou faktureringstelsel wanneer geleenthede gewen word.
+
+**Sneller**: Rekord word Opgedateer (Geleenthede voorwerp, Stadium = "Gesluit Gewen").
+
+**Aksies**:
+
+- Soek Rekords om volledige kliëntinligting te kry.
+- Kode aksie om data vir faktureringstelsel te formateer.
+- HTTP Versoek om kliënt op fakturering platform te skep.
+- HTTP Versoek om faktuur te genereer.
+- Opdateer Rekord om faktuur verwysing te stoor.
+- Stuur E-pos aan finansiële span met faktuur besonderhede.
+
+## Gevorderde Integrasiepatrone
+
+### Bi-rigting Synchronisasie
+
+**Probleem**: Jy moet data gesinkroniseer hou tussen Twenty en 'n ander stelsel in beide rigtings.
+
+**Oplossing**: Kombineer geskeduleerde werkstrome met webhook triggers vir intydse sinkronisasie.
+
+**Van Twenty na Eksterne Stelsel**:
+
+**Sneller**: Rekord word Opgedateer (enige relevante voorwerp).
+
+**Aksies**:
+
+- HTTP Versoek om eksterne stelsel op te dateer.
+- Opdateer Rekord om sinkroniseringsstatus- en tydstempel op te spoor.
+
+**Van Eksterne Stelsel na Twenty**:
+
+**Sneller**: Webhook (van eksterne stelsel).
+
+**Aksies**:
+
+- Soek Rekords om ooreenstemmende rekord te vind.
+- Opdateer Rekord met nuwe data van eksterne stelsel.
+- Create Record for conflict resolution task if needed
+
+### Multi-stap Dataverwerking
+
+**Probleem**: Data van eksterne bronne benodig komplekse verwerking voordat dit in Twenty gebruik kan word.
+
+**Oplossing**: Gebruik Kode aksies vir data transformasie en validering.
+
+**Sneller**: Webhook of Op 'n Skedule
+
+**Aksies**:
+
+- Kode aksie om inkomende dataformaat te valideer.
+- Kode aksie om datastruktuur te transformeer.
+- Kode aksie om besigheidsreëls en berekeninge toe te pas.
+- Soek Rekords om vir duplikate te kyk.
+- Skep of Opdateer Rekord met verwerkte data.
+- Stuur E-pos waarskuwing indien datakwaliteit kwessies opgespoor word.
+
+## Implementeer Wenke
+
+- Stoor API sleutels veilig in Instellings → API & Webhooks.
+- Gebruik HTTPS vir alle eksterne API oproepe.
+- Wees bedag op API-tempo perke - gebruik geskeduleerde werkstrome waar moontlik.
+- Oorweeg bondel opdaterings "Op 'n Skedule" wanneer intydse verwerking nie nodig is nie.
+- Onthou die 100 gelyktydige werkstroomlimiet per werksarea - gebruik "Bondel" beskikbaarheid vir handmatige snellers wanneer verskeie rekords verwerk word (sien [Werkstroomkenmerke](/l/af/user-guide/workflows/workflow-features) vir besonderhede)
+- Toets met voorbeelddata voordat werkstrome geïmplementeer word.
+
+Vir foutoplossing van integrasie-kwessies, sien ons [Werkstroom Foutoplossing](/l/af/user-guide/workflows/workflow-troubleshooting) gids. Vir hulp met die implementering van komplekse integrasies, oorweeg ons [Professionele Dienste](/l/af/user-guide/workflows/professional-services).

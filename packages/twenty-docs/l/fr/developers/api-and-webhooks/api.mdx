@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Découvrez comment utiliser nos API.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Vue d'ensemble
+
+L'API de Twenty permet aux développeurs d'interagir de manière programmée avec la plateforme CRM de Twenty. En utilisant l'API, vous pouvez intégrer Twenty avec d'autres systèmes, automatiser la synchronisation des données, et construire des solutions personnalisées autour de vos données clients. L'API fournit des points d'accès pour **créer, lire, mettre à jour et supprimer** des objets CRM principaux (comme les personnes et les entreprises) ainsi que pour accéder à la configuration des métadonnées.
+
+**API Playground :** Vous pouvez désormais accéder à l'API Playground dans les paramètres de l'application. Pour essayer les appels API en temps réel, connectez-vous à votre espace de travail Twenty et naviguez vers **Paramètres → APIs & Webhooks**. Cela ouvre le API Playground intégré et les paramètres pour les clés API.
+**[Accédez aux paramètres de l'API](https://app.twenty.com/settings)**
+
+## Authentification
+
+L'API de Twenty utilise des clés API pour l'authentification. Chaque requête vers des points d'accès protégés doit inclure une clé API dans l'en-tête.
+
+- **Clés API :** Vous pouvez générer une nouvelle clé API depuis la page de **paramètres de l'API** de votre application Twenty. Chaque clé API est un jeton secret qui accorde l'accès à vos données CRM, alors gardez-le en sécurité. Si une clé est compromise, révoquez-la dans les paramètres et générez-en une nouvelle.
+- **En-tête Auth :** Une fois que vous avez une clé API, incluez-la dans l'en-tête `Authorization` de vos requêtes HTTP. Utilisez le schéma de jeton Bearer. Par exemple :
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Remplacez `VOTRE_CLÉ_API` par la clé que vous avez obtenue. Cet en-tête doit être présent sur **toutes les requêtes API**. Si le jeton est manquant ou invalide, l'API répondra avec une erreur d'authentification (HTTP 401 Non autorisé).
+
+## Points d'accès API
+
+Toutes les ressources peuvent être consultées via REST ou GraphQL.
+
+- **Cloud :** `https://api.twenty.com/` ou votre domaine / sous-domaine personnalisé
+- **Instances auto-hébergées :** Si vous exécutez Twenty sur votre propre serveur, utilisez votre propre domaine à la place de `api.twenty.com` (par exemple, `https://<votre-domaine>/rest/`).
+
+Les points d'accès sont groupés en deux catégories : **Core API** et **Metadata API**. L'**API principale** traite les données CRM primaires (personnes, entreprises, notes, tâches), tandis que l'**API des métadonnées** couvre les données de configuration (comme les champs personnalisés ou les définitions d'objets). La plupart des intégrations utiliseront principalement l'API principale.
+
+### API principale
+
+Accessible sur `/rest/` ou `/graphql/`.
+L'**API principale** sert de l'interface unifiée pour gérer les entités CRM principales (personnes, entreprises, notes, tâches) et leurs relations, offrant des modèles d'interaction **REST et GraphQL**.
+
+### API de métadonnées
+
+Accessible sur `/rest/metadata/` ou `/metadata/`.
+Les points d'accès de l'API de métadonnées permettent de récupérer des informations sur votre schéma et vos paramètres. Par exemple, vous pouvez récupérer les définitions des champs personnalisés, des schémas d'objets, etc.
+
+- **Exemples de points d'accès :**
+
+  - `GET /rest/metadata/objects` – Liste tous les types d'objets et leurs métadonnées (champs, relations).
+  - `GET /rest/metadata/objects/{objectName}` – Obtenez les métadonnées d'un objet spécifique (par exemple, `people`, `companies`).
+  - `GET /rest/metadata/picklists` – Récupérer les options de champ de liste déroulante définies dans le CRM.
+
+Typiquement, les points d'accès des métadonnées sont utilisés pour comprendre la structure des données (pour des intégrations dynamiques ou la création de formulaires) plutôt que pour gérer des enregistrements réels. Ils sont principalement en lecture seule dans la plupart des cas. Une authentification est également requise pour ceux-ci (utilisez votre clé API).

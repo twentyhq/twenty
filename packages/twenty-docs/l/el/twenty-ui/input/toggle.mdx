@@ -1,0 +1,39 @@
+---
+title: Εναλλαγή
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Ιδιότητες        | Τύπος         | Περιγραφή                                                                                                                                   | Προεπιλογή |
+| ---------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| αξία             | boolean       | Η τρέχουσα κατάσταση της εναλλαγής                                                                                                          | `ψευδής`   |
+| κατά την αλλαγή  | συνάρτηση     | Callback function triggered when the toggle state changes                                                                                   |            |
+| χρώμα            | αλφαριθμητικό | Color of the toggle when it\                                                                                                               | μπλε χρώμα |
+| μέγεθοςΕναλλαγής | αλφαριθμητικό | Μέγεθος της εναλλαγής, που επηρεάζει τόσο το ύψος όσο και το βάρος. Έχει δύο επιλογές: `μικρό` και `μεσαίο` | μεσαίο     |
+
+</Tab>
+</Tabs>

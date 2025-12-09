@@ -1,7 +1,8 @@
 import { type DataSource } from 'typeorm';
+import { v4 } from 'uuid';
 
-import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { getPageLayoutWidgetDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds.util';
 
 export const seedPageLayoutWidgets = async ({
@@ -10,32 +11,41 @@ export const seedPageLayoutWidgets = async ({
   workspaceId,
   objectMetadataItems,
   isDashboardV2Enabled,
+  workspaceCustomApplicationId,
 }: {
   dataSource: DataSource;
   schemaName: string;
   workspaceId: string;
   objectMetadataItems: ObjectMetadataEntity[];
   isDashboardV2Enabled: boolean;
+  workspaceCustomApplicationId: string;
 }) => {
-  const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(
+  const widgetSeeds = getPageLayoutWidgetDataSeeds(
     workspaceId,
     objectMetadataItems,
-  ).map((widget) => {
-    const validatedConfiguration = widget.configuration
-      ? validateAndTransformWidgetConfiguration({
-          type: widget.type,
-          configuration: widget.configuration,
-          isDashboardV2Enabled,
-        })
-      : null;
+    isDashboardV2Enabled,
+  );
 
-    return {
-      ...widget,
-      workspaceId,
-      gridPosition: widget.gridPosition,
-      configuration: validatedConfiguration,
-    };
-  });
+  const pageLayoutWidgets = await Promise.all(
+    widgetSeeds.map(async (widget) => {
+      const validatedConfiguration = widget.configuration
+        ? await validateAndTransformWidgetConfiguration({
+            type: widget.type,
+            configuration: widget.configuration,
+            isDashboardV2Enabled,
+          })
+        : null;
+
+      return {
+        ...widget,
+        workspaceId,
+        gridPosition: widget.gridPosition,
+        configuration: validatedConfiguration,
+        universalIdentifier: v4(),
+        applicationId: workspaceCustomApplicationId,
+      };
+    }),
+  );
 
   if (pageLayoutWidgets.length > 0) {
     await dataSource
@@ -50,6 +60,8 @@ export const seedPageLayoutWidgets = async ({
         'configuration',
         'objectMetadataId',
         'workspaceId',
+        'universalIdentifier',
+        'applicationId',
       ])
       .values(pageLayoutWidgets)
       .orIgnore()

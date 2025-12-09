@@ -1,4 +1,4 @@
-import { type CacheModuleOptions } from '@nestjs/common';
+import { type CacheModuleOptions } from '@nestjs/cache-manager';
 
 import { redisStore } from 'cache-manager-redis-yet';
 

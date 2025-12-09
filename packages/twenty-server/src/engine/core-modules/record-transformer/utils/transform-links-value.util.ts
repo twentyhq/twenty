@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
+import { type LinkMetadataNullable } from 'twenty-shared/types';
 import {
   isDefined,
   lowercaseUrlOriginAndRemoveTrailingSlash,
@@ -7,7 +8,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
-import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
   | {
@@ -32,7 +32,7 @@ export const transformLinksValue = (
 
   const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
     ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : null;
+    : secondaryLinksRaw;
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {

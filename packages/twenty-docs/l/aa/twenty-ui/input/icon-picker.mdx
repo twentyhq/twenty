@@ -1,0 +1,56 @@
+---
+title: crwdns62150:0crwdne62150:0
+image: crwdns62162:0crwdne62162:0
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+crwdns62166:0crwdne62166:0
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62170:0crwdne62170:0 | crwdns62174:0crwdne62174:0 | crwdns62180:0crwdne62180:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62184:0crwdne62184:0 | crwdns62188:0crwdne62188:0 | crwdns62192:0crwdne62192:0                                                            |
+| crwdns62196:0crwdne62196:0 | crwdns62200:0crwdne62200:0 | crwdns62204:0crwdne62204:0 crwdns62208:0crwdne62208:0 |
+| crwdns62212:0crwdne62212:0 | crwdns62216:0crwdne62216:0 | crwdns62220:0crwdne62220:0                                                            |
+| crwdns62224:0crwdne62224:0 | crwdns62228:0crwdne62228:0 | crwdns62232:0crwdne62232:0                                                            |
+| crwdns62238:0crwdne62238:0 | crwdns62242:0crwdne62242:0 | crwdns62246:0crwdne62246:0                                                            |
+| crwdns62250:0crwdne62250:0 | crwdns62254:0crwdne62254:0 | crwdns62258:0crwdne62258:0                                                            |
+| crwdns62262:0crwdne62262:0 | crwdns62266:0crwdne62266:0 | crwdns62270:0crwdne62270:0 crwdns62274:0crwdne62274:0 |
+
+</Tab>
+</Tabs>

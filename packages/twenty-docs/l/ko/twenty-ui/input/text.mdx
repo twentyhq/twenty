@@ -1,0 +1,153 @@
+---
+title: 텍스트
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## 텍스트 입력
+
+사용자가 텍스트를 입력하고 편집할 수 있습니다.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 프로퍼티           | 유형       | 설명                                                                                                          |
+| -------------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| 클래스 네임         | 문자열      | 추가 스타일을 위한 선택적 이름                                                                                           |
+| 라벨             | 문자열      | 입력의 레이블을 나타냅니다.                                                                             |
+| onChange       | function | 입력 값이 변경될 때 호출되는 함수                                                                                         |
+| 전체 폭           | 부울       | 입력이 너비의 100%를 차지해야 하는지 여부를 나타냅니다.                                                           |
+| disableHotkeys | 부울       | 입력에 대해 단축키가 활성화되었는지 여부를 나타냅니다.                                                              |
+| 오류             | 문자열      | 표시될 오류 메시지를 나타냅니다. When provided, it also adds an icon error on the right side of the input |
+| onKeyDown      | function | 입력 필드가 포커스될 때 키가 눌린 경우 호출됩니다. `React.KeyboardEvent`를 인수로 받습니다.              |
+| RightIcon      | 아이콘 컴포넌트 | 입력 오른쪽에 표시되는 선택적 아이콘 컴포넌트                                                                                   |
+
+이 컴포넌트는 다른 HTML 입력 요소 속성도 허용합니다.
+
+</Tab>
+
+</Tabs>
+
+## 자동 크기 조정 텍스트 입력
+
+내용에 따라 자동으로 높이가 조정되는 텍스트 입력 컴포넌트.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 프로퍼티        | 유형       | 설명                                                                               |
+| ----------- | -------- | -------------------------------------------------------------------------------- |
+| onValidate  | function | 사용자가 입력을 검증할 때 트리거하려는 콜백 함수                                                      |
+| minRows     | 숫자       | 텍스트 영역의 최소 행 수                                                                   |
+| placeholder | 문자열      | 텍스트 영역이 비어 있을 때 표시할 자리 표시자 텍스트                                                   |
+| onFocus     | function | 텍스트 영역에 초점이 맞춰졌을 때 트리거하려는 콜백 함수                                                  |
+| 변형          | 문자열      | 입력의 변형. 옵션에는 `default`, `icon`, `button`이 포함됩니다. |
+| buttonTitle | 문자열      | (버튼 변형에만 적용됨) 버튼의 제목                                          |
+| 값           | 문자열      | 텍스트 영역의 초기 값                                                                     |
+
+</Tab>
+
+</Tabs>
+
+## 텍스트 영역
+
+다중 라인 텍스트 입력을 만들 수 있습니다.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 프로퍼티        | 유형       | 설명                                            |
+| ----------- | -------- | --------------------------------------------- |
+| disabled    | 부울       | 텍스트 영역이 비활성화되어 있는지 여부를 나타냅니다. |
+| minRows     | 숫자       | 텍스트 영역의 최소 표시 행 수.            |
+| onChange    | function | 텍스트 영역의 내용이 변경될 때 호출되는 콜백 함수                  |
+| placeholder | 문자열      | 텍스트 영역이 비어 있을 때 표시할 자리 표시자 텍스트                |
+| 값           | 문자열      | 텍스트 영역의 현재 값                                  |
+
+</Tab>
+</Tabs>

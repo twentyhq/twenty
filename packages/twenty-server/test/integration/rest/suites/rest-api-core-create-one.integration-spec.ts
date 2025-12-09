@@ -7,8 +7,8 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { FieldActorSource } from 'twenty-shared/types';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Core REST API Create One endpoint', () => {
@@ -208,7 +208,7 @@ describe('Core REST API Create One endpoint', () => {
       .expect(400)
       .expect((res) => {
         expect(res.body.messages[0]).toMatch(
-          /invalid input value for enum workspace_[a-z0-9]+\.opportunity_stage_enum: "INVALID_ENUM_VALUE"/,
+          'Invalid value \'INVALID_ENUM_VALUE\' for field "stage"',
         );
         expect(res.body.error).toBe('BadRequestException');
       });

@@ -6,6 +6,10 @@ import {
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
 import {
+  type AdditionalPhoneMetadata,
+  type PhonesMetadata,
+} from 'twenty-shared/types';
+import {
   getCountryCodesForCallingCode,
   isDefined,
   isValidCountryCode,
@@ -17,10 +21,6 @@ import {
   RecordTransformerException,
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
-import {
-  type AdditionalPhoneMetadata,
-  type PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 export type PhonesFieldGraphQLInput =
   | Partial<

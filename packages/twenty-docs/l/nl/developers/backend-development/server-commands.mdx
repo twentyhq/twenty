@@ -1,0 +1,108 @@
+---
+title: Backend Commands
+image: /afbeeldingen/gebruiker-gids/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Nuttige commando's
+
+Deze opdrachten moeten vanuit de map packages/twenty-server worden uitgevoerd.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Eerste keer installatie
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### De server starten
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Test
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Opmerking: je kunt `npx nx run twenty-server:test:integration:with-db-reset` uitvoeren als je de database moet resetten voordat de integratietests worden uitgevoerd.
+
+### De database resetten
+
+Als je de database wilt resetten en opnieuw vullen, kun je de volgende opdracht uitvoeren:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migraties
+
+#### Voor objecten in Core/Metadata-schema's (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Voor Workspace-objecten
+
+Er zijn geen migratiebestanden; migraties worden automatisch gegenereerd voor elke werkruimte, opgeslagen in de database en toegepast met dit commando
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+Hierdoor wordt de database verwijderd en worden de migraties opnieuw uitgevoerd en gevuld.
+
+Zorg ervoor dat je een back-up maakt van gegevens die je wilt bewaren alvorens dit commando uit te voeren.
+
+</Warning>
+
+## Technologische stack
+
+Twenty gebruikt voornamelijk NestJS voor de backend.
+
+Prisma was de eerste ORM die we gebruikten. Maar om gebruikers in staat te stellen aangepaste velden en objecten te maken, was een lager niveau logischer omdat we gedetailleerde controle nodig hebben. Het project gebruikt nu TypeORM.
+
+Zo ziet de technologische stack er nu uit.
+
+**Kern**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+
+- [Sentry](https://sentry.io/welcome/) voor het bijhouden van bugs
+
+**Testen**
+
+- [Jest](https://jestjs.io/)
+
+**Tools**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Ontwikkeling**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+

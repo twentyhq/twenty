@@ -1,0 +1,47 @@
+---
+title: crwdns60634:0crwdne60634:0
+image: crwdns60636:0crwdne60636:0
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+crwdns60638:0crwdne60638:0 crwdns60640:0crwdne60640:0
+crwdns60642:0crwdne60642:0
+
+crwdns60644:0https://bullmq.io/crwdne60644:0
+
+## crwdns60646:0crwdne60646:0
+
+1. crwdns60648:0crwdne60648:0
+2. crwdns60650:0crwdne60650:0
+3. crwdns60652:0crwdne60652:0
+4. crwdns60654:0crwdne60654:0
+
+### crwdns60656:0crwdne60656:0
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

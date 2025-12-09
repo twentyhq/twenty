@@ -47,6 +47,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+      focusTitleInput: true,
     });
   };
 
@@ -59,6 +60,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
+      focusTitleInput: true,
     });
   };
 

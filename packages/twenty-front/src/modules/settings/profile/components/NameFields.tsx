@@ -8,6 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { logError } from '~/utils/logError';
 
@@ -21,20 +22,16 @@ const StyledComboInputContainer = styled.div`
 
 type NameFieldsProps = {
   autoSave?: boolean;
-  onFirstNameUpdate?: (firstName: string) => void;
-  onLastNameUpdate?: (lastName: string) => void;
 };
 
-export const NameFields = ({
-  autoSave = true,
-  onFirstNameUpdate,
-  onLastNameUpdate,
-}: NameFieldsProps) => {
+export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
   const { t } = useLingui();
   const currentUser = useRecoilValue(currentUserState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const { canEdit: canEditFirstName } = useCanEditProfileField('firstName');
+  const { canEdit: canEditLastName } = useCanEditProfileField('lastName');
 
   const [firstName, setFirstName] = useState(
     currentWorkspaceMember?.name?.firstName ?? '',
@@ -49,9 +46,6 @@ export const NameFields = ({
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = useDebouncedCallback(async () => {
-    onFirstNameUpdate?.(firstName);
-    onLastNameUpdate?.(lastName);
-
     try {
       if (!currentWorkspaceMember?.id) {
         throw new Error('User is not logged in');
@@ -107,6 +101,8 @@ export const NameFields = ({
     debouncedUpdate,
     autoSave,
     currentWorkspaceMember,
+    canEditFirstName,
+    canEditLastName,
   ]);
 
   const firstNameTextInputId = `${currentWorkspaceMember?.id}-first-name`;
@@ -121,6 +117,7 @@ export const NameFields = ({
         onChange={setFirstName}
         placeholder="Tim"
         fullWidth
+        disabled={!canEditFirstName}
       />
       <SettingsTextInput
         instanceId={lastNameTextInputId}
@@ -129,6 +126,7 @@ export const NameFields = ({
         onChange={setLastName}
         placeholder="Cook"
         fullWidth
+        disabled={!canEditLastName}
       />
     </StyledComboInputContainer>
   );

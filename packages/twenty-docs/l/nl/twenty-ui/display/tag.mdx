@@ -1,0 +1,44 @@
+---
+title: Tag
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Component om inhoud visueel te categoriseren of te labelen.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props     | Soort      | Beschrijving                                                                                                                                                     |
+| --------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | tekenreeks | Optionele naam voor extra styling                                                                                                                                |
+| kleur     | tekenreeks | Kleur van het label. Opties omvatten: `groen`, `turquoise`, `hemel`, `blauw`, `paars`, `roze`, `rood`, `oranje`, `geel`, `grijs` |
+| tekst     | tekenreeks | The content of the tag                                                                                                                                           |
+| onClick   | functie    | Optional function called when a user clicks on the tag                                                                                                           |
+
+</Tab>
+
+</Tabs>

@@ -11,6 +11,7 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { addMonths, format, subMonths } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 import { type Nullable } from 'twenty-shared/types';
@@ -120,6 +121,7 @@ export const RecordCalendarTopBar = () => {
           dropdownComponents={
             <DropdownContent widthInPixels={280}>
               <DateTimePicker
+                instanceId={recordCalendarId}
                 date={recordCalendarSelectedDate}
                 onChange={handleDateChange}
                 onClose={handleDateChange}
@@ -144,7 +146,7 @@ export const RecordCalendarTopBar = () => {
         <Button
           size="small"
           variant="tertiary"
-          title="Today"
+          title={t`Today`}
           onClick={handleTodayClick}
         />
         <StyledNavigationButton

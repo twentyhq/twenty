@@ -1,0 +1,87 @@
+---
+title: Webhooklar
+image: /images/docs/getting-started/webhooks.png
+info: Webhooklarımızı nasıl kullanacağınızı keşfedin.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Genel Bakış
+
+Twenty'de Webhook'lar, CRM'nizde belirli olaylar meydana geldiğinde kendi uygulamalarınıza **gerçek zamanlı bildirimler** sağlayarak API'yi tamamlar. Sürekli API'yi değişiklikler için kontrol etmek yerine, belirli olaylar meydana geldiğinde Twenty'nin sisteminize veri göndermesi için webhook'lar kurabilirsiniz (örneğin, yeni bir kayıt oluşturulduğunda veya mevcut bir kayıt güncellendiğinde). Bu, dış sistemlerin Twenty ile anında ve verimli bir şekilde senkronize olmasına yardımcı olur.
+
+Webhook'lar ile, Twenty'nin belirttiğiniz URL'ye olaya dair bilgileri içeren bir HTTP POST isteği göndermesini sağlarsınız. Ardından bu verileri uygulamanızda ele alabilirsiniz (örneğin, harici veritabanınızı güncellemek, iş akışlarını tetiklemek veya uyarılar göndermek için).
+
+## Webhook Kurulumu
+
+Twenty'de bir webhook oluşturmak için, Twenty uygulamanızın **API'ler & Webhook'lar** ayarlarını kullanın:
+
+1. **Ayarlar'a Git:** Twenty uygulamanızda, **Ayarlar → API'ler & Webhooklar** yolunu izleyin.
+2. **Create a Webhook:** Under **Webhooks** click on **+ Create webhook**.
+3. **URL Girin:** Twenty'nin webhook isteklerini göndermesini istediğiniz sunucunuzdaki uç nokta URL'sini sağlayın. Bu, POST isteklerini ele alabilen herkese açık bir URL olmalıdır.
+4. **Kaydet:** Webhook'u oluşturmak için **Kaydet**'e tıklayın. Yeni webhook hemen etkin hale gelecektir.
+
+Farklı olayları farklı uç noktalara göndermek istiyorsanız birden fazla webhook oluşturabilirsiniz. Her webhook esasen tüm ilgili olaylar için bir abonelik niteliğindedir (şu anda, Twenty tüm olay türlerini verilen URL'ye gönderir; belirli olay türlerini filtreleme UI'den yapılandırılabilir olabilir). Bir webhook'u kaldırmanız gerekirse, aynı ayarlar sayfasından (webhook'u seçip sil seçeneğini belirleyin) silebilirsiniz.
+
+## Olaylar ve Yükler
+
+Bir webhook kurulduğunda, CRM verilerinizde bir tetikleyici olay meydana geldiğinde Twenty, belirttiğiniz URL'ye bir HTTP POST isteği gönderecektir. Webhook'ları tetikleyen yaygın olaylar şunlardır:
+
+- **Kayıt Oluşturuldu:** Örneğin, yeni bir kişi eklendi (`person.created`), yeni bir şirket oluşturuldu (`company.created`), bir not oluşturuldu (`note.created`), vb.
+- **Kayıt Güncellendi:** Örneğin, mevcut bir kişinin bilgileri güncellendi (`person.updated`), bir şirket kaydı düzenlendi (`company.updated`), vb.
+- **Kayıt Silindi:** Örneğin, bir kişi veya şirket silindi (`person.deleted`, `company.deleted`).
+- **Diğer Olaylar:** Uygulanabiliyorsa, diğer nesne olayları veya özel tetikleyiciler (örneğin, görevler veya diğer nesneler güncellendiğinde, benzer olay türleri kullanılabilir, örneğin `task.created`, `note.updated`, vb.).
+
+Webhook POST isteği, gövdesinde bir JSON yükü içerir. Yük genel olarak en az iki şey içerir: olayın türü ve o olaya ilişkin veriler (genellikle oluşturulan/güncellenen kayıt). Örneğin, yeni oluşturulan bir kişi için bir webhook şöyle bir yük gönderebilir:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+Bu örnekte:
+
+- `"event"`, ne olduğunu belirtir (`person.created`).
+- `"data"`, yeni kaydın ayrıntılarını içerir (başka bir deyişle, eğer API üzerinden o kişiyi talep etmiş olsaydınız alacağınız bilgiler).
+- `"timestamp"`, olayın ne zaman meydana geldiğini belirtir (UTC olarak).
+
+Uç noktanız böyle bir JSON verisini POST ile alabilecek şekilde hazırlanmış olmalıdır. Genellikle, JSON'u ayrıştırırsınız, `"event"` türüne bakarak ne olduğunu anlarsınız ve sonra `"data"`yı buna göre kullanırsınız (örneğin, sisteminizde yeni bir kişi oluşturmak veya mevcut olanı güncellemek için).
+
+**Not:** Webhook uç noktanızdan başarılı teslimatı teyit etmek için **2xx HTTP durumu** ile yanıt vermek önemlidir. Twenty webhook göndereninin 2xx cevabı almaması durumunda, teslimatı başarısız olarak değerlendirebilir. (Gelecekte, başarısız webhook'ları yeniden göndermeyi deneyebileceği için, her zaman veriyi işledikten sonra mümkün olduğunca çabuk bir 200 OK ile yanıt vermeye çalışın.)
+
+## Webhook Doğrulaması
+
+Webhook uç noktalarınızın güvenliğini sağlamak için, Twenty istek başlığında `X-Twenty-Webhook-Signature` imzasını içerir.
+
+Bu imza, istek yükünün HMAC SHA256 özetidir ve webhook gizli anahtarınızı kullanarak hesaplanır.
+
+İmzanın doğrulanması için şunları yapmanız gerekecek:
+
+1. `X-Twenty-Webhook-Timestamp` başlığından tarih-damgasını, bir iki nokta üst üste işareti ve yükün JSON stringini birleştirin
+2. Webhook gizli anahtarınızı anahtar olarak kullanarak HMAC SHA256 özetini hesaplayın ()
+3. Çıkan hex özeti ile imza başlığını karşılaştırın
+
+İşte Node.js ile bir örnek:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

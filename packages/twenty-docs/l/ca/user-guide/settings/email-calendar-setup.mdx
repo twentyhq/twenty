@@ -1,0 +1,118 @@
+---
+title: Configuració de Correu Electrònic i Calendari
+info: "Connecta els teus comptes de correu electrònic i calendari."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Configura els ajustos i preferències del teu espai de treball Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Opcions de Connexió
+
+### Compte de Google (Gmail i Google Calendar)
+
+1. Ves a **Configuració → Comptes**
+2. Fes clic a **Afegir compte**
+3. Selecciona **Continuar amb Google**
+4. Authorize Twenty to access your Gmail and Google Calendar
+5. Els teus correus i esdeveniments de calendari començaran a sincronitzar-se automàticament
+
+### Compte de Microsoft (Outlook i Microsoft Calendar)
+
+1. Ves a **Configuració → Comptes**
+2. Fes clic a **Afegir compte**
+3. Selecciona **Continuar amb Microsoft**
+4. Authorize Twenty to access your Outlook and Microsoft Calendar
+5. Els teus correus i esdeveniments de calendari començaran a sincronitzar-se automàticament
+
+### Configuració SMTP/CalDAV (Altres Proveïdors)
+
+Per altres proveïdors de correu electrònic i calendari:
+
+1. Ves a **Configuració → Llançaments → Laboratori** per habilitar la funció
+2. Torna a **Configuració → Comptes**
+3. Configura les opcions de SMTP per a correu electrònic
+4. Configura les opcions de CalDAV per a calendari
+5. Prova la connexió
+
+### Múltiples Safates d'Entrada
+
+- **Comptes Il·limitats**: Connecta múltiples comptes de correu per usuari
+- **Gestió de Comptes**: Canvia entre diferents safates d'entrada
+- **Opcions de Sincronització**: Configura diferents opcions per cada safata d'entrada
+
+<Warning>
+Només les safates de veritat poden ser connectades (per exemple, suport@domini.com amb la seva pròpia safata). Els àlies de correu que són reenviats a una altra safata no poden ser connectats a Twenty.
+</Warning>
+
+## Configuració del Correu Electrònic
+
+### Visibilitat del Missatge
+
+Tria diferents nivells de visibilitat per als teus correus:
+
+- **Només Metadades**: Comparteix només la informació bàsica (remitent, destinatari, data, hora)
+- **Assumpte i Metadades**: Comparteix l'assumpte juntament amb les metadades
+- **Tot el Contingut del Correu**: Comparteix tot el contingut del correu incloent els adjunts
+
+### Creació Automàtica de Contactes
+
+- **Desactivat**: No es crearan contactes automàticament
+- **Per missatges enviats i rebuts**: Crear contactes per totes les interaccions externes de correu
+- **Només per missatges enviats**: Crear contactes només pels correus que envies
+- **Nota**: Els correus interns (mateix domini) mai són sincronitzats per mantenir la privacitat
+
+### Controla quins correus es sincronitzen amb la Selecció de Carpetes de Missatges (Funció Llaboratori)
+
+Controla quines carpetes de correu es sincronitzen amb Twenty:
+
+1. Ves a **Configuració → Llançaments → Laboratori** i habilita **Carpeta de Missatges**
+2. Torna a **Configuració → Comptes** i selecciona el teu compte de correu connectat
+3. Tria quines carpetes sincronitzar:
+   - **Safata d'Entrada**: Correus entrants principals
+   - **Enviats**: Correus sortints que has enviat
+   - **Carpetes Personalitzades**: Qualsevol carpeta específica que vulguis incloure
+   - **Excloure Carpetes**: Descartar carpetes com Spam, Cistella o carpetes personals
+
+Això et dona un control precís sobre els correus que apareixen en el teu CRM sense sincronitzar-ho tot.
+
+**Què es Sincronitza:**
+
+- **Correus Externs**: Tots els correus amb contactes externs de les carpetes seleccionades
+- **Correus Interns**: No es sincronitzen (els correus del mateix domini es mantenen privats)
+- **Adjunts**: Arribarà el H1 2026
+
+**Nota**: No proporcionem una adreça de correu CC per a la sincronització selectiva. En comptes d'això, utilitza la funció de Carpeta de Missatges esmentada anteriorment per aconseguir el mateix nivell de control sobre quins correus es sincronitzen amb Twenty.
+
+## Configuració del Calendari
+
+### Visibilitat de l'Esdeveniment
+
+Tria què serà visible per als altres usuaris en el teu espai de treball:
+
+- **Tot**: Els detalls complets de l'esdeveniment seran compartits amb el teu equip
+- **Metadades**: Només la data i participants seran compartits amb el teu equip
+
+### Creació Automàtica de Contactes per a Reunions
+
+- **Sí**: Crear contactes automàticament per als participants de reunions que no són al teu CRM
+- **No**: Només enllaça les reunions amb contactes existents
+
+### Controla quins esdeveniments es sincronitzen
+
+- **Importació de Reunions**: Importació automàtica d'esdeveniments de calendari
+- **Enllaç de Contacte**: Enllaça les reunions als registres de Persones i Empreses
+
+**Què es Sincronitza:**
+
+- **Reunions**: Esdeveniments de calendari amb participants externs
+- **Enllaç de Contacte**: Esdeveniments automàticament enllaçats als registres CRM
+- **Esdeveniments de l'Equip**: Visibilitat compartida de calendaris
+
+## Freqüència de Sincronització
+
+**Actualitzacions cada 5 minuts**: Tant les dades del correu electrònic com les del calendari es sincronitzen automàticament cada 5 minuts després de la importació inicial.
+
+

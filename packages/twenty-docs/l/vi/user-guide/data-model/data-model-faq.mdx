@@ -1,0 +1,90 @@
+---
+title: Câu hỏi thường gặp về Mô hình Dữ liệu
+info: "Các câu hỏi thường gặp về cấu hình mô hình dữ liệu, giới hạn và các tính năng sắp tới."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Mô hình dữ liệu linh hoạt được thiết kế để hỗ trợ các quy trình kinh doanh độc đáo của bạn.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Quản lý Đối tượng
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Chưa được. Thứ tự trong điều hướng hiện tại cố định, nhưng tính năng này dự kiến sẽ có trong phiên bản phát hành tương lai.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Tất cả các đối tượng đang hoạt động sẽ xuất hiện trong điều hướng. Bạn có thể vô hiệu hóa các đối tượng không cần thiết dưới **Cài đặt → Mô hình Dữ liệu**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Khả năng Trường
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Trường công thức sẽ có trong **Quý 1 năm 2026**. Hiện tại, bạn có thể sử dụng quy trình công việc để tự động tính toán và cập nhật giá trị trường.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Trường lồng nhau sẽ có trong **Quý 1 năm 2026**. Hiện tại, bạn có thể sử dụng quy trình công việc để mang giá trị trường từ các đối tượng liên quan. Ví dụ, để hiển thị ngành của công ty trên bản ghi Cá nhân, tạo một trường tùy chỉnh trên Người và sử dụng quy trình công việc để đồng bộ hóa giá trị.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Tên trường quan hệ ảnh hưởng đến cấu trúc API và không thể thay đổi sau khi đã tạo. Nếu bạn cần đổi tên một trường quan hệ, bạn sẽ cần tạo một trường mới và xóa trường cũ.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+Điều này tạo ra các giới hạn khi dạng số ít và số nhiều giống nhau, nhưng nó cải thiện trải nghiệm của nhà phát triển. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Một số tên trường như `Loại` hoặc `Ứng dụng` được dành riêng cho hệ thống sử dụng. Chọn tên thay thế như `Danh mục` hoặc `Phân loại`.
+</Accordion>
+</AccordionGroup>
+
+## Tính năng Nâng cao
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Quan hệ nhiều-nhiều sẽ có trong **Quý 1 năm 2026**. Hiện tại, bạn có thể tạo một đối tượng trung gian với hai quan hệ 1-nhiều như một giải pháp tạm thời.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Quan hệ Morph Many cho phép một đối tượng liên quan đến nhiều loại đối tượng khác nhau. Ví dụ, một Cơ hội có thể liên quan đến một Cá nhân hoặc một Công ty. Tính năng này hiện đã có sẵn.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Sắp xếp lại trường sẽ có với bố cục tùy chỉnh trong **Quý 4 năm 2025**. Hiện tại, các trường xuất hiện theo thứ tự chữ cái.
+</Accordion>
+</AccordionGroup>
+
+## Quyền Truy cập và Quyền hạn
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Liên hệ với quản trị viên không gian làm việc của bạn. Quyền truy cập mô hình dữ liệu thường chỉ hạn chế cho quản trị viên.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Cần Thêm Hỗ trợ?
+
+Kiểm tra các [dịch vụ triển khai](/l/vi/user-guide/getting-started/implementation-services) của chúng tôi để nhận trợ giúp với thiết kế mô hình dữ liệu phức tạp.
+

@@ -39,16 +39,17 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
+import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   type OperationType,
@@ -76,7 +77,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   constructor(
     internalContext: WorkspaceInternalContext,
-    connection: WorkspaceDataSource,
+    connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
@@ -195,7 +196,7 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
-      undefined,
+      {},
       this.getFeatureFlagMap(),
     );
   }
@@ -441,7 +442,9 @@ export class WorkspaceEntityManager extends EntityManager {
       entityName,
       operationType,
       objectsPermissions: permissionOptions?.objectRecordsPermissions ?? {},
-      objectMetadataMaps: this.internalContext.objectMetadataMaps,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
@@ -955,7 +958,11 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
     );
 
-    const formattedEntityLike = formatData(entityLike, objectMetadataItem);
+    const formattedEntityLike = formatData(
+      entityLike,
+      objectMetadataItem,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     const managerWithPermissionOptions = Object.assign(
       Object.create(Object.getPrototypeOf(this)),
@@ -1189,6 +1196,7 @@ export class WorkspaceEntityManager extends EntityManager {
       const formattedEntityOrEntities = formatData(
         entityWithConnectedRelations,
         objectMetadataItem,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       const updatedColumns = formattedEntityOrEntities
@@ -1220,7 +1228,8 @@ export class WorkspaceEntityManager extends EntityManager {
       let formattedResult = formatResult<Entity[]>(
         resultArray,
         objectMetadataItem,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       const updatedEntities = formattedResult.filter(
@@ -1234,6 +1243,7 @@ export class WorkspaceEntityManager extends EntityManager {
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
           objectMetadataItem,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: updatedEntities,
           beforeEntities: updatedEntities.map(
@@ -1246,6 +1256,7 @@ export class WorkspaceEntityManager extends EntityManager {
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.CREATED,
           objectMetadataItem,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: createdEntities,
         }),
@@ -1282,7 +1293,7 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptionsFromArgs,
   }: {
     formattedResult: Entity[];
-    objectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    objectMetadataItem: FlatObjectMetadata;
     permissionOptionsFromArgs: PermissionOptions | undefined;
   }): Entity[] {
     if (permissionOptionsFromArgs?.shouldBypassPermissionChecks === true) {
@@ -1302,15 +1313,12 @@ export class WorkspaceEntityManager extends EntityManager {
       return formattedResult;
     }
 
-    const objectMetadataItemWithFieldMaps =
-      this.internalContext.objectMetadataMaps.byId[objectMetadataItem.id];
-
     const restrictedFieldNames = new Set(
       Object.entries(restrictedFields)
         .filter(([_, fieldPermissions]) => fieldPermissions.canRead === false)
         .map(([fieldMetadataId]) => {
           const fieldMetadata =
-            objectMetadataItemWithFieldMaps?.fieldsById[fieldMetadataId];
+            this.internalContext.flatFieldMetadataMaps.byId[fieldMetadataId];
 
           if (!isDefined(fieldMetadata)) {
             throw new InternalServerError(
@@ -1406,7 +1414,11 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
     );
 
-    const formattedEntity = formatData(entity, objectMetadataItem);
+    const formattedEntity = formatData(
+      entity,
+      objectMetadataItem,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     const result = new EntityPersistExecutor(
       this.connection,
@@ -1423,13 +1435,15 @@ export class WorkspaceEntityManager extends EntityManager {
     const formattedResult = formatResult<Entity[]>(
       result,
       objectMetadataItem,
-      this.internalContext.objectMetadataMaps,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
     );
 
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.DESTROYED,
         objectMetadataItem,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
         entities: formattedResult,
       }),
@@ -1521,7 +1535,11 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
     );
 
-    const formattedEntity = formatData(entity, objectMetadataItem);
+    const formattedEntity = formatData(
+      entity,
+      objectMetadataItem,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     const result = new EntityPersistExecutor(
       this.connection,
@@ -1538,13 +1556,15 @@ export class WorkspaceEntityManager extends EntityManager {
     const formattedResult = formatResult<Entity[]>(
       result,
       objectMetadataItem,
-      this.internalContext.objectMetadataMaps,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
     );
 
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.DELETED,
         objectMetadataItem,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
         entities: formattedResult,
       }),
@@ -1632,7 +1652,11 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext,
     );
 
-    const formattedEntity = formatData(entity, objectMetadataItem);
+    const formattedEntity = formatData(
+      entity,
+      objectMetadataItem,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     const result = new EntityPersistExecutor(
       this.connection,
@@ -1649,13 +1673,15 @@ export class WorkspaceEntityManager extends EntityManager {
     const formattedResult = formatResult<Entity[]>(
       result,
       objectMetadataItem,
-      this.internalContext.objectMetadataMaps,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
     );
 
     this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
       formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.RESTORED,
         objectMetadataItem,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         workspaceId: this.internalContext.workspaceId,
         entities: formattedResult,
       }),

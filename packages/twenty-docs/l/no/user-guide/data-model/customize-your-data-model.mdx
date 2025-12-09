@@ -1,0 +1,69 @@
+---
+title: Tilpass din datamodell
+info: "Lær hvordan du designer og oppretter en datamodell som gjenspeiler hvordan du opererer."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Fleksibel datamodell designet for å støtte dine unike forretningsprosesser
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Hva er en datamodell?
+
+En datamodell er strukturen som definerer hvordan informasjon er organisert i ditt CRM. Den bestemmer hvilke objekter som finnes (som selskaper, personer eller muligheter), hvilke egenskaper de har (det er feltene), og hvordan de forholder seg til hverandre. Du kan tenke på det som et kart over kundedataene dine.
+
+## Hvorfor bør du tilpasse din datamodell?
+
+Alle virksomheter fungerer forskjellig. Å kunne fullstendig tilpasse din datamodell betyr at du kan forme Twenty rundt dine prosesser i stedet for å tvinge dine inn i et rigid system.  
+Twenty tilbyr fleksibiliteten du trenger for å forme den datamodellen som best støtter din hverdag. Du kan opprette så mange tilpassede objekter og felt du trenger, prisen vil ikke endre seg.
+
+## Tips for å designe din datamodell
+
+Det er sjelden bare én måte å bygge en datamodell på. Nedenfor er noen tips for å hjelpe deg med å bygge din.
+
+**1. Start med dine kjerneobjekter.**  
+Identifiser de viktigste konseptene du jobber med (f.eks. Selskaper, Personer, Muligheter). Disse tre objektene er allerede tilgjengelige ettersom de brukes ofte. Men tenk på andre du kanskje trenger.  
+Eksempel: Stripe ville trenge et objekt `Abonnementer`, Airbnb ville trenge et objekt `Reiser`, en oppstartsakselerator et objekt `Partier`.
+
+**2. Bruk felt for variasjoner, ikke nye objekter.**  
+Hvis noe bare er en egenskap for et eksisterende objekt (f.eks. `Industri` for et Selskap, eller `Status` for en Mulighet), gjør det til et felt. Felt er best for kategorier, etiketter og attributter.
+
+**3. Opprett et nytt objekt når det står alene.**  
+Hvis konseptet har sin egen livssyklus, egenskaper eller relasjoner, fortjener det vanligvis et objekt. For eksempel:
+
+- **Prosjekter** som har sine egne frister, eiere og oppgaver
+- **Abonnementer** som knytter sammen selskaper, produkter og fakturaer
+- **Arrangementer** som innebærer mange deltakere og oppfølgende tiltak
+
+Disse går utover et enkelt felt fordi de bærer med seg sine egne data og relasjoner.
+
+**4. Opprett et objekt når antallet relaterte poster er ubegrenset.**  
+Hvis noe kan kobles flere ganger og du ikke vet hvor mange, er det bedre som sitt eget objekt. For eksempel, i stedet for å opprette felt som `Produkt 1`, `Produkt 2`, osv., definer et `Produkt` objekt og koble det til den opprinnelige posten. På denne måten kan du støtte ett, to eller hundre produkter uten å endre modellen din.
+
+**5. Hold det enkelt først.**  
+Begynn med feltene. Gå til nye objekter bare når du føler grensene: for mange felter, gjentatte poster eller relasjoner som ikke passer pent.
+
+### Spesiell merknad om Personer, Selskaper og Muligheter
+
+- **`Personer`, `Selskaper` og `Muligheter` er de eneste objektene hvorfra du kan få tilgang til e-postene og møtene som synkroniseres fra din innboks / kalender.** Vi anbefaler å bruke disse så mye som mulig. Hvis du trenger å opprette kategorier av `Personer` eller `Selskaper`, bruk felter i stedet for nye objekter.
+
+  Eksempel: det er best å bruke `Person` objektet for både potensielle kunder og partnere, ved å legge til et felt kalt `Person Type`. Unngå å lage et `Partner` objekt, siden du ikke vil kunne få tilgang til e-post tråder fra det. Opprett i stedet forskjellige visninger under `Personer`: en som viser partnere, en annen som viser potensielle kunder.
+- Gitt punktet ovenfor, er det greit å ha felt som ikke gjelder for hver post. For eksempel kan du under `Personer` legge til et `Henvisningslink` felt som bare er relevant når `Person Type = Partner`. Det er i orden: du kan skjule dette feltet fra visninger der det ikke er nødvendig.
+
+### Spørsmål for å veilede ditt valg
+
+Spør deg selv:
+
+- Er dette bare en egenskap av noe jeg allerede har, eller trenger det sine egne egenskaper?
+- Vil jeg noen gang trenge å spore flere av disse per post, uten å vite hvor mange på forhånd?
+- Er dette konseptet knyttet til flere forskjellige objekter, ikke bare ett?
+- Vil det ha sin egen livssyklus (f.eks. stadier, start-/sluttdatoer)?
+
+Hvis svaret er “ja” til ett eller flere av disse, er det sannsynlig på tide med et nytt objekt.
+
+## Ønsker du hjelp?
+
+Vårt team kan hjelpe deg med å designe og opprette den datamodellen du trenger. Oppdag vårt Onboarding Pack [her](https://twenty.com/onboarding-packages).
+
+

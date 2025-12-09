@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "시작하기"
+        },
+        "dataModel": {
+          "label": "데이터 모델"
+        },
+        "crmEssentials": {
+          "label": "CRM 필수 요소"
+        },
+        "views": {
+          "label": "보기들"
+        },
+        "workflows": {
+          "label": "Workflows"
+        },
+        "collaboration": {
+          "label": "협업"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "Reporting"
+        },
+        "settings": {
+          "label": "설정"
+        },
+        "pricing": {
+          "label": "가격"
+        },
+        "resources": {
+          "label": "자료"
+        }
+      }
+    },
+    "developers": {
+      "label": "개발자",
+      "groups": {
+        "developersGroup": {
+          "label": "개발자"
+        },
+        "devGettingStarted": {
+          "label": "시작하기",
+          "groups": {
+            "selfHosting": {
+              "label": "셀프 호스팅"
+            },
+            "apiAndWebhooks": {
+              "label": "API 및 웹훅"
+            }
+          }
+        },
+        "contributing": {
+          "label": "기여",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "프론트엔드 개발",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "표시"
+                    },
+                    "feedback": {
+                      "label": "피드백"
+                    },
+                    "input": {
+                      "label": "입력"
+                    },
+                    "navigation": {
+                      "label": "네비게이션"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "백엔드 개발"
+            }
+          }
+        }
+      }
+    }
+  }
+}

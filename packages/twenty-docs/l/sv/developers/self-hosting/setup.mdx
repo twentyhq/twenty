@@ -1,0 +1,251 @@
+---
+title: Installation
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Konfigurationshantering
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/sv/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty erbjuder **två konfigurationslägen** för att möta olika implementeringsbehov:
+
+**Admin panel access:** Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the configuration interface.
+
+## 1. Administratörspanelkonfiguration (Standard)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**De flesta konfigurationer sker via UI** efter installationen:
+
+1. Anslut till din Twenty-instans (vanligtvis `http://localhost:3000`)
+2. Gå till **Inställningar / Administratörspanel / Konfigurationsvariabler**
+3. Konfigurera integrationer, e-post, lagring och mer
+4. Ändringar träder i kraft omedelbart (inom 15 sekunder för flerkontainersinstallationer)
+
+<Warning>
+**Flerkontainersinstallationer:** När du använder databaskonfiguration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) läser både server och arbetarsbehållare från samma databas. Ändringar i administratörspanelen påverkar båda automatiskt, vilket eliminerar behovet av att duplicera miljövariabler mellan behållare (förutom infrastrukturella variabler).
+</Warning>
+
+**Vad du kan konfigurera genom administratörspanelen:**
+
+- **Autentisering** - Google/Microsoft OAuth, lösenordsinställningar
+- **E-post** - SMTP-inställningar, mallar, verifiering
+- **Lagring** - S3-konfiguration, lokala lagringsvägar
+- **Integrationer** - Gmail, Google-kalender, Microsoft-tjänster
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **Och mycket mer...**
+
+![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Varje variabel dokumenteras med beskrivningar i din adminpanel under **Inställningar → Administratörspanel → Konfigurationsvariabler**.
+Vissa infrastrukturella inställningar som databasanslutningar (`PG_DATABASE_URL`), server-URL:er (`SERVER_URL`) och app-hemligheter (`APP_SECRET`) kan endast konfigureras via `.env`-filen.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. Endast miljökonfiguration
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**All konfigurering hanteras genom `.env`-filer:**
+
+1. Sätt `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` i din `.env`-fil
+2. Lägg till alla konfigurationsvariabler i din `.env`-fil
+3. Starta om behållare för att ändringarna ska träda i kraft
+4. Administratörspanelen kommer att visa aktuella värden men kan inte ändra dem
+
+## Gmail & Google Kalender Integration
+
+### Skapa Google Cloud-projekt
+
+1. Gå till [Google Cloud Console](https://console.cloud.google.com/)
+2. Skapa ett nytt projekt eller välj ett befintligt
+3. Aktivera dessa API:er:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Kalender API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Konfigurera OAuth
+
+1. Gå till [Behörighet](https://console.cloud.google.com/apis/credentials)
+2. Skapa OAuth 2.0 Klient-ID
+3. Lägg till dessa återställnings-URI:er:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Konfigurera i Twenty
+
+1. Gå till **Inställningar → Administratörspanel → Konfigurationsvariabler**
+2. Hitta avsnittet **Google Auth**
+3. Sätt dessa variabler:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**Obligatoriska omfattningar** (konfigureras automatiskt):
+[Se relevant källkod](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### Om din app är i testläge
+
+Om din app är i testläge, måste du lägga till testanvändare i ditt projekt.
+
+Under [OAuth-samtyckesskärm](https://console.cloud.google.com/apis/credentials/consent), lägg till dina testanvändare i avsnittet "Testanvändare".
+
+## Microsoft 365 Integration
+
+<Warning>
+Användare måste ha en [Microsoft 365-licens](https://admin.microsoft.com/Adminportal/Home) för att kunna använda kalender- och meddelande-API:et. De kommer inte att kunna synkronisera sitt konto på Twenty utan en.
+</Warning>
+
+### Skapa ett projekt i Microsoft Azure
+
+Du måste skapa ett projekt i [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) och skaffa referenser.
+
+### Aktivera API:er
+
+På Microsoft Azure Console aktivera följande API:er i "Behörigheter":
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+Notera: "Mail.ReadWrite" och "Mail.Send" är endast obligatoriska om du vill skicka e-post med våra arbetsflödesåtgärder. Du kan använda "Mail.Read" istället om du bara vill ta emot e-post.
+
+### Auktoriserade återställnings-URI:er
+
+Du måste lägga till följande återställnings-URI:er i ditt projekt:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Konfigurera i Twenty
+
+1. Gå till **Inställningar → Administratörspanel → Konfigurationsvariabler**
+2. Hitta avsnittet **Microsoft Auth**
+3. Sätt dessa variabler:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Konfigurera omfattningar
+
+[Se relevant källkod](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'e-post'
+- 'profil'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### Om din app är i testläge
+
+Om din app är i testläge, måste du lägga till testanvändare i ditt projekt.
+
+Lägg till dina testanvändare i avsnittet "Användare och grupper".
+
+## Bakgrundsjobb för Kalender & Meddelanden
+
+Efter konfiguration av Gmail-, Google Kalender- eller Microsoft 365-integrationer behöver du starta bakgrundsjobben som synkroniserar data.
+
+Registrera följande återkommande jobb i din arbetarbehållare:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## E-postkonfiguration
+
+1. Gå till **Inställningar → Administratörspanel → Konfigurationsvariabler**
+2. Hitta avsnittet **E-post**
+3. Konfigurera dina SMTP-inställningar:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+Du kommer att behöva skapa ett [Applikationslösenord](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_adress
+- EMAIL_SMTP_PASSWORD='gmail_app_lösenord'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** är en falsk SMTP mejlserver för utveckling och testning.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_adress
+- EMAIL_SMTP_PASSWORD='office365_lösenord'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** är en falsk SMTP mejlserver för utveckling och testning.
+
+- Kör smtp4dev-bilden: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Använd smtp4dev ui här: [http://localhost:8090](http://localhost:8090)
+- Sätt dessa variabler:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

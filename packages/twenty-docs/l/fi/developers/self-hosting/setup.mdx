@@ -1,0 +1,251 @@
+---
+title: Asetukset
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Konfiguraatiohallinta
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/fi/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty tarjoaa **kaksi konfiguraatiotapaa** eri käyttöönoton tarpeisiin:
+
+**Admin panel access:** Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the configuration interface.
+
+## 1. Admin Panel Configuration (Default)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**Suurin osa konfiguraatiosta tehdään käyttöliittymän kautta** asennuksen jälkeen:
+
+1. Avaa Twenty-instanssisi (yleensä `http://localhost:3000`)
+2. Go to **Settings / Admin Panel / Configuration Variables**
+3. Konfiguroi integraatiot, sähköposti, tallennus ja paljon muuta
+4. Changes take effect immediately (within 15 seconds for multi-container deployments)
+
+<Warning>
+**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+</Warning>
+
+**What you can configure through the admin panel:**
+
+- **Autentikointi** - Google/Microsoft OAuth, salasana-asetukset
+- **Sähköposti** - SMTP-asetukset, mallipohjat, vahvistukset
+- **Tallennus** - S3-konfiguraatio, paikalliset tallennuspolut
+- **Integrations** - Gmail, Google Calendar, Microsoft services
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **Ja paljon muuta...**
+
+![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Jokainen muuttuja on dokumentoitu kuvauksilla ylläpitopaneelissasi kohdassa **Asetukset → Ylläpito Paneeli → Konfiguraatiomuuttujat**.
+Jotkut infrarakenteeseen liittyvät asetukset, kuten tietokantayhteydet (`PG_DATABASE_URL`), palvelinosoitteet (`SERVER_URL`) ja sovellussalaisuudet (`APP_SECRET`), voidaan konfiguroida vain `.env` tiedoston kautta.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. Environment-Only Configuration
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Kaikki konfiguraatio hallitaan `.env` tiedoston kautta:**
+
+1. Aseta `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` `.env` tiedostoosi
+2. Lisää kaikki konfiguraatiomuuttujat `.env` tiedostoon
+3. Käynnistä kontit uudelleen, jotta muutokset tulevat voimaan
+4. Ylläpitopaneeli näyttää nykyiset arvot mutta niitä ei voi muokata
+
+## Gmail & Google Calendar Integrointi
+
+### Luo Google Cloud Projekti
+
+1. Siirry [Google Cloud Console](https://console.cloud.google.com/):iin
+2. Luo uusi projekti tai valitse olemassa oleva
+3. Ota seuraavat API:t käyttöön:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Konfiguroi OAuth
+
+1. Siirry [Valtuudet](https://console.cloud.google.com/apis/credentials)
+2. Luo OAuth 2.0 Client ID
+3. Lisää nämä uudelleenohjaus-URI:t:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Konfiguroi Twentyssä
+
+1. Siirry kohtaan **Asetukset → Ylläpito Paneeli → Konfiguraatiomuuttujat**
+2. Etsi **Google Auth** -osio
+3. Aseta nämä muuttujat:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**Vaaditut oikeudet** (automaattisesti konfiguroitu):
+[Katso olennainen lähdekoodi](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### Jos sovelluksesi on testitilassa
+
+Jos sovelluksesi on testitilassa, sinun on lisättävä testikäyttäjiä projektiisi.
+
+Under [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), add your test users to the "Test users" section.
+
+## Microsoft 365 Integrointi
+
+<Warning>
+Users must have a [Microsoft 365 Licence](https://admin.microsoft.com/Adminportal/Home) to be able to use the Calendar and Messaging API. He eivät pysty synkronoimaan tiliään Twentyssä ilman lisenssiä.
+</Warning>
+
+### Luo Microsoft Azure projekti
+
+Sinun on luotava projekti [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) ja saatava tunnukset.
+
+### Ota API:t käyttöön
+
+Ota Microsoft Azure Consolessa seuraavat API:t käyttöön kohdassa "Oikeudet":
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profiili
+- Microsoft Graph: offline_access
+
+Huomaa: "Mail.ReadWrite" ja "Mail.Send" ovat pakollisia vain, jos haluat lähettää sähköposteja työprosessitoimintojemme avulla. Voit käyttää "Mail.Read" sijaan jos haluat ainoastaan vastaanottaa sähköposteja.
+
+### Valtuutettujen uudelleenohjaus-URI:t
+
+Sinun on lisättävä seuraavat uudelleenohjaus-URI:t projektiisi:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Konfiguroi Twentyssä
+
+1. Siirry kohtaan **Asetukset → Ylläpito Paneeli → Konfiguraatiomuuttujat**
+2. Etsi **Microsoft Auth** -osio
+3. Aseta nämä muuttujat:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Oikeuksien konfigurointi
+
+[Katso olennainen lähdekoodi](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'sähköposti'
+- 'profiili'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### Jos sovelluksesi on testitilassa
+
+Jos sovelluksesi on testitilassa, sinun on lisättävä testikäyttäjiä projektiisi.
+
+Lisää testikäyttäjäsi kohtaan "Käyttäjät ja ryhmät".
+
+## Ajoitustyöt Kalenterille & Viestinnälle
+
+Kun olet konfiguroinut Gmail-, Google Calendar- tai Microsoft 365 -integraatiot, sinun on aloitettava taustatyöt, jotka synkronoivat tiedot.
+
+Rekisteröi seuraavat toistuvat työt työntekijäkonteissasi:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## Sähköpostin Konfiguraatio
+
+1. Siirry kohtaan **Asetukset → Ylläpito Paneeli → Konfiguraatiomuuttujat**
+2. Etsi **Sähköposti** -osio
+3. Konfiguroi SMTP-asetuksesi:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+Sinun on hankittava [Sovelluksen salasana](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_sähköposti_osoite
+- EMAIL_SMTP_PASSWORD='gmail_sovellussalasana'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** on väärennetty SMTP-sähköpostipalvelin kehitykseen ja testaukseen.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_sähköposti_osoite
+- EMAIL_SMTP_PASSWORD='office365_salasana'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** on väärennetty SMTP-sähköpostipalvelin kehitykseen ja testaukseen.
+
+- Suorita smtp4dev-kuva: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Pääset smtp4dev käyttöliittymään täältä: [http://localhost:8090](http://localhost:8090)
+- Aseta seuraavat muuttujat:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

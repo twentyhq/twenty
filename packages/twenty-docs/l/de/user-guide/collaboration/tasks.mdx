@@ -1,0 +1,118 @@
+---
+title: Aufgaben
+info: Verstehen, wie man in Twenty Aufgaben effektiv verwaltet.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Entdecken Sie, wie Sie Notizen und Aufgaben nutzen können, um besser mit Ihrem Team zusammenzuarbeiten.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Verwalten Sie alle Aufgaben in Ihrem Arbeitsbereich mithilfe der **Aufgaben**-Funktion. Dieser Leitfaden zeigt Ihnen, wie Sie Aufgaben erstellen und verwalten, zwischen bevorstehenden und abgeschlossenen Aufgaben wechseln, Aufgabendetails bearbeiten und vieles mehr.
+
+## Häufige Anwendungsfälle
+
+### Vertriebs-Nachverfolgungen
+
+- **Nächste Schritte im Meeting**: Erstellen Sie Aufgaben für Maßnahmen, die bei Kundengesprächen besprochen wurden.
+- **Vorschlagsnachverfolgungen**: Erinnerungen einrichten, um auf ausstehende Vorschläge zu prüfen
+- **Vertragsüberprüfungen**: Aufgaben für Vertragsverhandlungen und -genehmigungen planen
+
+### Kundenerfolg
+
+- **Onboarding-Aufgaben**: Erstellen Sie automatisch Checklisten für das Onboarding, wenn Aufträge abgeschlossen werden
+- **Check-in-Erinnerungen**: Regelmäßige Kunden-Gesundheitskontrollen anrufen planen
+- **Vorbereitung der Verlängerung**: Aufgaben zur Vorbereitung von Vertragserneuerungen 90 Tage im Voraus planen
+
+### Internes Projektmanagement
+
+Über Vertrieb und Kundenerfolg hinaus unterstützen Aufgaben breitere organisatorische Bedürfnisse:
+
+- **Produktentwicklung**: Verfolgen Sie Feature-Releases, Fehlerbehebungen und Entwicklungsmilestones
+- **Marketingkampagnen**: Verwalten Sie Kampagnenstarts, Inhaltserstellung und Werbeaktivitäten
+- **Personalabteilung**: Handhaben Sie Rekrutierungsprozesse, Mitarbeiter-Onboarding und Leistungsbewertungen
+- **Finanzaufgaben**: Budgetüberprüfungen, Rechnungsverarbeitung und Finanzberichte planen
+- **Betrieb**: Koordinieren Sie Facility Management, Lieferantenbeziehungen und Prozessverbesserungen
+
+### Automatisierte Aufgabenerstellung
+
+Verwenden Sie [Workflows](/l/de/user-guide/workflows/getting-started-workflows), um Aufgaben automatisch zu erstellen.
+
+- **Deal-Gewinn-Triggers**: Onboarding-Aufgaben automatisch erstellen, die dem CS-Team zugewiesen sind, wenn Chancen sich schließen
+- **E-Mail-Erinnerungen**: Richten Sie wöchentliche E-Mail-Erinnerungen für Aufgaben ein, die diese Woche fällig sind (jeden Montag gesendet)
+- **Pipeline-Automatisierung**: Erstellen Sie Nachfolgetasks, wenn Geschäfte in bestimmten Phasen stocken
+- **Meeting-Integration**: Aufgaben automatisch aus Besprechungsaufzeichnungen oder Kalendereinträgen erstellen
+
+## Aufgabeneigenschaften
+
+### Beziehungsfeld
+
+Aufgaben enthalten ein `Relations`-Feld, das Ihnen erlaubt, eine einzelne Aufgabe mit mehreren Datensätzen über verschiedene Objekte hinweg zu verbinden. Sie können zum Beispiel eine Nachverfolgungsaufgabe verknüpfen mit:
+
+- Der Person, die Sie kontaktieren müssen.
+- Dem Unternehmen, das sie vertreten.
+- Der Möglichkeit, die verfolgt wird.
+- Relevante Notizen oder andere Datensätze.
+
+Diese morph-spezifische Beziehung stellt sicher, dass Aufgaben von allen relevanten Datensatzseiten zugänglich sind und einen vollständigen Kontext bieten.
+
+### Nutzer-Tagging
+
+**Hinweis**: Nutzer-Tagging innerhalb von Aufgaben ist derzeit nicht verfügbar. Diese Funktion ist für 2026 geplant, was Ihnen ermöglicht, Teammitglieder zu erwähnen und Benachrichtigungen beim Zuweisen oder Aktualisieren von Aufgaben auszulösen.
+
+## Aufgaben erstellen
+
+Das Erstellen von Aufgaben in Twenty ist nahtlos. Sie können entweder:
+
+- Zum `Tasks`-Tab gehen und die `+`-Schaltfläche oben rechts auf der Seite drücken.
+- Die Suchfunktion nutzen, indem Sie `cmd/ctrl + k` drücken, und dann 'Aufgabe erstellen' aus der Liste der Schnellaktionen auswählen.
+- Zu einer `Datensatzseite` gehen und oben rechts auf der Seite `+` drücken oder zum Task-Tab gehen und die `Task hinzufügen`-Schaltfläche drücken.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Task-Inhalte hinzufügen
+
+Sobald Sie eine Aufgabe erstellt haben, können Sie sie mit reichhaltigem Inhalt wie Titeln, Aufzählungspunkten oder sogar Bildern anreichern. Drücken Sie dazu `/` und geben Sie den gewünschten Befehl ein.
+
+## Aufgaben anzeigen
+
+Die **Aufgaben**-Seite zeigt alle Ihre Aufgaben in Ihrem Arbeitsbereich an. Hier können Sie:
+
+- Aufgaben, die einem bestimmten Nutzer zugewiesen sind, filtern, indem Sie oben rechts auf dem Bildschirm auf die Schaltfläche mit Ihrem Namen klicken.
+- Zwischen anstehenden (`Zu erledigen`) und abgeschlossenen (`Erledigt`) Aufgaben umschalten, um zu sehen, was Aufmerksamkeit benötigt und was Sie erreicht haben.
+
+Sie können auch Aufgaben für einen bestimmten Datensatz auf seiner `Datensatzseite`sehen.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Aufgaben bearbeiten
+
+Um eine Aufgabe zu bearbeiten, sollten Sie auf ihre Karte klicken. Dies öffnet ein Seitenpanel, das folgende Funktionen bietet:
+
+- **Zugewiesener Mitarbeiter und Fälligkeitsdatum**: Aktualisieren Sie den zugewiesenen Mitarbeiter oder bearbeiten Sie das Fälligkeitsdatum.
+- **Kommentare**: Arbeiten Sie mit Ihren Teammitgliedern zusammen, indem Sie Kommentare zu Aufgaben hinzufügen, um Updates oder Feedback zu geben.
+- **Automatisierungen**: Dank der API und Webhooks können Sie auch die Aufgabenerstellung automatisieren, die durch spezifische Aktivitäten in Ihrem Arbeitsbereich ausgelöst wird.
+
+## Aufgaben als erledigt markieren
+
+Um eine Aufgabe als erledigt zu markieren:
+
+1. Finden Sie die Aufgabe auf Ihrer `Tasks`-Seite oder innerhalb einer `Datensatzseite`.
+2. Klicken Sie auf den Kreis links auf der Aufgabenkarte, es wird eine Änderung symbolisieren, um die Erledigung anzuzeigen.
+3. Der Aufgabenstatus wird automatisch auf `Erledigt` aktualisiert.
+
+Dieses Verfahren hilft, ein aktuelles Protokoll Ihrer Leistungen zu führen.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Eine Aufgabe löschen
+
+Um eine Aufgabe dauerhaft zu entfernen:
+
+1. Öffnen Sie die Aufgabe, die Sie löschen möchten, indem Sie auf ihre Karte entweder von der `Tasks`-Seite oder innerhalb einer `Datensatzseite` klicken.
+2. Klicken Sie auf das Papierkorbsymbol in der oberen rechten Ecke des Aufgaben-Detail-Panels.
+
+Bitte beachten Sie, dass das Löschen einer Aufgabe dauerhaft ist und nicht rückgängig gemacht werden kann. Überlegen Sie, Aufgaben als `Erledigt` zu markieren, wenn die Möglichkeit besteht, dass Sie später darauf zugreifen müssen.

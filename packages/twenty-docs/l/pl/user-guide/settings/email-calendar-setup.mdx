@@ -1,0 +1,118 @@
+---
+title: Konfiguracja Email i Kalendarza
+info: "Połącz swoje konta email i kalendarza."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Skonfiguruj ustawienia i preferencje w swoim miejscu pracy Twenty.
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Connection Options
+
+### Konto Google (Gmail & Kalendarz Google)
+
+1. Przejdź do **Ustawienia → Konta**
+2. Kliknij **Dodaj konto**
+3. Wybierz **Kontynuuj z Google**
+4. Upoważnij Twenty do dostępu do Twojego Gmaila i Kalendarza Google
+5. Your emails and calendar events will start syncing automatically
+
+### Konto Microsoft (Outlook & Kalendarz Microsoft)
+
+1. Przejdź do **Ustawienia → Konta**
+2. Kliknij **Dodaj konto**
+3. Select **Continue with Microsoft**
+4. Upoważnij Twenty do dostępu do Twojego Outlooka i Kalendarza Microsoft
+5. Your emails and calendar events will start syncing automatically
+
+### Konfiguracja SMTP/CalDAV (Inni Dostawcy)
+
+Dla innych dostawców e-mail i kalendarza:
+
+1. Przejdź do **Ustawienia → Wydania → Lab** aby włączyć tę funkcję
+2. Wróć do **Ustawienia → Konta**
+3. Skonfiguruj ustawienia SMTP dla e-maili
+4. Skonfiguruj ustawienia CalDAV dla kalendarza
+5. Przetestuj połączenie
+
+### Wiele Skrzynek Pocztowych
+
+- **Nieograniczone Konta**: Połącz wiele kont e-mail dla każdego użytkownika
+- **Zarządzanie Kontami**: Przełączaj się między różnymi skrzynkami pocztowymi
+- **Ustawienia Synchronizacji**: Skonfiguruj różne ustawienia dla każdej skrzynki pocztowej
+
+<Warning>
+Tylko prawdziwe skrzynki pocztowe mogą być połączone (np. support@domain.com z własną skrzynką odbiorczą). Alias e-mail, która przesyła wiadomości do innej skrzynki, nie może być połączona z Twenty.
+</Warning>
+
+## Konfiguracja Email
+
+### Widoczność Wiadomości
+
+Wybierz różne poziomy widoczności dla swoich e-maili:
+
+- **Tylko Metadane**: Udostępnij tylko podstawowe informacje (nadawca, odbiorca, data, czas)
+- **Temat i Metadane**: Udostępnij temat wiadomości razem z metadanymi
+- **Cała Zawartość Emaila**: Udostępnij całą zawartość wiadomości wraz z załącznikami
+
+### Automatyczne Tworzenie Kontaktów
+
+- **Wyłączone**: Brak automatycznego tworzenia kontaktów
+- **Dla wiadomości wysłanych i odebranych**: Twórz kontakty dla wszystkich zewnętrznych interakcji e-mail
+- **Dla wiadomości wysłanych tylko**: Twórz kontakty tylko dla e-maili, które wysyłasz
+- **Uwaga**: Wewnętrzne e-maile (w tej samej domenie) nigdy nie są synchronizowane, aby zachować prywatność
+
+### Kontroluj, które e-maile są synchronizowane z wyborem Folderu Wiadomości (Funkcja Laboratorium)
+
+Kontroluj, które foldery e-mail są synchronizowane z Twenty:
+
+1. Przejdź do **Ustawienia → Wydania → Lab** i włącz **Folder Wiadomości**
+2. Return to **Settings → Accounts** and select your connected email account
+3. Wybierz, które foldery synchronizować:
+   - **Skrzynka Odbiorcza**: Główne przychodzące wiadomości
+   - **Wysłane**: Wychodzące wiadomości, które wysłałeś
+   - **Foldery Niestandardowe**: Dowolne określone foldery, które chcesz uwzględnić
+   - **Wyklucz Foldery**: Pomiń foldery jak Spam, Kosz lub foldery osobiste
+
+To daje Ci precyzyjną kontrolę nad tym, które wiadomości pojawiają się w Twoim CRM bez synchronizacji wszystkiego.
+
+**Co jest synchronizowane:**
+
+- **Zewnętrzne e-maile**: Wszystkie wiadomości e-mail z zewnętrznymi kontaktami z wybranych folderów
+- **Wewnętrzne e-maile**: Nie są synchronizowane (wiadomości e-mail w tej samej domenie pozostają prywatne)
+- **Załączniki**: Wchodzi w H1 2026
+
+**Uwaga**: Nie zapewniamy adresu e-mail CC dla selektywnej synchronizacji. Zamiast tego użyj funkcji Folder Wiadomości powyżej, aby uzyskać taki sam poziom kontroli nad tym, które e-maile synchronizować z Twenty.
+
+## Konfiguracja Kalendarza
+
+### Widoczność Wydarzeń
+
+Choose what will be visible to other users in your workspace:
+
+- **Wszystko**: Całe szczegóły wydarzenia będą udostępniane Twojemu zespołowi
+- **Metadata**: Only date & participants will be shared with your team
+
+### Automatyczne Tworzenie Kontaktów dla Spotkań
+
+- **Tak**: Automatyczne tworzenie kontaktów dla uczestników spotkań, którzy nie są w Twoim CRM
+- **Nie**: Łącz spotkania tylko z istniejącymi kontaktami
+
+### Kontroluj, które wydarzenia są synchronizowane
+
+- **Import Spotkań**: Automatycznie importuj wydarzenia kalendarza
+- **Łączenie Kontaktów**: Połącz spotkania z rekordami Ludzi i Firm
+
+**Co jest synchronizowane:**
+
+- **Spotkania**: Wydarzenia kalendarza z zewnętrznymi uczestnikami
+- **Łączenie Kontaktów**: Wydarzenia automatycznie połączone z rekordami CRM
+- **Wydarzenia Zespołu**: Widoczność współużytkowanego kalendarza
+
+## Częstotliwość Synchronizacji
+
+**Aktualizacje co 5 minut**: Zarówno dane poczty e-mail, jak i kalendarza synchronizują się automatycznie co 5 minut po początkowym imporcie.
+
+

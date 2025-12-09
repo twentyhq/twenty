@@ -1,0 +1,108 @@
+---
+title: Trường
+info: "Hiểu vai trò của các trường và cách xử lý chúng."
+image: /images/user-guide/fields/field.png
+sectionInfo: Mô hình dữ liệu linh hoạt được thiết kế để hỗ trợ các quy trình kinh doanh độc đáo của bạn.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Về Các Trường
+
+Các trường giống như các cột trong bảng tính. Chúng lưu trữ các loại dữ liệu khác nhau như văn bản, số hoặc ngày tháng. Các trường có thể là tiêu chuẩn (tích hợp sẵn) hoặc tùy chỉnh (những cái bạn tạo ra).
+
+### Trường Tiêu Chuẩn
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+Ví dụ, `Tên` và `Họ` là các trường tiêu chuẩn trong đối tượng `Con người`. Chúng lưu trữ dữ liệu văn bản cho tên cá nhân.
+
+Bạn không thể xóa các trường tiêu chuẩn, nhưng bạn có thể hủy kích hoạt chúng nếu không cần đến.
+
+Bạn cũng có thể tùy chỉnh các tùy chọn của các trường loại `CHỌN` tiêu chuẩn, chẳng hạn như các tùy chọn cho `Giai đoạn` trong Cơ hội.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Trường Tùy Chỉnh
+
+Có thể thêm các trường tùy chỉnh vào bất kỳ đối tượng nào. Bạn có thể lưu trữ văn bản, số, ngày tháng, các lựa chọn thả xuống và hơn thế nữa. Sử dụng các trường tùy chỉnh để theo dõi thông tin đặc thù cho doanh nghiệp của bạn.
+
+Ví dụ, một trường tùy chỉnh cho SpaceX có thể là `Tình Trạng Hoạt Động Của Tên Lửa`, chỉ ra nếu tên lửa đang hoạt động.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Tạo Một Trường Tùy Chỉnh
+
+To add a custom field to any object, follow these steps:
+1.	Đi tới `Cài đặt` trong thanh bên trái.
+2.	Đi tới `Mô Hình Dữ Liệu`, sau đó chọn đối tượng bạn muốn tùy chỉnh.
+3.	Tiếp tục bằng cách nhấp vào `Thêm Trường`.
+4.	Chọn tên trường và loại trường phù hợp với nhu cầu của bạn. Cân nhắc thêm mô tả trường để dễ hiểu hơn.
+
+Trường mới tạo của bạn bây giờ có sẵn trong các trường của ứng dụng. Để hiển thị nó trong một chế độ xem cụ thể, nhấp vào menu tùy chọn, sau đó chọn `Trường`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Cách nhanh:** Nhấp vào nút **+** ở phía trên bên phải của bất kỳ bảng đối tượng nào, sau đó chọn `Tùy chỉnh trường`. Điều này dẫn bạn trực tiếp tới cài đặt Mô Hình Dữ Liệu.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Hủy Kích Hoạt Trường
+
+Bạn có thể hủy kích hoạt một trường để ẩn nó khỏi ứng dụng mà không mất dữ liệu. Hãy coi nó như việc ẩn trường chứ không phải xóa nó.
+
+Đây là cách bạn có thể thực hiện:
+
+1. Tìm trường bạn muốn hủy kích hoạt trong cài đặt đối tượng của bạn.
+
+2. Nhấp vào ba dấu chấm `⋮` bên cạnh trường để mở menu.
+
+3. Chọn `Hủy Kích Hoạt` từ danh sách thả xuống.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Điều gì xảy ra khi bạn hủy kích hoạt một trường?
+
+1. **Trong ứng dụng:** Trường biến mất và bạn không thể thêm giá trị mới cho nó.
+
+2. **Quan hệ hiện có:** Nếu đó là trường quan hệ, các kết nối hiện có vẫn giữ nguyên nhưng bạn không thể tạo những kết nối mới.
+
+3. **Truy cập API:** Bạn vẫn có thể truy cập trường và dữ liệu của nó qua API.
+
+Bạn có thể kích hoạt lại các Trường Tiêu Chuẩn và Tùy Chỉnh hoặc có tùy chọn để xóa vĩnh viễn chúng.
+
+## Tạo Trường Độc Nhất
+
+Tạo một trường độc nhất để đảm bảo các bản ghi khác nhau không thể có cùng giá trị. Ví dụ, địa chỉ email là duy nhất cho mỗi người.
+
+Nếu bạn gặp lỗi khi thiết lập tính độc nhất, hãy kiểm tra các giá trị trùng lặp trong dữ liệu của bạn (kể cả bản ghi đã xóa).
+
+## Thực Hành Tốt Nhất Cho Cấu Hình Trường
+
+### Thực Hành Tốt Nhất Cho Cấu Hình Trường
+
+- **Tên trường quan hệ không thể được cập nhật** sau khi tạo (ảnh hưởng đến cấu trúc API)
+- **Tên dạng đơn và dạng số nhiều phải khác nhau**: API GraphQL của chúng tôi cần tên khác nhau cho các thao tác
+- **Tên trường được bảo vệ**: một số tên được dành riêng cho sử dụng của hệ thống (ví dụ, `Type`)
+
+### Trường Tiền Tệ và Điện Thoại
+
+- **Loại tiền tệ mặc định**: có thể được cấu hình thông qua mô hình dữ liệu
+- **Mã quốc gia mặc định**: có thể được cấu hình cho các trường điện thoại qua mô hình dữ liệu
+
+### Chọn Trường
+
+- **Có thể chọn tùy chọn mặc định** cho mỗi trường Chọn
+
+### Trường Văn Bản Ghi
+
+- **Mỗi đối tượng có một trường hiển thị chính**: Trường này xuất hiện ở cột ngoài cùng bên trái và đại diện cho bản ghi khi được liên kết với các đối tượng khác. Nó phải là một trường văn bản. Ví dụ, Con người sử dụng `Tên` là trường chính, vì vậy khi bạn liên kết một người với một công ty, bạn sẽ thấy tên của họ trong chế độ xem của công ty đó.
+
+### Trường Quan Hệ
+
+- **Kết nối các đối tượng với nhau**: Trường quan hệ liên kết các bản ghi từ các đối tượng khác nhau. Để biết thông tin chi tiết về việc tạo và quản lý mối quan hệ, hãy xem bài viết [Trường Quan Hệ](/l/vi/user-guide/data-model/relation-fields).
+

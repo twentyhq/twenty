@@ -1,0 +1,34 @@
+---
+title: עורך בלוק
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+<span>משתמש בעורך טקסט עשיר מבוסס בלוקים מ- [BlockNote](https://www.blocknotejs.org/) כדי לאפשר למשתמשים לערוך ולראות בלוקים של תוכן.</span>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות            | סוג               | תיאור                                              |
+| ----------------- | ----------------- | -------------------------------------------------- |
+| <span>עורך</span> | `BlockNoteEditor` | <span>המופע או הקונפיגורציה של עורך הבלוקים</span> |
+
+</Tab>
+</Tabs>

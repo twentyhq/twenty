@@ -1,6 +1,5 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
@@ -12,32 +11,35 @@ export type FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs = {
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
   flatObjectMetadata: FlatObjectMetadata;
 };
+
+type FindFlatFieldMetadatasRelatedToMorphRelationOrThrowReturnType = {
+  morphRelationFlatFieldMetadatas: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
+  relationFlatFieldMetadatas: FlatFieldMetadata<FieldMetadataType.RELATION>[];
+};
 export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
   flatFieldMetadataMaps,
   flatFieldMetadata: morphRelationFlatFieldMetadata,
   flatObjectMetadata,
-}: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>[] => {
-  const allMorphFlatFieldMetadatas =
+}: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FindFlatFieldMetadatasRelatedToMorphRelationOrThrowReturnType => {
+  const morphRelationFlatFieldMetadatas =
     findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
       flatFieldMetadata: morphRelationFlatFieldMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadata,
     });
 
-  return [
+  const relationFlatFieldMetadatas = [
     morphRelationFlatFieldMetadata,
-    ...allMorphFlatFieldMetadatas,
-  ].flatMap((flatFieldMetadata) => {
-    const relationTargetFlatFieldMetadata =
-      findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-        flatFieldMetadata,
-        flatFieldMetadataMaps,
-      });
+    ...morphRelationFlatFieldMetadatas,
+  ].map((flatFieldMetadata) =>
+    findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
+      flatFieldMetadata,
+      flatFieldMetadataMaps,
+    }),
+  ) as FlatFieldMetadata<FieldMetadataType.RELATION>[];
 
-    if (flatFieldMetadata.id === morphRelationFlatFieldMetadata.id) {
-      return [relationTargetFlatFieldMetadata];
-    }
-
-    return [flatFieldMetadata, relationTargetFlatFieldMetadata];
-  });
+  return {
+    morphRelationFlatFieldMetadatas,
+    relationFlatFieldMetadatas,
+  };
 };

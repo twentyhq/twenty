@@ -1,0 +1,109 @@
+---
+title: Εντολές Backend
+image: /εικόνες/οδηγός-χρήστη/kanban-προβολές/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Χρήσιμες εντολές
+
+Αυτές οι εντολές θα πρέπει να εκτελούνται από το φάκελο packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Ρύθμιση πρώτης φοράς
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Ξεκινώντας τον server
+
+```
+npx nx run twenty-server:start
+```
+
+### Έλεγχος
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Δοκιμή
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+
+### Επαναφορά της βάσης δεδομένων
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### Για αντικείμενα στα Core/Metadata σχήματα (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Για αντικείμενα στο Workspace
+
+Δεν υπάρχουν αρχεία μεταναστεύσεων, οι μεταναστεύσεις δημιουργούνται αυτόματα για κάθε εργασία,
+αποθηκεύονται στη βάση δεδομένων και εφαρμόζονται με αυτήν την εντολή
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+This will drop the database and re-run the migrations and seed.
+
+Βεβαιωθείτε ότι έχετε αντίγραφα ασφαλείας των δεδομένων που θέλετε να διατηρήσετε πριν εκτελέσετε αυτή την εντολή.
+
+</Warning>
+
+## Τεχνολογική Στοίβα
+
+Το Twenty χρησιμοποιεί κυρίως το NestJS για το backend.
+
+Η Prisma ήταν το πρώτο ORM που χρησιμοποιήσαμε. Αλλά για να επιτρέψουμε στους χρήστες να δημιουργούν προσαρμοσμένα πεδία και προσαρμοσμένα αντικείμενα, μια λύση χαμηλότερου επιπέδου είχε περισσότερο νόημα καθώς χρειαζόμαστε λεπτομερή έλεγχο. Το έργο χρησιμοποιεί πλέον TypeORM.
+
+Αυτό είναι το πώς μοιάζει το τεχνολογικό σύνολο τώρα.
+
+**Πυρήνας**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Βάση δεδομένων**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Ενσωματώσεις τρίτων**
+
+- [Sentry](https://sentry.io/welcome/) για την παρακολούθηση σφαλμάτων
+
+**Δοκιμές**
+
+- [Jest](https://jestjs.io/)
+
+**Εργαλεία**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Ανάπτυξη**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+

@@ -1,9 +1,9 @@
 import { DASHBOARD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DashboardActionsConfig';
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { RECORD_PAGE_LAYOUT_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig';
 import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowActionsConfig';
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
+import { WORKSPACE_MEMBERS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -11,10 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const getActionConfig = ({
   objectMetadataItem,
-  isRecordPageLayoutEnabled,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
-  isRecordPageLayoutEnabled: boolean;
 }): Record<string, ActionConfig> => {
   if (!isDefined(objectMetadataItem)) {
     return {};
@@ -33,11 +31,10 @@ export const getActionConfig = ({
     case CoreObjectNameSingular.WorkflowRun: {
       return WORKFLOW_RUNS_ACTIONS_CONFIG;
     }
+    case CoreObjectNameSingular.WorkspaceMember: {
+      return WORKSPACE_MEMBERS_ACTIONS_CONFIG;
+    }
     case CoreObjectNameSingular.Company: {
-      if (isRecordPageLayoutEnabled) {
-        return RECORD_PAGE_LAYOUT_ACTIONS_CONFIG;
-      }
-
       return DEFAULT_RECORD_ACTIONS_CONFIG;
     }
     default: {

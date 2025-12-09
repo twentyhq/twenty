@@ -15,6 +15,7 @@ import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-met
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 // TODO: this should be refactored like for view-field.input.ts
 // This is a temporary fix as we were extending the CreateViewInput class which was adding default values for the non filled fields
@@ -81,4 +82,14 @@ export class UpdateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsEnum(ViewVisibility)
+  @Field(() => ViewVisibility, { nullable: true })
+  visibility?: ViewVisibility;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string | null;
 }

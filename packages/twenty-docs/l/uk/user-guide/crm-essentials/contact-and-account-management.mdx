@@ -1,0 +1,95 @@
+---
+title: Управління контактами та обліковими записами
+info: "Create and manage People and Company records to build your customer database."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Основні функції CRM для управління лідами, продажами і клієнтами"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Getting data into your CRM
+
+Почавши використовувати Twenty, ви захочете додати контакти та компанії у систему. There are several ways to populate your CRM depending on your workflow and data sources.
+
+### Введення вручну
+
+Найпростіший підхід — додавати записи безпосередньо через інтерфейс Twenty. Перейдіть до розділу `Люди` та натисніть кнопку `+`, щоб додати новий контакт. Заповніть їхнє ім'я, електронну адресу, телефон та зв’яжіть їх із компанією. Для компаній перейдіть до розділу `Компанії` та додайте деталі організації: назва компанії, домен, галузь та розмір.
+
+Поле для домену є особливо важливим для ідентифікації компанії, а поле для електронної адреси — є ключовим для ідентифікації осіб.
+
+### Імпорт CSV
+
+Якщо у вас є існуючі дані з таблиць або інших систем, імпорт CSV є найшвидшим варіантом. Ви можете підготувати дані у Excel або Google Sheets, а потім завантажити їх усі одразу. Це особливо корисно при міграції з іншого CRM або якщо хтось стежить за контактами в таблицях. Наш [Посібник з імпорту/експорту даних](/l/uk/user-guide/getting-started/import-export-data) проведе вас через процес.
+
+### Автоматизоване захоплення даних
+
+For ongoing lead generation, you can set up automated workflows that bring data directly into Twenty:
+
+**Website forms**: When someone fills out a form on your website, you can configure it to send the information to Twenty automatically. The form submission triggers a webhook that activates a workflow in Twenty, creating the new contact record without any manual work.
+
+**Integration with other systems**: If you use other business tools, you can connect them to Twenty using API calls and workflows. Це дозволяє автоматично синхронізувати дані між системами: наприклад, додаючи нових клієнтів із вашої системи білінгу або ліди з вашої маркетингової платформи.
+
+Щоб дізнатися більше про налаштування цих автоматизованих потоків даних, ознайомтеся з розділом [Робочі процеси](/l/uk/user-guide/workflows/getting-started-workflows).
+
+### Синхронізація електронної пошти та календаря
+
+When you connect your mailbox and calendar to Twenty, the system can automatically create People and Companies records for people you email or meet with. If you send an email to someone who isn't already in your CRM, Twenty can create a new Person record for them. Те ж саме відбувається, коли ви плануєте зустрічі з новими контактами через календар.
+
+Це особливо корисно для команд продажів та розвитку бізнесу, які постійно зустрічають нових людей. Замість ручного додавання кожного нового контакту Twenty автоматично захоплює їх у міру вашого спілкування. Дізнайтеся, як налаштувати це за допомогою нашого [Посібника з електронної пошти і календарів](/l/uk/user-guide/collaboration/emails-and-calendars).
+
+### Зменшення ручної роботи
+
+Навіть при введенні даних вручну, ви можете використовувати робочі процеси, щоб оптимізувати процес. Наприклад, ви могли б налаштувати автоматизацію, яка призначає нові контакти членам команди на основі їхньої локації, або автоматично створює завдання для подальших дій, коли додаються певні типи контактів.
+
+## Організація контактів
+
+### Збереження даних унікальними та чистими
+
+Twenty automatically enforces uniqueness to keep your data organized. Електронна адреса кожної особи слугує унікальним ідентифікатором: ви не можете мати двох людей з тією ж електронною адресою. Similarly, company domains are unique, so you won't accidentally create duplicate companies.
+
+Якщо вашому бізнесу потрібні інші поля для унікальності (як номери телефонів, або коди посилань), ви можете налаштувати це у вашій моделі даних. Перейдіть до розділу [Модель даних](/l/uk/user-guide/data-model/customize-your-data-model), щоб дізнатися, як налаштувати додаткові обмеження унікальності для ваших конкретних потреб.
+
+### Обробка дублікатів
+
+Sometimes you'll end up with duplicate records. Twenty has a merge feature for both People and Companies: you can combine duplicate records to keep your database clean without losing any information.
+
+Щоб об'єднати записи, виберіть 2 записи, відкрийте меню команд `Cmd+K` на Mac, `Ctrl+K` на Windows і виберіть `Злиття записів`.
+
+### Створення ієрархії компаній
+
+Якщо ви працюєте з великими організаціями, що мають філії або кілька відділів, ви можете створити взаємозв'язки між компаніями. Налаштуйте поля взаємозв'язків між записами компаній, щоб визначити ці зв'язки. Це допомагає зрозуміти повну організаційну структуру, з якою ви маєте справу.
+
+### Customizing your views
+
+Different team members might need to see different information. You can create custom views that show different columns for different purposes: maybe your sales team needs to see deal stages while your support team focuses on contact details. Learn more about this in our [View Management](/l/uk/user-guide/crm-essentials/view-management) article.
+
+## Робота з записами
+
+### Що ви знайдете у кожному записі
+
+When you open a Person or Company record, you'll see all their information organized in tabs:
+
+- **Поля**: Основна інформація, як ім'я, електронна адреса, телефон, та будь-які користувацькі поля, які ви додали.
+- **Взаємозв'язки**: показує з'єднання між цим записом і записами з інших об'єктів.
+- **Хронологія**: Хронологічний огляд всіх взаємодій та оновлень цього запису.
+- **Завдання**: Будь-які завдання для подальшого виконання, пов'язані з цим контактом.
+- **Примітки**: Примітки та спостереження команди щодо цієї особи або компанії.
+- **Файли**: Документи та вкладення, пов'язані з цим записом.
+- **Електронні листи**: Ланцюжки електронної пошти з цим контактом (коли ваша команда підключила свої поштові скриньки).
+- **Календар**: Зустрічі та призначення з цим контактом
+
+Вкладки «Електронна пошта» та «Календар» є особливо потужними: вони автоматично відображають всі обміни електронною поштою та зустрічі, які будь-хто з вашої команди мав з цим контактом, за умови, що вони підключили свою скриньку до Twenty. Ви можете дізнатися більше про налаштування цього в нашому посібнику [Електронна пошта та календарі](/l/uk/user-guide/collaboration/emails-and-calendars).
+
+### Додавання необхідних полів
+
+Стандартні поля можуть не включати всі важливі для вашого бізнесу дані. If you need additional information: like customer segments, referral sources, or industry-specific data: you can add custom fields or modify existing ones. Перейдіть до нашого розділу [Модель даних](/l/uk/user-guide/data-model/customize-your-data-model), щоб дізнатися, як налаштувати вашу установку.
+
+## Управління видаленими записами
+
+Коли ви видаляєте запис у Twenty, він не зникає назавжди. Записи «м'яко видаляються», тобто вони приховані, але можуть бути відновлені за необхідності.
+
+Щоб отримати доступ до видалених записів, відкрийте меню команд `Cmd+K` на Mac, `Ctrl+K` на Windows, а потім натисніть `Переглянути видалені записи`. Звідти ви можете або відновити записи, або видалити їх остаточно, якщо ви впевнені, що вам вони не потрібні.
+
+Ця страховка означає, що ви можете очистити свою базу даних, не турбуючись про випадкову втрату важливої інформації.

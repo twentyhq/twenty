@@ -1,0 +1,121 @@
+---
+title: Visningsstyring
+info: "Opret og tilpas visninger for at organisere dine data med filtre, sortering og forskellige layouts."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Grundlæggende CRM-funktioner til styring af kundeemner, salg og kunder"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Layout Indstillinger
+
+Du kan vise dine data i tre forskellige layouts, der hver især er velegnet til forskellige formål. Tilpassede layouts til at tilpasse, hvordan siden ser ud for hver type post vil blive frigivet i december 2025.
+
+### Standardvisning
+
+Each object comes with an unfiltered, unsorted, and undeletable view known as the Default view. It's named after the object's plural name, such as`All Companies`,`All People`, `All Opportunities`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Liste Layout
+
+Den standard tabelformat, der viser poster i rækker og kolonner. Dette er perfekt til at se detaljerede oplysninger ved et øjekast og sammenligne poster side om side.
+
+### Liste Grupper efter Layout
+
+Organiserer dine poster ved at gruppere dem baseret på et valgt felt. For eksempel kan du gruppere muligheder efter fase, virksomheder efter placeringer eller et hvilket som helst andet valgt felt. Dette hjælper dig med at se mønstre og organisere relaterede poster sammen.
+
+### Kanban Layout
+
+A visual board where each column represents a stage and each record appears as a card. Dette layout er ideelt til styring af rørledninger og arbejdsgange, hvor poster bevæger sig gennem forskellige faser. For flere detaljer om brug af Kanban-visninger til pipeline-styring, se vores [Pipeline](/l/da/user-guide/crm-essentials/pipeline) artikel.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Oprettelse af nye visninger
+
+There are three ways to create a new view:
+
+### Brug af kommandomenuen
+
+Brug `Cmd+K` på Mac (eller `Ctrl+K` på Windows) for at åbne kommandomenuen, og klik derefter på `Opret en ny visning`.
+
+### Ved hjælp af visningsrullelisten
+
+Klik på visningsrullelisten (øverste venstre), og klik derefter på `Tilføj Visning` nederst. Fra denne menu kan du:
+
+- Vælg et ikon og navn til din visning
+- Vælg layouttype (Liste eller Kanban)
+
+<Warning>
+Vigtigt: Du skal først vælge Liste layout og derefter tilføje en Grupper Efter. Du kan ikke oprette en Liste Grupper Efter direkte derfra.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Opret visninger ud fra eksisterende filtre
+
+Når du ændrer sortering og filtrering af en eksisterende visning, vises en `Gem som ny visning`-knap. Dette giver dig mulighed for at oprette en ny visning baseret på dine nuværende tilpasninger.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Gøre visninger handlekraftige
+
+Retningslinjerne nedenfor viser, hvordan du tilpasser kolonnerne i dine visninger. Vi anbefaler ikke at beholde alle kolonner: disse visninger kan forenkles og gøres handlingsrettede ved at tilføje sorteringsbetingelser og kun vise visse kolonner, der er relevante for din specifikke brugssag.
+
+## Tilpasning af dine visninger
+
+Alle layouts understøtter de samme tilpasningsmuligheder: sortering, filtrering og feltvalg. Du kan lave hurtige engangsændringer ved at klikke direkte på kolonnenavnet eller bruge `Indstillingsmenuen` til mere omfattende redigering.
+
+### Hurtige handlinger vs Indstillingsmenuen
+
+**For engangsændringer**: Klik direkte på kolonneoverskrifter for at sortere, eller brug knapperne `Flyt Venstre`, `Flyt Højre`.
+
+**For flere redigeringer**: Brug `Indstillingsmenuen` (øverste højre hjørne), når du vil foretage flere ændringer i træk. Denne menu giver dig adgang til:
+
+- **Layoutvalg** (Liste, Liste Grupper Efter, Kanban)
+- **Grupperingsmuligheder** (for Liste Grupper Efter layout)
+- **Feltstyring** (vis/skjul og omorganiser kolonner)
+
+### Filtrering af dine data
+
+Du kan anvende filtre for kun at vise de poster, der matcher dine kriterier. Klik på `Filter` i værktøjslinjen, vælg et felt, vælg din betingelse, og angiv værdien. Du kan tilføje flere filtre for avanceret filtrering baseret på flere betingelser.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Sortering af dine poster
+
+Kontroller rækkefølgen af dine poster ved at klikke på en hvilken som helst kolonneoverskrift for at sortere efter det felt. Klik igen for at vende sorteringsrækkefølgen. Du kan anvende flere sorteringer for kompleks organisering.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Administration af felter og kolonner
+
+Du kan vælge, hvilke felter der skal vises og omorganisere dem. For hurtige ændringer skal du klikke direkte på et kolonnenavn. For flere redigeringer skal du bruge `Indstillingsmenu → Felter`, hvor du kan:
+
+- Vis eller skjul felter ved hjælp af øjeikonet
+- Omorganiser felter ved at trække og slippe
+- Foretage flere ændringer effektivt på ét sted
+
+## Administrere dine visninger
+
+### Visningsrulleliste Funktioner
+
+Visningsrullelisten (øverste venstre) er dit centrale knudepunkt for visningshåndtering. Herfra kan du:
+
+- **Rediger visningsnavne og ikoner**: Klik på de tre prikker ud for en visning
+- **Reorder views**: Drag and drop views to organize them by priority
+- **Gem visninger som favoritter**: Favoritter vises lige under Indstillinger for hurtig adgang
+
+### Redigering og sletning af visninger
+
+For at ændre eller fjerne visninger skal du åbne visningsrullelisten og holde musen over den visning, du vil ændre. Klik på de tre prikker, der vises, for at få adgang til redigerings- og sletningsindstillinger.
+
+### Favoritter og Organisering
+
+Visninger, der er gemt som favoritter, vises lige under Indstillinger i din navigation og giver dig øjeblikkelig adgang til dine vigtigste visninger. Brug visningsrullelisten til at organisere dine visninger ved at trække dem i den rækkefølge, der bedst passer til dit Workflow.
+
+For mere avanceret dataorganisation, se vores [Data Model sektion](/l/da/user-guide/data-model/customize-your-data-model) for at lære om tilpasning af felter og objekter.

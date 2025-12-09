@@ -1,0 +1,87 @@
+---
+title: Webhookok
+image: '"/images/docs/getting-started/webhooks.png"'
+info: Discover how to use our Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Áttekintés
+
+A Twenty-ben található webhooks kiegészítik az API-t azáltal, hogy lehetővé teszik a **valós idejű értesítéseket** az Ön alkalmazásai számára, amikor bizonyos események történnek a CRM-ben. Instead of continuously polling the API for changes, you can set up webhooks to have Twenty **push** data to your system whenever specific events occur (for example, when a new record is created or an existing record is updated). Ez segít azonnal és hatékonyan szinkronizálni a külső rendszereket a Twenty-vel.
+
+A webhooks segítségével a Twenty HTTP POST kérést küld az Ön által megadott URL-re, amely tartalmazza az esemény részleteit. Ezután kezelheti ezeket az adatokat a saját alkalmazásában (pl. az adatbázisának frissítésére, munkafolyamatok indítására vagy riasztások küldésére).
+
+## Setting Up a Webhook
+
+To create a webhook in Twenty, use the **APIs & Webhooks** settings in your Twenty app:
+
+1. **Navigate to Settings:** In your Twenty application, go to **Settings → APIs & Webhooks**.
+2. **Create a Webhook:** Under **Webhooks** click on **+ Create webhook**.
+3. **Írja be az URL-t:** Adja meg a szerverén azt a végpont URL-t, ahová a Twenty a webhook kéréseket szeretné küldeni. Ennek egy nyilvánosan elérhető URL-nek kell lennie, amely képes POST kérések fogadására.
+4. **Mentés:** Kattintson a **Mentés** gombra a webhook létrehozásához. Az új webhook azonnal aktívvá válik.
+
+Ha különböző eseményeket különböző végpontokra szeretne küldeni, több webhorgot is létrehozhat. Minden webhook lényegében egy előfizetés az összes releváns eseményhez (jelenleg a Twenty minden eseménytípust küld a megadott URL-re; az egyes eseménytípusok szűrése konfigurálható lehet a felületen). Ha valaha is el kell távolítania egy webhorgot, törölheti azt ugyanazon a beállítások oldalon (válassza ki a webhookot és válassza a törlést).
+
+## Események és Terhelések
+
+Miután beállított egy webhorgot, a Twenty HTTP POST kérést küld a megadott URL-re, amikor egy trigger esemény történik a CRM adataiban. Common events that trigger webhooks include:
+
+- **Rekord létrehozva:** pl. egy új személy hozzáadása (`person.created`), egy új cég létrehozása (`company.created`), egy megjegyzés hozzáadása (`note.created`), stb.
+- **Rekord frissítve:** pl. egy meglévő személy adatai frissültek (`person.updated`), egy cég rekord szerkesztve (`company.updated`), stb.
+- **Rekord törölve:** pl. egy személy vagy cég törölve (`person.deleted`, `company.deleted`).
+- **Egyéb események:** Ha alkalmazható, más objektum események vagy egyedi trigerek (például, ha feladatok vagy más objektumok frissülnek, hasonló eseménytípusok használatosak, mint `task.created`, `note.updated`, stb.).
+
+A webhook POST kérés JSON terhelést tartalmaz a testében. Általánosságban a terhelés legalább két dolgot tartalmaz: az esemény típusát és az eseményhez kapcsolódó adatokat (gyakran a létrehozott/frissült rekordot). Például, egy újonnan létrehozott személyhez tartozó webhook egy ilyen terhelést küldhet:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+Ebben a példában:
+
+- `"event"` megadja, mi történt (`person.created`).
+- `"data"` tartalmazza az új rekord részleteit (ugyanaz az információ, mintha az adott személyt kérte volna az API-n keresztül).
+- `"timestamp"` a (UTC) időpont, amikor az esemény történt.
+
+Az Ön végpontjának képesnek kell lennie az ilyen JSON adatok fogadására POST-on keresztül. Tipikusan elemezni fogja a JSON-t, megvizsgálja az `"event"` típusát, hogy megértse, mi történt, majd az `"data"` szerint cselekszik (pl. új kapcsolatot hoz létre a rendszerében, vagy frissíti egy meglévőt).
+
+**Megjegyzés:** Fontos, hogy a webhook végpontjáról egy **2xx HTTP státuszt** válaszoljon a sikeres fogadás elismeréséhez. Ha a Twenty webhookküldő nem kap 2xx választ, akkor a kézbesítést sikertelennek tekintheti. (A jövőben az újrapróba-érvényesítés megkísérelheti az elhibázott webhorgok újraküldését, ezért mindig törekedjen gyorsan egy 200 OK küldésére az adatfeldolgozás után.)
+
+## Webhook Hitelesítés
+
+To ensure the security of your webhook endpoints, Twenty includes a signature in the `X-Twenty-Webhook-Signature` header.
+
+This signature is an HMAC SHA256 hash of the request payload, computed using your webhook secret.
+
+Az aláírás érvényesítéséhez az alábbiakat kell tennie:
+
+1. Összefűzi az `X-Twenty-Webhook-Timestamp` fejlécben található időbélyeget, egy kettőspontot, és a terhelés JSON stringjét
+2. Compute the HMAC SHA256 hash using your webhook secret as the key ()
+3. Összehasonlítja a kapott hexadecimális adattal az aláírás fejlécet.
+
+Itt egy példa Node.js-ben:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

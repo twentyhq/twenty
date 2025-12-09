@@ -4,6 +4,7 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -17,20 +18,25 @@ import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/uti
 
 export function assertVersionCanBeActivated(
   workflowVersion: WorkflowVersionWorkspaceEntity,
+  workflow: WorkflowWorkspaceEntity,
 ) {
   assertVersionIsValid(workflowVersion);
 
+  const isLastPublishedVersion =
+    workflow.lastPublishedVersionId === workflowVersion.id;
+
   const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
 
-  const isDeactivated =
-    workflowVersion.status === WorkflowVersionStatus.DEACTIVATED;
+  const isLastPublishedVersionDeactivated =
+    workflowVersion.status === WorkflowVersionStatus.DEACTIVATED &&
+    isLastPublishedVersion;
 
-  if (!isDraft && !isDeactivated) {
+  if (!isDraft && !isLastPublishedVersionDeactivated) {
     throw new WorkflowTriggerException(
-      'Cannot activate non-draft or non-deactivated version',
+      'Cannot activate non-draft or non-last-published version',
       WorkflowTriggerExceptionCode.INVALID_INPUT,
       {
-        userFriendlyMessage: msg`Cannot activate non-draft or non-deactivated version`,
+        userFriendlyMessage: msg`Cannot activate non-draft or non-last-published version`,
       },
     );
   }
@@ -214,12 +220,19 @@ function assertCronTriggerSettingsAreValid(settings: any) {
         );
       }
 
-      if (settings.schedule.minute <= 0) {
+      if (settings.schedule.minute <= 0 || settings.schedule.minute > 60) {
+        const errorMessage =
+          settings.schedule.minute <= 0
+            ? msg`Invalid minute value. Should be integer greater than 1`
+            : msg`Minute value cannot exceed 60. For intervals greater than 60 minutes, use the "Hours" trigger type or a custom cron expression`;
+
         throw new WorkflowTriggerException(
-          'Invalid minute value. Should be integer greater than 1',
+          settings.schedule.minute <= 0
+            ? 'Invalid minute value. Should be integer greater than 1'
+            : 'Invalid minute value. Cannot exceed 60. For intervals greater than 60 minutes, use the "Hours" trigger type or a custom cron expression',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
           {
-            userFriendlyMessage: msg`Invalid minute value. Should be integer greater than 1`,
+            userFriendlyMessage: errorMessage,
           },
         );
       }

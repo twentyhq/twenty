@@ -1,0 +1,52 @@
+---
+title: カンバンビュー
+info: "カンバンビューをカスタマイズおよび操作する方法を学びましょう。"
+image: /images/user-guide/kanban-views/kanban.png
+sectionInfo: ワークスペースで標準オブジェクトとカスタムオブジェクトを使用する方法を発見します。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## カンバンビューについて
+
+カンバンビューはプロセスフローを視覚的にマッピングするもので、各列がそれぞれ異なるステージを表し、各カードがレコードを表します。
+
+## カードをステージ間で移動
+
+You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## ステージの追加と削除
+
+You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+
+### ステージを追加する
+
+ステージを追加するには、「設定 ＞ データモデル」に移動し、オブジェクトを選択し、カンバンボードが依存するフィールドを選択して、セレクトフィールド設定にアクセスします。
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+### ステージを削除する
+
+ステージを削除するには、ステージ名または「⋮」アイコンをホバーし、セレクトフィールド設定で「設定から編集」をクリックし、関連するステージの横にある<b>削除</b>をクリックします。
+
+<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
+
+## Display fields
+
+カンバンボードを構成し、いくつかのフィールドを表示または隠すことができます。 カンバンボードを構成し、いくつかのフィールドを表示または隠すことができます。 フィールドを非表示にするには、右上の<b>オプション</b>をクリックし、<b>フィールド</b>をクリックしてオプションリストを表示します。 隠したいフィールドにカーソルを合わせ、`-` ボタンを表示させます。 それをクリックしてフィールドを隠します。 隠したいフィールドにカーソルを合わせ、`-` ボタンを表示させます。 それをクリックしてフィールドを隠します。
+
+フィールドの順序を並べ替える場合は、フィールド名を押し続けて、希望の場所にドラッグします。
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}}/>
+
+## コンパクトビュー
+
+すべてのフィールドを隠し、一目で全ての機会の概要をつかむこともできます。 それには、右上の<b>オプション</b>をクリックし、カンバンビューのレイアウトを選択してから<b>コンパクトビュー</b>のトグルをオンにします。 それには、右上の<b>オプション</b>をクリックし、カンバンビューのレイアウトを選択してから<b>コンパクトビュー</b>のトグルをオンにします。
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>

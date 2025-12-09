@@ -1,0 +1,121 @@
+---
+title: View Management
+info: "Crie e personalize visualizações para organizar seus dados com filtros, classificação e diferentes layouts."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Recursos essenciais de CRM para gerenciar leads, vendas e clientes"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Opções de Layout
+
+Você pode exibir seus dados em três layouts diferentes, cada um adequado para diferentes propósitos. Layouts personalizados para personalizar como a página aparece para cada tipo de registro serão lançados em dezembro de 2025.
+
+### Visualização Padrão
+
+Cada objeto vem com uma visualização não filtrada, não ordenada e não apagável conhecida como Visualização Padrão. Ela é nomeada de acordo com o nome plural do objeto, como `Todas as Empresas`, `Todas as Pessoas`, `Todas as Oportunidades`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Layout em Lista
+
+O formato de tabela padrão que exibe registros em linhas e colunas. Isso é perfeito para ver informações detalhadas num relance e comparar registros lado a lado.
+
+### List Group By Layout
+
+Organiza seus registros agrupando-os com base em um campo selecionado. Por exemplo, você pode agrupar oportunidades por estágio, empresas por localizações ou qualquer outro campo selecionado. Isso ajuda a ver padrões e organizar registros relacionados juntos.
+
+### Layout Kanban
+
+Um quadro visual onde cada coluna representa um estágio e cada registro aparece como um cartão. Este layout é ideal para gerenciar pipelines e fluxos de trabalho onde os registros se movem por diferentes estágios. Para mais detalhes sobre como usar visualizações Kanban para gerenciamento de pipelines, consulte nosso artigo [Pipeline](/l/pt/user-guide/crm-essentials/pipeline).
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Creating New Views
+
+There are three ways to create a new view:
+
+### Usando o Menu de Comando
+
+Use `Cmd+K` no Mac (ou `Ctrl+K` no Windows) para abrir o menu de comandos, em seguida, clique em `Criar uma nova visualização`.
+
+### Using the View Dropdown Menu
+
+Click on the view dropdown menu (top left), then click `Add View` at the bottom. A partir deste menu você pode:
+
+- Choose an icon and name for your view
+- Selecionar o tipo de layout (Lista ou Kanban)
+
+<Warning>
+Importante: Primeiro você precisa selecionar o layout Lista e depois adicionar um Agrupamento Por. Você não pode criar um Agrupamento por Lista diretamente de lá.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Criando Visualizações a Partir de Filtros Existentes
+
+When you modify the sorting and filtering of an existing view, a `Save as new view` button appears. This lets you create a new view based on your current customizations.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Tornando Visualizações Executáveis
+
+A orientação abaixo mostra como personalizar as colunas das suas visualizações. Não recomendamos manter todas as colunas: essas visualizações podem ser simplificadas e tornadas executáveis ao adicionar condições de classificação e exibir apenas determinadas colunas que são relevantes ao seu caso de uso específico.
+
+## Personalizando Suas Visualizações
+
+Todos os layouts suportam as mesmas opções de personalização: classificação, filtro e seleção de campos. Você pode fazer alterações rápidas de uma única vez clicando diretamente no nome da coluna ou usar o `Menu de Opções` para uma edição mais abrangente.
+
+### Ações Rápidas vs Menu de Opções
+
+**Para alterações pontuais**: Clique diretamente nos cabeçalhos das colunas para classificar, ou use os botões `Mover para a Esquerda`, `Mover para a Direita`.
+
+**Para múltiplas edições**: Use o `Menu de Opções` (canto superior direito) quando quiser fazer várias alterações seguidas. Este menu oferece acesso a:
+
+- **Seleção de layout** (Lista, Agrupamento por Lista, Kanban)
+- **Opções de agrupamento** (para layout de Agrupamento por Lista)
+- **Gestão de campos** (mostrar/ocultar e reordenar colunas)
+
+### Filtrando Seus Dados
+
+Você pode aplicar filtros para mostrar apenas os registros que correspondem aos seus critérios. Clique em `Filtro` na barra de ferramentas, selecione um campo, escolha sua condição e defina o valor. Você pode adicionar diversos filtros para filtragem avançada com base em várias condições.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Classificando Seus Registros
+
+Controle a ordem dos seus registros clicando em qualquer cabeçalho de coluna para classificar por esse campo. Clique novamente para reverter a ordem de classificação. Você pode aplicar múltiplas classificações para organização complexa.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Gerenciando Campos e Colunas
+
+Você pode escolher quais campos exibir e reordená-los. Para alterações rápidas, clique diretamente no nome de uma coluna. Para várias edições, use `Menu de Opções → Campos` onde você pode:
+
+- Mostrar ou ocultar campos usando o ícone de olho
+- Reordenar campos arrastando e soltando
+- Faça múltiplas alterações de forma eficiente em um só lugar
+
+## Gerenciando Suas Visualizações
+
+### Recursos do Menu Dropdown de Visualizações
+
+O menu dropdown de visualizações (canto superior esquerdo) é seu centro de gerenciamento de visualizações. A partir daqui você pode:
+
+- **Editar nomes e ícones de visualizações**: Clique nos três pontos ao lado de qualquer visualização
+- **Reordenar visualizações**: Arraste e solte visualizações para organizá-las por prioridade
+- **Salvar visualizações como favoritas**: Favoritas aparecem logo abaixo de Configurações para acesso rápido
+
+### Editando e Excluindo Visualizações
+
+Para modificar ou remover visualizações, abra o menu dropdown de visualizações e passe o cursor sobre a visualização que deseja alterar. Clique nos três pontos que aparecem para acessar as opções de edição e exclusão.
+
+### Favoritos e Organização
+
+Visualizações salvas como favoritas aparecem logo abaixo de Configurações em sua navegação, dando acesso instantâneo às suas visualizações mais importantes. Use o menu dropdown de visualizações para organizar suas visualizações arrastando-as na ordem que melhor funciona para seu fluxo de trabalho.
+
+Para uma organização de dados mais avançada, consulte nossa [seção Modelo de Dados](/l/pt/user-guide/data-model/customize-your-data-model) para aprender sobre a personalização de campos e objetos.

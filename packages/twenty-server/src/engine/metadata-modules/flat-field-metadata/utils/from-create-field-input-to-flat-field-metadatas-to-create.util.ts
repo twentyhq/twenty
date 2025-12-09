@@ -1,13 +1,14 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataOptions,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-
-import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -24,12 +25,14 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
   workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+  workspaceCustomApplicationId,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: FlatFieldMetadata[];
@@ -39,10 +42,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (rawCreateFieldInput.isRemoteCreation) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: "Remote fields aren't supported",
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: "Remote fields aren't supported",
+        },
+      ],
     };
   }
 
@@ -57,11 +62,13 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (!isDefined(parentFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        message: 'Provided object metadata id does not exist',
-        userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          message: 'Provided object metadata id does not exist',
+          userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
+        },
+      ],
     };
   }
 
@@ -70,6 +77,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     createFieldInput,
     workspaceId,
     fieldMetadataId,
+    workspaceCustomApplicationId,
   });
 
   switch (createFieldInput.type) {
@@ -82,6 +90,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         existingFlatObjectMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         workspaceId,
+        workspaceCustomApplicationId,
       });
     }
     case FieldMetadataType.RELATION: {
@@ -93,6 +102,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           type: createFieldInput.type,
         },
         workspaceId,
+        workspaceCustomApplicationId,
       });
     }
     case FieldMetadataType.RATING: {
@@ -143,10 +153,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.TS_VECTOR: {
       return {
         status: 'fail',
-        error: {
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: 'TS Vector is not supported for field creation',
-        },
+        errors: [
+          {
+            code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            message: 'TS Vector is not supported for field creation',
+          },
+        ],
       };
     }
     case FieldMetadataType.UUID:

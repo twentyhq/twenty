@@ -1,0 +1,118 @@
+---
+title: Thiết Lập Email & Lịch
+info: "Kết nối tài khoản email và lịch của bạn."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Cấu hình cài đặt và tùy chọn không gian làm việc của Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Tùy Chọn Kết Nối
+
+### Tài Khoản Google (Gmail & Google Calendar)
+
+1. Go to **Settings → Accounts**
+2. Nhấp vào **Thêm tài khoản**
+3. Chọn **Tiếp tục với Google**
+4. Cấp quyền cho Twenty truy cập vào Gmail và Google Calendar của bạn
+5. Email và sự kiện trên lịch của bạn sẽ bắt đầu đồng bộ tự động
+
+### Tài Khoản Microsoft (Outlook & Microsoft Calendar)
+
+1. Go to **Settings → Accounts**
+2. Nhấp vào **Thêm tài khoản**
+3. Chọn **Tiếp tục với Microsoft**
+4. Cấp quyền cho Twenty truy cập vào Outlook và Microsoft Calendar của bạn
+5. Email và sự kiện trên lịch của bạn sẽ bắt đầu đồng bộ tự động
+
+### Thiết Lập SMTP/CalDAV (Nhà Cung Cấp Khác)
+
+Đối với nhà cung cấp email và lịch khác:
+
+1. Đi tới **Cài Đặt → Phát Hành → Lab** để kích hoạt tính năng này
+2. Return to **Settings → Accounts**
+3. Cấu hình cài đặt SMTP cho email
+4. Cấu hình cài đặt CalDAV cho lịch
+5. Kiểm tra kết nối
+
+### Nhiều Hộp Thư
+
+- **Tài Khoản Không Giới Hạn**: Kết nối nhiều tài khoản email cho mỗi người dùng
+- **Quản Lý Tài Khoản**: Chuyển đổi giữa các hộp thư khác nhau
+- **Cài Đặt Đồng Bộ**: Cấu hình cài đặt khác nhau cho mỗi hộp thư
+
+<Warning>
+Chỉ các hộp thư thực sự mới có thể được kết nối (ví dụ: support@domain.com với hộp thư đến của riêng nó). Bí danh email chuyển tiếp đến hộp thư khác không thể kết nối với Twenty.
+</Warning>
+
+## Cấu Hình Email
+
+### Khả Năng Nhìn Thấy Thông Điệp
+
+Chọn các mức độ hiển thị khác nhau cho email của bạn:
+
+- **Chỉ Thông Tin Cơ Bản**: Chia sẻ thông tin cơ bản (người gửi, người nhận, ngày, giờ)
+- **Tiêu Đề và Thông Tin**: Chia sẻ tiêu đề cùng với thông tin
+- **Nội Dung Email Hoàn Chỉnh**: Chia sẻ toàn bộ nội dung email bao gồm cả tệp đính kèm
+
+### Tự Động Tạo Liên Lạc
+
+- **Ngưng Kích Hoạt**: Không tự động tạo liên lạc
+- **Đối với tin nhắn đã gửi & nhận**: Tạo liên lạc cho tất cả các tương tác email bên ngoài
+- **Chỉ với tin nhắn đã gửi**: Chỉ tạo liên lạc cho email bạn gửi
+- **Lưu ý**: Email nội bộ (cùng trong một tên miền) không bao giờ được đồng bộ để bảo vệ sự riêng tư
+
+### Kiểm soát email nào sẽ được đồng bộ với Lựa Chọn Thư Mục Thông Điệp (Tính Năng Lab)
+
+Kiểm soát thư mục email nào đồng bộ với Twenty:
+
+1. Đi tới **Cài Đặt → Phát Hành → Lab** và bật **Thư Mục Thông Điệp**
+2. Return to **Settings → Accounts** and select your connected email account
+3. Chọn thư mục nào để đồng bộ:
+   - **Hộp thư đến**: Email chính nhập vào
+   - **Đã gửi**: Email đã gửi đi
+   - **Thư Mục Tùy Chỉnh**: Bất kỳ thư mục cụ thể nào mà bạn muốn bao gồm
+   - **Loại Trừ Thư Mục**: Bỏ qua các thư mục như Spam, Thùng rác, hoặc thư mục cá nhân
+
+Điều này cho phép bạn kiểm soát chính xác email nào xuất hiện trong CRM của bạn mà không cần đồng bộ tất cả.
+
+**Những Gì Được Đồng Bộ Hóa:**
+
+- **Email Bên Ngoài**: Tất cả các email với các liên hệ bên ngoài từ thư mục được chọn
+- **Email Nội Bộ**: Không được đồng bộ (email cùng tên miền vẫn riêng tư)
+- **Tệp đính kèm**: Sẽ có vào H1 năm 2026
+
+**Lưu ý**: Chúng tôi không cung cấp địa chỉ email CC cho việc đồng bộ có chọn lọc. Thay vào đó, sử dụng tính năng Thư Mục Thông Điệp ở trên để đạt được mức kiểm soát tương tự đối với việc đồng bộ hoá email với Twenty.
+
+## Cấu Hình Lịch
+
+### Khả Năng Nhìn Thấy Sự Kiện
+
+Chọn những gì sẽ hiển thị cho người dùng khác trong không gian làm việc của bạn:
+
+- **Mọi Thứ**: Chi tiết toàn bộ sự kiện sẽ được chia sẻ với nhóm của bạn
+- **Thông Tin**: Chỉ ngày & những người tham gia sẽ được chia sẻ với nhóm của bạn
+
+### Tự Động Tạo Liên Lạc cho Cuộc Họp
+
+- **Có**: Tự động tạo liên lạc cho các đối tượng tham dự cuộc họp không có trong CRM của bạn
+- **Không**: Chỉ liên kết các cuộc họp với liên lạc hiện có
+
+### Kiểm soát sự kiện nào được đồng bộ
+
+- **Nhập Cuộc Họp**: Tự động nhập các sự kiện lịch
+- **Liên Kết Liên Lạc**: Liên kết các cuộc họp với các ghi chép Người và Công ty
+
+**Những Gì Được Đồng Bộ Hóa:**
+
+- **Cuộc Họp**: Các sự kiện lịch với người tham dự bên ngoài
+- **Liên Kết Liên Lạc**: Sự kiện tự động liên kết vào ghi âm CRM
+- **Sự Kiện Nhóm**: Khả năng nhìn thấy lịch cùng chia sẻ
+
+## Tần Suất Đồng Bộ
+
+**Cập nhật mỗi 5 phút**: Dữ liệu email và lịch sẽ đồng bộ tự động mỗi 5 phút sau lần nhập đầu tiên.
+
+

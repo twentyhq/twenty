@@ -1,0 +1,70 @@
+---
+title: 自定義您的數據模型
+info: "學習如何設計和創建反映您運營方式的數據模型。"
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: 靈活的數據模型設計來支持您的獨特業務流程
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## 什麼是數據模型？
+
+數據模型是定義信息如何在您的CRM中組織的結構。 It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. 您可以將其視為客戶數據的地圖。
+
+## Why should you customize your data model?
+
+每個企業的運作方式都不同。 能夠完全自訂您的數據模型意味著您可以根據自己的流程而非強制自己進入僵化的系統來塑造 Twenty。  
+Twenty 提供您需要的靈活性，讓您構建最能支持您日常運作的數據模型。 您可以創建任意多的自訂對象和字段，價格不變。
+
+## 設計您的數據模型的小貼士
+
+There is rarely only one way to build a data model. Below are a few tips to help you build yours.
+
+**1. 從核心對象開始。**  
+確定您使用的主要概念（例如公司、人員、機會）。 這三個對象已經可用，因為它們被經常使用。 But think of any other you might need.  
+例子：Stripe 需要一個對象`訂閱`，Airbnb 需要一個對象`旅行`，創業加速器需要一個對象`批次`。
+
+**2. 使用字段表示變化，而不是新對象。**  
+如果某物只是現有對象的一個特徵（例如公司的`行業`，或機會的`狀態`），請將其作為一個字段。 字段最適合用於類別、標籤和屬性。 字段最適合用於類別、標籤和屬性。
+
+**3. Create a new object when it stands on its own.**  
+If the concept has its own lifecycle, properties, or relationships, it usually deserves an object. 例如：
+
+- **專案**有自己的截止日期、所有者和任務
+- **訂閱**連接公司、產品和發票
+- **事件**涉及許多參與者和後續行動
+
+這些超出了單個字段，因為它們有自己獨特的數據和關係。
+
+**4. 當相關記錄的數量是開放式的時候，創建一個對象。**  
+如果某物可以多次連結，甚至不確定會有多少次，則其更好作為自己的對象。 例如，與其創建“產品1”、“產品2”等字段，不如定義一個“產品”對象並將其與原始記錄關聯。 這樣您可以在不改變模型的情況下，將一、兩百乃至更多的產品支持到系統中。
+
+**5. 保持簡單。**  
+從字段開始。 保持簡單。\*\*  
+從字段開始。 只有當您感到限制時才移動到新對象：太多字段、重複記錄或不適合的關係。
+
+### 關於人員、公司與機會的特別說明
+
+- **`People`, `Companies` and `Opportunities` are the only objects from where you can access the emails and meetings synchronized from your mailbox / calendar.** We recommend using those as much as possible. If you need to create categories of `People` or `Companies`, use fields rather than new objects.
+
+  Example: it is best to use the `People` object for both prospects and partners, adding a field called `Person Type`. Avoid creating a `Partner` object, since you wouldn’t be able to access email threads from it. 相反，在“人員”下創建不同的視圖：一個顯示合作夥伴，另一個顯示潛在客戶。
+- 鑑於上述觀點，擁有並不適用於每條記錄的字段是合理的。 例如，在“人員”下您可能只需要在“人員類型=合夥人”時增加一個“推薦鏈接”字段。 這沒問題：在不需要的視圖中隱藏此字段即可。
+
+### 指導您的選擇的問題
+
+問自己：
+
+- 這只是我已有內容的一個屬性，還是它需要自己的屬性？
+- 我是否需要在不知道具體數量的情況下跟踪每條記錄的多個？
+- 這個概念是否鏈接到幾個不同的對象，而不僅僅是一個？
+- 它會有自己的生命週期（例如階段，開始/結束日期）嗎？
+
+如果答案對其一或多者是“是”，那可能是創建新對象的時機了。
+
+## 是否需要幫助？
+
+我們的團隊可以協助您設計和創建所需的數據模型。 在[此處](https://twenty.com/onboarding-packages) 探索我們的 Onboarding Pack。
+
+

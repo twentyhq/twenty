@@ -1,0 +1,103 @@
+---
+title: Importeer/Exporteer Gegevens
+info: "Leer hoe u gegevens kunt importeren en exporteren."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Ontdek Twenty, een open-source CRM.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Gegevens Importeren
+
+- U kunt gegevens voor elk object importeren met een .csv-, .xlsx- of .xls-bestand.
+- Elk van de bestanden die u uploadt, moet **slechts één type object** bevatten (bijvoorbeeld alleen gegevens van Personen).
+- U kunt de Import gebruiken om **records te maken of bij te werken**.
+
+### Download een voorbeeldbestand om de verwachte opmaak te matchen
+
+1. Ga naar een weergave met het object dat u op het punt staat te importeren.
+2. Klik op het `⋮`-pictogram rechtsboven en selecteer vervolgens `Records importeren`.
+3. Klik op `Voorbeeldbestand downloaden`.
+
+### Bereid uw csv voor
+
+Hieronder staan enkele dingen die u moet controleren voordat u uw bestand uploadt.
+
+- Beperk het aantal records tot **10.000 per bestand**.
+- **Verwijder duplicaten** uit uw bestand.
+  - De uniciteit bij `Personen` wordt standaard ingesteld door het `id` en het `e-mailadres`. U heeft ook de mogelijkheid om bij het configureren van uw datamodel aangepaste velden van `Personen` als uniek te definiëren.
+  - De uniciteit bij `Bedrijven` wordt standaard ingesteld door het `id` en het `domein`. U heeft ook de mogelijkheid om bij het configureren van uw datamodel aangepaste velden van `Bedrijven` als uniek te definiëren.
+  - Voor elk ander object, inclusief aangepaste objecten, heeft u de mogelijkheid om enkele velden als uniek te definiëren. Zorg ervoor dat u geen duplicaten opneemt bij het voorbereiden van uw bestanden.
+- We raden aan de syntax `https://domein.com` te gebruiken bij het uploaden van uw domeinen, aangezien dit degene is die onze connector met uw mailbox en agenda gebruikt.
+- U kunt de **relaties tussen objecten importeren** door een van de unieke velden van het bijbehorende record op te geven.
+  - Voorbeeld: U wilt een persoon aan een bedrijf koppelen. Voeg een kolom toe in het bestand met alle `Personen`-records die het `id` of het `domein` van het bedrijf bevat. U kunt dit veld tijdens het uploaden toewijzen.
+    <Warning>
+
+**Belangrijke opmerking:**
+
+- Relaties tussen objecten in Twenty zijn "Een op Veel". Dit betekent dat elk record van object A aan meerdere records van object B kan worden gekoppeld. Maar elk record van object B kan slechts tot één record van object A behoren. _Bijvoorbeeld, één bedrijf kan aan meerdere personen zijn gekoppeld. En één persoon kan slechts tot één bedrijf behoren._
+
+- Om relaties via de Importeer-functie te uploaden, moet u het `id` (of een ander uniek veld) van het gekoppelde object in het bestand opnemen dat de records aan de "Veel-kant" van de relatie bevat.  
+  _Bijvoorbeeld, u geeft het `id` of `domein` van het bedrijf op bij het uploaden van personenrecords. U geeft niet de `id` (of `e-mail`) van de mensen op bij het uploaden van het bestand met bedrijven._ </Warning>
+  </Warning>
+
+### Upload uw bestand
+
+1. Ga naar een weergave met het object dat u op het punt staat te importeren.
+2. Klik op het `⋮`-pictogram rechtsboven en selecteer vervolgens `Records importeren`.
+3. Klik op `Bestand selecteren`.
+4. Valideer de toewijzing van de velden.
+
+- U hoeft ze niet allemaal te importeren, u kunt de optie "Niet toewijzen" kiezen.
+- For relationships, it is recommended to only map one of the unique fields.
+- U moet mogelijk ook de waarden van uw selectievak en multi-selectievelden in kaart brengen.
+
+5. Klik op `Volgende stappen` en `Controleer de rijen met fouten`. Cellen met een probleem worden gemarkeerd. **U kunt de rij verwijderen of de cel daar direct bijwerken**.
+6. Als u klaar bent, klikt u op `Bevestigen`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### Importeer FAQ
+
+<details><summary>Ik zie duplicaatproblemen bij het uploaden van mijn bestand, wat moet ik doen?</summary>
+
+Raadpleeg de sectie **Bereid uw csv voor** hierboven in dit artikel. Het bevat richtlijnen over wat als duplicaat wordt beschouwd.
+
+</details>
+
+<details><summary>Kan ik relaties tussen objecten importeren?</summary>
+
+Ja, raadpleeg de sectie **Bereid uw csv voor** hierboven in dit artikel. Het bevat een sectie over de import van relaties.
+
+</details>
+
+<details><summary>Kan ik bestaande records bijwerken met behulp van de Importeer-functie?</summary>
+
+Ja, u kunt bestaande records bijwerken met behulp van de Importeer-functie. Zorg ervoor dat u het id (of een ander uniek veld) opgeeft wanneer u uw records opnieuw uploadt.
+
+</details>
+
+<details><summary>Kan ik het `id` van mijn andere tool(s) migreren?</summary>
+
+Ja. U moet een veld maken dat u in uw datamodel als uniek definieert dat het `id` van uw andere tool(s) bevat. Houd er rekening mee dat de naam `id` beschermd is omdat deze wordt gebruikt voor het Twenty-id.  
+Als u relaties wilt maken tussen objecten met behulp van dit veld, raadpleeg dan de sectie **Bereid uw csv voor** hierboven in dit artikel. Het bevat een sectie over de import van relaties.
+
+</details>
+
+## Gegevens Exporteren
+
+U kunt gegevens van de meeste van uw objecten downloaden en tot 20.000 records per export.
+Om gegevens van een object te exporteren:
+
+1. Bezoek de objectindex.
+2. Kies de weergave voor data-export. Configureer de kolommen die u wilt downloaden door kolommen te verbergen of toe te voegen en de records die u nodig hebt te vinden door uw weergave te filteren.
+3. Open het zijpaneel via het `⋮`-pictogram rechtsboven.
+4. Klik op `Exportweergave`.
+5. Selecteer de opslaglocatie voor de CSV-gegevens. Houd er rekening mee dat exporteren tijd kan kosten met een groot aantal records.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

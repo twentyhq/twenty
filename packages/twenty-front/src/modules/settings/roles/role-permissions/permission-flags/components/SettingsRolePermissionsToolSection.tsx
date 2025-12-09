@@ -1,21 +1,14 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
-import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
+import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
-import {
-  H2Title,
-  IconFileExport,
-  IconFileImport,
-  IconMail,
-  IconTool,
-} from 'twenty-ui/display';
+import { H2Title, IconTool } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -43,50 +36,42 @@ export const SettingsRolePermissionsToolSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const toolPermissionsConfig: SettingsRolePermissionsSettingPermission[] = [
-    {
-      key: PermissionFlagType.SEND_EMAIL_TOOL,
-      name: t`Send Email`,
-      description: t`Allow sending emails using connected accounts`,
-      Icon: IconMail,
-      isToolPermission: true,
+  const toolPermissionsConfig = useActionRolePermissionFlagConfig({
+    assignmentCapabilities: {
+      canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+      canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+      canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
     },
-    {
-      key: PermissionFlagType.IMPORT_CSV,
-      name: t`Import CSV`,
-      description: t`Allow importing data from CSV files`,
-      Icon: IconFileImport,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.EXPORT_CSV,
-      name: t`Export CSV`,
-      description: t`Allow exporting data to CSV files`,
-      Icon: IconFileExport,
-      isToolPermission: true,
-    },
-  ];
+  });
+
+  const shouldShowAllAccessToggle =
+    !settingsDraftRole.canBeAssignedToAgents ||
+    settingsDraftRole.canBeAssignedToUsers;
 
   return (
     <Section>
       <H2Title title={t`Actions`} description={t`Actions permissions`} />
-      <StyledCard rounded>
-        <SettingsOptionCardContentToggle
-          Icon={IconTool}
-          title={t`All Actions Access`}
-          description={t`Grants permission to perform all available actions without restriction`}
-          checked={settingsDraftRole.canAccessAllTools}
-          disabled={!isEditable}
-          onChange={() => {
-            setSettingsDraftRole({
-              ...settingsDraftRole,
-              canAccessAllTools: !settingsDraftRole.canAccessAllTools,
-            });
-          }}
-        />
-      </StyledCard>
+      {shouldShowAllAccessToggle && (
+        <StyledCard rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconTool}
+            title={t`All Actions Access`}
+            description={t`Grants permission to perform all available actions without restriction`}
+            checked={settingsDraftRole.canAccessAllTools}
+            disabled={!isEditable}
+            onChange={() => {
+              setSettingsDraftRole({
+                ...settingsDraftRole,
+                canAccessAllTools: !settingsDraftRole.canAccessAllTools,
+              });
+            }}
+          />
+        </StyledCard>
+      )}
       <AnimatedExpandableContainer
-        isExpanded={!settingsDraftRole.canAccessAllTools}
+        isExpanded={
+          !shouldShowAllAccessToggle || !settingsDraftRole.canAccessAllTools
+        }
         dimension="height"
         animationDurations={{
           opacity: 0.2,

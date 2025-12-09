@@ -1,0 +1,96 @@
+---
+title: Frontend Commands
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## פקודות שימושיות
+
+### הפעלת האפליקציה
+
+```bash
+npx nx start twenty-front
+```
+
+### שחזור סכמת GraphQL על בסיס סכמת API
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+או
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### בדיקת קוד
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## תרגומים
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### \
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Tech Stack
+
+הפרויקט בעל סטאק פשוט ונקי, עם מעט קוד ברירת מחדל.
+
+**אפליקציה**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**בדיקות**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**כלי עבודה**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## ארכיטקטורה
+
+### ניתוב
+
+[React Router](https://reactrouter.com/) מטפל בניתוב.
+
+כדי למנוע [רינדורים מיותרים](/l/he/developers/frontend-development/best-practices-front#managing-re-renders) כל לוגיקת הניתוב נמצאת ב-`useEffect` ב-`PageChangeEffect`.
+
+### State Management
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) מנהל את ניהול המצב.
+
+למידע נוסף על ניהול מצב עיין ב-[שיטות הטובות ביותר](/l/he/developers/frontend-development/best-practices-front#state-management).
+
+## בדיקות
+
+[Jest](https://jestjs.io/) משמש ככלי לבדיקות יחידה ו-[Storybook](https://storybook.js.org/) הוא לבדיקות רכיבים.
+
+Jest משמש בעיקר לבדיקת פונקציות שירות, ולא לרכיבים עצמם.
+
+Storybook משמש לבדיקת ההתנהגות של רכיבים מבודדים וכן להצגת מערכת העיצוב.
+

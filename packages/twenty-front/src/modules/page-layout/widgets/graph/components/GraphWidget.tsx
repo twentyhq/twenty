@@ -4,25 +4,11 @@ import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
+import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChartRenderer';
+import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
-
-const GraphWidgetLineChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
-  ).then((module) => ({
-    default: module.GraphWidgetLineChart,
-  })),
-);
-
-const GraphWidgetPieChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
-  ).then((module) => ({
-    default: module.GraphWidgetPieChart,
-  })),
-);
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(
@@ -56,25 +42,23 @@ export const GraphWidget = ({
     return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
   }
 
-  const data: any = getDefaultWidgetData(graphType);
-
-  if (!data) {
-    return null;
-  }
-
   switch (graphType) {
     case GraphType.AGGREGATE:
       return <GraphWidgetAggregateChartRenderer widget={widget} />;
 
-    case GraphType.GAUGE:
+    case GraphType.GAUGE: {
+      const gaugeData: any = getDefaultWidgetData(graphType);
+      if (!gaugeData) {
+        return null;
+      }
       return (
         <Suspense fallback={<ChartSkeletonLoader />}>
           <GraphWidgetGaugeChart
             data={{
-              value: data.value,
-              min: data.min,
-              max: data.max,
-              label: data.label,
+              value: gaugeData.value,
+              min: gaugeData.min,
+              max: gaugeData.max,
+              label: gaugeData.label,
             }}
             displayType="percentage"
             showValue
@@ -82,46 +66,17 @@ export const GraphWidget = ({
           />
         </Suspense>
       );
+    }
 
     case GraphType.PIE:
-      return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetPieChart
-            data={data.items}
-            showLegend
-            displayType="percentage"
-            id={`pie-chart-${widget.id}`}
-          />
-        </Suspense>
-      );
+      return <GraphWidgetPieChartRenderer widget={widget} />;
 
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:
       return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:
-      return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetLineChart
-            id={`line-chart-${widget.id}`}
-            data={data.series}
-            enableArea={data.enableArea}
-            showLegend={data.showLegend}
-            showGrid={data.showGrid}
-            enablePoints={data.enablePoints}
-            xAxisLabel={data.xAxisLabel}
-            yAxisLabel={data.yAxisLabel}
-            displayType={data.displayType}
-            prefix={data.prefix}
-            suffix={data.suffix}
-            xScale={data.xScale}
-            yScale={data.yScale}
-            curve={data.curve}
-            stackedArea={data.stackedArea}
-            enableSlices={data.enableSlices}
-          />
-        </Suspense>
-      );
+      return <GraphWidgetLineChartRenderer widget={widget} />;
 
     default:
       return null;

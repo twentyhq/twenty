@@ -1,0 +1,114 @@
+---
+title: Mappa Architektúra
+info: Részletes betekintés a mappaarchitektúránkba
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Ebben az útmutatóban megismerkedsz a projektkönyvtár struktúrájának részleteivel, és hogy ez hogyan járul hozzá a Twenty szervezéséhez és karbantarthatóságához.
+
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Oldalak
+
+Tartalmazza az alkalmazási útvonalak által definiált legfelső szintű összetevőket. Alacsonyabb szintű összetevőket importálnak a modulok mappából (részletek alább).
+
+## Modulok
+
+Minden modul egy funkciót vagy funkció csoportot képvisel, amelyek sajátos komponensekből, állapotokból és működési logikából állnak.
+Mindegyiknek az alábbi szerkezetet kell követnie. A modulokba beágyazott modulokat (almodulokként emlegetik) hozhatsz létre, és ugyanazok a szabályok érvényesek.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Környezetek
+
+A környezet lehetővé teszi, hogy adatok áramoljanak át a komponensfán anélkül, hogy minden szinten kellene beállítani az átadott értéket.
+
+Lásd [React Context](https://react.dev/reference/react#context-hooks) további részletekért.
+
+### GraphQL
+
+Tartalmaz töredékeket, kérdéseket és módosításokat.
+
+Lásd [GraphQL](https://graphql.org/learn/) további részletekért.
+
+- Töredékek
+
+A töredék a lekérdezés újrahasználható része, amit különböző helyeken használhatsz. A töredékek használatával könnyebb elkerülni a kód duplikálását.
+
+Lásd [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) további részletekért.
+
+- Kérdések
+
+Lásd [GraphQL Queries](https://graphql.org/learn/queries/) további részletekért.
+
+- Módosítások
+
+Lásd [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) további részletekért.
+
+### Horgok
+
+Lásd [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) további részletekért.
+
+### Állapotok
+
+Tartalmazza az állapotkezelési logikát. [RecoilJS](https://recoiljs.org) kezeli ezt.
+
+- Szelekciók: Lásd [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) további részletekért.
+
+A React beépített állapotkezelése továbbra is az állapotokat kezeli komponens szinten.
+
+### Eszközök
+
+Csak újrahasználható tiszta függvényeket kell tartalmaznia. Ellenkező esetben, hozz létre saját horgokat a `horgok` mappában.
+
+## UI
+
+Tartalmazza az alkalmazásban használt újrahasználható UI komponenseket.
+
+Ez a mappa al-mappákat tartalmazhat, mint például `adat`, `megjelenítés`, `visszajelzés` és `bemenet` a különféle típusú komponensek számára. Minden komponensnek önállónak és újrahasználhatónak kell lennie, hogy az alkalmazás különböző részeiben használhasd őket.
+
+A UI komponensek különválasztásával a többi modulban lévő komponensektől könnyebb fenntartani a következetes dizájnt, és a UI módosítása anélkül történhet, hogy más részeket (üzleti logika) érintene a kódbázisban.
+
+## Interfész és függőségek
+
+You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
+
+### Belső
+
+Minden rész (horgok, állapotok, ...) egy modulnak lehet egy `belső` mappája, amely olyan részeket tartalmaz, amik csak a modulon belül használatosak.

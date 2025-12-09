@@ -1,0 +1,69 @@
+---
+title: Personalitza el teu model de dades
+info: "Aprèn a dissenyar i crear un model de dades que reflecteixi com operes."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Model de dades flexible dissenyat per donar suport als teus processos empresarials únics
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Què és un model de dades?
+
+Un model de dades és l'estructura que defineix com s'organitza la informació al teu CRM. Determina quins objectes existeixen (com empreses, persones o oportunitats), quines propietats tenen (aquestes són els camps), i com es relacionen entre ells. El pots considerar com el mapa de les teves dades de clients.
+
+## Why should you customize your data model?
+
+Cada empresa treballa de manera diferent. Poder personalitzar completament el teu model de dades significa que pots modelar Twenty perquè s'adapti als teus processos en comptes de forçar els teus processos en un sistema rígid.  
+Twenty ofereix la flexibilitat necessària per modelar el model de dades que millor suportarà el teu dia a dia. Pots crear tants objectes i camps personalitzats com necessitis, el preu no canviarà.
+
+## Consells per dissenyar el teu model de dades
+
+Rara vegada només hi ha una manera de construir un model de dades. A continuació, alguns consells per ajudar-te a construir el teu.
+
+**1. Comença amb els teus objectes bàsics.**  
+Identifica els conceptes principals amb els quals treballes (per exemple, Empreses, Persones, Oportunitats). Aquests tres objectes ja són disponibles, ja que s'utilitzen molt sovint. Però pensa en qualsevol altre que puguis necessitar.  
+Exemple: Stripe necessitaria un objecte `Subscripcions`, Airbnb necessitaria un objecte `Viatges`, un accelerador de start-ups necessitaria un objecte `Batches`.
+
+**2. Usa camps per a variacions, no nous objectes.**  
+Si alguna cosa és només una característica d'un objecte existent (per exemple, `Indústria` per a una Empresa, o `Estat` per a una Oportunitat), fes-lo un camp. Els camps són millor per a categories, etiquetes i atributs.
+
+**3. Crea un nou objecte quan es manté per si mateix.**  
+Si el concepte té el seu propi cicle de vida, propietats o relacions, normalment mereix un objecte. Per exemple:
+
+- **Projectes** que tenen els seus propis terminis, propietaris i tasques
+- **Subscripcions** que connecten empreses, productes i factures
+- **Esdeveniments** que impliquen molts assistents i accions de seguiment
+
+Aquests van més enllà d'un sol camp perquè tenen les seves pròpies dades i relacions.
+
+**4. Crea un objecte quan el nombre de registres relacionats és indeterminat.**  
+Si alguna cosa pot estar relacionada diverses vegades i no saps quantes, és millor que sigui el seu propi objecte. Per exemple, en lloc de crear camps com `Producte 1`, `Producte 2`, etc., defineix un objecte `Producte` i relaciona'l amb el registre original. D'aquesta manera, pots suportar un, dos o cent productes sense canviar el teu model.
+
+**5. Mantingues-ho senzill al principi.**  
+Comença amb camps. Passa a nous objectes només quan sentis els límits: massa camps, registres repetits, o relacions que no encaixen bé.
+
+### Nota especial sobre Persones, Empreses i Oportunitats
+
+- **`Persones`, `Empreses` i `Oportunitats` són els únics objectes des dels quals pots accedir als correus electrònics i reunions sincronitzades des de la teva bústia / calendari.** Recomanem utilitzar-los tant com sigui possible. Si necessites crear categories de `Persones` o `Empreses`, usa camps en lloc de nous objectes.
+
+  Example: it is best to use the `People` object for both prospects and partners, adding a field called `Person Type`. Evita crear un objecte `Soci`, ja que no podries accedir als fils de correu electrònic des d'ell. Instead, create different views under `People`: one showing partners, another showing prospects.
+- D'acord amb l'anterior, està bé tenir camps que no s'apliquen a cada registre. Per exemple, sota `Persones` pots afegir un camp `Enllaç de Referència` que només és rellevant quan `Tipus de Persona = Soci`. Això està bé: pots amagar aquest camp de les vistes on no és necessari.
+
+### Preguntes per guiar la teva decisió
+
+Pregunta't:
+
+- És només una propietat d'alguna cosa que ja tinc, o necessita les seves pròpies propietats?
+- Alguna vegada necessitaré seguir diverses d'aquestes per registre, sense saber quantes prèviament?
+- Aquest concepte es connecta a diversos objectes diferents, no només a un?
+- Tindrà el seu propi cicle de vida (per exemple, etapes, dates d'inici/finalització)?
+
+Si la resposta és “sí” a una o més d'aquestes, probablement és hora d'un nou objecte.
+
+## Vols ajuda?
+
+El nostre equip pot ajudar-te a dissenyar i crear el model de dades que necessites. Discover our Onboarding Pack [here](https://twenty.com/onboarding-packages).
+
+

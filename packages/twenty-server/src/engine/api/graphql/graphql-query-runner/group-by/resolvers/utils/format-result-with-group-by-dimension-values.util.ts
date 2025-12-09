@@ -6,9 +6,10 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
-import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export const formatResultWithGroupByDimensionValues = async ({
@@ -16,8 +17,9 @@ export const formatResultWithGroupByDimensionValues = async ({
   groupByDefinitions,
   aggregateFieldNames,
   recordsResult,
-  objectMetadataItemWithFieldMaps,
-  objectMetadataMaps,
+  flatObjectMetadata,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   processRecord,
 }: {
   groupsResult: Record<string, unknown>[];
@@ -25,8 +27,9 @@ export const formatResultWithGroupByDimensionValues = async ({
   aggregateFieldNames: string[];
   processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
   recordsResult?: Array<Record<string, unknown>>;
-  objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
-  objectMetadataMaps?: ObjectMetadataMaps;
+  flatObjectMetadata?: FlatObjectMetadata;
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
 }): Promise<CommonGroupByOutputItem[]> => {
   const formattedResult: CommonGroupByOutputItem[] = [];
 
@@ -34,8 +37,9 @@ export const formatResultWithGroupByDimensionValues = async ({
 
   if (isDefined(recordsResult)) {
     if (
-      !isDefined(objectMetadataItemWithFieldMaps) ||
-      !isDefined(objectMetadataMaps)
+      !isDefined(flatObjectMetadata) ||
+      !isDefined(flatObjectMetadataMaps) ||
+      !isDefined(flatFieldMetadataMaps)
     ) {
       throw new Error('Metadata are required to format result');
     }
@@ -55,8 +59,9 @@ export const formatResultWithGroupByDimensionValues = async ({
             await processRecord(
               formatResult(
                 record,
-                objectMetadataItemWithFieldMaps,
-                objectMetadataMaps,
+                flatObjectMetadata,
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
               ),
             ),
         ),

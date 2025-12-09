@@ -6,6 +6,7 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -71,7 +72,7 @@ export const AIChatThreadsList = () => {
             variant="primary"
             accent="blue"
             size="medium"
-            title="New chat"
+            title={t`New chat`}
             onClick={() => createChatThread()}
             hotkeys={[getOsControlSymbol(), '⏎']}
           />

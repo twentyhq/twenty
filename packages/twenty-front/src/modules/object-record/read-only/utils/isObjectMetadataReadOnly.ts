@@ -17,8 +17,7 @@ export const isObjectMetadataReadOnly = ({
   return (
     (isDefined(objectPermissions) &&
       !objectPermissions.canUpdateObjectRecords) ||
-    objectMetadataItem?.isUIReadOnly ||
-    objectMetadataItem?.isRemote ||
-    isDefined(objectMetadataItem?.applicationId)
+    (isDefined(objectMetadataItem) &&
+      (objectMetadataItem.isUIReadOnly || objectMetadataItem.isRemote))
   );
 };

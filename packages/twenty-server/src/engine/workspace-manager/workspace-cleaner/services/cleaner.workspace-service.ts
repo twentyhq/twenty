@@ -133,6 +133,10 @@ export class CleanerWorkspaceService {
     const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
     const subject = i18n._(workspaceDeletionMsg);
 
+    if (!isDefined(workspaceMember.userEmail)) {
+      throw new Error('Workspace member email is missing');
+    }
+
     this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
@@ -206,6 +210,10 @@ export class CleanerWorkspaceService {
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
+
+    if (!isDefined(workspaceMember.userEmail)) {
+      throw new Error('Workspace member email is missing');
+    }
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -299,7 +307,6 @@ export class CleanerWorkspaceService {
             await this.workspaceService.handleRemoveWorkspaceMember(
               workspace.id,
               userWorkspace.userId,
-              false,
             );
           }
 

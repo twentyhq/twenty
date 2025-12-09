@@ -1,15 +1,17 @@
-import type { Application } from '~/generated/graphql';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/layout';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import type { Application } from '~/generated/graphql';
 import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
 
 export const SettingsApplicationDetailAboutTab = ({
   application,
 }: {
-  application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
+    objects: { id: string }[];
+  };
 }) => {
   if (!isDefined(application)) {
     return null;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { google } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -12,7 +13,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
@@ -47,12 +47,14 @@ export class MessagingSendMessageService {
             connectedAccount,
           );
 
-        const gmailClient = oAuth2Client.gmail({
+        const gmailClient = google.gmail({
           version: 'v1',
+          auth: oAuth2Client,
         });
 
-        const peopleClient = oAuth2Client.people({
+        const peopleClient = google.people({
           version: 'v1',
+          auth: oAuth2Client,
         });
 
         const { data: gmailData } = await gmailClient.users.getProfile({
@@ -127,31 +129,11 @@ export class MessagingSendMessageService {
 
         const response = await microsoftClient
           .api(`/me/messages`)
-          .post(message)
-          .catch((error) => {
-            if (isAccessTokenRefreshingError(error?.body)) {
-              throw new MessageImportDriverException(
-                error.message,
-                MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-              );
-            }
-            throw error;
-          });
+          .post(message);
 
         z.string().parse(response.id);
 
-        await microsoftClient
-          .api(`/me/messages/${response.id}/send`)
-          .post({})
-          .catch((error) => {
-            if (isAccessTokenRefreshingError(error?.body)) {
-              throw new MessageImportDriverException(
-                error.message,
-                MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-              );
-            }
-            throw error;
-          });
+        await microsoftClient.api(`/me/messages/${response.id}/send`).post({});
 
         break;
       }
@@ -161,6 +143,13 @@ export class MessagingSendMessageService {
 
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
+
+        if (!isDefined(handle)) {
+          throw new MessageImportDriverException(
+            'Handle is required',
+            MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+          );
+        }
 
         const mail = new MailComposer({
           from: handle,
@@ -200,7 +189,7 @@ export class MessagingSendMessageService {
             (messageFolder) => messageFolder.isSentFolder,
           );
 
-          if (isDefined(sentFolder)) {
+          if (isDefined(sentFolder) && isDefined(sentFolder.name)) {
             await imapClient.append(sentFolder.name, messageBuffer);
           }
 

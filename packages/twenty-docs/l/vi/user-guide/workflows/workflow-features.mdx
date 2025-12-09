@@ -1,0 +1,320 @@
+---
+title: Tính năng Workflow
+info: Tài liệu tham khảo hoàn chỉnh cho tất cả các trình kích hoạt, hành động và tính năng quản lý workflow có sẵn.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Tự động hóa quy trình và tích hợp với các công cụ bên ngoài
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Trình kích hoạt Workflow
+
+Workflows luôn bắt đầu với một trình kích hoạt duy nhất để xác định khi nào quá trình tự động nên chạy.
+
+### Bản ghi được Tạo
+
+Bắt đầu workflow khi một bản ghi mới được tạo trong một đối tượng đã chọn (Con người, Công ty, Cơ hội hoặc bất kỳ đối tượng tùy chỉnh nào khác).
+
+**Cấu hình**: Chọn loại đối tượng để giám sát cho các bản ghi mới.
+
+### Bản ghi được Cập nhật
+
+Bắt đầu workflow khi thực hiện thay đổi đối với một bản ghi hiện tại.
+
+**Cấu hình**:
+
+- Chọn loại đối tượng
+- Tùy chọn chỉ định trường nào cần giám sát thay đổi
+
+### Bản ghi được Cập nhật hoặc Tạo
+
+Bắt đầu workflow khi một bản ghi được tạo hoặc cập nhật trong một đối tượng đã chọn.
+
+**Tại sao điều này quan trọng**: Trình kích hoạt này đặc biệt hữu ích vì các bản ghi được tạo qua các phương pháp khác nhau hành xử khác nhau:
+
+- **Nhập API/CSV**: Các bản ghi được tạo với tất cả các trường được điền ngay lập tức
+- **Tạo thủ công**: Các bản ghi được tạo trước, sau đó các trường được thêm vào trong các cập nhật tiếp theo
+
+**Cấu hình**:
+
+- Chọn loại đối tượng để giám sát
+- Tùy chọn chỉ định trường nào cần giám sát thay đổi
+- Workflow sẽ kích hoạt cả khi tạo ban đầu và bất kỳ cập nhật sau đó
+
+### Bản ghi bị Xóa
+
+Bắt đầu workflow khi một bản ghi bị xóa khỏi một đối tượng.
+
+**Cấu hình**: Chọn loại đối tượng để giám sát việc xóa.
+
+### Khởi chạy Thủ công
+
+Bắt đầu workflow khi được kích hoạt bởi một hành động của người dùng. Trình kích hoạt này có thể được truy cập thông qua menu Cmd+K hoặc qua nút tùy chỉnh trong thanh công cụ trên cùng.
+
+**Cấu hình Khả dụng**:
+Chọn cách workflow nên xử lý việc chọn bản ghi:
+
+- **Global**: No record is required to trigger this workflow. Workflow được kích hoạt từ bất kỳ đâu (từ bất kỳ đối tượng nào) và không sử dụng bản ghi làm đầu vào.
+
+- **Đơn lẻ**: Các bản ghi đã chọn sẽ được gửi đến workflow của bạn. Điều này được cấu hình cho một đối tượng đã cho. Nhiều bản ghi có thể được chọn trước khi kích hoạt workflow. Quy trình làm việc sẽ chạy nhiều lần tương ứng với số lượng bản ghi được chọn.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Nhiều**: Các bản ghi đã chọn sẽ được truyền vào quy trình làm việc của bạn. Điều này được cấu hình cho một đối tượng nhất định. Nhiều bản ghi có thể được chọn trước khi kích hoạt quy trình làm việc. Quy trình làm việc sẽ chạy một lần, cung cấp toàn bộ danh sách bản ghi làm đầu vào. This means the workflow needs to contain an Iterator action. Điều này tốt nhất cho những người muốn tối ưu hóa/hạn chế số lần chạy quy trình làm việc.
+
+**Cấu hình Bổ sung**:
+
+- Chọn đối tượng đích (cho khả dụng một lần và nhiều lần)
+- Chọn biểu tượng lệnh cho kích hoạt quy trình làm việc
+- Cấu hình vị trí thanh điều hướng (Ghim hoặc Không Ghim)
+
+**Phương pháp Truy cập**:
+
+- Menu Cmd+K để tìm và khởi chạy các quy trình làm việc thủ công
+- Nút tùy chỉnh trong thanh điều hướng trên cùng (nếu được cấu hình)
+
+### Theo Lịch Trình
+
+Bắt đầu quy trình làm việc theo chế độ định kỳ bạn định nghĩa.
+
+**Cấu hình**:
+
+- Chọn đơn vị thời gian (phút, giờ, ngày)
+- Nhập một giá trị hoặc sử dụng biểu thức cron tùy chỉnh cho lập lịch nâng cao
+
+### Webhook
+
+Bắt đầu quy trình làm việc khi nhận được yêu cầu GET hoặc POST từ một dịch vụ bên ngoài.
+
+**Cấu hình**:
+
+- Nhận URL webhook duy nhất
+- For POST requests, define the expected body structure
+- Cấu hình xác thực nếu cần
+
+## Các Hành Động Quy Trình
+
+Hành động xác định những gì sẽ xảy ra sau khi một kích hoạt diễn ra. Bạn có thể xâu chuỗi nhiều hành động với nhau.
+
+### Tạo một bản ghi
+
+Thêm một bản ghi mới vào một đối tượng được chọn.
+
+**Cấu hình**:
+
+- Chọn đối tượng đích
+- Điền các trường bắt buộc và tùy chọn
+- Sử dụng dữ liệu từ các bước trước để điền vào các trường
+
+**Dữ liệu Xuất ra**: Dữ liệu bản ghi mới tạo sẵn sàng để sử dụng trong các bước tiếp theo.
+
+### Cập Nhật Bản Ghi
+
+Chỉnh sửa một bản ghi hiện có trong một đối tượng được chọn.
+
+**Cấu hình**:
+
+- Chọn đối tượng đích
+- Chọn bản ghi cụ thể cần cập nhật
+- Chọn các trường cần sửa và nhập giá trị mới
+
+**Dữ liệu Xuất ra**: Dữ liệu bản ghi cập nhật sẵn sàng để sử dụng trong các bước tiếp theo.
+
+### Xóa Bản Ghi
+
+Loại bỏ một bản ghi ra khỏi đối tượng đã chọn.
+
+**Cấu hình**:
+
+- Chọn đối tượng đích
+- Chọn bản ghi cụ thể cần xóa
+
+**Dữ liệu Xuất ra**: Dữ liệu bản ghi đã xóa vẫn có sẵn để sử dụng trong các bước tiếp theo.
+
+### Tìm Kiếm Bản Ghi
+
+Tìm bản ghi trong một đối tượng được chọn bằng cách sử dụng điều kiện lọc.
+
+**Cấu hình**:
+
+- Chọn đối tượng để tìm kiếm
+- Đặt tiêu chí lọc để thu hẹp kết quả
+- Cấu hình sắp xếp và giới hạn
+
+**Dữ liệu Xuất ra**: Trả lại các bản ghi phù hợp có thể sử dụng trong các bước tiếp theo.
+
+**Thực hành Tốt nhất**: Sử dụng nhánh sau Tìm Kiếm Bản Ghi để xử lý các tình huống "tìm thấy" và "không tìm thấy".
+
+### Bộ lặp
+
+Lặp qua một mảng các bản ghi được trả về từ một bước trước đó, cho phép bạn thực hiện các hành động trên từng bản ghi riêng lẻ.
+
+**Cấu hình**:
+
+- Chọn mảng các bản ghi từ một bước trước đó (ví dụ, kết quả từ Tìm Kiếm Bản Ghi)
+- Xác định các hành động cần thực hiện trên từng bản ghi trong vòng lặp
+- Cấu hình tên biến để tham chiếu từng bản ghi trong lần lặp
+
+**Example**: Search Records returns 5 people, then use Iterator to send an email to each person or update each record individually.
+
+**Chú ý**: Trình lặp hiện đang trong phiên bản beta. Kích hoạt nó trong Cài đặt → Phát hành → Phòng thí nghiệm.
+
+### Lọc
+
+Lọc một mảng các bản ghi theo điều kiện đã định; chỉ cho phép các bản ghi đáp ứng tiêu chí để qua được.
+
+**Cấu hình**:
+
+- Chọn mảng các bản ghi cần lọc
+- Xác định điều kiện và tiêu chí lọc
+- Cấu hình bản ghi nào nên qua bước tiếp theo
+
+**Dữ liệu Xuất ra**: Trả về các bản ghi chỉ đáp ứng các điều kiện lọc đã định.
+
+### Gửi Email
+
+Gửi một email từ quy trình làm việc của bạn.
+
+**Yêu cầu trước**: Thêm một tài khoản email trong Cài đặt > Tài khoản
+
+**Cấu hình**:
+
+- Nhập địa chỉ email người nhận
+- Đặt dòng tiêu đề
+- Soạn thư
+- Tham khảo các biến từ các bước trước để cá nhân hóa
+
+**Chú ý**: Đính kèm email sẽ có sẵn vào Quý 1 năm 2026.
+
+### Mã
+
+Chạy JavaScript tùy chỉnh trong quy trình làm việc của bạn.
+
+**Cấu hình**:
+
+- Viết mã JavaScript trong trình soạn thảo
+- Truy cập các biến từ các bước trước
+- Trả về các biến để sử dụng trong các bước tiếp theo
+- Kiểm tra mã trực tiếp trong bước
+
+**Access**: Manage API keys in Settings → API & Webhooks
+
+### Biểu mẫu
+
+Hiển thị một biểu mẫu trong quá trình thực thi quy trình để thu thập đầu vào từ người dùng.
+
+**Cấu hình**:
+
+- Định nghĩa các trường đầu vào với kiểu, nhãn và văn bản thay thế
+- Cấu hình quy tắc xác thực
+- Đặt tiêu đề và mô tả biểu mẫu
+
+**Dữ liệu Xuất ra**: Phản hồi biểu mẫu có sẵn để sử dụng trong các bước tiếp theo.
+
+<Warning>
+Hiện tại các biểu mẫu được thiết kế chỉ cho các kích hoạt thủ công. Đối với các quy trình làm việc với các kích hoạt khác (Hồ sơ Được tạo, Cập nhật, v.v.), biểu mẫu chỉ có thể truy cập thông qua giao diện và không mang lại trải nghiệm người dùng như mong đợi. Một trung tâm thông báo sẽ được phát hành vào năm 2026 để hỗ trợ đúng đắn cho các biểu mẫu trong các quy trình tự động.
+</Warning>
+
+### Yêu cầu HTTP
+
+Gửi yêu cầu đến một API bên ngoài như một phần của quy trình làm việc của bạn.
+
+**Cấu hình**:
+
+- Nhập URL điểm cuối API
+- Chọn phương thức HTTP (GET, POST, PUT, PATCH, DELETE)
+- Thêm các tiêu đề và giá trị yêu cầu cần thiết
+- Bao gồm nội dung yêu cầu cho các yêu cầu POST/PUT/PATCH
+- Cung cấp phản hồi mẫu cho việc xem trước cấu trúc
+
+## Quản Lý Quy Trình
+
+### Tạo Quy Trình Mới
+
+1. Nhấp vào "+ Thêm một quy trình làm việc" để bắt đầu
+2. Nhấp vào "Chưa có tiêu đề" để đặt tên cho quy trình của bạn
+3. Chọn và cấu hình kích hoạt quy trình của bạn
+4. Thêm hành động vào quy trình làm việc của bạn
+5. Kiểm tra và điều chỉnh
+6. Kích hoạt quy trình của bạn (hiện đang ở chế độ nháp) sau khi bạn đã chỉnh sửa xong.
+
+**Note**: If you don't see the Workflows section, this is due to a permissions issue. Liên hệ với quản trị viên không gian làm việc của bạn để cấp quyền truy cập vào các quy trình làm việc.
+
+### Trạng Thái Quy Trình
+
+- **Nháp**: Đang được chỉnh sửa, chưa xuất bản
+- **Hoạt động**: Phiên bản trực tiếp đáp ứng kích hoạt
+- **Ngừng Hoạt Động**: Đã hoạt động trước đây nhưng đã dừng thủ công
+- **Lưu Trữ**: Các phiên bản cũ được lưu lại cho lịch sử
+
+### Kích Hoạt Quy Trình
+
+Nhấp **Kích Hoạt** để xuất bản nháp dưới dạng phiên bản mới. Điều này làm cho quy trình đủ điều kiện để chạy khi kích hoạt nhưng không thực thi ngay lập tức.
+
+### Kiểm Tra Quy Trình
+
+Kiểm tra quy trình trước khi kích hoạt bằng cách sử dụng:
+
+- Kích hoạt thủ công (khi không có bản ghi nào được chọn)
+- Kiểm tra hành động riêng lẻ (đặc biệt là các Hành động Mã)
+- Kiểm tra chế độ nháp không kích hoạt quy trình
+
+### Chạy Quy Trình
+
+Một **Lần chạy** là bản ghi của việc thực thi quy trình chứa:
+
+- Trạng thái (thành công, thất bại, đang chạy)
+- Dữ liệu xuất ra từ mỗi bước
+- Author and timestamps
+- Thông báo lỗi nếu có
+
+**Xem Lần Chạy**:
+
+- Kiểm tra bảng **Chạy** trong trình chỉnh sửa quy trình làm việc
+- Open **Workflow Runs** view for monitoring across all workflows
+
+**Mẹo Hiệu Suất**: Ẩn các lần chạy quy trình khỏi trang "Tất cả quy trình" và các trang quy trình khác để cải thiện hiệu suất tải trang, vì nhiều lần chạy có thể làm chậm quá trình tải trang.
+
+### Lịch Sử Phiên Bản
+
+- Xem tất cả các phiên bản trong trường **Phiên Bản**
+- Nhấp vào bất kỳ phiên bản nào để xem chi tiết
+- Sử dụng **Sử dụng dưới dạng nháp** để khôi phục các phiên bản trước
+- Xử lý xung đột nháp với các tùy chọn ghi đè hoặc quay lại
+
+## Thực Hành Tốt Nhất
+
+### Tổ Chức Quy Trình
+
+- **Tên Mô Tả**: Sử dụng tên quy trình rõ ràng, cụ thể
+- **Đặt Tên Bước**: Đặt lại tên các bước để mô tả chức năng của chúng
+- **Tài Liệu**: Thêm nhận xét trong các hành động mã
+- **Phân Loại**: Nhóm các quy trình liên quan một cách hợp lý
+- **Trường Tùy Chỉnh**: Thêm trường vào đối tượng Quy Trình trong mô hình dữ liệu của bạn để tổ chức và phân loại các quy trình với các thuộc tính tùy chỉnh
+
+### Tối Ưu Hóa Hiệu Suất
+
+- **Giảm Thiểu API Gọi**: Thực hiện thao tác theo lô khi có thể
+- **Tìm Kiếm Hiệu Quả**: Sử dụng tiêu chí lọc cụ thể
+- **Xử Lý Lỗi**: Lên kế hoạch cho các kịch bản thất bại
+- **Giới Hạn Tốc Độ**: Tôn trọng giới hạn từ API bên ngoài
+
+### Quản Lý Luồng Dữ Liệu
+
+- **Branch Logic**: Use branches after Search Records
+- **Sử Dụng Biến**: Tận dụng dữ liệu từ các bước trước
+- **Data Validation**: Validate inputs in Code actions
+- **Lập Bản Đồ Trường**: Lên kế hoạch cho các chuyển đổi dữ liệu cẩn thận
+
+### Giám Sát và Bảo Trì
+
+- **Regular Monitoring**: Check workflow runs for errors
+- **Performance Review**: Analyze execution times and success rates
+- **Quản Lý Cập Nhật**: Kiểm tra thay đổi trong bản nháp trước khi kích hoạt
+- **Team Coordination**: Document workflows for team members
+
+For practical examples of these features in action, see our [Internal Automations](/l/vi/user-guide/workflows/internal-automations) and [External Tool Integration](/l/vi/user-guide/workflows/external-tool-integration) guides.

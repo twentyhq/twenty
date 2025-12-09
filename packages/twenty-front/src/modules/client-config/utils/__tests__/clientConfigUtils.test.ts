@@ -21,7 +21,6 @@ const mockClientConfig = {
   isEmailVerificationRequired: false,
   defaultSubdomain: 'app',
   frontDomain: 'localhost',
-  debugMode: true,
   support: {
     supportDriver: 'none',
     supportFrontChatId: undefined,

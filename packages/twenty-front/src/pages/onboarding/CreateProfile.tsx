@@ -13,7 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -175,8 +175,12 @@ export const CreateProfile = () => {
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Picture" />
-          <ProfilePictureUploader />
+          <H2Title title={t`Picture`} />
+          {currentWorkspaceMember?.id && (
+            <WorkspaceMemberPictureUploader
+              workspaceMemberId={currentWorkspaceMember.id}
+            />
+          )}
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title

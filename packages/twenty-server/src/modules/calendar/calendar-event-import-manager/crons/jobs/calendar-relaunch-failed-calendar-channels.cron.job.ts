@@ -16,7 +16,10 @@ import {
   CalendarRelaunchFailedCalendarChannelJob,
   type CalendarRelaunchFailedCalendarChannelJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-relaunch-failed-calendar-channel.job';
-import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarChannelSyncStage,
+  CalendarChannelSyncStatus,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export const CALENDAR_RELAUNCH_FAILED_CALENDAR_CHANNELS_CRON_PATTERN =
   '*/30 * * * *';
@@ -50,7 +53,7 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const failedCalendarChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."calendarChannel" WHERE "syncStage" = '${CalendarChannelSyncStage.FAILED}'`,
+          `SELECT * FROM ${schemaName}."calendarChannel" WHERE "syncStage" = '${CalendarChannelSyncStage.FAILED}' AND "syncStatus" = '${CalendarChannelSyncStatus.FAILED_UNKNOWN}'`,
         );
 
         for (const calendarChannel of failedCalendarChannels) {

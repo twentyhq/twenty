@@ -1,18 +1,17 @@
-import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { Strategy } from 'passport-microsoft';
+import { type VerifyCallback } from 'passport-google-oauth20';
 
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftAPIScopeConfig = {
   isCalendarEnabled?: boolean;
   isMessagingAliasFetchingEnabled?: boolean;
 };
 
-@Injectable()
-export class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
+export abstract class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,
   'microsoft-apis',
 ) {
@@ -28,4 +27,12 @@ export class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
+
+  abstract validate(
+    request: Express.Request,
+    accessToken: string,
+    refreshToken: string,
+    profile: unknown,
+    done: VerifyCallback,
+  ): Promise<void>;
 }

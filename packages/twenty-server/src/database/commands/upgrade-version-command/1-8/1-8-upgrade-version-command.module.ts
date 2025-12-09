@@ -7,6 +7,7 @@ import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-v
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       ServerlessFunctionEntity,
       ServerlessFunctionLayerEntity,
     ]),
+    DataSourceModule,
     IndexMetadataModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,

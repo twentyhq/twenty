@@ -1,0 +1,220 @@
+---
+title: Integration externer Tools
+info: Diese Arbeitsabläufe konzentrieren sich darauf, Daten über API-Aufrufe und Webhooks in Twenty zu bringen und herauszubringen.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automatisieren Sie Prozesse und integrieren Sie externe Werkzeuge
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Below are workflow examples you could roll out to connect Twenty with the rest of your stack.
+
+## Anwendungsfälle für die Datenaufnahme
+
+### Webformular-Einsendungen
+
+**Problem**: Sie müssen Leads aus Website-Formularen, Zielseiten oder Kontaktformularen direkt in Twenty erfassen.
+
+**Lösung**: Verwenden Sie Webhook-Trigger, um automatisch Datensätze aus Formulareinsendungen zu erstellen.
+
+**Einrichtung**:
+
+- Erstellen Sie einen Workflow mit einem Webhook-Trigger
+- Konfigurieren Sie den Webhook, um Formulardaten (Name, E-Mail, Firma usw.) zu erwarten
+- Stellen Sie die Webhook-Methode auf POST ein
+- Definieren Sie die erwartete Körperstruktur im Trigger
+
+**Trigger**: Webhook (POST-Anfrage von Ihrem Formular)
+
+**Aktionen**:
+
+- Datensätze durchsuchen, um zu überprüfen, ob Person/Firma bereits existiert
+- Zweig: Wenn vorhanden → Datensatz aktualisieren, Wenn nicht → Datensatz erstellen
+- Datensatz erstellen für eine Nachfassaufgabe, die einem Vertriebsmitarbeiter zugewiesen ist
+- E-Mail-Benachrichtigung an Vertriebsteams senden
+
+### Produktdatensynchronisierung
+
+**Problem**: Ihr Vertriebsteam benötigt Einsicht in Produktnutzung, Abrechnung oder Funktionsadoptionsdaten, die in Ihrem Data Warehouse gespeichert sind.
+
+**Lösung**: Regelmäßig Produktdaten in Twenty synchronisieren, um Verkäufern Kontext über ihre Konten zu geben.
+
+**Trigger**: Nach einem Zeitplan (täglich oder wöchentlich)
+
+**Aktionen**:
+
+- HTTP-Anfrage an Ihre Data Warehouse-API
+- Code-Aktion, um die Daten zu verarbeiten und zu formatieren
+- Verwenden Sie die Iterator-Funktion für die folgenden Schritte
+- Datensätze durchsuchen, um übereinstimmende Firmendatensätze zu finden
+- Datensatz aktualisieren, um Produktnutzungs-Metriken hinzuzufügen
+- Datensatz erstellen für Aufgaben, wenn die Nutzung unter den Schwellenwert fällt
+
+### Besprechungsnotizen aus Anrufrekordern
+
+**Problem**: Wichtige Erkenntnisse aus Verkaufsgesprächen gehen verloren oder werden nicht im CRM dokumentiert.
+
+**Lösung**: Automatisch Notizen und Aktionselemente aus Anrufaufzeichnungssystemen erstellen.
+
+**Trigger**: Webhook (von der Anrufaufzeichnungsplattform)
+
+**Aktionen**:
+
+- Code-Aktion, um Sitzungszusammenfassungen und Aktionselemente zu extrahieren
+- Datensätze durchsuchen, um die zugehörige Gelegenheit oder den Kontakt zu finden
+- Datensatz für eine Notiz mit Sitzungszusammenfassung erstellen
+- Datensatz erstellen für Nachfassaufgaben basierend auf Aktionselementen
+- E-Mail an Teilnehmer senden mit Zusammenfassung und nächsten Schritten
+
+### Datenanreicherung
+
+**Problem**: Ihre Kontakt- und Firmendatensätze fehlen wichtige demografische und firmografische Informationen.
+
+**Lösung**: Automatisch Datensätze mit externen Datenanbietern anreichern.
+
+**Trigger**: Datensatz wird erstellt (Objekte Personen oder Unternehmen)
+
+**Aktionen**:
+
+- HTTP-Anfrage an Enrichment-API
+- Code-Aktion, um Enrichment-Antwort zu verarbeiten
+- Verwenden Sie die Iterator-Funktion für die folgenden Schritte
+- Datensatz mit zusätzlichen Unternehmens-/Kontaktinformationen aktualisieren
+- Datensatz für Vertriebsaufgabe erstellen, wenn hochrangiger Interessent identifiziert wurde
+- E-Mail-Benachrichtigung senden, wenn Anreicherung wichtige Kaufsignale aufdeckt
+
+## Anwendungsfälle zur Datendistribution
+
+### Verwaltung von Newsletter-Abonnenten
+
+**Problem**: Sie möchten Marketing-E-Mails an spezifische Segmente Ihrer CRM-Daten mit spezialisierten E-Mail-Tools senden.
+
+**Lösung**: Exportieren Sie Abonnentenlisten bei Bedarf auf Ihre E-Mail-Marketing-Plattform.
+
+**Setup**: Create a view in Twenty with all newsletter recipients
+
+**Trigger**: Launch Manually (when no record is selected)
+
+**Aktionen**:
+
+- Datensätze anhand der Newsletter-Sichtkriterien durchsuchen
+- Code-Aktion zum Formatieren von E-Mail-Adressen für Ihre E-Mail-Plattform
+- HTTP-Anfrage, um Abonnenten zu Ihrem E-Mail-Marketing-Tool hinzuzufügen
+- Datensatz für Kampagnen-Tracking erstellen
+- Bestätigung per E-Mail an das Marketing-Team senden
+
+### E-Mail-Sequenz-Auslöser
+
+**Problem**: Sie möchten anspruchsvolle E-Mail-Sequenzen basierend auf CRM-Ereignissen mit speziellen E-Mail-Automatisierungstools auslösen.
+
+**Lösung**: Senden Sie neue Leads oder Kunden an Ihre E-Mail-Automatisierungsplattform, wenn bestimmte Ereignisse eintreten.
+
+**Auslöser**: Datensatz wird erstellt (Personenobjekt mit spezifischen Kriterien)
+
+**Aktionen**:
+
+- Code-Aktion zur Bestimmung der geeigneten E-Mail-Sequenz
+- HTTP-Anfrage, um Kontakt zur E-Mail-Automatisierungsplattform hinzuzufügen
+- Datensatz aktualisieren, um die Sequenzregistrierung zu verfolgen
+- Datensatz für Nachverfolgungsaufgabe zur Überwachung des Engagements erstellen
+
+### Lead-Scoring-Integration
+
+**Problem**: Sie benötigen ein anspruchsvolles Lead-Scoring, das CRM-Daten mit externen Signalen kombiniert.
+
+**Lösung**: Senden Sie Lead-Daten an externe Bewertungstools oder implementieren Sie Bewertungslogik innerhalb von Workflows.
+
+**Option 1 - Externes Tool**:
+
+**Auslöser**: Datensatz wird aktualisiert (Personenobjekt)
+
+**Aktionen**:
+
+- HTTP-Anfrage, um Lead-Daten an Bewertungsplattform zu senden
+- Code-Aktion zum Verarbeiten der Bewertungsantwort
+- Datensatz mit Lead-Bewertung aktualisieren
+- Datensatz für Verkaufsaufgabe erstellen, falls Bewertung den Schwellenwert überschreitet
+
+**Option 2 - Interne Logik**:
+
+**Auslöser**: Datensatz wird aktualisiert (Personenobjekt)
+
+**Aktionen**:
+
+- Code-Aktion mit Bewertungsalgorithmus (Unternehmensgröße, Branche, Verhalten)
+- Datensatz mit berechneter Bewertung aktualisieren
+- E-Mail-Benachrichtigung an Verkaufsmitarbeiter für hoch bewertete Leads senden
+
+### Rechnungsstellung
+
+**Problem**: Wenn Geschäfte abgeschlossen werden, muss Ihr Abrechnungssystem mit Kunden- und Geschäftsinformationen aktualisiert werden.
+
+**Lösung**: Senden Sie automatisch Geschäftsdaten an Ihr Rechnungssystem, wenn Chancen gewonnen werden.
+
+**Auslöser**: Datensatz wird aktualisiert (Chancenobjekt, Phase = "Geschlossen Gewonnen")
+
+**Aktionen**:
+
+- Datensätze durchsuchen, um vollständige Kundeninformationen zu erhalten
+- Code-Aktion zur Formatierung von Daten für Abrechnungssystem
+- HTTP Request to create customer in billing platform
+- HTTP-Anfrage für Rechnungserstellung
+- Datensatz aktualisieren, um Rechnungsreferenz zu speichern
+- E-Mail an das Finanzteam mit Rechnungsdetails senden
+
+## Erweiterte Integrationsmuster
+
+### Bidirektionale Synchronisation
+
+**Problem**: Sie müssen Daten zwischen Twenty und einem anderen System in beide Richtungen synchronisieren.
+
+**Lösung**: Kombinieren Sie geplante Workflows mit Webhook-Auslösern für Echtzeit-Synchronisation.
+
+**Von Twenty zum externen System**:
+
+**Auslöser**: Datensatz wird aktualisiert (jedes relevante Objekt)
+
+**Aktionen**:
+
+- HTTP-Anfrage zur Aktualisierung des externen Systems
+- Datensatz aktualisieren, um Sync-Status und Zeitstempel zu verfolgen
+
+**Vom externen System zu Twenty**:
+
+**Auslöser**: Webhook (vom externen System)
+
+**Aktionen**:
+
+- Datensätze durchsuchen, um passenden Datensatz zu finden
+- Datensatz mit neuen Daten aus dem externen System aktualisieren
+- Datensatz für Konfliktlösungsaufgabe erstellen falls erforderlich
+
+### Mehrstufige Datenverarbeitung
+
+**Problem**: Daten aus externen Quellen benötigen eine komplexe Verarbeitung, bevor sie in Twenty verwendet werden können.
+
+**Lösung**: Verwenden Sie Code-Aktionen für die Datenumwandlung und Validierung.
+
+**Trigger**: Webhook or On a Schedule
+
+**Aktionen**:
+
+- Code-Aktion, um das eingehende Datenformat zu validieren
+- Code-Aktion, um die Datenstruktur zu transformieren
+- Code-Aktion, um Geschäftsregeln und Berechnungen anzuwenden
+- Datensätze durchsuchen, um Duplikate zu überprüfen
+- Datensatz mit verarbeiteten Daten erstellen oder aktualisieren
+- E-Mail-Warnung senden, falls Datenqualitätsprobleme festgestellt werden
+
+## Implementierungstipps
+
+- API-Schlüssel sicher speichern unter Einstellungen → API & Webhooks
+- Verwenden Sie HTTPS für alle externen API-Aufrufe
+- Beachten Sie die API-Ratenlimits - verwenden Sie geplante Workflows, wenn möglich
+- Erwägen Sie Batch-Updates "nach Zeitplan", wenn keine Echtzeitverarbeitung erforderlich ist
+- Denken Sie an das Limit von 100 gleichzeitigen Workflows pro Arbeitsbereich - verwenden Sie "Bulk-Verfügbarkeit" für manuelle Auslöser bei der Bearbeitung mehrerer Datensätze (siehe [Workflow-Features](/l/de/user-guide/workflows/workflow-features) für Details)
+- Testen Sie mit Beispieldaten, bevor Sie Workflows aktivieren
+
+Bei Problemen bei der Integration, sehen Sie sich unser [Workflow-Troubleshooting](/l/de/user-guide/workflows/workflow-troubleshooting) Leitfaden an. Für Hilfe bei der Umsetzung komplexer Integrationen, ziehen Sie unsere [Professional Services](/l/de/user-guide/workflows/professional-services) in Betracht.

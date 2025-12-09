@@ -7,6 +7,7 @@ import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGr
 import { convertCoreViewKeyToViewKey } from '@/views/utils/convertCoreViewKeyToViewKey';
 import { convertCoreViewOpenRecordInToViewOpenRecordIn } from '@/views/utils/convertCoreViewOpenRecordInToViewOpenRecordIn';
 import { convertCoreViewTypeToViewType } from '@/views/utils/convertCoreViewTypeToViewType';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const convertCoreViewToView = (
   coreView: CoreViewWithRelations,
@@ -37,7 +38,7 @@ export const convertCoreViewToView = (
       convertCoreViewFilterGroupToViewFilterGroup,
     ),
     viewSorts: coreView.viewSorts,
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: coreView.mainGroupByFieldMetadataId ?? null,
     kanbanAggregateOperation: coreView.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       coreView.kanbanAggregateOperationFieldMetadataId ?? null,
@@ -47,6 +48,8 @@ export const convertCoreViewToView = (
     icon: coreView.icon,
     openRecordIn: convertedOpenRecordIn,
     anyFieldFilterValue: coreView.anyFieldFilterValue ?? null,
+    visibility: coreView.visibility ?? ViewVisibility.UNLISTED,
+    createdByUserWorkspaceId: coreView.createdByUserWorkspaceId,
     __typename: 'View',
   };
 };

@@ -8,6 +8,8 @@ import {
   ViewKey as CoreViewKey,
   ViewOpenRecordIn as CoreViewOpenRecordIn,
   ViewType as CoreViewType,
+  ViewVisibility as CoreViewVisibility,
+  ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -26,7 +28,7 @@ export const mockedViewsData: View[] = [
     type: ViewType.Table,
     icon: 'IconSkyline',
     key: ViewKey.Index,
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: null,
     kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
@@ -37,6 +39,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -46,7 +49,7 @@ export const mockedViewsData: View[] = [
     type: ViewType.Table,
     icon: 'IconPerson',
     key: ViewKey.Index,
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: null,
     kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
@@ -57,6 +60,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -66,7 +70,7 @@ export const mockedViewsData: View[] = [
     type: ViewType.Kanban,
     icon: 'IconOpportunity',
     key: ViewKey.Index,
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: null,
     kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
@@ -77,6 +81,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -86,7 +91,7 @@ export const mockedViewsData: View[] = [
     type: ViewType.Table,
     icon: 'IconSkyline',
     key: null,
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: null,
     kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
@@ -97,6 +102,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
 ];
@@ -119,6 +125,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
     __typename: 'CoreView',
   },
   {
@@ -138,6 +146,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
     __typename: 'CoreView',
   },
   {
@@ -157,6 +167,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
     __typename: 'CoreView',
   },
   {
@@ -176,6 +188,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
     __typename: 'CoreView',
   },
 ];

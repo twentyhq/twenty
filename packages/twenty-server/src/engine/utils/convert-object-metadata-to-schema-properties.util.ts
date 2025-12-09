@@ -1,10 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import {
+  FieldMetadataType,
   type FieldMetadataSettings,
   NumberDataType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';

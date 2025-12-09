@@ -1,0 +1,382 @@
+---
+title: crwdns59094:0crwdne59094:0
+image: crwdns59096:0crwdne59096:0
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## crwdns59098:0crwdne59098:0
+
+crwdns64006:0{db_container_name_or_id}crwdnd64006:0{postgres_user}crwdne64006:0
+
+crwdns64008:0{db_container_name_or_id}crwdnd64008:0{postgres_user}crwdne64008:0
+
+crwdns59104:0crwdne59104:0
+
+1. crwdns59106:0crwdne59106:0
+
+2. crwdns59108:0crwdne59108:0 crwdns59110:0crwdne59110:0
+
+3. crwdns59112:0crwdne59112:0
+
+crwdns59114:0crwdne59114:0
+
+crwdns59116:0crwdne59116:0
+
+## crwdns59118:0crwdne59118:0
+
+## crwdns59120:0crwdne59120:0
+
+crwdns59122:0crwdne59122:0 crwdns59124:0crwdne59124:0
+
+## crwdns59126:0crwdne59126:0
+
+### crwdns59128:0crwdne59128:0
+
+crwdns59130:0crwdne59130:0
+
+crwdns59132:0crwdne59132:0
+
+crwdns59134:0crwdne59134:0 crwdns59136:0crwdne59136:0
+
+```bash
+yarn command:prod cache:flush
+```
+
+### crwdns59138:0crwdne59138:0
+
+crwdns59140:0crwdne59140:0
+
+crwdns59142:0crwdne59142:0
+
+### crwdns59144:0crwdne59144:0
+
+crwdns59146:0crwdne59146:0
+
+crwdns59148:0crwdne59148:0
+
+```bash
+yarn command:prod cache:flush
+```
+
+crwdns59150:0crwdne59150:0
+
+### crwdns59152:0crwdne59152:0
+
+crwdns59154:0crwdne59154:0
+
+#### crwdns59156:0crwdne59156:0
+
+crwdns59158:0crwdne59158:0
+crwdns59160:0crwdne59160:0 crwdns59162:0crwdne59162:0
+
+### crwdns59164:0crwdne59164:0
+
+crwdns59166:0crwdne59166:0
+
+crwdns59168:0crwdne59168:0
+
+crwdns59170:0crwdne59170:0
+
+crwdns59172:0$APP_VERSIONcrwdne59172:0
+
+crwdns59174:0crwdne59174:0
+
+#### crwdns59176:0crwdne59176:0
+
+crwdns59178:0crwdne59178:0
+
+### crwdns59180:0crwdne59180:0
+
+crwdns59182:0crwdne59182:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### crwdns59184:0crwdne59184:0
+
+crwdns59186:0crwdne59186:0
+crwdns59188:0crwdne59188:0
+
+### crwdns59190:0crwdne59190:0
+
+crwdns59192:0crwdne59192:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### crwdns59194:0crwdne59194:0
+
+crwdns59196:0crwdne59196:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### crwdns59198:0crwdne59198:0
+
+crwdns59200:0crwdne59200:0
+crwdns59202:0https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.ymlcrwdne59202:0
+
+### crwdns59204:0crwdne59204:0
+
+crwdns59206:0crwdne59206:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### crwdns59208:0crwdne59208:0
+
+crwdns59210:0crwdne59210:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+crwdns59212:0crwdne59212:0
+
+#### crwdns59214:0crwdne59214:0
+
+crwdns59216:0crwdne59216:0
+
+#### crwdns59218:0crwdne59218:0
+
+crwdns59220:0crwdne59220:0
+
+1. crwdns59222:0crwdne59222:0
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+crwdns59224:0crwdne59224:0
+
+2. crwdns59226:0https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.ymlcrwdne59226:0
+
+3. crwdns59228:0crwdne59228:0
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### crwdns59230:0crwdne59230:0
+
+crwdns59232:0crwdne59232:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+crwdns59234:0crwdne59234:0
+
+- crwdns59236:0crwdne59236:0
+- crwdns59238:0crwdne59238:0
+
+### crwdns59240:0crwdne59240:0
+
+crwdns59242:0crwdne59242:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+crwdns59244:0crwdne59244:0
+
+- crwdns59246:0crwdne59246:0
+
+### crwdns59248:0crwdne59248:0
+
+crwdns59250:0crwdne59250:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+crwdns59252:0crwdne59252:0
+
+- crwdns59254:0crwdne59254:0
+
+### crwdns59256:0crwdne59256:0
+
+crwdns59258:0crwdne59258:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+crwdns59260:0crwdne59260:0
+
+crwdns59262:0crwdne59262:0
+
+- crwdns59264:0crwdne59264:0
+
+### crwdns59266:0crwdne59266:0
+
+crwdns59268:0crwdne59268:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+crwdns59270:0crwdne59270:0
+
+crwdns59272:0crwdne59272:0
+
+- crwdns59274:0crwdne59274:0
+- crwdns59276:0crwdne59276:0
+
+crwdns59278:0crwdne59278:0
+crwdns59280:0crwdne59280:0
+crwdns59282:0crwdne59282:0
+
+### crwdns59284:0crwdne59284:0
+
+crwdns59286:0crwdne59286:0
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+crwdns59288:0crwdne59288:0
+crwdns59290:0crwdne59290:0
+
+crwdns59292:0crwdne59292:0
+crwdns59294:0${TAG}crwdne59294:0
+
+### crwdns59296:0crwdne59296:0
+
+crwdns59298:0crwdne59298:0
+
+crwdns59300:0crwdne59300:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+crwdns59302:0crwdne59302:0
+
+crwdns59304:0crwdne59304:0
+
+crwdns59306:0crwdne59306:0
+
+- crwdns59308:0crwdne59308:0
+- crwdns59310:0crwdne59310:0
+
+crwdns59312:0crwdne59312:0
+
+crwdns59314:0crwdne59314:0
+
+- crwdns59316:0crwdne59316:0
+- crwdns59318:0crwdne59318:0
+
+crwdns59320:0crwdne59320:0
+
+crwdns59322:0crwdne59322:0
+
+crwdns59324:0https://developers.google.com/peoplecrwdne59324:0
+
+### crwdns59326:0crwdne59326:0
+
+crwdns59328:0crwdne59328:0
+
+crwdns59330:0crwdne59330:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+crwdns59332:0crwdne59332:0
+
+### crwdns59334:0crwdne59334:0
+
+crwdns59336:0crwdne59336:0
+
+crwdns64010:0crwdne64010:0 crwdns59340:0https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.ymlcrwdne59340:0
+crwdns59342:0crwdne59342:0
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+crwdns59344:0crwdne59344:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+crwdns59346:0crwdne59346:0
+
+### crwdns59348:0crwdne59348:0
+
+crwdns59350:0crwdne59350:0
+
+crwdns59352:0crwdne59352:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+crwdns59354:0crwdne59354:0
+
+### crwdns59356:0crwdne59356:0
+
+crwdns59358:0crwdne59358:0
+
+crwdns59360:0crwdne59360:0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+crwdns59362:0crwdne59362:0
+crwdns59364:0crwdne59364:0
+
+### crwdns59366:0crwdne59366:0
+
+crwdns59368:0crwdne59368:0
+
+crwdns59370:0crwdne59370:0
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+crwdns59372:0crwdne59372:0
+crwdns59374:0crwdne59374:0
+crwdns59376:0crwdne59376:0
+
+
+
+

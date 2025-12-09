@@ -35,7 +35,7 @@
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
-        "main": "packages/twenty-server/dist/src/main.js",
+        "main": "packages/twenty-server/dist/main.js",
         "tsConfig": "packages/twenty-server/tsconfig.json",
         "outputPath": "packages/twenty-server/dist",
         "updateBuildableProjectDepsInPackageJson": true
@@ -44,17 +44,18 @@
     "typecheck": {},
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": ["typecheck", "build"],
+      "cache": false,
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start --watch"
+        "command": "NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start"
+        "command": "NODE_ENV=development nest start"
       }
     },
     "start:ci-if-needed": {
@@ -88,14 +89,14 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/command/command.js"
       }
     },
     "command-no-deps": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/command/command.js"
+        "command": "node dist/command/command.js"
       }
     },
     "worker": {
@@ -103,7 +104,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/src/queue-worker/queue-worker.js"
+        "command": "node dist/queue-worker/queue-worker.js"
       }
     },
     "typeorm": {

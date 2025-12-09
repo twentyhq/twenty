@@ -1,0 +1,54 @@
+---
+title: 選択する
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+ユーザーが事前定義されたオプションのリストから値を選択できるようにします。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| プロパティ     | タイプ    | 説明                                                                                                                                                       |
+| --------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | string | 追加のスタイリング用のオプションのCSSクラス                                                                                                                                  |
+| disabled  | ブール型   | `true` に設定すると、コンポーネントとのユーザーインタラクションが無効になります。                                                                                                             |
+| ラベル       | string | `選択` コンポーネントの目的を説明するラベル                                                                                                                                  |
+| onChange  | 機能     | 選択された値が変更されたときに呼び出される機能                                                                                                                                  |
+| オプション     | array  | Represents the options available for the `Selected` component. 各オブジェクトが `value`（一意の識別子）、`label`（一意の識別子）、およびオプションの `アイコン` を持つオブジェクトの配列です。 |
+| 値         | string | 現在選択されている値を表します。 現在選択されている値を表します。 その `options` 配列の `value` プロパティのいずれかと一致する必要があります。                                                                       |
+
+</Tab>
+</Tabs>

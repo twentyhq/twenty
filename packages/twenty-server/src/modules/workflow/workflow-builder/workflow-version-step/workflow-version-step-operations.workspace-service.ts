@@ -6,10 +6,14 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -25,7 +29,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -52,9 +55,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -89,7 +95,22 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         if (isDefined(agent)) {
+          const roleTarget = await this.roleTargetRepository.findOne({
+            where: {
+              agentId: agent.id,
+              workspaceId,
+            },
+          });
+
           await this.agentRepository.delete({ id: agent.id, workspaceId });
+
+          if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
+            await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
+              roleId: roleTarget.roleId,
+              roleTargetId: roleTarget.id,
+              workspaceId,
+            });
+          }
         }
         break;
       }
@@ -336,6 +357,32 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        // Get workflow version to use workflow ID and name in agent name
+        const workflowVersion =
+          await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+            workflowVersionId,
+            workspaceId,
+          });
+
+        const newAgent = await this.agentRepository.save({
+          name: 'workflow-service-agent' + v4(),
+          label: 'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
+          icon: 'IconRobot',
+          description: '',
+          prompt: '',
+          modelId: DEFAULT_SMART_MODEL,
+          responseFormat: { type: 'text' },
+          workspaceId,
+          isCustom: true,
+        });
+
+        if (!isDefined(newAgent)) {
+          throw new WorkflowVersionStepException(
+            'Failed to create AI Agent step',
+            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
+          );
+        }
+
         return {
           builtStep: {
             ...baseStep,
@@ -344,7 +391,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                agentId: '',
+                agentId: newAgent.id,
                 prompt: '',
               },
             },
@@ -433,14 +480,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const objectMetadataInfo =
-            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          const { flatObjectMetadata, flatFieldMetadataMaps } =
+            await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
               field.settings.objectName,
               workspaceId,
             );
 
-          const relationFieldsNames = Object.values(
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
+          const relationFieldsNames = getFlatFieldsFromFlatObjectMetadata(
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           )
             .filter((field) => field.type === FieldMetadataType.RELATION)
             .map((field) => field.name);
@@ -474,7 +522,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }, {});
   }
 
-  async createStepForDuplicate({
+  async cloneStep({
     step,
     workspaceId,
   }: {
@@ -482,8 +530,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     const duplicatedStepPosition = {
-      x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
-      y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      x: step.position?.x ?? 0,
+      y: step.position?.y ?? 0,
     };
 
     switch (step.type) {
@@ -498,7 +546,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {
@@ -511,16 +558,80 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.AI_AGENT: {
+        const existingAgent = await this.agentRepository.findOne({
+          where: { id: step.settings.input.agentId, workspaceId },
+        });
+
+        if (!isDefined(existingAgent)) {
+          throw new WorkflowVersionStepException(
+            'Agent not found for cloning',
+            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
+          );
+        }
+
+        const clonedAgent = await this.agentRepository.save({
+          name: 'workflow-service-agent' + v4(),
+          label: existingAgent.label,
+          icon: existingAgent.icon,
+          description: existingAgent.description,
+          prompt: existingAgent.prompt,
+          modelId: existingAgent.modelId,
+          responseFormat: existingAgent.responseFormat,
+          workspaceId,
+          isCustom: true,
+          modelConfiguration: existingAgent.modelConfiguration,
+        });
+
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              agentId: clonedAgent.id,
+            },
+          },
+        };
+      }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default: {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
       }
     }
+  }
+
+  markStepAsDuplicate({ step }: { step: WorkflowAction }): WorkflowAction {
+    return {
+      ...step,
+      name: `${step.name} (Duplicate)`,
+      position: {
+        x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+        y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      },
+    };
   }
 
   async createEmptyNodeForIteratorStep({

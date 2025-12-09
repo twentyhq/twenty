@@ -1,0 +1,88 @@
+---
+title: App-verktøytips
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+En kort melding som viser ekstra informasjon når en bruker samhandler med et element.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                                          | Beskrivelse                                                                                                                                                                                                             |
+| ----------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>                           | Valgfri CSS-klasse for ekstra styling                                                                                                                                                                                   |
+| anchorSelect            | CSS-selektor                                  | Selektor for verktøytips-ankeret (elementet som utløser verktøytips)                                                                                                                                 |
+| innhold                 | <span>streng</span>                           | Innholdet du ønsker å vise i verktøytipset                                                                                                                                                                              |
+| delayHide               | nummer                                        | Forsinkelsen i sekunder før verktøytipset skjules etter at markøren forlater ankeren                                                                                                                                    |
+| forskyvning             | nummer                                        | Forskyvningen i piksler for plassering av verktøytipset                                                                                                                                                                 |
+| noArrow                 | <span>boolean</span>                          | Hvis `true`, skjuler pilen på verktøytipset                                                                                                                                                                             |
+| isOpen                  | <span>boolean</span>                          | Hvis `true`, er verktøytipset åpent som standard                                                                                                                                                                        |
+| plassering              | `PlacesType` streng fra `react-tooltip`       | Angir plasseringen av verktøytipset. Verdier inkluderer `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, og `left-end` |
+| posisjonsstrategi       | `PositionStrategy` streng fra `react-tooltip` | Posisjonsstrategi for verktøytipset. Har to verdier: `absolutt` og `fast`                                                                                                               |
+
+</Tab>
+
+</Tabs>
+
+## Overflytende tekst med verktøytips
+
+Håndterer overflytende tekst og viser et verktøytips når teksten er overfylt.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                | Beskrivelse                                                |
+| ----------------------- | ------------------- | ---------------------------------------------------------- |
+| tekst                   | <span>streng</span> | Innholdet du ønsker å vise i det overflytende tekstområdet |
+
+</Tab>
+
+</Tabs>

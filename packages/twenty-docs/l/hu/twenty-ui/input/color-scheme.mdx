@@ -1,0 +1,73 @@
+---
+title: Színséma
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Színséma Kártya
+
+Különböző színsémákat képvisel, és kifejezetten világos és sötét témákhoz van kidolgozva.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok         | Típus                                   | Leírás                                                                                        | Alapértelmezett |
+| --------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------- | --------------- |
+| változat              | string                                  | A színséma változata. Opciók közé tartozik a `Sötét`, `Világos` és `Rendszer` | világos         |
+| kijelölt              | boolean                                 | Ha `true`, pipát jelenít meg annak jelzésére, hogy a színséma kiválasztva van                 |                 |
+| további tulajdonságok | `React.ComponentPropsWithoutRef<'div'>` | Alapvető HTML `div` elemtulajdonságok                                                         |                 |
+
+</Tab>
+
+</Tabs>
+
+## Színséma Választó
+
+Lehetővé teszi a felhasználók számára, hogy különböző színsémák közül válasszanak.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus      | Leírás                                                                                 |
+| ------------- | ---------- | -------------------------------------------------------------------------------------- |
+| érték         | `Színséma` | A jelenleg kiválasztott színséma                                                       |
+| onChange      | funkció    | A visszaolvasó funkció, amelyet meg akar hívni, amikor a felhasználó színsémát választ |
+
+</Tab>
+
+</Tabs>

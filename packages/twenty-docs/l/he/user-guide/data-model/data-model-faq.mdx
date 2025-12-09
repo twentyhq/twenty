@@ -1,0 +1,90 @@
+---
+title: שאלות נפוצות על מודל נתונים
+info: "שאלות הנשאלות לעיתים קרובות אודות קונפיגורציית מודל הנתונים, מגבלות ותכונות עתידיות."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: מודל נתונים גמיש שנועד לתמוך בתהליכים העסקיים הייחודיים שלך
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## ניהול אובייקטים
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+עדיין לא. הסידור של האובייקטים בניווט קבוע כרגע, אך פונקציה זו מתוכננת לשחרור בעתיד.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+כל האובייקטים הפעילים מופיעים בניווט. You can deactivate objects you don't need under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## יכולות שדות
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+שדות נוסחאות מגיעים ב**.Q1 2026** In the meantime, you can use workflows to calculate and update field values automatically.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+שדות מקוננים מגיעים ב**.Q1 2026** Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+שמות שדות קשר משפיעים על מבנה ה-API ולא יכולים להשתנות לאחר יצירתם. אם עליך לשנות שם של שדה קשר, תצטרך ליצור חדש ולמחוק את הישן.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+זה יוצר הגבלות כאשר הצורות אינן שונות, אבל משפר את חוויית המפתח. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+שמות שדות מסוימים כמו `Type` או `Application` שמורים לשימוש המערכת. בחר שמות חלופיים כמו `Category` או `Classification`.
+</Accordion>
+</AccordionGroup>
+
+## תכונות מתקדמות
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+קשרים רבים-רבים מגיעים ב**.Q1 2026** כרגע, צור אובייקט ביניים עם שני קשרים אחד-יותר כפתרון מעקף.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+קשרי Morph Many מאפשרים לאובייקט אחד להיות קשור לסוגי אובייקטים שונים. לדוגמה, הזדמנות יכולה להיות קשורה לאדם או לחברה. תכונה זו זמינה כעת.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+סידור מחדש של שדות יהיה זמין עם תבניות מותאמות ב-**Q4 2025**. כרגע, השדות מופיעים בסדר אלפביתי.
+</Accordion>
+</AccordionGroup>
+
+## גישה והרשאות
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+פנה למנהל סביבת העבודה שלך. הגישה למודל הנתונים מוגבלת בדרך כלל למנהלים בלבד.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## צריך יותר עזרה?
+
+בדוק את [שירותי ההטמעה](/l/he/user-guide/getting-started/implementation-services) שלנו לקבלת עזרה עם עיצוב מודל נתונים מורכב.
+

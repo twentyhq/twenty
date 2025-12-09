@@ -1,0 +1,45 @@
+---
+title: Tilpassede objekter
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Objekter er strukturer som lar deg lagre data (poster, attributter og verdier) spesifikke for en organisasjon. Twenty provides both standard and custom objects.
+
+Standardobjekter er innebygde objekter med et sett attributter tilgjengelig for alle brukere. Eksempler på standardobjekter i Twenty inkluderer Selskap og Person. Standardobjekter har standardfelter som også er tilgjengelige for alle Twenty-brukere, som Selskap.displayName.
+
+Tilpassede objekter er objekter som du kan opprette for å lagre informasjon som er unik for din organisasjon. De er ikke innebygd; medlemmer av arbeidsområdet ditt kan opprette og tilpasse tilpassede objekter for å holde informasjon som standardobjekter ikke egner seg til.
+
+## Overordnet skjema
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Hvordan det fungerer
+
+Tilpassede objekter kommer fra metadata-tabeller som bestemmer formen, navnet og typen på objektene. All denne informasjonen finnes i metadata-skjemaets database, bestående av tabeller:
+
+- **DataSource**: Detaljer om hvor dataene er til stede.
+- **Object**: Beskriver objektet og kobler til en DataSource.
+- **Field**: Skisserer et objekts felt og kobler til objektet.
+
+For å legge til et tilpasset objekt vil arbeidsplassmedlemmet foreta forespørsel til /metadata API. Dette oppdaterer metadataene tilsvarende og beregner et GraphQL-skjema basert på metadata, som lagres i en GQL-cache for senere bruk.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+For å hente data innebærer prosessen å gjøre forespørsler gjennom /graphql-endepunktet og sende dem gjennom Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

@@ -1,0 +1,60 @@
+---
+title: Објекти
+info: "Сазнајте више о стандардним објектима и како да креирате прилагођене објекте за потребе вашег пословања."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Флексибилан модел података дизајниран тако да подржава ваше јединствене пословне процесе.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Стандардни објекти
+
+Стандардни објекти су унапред дефинисани ентитети у вашем радном простору који ће вам помоћи да започнете. They're part of a shared data model accessible to all users of Twenty. Можете их користити такве какве јесу, прилагодити их или их деактивирати.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Личности
+
+The `People` object stores your contacts. Укључује детаље о контактима и историју интеракција, тако да можете видети све интеракције са купцима на једном месту.
+
+### Компанија
+
+The `Companies` object stores your business accounts. Укључује детаље попут индустрије, величине и локације. Companies connect to both `People` and `Opportunities` objects.
+
+### Прилике
+
+The `Opportunities` object stores deal-related data. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. Можете погледати ваш продајни канал у канбан распореду.
+
+## Прилагођени објекти
+
+Прилагођени објекти омогућавају вам да унесете јединствене информације за вашу организацију које стандардни објекти не могу обрадити. На пример, ако сте SpaceX, можда ћете желети да креирате прилагођени објекат за Ракете и Лансирања.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Креирање новог прилагођеног објекта
+
+Да бисте креирали нови прилагођени објекат:
+
+1. Идите на Подешавања у бочној траци са леве стране.
+2. Under Workspace, go to Data model. Овде можете видети преглед свих постојећих Стандардних и Прилагођених објеката (и активних и искључених).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Кликните на `+ Нови објекат` на врху. Унесите име (уједнини и множини), изаберите икону и додајте опис за ваш прилагођени објекат и притисните Сачувај (у горњем десном углу). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+<Warning>
+The singular and plural names must be different. Ово је неопходно да би наш GraphQL API исправно радио.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Once you create your custom object, you'll be able to manage it. Можете изменити име, икону и опис, прегледати различита поља и додати више поља.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Напомена:** Ако нисте сигурни да ли је потребан нови објекат или поље, погледајте [овај чланак](/l/sr/user-guide/data-model/customize-your-data-model) за смернице о дизајнирању вашег модела података.
+

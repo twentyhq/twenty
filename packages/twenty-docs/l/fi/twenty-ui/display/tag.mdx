@@ -1,0 +1,44 @@
+---
+title: Tunniste
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Komponentti sisällön visuaaliseen luokitteluun tai merkitsemiseen.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ominaisuudet | Tyyppi     | Kuvaus                                                                                                                                                     |
+| ------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className    | merkkijono | Valinnainen nimi lisätyyliksi                                                                                                                              |
+| väri         | merkkijono | Tunnisteen väri. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+| teksti       | merkkijono | Tunnisteen sisältö                                                                                                                                         |
+| onClick      | toiminto   | Valinnainen funktio, jota kutsutaan, kun käyttäjä napsauttaa tunnistetta                                                                                   |
+
+</Tab>
+
+</Tabs>

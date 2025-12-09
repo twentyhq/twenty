@@ -72,12 +72,12 @@ export class RelationNestedQueries {
       this.internalContext,
     );
 
-    const objectMetadataMap = this.internalContext.objectMetadataMaps;
-
     const relationConnectQueryConfigs = computeRelationConnectQueryConfigs(
       entities,
       objectMetadata,
-      objectMetadataMap,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+      this.internalContext.flatIndexMaps,
       relationConnectQueryFieldsByEntityIndex,
     );
 

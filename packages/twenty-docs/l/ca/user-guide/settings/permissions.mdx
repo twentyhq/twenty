@@ -1,0 +1,106 @@
+---
+title: Permisos
+info: "Aprèn a controlar l'accés: assigna rols i estableix permisos."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Configura els ajustos i preferències del teu espai de treball Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+El sistema de permisos de Twenty et permet controlar l'accés a tres àrees principals:
+
+- **Objectes i Camps**: Controla qui pot veure, editar o eliminar registres i camps individuals
+- **Configuracions**: Gestiona l'accés a la configuració de l'espai de treball i les funcions administratives
+- **Accions**: Controla accions generals de l'espai de treball com importar dades o enviar correus electrònics
+
+## Create a Role
+
+Per crear un nou rol:
+
+1. Ves a **Configuració → Rols**
+2. A sota de **Tots els Rols**, fes clic a **+ Crear Rol**
+3. Introdueix un nom de rol
+4. A la pestanya per defecte de **Permisos**, configura permisos
+5. Fes clic a **Desa** per acabar
+
+## Delete a Role
+
+Per eliminar un rol:
+
+1. Ves a **Configuració → Rols**
+2. Fes clic al rol que vols eliminar
+3. Obre la pestanya de **Configuració** i després fes clic a **Eliminar Rol**
+4. Fes clic a **Confirma** al modal
+
+Nota: Si s'elimina un rol, qualsevol membre de l'espai de treball assignat a aquest rol serà automàticament reassignat al rol per defecte. Tots, excepte el rol **Admin**, poden ser eliminats. Sempre hi ha d'haver almenys un membre assignat al rol **Admin**.
+
+## Assigna Rols als Membres
+
+### Visualitza Assignacions Actuals
+
+- Ves a **Configuració → Rols**
+- Veure tots els rols i quants membres estan assignats a cadascun
+- Veure quins membres tenen quins rols
+
+### Assigna un Rol a un Membre
+
+1. Ves a **Configuració → Rols**
+2. Fes clic al rol que vols assignar
+3. Obre la pestanya **Assignació**
+4. Fes clic a **+ Assigna a membre**
+5. Selecciona el membre de l'espai de treball de la llista
+6. Confirma l'assignació
+
+### Establir Rol per Defecte
+
+1. Ves a **Configuració → Rols**
+2. A la secció **Opcions**, busca **Rol per Defecte**
+3. Selecciona quin rol haurien de rebre automàticament els nous membres
+4. Els nous membres de l'espai de treball seran assignats a aquest rol quan s'incorporin
+
+**Nota**: Només pots assignar rols als membres existents de l'espai de treball. Per convidar nous membres, fes servir [Gestió de Membres](/l/ca/user-guide/settings/member-management).
+
+## Personalitza Permisos
+
+Els permisos determinen què pot accedir o modificar cada rol dins del teu espai de treball, inclosos registres d'objectes de l'espai de treball, configuracions i accions.
+
+### Permisos d'Objecte i Camp
+
+Controla l'accés a registres i camps individuals:
+
+#### Permisos a nivell d'objecte
+
+- A sota de **Tots els Objectes**, aplica permisos com **Veure Registre**, **Editar Registres**, **Eliminar Registres**, o **Destruir Registres** a tots els objectes
+- A sota de **Permisos a Nivell d'Objecte**, configura excepcions per a objectes individuals. Aquests anul·len les configuracions de **Tots els Objectes**
+
+#### Permisos a Nivell de Camp
+
+- Configura permisos per a camps individuals dins de cada objecte
+- Controla qui pot **Veure Camp**, **Editar Camp**, o tenir **Sense Accés** a camps específics
+- Els permisos de camp funcionen igual que els permisos d'objecte amb herències i anul·lacions
+
+#### Gestió de Substitucions de Permisos
+
+To override parent permissions and apply stricter rules:
+
+- Fes clic a **X** per eliminar la regla heretada
+- Selecciona els permisos específics per a l'objecte o camp seleccionat
+- Fes clic a la icona taronja de **Desfer** (fletxa circular) per revertir els canvis
+
+En acabar, fes clic a **Acabar**, després **Desa** un cop redirigit a la pàgina del rol.
+
+### Permisos de Configuració de l'Espai de Treball
+
+Controla l'accés a configuracions de l'espai de treball de dues maneres:
+
+- Activa **Tots els Accessos de Configuració** per concedir accés complet
+- Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+
+### Permisos d'Accions de l'Espai de Treball
+
+Controla l'accés a les accions generals de l'espai de treball:
+
+- Activa **Tots els Accessos de l'Aplicació** per concedir permisos complets
+- O habilita accions individuals com **Enviar correu electrònic**, **Importar CSV**, i **Exportar CSV**

@@ -87,6 +87,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         isConnectable={isNodeConnectable}
+        selected={selected}
       >
         <WorkflowDiagramHandleTarget isConnectable={isNodeConnectable} />
 
@@ -96,10 +97,15 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
-            <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
+            <WorkflowNodeLabel selected={selected}>
+              {capitalize(data.nodeType)}
+            </WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle highlight={nodeTitleHighlighted}>
+          <WorkflowNodeTitle
+            highlight={nodeTitleHighlighted}
+            selected={selected}
+          >
             {data.name}
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
@@ -108,6 +114,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       {!data.hasNextStepIds && !isConnectionInProgress && (
         <StyledAddStepButtonContainer
           shouldDisplay={
+            data.nodeType === 'trigger' ||
             isHovered ||
             selected ||
             isNodeCreationStarted({ parentStepId: data.stepId })

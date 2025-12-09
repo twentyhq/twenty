@@ -1,0 +1,88 @@
+---
+title: Dica do Aplicativo
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Uma mensagem breve que exibe informações adicionais quando um usuário interage com um elemento.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props            | Tipo                                         | Descrição                                                                                                                                                                                                                               |
+| ---------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className        | Nome opcional para estilização adicional     | Classe CSS opcional para estilização adicional                                                                                                                                                                                          |
+| anchorSelect     | Seleção CSS                                  | Seletor para o âncora da dica (o elemento que aciona a dica)                                                                                                                                                         |
+| conteúdo         | Nome opcional para estilização adicional     | O conteúdo que deseja exibir na dica                                                                                                                                                                                                    |
+| delayHide        | número                                       | O atraso em segundos antes de ocultar a dica após o cursor deixar a âncora.                                                                                                                                             |
+| offset           | número                                       | O deslocamento em pixels para posicionar a dica.                                                                                                                                                                        |
+| noArrow          | booleano                                     | Se `true`, oculta a seta na dica.                                                                                                                                                                                       |
+| isOpen           | booleano                                     | Se `true`, a dica está aberta por padrão.                                                                                                                                                                               |
+| local            | string `PlacesType` de `react-tooltip`       | Especifica o posicionamento da dica. Os valores incluem `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, e `left-end`. |
+| positionStrategy | string `PositionStrategy` de `react-tooltip` | Estratégia de posição para a dica. Possui dois valores: `absolute` e `fixed`.                                                                                                           |
+
+</Tab>
+
+</Tabs>
+
+## Texto Overflow com Dica
+
+Lida com texto em excesso e exibe uma dica quando o texto transborda.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props | Tipo                                     | Descrição                                                                     |
+| ----- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| texto | Nome opcional para estilização adicional | O conteúdo que você deseja exibir na área de texto excessivo. |
+
+</Tab>
+
+</Tabs>
