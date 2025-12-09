@@ -9,7 +9,7 @@ import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/util
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { plural } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -165,6 +165,25 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
         const hasAggregateOperation = isDefined(aggregateOperation);
+
+        if (
+          configuration.__typename === 'AggregateChartConfiguration' &&
+          isDefined(configuration.ratioAggregateConfig)
+        ) {
+          const ratioField = objectMetadataItem?.fields.find(
+            (field) =>
+              field.id === configuration.ratioAggregateConfig?.fieldMetadataId,
+          );
+          const ratioOptionLabel =
+            ratioField?.options?.find(
+              (option) =>
+                option.value ===
+                configuration.ratioAggregateConfig?.optionValue,
+            )?.label ??
+            capitalize(configuration.ratioAggregateConfig.optionValue);
+
+          return `${aggregateField?.label ?? ''} (${t`Ratio`}: ${ratioOptionLabel})`;
+        }
 
         return `${aggregateField?.label ?? ''}${
           hasAggregateLabel && hasAggregateOperation

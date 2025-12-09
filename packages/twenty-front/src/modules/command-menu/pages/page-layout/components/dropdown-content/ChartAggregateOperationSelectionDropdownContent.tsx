@@ -178,14 +178,13 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
         >
           {filteredAggregateOperationsWithLabels.map((item) => {
             const operation = item.operation;
+            const currentConfiguration = widgetInEditMode.configuration;
+            const isCurrentlyRatio =
+              currentConfiguration?.__typename ===
+                'AggregateChartConfiguration' &&
+              isDefined(currentConfiguration.ratioAggregateConfig);
 
             if (operation === DASHBOARD_AGGREGATE_OPERATION_RATIO) {
-              const currentConfiguration = widgetInEditMode.configuration;
-              const isCurrentlyRatio =
-                currentConfiguration?.__typename ===
-                  'AggregateChartConfiguration' &&
-                isDefined(currentConfiguration.ratioAggregateConfig);
-
               return (
                 <SelectableListItem
                   key={operation}
@@ -213,7 +212,9 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
 
             const isSelected =
               currentAggregateOperation ===
-              convertExtendedAggregateOperationToAggregateOperation(operation);
+                convertExtendedAggregateOperationToAggregateOperation(
+                  operation,
+                ) && !isCurrentlyRatio;
 
             return (
               <SelectableListItem

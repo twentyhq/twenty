@@ -17,11 +17,18 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { IconCheck, IconChevronLeft, IconX } from 'twenty-ui/display';
+import { MenuItemSelect, MenuItemSelectTag } from 'twenty-ui/navigation';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { AggregateOperations } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+
+type RatioOption = {
+  value: string;
+  label: string;
+  color?: ThemeColor;
+};
 
 export const ChartRatioOptionValueSelectionDropdownContent = ({
   currentFieldMetadataId,
@@ -70,7 +77,7 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
     return null;
   }
 
-  const getOptionsForField = () => {
+  const getOptionsForField = (): RatioOption[] => {
     if (selectedField.type === FieldMetadataType.BOOLEAN) {
       return [
         { value: 'true', label: t`True` },
@@ -86,12 +93,14 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
       return options.map((option) => ({
         value: option.value,
         label: option.label,
+        color: option.color as ThemeColor,
       }));
     }
 
     return [];
   };
 
+  const isBoolean = selectedField.type === FieldMetadataType.BOOLEAN;
   const options = getOptionsForField();
 
   const filteredOptions = filterBySearchQuery({
@@ -140,20 +149,44 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
           focusId={dropdownId}
           selectableItemIdArray={filteredOptions.map((item) => item.value)}
         >
-          {filteredOptions.map((option) => (
-            <SelectableListItem
-              key={option.value}
-              itemId={option.value}
-              onEnter={() => handleSelectOptionValue(option.value)}
-            >
-              <MenuItemSelect
-                text={option.label}
-                selected={currentRatioConfig?.optionValue === option.value}
-                focused={selectedItemId === option.value}
-                onClick={() => handleSelectOptionValue(option.value)}
-              />
-            </SelectableListItem>
-          ))}
+          {filteredOptions.map((option) => {
+            const isSelected = currentRatioConfig?.optionValue === option.value;
+            const isFocused = selectedItemId === option.value;
+
+            if (isBoolean) {
+              return (
+                <SelectableListItem
+                  key={option.value}
+                  itemId={option.value}
+                  onEnter={() => handleSelectOptionValue(option.value)}
+                >
+                  <MenuItemSelect
+                    text={option.label}
+                    LeftIcon={option.value === 'true' ? IconCheck : IconX}
+                    selected={isSelected}
+                    focused={isFocused}
+                    onClick={() => handleSelectOptionValue(option.value)}
+                  />
+                </SelectableListItem>
+              );
+            }
+
+            return (
+              <SelectableListItem
+                key={option.value}
+                itemId={option.value}
+                onEnter={() => handleSelectOptionValue(option.value)}
+              >
+                <MenuItemSelectTag
+                  text={option.label}
+                  color={option.color ?? 'transparent'}
+                  selected={isSelected}
+                  focused={isFocused}
+                  onClick={() => handleSelectOptionValue(option.value)}
+                />
+              </SelectableListItem>
+            );
+          })}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </>
