@@ -93,7 +93,7 @@ export class WorkspaceMemberPreQueryHookService {
     await this.onboardingService.setOnboardingCreateProfilePending({
       userId,
       workspaceId,
-      value: true,
+      value: false,
     });
   }
 }
