@@ -1,3 +1,6 @@
+import { NICE_STEP_MULTIPLIERS } from '@/page-layout/widgets/graph/constants/NiceStepMultipliers';
+import { NICE_STEP_NORMALIZED_VALUE_THRESHOLDS } from '@/page-layout/widgets/graph/constants/NiceStepNormalizedValueThresholds';
+
 const computeNiceStepInterval = (roughStepInterval: number): number => {
   if (roughStepInterval === 0) {
     return 0;
@@ -9,10 +12,13 @@ const computeNiceStepInterval = (roughStepInterval: number): number => {
   );
   const normalizedStepValue = roughStepInterval / stepMagnitude;
 
-  if (normalizedStepValue >= 5) return 10 * stepMagnitude;
-  if (normalizedStepValue >= 2) return 5 * stepMagnitude;
-  if (normalizedStepValue >= 1) return 2 * stepMagnitude;
-  return 1 * stepMagnitude;
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.LARGE)
+    return NICE_STEP_MULTIPLIERS.LARGE * stepMagnitude;
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.MEDIUM)
+    return NICE_STEP_MULTIPLIERS.MEDIUM * stepMagnitude;
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.SMALL)
+    return NICE_STEP_MULTIPLIERS.SMALL * stepMagnitude;
+  return NICE_STEP_MULTIPLIERS.DEFAULT * stepMagnitude;
 };
 
 export const computeValueTickValues = ({
