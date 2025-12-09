@@ -89,7 +89,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
 
   const viewIds = Object.keys(viewGroupsByViewId.flatViewGroupRecordByViewId);
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const flatViewGroupsToCreate = createdFieldMetadataOptions.flatMap(
     (option, createdOptionIndex) =>
       viewIds.map<FlatViewGroup>((viewId) => {
