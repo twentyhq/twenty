@@ -5,6 +5,12 @@ export const useBarChartTheme = () => {
 
   return {
     axis: {
+      domain: {
+        line: {
+          stroke: theme.border.color.light,
+          strokeWidth: 1,
+        },
+      },
       ticks: {
         line: {
           stroke: theme.border.color.light,
