@@ -53,6 +53,7 @@ export class CalendarEventParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',
         participantMatching,
+        workspaceId,
       });
     }
 
@@ -60,6 +61,7 @@ export class CalendarEventParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
         objectMetadataName: 'calendarEventParticipant',
         participantMatching,
+        workspaceId,
       });
     }
   }

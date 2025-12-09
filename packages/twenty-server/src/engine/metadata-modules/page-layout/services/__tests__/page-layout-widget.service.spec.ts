@@ -4,7 +4,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { IsNull, type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
@@ -58,15 +57,11 @@ describe('PageLayoutWidgetService', () => {
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(WorkspaceEntity),
-          useValue: {
-            findOne: jest.fn(),
-            findOneOrFail: jest.fn().mockResolvedValue({
-              workspaceCustomApplicationId: 'application-id',
-            }),
+            manager: {
+              getRepository: jest.fn().mockReturnValue({
+                findOne: jest.fn(),
+              }),
+            },
           },
         },
         {
@@ -193,6 +188,22 @@ describe('PageLayoutWidgetService', () => {
     it('should create a new page layout widget successfully', async () => {
       const workspaceId = 'workspace-id';
 
+      const mockPageLayoutTab = {
+        id: 'page-layout-tab-id',
+        pageLayout: {
+          id: 'page-layout-id',
+          applicationId: 'application-id',
+        },
+      };
+
+      const tabRepository = {
+        findOne: jest.fn().mockResolvedValue(mockPageLayoutTab),
+      };
+
+      jest
+        .spyOn(pageLayoutWidgetRepository.manager, 'getRepository')
+        .mockReturnValue(tabRepository as any);
+
       jest.spyOn(pageLayoutWidgetRepository, 'insert').mockResolvedValue({
         identifiers: [{ id: 'page-layout-widget-id' }],
         generatedMaps: [],
@@ -207,6 +218,14 @@ describe('PageLayoutWidgetService', () => {
         workspaceId,
       );
 
+      expect(tabRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id: validPageLayoutWidgetData.pageLayoutTabId,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+        relations: ['pageLayout'],
+      });
       expect(pageLayoutWidgetRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutWidgetData,
         workspaceId,
@@ -303,9 +322,13 @@ describe('PageLayoutWidgetService', () => {
       const workspaceId = 'workspace-id';
       const unexpectedError = new Error('Unexpected error');
 
+      const tabRepository = {
+        findOne: jest.fn().mockRejectedValue(unexpectedError),
+      };
+
       jest
-        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
-        .mockRejectedValue(unexpectedError);
+        .spyOn(pageLayoutWidgetRepository.manager, 'getRepository')
+        .mockReturnValue(tabRepository as any);
 
       await expect(
         pageLayoutWidgetService.create(validPageLayoutWidgetData, workspaceId),

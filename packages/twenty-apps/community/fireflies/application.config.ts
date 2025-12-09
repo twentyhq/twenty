@@ -1,4 +1,4 @@
-import { type ApplicationConfig } from 'twenty-sdk/application';
+import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
   universalIdentifier: 'a4df0c0f-c65e-44e5-8436-24814182d4ac',
@@ -9,17 +9,25 @@ const config: ApplicationConfig = {
     FIREFLIES_WEBHOOK_SECRET: {
       universalIdentifier: 'f51f7646-be9f-4ba9-9b75-160dd288cd0c',
       description: 'Secret key for verifying Fireflies webhook signatures',
-      isSecret: true,
+      //isSecret: true,
+      value: '',
     },
     FIREFLIES_API_KEY: {
       universalIdentifier: 'faa41f07-b28e-4500-b1c0-ce4b3d27924c',
       description: 'Fireflies GraphQL API key used to fetch meeting summaries',
-      isSecret: true,
+      //isSecret: true,
+      value: '',
+    },
+    FIREFLIES_PLAN: {
+      universalIdentifier: '57dbb73c-aac5-4247-9fcc-a070bb669f16',
+      description: 'Fireflies plan: free, pro, business, enterprise',
+      value: 'free',
     },
     TWENTY_API_KEY: {
       universalIdentifier: '02756551-5bf7-4fb2-8e08-1f622008d305',
       description: 'Twenty API key used when running scripts locally',
-      isSecret: true,
+      //isSecret: true,
+      value: '',
     },
     SERVER_URL: {
       universalIdentifier: '9b3a5e8e-5973-4e6b-a059-2966075652aa',
@@ -35,6 +43,11 @@ const config: ApplicationConfig = {
       universalIdentifier: '2b019cf1-d198-48dd-943e-110571aa541e',
       description: 'Log level: silent, error, warn, info, debug (default: error)',
       value: 'error',
+    },
+    CAPTURE_LOGS: {
+      universalIdentifier: 'adbcc267-309d-49b2-af71-76f1299d863e',
+      description: 'Capture logs in webhook response for debugging (true/false)',
+      value: 'true',
     },
     FIREFLIES_SUMMARY_STRATEGY: {
       universalIdentifier: '562b43d9-cd47-4ec1-ae16-5cc7ebc9729b',

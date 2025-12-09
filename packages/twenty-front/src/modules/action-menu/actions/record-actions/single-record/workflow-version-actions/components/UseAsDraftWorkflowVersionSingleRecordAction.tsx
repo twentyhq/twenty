@@ -12,14 +12,15 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
+const UseAsDraftWorkflowVersionSingleRecordActionContent = ({
+  workflowId,
+  workflowVersionId,
+}: {
+  workflowId: string;
+  workflowVersionId: string;
+}) => {
   const { openModal } = useModal();
-
-  const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useWorkflowVersion(recordId);
-  const workflow = useWorkflowWithCurrentVersion(
-    workflowVersion?.workflow?.id ?? '',
-  );
+  const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const navigate = useNavigateApp();
@@ -29,7 +30,7 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
     workflow?.versions.some((version) => version.status === 'DRAFT') || false;
 
   const handleClick = () => {
-    if (!isDefined(workflowVersion) || !isDefined(workflow) || hasNavigated) {
+    if (!isDefined(workflow) || hasNavigated) {
       return;
     }
 
@@ -38,13 +39,13 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
     } else {
       const executeActionWithoutWaiting = async () => {
         await createDraftFromWorkflowVersion({
-          workflowId: workflowVersion.workflow.id,
-          workflowVersionIdToCopy: workflowVersion.id,
+          workflowId,
+          workflowVersionIdToCopy: workflowVersionId,
         });
 
         navigate(AppPath.RecordShowPage, {
           objectNameSingular: CoreObjectNameSingular.Workflow,
-          objectRecordId: workflowVersion.workflow.id,
+          objectRecordId: workflowId,
         });
 
         setHasNavigated(true);
@@ -54,13 +55,29 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
     }
   };
 
-  return isDefined(workflowVersion) ? (
+  return (
     <>
       <Action onClick={handleClick} />
       <OverrideWorkflowDraftConfirmationModal
-        workflowId={workflowVersion.workflow.id}
-        workflowVersionIdToCopy={workflowVersion.id}
+        workflowId={workflowId}
+        workflowVersionIdToCopy={workflowVersionId}
       />
     </>
-  ) : null;
+  );
+};
+
+export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
+  const recordId = useSelectedRecordIdOrThrow();
+  const workflowVersion = useWorkflowVersion(recordId);
+
+  if (!isDefined(workflowVersion?.workflow?.id)) {
+    return null;
+  }
+
+  return (
+    <UseAsDraftWorkflowVersionSingleRecordActionContent
+      workflowId={workflowVersion.workflow.id}
+      workflowVersionId={workflowVersion.id}
+    />
+  );
 };
