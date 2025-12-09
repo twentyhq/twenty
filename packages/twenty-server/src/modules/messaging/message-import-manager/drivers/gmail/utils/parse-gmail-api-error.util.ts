@@ -20,8 +20,6 @@ export const parseGmailApiError = (
       'Unknown error',
   };
 
-  console.log('gmailApiError', gmailApiError);
-
   switch (gmailApiError.code) {
     case 400:
       if (gmailApiError.reason === 'invalid_grant') {
