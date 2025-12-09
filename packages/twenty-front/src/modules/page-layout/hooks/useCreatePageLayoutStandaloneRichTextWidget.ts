@@ -11,7 +11,6 @@ import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,7 +28,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
     pageLayoutIdFromProps,
   );
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabIdState = useRecoilComponentCallbackState(
     activeTabIdComponentState,
     getTabListInstanceIdFromPageLayoutId(pageLayoutId),
   );
@@ -52,6 +51,14 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
   const createPageLayoutStandaloneRichTextWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (body: RichTextV2Body): PageLayoutWidget => {
+        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+
+        if (!isDefined(activeTabId)) {
+          throw new Error(
+            'A tab must be selected to create a new rich text widget',
+          );
+        }
+
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
@@ -59,12 +66,6 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
-
-        if (!isDefined(activeTabId)) {
-          throw new Error(
-            'A tab must be selected to create a new iframe widget',
-          );
-        }
 
         const widgetId = uuidv4();
         const richTextSize = WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!;
@@ -117,7 +118,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
         return newWidget;
       },
     [
-      activeTabId,
+      activeTabIdState,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
