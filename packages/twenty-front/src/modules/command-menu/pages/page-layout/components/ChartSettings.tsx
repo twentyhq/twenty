@@ -91,7 +91,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         (item) =>
           !shouldHideChartSetting(
             item,
-            widget.objectMetadataId!,
+            widget.objectMetadataId,
             isGroupByEnabled as boolean,
             configuration,
             objectMetadataItem,
@@ -140,7 +140,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             (item) =>
               !shouldHideChartSetting(
                 item,
-                widget.objectMetadataId!,
+                widget.objectMetadataId,
                 isGroupByEnabled as boolean,
                 configuration,
                 objectMetadataItem,
@@ -163,7 +163,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 <ChartSettingItem
                   key={item.id}
                   item={item}
-                  objectMetadataId={widget.objectMetadataId!}
+                  objectMetadataId={widget.objectMetadataId}
                   configuration={configuration}
                 />
               ))}
