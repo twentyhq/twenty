@@ -175,4 +175,14 @@ export class AccessTokenService {
 
     return this.validateToken(token);
   }
+
+  decode(request: Request) {
+    const token = this.jwtWrapperService.extractJwtFromRequest()(request);
+
+    if (!token) {
+      return;
+    }
+
+    return this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
+  }
 }

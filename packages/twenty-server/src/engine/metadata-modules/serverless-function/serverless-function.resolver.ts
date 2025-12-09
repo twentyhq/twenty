@@ -1,4 +1,4 @@
-import { Inject, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Inject, Req, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { Request } from 'express';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -157,18 +158,20 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneServerlessFunction(
+    @Req() request: Request,
     @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       const { id, payload, version } = input;
 
-      return await this.serverlessFunctionService.executeOneServerlessFunction(
+      return await this.serverlessFunctionService.executeOneServerlessFunction({
         id,
         workspaceId,
         payload,
         version,
-      );
+        request,
+      });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }

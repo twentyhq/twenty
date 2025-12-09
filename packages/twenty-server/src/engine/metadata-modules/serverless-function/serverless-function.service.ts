@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
 
+import { Request } from 'express';
 import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
@@ -33,6 +34,9 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -45,6 +49,8 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly auditService: AuditService,
+    private readonly accessTokenService: AccessTokenService,
+    private readonly applicationTokenService: ApplicationTokenService,
     @Inject('PUB_SUB')
     private readonly pubSub: RedisPubSub,
   ) {}
@@ -86,13 +92,24 @@ export class ServerlessFunctionService {
     }
   }
 
-  async executeOneServerlessFunction(
-    id: string,
-    workspaceId: string,
-    payload: object,
+  async executeOneServerlessFunction({
+    id,
+    workspaceId,
+    payload,
     version = 'latest',
-  ): Promise<ServerlessExecuteResult> {
+    request,
+  }: {
+    id: string;
+    workspaceId: string;
+    payload: object;
+    version?: string;
+    request?: Request;
+  }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
+
+    const accessTokenPayload = isDefined(request)
+      ? this.accessTokenService.decode(request)
+      : undefined;
 
     const functionToExecute =
       await this.serverlessFunctionRepository.findOneOrFail({
@@ -102,14 +119,34 @@ export class ServerlessFunctionService {
         },
         relations: [
           'serverlessFunctionLayer',
-          'application',
           'application.applicationVariables',
         ],
       });
 
+    const applicationToken = isDefined(functionToExecute.applicationId)
+      ? await this.applicationTokenService.generateApplicationToken({
+          workspaceId,
+          userId: accessTokenPayload?.userId,
+          applicationId: functionToExecute.applicationId,
+          expiresInSeconds: functionToExecute.timeoutSeconds,
+        })
+      : undefined;
+
+    const envVariables = {
+      ...buildEnvVar(functionToExecute),
+      ...(isDefined(applicationToken)
+        ? { APPLICATION_TOKEN: applicationToken.token }
+        : {}),
+    };
+
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
-        this.serverlessService.execute(functionToExecute, payload, version),
+        this.serverlessService.execute({
+          serverlessFunction: functionToExecute,
+          payload,
+          version,
+          env: envVariables,
+        }),
       timeoutMs: functionToExecute.timeoutSeconds * 1000,
     });
 
