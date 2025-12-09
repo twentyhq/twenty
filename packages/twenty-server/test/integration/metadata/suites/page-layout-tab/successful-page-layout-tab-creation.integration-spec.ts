@@ -29,6 +29,7 @@ describe('Page layout tab creation should succeed', () => {
         expectToFail: false,
         input: { id: createdPageLayoutTabId },
       });
+      createdPageLayoutTabId = '';
     }
   });
 
