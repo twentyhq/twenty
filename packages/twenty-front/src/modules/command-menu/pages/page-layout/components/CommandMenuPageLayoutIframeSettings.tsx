@@ -58,16 +58,18 @@ export const CommandMenuPageLayoutIframeSettings = () => {
   const handleUrlChange = (value: string) => {
     setUrl(value);
 
-    if (validateUrl(value)) {
-
-      const trimmedValue = value.trim();
-      updatePageLayoutWidget(widgetInEditMode.id, {
-        configuration: {
-          ...widgetInEditMode.configuration,
-          url: trimmedValue || null,
-        },
-      });
+    if (!validateUrl(value)) {
+      return;
     }
+
+    const trimmedValue = value.trim();
+
+    updatePageLayoutWidget(widgetInEditMode.id, {
+      configuration: {
+        __typename: 'IframeConfiguration',
+        url: isNonEmptyString(trimmedValue) ? trimmedValue : null,
+      },
+    });
   };
 
   return (
