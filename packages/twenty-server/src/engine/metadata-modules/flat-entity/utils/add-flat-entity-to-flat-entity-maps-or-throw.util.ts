@@ -5,14 +5,16 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
-type AddFlatEntityToFlatEntityMapsOrThrowArgs<T extends FlatEntity> = {
+type AddFlatEntityToFlatEntityMapsOrThrowArgs<T extends SyncableFlatEntity> = {
   flatEntity: T;
   flatEntityMaps: FlatEntityMaps<T>;
 };
 
-export const addFlatEntityToFlatEntityMapsOrThrow = <T extends FlatEntity>({
+export const addFlatEntityToFlatEntityMapsOrThrow = <
+  T extends SyncableFlatEntity,
+>({
   flatEntity,
   flatEntityMaps,
 }: AddFlatEntityToFlatEntityMapsOrThrowArgs<T>): FlatEntityMaps<T> => {

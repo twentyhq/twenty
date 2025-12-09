@@ -14,6 +14,9 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
 
   return {
     ...pageLayoutWidgetEntityWithoutRelations,
+    createdAt: pageLayoutWidgetEntity.createdAt.toISOString(),
+    updatedAt: pageLayoutWidgetEntity.updatedAt.toISOString(),
+    deletedAt: pageLayoutWidgetEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       pageLayoutWidgetEntityWithoutRelations.universalIdentifier ??
       pageLayoutWidgetEntityWithoutRelations.id,

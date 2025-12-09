@@ -3,12 +3,14 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetBarChart',
   component: GraphWidgetBarChart,
   decorators: [
+    I18nFrontDecorator,
     (Story) => (
       <GraphWidgetTestWrapper>
         <Story />

@@ -1,6 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  type PageLayoutWidget,
+  type RatioAggregateConfig,
+} from '~/generated/graphql';
 
 const fieldExists = (
   fieldId: string | undefined | null,
@@ -11,6 +15,39 @@ const fieldExists = (
   }
 
   return objectMetadataItem.fields.some((field) => field.id === fieldId);
+};
+
+const isRatioConfigValid = (
+  ratioConfig: RatioAggregateConfig | null | undefined,
+  objectMetadataItem: ObjectMetadataItem,
+): boolean => {
+  if (!isDefined(ratioConfig)) {
+    return true;
+  }
+
+  const field = objectMetadataItem.fields.find(
+    (f) => f.id === ratioConfig.fieldMetadataId,
+  );
+
+  if (!isDefined(field)) {
+    return false;
+  }
+
+  if (field.type === FieldMetadataType.BOOLEAN) {
+    return (
+      ratioConfig.optionValue === 'true' || ratioConfig.optionValue === 'false'
+    );
+  }
+
+  if (
+    field.type === FieldMetadataType.SELECT ||
+    field.type === FieldMetadataType.MULTI_SELECT
+  ) {
+    const options = field.options ?? [];
+    return options.some((option) => option.value === ratioConfig.optionValue);
+  }
+
+  return false;
 };
 
 export const areChartConfigurationFieldsValidForQuery = (
@@ -54,6 +91,17 @@ export const areChartConfigurationFieldsValidForQuery = (
       );
 
     case 'AggregateChartConfiguration':
+      return (
+        fieldExists(
+          configuration.aggregateFieldMetadataId,
+          objectMetadataItem,
+        ) &&
+        isRatioConfigValid(
+          configuration.ratioAggregateConfig,
+          objectMetadataItem,
+        )
+      );
+
     case 'GaugeChartConfiguration':
       return fieldExists(
         configuration.aggregateFieldMetadataId,

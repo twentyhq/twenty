@@ -635,6 +635,11 @@ msgstr "Não é possível excluir a conta: você é o único administrador. Atri
 msgid "Cannot delete standard agent"
 msgstr ""
 
+#. js-lingui-id: mWk3X+
+#: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
+msgid "Cannot delete unique index that have not been created by the workspace custom application"
+msgstr ""
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -1477,6 +1482,11 @@ msgstr "Campo para criar objeto relacionado não encontrado"
 msgid "Field to update not found"
 msgstr "Campo a ser atualizado não encontrado"
 
+#. js-lingui-id: 5cm5Hn
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field to update object metadata not found"
+msgstr ""
+
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type NUMERIC is not supported. Use Number instead."
@@ -2203,6 +2213,11 @@ msgstr "Token de Acesso do Provedor de Mensagens"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
 msgstr "Token de Atualização do Provedor de Mensagens"
+
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
 
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
