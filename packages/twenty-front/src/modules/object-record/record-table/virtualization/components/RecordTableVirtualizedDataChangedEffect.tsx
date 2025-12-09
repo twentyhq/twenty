@@ -97,14 +97,12 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
               updatedFieldMetadataItemIds.includes(recordSort.fieldMetadataId),
           );
 
-          if (
+          if (updatedFieldNames.includes('position')) {
+            resetVirtualizationBecauseDataChanged();
+          } else if (
             thereIsAnUpdateOnAFilteredField ||
             thereIsAnUpdateOnASortedField
           ) {
-            resetVirtualizationBecauseDataChanged();
-          }
-
-          if (updatedFieldNames.includes('position')) {
             resetVirtualizationBecauseDataChanged();
           }
         } else {
