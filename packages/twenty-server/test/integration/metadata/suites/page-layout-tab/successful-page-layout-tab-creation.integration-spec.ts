@@ -2,6 +2,7 @@ import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-la
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -12,11 +13,6 @@ type TestContext = {
     title: string;
     position?: number;
   };
-  expected: {
-    title: string;
-    position?: number;
-    includePageLayoutId?: boolean;
-  };
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -26,20 +22,12 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         title: 'Test Tab',
       },
-      expected: {
-        title: 'Test Tab',
-        includePageLayoutId: true,
-      },
     },
   },
   {
     title: 'create a page layout tab with position',
     context: {
       input: {
-        title: 'Positioned Tab',
-        position: 5,
-      },
-      expected: {
         title: 'Positioned Tab',
         position: 5,
       },
@@ -79,7 +67,7 @@ describe('Page layout tab creation should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { input, expected } }) => {
+    async ({ context: { input } }) => {
       const { data } = await createOnePageLayoutTab({
         expectToFail: false,
         input: {
@@ -90,13 +78,9 @@ describe('Page layout tab creation should succeed', () => {
 
       createdPageLayoutTabId = data?.createPageLayoutTab?.id;
 
-      const { includePageLayoutId, ...expectedFields } = expected;
-
-      expect(data.createPageLayoutTab).toMatchObject({
-        id: expect.any(String),
-        ...expectedFields,
-        ...(includePageLayoutId ? { pageLayoutId: testPageLayoutId } : {}),
-      });
+      expect(data.createPageLayoutTab).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...data.createPageLayoutTab }),
+      );
     },
   );
 });

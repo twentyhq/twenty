@@ -6,6 +6,7 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { restoreOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/restore-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -92,14 +93,22 @@ describe('Page layout widget deletion should succeed', () => {
           input: { id: widgetId },
         });
 
-        expect(deleteData.deletePageLayoutWidget.deletedAt).not.toBeNull();
+        expect(deleteData.deletePageLayoutWidget).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...deleteData.deletePageLayoutWidget,
+          }),
+        );
 
         const { data: restoreData } = await restoreOnePageLayoutWidget({
           expectToFail: false,
           input: { id: widgetId },
         });
 
-        expect(restoreData.restorePageLayoutWidget.deletedAt).toBeNull();
+        expect(restoreData.restorePageLayoutWidget).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...restoreData.restorePageLayoutWidget,
+          }),
+        );
 
         await destroyOnePageLayoutWidget({
           expectToFail: false,

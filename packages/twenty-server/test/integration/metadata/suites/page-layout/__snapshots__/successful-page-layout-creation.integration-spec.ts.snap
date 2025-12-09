@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout creation should succeed should create a page layout with DASHBOARD type 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Dashboard Layout",
+  "objectMetadataId": null,
+  "tabs": null,
+  "type": "DASHBOARD",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout creation should succeed should create a page layout with minimal input 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Test Page Layout",
+  "objectMetadataId": null,
+  "tabs": null,
+  "type": "RECORD_PAGE",
+  "updatedAt": Any<String>,
+}
+`;

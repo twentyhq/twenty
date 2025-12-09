@@ -4,6 +4,7 @@ import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -22,11 +23,6 @@ type TestContext = {
       columnSpan: number;
     };
   };
-  expected: {
-    title: string;
-    type: WidgetType;
-    includePageLayoutTabId?: boolean;
-  };
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -42,11 +38,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
           columnSpan: 1,
         },
       },
-      expected: {
-        title: 'Test Widget',
-        type: WidgetType.VIEW,
-        includePageLayoutTabId: true,
-      },
     },
   },
   {
@@ -61,10 +52,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
           rowSpan: 2,
           columnSpan: 2,
         },
-      },
-      expected: {
-        title: 'Graph Widget',
-        type: WidgetType.GRAPH,
       },
     },
   },
@@ -116,7 +103,7 @@ describe('Page layout widget creation should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { input, expected } }) => {
+    async ({ context: { input } }) => {
       const { data } = await createOnePageLayoutWidget({
         expectToFail: false,
         input: {
@@ -127,15 +114,9 @@ describe('Page layout widget creation should succeed', () => {
 
       createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
 
-      const { includePageLayoutTabId, ...expectedFields } = expected;
-
-      expect(data.createPageLayoutWidget).toMatchObject({
-        id: expect.any(String),
-        ...expectedFields,
-        ...(includePageLayoutTabId
-          ? { pageLayoutTabId: testPageLayoutTabId }
-          : {}),
-      });
+      expect(data.createPageLayoutWidget).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...data.createPageLayoutWidget }),
+      );
     },
   );
 });

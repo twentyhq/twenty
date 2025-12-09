@@ -5,6 +5,7 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -23,16 +24,6 @@ type TestContext = {
       columnSpan: number;
     };
   };
-  expected: {
-    title?: string;
-    type?: WidgetType;
-    gridPosition?: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
-  };
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -40,9 +31,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     title: 'update page layout widget title',
     context: {
       input: {
-        title: 'Updated Widget Title',
-      },
-      expected: {
         title: 'Updated Widget Title',
       },
     },
@@ -53,23 +41,12 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         type: WidgetType.GRAPH,
       },
-      expected: {
-        type: WidgetType.GRAPH,
-      },
     },
   },
   {
     title: 'update page layout widget grid position',
     context: {
       input: {
-        gridPosition: {
-          row: 2,
-          column: 3,
-          rowSpan: 2,
-          columnSpan: 4,
-        },
-      },
-      expected: {
         gridPosition: {
           row: 2,
           column: 3,
@@ -143,7 +120,7 @@ describe('Page layout widget update should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { input, expected } }) => {
+    async ({ context: { input } }) => {
       const { data } = await updateOnePageLayoutWidget({
         expectToFail: false,
         input: {
@@ -152,10 +129,9 @@ describe('Page layout widget update should succeed', () => {
         },
       });
 
-      expect(data.updatePageLayoutWidget).toMatchObject({
-        id: testPageLayoutWidgetId,
-        ...expected,
-      });
+      expect(data.updatePageLayoutWidget).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...data.updatePageLayoutWidget }),
+      );
     },
   );
 });

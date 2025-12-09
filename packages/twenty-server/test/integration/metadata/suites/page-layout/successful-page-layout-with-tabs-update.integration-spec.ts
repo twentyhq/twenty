@@ -3,6 +3,7 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -53,12 +54,6 @@ type TestContext = {
         | typeof MOCK_IFRAME_CONFIGURATION;
     }>;
   }>;
-  expectedTabs: (params: {
-    tabId1: string;
-    tabId2: string;
-    pieChartWidgetId: string;
-    iframeWidgetId: string;
-  }) => Array<Record<string, unknown>>;
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -83,19 +78,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
             },
           ],
         },
-      ],
-      expectedTabs: ({ tabId1, pieChartWidgetId }) => [
-        expect.objectContaining({
-          id: tabId1,
-          title: 'Updated Tab 1',
-          widgets: expect.arrayContaining([
-            expect.objectContaining({
-              id: pieChartWidgetId,
-              title: 'Pie Chart Widget',
-              type: WidgetType.GRAPH,
-            }),
-          ]),
-        }),
       ],
     },
   },
@@ -136,10 +118,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
             },
           ],
         },
-      ],
-      expectedTabs: ({ tabId1, tabId2 }) => [
-        expect.objectContaining({ id: tabId1, title: 'First Tab' }),
-        expect.objectContaining({ id: tabId2, title: 'Second Tab' }),
       ],
     },
   },
@@ -199,7 +177,7 @@ describe('Page layout with tabs update should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { layoutName, buildTabs, expectedTabs } }) => {
+    async ({ context: { layoutName, buildTabs } }) => {
       const pieChartWidgetId = v4();
       const iframeWidgetId = v4();
 
@@ -221,12 +199,11 @@ describe('Page layout with tabs update should succeed', () => {
         },
       });
 
-      expect(data.updatePageLayoutWithTabsAndWidgets).toMatchObject({
-        id: testPageLayoutId,
-        name: layoutName,
-        type: PageLayoutType.RECORD_PAGE,
-        tabs: expect.arrayContaining(expectedTabs(tabParams)),
-      });
+      expect(data.updatePageLayoutWithTabsAndWidgets).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({
+          ...data.updatePageLayoutWithTabsAndWidgets,
+        }),
+      );
     },
   );
 });

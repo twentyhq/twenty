@@ -4,6 +4,7 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { restoreOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/restore-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -76,7 +77,11 @@ describe('Page layout tab deletion should succeed', () => {
           input: { id: tabId },
         });
 
-        expect(restoreData.restorePageLayoutTab.deletedAt).toBeNull();
+        expect(restoreData.restorePageLayoutTab).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...restoreData.restorePageLayoutTab,
+          }),
+        );
 
         await destroyOnePageLayoutTab({
           expectToFail: false,

@@ -1,6 +1,7 @@
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -13,10 +14,6 @@ type TestContext = {
     name?: string;
     type?: PageLayoutType;
   };
-  expected: {
-    name?: string;
-    type?: PageLayoutType;
-  };
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -26,18 +23,12 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         name: 'Updated Page Layout Name',
       },
-      expected: {
-        name: 'Updated Page Layout Name',
-      },
     },
   },
   {
     title: 'update page layout type',
     context: {
       input: {
-        type: PageLayoutType.DASHBOARD,
-      },
-      expected: {
         type: PageLayoutType.DASHBOARD,
       },
     },
@@ -68,7 +59,7 @@ describe('Page layout update should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { input, expected } }) => {
+    async ({ context: { input } }) => {
       const { data } = await updateOnePageLayout({
         expectToFail: false,
         input: {
@@ -77,10 +68,9 @@ describe('Page layout update should succeed', () => {
         },
       });
 
-      expect(data.updatePageLayout).toMatchObject({
-        id: testPageLayoutId,
-        ...expected,
-      });
+      expect(data.updatePageLayout).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...data.updatePageLayout }),
+      );
     },
   );
 });

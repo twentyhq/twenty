@@ -2,6 +2,7 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { deleteOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/delete-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { restoreOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/restore-one-page-layout.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -46,14 +47,22 @@ describe('Page layout deletion should succeed', () => {
           input: { id: pageLayoutId },
         });
 
-        expect(deleteData.deletePageLayout.deletedAt).not.toBeNull();
+        expect(deleteData.deletePageLayout).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...deleteData.deletePageLayout,
+          }),
+        );
 
         const { data: restoreData } = await restoreOnePageLayout({
           expectToFail: false,
           input: { id: pageLayoutId },
         });
 
-        expect(restoreData.restorePageLayout.deletedAt).toBeNull();
+        expect(restoreData.restorePageLayout).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...restoreData.restorePageLayout,
+          }),
+        );
 
         await destroyOnePageLayout({
           expectToFail: false,
