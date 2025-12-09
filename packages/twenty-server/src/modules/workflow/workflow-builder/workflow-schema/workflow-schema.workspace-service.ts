@@ -237,7 +237,6 @@ export class WorkflowSchemaWorkspaceService {
     const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
-      maxDepth: 0,
     });
 
     const objectMetadataInfo =
@@ -276,11 +275,9 @@ export class WorkflowSchemaWorkspaceService {
   private async computeRecordOutputSchema({
     objectType,
     workspaceId,
-    maxDepth = 1,
   }: {
     objectType: string;
     workspaceId: string;
-    maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
@@ -288,7 +285,7 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       );
 
-    return generateFakeObjectRecord({ objectMetadataInfo, maxDepth });
+    return generateFakeObjectRecord({ objectMetadataInfo });
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
@@ -335,7 +332,6 @@ export class WorkflowSchemaWorkspaceService {
       return this.computeRecordOutputSchema({
         objectType: availability.objectNameSingular,
         workspaceId,
-        maxDepth: 0,
       });
     }
 
@@ -434,7 +430,6 @@ export class WorkflowSchemaWorkspaceService {
               value: await this.computeRecordOutputSchema({
                 objectType: trigger.settings.availability.objectNameSingular,
                 workspaceId,
-                maxDepth: 0,
               }),
             };
           }

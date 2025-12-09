@@ -22,6 +22,7 @@ import {
   ViewFieldException,
   ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
+import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -117,7 +118,7 @@ export class ViewFieldV2Service {
     return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatViewFieldsToCreate.map((el) => el.id),
       flatEntityMaps: recomputedExistingFlatViewFieldMaps,
-    });
+    }).map(fromFlatViewFieldToViewFieldDto);
   }
 
   async updateOne({
@@ -171,10 +172,12 @@ export class ViewFieldV2Service {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatView.id,
-      flatEntityMaps: recomputedExistingFlatViewFieldMaps,
-    });
+    return fromFlatViewFieldToViewFieldDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatView.id,
+        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
+      }),
+    );
   }
 
   async deleteOne({
@@ -228,10 +231,12 @@ export class ViewFieldV2Service {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatViewWithDeletedAt.id,
-      flatEntityMaps: recomputedExistingFlatViewFieldMaps,
-    });
+    return fromFlatViewFieldToViewFieldDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewWithDeletedAt.id,
+        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
+      }),
+    );
   }
 
   async destroyOne({
@@ -277,7 +282,7 @@ export class ViewFieldV2Service {
       );
     }
 
-    return existingViewFieldToDelete;
+    return fromFlatViewFieldToViewFieldDto(existingViewFieldToDelete);
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {

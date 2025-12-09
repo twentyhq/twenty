@@ -9,7 +9,7 @@ type CalendarEventDataSeed = {
   externalUpdatedAt: string;
   description: string;
   location: string;
-  iCalUID: string;
+  iCalUid: string;
   conferenceSolution: string;
   conferenceLinkPrimaryLinkLabel: string;
   conferenceLinkPrimaryLinkUrl: string;
@@ -27,7 +27,7 @@ export const CALENDAR_EVENT_DATA_SEED_COLUMNS: (keyof CalendarEventDataSeed)[] =
     'externalUpdatedAt',
     'description',
     'location',
-    'iCalUID',
+    'iCalUid',
     'conferenceSolution',
     'conferenceLinkPrimaryLinkLabel',
     'conferenceLinkPrimaryLinkUrl',
@@ -217,7 +217,7 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
       ).toISOString(),
       description: TEMPLATE.description,
       location: LOCATION,
-      iCalUID: `event${INDEX}@calendar.twentycrm.com`,
+      iCalUid: `event${INDEX}@calendar.twentycrm.com`,
       conferenceSolution: CONFERENCE_SOLUTION,
       conferenceLinkPrimaryLinkLabel: CONFERENCE_LINK,
       conferenceLinkPrimaryLinkUrl: CONFERENCE_LINK,

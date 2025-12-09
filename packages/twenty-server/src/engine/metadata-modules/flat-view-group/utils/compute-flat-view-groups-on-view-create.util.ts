@@ -28,7 +28,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
     );
   }
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   const flatViewGroupsFromOptions: FlatViewGroup[] = (
     mainGroupByFieldMetadata.options ?? []

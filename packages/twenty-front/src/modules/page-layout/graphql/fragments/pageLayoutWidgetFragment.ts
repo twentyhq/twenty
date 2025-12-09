@@ -98,6 +98,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         suffix
         timezone
         firstDayOfTheWeek
+        ratioAggregateConfig {
+          fieldMetadataId
+          optionValue
+        }
       }
       ... on GaugeChartConfiguration {
         graphType

@@ -27,6 +27,6 @@ export const fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpda
     return {
       ...existingFlatDatabaseEventTrigger,
       settings: updateDatabaseEventTriggerInput.update.settings,
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
   };

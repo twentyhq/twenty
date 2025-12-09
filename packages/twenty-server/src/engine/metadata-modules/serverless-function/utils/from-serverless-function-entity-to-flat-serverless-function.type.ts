@@ -19,6 +19,9 @@ export const fromServerlessFunctionEntityToFlatServerlessFunction = (
 
   return {
     ...serverlessFunctionWithoutRelations,
+    createdAt: serverlessFunctionEntity.createdAt.toISOString(),
+    updatedAt: serverlessFunctionEntity.updatedAt.toISOString(),
+    deletedAt: serverlessFunctionEntity.deletedAt?.toISOString() ?? null,
     cronTriggerIds:
       serverlessFunctionEntity.cronTriggers.map((el) => el.id) ?? [],
     routeTriggerIds:

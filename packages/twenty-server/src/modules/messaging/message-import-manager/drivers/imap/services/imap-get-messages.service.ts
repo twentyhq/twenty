@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 import { Address, type Email as ParsedMail } from 'postal-mime';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -203,11 +204,11 @@ export class ImapGetMessagesService {
 
   private extractParticipants(parsed: ParsedMail) {
     const addressFields = [
-      { field: parsed.from, role: 'from' as const },
-      { field: parsed.to, role: 'to' as const },
-      { field: parsed.cc, role: 'cc' as const },
-      { field: parsed.bcc, role: 'bcc' as const },
-    ];
+      { field: parsed.from, role: MessageParticipantRole.FROM },
+      { field: parsed.to, role: MessageParticipantRole.TO },
+      { field: parsed.cc, role: MessageParticipantRole.CC },
+      { field: parsed.bcc, role: MessageParticipantRole.BCC },
+    ] as const;
 
     return addressFields.flatMap(({ field, role }) =>
       formatAddressObjectAsParticipants(this.extractAddresses(field), role),
