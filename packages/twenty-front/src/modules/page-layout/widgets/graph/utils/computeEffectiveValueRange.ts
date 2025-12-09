@@ -8,13 +8,11 @@ type ComputeEffectiveValueRangeParams = {
   calculatedMaximum: number;
   rangeMin?: number;
   rangeMax?: number;
-  dataLength: number;
 };
 
 type EffectiveValueRangeResult = {
   effectiveMinimumValue: number;
   effectiveMaximumValue: number;
-  hasNoData: boolean;
 };
 
 export const computeEffectiveValueRange = ({
@@ -22,11 +20,9 @@ export const computeEffectiveValueRange = ({
   calculatedMaximum,
   rangeMin,
   rangeMax,
-  dataLength,
 }: ComputeEffectiveValueRangeParams): EffectiveValueRangeResult => {
   const hasOnlyNonNegativeValues =
     calculatedMinimum >= 0 && calculatedMaximum >= 0;
-  const hasNoData = dataLength === 0;
 
   const baseMinimumValue = isDefined(rangeMin)
     ? rangeMin
@@ -60,6 +56,5 @@ export const computeEffectiveValueRange = ({
   return {
     effectiveMinimumValue,
     effectiveMaximumValue,
-    hasNoData,
   };
 };

@@ -110,13 +110,15 @@ export const GraphWidgetLineChart = ({
 
   const calculatedValueRange = calculateValueRangeFromLineChartSeries(data);
 
-  const { effectiveMinimumValue, effectiveMaximumValue, hasNoData } =
+  const hasNoData =
+    data.length === 0 || data.every((series) => series.data.length === 0);
+
+  const { effectiveMinimumValue, effectiveMaximumValue } =
     computeEffectiveValueRange({
       calculatedMinimum: calculatedValueRange.minimum,
       calculatedMaximum: calculatedValueRange.maximum,
       rangeMin,
       rangeMax,
-      dataLength: data.length,
     });
 
   const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
