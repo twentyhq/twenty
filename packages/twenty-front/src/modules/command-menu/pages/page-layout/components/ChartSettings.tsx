@@ -10,7 +10,6 @@ import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/u
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -20,6 +19,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
+import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { GraphType } from '~/generated/graphql';
 
@@ -37,11 +37,9 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (widget.configuration?.__typename === 'IframeConfiguration') {
-    throw new Error(t`IframeConfiguration is not supported`);
-  }
+  assertChartWidgetOrThrow(widget);
 
-  const configuration = widget.configuration as ChartConfiguration;
+  const configuration = widget.configuration;
   const currentGraphType = configuration?.graphType;
 
   const { getChartSettingsValues } = useChartSettingsValues({
@@ -93,7 +91,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         (item) =>
           !shouldHideChartSetting(
             item,
-            widget.objectMetadataId,
+            widget.objectMetadataId!,
             isGroupByEnabled as boolean,
             configuration,
             objectMetadataItem,
@@ -142,7 +140,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             (item) =>
               !shouldHideChartSetting(
                 item,
-                widget.objectMetadataId,
+                widget.objectMetadataId!,
                 isGroupByEnabled as boolean,
                 configuration,
                 objectMetadataItem,
@@ -165,7 +163,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 <ChartSettingItem
                   key={item.id}
                   item={item}
-                  objectMetadataId={widget.objectMetadataId}
+                  objectMetadataId={widget.objectMetadataId!}
                   configuration={configuration}
                 />
               ))}

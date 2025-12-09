@@ -5,6 +5,7 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
+import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -15,7 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { type LineChartConfiguration } from '~/generated/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(
@@ -30,6 +30,8 @@ export const GraphWidgetLineChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  assertLineChartWidgetOrThrow(widget);
+
   const {
     series,
     xAxisLabel,
@@ -42,11 +44,11 @@ export const GraphWidgetLineChartRenderer = ({
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as LineChartConfiguration,
+    configuration: widget.configuration,
   });
 
   const navigate = useNavigate();
-  const configuration = widget.configuration as LineChartConfiguration;
+  const configuration = widget.configuration;
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
