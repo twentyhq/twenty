@@ -39,14 +39,6 @@ const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
     isPageLayoutInEditMode ? theme.spacing(5) : 0};
 `;
 
-const StyledEmptyState = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
 type StandaloneRichTextWidgetProps = {
   widget: PageLayoutWidget;
 };
@@ -142,14 +134,10 @@ export const StandaloneRichTextWidget = ({
   const isThisWidgetBeingEdited = editingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
 
-  // TODO: revisit - we should not need this?
+  //TODO: this should be handled way earlier, because we should not be able to select this widget type record page layouts in the first place
   if (!isDefined(dashboardId)) {
-    return (
-      <StyledContainer>
-        <StyledEmptyState>
-          Rich text widget is only available on dashboards
-        </StyledEmptyState>
-      </StyledContainer>
+    throw new Error(
+      'StandaloneRichTextWidget should only be rendered on dashboards. This widget type should not be selectable on other layout types.',
     );
   }
 
