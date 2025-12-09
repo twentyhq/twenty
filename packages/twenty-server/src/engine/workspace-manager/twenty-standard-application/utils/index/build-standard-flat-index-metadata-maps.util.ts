@@ -49,7 +49,7 @@ const createEmptyFlatIndexMetadataMaps =
   });
 
 export const buildStandardFlatIndexMetadataMaps = (
-  args: Omit<CreateStandardIndexArgs, 'options' | 'objectName'>,
+  args: Omit<CreateStandardIndexArgs, 'context' | 'objectName'>,
 ): FlatEntityMaps<FlatIndexMetadata> => {
   const allIndexMetadatas: FlatIndexMetadata[] = (
     Object.keys(
