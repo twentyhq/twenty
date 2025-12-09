@@ -26,9 +26,15 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     ? LinkType.LinkedIn
     : displayedValue.startsWith('twitter.')
       ? LinkType.Twitter
-      : LinkType.Url;
+      : displayedValue.startsWith('facebook.')
+        ? LinkType.Facebook
+        : LinkType.Url;
 
-  if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
+  if (
+    type === LinkType.LinkedIn ||
+    type === LinkType.Twitter ||
+    type === LinkType.Facebook
+  ) {
     return <SocialLink href={absoluteUrl} type={type} label={displayedValue} />;
   }
 
