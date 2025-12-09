@@ -6,7 +6,7 @@ import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emit
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
@@ -25,7 +25,7 @@ export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
 })
 export class BlocklistReimportCalendarEventsJob {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
@@ -34,7 +34,8 @@ export class BlocklistReimportCalendarEventsJob {
     const workspaceId = data.workspaceId;
 
     const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
+        workspaceId,
         'calendarChannel',
       );
 

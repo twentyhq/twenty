@@ -9,7 +9,7 @@ export class ImapMessagesImportErrorHandler {
 
   public handleError(error: Error, messageExternalId: string): void {
     this.logger.error(
-      `IMAP: Error importing message ${messageExternalId}: ${error.message}`,
+      `IMAP: Error importing message ${messageExternalId}: ${JSON.stringify(error)}`,
     );
 
     const networkError = parseImapError(error, { cause: error });

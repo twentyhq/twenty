@@ -141,6 +141,7 @@ export class WorkflowTriggerController {
           name: 'Webhook',
           context: {},
         },
+        workspaceId,
       });
 
     return {

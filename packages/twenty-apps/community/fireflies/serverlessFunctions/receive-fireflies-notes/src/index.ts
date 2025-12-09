@@ -1,4 +1,5 @@
-export { config, main } from './receive-fireflies-notes';
+// Serverless function entry point - re-exports from src/lib
+export { config, main } from '../../../src';
 export type {
     FirefliesMeetingData,
     FirefliesParticipant,
@@ -6,5 +7,5 @@ export type {
     ProcessResult,
     SummaryFetchConfig,
     SummaryStrategy
-} from './types';
+} from '../../../src';
 

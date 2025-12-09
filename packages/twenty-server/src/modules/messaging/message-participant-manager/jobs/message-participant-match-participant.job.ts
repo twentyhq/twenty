@@ -26,7 +26,7 @@ export class MessageParticipantMatchParticipantJob {
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { participantMatching } = data;
+    const { participantMatching, workspaceId } = data;
 
     if (
       participantMatching.personIds.length > 0 ||
@@ -35,6 +35,7 @@ export class MessageParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsForPeople({
         participantMatching,
         objectMetadataName: 'messageParticipant',
+        workspaceId,
       });
     }
 
@@ -42,6 +43,7 @@ export class MessageParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
         participantMatching,
         objectMetadataName: 'messageParticipant',
+        workspaceId,
       });
     }
   }

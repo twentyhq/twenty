@@ -32,11 +32,13 @@ export const validateMorphRelationCreationPayload = async ({
   if (morphRelationCreationPayload.length === 0) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message: 'Morph relation creation payloads are empty',
-        userFriendlyMessage: msg`At least one relation is require`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message: 'Morph relation creation payloads are empty',
+          userFriendlyMessage: msg`At least one relation is require`,
+        },
+      ],
     };
   }
 
@@ -51,12 +53,14 @@ export const validateMorphRelationCreationPayload = async ({
   if (allRelationType.length > 1) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message:
-          'Morph relation creation payloads must have the same relation type',
-        userFriendlyMessage: msg`Morph relation creation payloads must have the same relation type`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message:
+            'Morph relation creation payloads must have the same relation type',
+          userFriendlyMessage: msg`Morph relation creation payloads must have the same relation type`,
+        },
+      ],
     };
   }
 
@@ -70,12 +74,14 @@ export const validateMorphRelationCreationPayload = async ({
   if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message:
-          'Morph relation creation payloads must not target source object metadata',
-        userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to other object metadata`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message:
+            'Morph relation creation payloads must not target source object metadata',
+          userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to other object metadata`,
+        },
+      ],
     };
   }
 
@@ -84,12 +90,14 @@ export const validateMorphRelationCreationPayload = async ({
   ) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message:
-          'Morph relation creation payloads must have only relation to the same object metadata',
-        userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to the same object metadata`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message:
+            'Morph relation creation payloads must have only relation to the same object metadata',
+          userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to the same object metadata`,
+        },
+      ],
     };
   }
 
@@ -127,14 +135,18 @@ export const validateMorphRelationCreationPayload = async ({
   if (relationCreationPayloadReport.failed.length > 0) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message: 'Morph relation input transpilation failed',
-        userFriendlyMessage: msg`Invalid morph relation input`,
-        value: relationCreationPayloadReport.failed
-          .map((failedTranspilation) => failedTranspilation.error.value)
-          .filter(isDefined),
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message: 'Morph relation input transpilation failed',
+          userFriendlyMessage: msg`Invalid morph relation input`,
+          value: relationCreationPayloadReport.failed
+            .flatMap((failedTranspilation) =>
+              failedTranspilation.errors.map((error) => error.value),
+            )
+            .filter(isDefined),
+        },
+      ],
     };
   }
 

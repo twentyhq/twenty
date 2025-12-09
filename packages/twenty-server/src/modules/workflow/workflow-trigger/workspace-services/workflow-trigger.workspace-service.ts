@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -34,43 +33,31 @@ export class WorkflowTriggerWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
-
-  private getWorkspaceId() {
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      throw new WorkflowTriggerException(
-        'No workspace id found',
-        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
-      );
-    }
-
-    return workspaceId;
-  }
 
   async runWorkflowVersion({
     workflowVersionId,
     payload,
     createdBy,
     workflowRunId,
+    workspaceId,
   }: {
     workflowVersionId: string;
     payload: object;
     createdBy: ActorMetadata;
     workflowRunId?: string;
+    workspaceId: string;
   }) {
     await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
       workflowVersionId,
-      workspaceId: this.getWorkspaceId(),
+      workspaceId,
     });
 
     return this.workflowRunnerWorkspaceService.run({
-      workspaceId: this.getWorkspaceId(),
+      workspaceId,
       workflowRunId,
       workflowVersionId,
       payload,
@@ -78,11 +65,13 @@ export class WorkflowTriggerWorkspaceService {
     });
   }
 
-  async activateWorkflowVersion(workflowVersionId: string) {
-    const workspaceId = this.getWorkspaceId();
+  async activateWorkflowVersion(
+    workflowVersionId: string,
+    workspaceId: string,
+  ) {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        this.getWorkspaceId(),
+        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
@@ -121,15 +110,19 @@ export class WorkflowTriggerWorkspaceService {
       workflowVersion,
       workflowRepository,
       workflowVersionRepository,
+      workspaceId,
     );
 
     return true;
   }
 
-  async deactivateWorkflowVersion(workflowVersionId: string) {
+  async deactivateWorkflowVersion(
+    workflowVersionId: string,
+    workspaceId: string,
+  ) {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        this.getWorkspaceId(),
+        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -137,14 +130,15 @@ export class WorkflowTriggerWorkspaceService {
     await this.performDeactivationSteps(
       workflowVersionId,
       workflowVersionRepository,
+      workspaceId,
     );
 
     return true;
   }
 
-  async stopWorkflowRun(workflowRunId: string) {
+  async stopWorkflowRun(workflowRunId: string, workspaceId: string) {
     return this.workflowRunnerWorkspaceService.stopWorkflowRun(
-      this.getWorkspaceId(),
+      workspaceId,
       workflowRunId,
     );
   }
@@ -154,6 +148,7 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workspaceId: string,
   ) {
     if (
       workflow.lastPublishedVersionId &&
@@ -162,6 +157,7 @@ export class WorkflowTriggerWorkspaceService {
       await this.performDeactivationSteps(
         workflow.lastPublishedVersionId,
         workflowVersionRepository,
+        workspaceId,
       );
     }
 
@@ -175,14 +171,16 @@ export class WorkflowTriggerWorkspaceService {
     await this.setActiveVersionStatus(
       workflowVersion,
       workflowVersionRepository,
+      workspaceId,
     );
 
-    await this.enableTrigger(workflowVersion);
+    await this.enableTrigger(workflowVersion, workspaceId);
   }
 
   private async performDeactivationSteps(
     workflowVersionId: string,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workspaceId: string,
   ) {
     const workflowVersionNullable = await workflowVersionRepository.findOne({
       where: { id: workflowVersionId },
@@ -200,14 +198,16 @@ export class WorkflowTriggerWorkspaceService {
     await this.setDeactivatedVersionStatus(
       workflowVersion,
       workflowVersionRepository,
+      workspaceId,
     );
 
-    await this.disableTrigger(workflowVersion);
+    await this.disableTrigger(workflowVersion, workspaceId);
   }
 
   private async setActiveVersionStatus(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workspaceId: string,
   ) {
     const activeWorkflowVersions = await workflowVersionRepository.find({
       where: {
@@ -234,13 +234,14 @@ export class WorkflowTriggerWorkspaceService {
     await this.emitStatusUpdateEvents(
       workflowVersion,
       WorkflowVersionStatus.ACTIVE,
-      this.getWorkspaceId(),
+      workspaceId,
     );
   }
 
   private async setDeactivatedVersionStatus(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workspaceId: string,
   ) {
     if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
       throw new WorkflowTriggerException(
@@ -260,7 +261,7 @@ export class WorkflowTriggerWorkspaceService {
     await this.emitStatusUpdateEvents(
       workflowVersion,
       WorkflowVersionStatus.DEACTIVATED,
-      this.getWorkspaceId(),
+      workspaceId,
     );
   }
 
@@ -287,7 +288,10 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
-  private async enableTrigger(workflowVersion: WorkflowVersionWorkspaceEntity) {
+  private async enableTrigger(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    workspaceId: string,
+  ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
     switch (workflowVersion.trigger.type) {
@@ -302,6 +306,7 @@ export class WorkflowTriggerWorkspaceService {
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.DATABASE_EVENT,
           settings,
+          workspaceId,
         });
 
         return;
@@ -313,6 +318,7 @@ export class WorkflowTriggerWorkspaceService {
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.CRON,
           settings: { pattern },
+          workspaceId,
         });
 
         return;
@@ -325,6 +331,7 @@ export class WorkflowTriggerWorkspaceService {
 
   private async disableTrigger(
     workflowVersion: WorkflowVersionWorkspaceEntity,
+    workspaceId: string,
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
@@ -333,6 +340,7 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.CRON:
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
+          workspaceId,
         });
 
         return;
