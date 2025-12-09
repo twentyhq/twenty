@@ -16,7 +16,7 @@ export type GraphQLView = {
   type: ViewType;
   key: ViewKey | null;
   mainGroupByFieldMetadataId?: string | null;
-  shouldHideEmptyGroups?: boolean;
+  shouldHideEmptyGroups: boolean;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   objectMetadataId: string;

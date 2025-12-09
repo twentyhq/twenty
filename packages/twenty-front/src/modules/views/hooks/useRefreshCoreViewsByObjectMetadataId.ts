@@ -136,8 +136,8 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           }
 
           if (
-            (coreView.shouldHideEmptyGroups ?? false) !==
-            (existingView.shouldHideEmptyGroups ?? false)
+            coreView.shouldHideEmptyGroups !==
+            existingView.shouldHideEmptyGroups
           ) {
             const view = convertCoreViewToView(coreView);
             set(
