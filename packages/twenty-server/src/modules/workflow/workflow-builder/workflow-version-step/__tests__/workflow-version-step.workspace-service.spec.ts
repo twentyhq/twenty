@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -86,7 +86,7 @@ const mockWorkflowVersion = {
 } as WorkflowVersionWorkspaceEntity;
 
 describe('WorkflowVersionStepWorkspaceService', () => {
-  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let service: WorkflowVersionStepWorkspaceService;
   let mockWorkflowVersionWorkspaceRepository: MockWorkspaceRepository;
   let mockComputeWorkflowVersionStepChanges: jest.Mock;
@@ -108,11 +108,11 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       mockWorkflowVersion,
     );
 
-    twentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest
+    globalWorkspaceOrmManager = {
+      getRepository: jest
         .fn()
         .mockResolvedValue(mockWorkflowVersionWorkspaceRepository),
-    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
+    } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -122,8 +122,8 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         WorkflowVersionStepUpdateWorkspaceService,
         WorkflowVersionStepDeletionWorkspaceService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
         {
           provide: WorkflowSchemaWorkspaceService,

@@ -14,7 +14,7 @@ import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
@@ -36,12 +36,10 @@ describe('CreatedByFromAuthContextService', () => {
   const mockWorkspaceMemberRepository = {
     findOneOrFail: jest.fn(),
   };
-  const twentyORMGlobalManager: jest.Mocked<
-    Pick<TwentyORMGlobalManager, 'getRepositoryForWorkspace'>
+  const globalWorkspaceOrmManager: jest.Mocked<
+    Pick<GlobalWorkspaceOrmManager, 'getRepository'>
   > = {
-    getRepositoryForWorkspace: jest
-      .fn()
-      .mockResolvedValue(mockWorkspaceMemberRepository),
+    getRepository: jest.fn().mockResolvedValue(mockWorkspaceMemberRepository),
   };
 
   beforeEach(async () => {
@@ -49,8 +47,8 @@ describe('CreatedByFromAuthContextService', () => {
       providers: [
         CreatedByFromAuthContextService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
         {
           provide: getRepositoryToken(FieldMetadataEntity),

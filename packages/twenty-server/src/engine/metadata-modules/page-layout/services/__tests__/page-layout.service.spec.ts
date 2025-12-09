@@ -14,13 +14,13 @@ import {
   generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('PageLayoutService', () => {
   let pageLayoutService: PageLayoutService;
   let pageLayoutRepository: Repository<PageLayoutEntity>;
   let workspaceRepository: Repository<WorkspaceEntity>;
-  let twentyORMGlobalManager: TwentyORMGlobalManager;
+  let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
 
   const mockPageLayout = {
     id: 'page-layout-id',
@@ -61,9 +61,9 @@ describe('PageLayoutService', () => {
           },
         },
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest.fn(),
+            getRepository: jest.fn(),
           },
         },
       ],
@@ -76,8 +76,8 @@ describe('PageLayoutService', () => {
     workspaceRepository = module.get<Repository<WorkspaceEntity>>(
       getRepositoryToken(WorkspaceEntity),
     );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
+    globalWorkspaceOrmManager = module.get<GlobalWorkspaceOrmManager>(
+      GlobalWorkspaceOrmManager,
     );
   });
 
@@ -408,7 +408,7 @@ describe('PageLayoutService', () => {
         type: PageLayoutType.DASHBOARD,
       });
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(mockDashboardRepository as any);
       jest
         .spyOn(mockDashboardRepository, 'find')
@@ -420,11 +420,13 @@ describe('PageLayoutService', () => {
 
       const result = await pageLayoutService.destroy(id, workspaceId);
 
-      expect(
-        twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId, 'dashboard', {
-        shouldBypassPermissionChecks: true,
-      });
+      expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+        workspaceId,
+        'dashboard',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
       expect(mockDashboardRepository.find).toHaveBeenCalledWith({
         where: {
           pageLayoutId: id,

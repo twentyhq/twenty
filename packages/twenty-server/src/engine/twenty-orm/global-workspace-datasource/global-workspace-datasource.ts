@@ -15,6 +15,7 @@ import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoun
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 
 import {
   PermissionsException,
@@ -31,7 +32,11 @@ type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
-export class GlobalWorkspaceDataSource extends DataSource {
+export class GlobalWorkspaceDataSource
+  extends DataSource
+  implements WorkspaceDataSourceInterface
+{
+  readonly isGlobalFlow = true;
   private eventEmitterService: WorkspaceEventEmitter;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;

@@ -27,7 +27,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -35,7 +35,7 @@ describe('UserWorkspaceService', () => {
   let userRepository: Repository<UserEntity>;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
-  let twentyORMGlobalManager: TwentyORMGlobalManager;
+  let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   let userRoleService: UserRoleService;
   let fileService: FileService;
   let fileUploadService: FileUploadService;
@@ -102,9 +102,9 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest.fn(),
+            getRepository: jest.fn(),
           },
         },
         {
@@ -156,8 +156,8 @@ describe('UserWorkspaceService', () => {
     approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
       ApprovedAccessDomainService,
     );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
+    globalWorkspaceOrmManager = module.get<GlobalWorkspaceOrmManager>(
+      GlobalWorkspaceOrmManager,
     );
     userRoleService = module.get<UserRoleService>(UserRoleService);
     fileUploadService = module.get<FileUploadService>(FileUploadService);
@@ -374,7 +374,7 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(workspaceMemberRepository as any);
 
       jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
@@ -902,7 +902,7 @@ describe('UserWorkspaceService', () => {
       };
 
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(workspaceMemberRepository as any);
 
       const result = await service.getWorkspaceMemberOrThrow({
@@ -910,11 +910,13 @@ describe('UserWorkspaceService', () => {
         workspaceId,
       });
 
-      expect(
-        twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId, 'workspaceMember', {
-        shouldBypassPermissionChecks: true,
-      });
+      expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+        workspaceId,
+        'workspaceMember',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
       expect(workspaceMemberRepository.findOne).toHaveBeenCalledWith({
         where: {
           id: workspaceMemberId,
@@ -931,7 +933,7 @@ describe('UserWorkspaceService', () => {
       };
 
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(workspaceMemberRepository as any);
 
       await expect(
