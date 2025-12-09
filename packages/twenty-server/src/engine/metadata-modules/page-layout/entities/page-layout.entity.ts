@@ -14,10 +14,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 @Entity({ name: 'pageLayout', schema: 'core' })
 @ObjectType('PageLayout')
@@ -26,7 +28,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   ['workspaceId', 'objectMetadataId'],
   { where: '"deletedAt" IS NULL' },
 )
-export class PageLayoutEntity implements Required<PageLayoutEntity> {
+export class PageLayoutEntity
+  extends SyncableEntity
+  implements Required<PageLayoutEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

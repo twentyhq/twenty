@@ -13,9 +13,9 @@ import {
   CalendarChannelSyncStatus,
   type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
-  MessageChannelSyncStatus,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
@@ -36,6 +36,7 @@ export class ChannelSyncService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -63,10 +64,10 @@ export class ChannelSyncService {
     });
 
     for (const messageChannel of messageChannels) {
-      await messageChannelRepository.update(messageChannel.id, {
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-        syncStatus: MessageChannelSyncStatus.ONGOING,
-      });
+      await this.messageChannelSyncStatusService.markAsMessagesListFetchScheduled(
+        [messageChannel.id],
+        workspaceId,
+      );
 
       await this.messageQueueService.add<MessagingMessageListFetchJobData>(
         MessagingMessageListFetchJob.name,

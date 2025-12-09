@@ -1,9 +1,11 @@
 import { useTriggerRecordBoardFetchMore } from '@/object-record/record-board/hooks/useTriggerRecordBoardFetchMore';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
+import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/states/lastRecordGroupIdsComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
+import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 
@@ -15,12 +17,17 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useEffect } from 'react';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+
+  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentState(
+    lastRecordGroupIdsComponentState,
+  );
 
   const [recordIndexRecordGroupsAreInInitialLoading] = useRecoilComponentState(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
@@ -57,12 +64,19 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
+  const recordGroupdIds = useRecoilComponentValue(recordGroupIdsComponentState);
+  const recordGroupIdsHaveChanged = !isDeeplyEqual(
+    [...recordGroupdIds].sort(),
+    [...lastRecordGroupIds].sort(),
+  );
+
   useEffect(() => {
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      queryIdentifierHasChanged
+      (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
       triggerRecordBoardInitialQuery();
+      setLastRecordGroupIds(recordGroupdIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       shouldFetchMore &&
@@ -82,6 +96,9 @@ export const RecordBoardQueryEffect = () => {
     shouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
+    setLastRecordGroupIds,
+    recordGroupdIds,
+    recordGroupIdsHaveChanged,
   ]);
 
   return null;

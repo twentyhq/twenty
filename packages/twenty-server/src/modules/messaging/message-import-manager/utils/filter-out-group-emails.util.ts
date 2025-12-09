@@ -1,3 +1,5 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 
@@ -8,7 +10,7 @@ export const filterOutGroupEmails = (messages: MessageWithParticipants[]) => {
     }
 
     const fromParticipant = message.participants.find(
-      (participant) => participant.role === 'from',
+      (participant) => participant.role === MessageParticipantRole.FROM,
     );
 
     if (!fromParticipant || !fromParticipant.handle) {

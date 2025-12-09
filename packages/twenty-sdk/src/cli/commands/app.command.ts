@@ -5,11 +5,11 @@ import {
   isSyncableEntity,
   SyncableEntity,
 } from './app-add.command';
-import { AppUninstallCommand } from './app-uninstall.command';
-import { AppDevCommand } from './app-dev.command';
-import { AppSyncCommand } from './app-sync.command';
-import { formatPath } from '../utils/format-path';
-import { AppGenerateCommand } from './app-generate.command';
+import { AppUninstallCommand } from '@/cli/commands/app-uninstall.command';
+import { AppDevCommand } from '@/cli/commands/app-dev.command';
+import { AppSyncCommand } from '@/cli/commands/app-sync.command';
+import { formatPath } from '@/cli/utils/format-path';
+import { AppGenerateCommand } from '@/cli/commands/app-generate.command';
 import { AppLogsCommand } from '@/cli/commands/app-logs.command';
 
 export class AppCommand {

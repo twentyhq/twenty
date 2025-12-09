@@ -83,6 +83,7 @@ export class WorkflowRunnerWorkspaceService {
 
     if (isHardThrottled) {
       return this.createFailedWorkflowRun({
+        workspaceId,
         workflowVersionId,
         initialWorkflowRunId,
         source,
@@ -258,11 +259,13 @@ export class WorkflowRunnerWorkspaceService {
   }
 
   private async createFailedWorkflowRun({
+    workspaceId,
     workflowVersionId,
     initialWorkflowRunId,
     source,
     payload,
   }: {
+    workspaceId: string;
     workflowVersionId: string;
     initialWorkflowRunId?: string;
     source: ActorMetadata;
@@ -276,6 +279,7 @@ export class WorkflowRunnerWorkspaceService {
         status: WorkflowRunStatus.FAILED,
         triggerPayload: payload,
         error: 'Throttle limit reached',
+        workspaceId,
       });
 
     return { workflowRunId };
@@ -301,6 +305,7 @@ export class WorkflowRunnerWorkspaceService {
         createdBy: source,
         status: WorkflowRunStatus.ENQUEUED,
         triggerPayload: payload,
+        workspaceId,
       });
 
     await this.messageQueueService.add<RunWorkflowJobData>(
@@ -334,6 +339,7 @@ export class WorkflowRunnerWorkspaceService {
         createdBy: source,
         status: WorkflowRunStatus.NOT_STARTED,
         triggerPayload: payload,
+        workspaceId,
       });
 
     await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
