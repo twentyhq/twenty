@@ -216,7 +216,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconVersions',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'workflow',
       settings: {
@@ -224,6 +223,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   runs: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -235,7 +237,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconRun',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'workflow',
       settings: {
@@ -243,6 +244,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   eventListeners: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -255,7 +259,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflowAutomatedTrigger',
       targetFieldName: 'workflow',
       settings: {
@@ -263,6 +266,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   automatedTriggers: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -275,7 +281,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflowAutomatedTrigger',
       targetFieldName: 'workflow',
       settings: {
@@ -283,6 +288,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -294,7 +302,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'workflow',
       settings: {
@@ -302,6 +309,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -313,7 +323,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workflow',
       settings: {
@@ -321,6 +330,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -332,7 +344,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'workflow',
       settings: {
@@ -340,5 +351,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

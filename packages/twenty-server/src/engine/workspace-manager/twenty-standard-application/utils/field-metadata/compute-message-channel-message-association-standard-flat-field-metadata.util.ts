@@ -175,8 +175,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Channel Id',
         icon: 'IconHash',
         isNullable: true,
-        createdAt,
-        targetObjectName: 'messageChannel',
+      targetObjectName: 'messageChannel',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
@@ -195,8 +194,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Thread Id',
         icon: 'IconHash',
         isNullable: true,
-        createdAt,
-        targetObjectName: 'messageThread',
+      targetObjectName: 'messageThread',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
@@ -215,8 +213,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Id',
         icon: 'IconHash',
         isNullable: true,
-        createdAt,
-        targetObjectName: 'message',
+      targetObjectName: 'message',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
           relationType: RelationType.MANY_TO_ONE,

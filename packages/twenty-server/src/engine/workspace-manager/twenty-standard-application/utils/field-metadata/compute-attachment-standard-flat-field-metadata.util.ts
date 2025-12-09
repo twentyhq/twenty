@@ -225,7 +225,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment author (deprecated - use createdBy)',
       icon: 'IconCircleUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'authoredAttachments',
       settings: {
@@ -235,6 +234,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   activity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -245,7 +247,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment activity',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
       // Activity is deprecated, pointing to a non-existent target
       targetObjectName: 'note',
       targetFieldName: 'attachments',
@@ -256,6 +257,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   task: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -266,7 +270,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment task',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
       targetObjectName: 'task',
       targetFieldName: 'attachments',
       settings: {
@@ -276,6 +279,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   note: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -286,7 +292,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment note',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'attachments',
       settings: {
@@ -296,6 +301,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -306,7 +314,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'attachments',
       settings: {
@@ -316,6 +323,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -326,7 +336,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'attachments',
       settings: {
@@ -336,6 +345,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -346,7 +358,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment opportunity',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'attachments',
       settings: {
@@ -356,6 +367,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -366,7 +380,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment dashboard',
       icon: 'IconLayout',
       isNullable: true,
-      createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'attachments',
       settings: {
@@ -376,6 +389,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -386,7 +402,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'attachments',
       settings: {
@@ -396,6 +411,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   custom: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -406,7 +424,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       description: 'Attachment custom object',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       // Custom is a dynamic relation, pointing to custom objects
       targetObjectName: 'note',
       targetFieldName: 'attachments',
@@ -417,5 +434,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

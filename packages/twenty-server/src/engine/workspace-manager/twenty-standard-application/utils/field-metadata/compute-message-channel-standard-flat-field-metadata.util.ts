@@ -506,7 +506,6 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Connected Account',
       icon: 'IconUserCircle',
       isNullable: false,
-      createdAt,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'messageChannels',
       settings: {
@@ -516,6 +515,9 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -526,7 +528,6 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'messageChannel',
       settings: {
@@ -534,6 +535,9 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageFolders: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -544,7 +548,6 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Message Folders',
       icon: 'IconFolder',
       isNullable: true,
-      createdAt,
       targetObjectName: 'messageFolder',
       targetFieldName: 'messageChannel',
       settings: {
@@ -552,5 +555,8 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

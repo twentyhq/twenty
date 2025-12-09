@@ -116,7 +116,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget note',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'noteTargets',
       settings: {
@@ -126,6 +125,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -136,7 +138,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'noteTargets',
       settings: {
@@ -146,6 +147,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -156,7 +160,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'noteTargets',
       settings: {
@@ -166,6 +169,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -176,7 +182,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'noteTargets',
       settings: {
@@ -186,6 +191,9 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   custom: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -196,7 +204,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       description: 'NoteTarget custom object',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       // Custom is a dynamic relation
       targetObjectName: 'note',
       targetFieldName: 'noteTargets',
@@ -207,5 +214,8 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

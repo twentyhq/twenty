@@ -148,7 +148,6 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: 'WorkflowAutomatedTrigger workflow',
       icon: 'IconSettingsAutomation',
       isNullable: false,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'automatedTriggers',
       settings: {
@@ -158,5 +157,8 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

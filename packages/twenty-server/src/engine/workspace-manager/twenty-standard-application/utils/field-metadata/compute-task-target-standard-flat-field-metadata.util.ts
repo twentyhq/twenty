@@ -116,7 +116,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget task',
       icon: 'IconCheckbox',
       isNullable: true,
-      createdAt,
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
       settings: {
@@ -126,6 +125,9 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -136,7 +138,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
       settings: {
@@ -146,6 +147,9 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -156,7 +160,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
       settings: {
@@ -166,6 +169,9 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -176,7 +182,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
       settings: {
@@ -186,6 +191,9 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   custom: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -196,7 +204,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget custom object',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       // Custom is a dynamic relation
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
@@ -207,5 +214,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

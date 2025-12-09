@@ -189,7 +189,6 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Event ID',
       icon: 'IconCalendar',
       isNullable: false,
-      createdAt,
       targetObjectName: 'calendarEvent',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -199,6 +198,9 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -209,7 +211,6 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -219,6 +220,9 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -229,7 +233,6 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       description: 'Workspace Member',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -239,5 +242,8 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

@@ -183,7 +183,6 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Message',
       icon: 'IconMessage',
       isNullable: false,
-      createdAt,
       targetObjectName: 'message',
       targetFieldName: 'messageParticipants',
       settings: {
@@ -193,6 +192,9 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -203,7 +205,6 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'messageParticipants',
       settings: {
@@ -213,6 +214,9 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -223,7 +227,6 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'messageParticipants',
       settings: {
@@ -233,5 +236,8 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

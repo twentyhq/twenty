@@ -231,7 +231,6 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       description: 'Message Channel',
       icon: 'IconMessage',
       isNullable: false,
-      createdAt,
       targetObjectName: 'messageChannel',
       targetFieldName: 'messageFolders',
       settings: {
@@ -241,5 +240,8 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

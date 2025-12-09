@@ -146,7 +146,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workspace member',
       icon: 'IconCircleUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'favorites',
       settings: {
@@ -156,6 +155,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   person: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -166,7 +168,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite person',
       icon: 'IconUser',
       isNullable: true,
-      createdAt,
       targetObjectName: 'person',
       targetFieldName: 'favorites',
       settings: {
@@ -176,6 +177,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   company: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -186,7 +190,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'favorites',
       settings: {
@@ -196,6 +199,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -206,7 +212,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
-      createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'favorites',
       settings: {
@@ -216,6 +221,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -226,7 +234,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'favorites',
       settings: {
@@ -236,6 +243,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflowVersion: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -246,7 +256,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow version',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'favorites',
       settings: {
@@ -256,6 +265,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   workflowRun: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -266,7 +278,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite workflow run',
       icon: 'IconSettingsAutomation',
       isNullable: true,
-      createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'favorites',
       settings: {
@@ -276,6 +287,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   task: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -286,7 +300,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite task',
       icon: 'IconCheckbox',
       isNullable: true,
-      createdAt,
       targetObjectName: 'task',
       targetFieldName: 'favorites',
       settings: {
@@ -296,6 +309,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   note: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -306,7 +322,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite note',
       icon: 'IconNotes',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'favorites',
       settings: {
@@ -316,6 +331,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -326,7 +344,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite dashboard',
       icon: 'IconLayoutDashboard',
       isNullable: true,
-      createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'favorites',
       settings: {
@@ -336,6 +353,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favoriteFolder: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -346,7 +366,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'The folder this favorite belongs to',
       icon: 'IconFolder',
       isNullable: true,
-      createdAt,
       targetObjectName: 'favoriteFolder',
       targetFieldName: 'favorites',
       settings: {
@@ -356,6 +375,9 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   custom: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -366,7 +388,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       description: 'Favorite custom object',
       icon: 'IconHeart',
       isNullable: true,
-      createdAt,
       targetObjectName: 'note',
       targetFieldName: 'favorites',
       settings: {
@@ -376,5 +397,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

@@ -393,7 +393,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Tasks assigned to the workspace member',
       icon: 'IconCheckbox',
       isNullable: false,
-      createdAt,
       targetObjectName: 'task',
       targetFieldName: 'assignee',
       settings: {
@@ -401,6 +400,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -411,7 +413,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Favorites linked to the workspace member',
       icon: 'IconHeart',
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'forWorkspaceMember',
       settings: {
@@ -419,6 +420,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   accountOwnerForCompanies: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -429,7 +433,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Account owner for companies',
       icon: 'IconBriefcase',
       isNullable: false,
-      createdAt,
       targetObjectName: 'company',
       targetFieldName: 'accountOwner',
       settings: {
@@ -437,6 +440,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   authoredAttachments: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -448,7 +454,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: false,
-      createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'author',
       settings: {
@@ -456,6 +461,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   connectedAccounts: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -466,7 +474,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Connected accounts',
       icon: 'IconAt',
       isNullable: false,
-      createdAt,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'accountOwner',
       settings: {
@@ -474,6 +481,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -484,7 +494,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isNullable: false,
-      createdAt,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -492,6 +501,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   blocklist: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -502,7 +514,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Blocklisted handles',
       icon: 'IconForbid2',
       isNullable: false,
-      createdAt,
       targetObjectName: 'blocklist',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -510,6 +521,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -520,7 +534,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Calendar Event Participants',
       icon: 'IconCalendar',
       isNullable: false,
-      createdAt,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -528,6 +541,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
@@ -539,7 +555,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
-      createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -547,5 +562,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });

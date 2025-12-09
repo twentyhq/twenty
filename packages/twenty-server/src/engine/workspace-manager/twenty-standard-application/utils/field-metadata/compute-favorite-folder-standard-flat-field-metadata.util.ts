@@ -142,7 +142,6 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       description: 'Favorites in this folder',
       icon: 'IconHeart',
       isNullable: false,
-      createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'favoriteFolder',
       settings: {
@@ -150,5 +149,8 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 });
