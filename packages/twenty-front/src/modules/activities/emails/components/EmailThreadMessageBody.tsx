@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import Linkify from 'linkify-react';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledThreadMessageBody = styled(motion.div)`
@@ -9,6 +10,17 @@ const StyledThreadMessageBody = styled(motion.div)`
   margin-top: ${({ theme }) => theme.spacing(4)};
   white-space: pre-line;
   overflow-wrap: break-word;
+
+  a {
+    color: ${({ theme }) => theme.font.color.tertiary};
+    text-decoration: underline;
+    text-decoration-color: ${({ theme }) => theme.border.color.strong};
+
+    &:hover {
+      color: ${({ theme }) => theme.font.color.primary};
+      text-decoration-color: ${({ theme }) => theme.font.color.primary};
+    }
+  }
 `;
 
 type EmailThreadMessageBodyProps = {
@@ -22,7 +34,16 @@ export const EmailThreadMessageBody = ({
 }: EmailThreadMessageBodyProps) => {
   return (
     <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>{body}</StyledThreadMessageBody>
+      <StyledThreadMessageBody>
+        <Linkify
+          options={{
+            target: '_blank',
+            rel: 'noopener noreferrer',
+          }}
+        >
+          {body}
+        </Linkify>
+      </StyledThreadMessageBody>
     </AnimatedEaseInOut>
   );
 };
