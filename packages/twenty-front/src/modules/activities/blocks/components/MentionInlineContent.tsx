@@ -31,7 +31,6 @@ const MentionInlineContentRenderer = ({
       objectNameSingular={objectNameSingular}
       record={record}
       forceDisableClick={false}
-      isIconHidden={true}
     />
   );
 };
