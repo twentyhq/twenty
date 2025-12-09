@@ -8,6 +8,6 @@ export const WIDGET_SIZES: Partial<Record<WidgetType, WidgetSizeConfig>> = {
   },
   [WidgetType.STANDALONE_RICH_TEXT]: {
     default: { w: 4, h: 4 },
-    minimum: { w: 2, h: 2 },
+    minimum: { w: 1, h: 1 },
   },
 };
