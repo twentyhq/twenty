@@ -28,6 +28,8 @@ import {
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
 
+const STANDALONE_WIDGET_EXCLUDED_SLASH_MENU_ITEMS = ['File', 'Video'];
+
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;
   display: flex;
@@ -150,6 +152,7 @@ export const StandaloneRichTextWidget = ({
           onChange={handleEditorChange}
           editor={editor}
           readonly={!isEditable}
+          excludeSlashMenuItems={STANDALONE_WIDGET_EXCLUDED_SLASH_MENU_ITEMS}
         />
       </ScrollWrapper>
     </StyledContainer>

@@ -20,6 +20,7 @@ interface BlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
+  excludeSlashMenuItems?: string[];
 }
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
@@ -138,6 +139,7 @@ export const BlockEditor = ({
   onChange,
   onPaste,
   readonly,
+  excludeSlashMenuItems,
 }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
@@ -174,9 +176,15 @@ export const BlockEditor = ({
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"
-          getItems={async (query) =>
-            filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
-          }
+          getItems={async (query) => {
+            const items = getSlashMenu(editor);
+            const filtered = excludeSlashMenuItems
+              ? items.filter(
+                  (item) => !excludeSlashMenuItems.includes(item.title),
+                )
+              : items;
+            return filterSuggestionItems<SuggestionItem>(filtered, query);
+          }}
           suggestionMenuComponent={CustomSlashMenu}
         />
       </BlockNoteView>
