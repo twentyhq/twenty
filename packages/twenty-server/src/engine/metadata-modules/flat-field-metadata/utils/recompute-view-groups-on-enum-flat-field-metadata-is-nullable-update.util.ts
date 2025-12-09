@@ -65,7 +65,7 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
     ) {
       const highestViewGroupPosition = highestViewGroupPositionByViewId[viewId];
       const viewGroupId = v4();
-      const createdAt = new Date();
+      const createdAt = new Date().toISOString();
 
       sideEffectResult.flatViewGroupsToCreate.push({
         id: viewGroupId,

@@ -54,7 +54,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
         },
         workspaceId,
       });
-    const createdAt = new Date();
+    const createdAt = new Date().toISOString();
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldMetadataIds: [],
       viewIds: [],

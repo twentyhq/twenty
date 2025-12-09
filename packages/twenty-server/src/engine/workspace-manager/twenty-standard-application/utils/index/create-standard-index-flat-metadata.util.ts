@@ -78,7 +78,7 @@ export const createStandardIndexFlatMetadata = <
 
   return generateFlatIndexMetadataWithNameOrThrow({
     flatIndex: {
-      createdAt: now,
+      createdAt: now.toISOString(),
       applicationId: twentyStandardApplicationId,
       indexType,
       indexWhereClause,
@@ -86,17 +86,17 @@ export const createStandardIndexFlatMetadata = <
       isUnique,
       objectMetadataId,
       universalIdentifier: indexDefinition.universalIdentifier,
-      updatedAt: now,
+      updatedAt: now.toISOString(),
       workspaceId,
       id: indexId,
       flatIndexFieldMetadatas: flatFieldMetadatas.map<FlatIndexFieldMetadata>(
         ({ id: fieldMetadataId }, index) => ({
-          createdAt: now,
+          createdAt: now.toISOString(),
           fieldMetadataId,
           id: v4(),
           indexMetadataId: indexId,
           order: index,
-          updatedAt: now,
+          updatedAt: now.toISOString(),
         }),
       ),
     },

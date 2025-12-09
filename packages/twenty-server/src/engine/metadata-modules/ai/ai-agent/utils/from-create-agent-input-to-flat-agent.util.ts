@@ -38,7 +38,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       ],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const agentId = v4();
   const standardId = createAgentInput.standardId ?? null;
   const universalIdentifier = standardId ?? agentId;

@@ -35,7 +35,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       ['id', 'name', 'objectMetadataId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
 
   const flatViewToCreate = {

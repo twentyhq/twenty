@@ -81,7 +81,7 @@ export const createStandardObjectFlatMetadata = <
   fieldMetadataIds: [],
   indexMetadataIds: [],
   viewIds: [],
-  createdAt: now,
-  updatedAt: now,
+  createdAt: now.toISOString(),
+  updatedAt: now.toISOString(),
   id: standardFieldMetadataIdByObjectAndFieldName[nameSingular].id,
 });
