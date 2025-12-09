@@ -205,9 +205,7 @@ export const useLoadRecordIndexStates = () => {
           view.calendarFieldMetadataId ?? null,
         );
 
-        setRecordIndexShouldHideEmptyRecordGroups(
-          view.shouldHideEmptyGroups ?? false,
-        );
+        setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
 
         if (isDefined(view.mainGroupByFieldMetadataId)) {
           const recordIndexGroupFieldMetadataItemId =

@@ -147,7 +147,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                   view.id,
                 ),
               }),
-              view.shouldHideEmptyGroups ?? false,
+              view.shouldHideEmptyGroups,
             );
           }
         }
