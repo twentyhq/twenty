@@ -135,7 +135,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   }
                   disabled={disabled}
                   minValue={0}
-                  maxValue={100}
+                  maxValue={5}
                 />
               )}
             </>
