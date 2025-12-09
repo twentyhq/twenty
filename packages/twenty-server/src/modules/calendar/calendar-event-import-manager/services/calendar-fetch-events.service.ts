@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
@@ -27,7 +27,7 @@ export class CalendarFetchEventsService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
@@ -42,6 +42,7 @@ export class CalendarFetchEventsService {
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
+      workspaceId,
     );
 
     try {
@@ -82,7 +83,8 @@ export class CalendarFetchEventsService {
       const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
 
       const calendarChannelRepository =
-        await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
+          workspaceId,
           'calendarChannel',
         );
 
@@ -96,8 +98,9 @@ export class CalendarFetchEventsService {
           },
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
+          workspaceId,
         );
       }
 
@@ -126,8 +129,9 @@ export class CalendarFetchEventsService {
           calendarEventIds,
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
+          workspaceId,
         );
       } else {
         throw new CalendarEventImportDriverException(

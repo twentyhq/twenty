@@ -26,6 +26,7 @@ export const getDefaultFlatFieldMetadata = ({
 
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
@@ -59,7 +60,6 @@ export const getDefaultFlatFieldMetadata = ({
     morphId: null,
     applicationId: workspaceCustomApplicationId,
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

@@ -5,13 +5,9 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/create-one-core-view-group.util';
 import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import {
-  FieldMetadataType,
-  type EnumFieldMetadataType,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   type FieldMetadataComplexOption,
@@ -37,16 +33,10 @@ const fakeOptionUpdate = ({ value, label, ...option }: Option) => ({
   label: `${label} updated`,
 });
 
-const testFieldMetadataTypes: EnumFieldMetadataType[] = [
-  FieldMetadataType.SELECT,
-  FieldMetadataType.MULTI_SELECT,
-];
-
 describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
   let objectMetadataIdToDelete: string;
 
   const createObjectWithSelectFieldAndView = async (
-    fieldType: EnumFieldMetadataType,
     initialOptions: Option[],
   ) => {
     const singular = 'sideEffect';
@@ -69,11 +59,11 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
 
     const {
       data: { createOneField },
-    } = await createOneFieldMetadata<typeof fieldType>({
+    } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
         objectMetadataId: createOneObject.id,
-        type: fieldType,
+        type: FieldMetadataType.SELECT,
         name: 'statusField',
         label: 'Status Field',
         isLabelSyncedWithName: true,
@@ -90,6 +80,7 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         icon: 'IconTable',
         name: 'Test View',
         objectMetadataId: createOneObject.id,
+        mainGroupByFieldMetadataId: createOneField.id,
         type: ViewType.TABLE,
       },
       expectToFail: false,
@@ -120,38 +111,30 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
     });
   });
 
-  describe.each(testFieldMetadataTypes)('%s field type', (fieldType) => {
-    it('should delete all view groups when all enum field options are deleted', async () => {
+  describe('SELECT field type', () => {
+    it('deleted and adds view groups when options are deleted and added', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      for (const [index, option] of initialOptions.entries()) {
-        await createOneCoreViewGroup({
-          input: {
-            viewId,
-            fieldMetadataId,
-            fieldValue: option.value,
-            isVisible: true,
-            position: index,
-          },
-          expectToFail: false,
-          gqlFields: 'id fieldValue',
-        });
-      }
+        await createObjectWithSelectFieldAndView(initialOptions);
 
       const {
         data: { getCoreViewGroups: initialViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      expect(
-        initialViewGroups.filter((vg) => vg.fieldMetadataId === fieldMetadataId)
-          .length,
-      ).toBe(3);
+      expect(initialViewGroups.length).toBe(4);
+      const initialFieldValues = [...initialViewGroups]
+        .map((vg) => vg.fieldValue)
+        .sort();
+      const expectedFieldValues = [
+        ...initialOptions.map((opt) => opt.value),
+        '',
+      ].sort();
+
+      expect(initialFieldValues).toEqual(expectedFieldValues);
 
       await updateOneFieldMetadata({
         input: {
@@ -175,82 +158,22 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue viewId',
         expectToFail: false,
       });
 
-      expect(
-        updatedViewGroups.filter((vg) => vg.fieldMetadataId === fieldMetadataId)
-          .length,
-      ).toBe(0);
+      expect(updatedViewGroups.length).toBe(2);
+      const updatedFieldValues = updatedViewGroups
+        .map((vg) => vg.fieldValue)
+        .sort();
+      const expectedUpdatedFieldValues = ['', 'NEW_OPTION_VALUE'].sort();
+
+      expect(updatedFieldValues).toEqual(expectedUpdatedFieldValues);
     });
-
-    it('should update view group when option value is updated', async () => {
-      const initialOptions = generateOptions(1);
-      const { fieldMetadataId, fieldOptions, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      await createOneCoreViewGroup({
-        input: {
-          viewId,
-          fieldMetadataId,
-          fieldValue: initialOptions[0].value,
-          isVisible: true,
-          position: 0,
-        },
-        expectToFail: false,
-        gqlFields: 'id fieldValue',
-      });
-
-      const updatedOptions = [fakeOptionUpdate(fieldOptions[0])];
-
-      await updateOneFieldMetadata({
-        input: {
-          idToUpdate: fieldMetadataId,
-          updatePayload: {
-            options: updatedOptions,
-          },
-        },
-        gqlFields: 'id options',
-        expectToFail: false,
-      });
-
-      const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
-        viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
-        expectToFail: false,
-      });
-
-      const viewGroupsForField = updatedViewGroups.filter(
-        (vg) => vg.fieldMetadataId === fieldMetadataId,
-      );
-
-      expect(viewGroupsForField.length).toBe(1);
-      expect(viewGroupsForField[0].fieldValue).toBe(
-        `${initialOptions[0].value}_UPDATED`,
-      );
-    });
-
-    it('should update multiple view groups when multiple option values are updated', async () => {
+    it('updates specific view groups when some options are updated', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, fieldOptions, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      for (const [index, option] of initialOptions.entries()) {
-        await createOneCoreViewGroup({
-          input: {
-            viewId,
-            fieldMetadataId,
-            fieldValue: option.value,
-            isVisible: true,
-            position: index,
-          },
-          expectToFail: false,
-          gqlFields: 'id fieldValue',
-        });
-      }
+        await createObjectWithSelectFieldAndView(initialOptions);
 
       const updatedOptions = fieldOptions.map((opt) => fakeOptionUpdate(opt));
 
@@ -269,43 +192,26 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      const viewGroupsForField = updatedViewGroups.filter(
-        (vg) => vg.fieldMetadataId === fieldMetadataId,
-      );
-
-      expect(viewGroupsForField.length).toBe(3);
-      const actualFieldValues = viewGroupsForField
+      expect(updatedViewGroups.length).toBe(4);
+      const updatedFieldValues = updatedViewGroups
         .map((vg) => vg.fieldValue)
         .sort();
-      const expectedFieldValues = initialOptions
-        .map((opt) => `${opt.value}_UPDATED`)
-        .sort();
+      const expectedUpdatedFieldValues = [
+        ...updatedOptions.map((opt) => opt.value),
+        '',
+      ].sort();
 
-      expect(actualFieldValues).toEqual(expectedFieldValues);
+      expect(updatedFieldValues).toEqual(expectedUpdatedFieldValues);
     });
 
-    it('should delete specific view groups when their options are removed', async () => {
+    it('deletes specific view groups when some of all options are removed', async () => {
       const initialOptions = generateOptions(5);
       const { fieldMetadataId, fieldOptions, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      for (const [index, option] of initialOptions.entries()) {
-        await createOneCoreViewGroup({
-          input: {
-            viewId,
-            fieldMetadataId,
-            fieldValue: option.value,
-            isVisible: true,
-            position: index,
-          },
-          expectToFail: false,
-          gqlFields: 'id fieldValue',
-        });
-      }
+        await createObjectWithSelectFieldAndView(initialOptions);
 
       const updatedOptions = fieldOptions.slice(2);
 
@@ -324,44 +230,26 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      const viewGroupsForField = updatedViewGroups.filter(
-        (vg) => vg.fieldMetadataId === fieldMetadataId,
-      );
+      expect(updatedViewGroups.length).toBe(4);
+      const remainingFieldValues = updatedViewGroups
+        .map((vg) => vg.fieldValue)
+        .sort();
+      const expectedRemainingFieldValues = [
+        ...updatedOptions.map((opt) => opt.value),
+        '',
+      ].sort();
 
-      expect(viewGroupsForField.length).toBe(3);
-      const remainingFieldValues = viewGroupsForField.map(
-        (vg) => vg.fieldValue,
-      );
-
-      expect(remainingFieldValues).not.toContain(initialOptions[0].value);
-      expect(remainingFieldValues).not.toContain(initialOptions[1].value);
-      expect(remainingFieldValues).toContain(initialOptions[2].value);
-      expect(remainingFieldValues).toContain(initialOptions[3].value);
-      expect(remainingFieldValues).toContain(initialOptions[4].value);
+      expect(remainingFieldValues).toEqual(expectedRemainingFieldValues);
     });
 
-    it('should preserve view groups when no options are changed', async () => {
+    it('preserves view groups when no options are changed', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, fieldOptions, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      for (const [index, option] of initialOptions.entries()) {
-        await createOneCoreViewGroup({
-          input: {
-            viewId,
-            fieldMetadataId,
-            fieldValue: option.value,
-            isVisible: true,
-            position: index,
-          },
-          expectToFail: false,
-          gqlFields: 'id fieldValue',
-        });
-      }
+        await createObjectWithSelectFieldAndView(initialOptions);
 
       await updateOneFieldMetadata({
         input: {
@@ -378,41 +266,26 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      const viewGroupsForField = updatedViewGroups.filter(
-        (vg) => vg.fieldMetadataId === fieldMetadataId,
-      );
-
-      expect(viewGroupsForField.length).toBe(3);
-      const actualFieldValues = viewGroupsForField
+      expect(updatedViewGroups.length).toBe(4);
+      const actualFieldValues = updatedViewGroups
         .map((vg) => vg.fieldValue)
         .sort();
-      const expectedFieldValues = initialOptions.map((opt) => opt.value).sort();
+      const expectedFieldValues = [
+        ...initialOptions.map((opt) => opt.value),
+        '',
+      ].sort();
 
       expect(actualFieldValues).toEqual(expectedFieldValues);
     });
 
-    it('should handle adding new options while maintaining existing view groups', async () => {
+    it('adds new view groups when new options are added', async () => {
       const initialOptions = generateOptions(3);
       const { fieldMetadataId, fieldOptions, viewId } =
-        await createObjectWithSelectFieldAndView(fieldType, initialOptions);
-
-      for (const [index, option] of initialOptions.entries()) {
-        await createOneCoreViewGroup({
-          input: {
-            viewId,
-            fieldMetadataId,
-            fieldValue: option.value,
-            isVisible: true,
-            position: index,
-          },
-          expectToFail: false,
-          gqlFields: 'id fieldValue',
-        });
-      }
+        await createObjectWithSelectFieldAndView(initialOptions);
 
       const newOptions = generateOptions(6).slice(3);
       const updatedOptions = [...fieldOptions, ...newOptions];
@@ -432,19 +305,18 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      const viewGroupsForField = updatedViewGroups.filter(
-        (vg) => vg.fieldMetadataId === fieldMetadataId,
-      );
-
-      expect(viewGroupsForField.length).toBe(6);
-      const actualFieldValues = viewGroupsForField
+      expect(updatedViewGroups.length).toBe(7);
+      const actualFieldValues = updatedViewGroups
         .map((vg) => vg.fieldValue)
         .sort();
-      const expectedFieldValues = updatedOptions.map((opt) => opt.value).sort();
+      const expectedFieldValues = [
+        ...updatedOptions.map((opt) => opt.value),
+        '',
+      ].sort();
 
       expect(actualFieldValues).toEqual(expectedFieldValues);
     });

@@ -7,6 +7,8 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
+import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
@@ -14,8 +16,9 @@ import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -23,6 +26,8 @@ import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatRoutingService } from './services/agent-chat-routing.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
+import { AgentTitleGenerationService } from './services/agent-title-generation.service';
+import { ChatToolsProviderService } from './services/chat-tools-provider.service';
 
 @Module({
   imports: [
@@ -39,11 +44,13 @@ import { AgentChatService } from './services/agent-chat.service';
     FileUploadModule,
     FileModule,
     PermissionsModule,
-    WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
+    ToolProviderModule,
+    // WorkflowToolsModule provides workflow tools for chat context
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -51,6 +58,13 @@ import { AgentChatService } from './services/agent-chat.service';
     AgentChatService,
     AgentChatStreamingService,
     AgentChatRoutingService,
+    AgentTitleGenerationService,
+    ChatToolsProviderService,
+    // Provide WorkflowToolWorkspaceService via token for ToolProviderService
+    {
+      provide: WORKFLOW_TOOL_SERVICE_TOKEN,
+      useExisting: WorkflowToolWorkspaceService,
+    },
   ],
   exports: [
     AgentChatService,

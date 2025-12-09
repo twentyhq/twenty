@@ -848,6 +848,11 @@ msgstr "南非荷蘭語"
 msgid "After a set amount of time"
 msgstr "在設定的時間後"
 
+#. js-lingui-id: fcYF58
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "agent"
+msgstr ""
+
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1058,6 +1063,11 @@ msgstr "允許上傳文件和附件"
 msgid "Allow users to sign in with an email and password."
 msgstr "允許用戶使用電子郵件和密碼登錄。"
 
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr ""
+
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
@@ -1070,9 +1080,6 @@ msgstr "處理您的消息時發生錯誤"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
@@ -1311,6 +1318,11 @@ msgstr "您確定要恢復這些記錄嗎？"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "您確定要恢復此記錄嗎？"
+
+#. js-lingui-id: 9JFf0y
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
+msgstr ""
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -2222,6 +2234,11 @@ msgstr "確認刪除 {roleName} 角色？此操作無法撤銷。所有成員將
 msgid "Confirm downgrade"
 msgstr "確認降級"
 
+#. js-lingui-id: 28b8wO
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Confirm role update"
+msgstr ""
+
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
@@ -2640,6 +2657,11 @@ msgstr ""
 msgid "CRUD"
 msgstr ""
 
+#. js-lingui-id: J1QT+3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Cumulative"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2717,6 +2739,11 @@ msgstr "自定義字段"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Customize page layouts and UI structure"
 msgstr "自定義頁面佈局和 UI 結構"
+
+#. js-lingui-id: ZBgSzH
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Customize what this user can view and perform"
+msgstr ""
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -3786,8 +3813,12 @@ msgstr "輸入位於 0 和 23 之間的數字"
 msgid "Enter number between 0 and 59"
 msgstr "輸入位於 0 和 59 之間的數字"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr ""
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -3961,9 +3992,9 @@ msgstr ""
 msgid "Evaluate"
 msgstr ""
 
-#. js-lingui-id: 9uDn0Y
-#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-msgid "Evaluation input executed successfully"
+#. js-lingui-id: FDRUdE
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluating"
 msgstr ""
 
 #. js-lingui-id: Y3MReI
@@ -4330,6 +4361,11 @@ msgstr ""
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "更新價格失敗。"
+
+#. js-lingui-id: QGaQRo
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Failed to update role"
+msgstr ""
 
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
@@ -5084,6 +5120,11 @@ msgstr "索引"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Indexes"
 msgstr "索引"
+
+#. js-lingui-id: 623chP
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Infos"
+msgstr ""
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5980,6 +6021,11 @@ msgstr "最小"
 msgid "Min range"
 msgstr "最小範圍"
 
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
+
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Minutes"
@@ -6589,6 +6635,11 @@ msgstr "沒有結果"
 msgid "No Results"
 msgstr "沒有結果"
 
+#. js-lingui-id: FVzmGK
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "No role assigned to this member"
+msgstr ""
+
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "No roles found"
@@ -6758,7 +6809,7 @@ msgid "Object destination"
 msgstr "對象目標"
 
 #. js-lingui-id: rDycBw
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "物件唯一欄位"
 
@@ -6924,6 +6975,11 @@ msgstr "打開Gmail"
 msgid "Open in"
 msgstr "打開"
 
+#. js-lingui-id: DP5C7w
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Open in Roles"
+msgstr ""
+
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
@@ -7025,6 +7081,21 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
 msgstr "頁"
+
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr ""
+
+#. js-lingui-id: HFlGEK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout tab"
+msgstr ""
+
+#. js-lingui-id: sVcqjZ
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout widget"
+msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -7159,6 +7230,7 @@ msgid "Permanently destroy workflows"
 msgstr "永久銷毀工作流程"
 
 #. js-lingui-id: 9cDpsw
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -7486,6 +7558,11 @@ msgstr "重新連接"
 msgid "Record"
 msgstr "紀錄"
 
+#. js-lingui-id: aGGOPJ
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+msgid "Record (ID)"
+msgstr ""
+
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -7784,6 +7861,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "角色"
@@ -7811,6 +7889,7 @@ msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Role updated successfully"
 msgstr "角色更新成功"
 
@@ -9589,7 +9668,7 @@ msgid "Unique"
 msgstr "唯一"
 
 #. js-lingui-id: +WHV0k
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Unique fields"
 msgstr "唯一欄位"
 
@@ -9666,6 +9745,11 @@ msgstr "更新"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "更新"
+
+#. js-lingui-id: 5bRMKt
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Update role"
+msgstr ""
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10006,7 +10090,7 @@ msgid "We encountered an issue verifying"
 msgstr "我們在驗證時遇到了一個問題"
 
 #. js-lingui-id: 6d9mjh
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
 msgstr "我們根據這些欄位匹配。如果 {objectLabelSingular} 已經存在，我們會進行更新。否則，我們會創建一個新的。"
 

@@ -6,7 +6,7 @@ import { In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FAVORITE_DELETION_BATCH_SIZE } from 'src/modules/favorite/constants/favorite-deletion-batch-size';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
@@ -18,7 +18,7 @@ export class FavoriteDeletionService {
 
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async deleteFavoritesForDeletedRecords(
@@ -26,7 +26,8 @@ export class FavoriteDeletionService {
     workspaceId: string,
   ): Promise<void> {
     const favoriteRepository =
-      await this.twentyORMManager.getRepository<FavoriteWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
+        workspaceId,
         'favorite',
       );
 

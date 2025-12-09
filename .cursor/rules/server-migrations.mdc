@@ -1,0 +1,29 @@
+---
+description: Guidelines for generating and managing TypeORM migrations in twenty-server
+globs: [
+  "packages/twenty-server/src/**/*.entity.ts",
+  "packages/twenty-server/src/database/typeorm/**/*.ts"
+]
+alwaysApply: false
+---
+
+## Server Migrations (twenty-server)
+
+- **When changing an entity, always generate a migration**
+  - If you modify a `*.entity.ts` file in `packages/twenty-server/src`, you **must** generate a corresponding TypeORM migration instead of manually editing the database schema.
+  - Use the Nx + TypeORM command from the project root:
+
+    ```bash
+    npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/common/[name] -d src/database/typeorm/core/core.datasource.ts
+    ```
+
+  - Replace `[name]` with a descriptive, kebab-case migration name that reflects the change (for example, `add-agent-turn-evaluation`).
+
+- **Prefer generated migrations over manual edits**
+  - Let TypeORM infer schema changes from the updated entities; only adjust the generated migration file manually if absolutely necessary (for example, for data backfills or complex constraints).
+  - Keep schema changes (DDL) in these generated migrations and avoid mixing in heavy data migrations unless there is a strong reason and clear comments.
+
+- **Keep migrations consistent and reversible**
+  - Ensure the generated migration includes both `up` and `down` logic that correctly applies and reverts the entity change when possible.
+  - Do not delete or rewrite existing, committed migrations unless you are explicitly working on a pre-release branch where history rewrites are allowed by team conventions.
+

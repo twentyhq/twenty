@@ -16,6 +16,7 @@ export const WorkflowFieldsMultiSelect = ({
   defaultFields,
   placeholder,
   hint,
+  actionType,
 }: {
   label: string;
   placeholder: string;
@@ -23,6 +24,7 @@ export const WorkflowFieldsMultiSelect = ({
   handleFieldsChange: (field: FieldMultiSelectValue | string) => void;
   readonly: boolean;
   defaultFields: string[] | undefined | null;
+  actionType: 'UPDATE_RECORD' | 'UPSERT_RECORD';
   hint?: string;
 }) => {
   const { getIcon } = useIcons();
@@ -31,7 +33,7 @@ export const WorkflowFieldsMultiSelect = ({
     .filter((fieldMetadataItem) =>
       shouldDisplayFormField({
         fieldMetadataItem,
-        actionType: 'UPDATE_RECORD',
+        actionType,
       }),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
@@ -55,6 +57,17 @@ export const WorkflowFieldsMultiSelect = ({
       label={label}
       defaultValue={defaultFields}
       options={inlineFieldDefinitions.map((field) => {
+        const isIdField = field.metadata.fieldName === 'id';
+
+        if (isIdField && actionType === 'UPSERT_RECORD') {
+          return {
+            label: 'ID',
+            value: field.metadata.fieldName,
+            Icon: getIcon('IconId'),
+            color: 'gray',
+          };
+        }
+
         const isFieldRelationManyToOne =
           isFieldRelation(field) &&
           field.metadata.relationType === RelationType.MANY_TO_ONE;

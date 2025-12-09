@@ -8,7 +8,7 @@ import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
-import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 @ObjectType('ApiKeyForRole')
 export class ApiKeyForRoleDTO {
@@ -33,6 +33,9 @@ export class RoleDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   standardId?: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @Field({ nullable: false })
   label: string;
 
@@ -55,7 +58,7 @@ export class RoleDTO {
   canBeAssignedToApiKeys: boolean;
 
   @HideField()
-  roleTargets?: Relation<RoleTargetsEntity[]>;
+  roleTargets?: Relation<RoleTargetEntity[]>;
 
   @Field(() => [WorkspaceMemberDTO], { nullable: true })
   workspaceMembers?: WorkspaceMemberDTO[];

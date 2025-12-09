@@ -61,10 +61,10 @@ const generateSourceFlatFieldMetadata = ({
 
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
     viewFieldIds: [],
-    viewGroupIds: [],
     createdAt,
     updatedAt: createdAt,
     defaultValue: null,
@@ -128,10 +128,10 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,

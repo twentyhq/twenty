@@ -1,7 +1,7 @@
 import {
-  FieldMetadataType,
-  FieldMetadataSettings,
   FieldMetadataOptions,
+  FieldMetadataSettings,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -212,4 +212,7 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewEntity, (view) => view.calendarFieldMetadata)
   calendarViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.mainGroupByFieldMetadata)
+  mainGroupByFieldMetadataViews: Relation<ViewEntity[]>;
 }

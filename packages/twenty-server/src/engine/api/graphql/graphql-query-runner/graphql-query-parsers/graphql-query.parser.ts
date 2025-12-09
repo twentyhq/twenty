@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
@@ -113,6 +115,36 @@ export class GraphqlQueryParser {
     );
 
     return queryBuilder.orderBy(parsedOrderBys);
+  }
+
+  public getOrderByRawSQL(
+    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
+    objectNameSingular: string,
+    isForwardPagination = true,
+  ): string {
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy as ObjectRecordOrderBy,
+      objectNameSingular,
+      isForwardPagination,
+    );
+
+    const orderByRawSQLClauseArray = Object.entries(parsedOrderBys).map(
+      ([orderByField, orderByCondition]) => {
+        const nullsCondition = isDefined(orderByCondition.nulls)
+          ? ` ${orderByCondition.nulls}`
+          : '';
+
+        return `${orderByField} ${orderByCondition.order}${nullsCondition}`;
+      },
+    );
+
+    const orderByRawSQLString = orderByRawSQLClauseArray.join(', ');
+
+    const orderByCompleteSQLClause = isNonEmptyString(orderByRawSQLString)
+      ? `ORDER BY ${orderByRawSQLString}`
+      : '';
+
+    return orderByCompleteSQLClause;
   }
 
   public applyGroupByOrderToBuilder(

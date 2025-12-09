@@ -3,6 +3,7 @@ import {
   WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { t } from '@lingui/core/macro';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,
@@ -45,8 +46,8 @@ export const HttpRequestExecutionResult = ({
       isSuccess &&
       Object.keys(httpRequestTestData.output.headers || {}).length > 0
         ? `${Object.keys(httpRequestTestData.output.headers || {}).length} headers received`
-        : isError && httpRequestTestData.output.error
-          ? httpRequestTestData.output.error
+        : isError
+          ? t`An error occurred`
           : undefined,
   };
 

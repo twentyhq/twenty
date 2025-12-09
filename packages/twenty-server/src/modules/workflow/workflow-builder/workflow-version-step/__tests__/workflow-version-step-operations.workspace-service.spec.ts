@@ -4,11 +4,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
@@ -24,7 +23,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let serverlessFunctionService: jest.Mocked<ServerlessFunctionService>;
   let agentRepository: jest.Mocked<any>;
-  let roleTargetsRepository: jest.Mocked<any>;
+  let roleTargetRepository: jest.Mocked<any>;
   let roleRepository: jest.Mocked<any>;
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
@@ -44,7 +43,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       delete: jest.fn(),
     };
 
-    roleTargetsRepository = {
+    roleTargetRepository = {
       findOne: jest.fn(),
       count: jest.fn(),
     };
@@ -86,8 +85,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: agentRepository,
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
-          useValue: roleTargetsRepository,
+          provide: getRepositoryToken(RoleTargetEntity),
+          useValue: roleTargetRepository,
         },
         {
           provide: getRepositoryToken(RoleEntity),
@@ -104,10 +103,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: AiAgentRoleService,
           useValue: aiAgentRoleService,
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: {},
         },
       ],
     }).compile();
@@ -208,7 +203,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       } as unknown as WorkflowAction;
 
       agentRepository.findOne.mockResolvedValue({ id: 'agent-id' });
-      roleTargetsRepository.findOne.mockResolvedValue({
+      roleTargetRepository.findOne.mockResolvedValue({
         id: 'role-target-id',
         roleId: 'role-id',
       });

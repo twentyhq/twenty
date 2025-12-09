@@ -344,7 +344,9 @@ export const ActivityRichTextEditor = ({
     dependencies: [editor],
   });
 
-  const handleAllKeys = (keyboardEvent: KeyboardEvent) => {
+  const focusRichTextEditorWhenFocusOnSidePanel = (
+    keyboardEvent: KeyboardEvent,
+  ) => {
     if (keyboardEvent.key === Key.Escape) {
       return;
     }
@@ -378,9 +380,9 @@ export const ActivityRichTextEditor = ({
 
   useHotkeysOnFocusedElement({
     keys: '*',
-    callback: handleAllKeys,
+    callback: focusRichTextEditorWhenFocusOnSidePanel,
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [handleAllKeys],
+    dependencies: [focusRichTextEditorWhenFocusOnSidePanel],
   });
 
   const { labelIdentifierFieldMetadataItem } =
@@ -431,7 +433,7 @@ export const ActivityRichTextEditor = ({
           focusId: activityId,
           globalHotkeysConfig: {
             enableGlobalHotkeysConflictingWithKeyboard: false,
-            enableGlobalHotkeysWithModifiers: false,
+            enableGlobalHotkeysWithModifiers: true,
           },
         });
       },

@@ -15,7 +15,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -23,6 +22,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -105,31 +105,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild,
-            inferDeletionFromMissingEntities: {
-              fieldMetadata: true,
-              index: true,
-            },
-          },
-          fromToAllFlatEntityMaps: {
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
-            }),
+            },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
@@ -195,13 +184,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     if (inputTranspilationResult.status === 'fail') {
-      throw new FieldMetadataException(
-        inputTranspilationResult.error.message,
-        inputTranspilationResult.error.code,
+      throw new WorkspaceMigrationBuilderExceptionV2(
         {
-          userFriendlyMessage:
-            inputTranspilationResult.error.userFriendlyMessage,
+          report: {
+            ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
+            fieldMetadata: [
+              {
+                errors: inputTranspilationResult.errors,
+                type: 'update_field',
+                flatEntityMinimalInformation: {},
+              },
+            ],
+          },
+          status: 'fail',
         },
+        'Validation errors occurred while updating field',
       );
     }
 
@@ -224,58 +221,40 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-            flatViewMaps: existingFlatViewMaps,
-          },
-          fromToAllFlatEntityMaps: {
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatFieldMetadatasToUpdate,
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
               flatEntityToDelete: flatIndexMetadatasToDelete,
               flatEntityToUpdate: flatIndexMetadatasToUpdate,
-            }),
-            flatViewFilterMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFilterMaps,
+            },
+            viewFilter: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFiltersToDelete,
               flatEntityToUpdate: flatViewFiltersToUpdate,
-            }),
-            flatViewGroupMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewGroupMaps,
+            },
+            viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,
               flatEntityToDelete: flatViewGroupsToDelete,
               flatEntityToUpdate: flatViewGroupsToUpdate,
-            }),
-            flatViewMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewMaps,
+            },
+            view: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewsToDelete,
               flatEntityToUpdate: flatViewsToUpdate,
-            }),
-            flatViewFieldMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFieldMaps,
+            },
+            viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild,
-            inferDeletionFromMissingEntities: {
-              index: true,
-              viewGroup: true,
-              viewFilter: true,
-              view: true,
             },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
@@ -324,20 +303,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         },
       );
 
-    const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatIndexMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const allTranspiledTranspilationInputs: Awaited<
       ReturnType<typeof fromCreateFieldInputToFlatFieldMetadatasToCreate>
@@ -377,27 +349,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          },
-          fromToAllFlatEntityMaps: {
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

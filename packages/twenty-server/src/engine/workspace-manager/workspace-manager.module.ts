@@ -11,7 +11,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -42,7 +42,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     ApplicationModule,
     TypeOrmModule.forFeature([
       FieldMetadataEntity,
-      RoleTargetsEntity,
+      RoleTargetEntity,
       RoleEntity,
     ]),
   ],

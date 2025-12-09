@@ -31,7 +31,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -44,8 +44,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -157,9 +157,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId: workspace.id,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: defaultRoleId,
       });
 
@@ -246,10 +246,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.roleTargetRepository.softRemove({ userWorkspaceId });
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.roleTargetRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
     }
   }

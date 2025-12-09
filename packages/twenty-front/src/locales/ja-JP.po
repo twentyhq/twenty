@@ -848,6 +848,11 @@ msgstr "アフリカーンス語"
 msgid "After a set amount of time"
 msgstr "一定時間経過後"
 
+#. js-lingui-id: fcYF58
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "agent"
+msgstr ""
+
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1058,6 +1063,11 @@ msgstr "ファイルと添付ファイルのアップロードを許可する"
 msgid "Allow users to sign in with an email and password."
 msgstr "ユーザーがメールとパスワードでサインインできるようにする。"
 
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr ""
+
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
@@ -1070,9 +1080,6 @@ msgstr "メッセージの処理中にエラーが発生しました"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
@@ -1311,6 +1318,11 @@ msgstr "これらのレコードを復元してもよろしいですか？"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "このレコードを復元しますか？"
+
+#. js-lingui-id: 9JFf0y
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
+msgstr ""
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -2222,6 +2234,11 @@ msgstr "{roleName}のロールを削除しますか？この操作は元に戻�
 msgid "Confirm downgrade"
 msgstr "ダウングレードを確認"
 
+#. js-lingui-id: 28b8wO
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Confirm role update"
+msgstr ""
+
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
@@ -2640,6 +2657,11 @@ msgstr ""
 msgid "CRUD"
 msgstr ""
 
+#. js-lingui-id: J1QT+3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Cumulative"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2717,6 +2739,11 @@ msgstr "フィールドをカスタマイズ"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Customize page layouts and UI structure"
 msgstr "ページレイアウトとUI構造のカスタマイズ"
+
+#. js-lingui-id: ZBgSzH
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Customize what this user can view and perform"
+msgstr ""
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -3786,8 +3813,12 @@ msgstr "0 から 23 の間の数字を入力してください"
 msgid "Enter number between 0 and 59"
 msgstr "0 から 59 の間の数字を入力してください"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr ""
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -3961,9 +3992,9 @@ msgstr ""
 msgid "Evaluate"
 msgstr ""
 
-#. js-lingui-id: 9uDn0Y
-#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-msgid "Evaluation input executed successfully"
+#. js-lingui-id: FDRUdE
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluating"
 msgstr ""
 
 #. js-lingui-id: Y3MReI
@@ -4330,6 +4361,11 @@ msgstr ""
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "価格の更新に失敗しました。"
+
+#. js-lingui-id: QGaQRo
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Failed to update role"
+msgstr ""
 
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
@@ -5084,6 +5120,11 @@ msgstr "インデックス"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Indexes"
 msgstr "インデックス"
+
+#. js-lingui-id: 623chP
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Infos"
+msgstr ""
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5980,6 +6021,11 @@ msgstr "最小"
 msgid "Min range"
 msgstr "最小範囲"
 
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
+
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Minutes"
@@ -6589,6 +6635,11 @@ msgstr "結果なし"
 msgid "No Results"
 msgstr "結果なし"
 
+#. js-lingui-id: FVzmGK
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "No role assigned to this member"
+msgstr ""
+
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "No roles found"
@@ -6758,7 +6809,7 @@ msgid "Object destination"
 msgstr "オブジェクトの目的地"
 
 #. js-lingui-id: rDycBw
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "オブジェクトの一意フィールド"
 
@@ -6924,6 +6975,11 @@ msgstr "Gmailで開く"
 msgid "Open in"
 msgstr "で開く"
 
+#. js-lingui-id: DP5C7w
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Open in Roles"
+msgstr ""
+
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
@@ -7025,6 +7081,21 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
 msgstr "ページ"
+
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr ""
+
+#. js-lingui-id: HFlGEK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout tab"
+msgstr ""
+
+#. js-lingui-id: sVcqjZ
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout widget"
+msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -7159,6 +7230,7 @@ msgid "Permanently destroy workflows"
 msgstr "ワークフローを永久に破壊する"
 
 #. js-lingui-id: 9cDpsw
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -7486,6 +7558,11 @@ msgstr "再接続"
 msgid "Record"
 msgstr "記録"
 
+#. js-lingui-id: aGGOPJ
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+msgid "Record (ID)"
+msgstr ""
+
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -7784,6 +7861,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "役割"
@@ -7811,6 +7889,7 @@ msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Role updated successfully"
 msgstr "ロールが正常に更新されました"
 
@@ -9589,7 +9668,7 @@ msgid "Unique"
 msgstr "一意"
 
 #. js-lingui-id: +WHV0k
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Unique fields"
 msgstr "一意のフィールド"
 
@@ -9666,6 +9745,11 @@ msgstr "更新"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "更新"
+
+#. js-lingui-id: 5bRMKt
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Update role"
+msgstr ""
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10006,7 +10090,7 @@ msgid "We encountered an issue verifying"
 msgstr "認証中に問題が発生しました"
 
 #. js-lingui-id: 6d9mjh
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
 msgstr "これらのフィールドで一致します。既に{objectLabelSingular}が存在する場合は更新します。そうでなければ、新しいものを作成します。"
 

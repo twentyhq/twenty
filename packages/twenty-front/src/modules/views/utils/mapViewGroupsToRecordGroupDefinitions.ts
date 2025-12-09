@@ -4,13 +4,15 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const mapViewGroupsToRecordGroupDefinitions = ({
+  mainGroupByFieldMetadataId,
   objectMetadataItem,
   viewGroups,
 }: {
+  mainGroupByFieldMetadataId: string;
   objectMetadataItem: ObjectMetadataItem;
   viewGroups: ViewGroup[];
 }): RecordGroupDefinition[] => {
@@ -18,10 +20,10 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
     return [];
   }
 
-  const fieldMetadataId = viewGroups?.[0]?.fieldMetadataId;
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) =>
-      field.id === fieldMetadataId && field.type === FieldMetadataType.SELECT,
+      field.id === mainGroupByFieldMetadataId &&
+      field.type === FieldMetadataType.SELECT,
   );
 
   if (!selectFieldMetadataItem) {
@@ -46,7 +48,6 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
 
       return {
         id: viewGroup.id,
-        fieldMetadataId: viewGroup.fieldMetadataId,
         type: !isDefined(selectedOption)
           ? RecordGroupDefinitionType.NoValue
           : RecordGroupDefinitionType.Value,

@@ -5,6 +5,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -325,6 +326,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
+              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -337,6 +339,9 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -595,11 +600,15 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -622,6 +631,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -942,6 +952,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
+              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -954,6 +965,9 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -1212,11 +1226,15 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -1250,6 +1268,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -1570,6 +1589,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
+              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -1582,6 +1602,9 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -1840,11 +1863,15 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -1867,6 +1894,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -2187,6 +2215,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
+              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -2199,6 +2228,9 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -2457,11 +2489,15 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -2495,6 +2531,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -2828,6 +2865,9 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -3086,11 +3126,15 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -3113,6 +3157,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -3446,6 +3491,9 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -3704,11 +3752,15 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -3731,6 +3783,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -4081,6 +4134,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
               "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
@@ -4093,6 +4147,9 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -4351,11 +4408,15 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -4378,6 +4439,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -4698,6 +4760,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "μ",
             },
           ],
@@ -4710,6 +4773,9 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -4968,11 +5034,15 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -4995,6 +5065,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -5314,7 +5385,8 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "users",
             },
           ],
@@ -5327,6 +5399,9 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -5585,11 +5660,15 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -5623,6 +5702,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -5943,11 +6023,13 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],
@@ -5960,6 +6042,9 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -6218,11 +6303,15 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -6245,6 +6334,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -6625,11 +6715,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "a a",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "a a",
             },
           ],
@@ -6642,6 +6734,9 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -6900,11 +6995,15 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -6927,6 +7026,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -7307,11 +7407,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
               "value": "",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "",
             },
           ],
@@ -7324,6 +7426,9 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -7582,11 +7687,15 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -7609,6 +7718,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -7959,6 +8069,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "μ",
             },
           ],
@@ -7971,6 +8082,9 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -8229,11 +8343,15 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -8256,6 +8374,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -8471,8 +8590,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
             {
@@ -8493,8 +8612,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
             {
@@ -8515,8 +8634,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
             {
@@ -8537,8 +8656,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
             {
@@ -8559,8 +8678,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
             {
@@ -8605,7 +8724,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add \"Custom\" suffix.",
+              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
               "value": "user",
             },
           ],
@@ -8618,6 +8738,9 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -8876,11 +8999,15 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -8914,6 +9041,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -9294,11 +9422,13 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],
@@ -9311,6 +9441,9 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -9569,11 +9702,15 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -9596,6 +9733,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -9929,6 +10067,9 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -10187,11 +10328,15 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -10214,6 +10359,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -10547,6 +10693,9 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create_object",
         },
       ],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
@@ -10805,11 +10954,15 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

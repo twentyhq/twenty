@@ -72,6 +72,10 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           selectedRowIdsSelector,
         );
 
+        const isDroppedAfterList =
+          tableRecordDropResult.destination.index + 1 >=
+          allSparseRecordIds.length;
+
         const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
           .filter(isDefined)
           .map((recordId) => ({
@@ -104,6 +108,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             sourceRecordId: draggedRecordId,
             targetRecordId: targetRecordId ?? '',
             recordsWithPosition: contiguousRecordsWithPosition,
+            isDroppedAfterList,
           });
 
           if (!isDefined(singleDragResult.position)) {
@@ -137,6 +142,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             targetRecordId: targetRecordId ?? '',
             selectedRecordIds: originalDragSelection,
             recordsWithPosition: contiguousRecordsWithPosition,
+            isDroppedAfterList,
           });
 
           for (const update of multiDragResult.recordUpdates) {

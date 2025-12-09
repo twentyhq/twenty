@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -17,8 +17,8 @@ export class ToolAdapterService {
   ) {}
 
   async getTools(
+    workspaceId: string,
     rolePermissionConfig?: RolePermissionConfig,
-    workspaceId?: string,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
@@ -26,8 +26,8 @@ export class ToolAdapterService {
       const tool = this.toolRegistry.getTool(toolType);
 
       if (!tool.flag) {
-        tools[toolType.toLowerCase()] = this.createToolSet(tool);
-      } else if (rolePermissionConfig && workspaceId) {
+        tools[toolType.toLowerCase()] = this.createToolSet(tool, workspaceId);
+      } else if (rolePermissionConfig) {
         const hasPermission = await this.permissionsService.hasToolPermission(
           rolePermissionConfig,
           workspaceId,
@@ -35,7 +35,7 @@ export class ToolAdapterService {
         );
 
         if (hasPermission) {
-          tools[toolType.toLowerCase()] = this.createToolSet(tool);
+          tools[toolType.toLowerCase()] = this.createToolSet(tool, workspaceId);
         }
       }
     }
@@ -43,12 +43,12 @@ export class ToolAdapterService {
     return tools;
   }
 
-  private createToolSet(tool: Tool) {
+  private createToolSet(tool: Tool, workspaceId: string) {
     return {
       description: tool.description,
       inputSchema: tool.inputSchema,
       execute: async (parameters: { input: ToolInput }) =>
-        tool.execute(parameters.input),
+        tool.execute(parameters.input, workspaceId),
     };
   }
 }

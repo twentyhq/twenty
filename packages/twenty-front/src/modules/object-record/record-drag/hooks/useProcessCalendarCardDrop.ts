@@ -91,6 +91,7 @@ export const useProcessCalendarCardDrop = () => {
             arrayOfRecordsWithPosition: recordsWithPosition,
             idOfItemToMove: recordId,
             idOfTargetItem: targetRecord.id,
+            isDroppedAfterList,
           });
         }
 

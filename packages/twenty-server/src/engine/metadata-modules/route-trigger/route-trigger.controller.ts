@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { HTTPMethod } from 'twenty-shared/types';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger-rest-api-exception-filter';
-import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
 
 @Controller('s')

@@ -1,5 +1,5 @@
-import { isDefined } from 'class-validator';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -17,7 +17,7 @@ import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migr
 type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
   update: PropertyUpdate<FlatFieldMetadata<EnumFieldMetadataType>, 'options'>;
-} & Pick<AllFlatEntityMaps, 'flatViewGroupMaps'>;
+} & Pick<AllFlatEntityMaps, 'flatViewMaps' | 'flatViewGroupMaps'>;
 
 export type FlatViewGroupsToDeleteUpdateAndCreate = {
   flatViewGroupsToDelete: FlatViewGroup[];
@@ -25,6 +25,7 @@ export type FlatViewGroupsToDeleteUpdateAndCreate = {
   flatViewGroupsToCreate: FlatViewGroup[];
 };
 export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
+  flatViewMaps,
   flatViewGroupMaps,
   fromFlatFieldMetadata,
   update,
@@ -39,8 +40,15 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     toOptions: update.to,
   });
 
+  const flatViewsAffected = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityIds: fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
+    flatEntityMaps: flatViewMaps,
+  });
+
   const flatViewGroups = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: fromFlatFieldMetadata.viewGroupIds,
+    flatEntityIds: flatViewsAffected.flatMap(
+      (flatView) => flatView.viewGroupIds,
+    ),
     flatEntityMaps: flatViewGroupMaps,
   });
 

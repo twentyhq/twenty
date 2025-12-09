@@ -17,6 +17,7 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
 
     return {
       summary: {
+        invalidAgent: 0,
         invalidViewFilter: 0,
         invalidObjectMetadata: 0,
         invalidView: 0,
@@ -30,7 +31,10 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
         invalidViewGroup: 0,
         invalidRole: 0,
         invalidRoleTarget: 0,
+        invalidPageLayout: 0,
+        invalidPageLayoutWidget: 0,
         totalErrors: 0,
+        invalidPageLayoutTab: 0,
       },
       errors: translatedReport,
     };

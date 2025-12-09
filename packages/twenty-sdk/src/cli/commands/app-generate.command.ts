@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { GenerateService } from '../services/generate.service';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { GenerateService } from '@/cli/services/generate.service';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
 
 export class AppGenerateCommand {
   private generateService = new GenerateService();

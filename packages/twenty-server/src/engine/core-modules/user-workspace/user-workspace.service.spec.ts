@@ -25,7 +25,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -70,7 +70,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -110,7 +110,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: UserRoleService,
           useValue: {
-            assignRoleToUserWorkspace: jest.fn(),
+            assignRoleToManyUserWorkspace: jest.fn(),
           },
         },
         {
@@ -417,7 +417,7 @@ describe('UserWorkspaceService', () => {
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
       jest
-        .spyOn(userRoleService, 'assignRoleToUserWorkspace')
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
         .mockResolvedValue(undefined);
       jest
         .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
@@ -439,9 +439,11 @@ describe('UserWorkspaceService', () => {
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: workspace.defaultRoleId,
       });
       expect(

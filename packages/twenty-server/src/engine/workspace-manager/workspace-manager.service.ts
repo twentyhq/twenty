@@ -12,7 +12,7 @@ import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/d
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -45,8 +45,8 @@ export class WorkspaceManagerService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -164,7 +164,7 @@ export class WorkspaceManagerService {
   // TODO investigate why some entities are not on cascade delete
   // Are foreign keys correctly applied ?
   public async delete(workspaceId: string): Promise<void> {
-    await this.roleTargetsRepository.delete({
+    await this.roleTargetRepository.delete({
       workspaceId,
     });
     await this.roleRepository.delete({
@@ -201,9 +201,9 @@ export class WorkspaceManagerService {
         where: { workspaceId, userId },
       });
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: adminRole.id,
       });
     }

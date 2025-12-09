@@ -14,9 +14,10 @@ import {
 } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -32,6 +33,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
+import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -41,7 +43,6 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -125,8 +126,8 @@ export class RoleResolver {
         workspaceId: workspace.id,
       });
 
-    await this.userRoleService.assignRoleToUserWorkspace({
-      userWorkspaceId: userWorkspace.id,
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      userWorkspaceIds: [userWorkspace.id],
       workspaceId: workspace.id,
       roleId,
     });
@@ -284,10 +285,13 @@ export class RoleResolver {
       workspace.id,
     );
 
-    return agents.map((agent) => ({
-      ...agent,
-      applicationId: agent.applicationId ?? undefined,
-    }));
+    return agents.map((agentEntity) =>
+      fromFlatAgentWithRoleIdToAgentDto({
+        ...agentEntity,
+        universalIdentifier: agentEntity.universalIdentifier ?? agentEntity.id,
+        roleId: role.id,
+      }),
+    );
   }
 
   @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])

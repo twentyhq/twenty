@@ -7,6 +7,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -21,7 +22,7 @@ import { ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/d
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
@@ -34,6 +35,7 @@ import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-mod
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { VerifyEmailAndGetLoginTokenOutput } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -73,10 +75,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { VerifyEmailAndGetLoginTokenOutput } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.output';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
@@ -706,7 +706,7 @@ export class AuthResolver {
       userId: impersonatorUserWorkspace.user.id,
     });
 
-    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_attempt`,
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
@@ -717,7 +717,7 @@ export class AuthResolver {
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
-        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        auditService.insertWorkspaceEvent(MONITORING_EVENT, {
           eventName: 'server.impersonation.token_exchange_failed',
           message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
         });
@@ -728,7 +728,7 @@ export class AuthResolver {
         );
       }
 
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `server.impersonation.token_exchange_success`,
         message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -750,7 +750,7 @@ export class AuthResolver {
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
-      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'workspace.impersonation.token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -760,7 +760,7 @@ export class AuthResolver {
       );
     }
 
-    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'workspace.impersonation.token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });

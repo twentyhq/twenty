@@ -5,13 +5,8 @@
   "tags": ["scope:create-app"],
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "cwd": "packages/create-twenty-app",
-        "commands": ["rimraf dist", "tsc --project tsconfig.json"]
-      },
-      "dependsOn": ["^build", "typecheck"]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -26,7 +21,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/create-twenty-app",
-        "command": "node dist/cli.js"
+        "command": "node dist/cli.cjs"
       }
     },
     "typecheck": {},

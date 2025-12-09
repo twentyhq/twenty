@@ -38,7 +38,6 @@ export const RecordBoardDragDropContext = ({
 
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
-  // const multiDragState = useRecordDragState('board', recordBoardId);
 
   const { processBoardCardDrop } = useProcessBoardCardDrop();
 

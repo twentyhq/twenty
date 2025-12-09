@@ -1,26 +1,32 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordGroups = () => {
   const setRecordGroups = useRecoilCallback(
     ({ snapshot, set }) =>
-      (
-        recordGroups: RecordGroupDefinition[],
-        recordIndexId: string,
-        objectMetadataItemId: string,
-      ) => {
+      ({
+        mainGroupByFieldMetadataId,
+        recordGroups,
+        recordIndexId,
+        objectMetadataItemId,
+      }: {
+        mainGroupByFieldMetadataId: string;
+        recordGroups: RecordGroupDefinition[];
+        recordIndexId: string;
+        objectMetadataItemId: string;
+      }) => {
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue();
@@ -40,7 +46,8 @@ export const useSetRecordGroups = () => {
             instanceId: recordIndexId,
           }),
         );
-        const fieldMetadataId = recordGroups?.[0]?.fieldMetadataId;
+
+        const fieldMetadataId = mainGroupByFieldMetadataId;
         const fieldMetadata = fieldMetadataId
           ? objectMetadataItem.fields.find(
               (field) => field.id === fieldMetadataId,
@@ -48,7 +55,7 @@ export const useSetRecordGroups = () => {
           : undefined;
         const currentFieldMetadata = getSnapshotValue(
           snapshot,
-          recordGroupFieldMetadataComponentState.atomFamily({
+          recordIndexGroupFieldMetadataItemComponentState.atomFamily({
             instanceId: recordIndexId,
           }),
         );
@@ -56,7 +63,7 @@ export const useSetRecordGroups = () => {
         // Set the field metadata linked to the record groups
         if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
           set(
-            recordGroupFieldMetadataComponentState.atomFamily({
+            recordIndexGroupFieldMetadataItemComponentState.atomFamily({
               instanceId: recordIndexId,
             }),
             fieldMetadata,
@@ -105,26 +112,34 @@ export const useSetRecordGroups = () => {
   );
 
   const setRecordGroupsFromViewGroups = useCallback(
-    (
-      viewId: string,
-      viewGroups: ViewGroup[],
-      objectMetadataItem: ObjectMetadataItem,
-    ) => {
+    ({
+      viewId,
+      mainGroupByFieldMetadataId,
+      viewGroups,
+      objectMetadataItem,
+    }: {
+      viewId: string;
+      mainGroupByFieldMetadataId: string;
+      viewGroups: ViewGroup[];
+      objectMetadataItem: ObjectMetadataItem;
+    }) => {
       const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
         objectMetadataItem.namePlural,
         viewId,
       );
 
       const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
+        mainGroupByFieldMetadataId,
         objectMetadataItem,
         viewGroups,
       });
 
-      setRecordGroups(
-        newGroupDefinitions,
+      setRecordGroups({
+        mainGroupByFieldMetadataId,
+        recordGroups: newGroupDefinitions,
         recordIndexId,
-        objectMetadataItem.id,
-      );
+        objectMetadataItemId: objectMetadataItem.id,
+      });
     },
     [setRecordGroups],
   );

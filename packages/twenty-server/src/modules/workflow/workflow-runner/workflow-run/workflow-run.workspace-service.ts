@@ -10,7 +10,6 @@ import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowRunStatus,
@@ -30,7 +29,6 @@ export class WorkflowRunWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -41,23 +39,20 @@ export class WorkflowRunWorkspaceService {
     workflowRunId,
     status,
     triggerPayload,
+    error,
+    workspaceId,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
-    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
+    status:
+      | WorkflowRunStatus.NOT_STARTED
+      | WorkflowRunStatus.ENQUEUED
+      | WorkflowRunStatus.FAILED;
     triggerPayload: object;
     workflowRunId?: string;
+    error?: string;
+    workspaceId: string;
   }) {
-    const workspaceId =
-      this.scopedWorkspaceContextFactory.create()?.workspaceId;
-
-    if (!workspaceId) {
-      throw new WorkflowRunException(
-        'Workspace id is invalid',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
-    }
-
     const workflowRunRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
         workspaceId,
@@ -100,7 +95,7 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const initState = this.getInitState(workflowVersion, triggerPayload);
+    const initState = this.getInitState(workflowVersion, triggerPayload, error);
 
     const lastWorkflowRun = await workflowRunRepository.findOne({
       where: {
@@ -144,16 +139,6 @@ export class WorkflowRunWorkspaceService {
       workflowRunId,
       workspaceId,
     });
-
-    if (
-      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
-      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
-    ) {
-      throw new WorkflowRunException(
-        'Cannot start a workflow run already ended',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
-    }
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
@@ -415,6 +400,7 @@ export class WorkflowRunWorkspaceService {
   private getInitState(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     triggerPayload: object,
+    error?: string,
   ): WorkflowRunState | undefined {
     if (
       !isDefined(workflowVersion.trigger) ||
@@ -437,6 +423,7 @@ export class WorkflowRunWorkspaceService {
           ]),
         ),
       },
+      workflowRunError: error,
     };
   }
 

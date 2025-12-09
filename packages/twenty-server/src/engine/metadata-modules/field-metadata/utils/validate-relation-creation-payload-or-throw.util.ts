@@ -1,11 +1,31 @@
 import { plainToInstance } from 'class-transformer';
-import { validateOrReject, type ValidationError } from 'class-validator';
+import {
+  IsEnum,
+  IsString,
+  IsUUID,
+  validateOrReject,
+  type ValidationError,
+} from 'class-validator';
+import { RelationType } from 'twenty-shared/types';
 
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { RelationCreationPayloadValidation } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+
+class RelationCreationPayloadValidation {
+  @IsUUID()
+  targetObjectMetadataId?: string;
+
+  @IsString()
+  targetFieldLabel: string;
+
+  @IsString()
+  targetFieldIcon: string;
+
+  @IsEnum(RelationType)
+  type: RelationType;
+}
 
 export const validateRelationCreationPayloadOrThrow = async (
   relationCreationPayload: RelationCreationPayloadValidation,

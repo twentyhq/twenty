@@ -39,11 +39,6 @@ msgstr "{fieldType} fält kan inte ha ett standardvärde."
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "{hostnameCount} värdnamn hittades för domän '{domainName}'. Förvänta 1"
 
-#. js-lingui-id: 8haj+G
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
-msgid "{name} should be in camelCase"
-msgstr "{name} bör vara i camelCase"
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -201,6 +196,19 @@ msgstr "Adressen till företaget"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adress till f\"oretaget - f\"or\"aldrad till f\"orm\"an f\"or nytt adressf\"alt"
 
+#. js-lingui-id: mDXkHu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Agent not found"
+msgstr ""
+
+#. js-lingui-id: EisfDV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "Agent with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -228,6 +236,11 @@ msgstr "Alla {objectLabelPlural}"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Belopp"
+
+#. js-lingui-id: pZEIPj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "An agent with this name already exists"
+msgstr ""
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -616,6 +629,17 @@ msgstr "Kan inte skapa arbetsflödesversion med annan status än utkast"
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
 msgstr "Kan inte ta bort kontot: du är den enda administratören. Tilldela en annan administratör eller ta bort arbetsytan/ar först."
 
+#. js-lingui-id: RYRFbW
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot delete standard agent"
+msgstr ""
+
+#. js-lingui-id: mWk3X+
+#: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
+msgid "Cannot delete unique index that have not been created by the workspace custom application"
+msgstr ""
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -637,9 +661,15 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Kan inte ha mer än en aktiv arbetsflödesversion"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Kan inte uppdatera meddelandekanal medan synkronisering pågår. Vänta tills synkroniseringen är klar."
+
+#. js-lingui-id: fpzw+t
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot update standard agent"
+msgstr ""
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -929,7 +959,7 @@ msgstr "December"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standardvärdet \"{defaultValue}\" måste vara ett av alternativens värden"
 
@@ -940,13 +970,13 @@ msgstr "Standardvärdet måste vara en sträng"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "Standardvärde ska vara som sträng inom citattecken"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "Standardvärden måste vara unika"
 
@@ -999,9 +1029,14 @@ msgstr "Domännamn"
 msgid "Due Date"
 msgstr "Förfallodatum"
 
+#. js-lingui-id: UrzTjS
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
+msgstr ""
+
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Duplicerad alternativ {field}"
 
@@ -1182,6 +1217,11 @@ msgstr "Förväntade att samma begränsningsfält ska användas konsekvent i all
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "Externt ID"
+
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1368,6 +1408,7 @@ msgstr "Fältet kan inte indexeras eftersom det tillhör ett annat objekt"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
 msgstr "Fält kan inte användas som etikettidentifierare"
 
@@ -1397,8 +1438,6 @@ msgid "Field label identifier is required"
 msgstr "Fältetikettens identifierare krävs"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1443,6 +1482,11 @@ msgstr "Fält för att skapa relaterat objekt hittades inte"
 msgid "Field to update not found"
 msgstr "Fält att uppdatera hittades inte"
 
+#. js-lingui-id: 5cm5Hn
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field to update object metadata not found"
+msgstr ""
+
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type NUMERIC is not supported. Use Number instead."
@@ -1462,6 +1506,14 @@ msgstr ""
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Fält använt för fulltextssökning"
+
+#. js-lingui-id: M4sb1B
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "Field value is required"
+msgstr ""
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1587,7 +1639,7 @@ msgstr "Ideal kundprofil: Anger om f\\u00f6retaget \\u00e4r den mest l\\u00e4mpl
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Om definierat måste standardvärdet innehålla minst ett värde"
 
@@ -1638,10 +1690,10 @@ msgstr "Index med samma id finns redan"
 msgid "Index with same name already exists"
 msgstr "Index med samma namn finns redan"
 
-#. js-lingui-id: 71VJzG
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
-msgid "Input is too short: \"{name}\""
-msgstr "Inmatningen är för kort: \"{name}\""
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1657,11 +1709,6 @@ msgstr "Ogiltig captcha, försök med en annan enhet"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Ogiltig landskod {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Ogiltiga inloggningsuppgifter. Kontrollera ditt användarnamn och lösenord."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1696,11 +1743,6 @@ msgstr "Ogiltigt minutvärde. Borde vara heltal större än 1"
 msgid "Invalid morph relation input"
 msgstr "Ogiltig input för morfrelation"
 
-#. js-lingui-id: VvhAS2
-#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
-msgid "Invalid object metadata input"
-msgstr "Ogiltig metadataingång för objekt"
-
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
@@ -1710,6 +1752,11 @@ msgstr "Ogiltig relationsskapadragsdata"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
+msgstr ""
+
+#. js-lingui-id: m4y7mj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Invalid response format type"
 msgstr ""
 
 #. js-lingui-id: ApP70c
@@ -1808,6 +1855,11 @@ msgstr "Json-objekt f\\u00f6r att tillhandah\\u00e5lla steg"
 msgid "Json object to provide trigger"
 msgstr "Json-objekt f\\u00f6r att tillhandah\\u00e5lla trigger"
 
+#. js-lingui-id: eCBMag
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "JSON response format requires a schema"
+msgstr ""
+
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
@@ -1822,6 +1874,44 @@ msgstr "Juli"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Juni"
+
+#. js-lingui-id: QS/zML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field metadata not found"
+msgstr ""
+
+#. js-lingui-id: ZfLcEk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a select field"
+msgstr ""
+
+#. js-lingui-id: RoCvZe
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a SELECT field"
+msgstr ""
+
+#. js-lingui-id: mAbBLH
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban view must have a main group by field"
+msgstr ""
+
+#. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Label cannot be empty"
+msgstr ""
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1850,13 +1940,13 @@ msgstr "Etikettidentifierarens vyfält måste vara synligt"
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "Etikett får inte vara tom"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "Etikett får inte innehålla kommatecken"
 
@@ -1998,7 +2088,7 @@ msgid "Message Channel Message Associations"
 msgstr "Meddelandekanalmeddelandeassociationer"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Meddelandekanal hittades inte"
 
@@ -2124,10 +2214,21 @@ msgstr "Access-token fr\\u00e5n meddelandeleverant\\u00f6ren"
 msgid "Messaging provider refresh token"
 msgstr "Uppdateringstoken fr\\u00e5n meddelandeleverant\\u00f6ren"
 
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
+
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Saknas obligatoriska fält: minst en unik begränsning måste vara fullständigt ifylld för '{connectFieldName}'."
+
+#. js-lingui-id: AHuHeg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Model ID cannot be empty"
+msgstr ""
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2177,11 +2278,6 @@ msgstr "Flera poster hittades med samma unika fältvärden för {conflictingFiel
 msgid "Name"
 msgstr "Namn"
 
-#. js-lingui-id: aD053i
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
-msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr "Namnet \"{computedMetadataNameFromLabel}\" kan inte vara detsamma på båda sidorna av relationen"
-
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
@@ -2197,28 +2293,24 @@ msgstr "Namnet \"{name}\" är inte tillgängligt då det redan används av ett a
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
-#. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
-msgid "Name is not available, it may be duplicating another field's name."
-msgstr "Namn är inte tillgängligt, det kan duplicera ett annat fältnamn."
-
 #. js-lingui-id: Ny5wFU
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
 msgstr "Namn är inte giltigt: det måste börja med liten bokstav och endast innehålla alfanumeriska tecken"
 
 #. js-lingui-id: zjh2SJ
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too long"
 msgstr "Namnet är för långt"
 
-#. js-lingui-id: 0MobB1
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
-msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr "Namn är för långt: det överstiger gränsen på 63 tecken."
-
 #. js-lingui-id: go/Vg1
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too short"
 msgstr "Namn är för kort"
 
@@ -2233,7 +2325,9 @@ msgid "Name of the workflow run"
 msgstr "Namnet p\\u00e5 arbetsfl\\u00f6dets k\\u00f6rning"
 
 #. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name should be in camelCase"
 msgstr "Namn bör vara i camelCase"
 
@@ -2402,7 +2496,6 @@ msgid "Number of employees in the company"
 msgstr "Antal anställda i företaget"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Objektet finns redan"
@@ -2535,25 +2628,25 @@ msgstr "Affärsmöjlighetens skede"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "Alternativ-ID är ogiltigt"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "Alternativ-ID krävs"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Alternativetiketten \"{sanitizedLabel}\" är understigande 1 tecken"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Alternativetiketten överstiger 63 tecken"
 
@@ -2565,7 +2658,6 @@ msgstr "Etikettformat för alternativ stöds inte"
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Alternativetikett är obligatorisk"
 
@@ -2576,13 +2668,13 @@ msgstr "Alternativetikett måste vara en sträng med minst ett tecken"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Alternativvärdet \"{sanitizedValue}\" understiger 1 tecken"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Alternativvärdet överstiger 63 tecken"
 
@@ -2594,7 +2686,6 @@ msgstr "Alternativvärdeformat stöds inte"
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Alternativvärde är obligatoriskt"
 
@@ -2612,6 +2703,51 @@ msgstr "Alternativ är nödvändiga för enum fält"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "Sidlayout-ID"
+
+#. js-lingui-id: ZKtamk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+msgid "Page layout not found"
+msgstr ""
+
+#. js-lingui-id: qJ9V6q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout tab not found"
+msgstr ""
+
+#. js-lingui-id: k6Npai
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget already exists"
+msgstr ""
+
+#. js-lingui-id: 7QlaTN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to delete not found"
+msgstr ""
+
+#. js-lingui-id: v2G/zq
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to destroy not found"
+msgstr ""
+
+#. js-lingui-id: yCsIxc
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
+msgid "Page layout widget to update not found"
+msgstr ""
+
+#. js-lingui-id: +4z9mT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
+msgstr ""
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2748,6 +2884,12 @@ msgstr "Föredraget språk"
 msgid "Probability"
 msgstr "Sannolikhet"
 
+#. js-lingui-id: t/0e9D
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Prompt cannot be empty"
+msgstr ""
+
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Property {property} is required for role"
@@ -2787,6 +2929,16 @@ msgstr "Offentlig domän redan registrerad"
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Offentlig domän-URL är inte definierad. Vänligen ställ in miljövariabeln PUBLIC_DOMAIN_URL"
+
+#. js-lingui-id: uzWClp
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
+msgstr ""
+
+#. js-lingui-id: XkHjXW
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
+msgstr ""
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2843,6 +2995,21 @@ msgstr "Fjärrobjekt stöds ännu inte"
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Förfrågan har löpt ut, försök igen."
+
+#. js-lingui-id: KPIUoa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format type must be either \"text\" or \"json\""
+msgstr ""
+
+#. js-lingui-id: 6Plp3x
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"json\" must include a schema"
+msgstr ""
+
+#. js-lingui-id: JCqfz6
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"text\" should not include a schema"
+msgstr ""
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -3013,6 +3180,11 @@ msgstr "Vissa av de angivna uppgifterna är ogiltiga. Vänligen kontrollera dina
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Vissa av de valda behörigheterna är ogiltiga. Vänligen försök igen med giltiga behörighetsinställningar."
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -3074,11 +3246,6 @@ msgstr "Statusar kan inte ställas in manuellt."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Steget är inte ett formulär"
-
-#. js-lingui-id: YFMPch
-#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
-msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr "Strängen \"{name}\" är ogiltig: måste börja med liten bokstav och endast innehålla alfanumeriska tecken"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3253,6 +3420,11 @@ msgstr "Uppgiftsmål för uppgift"
 msgid "Text"
 msgstr "Text"
 
+#. js-lingui-id: mQj02P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Text response format should not have a schema"
+msgstr ""
+
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
@@ -3262,6 +3434,11 @@ msgstr "Kontohanteraren (e-post, användarnamn, telefonnummer, etc.)"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Kontoleverantören"
+
+#. js-lingui-id: GekZDw
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr ""
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3357,9 +3534,14 @@ msgstr "Objektet du försöker ställa in behörigheter för kunde inte hittas. 
 msgid "The opportunity name"
 msgstr "Möjlighetens namn"
 
-#. js-lingui-id: lk5nUN
-#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
-msgid "The request is too complex to process. Please try reducing the amount of data requested."
+#. js-lingui-id: pv+BoZ
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested fields."
+msgstr ""
+
+#. js-lingui-id: 4LVaa7
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
 msgstr ""
 
 #. js-lingui-id: Zi9X+u
@@ -3422,28 +3604,19 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "Det var ett problem med dina anslutningsinställningar. Försök igen."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Den här API-nyckeln har återkallats och kan inte längre användas."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Den här API-nyckeln har gått ut. Vänligen skapa en ny."
 
-#. js-lingui-id: mAs70Y
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field."
-msgstr "Detta namn är inte tillgängligt eftersom det redan används av ett annat fält."
-
-#. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available."
-msgstr "Detta namn är inte tillgängligt."
-
 #. js-lingui-id: gPBck6
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
 msgstr ""
 
@@ -3697,7 +3870,7 @@ msgstr "Validering misslyckades för 0 objekt och 0 fält"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Värdet måste vara i VERSALER och följa snake_case \"{sanitizedValue}\""
 
@@ -3851,12 +4024,6 @@ msgstr "Vygruppen att förstöra hittades inte"
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
 msgid "View group to update not found"
 msgstr "Vygruppen att uppdatera hittades inte"
-
-#. js-lingui-id: XbOhpY
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-msgid "View group to update parent field not found"
-msgstr "Vygruppen att uppdatera föräldrafält hittades inte"
 
 #. js-lingui-id: P0grPG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4334,8 +4501,3 @@ msgstr "Ditt teammedlem ansvarig för att hantera företagskontot"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Ditt arbetsutrymme har uppdaterats med en ny datamodell. Uppdatera sidan."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Ditt medlemskap i arbetsytan kunde inte hittas. Du kanske inte längre har tillgång till denna arbetsyta."

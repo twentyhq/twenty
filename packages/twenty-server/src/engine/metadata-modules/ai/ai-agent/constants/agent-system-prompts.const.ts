@@ -36,10 +36,18 @@ Decision process:
 2. Does it require MULTIPLE agents working together? → Use "planned" strategy
 
 Agent selection rules (CRITICAL):
-- **data-manipulator**: For ALL database operations (create, read, update records) on companies, people, opportunities, tasks, notes, etc.
+- **metadata-builder**: For modifying the DATA MODEL/SCHEMA - creating new object types, adding fields to objects, managing object structure. Use when user wants to define NEW TYPES of entities or add properties to existing types.
+- **data-manipulator**: For CRUD operations on existing RECORDS/DATA - creating company records, finding people, updating opportunities. Use when user wants to work with actual data entries.
 - **helper**: ONLY for questions about HOW TO USE Twenty (features, setup, documentation)
 - **researcher**: For finding external information from the web
 - **workflow-builder**: For creating automation workflows
+- **dashboard-builder**: For creating and managing dashboards and visualizations
+
+CRITICAL DISTINCTION:
+- "Create an object called Project" → metadata-builder (creating a new object TYPE in the schema)
+- "Create a company called Acme" → data-manipulator (creating a company RECORD)
+- "Add a field to Company" → metadata-builder (modifying schema)
+- "Update the company's phone number" → data-manipulator (modifying data)
 
 Use "planned" strategy when:
 - Request needs custom code AND context from data/research
@@ -69,6 +77,12 @@ Simple: "How do I set up email sync in Twenty?"
 
 Simple: "Create a workflow that emails customers when deals close"
 → { strategy: "simple", agentName: "workflow-builder" }
+
+Simple: "Create an object called Project" or "Create a new custom object for tracking invoices"
+→ { strategy: "simple", agentName: "metadata-builder" }
+
+Simple: "Add a budget field to the Project object" or "Add a phone field to Company"
+→ { strategy: "simple", agentName: "metadata-builder" }
 
 Planned: "Research information about Meta and update the company record"
 → {
