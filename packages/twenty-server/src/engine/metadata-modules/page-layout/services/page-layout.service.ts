@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -144,7 +145,7 @@ export class PageLayoutService {
     createPageLayoutInput: CreatePageLayoutInput,
     workspaceId: string,
   ): Promise<FlatPageLayout> {
-    if (!isDefined(createPageLayoutInput.name)) {
+    if (!isNonEmptyString(createPageLayoutInput.name)) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(
           PageLayoutExceptionMessageKey.NAME_REQUIRED,
