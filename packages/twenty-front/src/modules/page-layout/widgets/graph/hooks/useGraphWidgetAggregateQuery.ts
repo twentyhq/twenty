@@ -100,13 +100,26 @@ export const useGraphWidgetAggregateQuery = ({
   }
 
   if (isRatioQuery) {
+    const isLoading = ratioNumeratorLoading || ratioDenominatorLoading;
+    const hasData =
+      isDefined(ratioNumeratorData) && isDefined(ratioDenominatorData);
+
+    if (isLoading || !hasData) {
+      return {
+        value: '-',
+        label: t`Ratio`,
+        loading: isLoading,
+        error: ratioNumeratorError ?? ratioDenominatorError,
+      };
+    }
+
     const numeratorCount =
-      ratioNumeratorData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+      ratioNumeratorData[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
         AggregateOperations.COUNT
       ] ?? 0;
 
     const denominatorCount =
-      ratioDenominatorData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+      ratioDenominatorData[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
         AggregateOperations.COUNT
       ] ?? 0;
 
@@ -116,7 +129,7 @@ export const useGraphWidgetAggregateQuery = ({
         denominatorCount: Number(denominatorCount),
       }),
       label: t`Ratio`,
-      loading: ratioNumeratorLoading || ratioDenominatorLoading,
+      loading: isLoading,
       error: ratioNumeratorError ?? ratioDenominatorError,
     };
   }

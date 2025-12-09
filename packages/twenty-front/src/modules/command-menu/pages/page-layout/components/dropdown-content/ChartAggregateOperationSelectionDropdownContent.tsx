@@ -1,11 +1,11 @@
+import { ChartAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
+import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio.constant';
 import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/types/AggregateChartOperation';
 import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel';
@@ -16,18 +16,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { GraphType, type AggregateOperations } from '~/generated/graphql';
+import { GraphType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -53,9 +48,6 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     throw new Error('Invalid configuration type');
   }
 
-  const currentAggregateOperation =
-    widgetInEditMode.configuration.aggregateOperation;
-
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
@@ -66,11 +58,6 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useRecoilComponentValue(
-    selectedItemIdComponentState,
-    dropdownId,
   );
 
   const isAggregateChart =
@@ -113,27 +100,9 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     getSearchableValues: (item) => [item.label],
   });
 
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
-
   if (!isDefined(sourceObjectMetadataItem) || !isDefined(selectedField)) {
     return null;
   }
-
-  const handleSelectAggregateOperation = (
-    aggregateOperation: AggregateOperations,
-  ) => {
-    updateCurrentWidgetConfig({
-      configToUpdate: {
-        aggregateFieldMetadataId: currentFieldMetadataId,
-        aggregateOperation,
-        ratioAggregateConfig: null,
-      },
-    });
-    closeDropdown();
-  };
 
   const handleSelectRatio = () => {
     setIsOptionValueMenuOpen(true);
@@ -176,61 +145,22 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
             (item) => item.operation,
           )}
         >
-          {filteredAggregateOperationsWithLabels.map((item) => {
-            const operation = item.operation;
-            const currentConfiguration = widgetInEditMode.configuration;
-            const isCurrentlyRatio =
-              currentConfiguration?.__typename ===
-                'AggregateChartConfiguration' &&
-              isDefined(currentConfiguration.ratioAggregateConfig);
-
-            if (operation === DASHBOARD_AGGREGATE_OPERATION_RATIO) {
-              return (
-                <SelectableListItem
-                  key={operation}
-                  itemId={operation}
-                  onEnter={handleSelectRatio}
-                >
-                  <MenuItemSelect
-                    text={item.label}
-                    selected={isCurrentlyRatio}
-                    focused={selectedItemId === operation}
-                    hasSubMenu={true}
-                    onClick={handleSelectRatio}
-                  />
-                </SelectableListItem>
-              );
-            }
-
-            const handleClick = () => {
-              handleSelectAggregateOperation(
-                convertExtendedAggregateOperationToAggregateOperation(
-                  operation,
-                ),
-              );
-            };
-
-            const isSelected =
-              currentAggregateOperation ===
-                convertExtendedAggregateOperationToAggregateOperation(
-                  operation,
-                ) && !isCurrentlyRatio;
-
-            return (
-              <SelectableListItem
-                key={operation}
-                itemId={operation}
-                onEnter={handleClick}
-              >
-                <MenuItemSelect
-                  text={item.label}
-                  selected={isSelected}
-                  focused={selectedItemId === operation}
-                  onClick={handleClick}
-                />
-              </SelectableListItem>
-            );
-          })}
+          {filteredAggregateOperationsWithLabels.map((item) =>
+            item.operation === DASHBOARD_AGGREGATE_OPERATION_RATIO ? (
+              <ChartRatioAggregateOperationSelectableListItem
+                key={item.operation}
+                label={item.label}
+                onSelect={handleSelectRatio}
+              />
+            ) : (
+              <ChartAggregateOperationSelectableListItem
+                key={item.operation}
+                operation={item.operation}
+                label={item.label}
+                currentFieldMetadataId={currentFieldMetadataId}
+              />
+            ),
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </>
