@@ -6,6 +6,32 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { restoreOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/restore-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
+
+type TestContext = {
+  title: string;
+  operation: 'soft-delete-restore' | 'hard-delete';
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'soft delete and restore a page layout widget',
+    context: {
+      title: 'Widget To Delete',
+      operation: 'soft-delete-restore',
+    },
+  },
+  {
+    title: 'hard delete a page layout widget',
+    context: {
+      title: 'Widget To Destroy',
+      operation: 'hard-delete',
+    },
+  },
+];
 
 describe('Page layout widget deletion should succeed', () => {
   let testPageLayoutId: string;
@@ -41,63 +67,52 @@ describe('Page layout widget deletion should succeed', () => {
     });
   });
 
-  it('should soft delete and restore a page layout widget', async () => {
-    const { data: createData } = await createOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        title: 'Widget To Delete',
-        pageLayoutTabId: testPageLayoutTabId,
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 1,
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { title, operation } }) => {
+      const { data: createData } = await createOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          title,
+          pageLayoutTabId: testPageLayoutTabId,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
         },
-      },
-    });
+      });
 
-    const widgetId = createData.createPageLayoutWidget.id;
+      const widgetId = createData.createPageLayoutWidget.id;
 
-    const { data: deleteData } = await deleteOnePageLayoutWidget({
-      expectToFail: false,
-      input: { id: widgetId },
-    });
+      if (operation === 'soft-delete-restore') {
+        const { data: deleteData } = await deleteOnePageLayoutWidget({
+          expectToFail: false,
+          input: { id: widgetId },
+        });
 
-    expect(deleteData.deletePageLayoutWidget.deletedAt).not.toBeNull();
+        expect(deleteData.deletePageLayoutWidget.deletedAt).not.toBeNull();
 
-    const { data: restoreData } = await restoreOnePageLayoutWidget({
-      expectToFail: false,
-      input: { id: widgetId },
-    });
+        const { data: restoreData } = await restoreOnePageLayoutWidget({
+          expectToFail: false,
+          input: { id: widgetId },
+        });
 
-    expect(restoreData.restorePageLayoutWidget.deletedAt).toBeNull();
+        expect(restoreData.restorePageLayoutWidget.deletedAt).toBeNull();
 
-    await destroyOnePageLayoutWidget({
-      expectToFail: false,
-      input: { id: widgetId },
-    });
-  });
+        await destroyOnePageLayoutWidget({
+          expectToFail: false,
+          input: { id: widgetId },
+        });
+      } else {
+        const { data: destroyData } = await destroyOnePageLayoutWidget({
+          expectToFail: false,
+          input: { id: widgetId },
+        });
 
-  it('should hard delete a page layout widget', async () => {
-    const { data: createData } = await createOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        title: 'Widget To Destroy',
-        pageLayoutTabId: testPageLayoutTabId,
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 1,
-        },
-      },
-    });
-
-    const { data: destroyData } = await destroyOnePageLayoutWidget({
-      expectToFail: false,
-      input: { id: createData.createPageLayoutWidget.id },
-    });
-
-    expect(destroyData.destroyPageLayoutWidget).toBe(true);
-  });
+        expect(destroyData.destroyPageLayoutWidget).toBe(true);
+      }
+    },
+  );
 });

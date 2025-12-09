@@ -5,8 +5,81 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+
+type TestContext = {
+  input: {
+    title?: string;
+    type?: WidgetType;
+    gridPosition?: {
+      row: number;
+      column: number;
+      rowSpan: number;
+      columnSpan: number;
+    };
+  };
+  expected: {
+    title?: string;
+    type?: WidgetType;
+    gridPosition?: {
+      row: number;
+      column: number;
+      rowSpan: number;
+      columnSpan: number;
+    };
+  };
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'update page layout widget title',
+    context: {
+      input: {
+        title: 'Updated Widget Title',
+      },
+      expected: {
+        title: 'Updated Widget Title',
+      },
+    },
+  },
+  {
+    title: 'update page layout widget type',
+    context: {
+      input: {
+        type: WidgetType.GRAPH,
+      },
+      expected: {
+        type: WidgetType.GRAPH,
+      },
+    },
+  },
+  {
+    title: 'update page layout widget grid position',
+    context: {
+      input: {
+        gridPosition: {
+          row: 2,
+          column: 3,
+          rowSpan: 2,
+          columnSpan: 4,
+        },
+      },
+      expected: {
+        gridPosition: {
+          row: 2,
+          column: 3,
+          rowSpan: 2,
+          columnSpan: 4,
+        },
+      },
+    },
+  },
+];
 
 describe('Page layout widget update should succeed', () => {
   let testPageLayoutId: string;
@@ -68,58 +141,21 @@ describe('Page layout widget update should succeed', () => {
     });
   });
 
-  it('should update page layout widget title', async () => {
-    const { data } = await updateOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        id: testPageLayoutWidgetId,
-        title: 'Updated Widget Title',
-      },
-    });
-
-    expect(data.updatePageLayoutWidget).toMatchObject({
-      id: testPageLayoutWidgetId,
-      title: 'Updated Widget Title',
-    });
-  });
-
-  it('should update page layout widget type', async () => {
-    const { data } = await updateOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        id: testPageLayoutWidgetId,
-        type: WidgetType.GRAPH,
-      },
-    });
-
-    expect(data.updatePageLayoutWidget).toMatchObject({
-      id: testPageLayoutWidgetId,
-      type: WidgetType.GRAPH,
-    });
-  });
-
-  it('should update page layout widget grid position', async () => {
-    const { data } = await updateOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        id: testPageLayoutWidgetId,
-        gridPosition: {
-          row: 2,
-          column: 3,
-          rowSpan: 2,
-          columnSpan: 4,
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { input, expected } }) => {
+      const { data } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutWidgetId,
+          ...input,
         },
-      },
-    });
+      });
 
-    expect(data.updatePageLayoutWidget).toMatchObject({
-      id: testPageLayoutWidgetId,
-      gridPosition: {
-        row: 2,
-        column: 3,
-        rowSpan: 2,
-        columnSpan: 4,
-      },
-    });
-  });
+      expect(data.updatePageLayoutWidget).toMatchObject({
+        id: testPageLayoutWidgetId,
+        ...expected,
+      });
+    },
+  );
 });

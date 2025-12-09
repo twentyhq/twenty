@@ -4,8 +4,71 @@ import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+
+type TestContext = {
+  input: {
+    title: string;
+    type?: WidgetType;
+    gridPosition: {
+      row: number;
+      column: number;
+      rowSpan: number;
+      columnSpan: number;
+    };
+  };
+  expected: {
+    title: string;
+    type: WidgetType;
+    includePageLayoutTabId?: boolean;
+  };
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'create a page layout widget',
+    context: {
+      input: {
+        title: 'Test Widget',
+        gridPosition: {
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
+      },
+      expected: {
+        title: 'Test Widget',
+        type: WidgetType.VIEW,
+        includePageLayoutTabId: true,
+      },
+    },
+  },
+  {
+    title: 'create a page layout widget with specific type',
+    context: {
+      input: {
+        title: 'Graph Widget',
+        type: WidgetType.GRAPH,
+        gridPosition: {
+          row: 0,
+          column: 0,
+          rowSpan: 2,
+          columnSpan: 2,
+        },
+      },
+      expected: {
+        title: 'Graph Widget',
+        type: WidgetType.GRAPH,
+      },
+    },
+  },
+];
 
 describe('Page layout widget creation should succeed', () => {
   let testPageLayoutId: string;
@@ -51,53 +114,28 @@ describe('Page layout widget creation should succeed', () => {
     }
   });
 
-  it('should create a page layout widget', async () => {
-    const { data } = await createOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        title: 'Test Widget',
-        pageLayoutTabId: testPageLayoutTabId,
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 1,
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { input, expected } }) => {
+      const { data } = await createOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          ...input,
+          pageLayoutTabId: testPageLayoutTabId,
         },
-      },
-    });
+      });
 
-    createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
+      createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
 
-    expect(data.createPageLayoutWidget).toMatchObject({
-      id: expect.any(String),
-      title: 'Test Widget',
-      type: WidgetType.VIEW,
-      pageLayoutTabId: testPageLayoutTabId,
-    });
-  });
+      const { includePageLayoutTabId, ...expectedFields } = expected;
 
-  it('should create a page layout widget with specific type', async () => {
-    const { data } = await createOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        title: 'Graph Widget',
-        pageLayoutTabId: testPageLayoutTabId,
-        type: WidgetType.GRAPH,
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 2,
-          columnSpan: 2,
-        },
-      },
-    });
-
-    createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
-
-    expect(data.createPageLayoutWidget).toMatchObject({
-      id: expect.any(String),
-      title: 'Graph Widget',
-      type: WidgetType.GRAPH,
-    });
-  });
+      expect(data.createPageLayoutWidget).toMatchObject({
+        id: expect.any(String),
+        ...expectedFields,
+        ...(includePageLayoutTabId
+          ? { pageLayoutTabId: testPageLayoutTabId }
+          : {}),
+      });
+    },
+  );
 });

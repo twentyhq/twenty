@@ -1,7 +1,50 @@
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+
+type TestContext = {
+  input: {
+    name: string;
+    type?: PageLayoutType;
+  };
+  expected: {
+    name: string;
+    type: PageLayoutType;
+  };
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'create a page layout with minimal input',
+    context: {
+      input: {
+        name: 'Test Page Layout',
+      },
+      expected: {
+        name: 'Test Page Layout',
+        type: PageLayoutType.RECORD_PAGE,
+      },
+    },
+  },
+  {
+    title: 'create a page layout with DASHBOARD type',
+    context: {
+      input: {
+        name: 'Dashboard Layout',
+        type: PageLayoutType.DASHBOARD,
+      },
+      expected: {
+        name: 'Dashboard Layout',
+        type: PageLayoutType.DASHBOARD,
+      },
+    },
+  },
+];
 
 describe('Page layout creation should succeed', () => {
   let createdPageLayoutId: string;
@@ -15,38 +58,20 @@ describe('Page layout creation should succeed', () => {
     }
   });
 
-  it('should create a page layout with minimal input', async () => {
-    const { data } = await createOnePageLayout({
-      expectToFail: false,
-      input: {
-        name: 'Test Page Layout',
-      },
-    });
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { input, expected } }) => {
+      const { data } = await createOnePageLayout({
+        expectToFail: false,
+        input,
+      });
 
-    createdPageLayoutId = data?.createPageLayout?.id;
+      createdPageLayoutId = data?.createPageLayout?.id;
 
-    expect(data.createPageLayout).toMatchObject({
-      id: expect.any(String),
-      name: 'Test Page Layout',
-      type: PageLayoutType.RECORD_PAGE,
-    });
-  });
-
-  it('should create a page layout with DASHBOARD type', async () => {
-    const { data } = await createOnePageLayout({
-      expectToFail: false,
-      input: {
-        name: 'Dashboard Layout',
-        type: PageLayoutType.DASHBOARD,
-      },
-    });
-
-    createdPageLayoutId = data?.createPageLayout?.id;
-
-    expect(data.createPageLayout).toMatchObject({
-      id: expect.any(String),
-      name: 'Dashboard Layout',
-      type: PageLayoutType.DASHBOARD,
-    });
-  });
+      expect(data.createPageLayout).toMatchObject({
+        id: expect.any(String),
+        ...expected,
+      });
+    },
+  );
 });

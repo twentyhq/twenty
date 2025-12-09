@@ -4,6 +4,32 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { restoreOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/restore-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
+
+type TestContext = {
+  title: string;
+  operation: 'soft-delete-restore' | 'hard-delete';
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'soft delete and restore a page layout tab',
+    context: {
+      title: 'Tab To Delete',
+      operation: 'soft-delete-restore',
+    },
+  },
+  {
+    title: 'hard delete a page layout tab',
+    context: {
+      title: 'Tab To Destroy',
+      operation: 'hard-delete',
+    },
+  },
+];
 
 describe('Page layout tab deletion should succeed', () => {
   let testPageLayoutId: string;
@@ -24,51 +50,46 @@ describe('Page layout tab deletion should succeed', () => {
     });
   });
 
-  it('should soft delete and restore a page layout tab', async () => {
-    const { data: createData } = await createOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        title: 'Tab To Delete',
-        pageLayoutId: testPageLayoutId,
-      },
-    });
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { title, operation } }) => {
+      const { data: createData } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          title,
+          pageLayoutId: testPageLayoutId,
+        },
+      });
 
-    const tabId = createData.createPageLayoutTab.id;
+      const tabId = createData.createPageLayoutTab.id;
 
-    const { data: deleteData } = await deleteOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: tabId },
-    });
+      if (operation === 'soft-delete-restore') {
+        const { data: deleteData } = await deleteOnePageLayoutTab({
+          expectToFail: false,
+          input: { id: tabId },
+        });
 
-    expect(deleteData.deletePageLayoutTab).toBe(true);
+        expect(deleteData.deletePageLayoutTab).toBe(true);
 
-    const { data: restoreData } = await restoreOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: tabId },
-    });
+        const { data: restoreData } = await restoreOnePageLayoutTab({
+          expectToFail: false,
+          input: { id: tabId },
+        });
 
-    expect(restoreData.restorePageLayoutTab.deletedAt).toBeNull();
+        expect(restoreData.restorePageLayoutTab.deletedAt).toBeNull();
 
-    await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: tabId },
-    });
-  });
+        await destroyOnePageLayoutTab({
+          expectToFail: false,
+          input: { id: tabId },
+        });
+      } else {
+        const { data: destroyData } = await destroyOnePageLayoutTab({
+          expectToFail: false,
+          input: { id: tabId },
+        });
 
-  it('should hard delete a page layout tab', async () => {
-    const { data: createData } = await createOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        title: 'Tab To Destroy',
-        pageLayoutId: testPageLayoutId,
-      },
-    });
-
-    const { data: destroyData } = await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: createData.createPageLayoutTab.id },
-    });
-
-    expect(destroyData.destroyPageLayoutTab).toBe(true);
-  });
+        expect(destroyData.destroyPageLayoutTab).toBe(true);
+      }
+    },
+  );
 });

@@ -3,6 +3,46 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { updateOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/update-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
+
+type TestContext = {
+  input: {
+    title?: string;
+    position?: number;
+  };
+  expected: {
+    title?: string;
+    position?: number;
+  };
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'update page layout tab title',
+    context: {
+      input: {
+        title: 'Updated Tab Title',
+      },
+      expected: {
+        title: 'Updated Tab Title',
+      },
+    },
+  },
+  {
+    title: 'update page layout tab position',
+    context: {
+      input: {
+        position: 10,
+      },
+      expected: {
+        position: 10,
+      },
+    },
+  },
+];
 
 describe('Page layout tab update should succeed', () => {
   let testPageLayoutId: string;
@@ -43,33 +83,21 @@ describe('Page layout tab update should succeed', () => {
     });
   });
 
-  it('should update page layout tab title', async () => {
-    const { data } = await updateOnePageLayoutTab({
-      expectToFail: false,
-      input: {
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { input, expected } }) => {
+      const { data } = await updateOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutTabId,
+          ...input,
+        },
+      });
+
+      expect(data.updatePageLayoutTab).toMatchObject({
         id: testPageLayoutTabId,
-        title: 'Updated Tab Title',
-      },
-    });
-
-    expect(data.updatePageLayoutTab).toMatchObject({
-      id: testPageLayoutTabId,
-      title: 'Updated Tab Title',
-    });
-  });
-
-  it('should update page layout tab position', async () => {
-    const { data } = await updateOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        id: testPageLayoutTabId,
-        position: 10,
-      },
-    });
-
-    expect(data.updatePageLayoutTab).toMatchObject({
-      id: testPageLayoutTabId,
-      position: 10,
-    });
-  });
+        ...expected,
+      });
+    },
+  );
 });

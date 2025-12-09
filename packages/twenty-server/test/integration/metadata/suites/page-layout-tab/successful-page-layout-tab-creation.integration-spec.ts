@@ -2,6 +2,50 @@ import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-la
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
+
+type TestContext = {
+  input: {
+    title: string;
+    position?: number;
+  };
+  expected: {
+    title: string;
+    position?: number;
+    includePageLayoutId?: boolean;
+  };
+};
+
+const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+  {
+    title: 'create a page layout tab',
+    context: {
+      input: {
+        title: 'Test Tab',
+      },
+      expected: {
+        title: 'Test Tab',
+        includePageLayoutId: true,
+      },
+    },
+  },
+  {
+    title: 'create a page layout tab with position',
+    context: {
+      input: {
+        title: 'Positioned Tab',
+        position: 5,
+      },
+      expected: {
+        title: 'Positioned Tab',
+        position: 5,
+      },
+    },
+  },
+];
 
 describe('Page layout tab creation should succeed', () => {
   let testPageLayoutId: string;
@@ -33,40 +77,26 @@ describe('Page layout tab creation should succeed', () => {
     }
   });
 
-  it('should create a page layout tab', async () => {
-    const { data } = await createOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        title: 'Test Tab',
-        pageLayoutId: testPageLayoutId,
-      },
-    });
+  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+    'should $title',
+    async ({ context: { input, expected } }) => {
+      const { data } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          ...input,
+          pageLayoutId: testPageLayoutId,
+        },
+      });
 
-    createdPageLayoutTabId = data?.createPageLayoutTab?.id;
+      createdPageLayoutTabId = data?.createPageLayoutTab?.id;
 
-    expect(data.createPageLayoutTab).toMatchObject({
-      id: expect.any(String),
-      title: 'Test Tab',
-      pageLayoutId: testPageLayoutId,
-    });
-  });
+      const { includePageLayoutId, ...expectedFields } = expected;
 
-  it('should create a page layout tab with position', async () => {
-    const { data } = await createOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        title: 'Positioned Tab',
-        pageLayoutId: testPageLayoutId,
-        position: 5,
-      },
-    });
-
-    createdPageLayoutTabId = data?.createPageLayoutTab?.id;
-
-    expect(data.createPageLayoutTab).toMatchObject({
-      id: expect.any(String),
-      title: 'Positioned Tab',
-      position: 5,
-    });
-  });
+      expect(data.createPageLayoutTab).toMatchObject({
+        id: expect.any(String),
+        ...expectedFields,
+        ...(includePageLayoutId ? { pageLayoutId: testPageLayoutId } : {}),
+      });
+    },
+  );
 });
