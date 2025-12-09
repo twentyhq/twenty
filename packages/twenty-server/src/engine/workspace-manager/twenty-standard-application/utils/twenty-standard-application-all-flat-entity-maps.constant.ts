@@ -18,7 +18,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   const standardFieldMetadataIdByObjectAndFieldName =
     getStandardFieldMetadataIdByObjectAndFieldName();
 
-  const builderArgs = {
+  const objectBuilderArgs = {
     createdAt: now,
     workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
@@ -26,10 +26,18 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   // Build object metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
   const flatObjectMetadataMaps =
-    buildStandardFlatObjectMetadataMaps(builderArgs);
+    buildStandardFlatObjectMetadataMaps(objectBuilderArgs);
 
   // Build field metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
-  const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps(builderArgs);
+  const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps: {
+      flatObjectMetadataMaps,
+    },
+    twentyStandardApplicationId,
+  });
 
   const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
     dependencyFlatEntityMaps: {
