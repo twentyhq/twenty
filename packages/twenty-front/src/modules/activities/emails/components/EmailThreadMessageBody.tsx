@@ -15,6 +15,26 @@ type EmailThreadMessageBodyProps = {
   body: string;
   isDisplayed: boolean;
 };
+const autoLink = (text: string): string => {
+  const urlRegex =
+    /((https?:\/\/|www\.)[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)/gi;
+  const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
+
+  let linked = text.replace(urlRegex, (url) => {
+    let href = url;
+    if (!href.startsWith('http')) {
+      href = 'https://' + href;
+    }
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+
+  linked = linked.replace(emailRegex, (email) => {
+    if (linked.includes(`>${email}<`)) return email;
+    return `<a href="mailto:${email}">${email}</a>`;
+  });
+
+  return linked;
+};
 
 export const EmailThreadMessageBody = ({
   body,
@@ -22,7 +42,9 @@ export const EmailThreadMessageBody = ({
 }: EmailThreadMessageBodyProps) => {
   return (
     <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>{body}</StyledThreadMessageBody>
+      <StyledThreadMessageBody
+        dangerouslySetInnerHTML={{ __html: autoLink(body) }}
+      />
     </AnimatedEaseInOut>
   );
 };
