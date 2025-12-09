@@ -180,8 +180,8 @@ export class TimelineMessagingService {
             if (!threadParticipant.message.messageThreadId)
               return threadParticipantsAcc;
 
-            // @ts-expect-error legacy noImplicitAny
             if (
+              // @ts-expect-error legacy noImplicitAny
               !threadParticipantsAcc[threadParticipant.message.messageThreadId]
             )
               // @ts-expect-error legacy noImplicitAny

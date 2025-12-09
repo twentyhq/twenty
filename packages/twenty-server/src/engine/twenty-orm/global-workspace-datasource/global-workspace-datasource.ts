@@ -37,7 +37,7 @@ export class GlobalWorkspaceDataSource
   implements WorkspaceDataSourceInterface
 {
   readonly isGlobalFlow = true;
-  private eventEmitterService: WorkspaceEventEmitter;
+  readonly eventEmitterService: WorkspaceEventEmitter;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
@@ -107,21 +107,7 @@ export class GlobalWorkspaceDataSource
       return super.createEntityManager(queryRunner) as WorkspaceEntityManager;
     }
 
-    const context = getWorkspaceContext();
-
-    return new WorkspaceEntityManager(
-      {
-        workspaceId: context.authContext.workspace.id,
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        flatIndexMaps: context.flatIndexMaps,
-        objectIdByNameSingular: context.objectIdByNameSingular,
-        featureFlagsMap: context.featureFlagsMap,
-        eventEmitterService: this.eventEmitterService,
-      },
-      this,
-      queryRunner,
-    );
+    return new WorkspaceEntityManager(undefined, this, queryRunner);
   }
 
   override createQueryRunner(

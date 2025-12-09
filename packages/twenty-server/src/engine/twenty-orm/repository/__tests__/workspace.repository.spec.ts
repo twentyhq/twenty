@@ -59,6 +59,9 @@ describe('WorkspaceRepository', () => {
       decrement: jest.fn(),
       preload: jest.fn(),
       clear: jest.fn(),
+      get internalContext() {
+        return mockInternalContext;
+      },
     } as unknown as jest.Mocked<WorkspaceEntityManager>;
 
     const mockFieldMetadata: FlatFieldMetadata = {
@@ -136,7 +139,6 @@ describe('WorkspaceRepository', () => {
     mockQueryRunner = {} as QueryRunner;
 
     repository = new WorkspaceRepository(
-      mockInternalContext,
       'test-entity',
       mockEntityManager,
       mockFeatureFlagMap,
