@@ -31,7 +31,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -45,7 +46,7 @@ const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 @Injectable()
 export class SearchService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fileService: FileService,
   ) {}
 
@@ -58,9 +59,13 @@ export class SearchService {
     limit,
     filter,
     after,
+    workspaceId,
+    rolePermissionConfig,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
+    rolePermissionConfig?: RolePermissionConfig;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -80,8 +85,10 @@ export class SearchService {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
           const repository =
-            await this.twentyORMManager.getRepository<ObjectRecord>(
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
+              workspaceId,
               flatObjectMetadata.nameSingular,
+              rolePermissionConfig,
             );
 
           return {

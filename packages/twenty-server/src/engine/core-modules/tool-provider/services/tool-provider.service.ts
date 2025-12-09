@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -21,7 +22,6 @@ import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-model
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 // Type-only import to avoid circular dependency at file level
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
@@ -173,7 +173,7 @@ export class ToolProviderService {
           description: tool.description,
           inputSchema: tool.inputSchema,
           execute: async (parameters: { input: ToolInput }) =>
-            tool.execute(parameters.input),
+            tool.execute(parameters.input, spec.workspaceId),
         };
       } else if (spec.rolePermissionConfig && spec.workspaceId) {
         const hasPermission = await this.permissionsService.hasToolPermission(
@@ -187,7 +187,7 @@ export class ToolProviderService {
             description: tool.description,
             inputSchema: tool.inputSchema,
             execute: async (parameters: { input: ToolInput }) =>
-              tool.execute(parameters.input),
+              tool.execute(parameters.input, spec.workspaceId),
           };
         }
       }

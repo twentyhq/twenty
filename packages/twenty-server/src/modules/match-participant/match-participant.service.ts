@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -22,6 +21,7 @@ type MatchParticipantsForWorkspaceMembersArgs = {
     workspaceMemberIds: string[];
   };
   objectMetadataName: ObjectMetadataName;
+  workspaceId: string;
 };
 
 type MatchParticipantsForPeopleArgs = {
@@ -30,6 +30,7 @@ type MatchParticipantsForPeopleArgs = {
     personEmails: string[];
   };
   objectMetadataName: ObjectMetadataName;
+  workspaceId: string;
 };
 
 type MatchParticipantsArgs<
@@ -47,6 +48,7 @@ type MatchParticipantsArgs<
   objectMetadataName: ObjectMetadataName;
   transactionManager?: WorkspaceEntityManager;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
+  workspaceId: string;
 };
 
 @Injectable()
@@ -58,7 +60,6 @@ export class MatchParticipantService<
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   private async getParticipantRepository(
@@ -83,15 +84,10 @@ export class MatchParticipantService<
     objectMetadataName,
     transactionManager,
     matchWith = 'workspaceMemberAndPerson',
+    workspaceId,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
     if (participants.length === 0) {
       return;
-    }
-
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!isDefined(workspaceId)) {
-      throw new Error('Workspace ID is required');
     }
 
     const personRepository =
@@ -209,13 +205,8 @@ export class MatchParticipantService<
   public async matchParticipantsForWorkspaceMembers({
     participantMatching,
     objectMetadataName,
+    workspaceId,
   }: MatchParticipantsForWorkspaceMembersArgs) {
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!isDefined(workspaceId)) {
-      throw new Error('Workspace ID is required');
-    }
-
     const participantRepository = await this.getParticipantRepository(
       workspaceId,
       objectMetadataName,
@@ -238,19 +229,15 @@ export class MatchParticipantService<
       matchWith: 'workspaceMemberOnly',
       participants: tobeRematchedParticipants as ParticipantWorkspaceEntity[],
       objectMetadataName,
+      workspaceId,
     });
   }
 
   public async matchParticipantsForPeople({
     participantMatching,
     objectMetadataName,
+    workspaceId,
   }: MatchParticipantsForPeopleArgs) {
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!isDefined(workspaceId)) {
-      throw new Error('Workspace ID is required');
-    }
-
     const participantRepository = await this.getParticipantRepository(
       workspaceId,
       objectMetadataName,
@@ -293,6 +280,7 @@ export class MatchParticipantService<
       matchWith: 'personOnly',
       participants: tobeRematchedParticipants,
       objectMetadataName,
+      workspaceId,
     });
   }
 }

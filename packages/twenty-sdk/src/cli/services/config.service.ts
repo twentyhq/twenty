@@ -1,7 +1,11 @@
 import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { type TwentyConfig } from '../types/config.types';
+
+export type TwentyConfig = {
+  apiUrl: string;
+  apiKey?: string;
+};
 
 type PersistedConfig = TwentyConfig & {
   profiles?: Record<string, TwentyConfig>;

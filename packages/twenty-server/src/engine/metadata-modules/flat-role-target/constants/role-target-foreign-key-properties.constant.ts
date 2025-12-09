@@ -4,4 +4,5 @@ export const ROLE_TARGET_FOREIGN_KEY_PROPERTIES = [
   'userWorkspaceId',
   'apiKeyId',
   'agentId',
+  'targetApplicationId',
 ] as const satisfies (keyof FlatRoleTarget)[];

@@ -12,7 +12,7 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -21,7 +21,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -39,7 +39,8 @@ export class ConnectedAccountDeleteOnePreQueryHook
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspace.id,
         'messageChannel',
       );
 

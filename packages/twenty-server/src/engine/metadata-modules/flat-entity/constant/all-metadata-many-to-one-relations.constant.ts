@@ -109,6 +109,17 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
     },
   },
   agent: {},
-  pageLayoutWidget: {},
-  pageLayoutTab: {},
+  pageLayout: {},
+  pageLayoutWidget: {
+    pageLayoutTabId: {
+      metadataName: 'pageLayoutTab',
+      flatEntityForeignKeyAggregator: 'widgetIds',
+    },
+  },
+  pageLayoutTab: {
+    pageLayoutId: {
+      metadataName: 'pageLayout',
+      flatEntityForeignKeyAggregator: 'tabIds',
+    },
+  },
 } as const satisfies MetadataNameAndRelations;

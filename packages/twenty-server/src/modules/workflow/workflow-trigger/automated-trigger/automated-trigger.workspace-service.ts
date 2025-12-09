@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   type AutomatedTriggerType,
   type WorkflowAutomatedTriggerWorkspaceEntity,
@@ -9,19 +9,24 @@ import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-tri
 
 @Injectable()
 export class AutomatedTriggerWorkspaceService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   async addAutomatedTrigger({
     workflowId,
     type,
     settings,
+    workspaceId,
   }: {
     workflowId: string;
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
+    workspaceId: string;
   }) {
     const workflowAutomatedTriggerRepository =
-      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
+        workspaceId,
         'workflowAutomatedTrigger',
       );
 
@@ -32,9 +37,16 @@ export class AutomatedTriggerWorkspaceService {
     });
   }
 
-  async deleteAutomatedTrigger({ workflowId }: { workflowId: string }) {
+  async deleteAutomatedTrigger({
+    workflowId,
+    workspaceId,
+  }: {
+    workflowId: string;
+    workspaceId: string;
+  }) {
     const workflowAutomatedTriggerRepository =
-      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
+        workspaceId,
         'workflowAutomatedTrigger',
       );
 
