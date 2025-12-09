@@ -6,6 +6,7 @@ import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/Em
 import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -45,7 +46,7 @@ export const EmailThreadMessage = ({
   const [isOpen, setIsOpen] = useState(isExpanded);
 
   const receivers = participants.filter(
-    (participant) => participant.role !== 'from',
+    (participant) => participant.role !== MessageParticipantRole.FROM,
   );
 
   if (!sender || receivers.length === 0) {

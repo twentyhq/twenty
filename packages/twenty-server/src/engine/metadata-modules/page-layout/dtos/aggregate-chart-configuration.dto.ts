@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -11,6 +12,7 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -19,6 +21,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout/dtos/ratio-aggregate-config.dto';
 import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
 
 @ObjectType('AggregateChartConfiguration')
@@ -83,4 +86,10 @@ export class AggregateChartConfigurationDTO {
   @IsString()
   @IsOptional()
   suffix?: string;
+
+  @Field(() => RatioAggregateConfigDTO, { nullable: true })
+  @ValidateNested()
+  @Type(() => RatioAggregateConfigDTO)
+  @IsOptional()
+  ratioAggregateConfig?: RatioAggregateConfigDTO;
 }

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type EmailAddress } from 'addressparser';
 import { isDefined } from 'twenty-shared/utils';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -109,16 +110,28 @@ export class MicrosoftGetMessagesService {
 
       const participants = [
         ...(safeParseFrom
-          ? formatAddressObjectAsParticipants(safeParseFrom, 'from')
+          ? formatAddressObjectAsParticipants(
+              safeParseFrom,
+              MessageParticipantRole.FROM,
+            )
           : []),
         ...(safeParseTo
-          ? formatAddressObjectAsParticipants(safeParseTo, 'to')
+          ? formatAddressObjectAsParticipants(
+              safeParseTo,
+              MessageParticipantRole.TO,
+            )
           : []),
         ...(safeParseCc
-          ? formatAddressObjectAsParticipants(safeParseCc, 'cc')
+          ? formatAddressObjectAsParticipants(
+              safeParseCc,
+              MessageParticipantRole.CC,
+            )
           : []),
         ...(safeParseBcc
-          ? formatAddressObjectAsParticipants(safeParseBcc, 'bcc')
+          ? formatAddressObjectAsParticipants(
+              safeParseBcc,
+              MessageParticipantRole.BCC,
+            )
           : []),
       ];
 

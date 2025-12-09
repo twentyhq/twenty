@@ -1,7 +1,7 @@
 {
   "name": "fireflies",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/twenty-apps/fireflies/src",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-apps/community/fireflies/src",
   "projectType": "application",
   "tags": [
     "scope:apps"
@@ -13,7 +13,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "packages/twenty-apps/fireflies/jest.config.mjs",
+        "jestConfig": "packages/twenty-apps/community/fireflies/jest.config.mjs",
         "passWithNoTests": true
       },
       "configurations": {
@@ -36,7 +36,7 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "packages/twenty-apps/fireflies/**/*.{ts,tsx,js,jsx}"
+          "packages/twenty-apps/community/fireflies/**/*.{ts,tsx,js,jsx}"
         ]
       },
       "configurations": {

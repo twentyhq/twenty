@@ -12,7 +12,7 @@ export const fromCreateCronTriggerInputToFlatCronTrigger = ({
   workspaceId: string;
   workspaceCustomApplicationId: string;
 }): FlatCronTrigger => {
-  const now = new Date();
+  const now = new Date().toISOString();
   const id = v4();
 
   return {

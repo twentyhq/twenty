@@ -12,7 +12,7 @@ export const fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger = ({
   workspaceId: string;
   workspaceCustomApplicationId: string;
 }): FlatDatabaseEventTrigger => {
-  const now = new Date();
+  const now = new Date().toISOString();
   const id = uuidV4();
 
   return {

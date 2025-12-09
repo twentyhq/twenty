@@ -2,6 +2,10 @@
 
 Automatically captures meeting notes with AI-generated summaries and insights from Fireflies.ai into your Twenty CRM.
 
+### Current Status
+- Doesn't work with Fireflies webhook yet due to missing headers forwarding in twenty serverless func
+- Meeting ingestion utility scripts are available for individual meeting insertion and historical meetings with filters with yarn meeting:all
+
 ## Integration Overview
 
 **Fireflies webhook → Fireflies API → Twenty CRM with summary-focused insights**
@@ -19,19 +23,54 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 
 ## API Access by Subscription Plan
 
-Fireflies API access varies significantly by subscription tier:
+Fireflies API access varies by subscription tier. This integration automatically adapts queries based on your plan and falls back gracefully if restrictions are encountered.
+
+### Plan Comparison
 
 | Feature | Free | Pro | Business | Enterprise |
-|---------|------|-----|----------|------------|
-| **API Rate Limit** | 50 requests/day | 50 requests/day | 60 requests/minute | 60 requests/minute |
-| **Storage** | 800 mins/seat | 8,000 mins/seat | Unlimited | Unlimited |
-| **AI Summaries** | Limited (20 credits) | Unlimited | Unlimited | Unlimited |
-| **Video Upload** | 100MB max | 1.5GB max | 1.5GB max | 1.5GB max |
-| **Advanced Features** | Basic transcription | AI apps, analytics | Team analytics, CI | Full API, SSO, compliance |
+|---------|:----:|:---:|:--------:|:----------:|
+| **API Rate Limit** | 50/day | 50/day | 60/min | 60/min |
+| **Basic Data** (title, date, duration) | ✅ | ✅ | ✅ | ✅ |
+| **Participants List** | ✅ | ✅ | ✅ | ✅ |
+| **Transcript URL** | ✅ | ✅ | ✅ | ✅ |
+| **Speakers** | ❌ | ✅ | ✅ | ✅ |
+| **Summary** (overview, keywords) | ❌ | ✅ | ✅ | ✅ |
+| **Audio URL** | ❌ | ✅ | ✅ | ✅ |
+| **Action Items** | ❌ | ❌ | ✅ | ✅ |
+| **Topics Discussed** | ❌ | ❌ | ✅ | ✅ |
+| **Video URL** | ❌ | ❌ | ✅ | ✅ |
+| **Sentiment Analytics** | ❌ | ❌ | ✅ | ✅ |
+| **Meeting Attendees (detailed)** | ❌ | ❌ | ✅ | ✅ |
 
-**Key Design Pattern:** Subscription-based API access uses **tiered rate limiting** rather than feature gating. Lower tiers get severely restricted throughput (50/day vs 60/minute = 1,700x difference), making production integrations effectively require Business+ plans.
+### What You'll Get Per Plan
 
-**Pro Plan Limitation:** Despite "unlimited" AI summaries, the 50 requests/day limit severely constrains production usage for meeting-heavy organizations.
+**Free Plan:**
+- Meeting title, date, duration
+- Participant names/emails (basic)
+- Link to transcript
+
+**Pro Plan:**
+- Everything in Free, plus:
+- Speaker identification
+- AI summary (overview + keywords)
+- Audio recording URL
+
+**Business Plan:**
+- Everything in Pro, plus:
+- Action items extraction
+- Topics discussed
+- Sentiment analysis (positive/negative/neutral %)
+- Video recording URL
+- Detailed meeting attendee info
+
+### Configuration
+
+Set your plan in `.env`:
+```bash
+FIREFLIES_PLAN=free  # Options: free, pro, business, enterprise
+```
+
+**Rate Limiting:** Free/Pro plans are limited to 50 API calls/day. The integration uses conservative retry settings by default to stay within limits.
 
 ## What Gets Captured
 
@@ -114,11 +153,6 @@ The `setup:fields` script adds 13 custom fields to store rich Fireflies data:
 | `firefliesMeetingId` | TEXT | Fireflies Meeting ID | Unique identifier from Fireflies |
 | `organizerEmail` | TEXT | Organizer Email | Email address of the meeting organizer |
 
-Then re-sync:
-```bash
-npx twenty-cli app sync
-```
-
 **Note:** Without custom fields, meetings will be created with just the title. The rich summary data will only be stored in Notes for 1-on-1 meetings.
 
 ## Configuration
@@ -159,6 +193,29 @@ The integration uses **HMAC SHA-256 signature verification**:
 - Fireflies sends `x-hub-signature` header
 - Twenty verifies signature using your webhook secret
 - Invalid signatures are rejected immediately
+
+### Current Platform Limitation (Headers)
+
+- Twenty serverless route triggers currently do **not forward HTTP headers** to functions. Fireflies signatures sent in headers are stripped, so header-based verification does not work in production.
+- Workaround: the provided test script also includes the signature inside the payload; the handler falls back to that payload signature. Use this only for testing until header forwarding is supported.
+
+## Utilities for meeting insertion (workarounds)
+
+- Ingest a specific Fireflies meeting into Twenty:
+`yarn meeting:ingest <meetingId>` or `MEETING_ID=... yarn meeting:ingest`
+
+- Fetch all/historical Fireflies meetings into Twenty:
+`yarn meeting:all [--from 2024-01-01] [--to 2024-02-01] [--organizer a@x.com] [--participant b@x.com] [--channel <channelId>] [--mine] [--dry-run]`
+
+  - Filters (combine as needed):
+    - `--from` / `--to`: ISO or date string range filter
+    - `--organizer` / `--participant`: comma-separated emails
+    - `--channel`: Fireflies channel id
+    - `--mine`: only meetings for the current Fireflies user
+  - Controls:
+    - `--dry-run`: list and transform without writing to Twenty
+    - `--page-size`: pagination size (default 50)
+    - `--max-records`: stop after N transcripts (default 500)
 
 ## Development
 
@@ -247,10 +304,7 @@ Client expressed strong interest in the enterprise plan.
 
 ## Future Implementation Opportunities
 
-### Past Meetings Retrieval
-- **New trigger to retrieve past meetings from a contact** - Enable users to fetch historical meeting data from Fireflies for specific contacts, allowing retrospective capture and analysis of past interactions.
-
-Next iteration would enhance the **intelligence layer** to:
+Next iterations would enhance the **intelligence layer** to:
 
 ### AI-Powered Insights
 - **Extract pain points, objections & buying signals** automatically from transcripts
