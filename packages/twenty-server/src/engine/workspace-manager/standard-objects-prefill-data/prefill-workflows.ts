@@ -229,7 +229,6 @@ export const prefillWorkflows = async (
                     flatObjectMetadataMaps,
                     flatFieldMetadataMaps,
                   },
-                  depth: 0,
                 }),
               },
               errorHandlingOptions: {
@@ -272,7 +271,6 @@ export const prefillWorkflows = async (
                     flatObjectMetadataMaps,
                     flatFieldMetadataMaps,
                   },
-                  depth: 0,
                 }),
               },
               errorHandlingOptions: {

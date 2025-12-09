@@ -12,8 +12,6 @@ export const generateObjectRecordFields = ({
   objectMetadataInfo,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
-  depth?: number;
-  maxDepth?: number;
 }): Record<string, FieldOutputSchema> => {
   const { flatObjectMetadata, flatFieldMetadataMaps } = objectMetadataInfo;
 
