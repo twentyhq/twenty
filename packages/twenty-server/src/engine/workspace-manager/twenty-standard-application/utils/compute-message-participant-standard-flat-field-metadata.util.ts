@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MessageParticipantRole,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -99,12 +100,32 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Role',
       icon: 'IconAt',
       isNullable: false,
-      defaultValue: "'from'",
+      defaultValue: `'${MessageParticipantRole.FROM}'`,
       options: [
-        { value: 'from', label: 'From', position: 0, color: 'green' },
-        { value: 'to', label: 'To', position: 1, color: 'blue' },
-        { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
-        { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
+        {
+          value: MessageParticipantRole.FROM,
+          label: 'From',
+          position: 0,
+          color: 'green',
+        },
+        {
+          value: MessageParticipantRole.TO,
+          label: 'To',
+          position: 1,
+          color: 'blue',
+        },
+        {
+          value: MessageParticipantRole.CC,
+          label: 'Cc',
+          position: 2,
+          color: 'orange',
+        },
+        {
+          value: MessageParticipantRole.BCC,
+          label: 'Bcc',
+          position: 3,
+          color: 'red',
+        },
       ],
       createdAt,
     },

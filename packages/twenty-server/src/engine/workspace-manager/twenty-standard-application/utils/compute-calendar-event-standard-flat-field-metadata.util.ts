@@ -210,11 +210,11 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  iCalUID: createStandardFieldFlatMetadata({
+  iCalUid: createStandardFieldFlatMetadata({
     objectName: 'calendarEvent',
     workspaceId,
     options: {
-      fieldName: 'iCalUID',
+      fieldName: 'iCalUid',
       type: FieldMetadataType.TEXT,
       label: 'iCal UID',
       description: 'iCal UID',

@@ -1,9 +1,14 @@
+import { addCustomSuffixIfIsReserved } from '@/metadata/add-custom-suffix-if-reserved.util';
 import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
 
-import { sanitizeReservedKeyword } from './sanitize-reserved-keyword.util';
-
-export const computeMetadataNameFromLabel = (label: string): string => {
+export const computeMetadataNameFromLabel = ({
+  label,
+  applyCustomSuffix = true,
+}: {
+  label: string;
+  applyCustomSuffix?: boolean;
+}): string => {
   if (!label) return '';
 
   const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
@@ -22,5 +27,7 @@ export const computeMetadataNameFromLabel = (label: string): string => {
 
   const computedName = camelCase(formattedString);
 
-  return sanitizeReservedKeyword(computedName);
+  return applyCustomSuffix
+    ? addCustomSuffixIfIsReserved(computedName)
+    : computedName;
 };
