@@ -1,3 +1,4 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
 import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
@@ -18,17 +19,16 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   const standardFieldMetadataIdByObjectAndFieldName =
     getStandardFieldMetadataIdByObjectAndFieldName();
 
-  const objectBuilderArgs = {
-    createdAt: now,
+  const flatObjectMetadataMaps = buildStandardFlatObjectMetadataMaps({
+    now,
     workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
-  };
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    },
+  });
 
-  // Build object metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
-  const flatObjectMetadataMaps =
-    buildStandardFlatObjectMetadataMaps(objectBuilderArgs);
-
-  // Build field metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
   const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps({
     now,
     workspaceId,

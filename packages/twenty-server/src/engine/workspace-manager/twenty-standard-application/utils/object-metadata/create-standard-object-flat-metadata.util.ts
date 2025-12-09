@@ -1,16 +1,36 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
-const TWENTY_STANDARD_APPLICATION_ID =
-  TWENTY_STANDARD_APPLICATION.universalIdentifier;
+export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
+  universalIdentifier: string;
+  standardId: string;
+  nameSingular: O;
+  namePlural: string;
+  labelSingular: string;
+  labelPlural: string;
+  description: string;
+  icon: string;
+  isSystem?: boolean;
+  isSearchable?: boolean;
+  isAuditLogged?: boolean;
+  isUIReadOnly?: boolean;
+  shortcut?: string | null;
+  labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
+};
+
+export type CreateStandardObjectArgs<
+  O extends AllStandardObjectName = AllStandardObjectName,
+> = StandardBuilderArgs<'objectMetadata'> & {
+  objectName: O;
+  context: CreateStandardObjectContext<O>;
+};
 
 export const createStandardObjectFlatMetadata = <
-  T extends AllStandardObjectName,
+  O extends AllStandardObjectName,
 >({
-  options: {
+  context: {
     universalIdentifier,
     standardId,
     nameSingular,
@@ -24,35 +44,16 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged = true,
     isUIReadOnly = false,
     shortcut = null,
-    createdAt,
     labelIdentifierFieldMetadataName,
   },
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  options: {
-    universalIdentifier: string;
-    standardId: string;
-    nameSingular: T;
-    namePlural: string;
-    labelSingular: string;
-    labelPlural: string;
-    description: string;
-    icon: string;
-    isSystem?: boolean;
-    isSearchable?: boolean;
-    isAuditLogged?: boolean;
-    isUIReadOnly?: boolean;
-    shortcut?: string | null;
-    createdAt: Date;
-    labelIdentifierFieldMetadataName: AllStandardObjectFieldName<T>;
-  };
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): FlatObjectMetadata => ({
+  twentyStandardApplicationId,
+  now,
+}: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
   universalIdentifier,
   standardId,
-  applicationId: TWENTY_STANDARD_APPLICATION_ID,
+  applicationId: twentyStandardApplicationId,
   workspaceId,
   nameSingular,
   namePlural,
@@ -80,7 +81,7 @@ export const createStandardObjectFlatMetadata = <
   fieldMetadataIds: [],
   indexMetadataIds: [],
   viewIds: [],
-  createdAt,
-  updatedAt: createdAt,
+  createdAt: now,
+  updatedAt: now,
   id: standardFieldMetadataIdByObjectAndFieldName[nameSingular].id,
 });

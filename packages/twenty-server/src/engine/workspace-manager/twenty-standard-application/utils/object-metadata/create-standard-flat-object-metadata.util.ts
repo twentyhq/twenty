@@ -1,23 +1,23 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-import { createStandardObjectFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
-
-export type BuildStandardFlatObjectMetadatasArgs = {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
-
-export type StandardFlatObjectMetadataBuilder = (
-  args: BuildStandardFlatObjectMetadatasArgs,
-) => FlatObjectMetadata;
+import {
+  type CreateStandardObjectArgs,
+  createStandardObjectFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
-  attachment: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  attachment: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'attachment'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'attachment',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
         standardId: STANDARD_OBJECTS.attachment.universalIdentifier,
         nameSingular: 'attachment',
@@ -27,16 +27,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'An attachment',
         icon: 'IconFileImport',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  blocklist: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  blocklist: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'blocklist'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'blocklist',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.blocklist.universalIdentifier,
         standardId: STANDARD_OBJECTS.blocklist.universalIdentifier,
         nameSingular: 'blocklist',
@@ -46,18 +54,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'Blocklist',
         icon: 'IconForbid2',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  calendarChannelEventAssociation: (
-    args: BuildStandardFlatObjectMetadatasArgs,
-  ) =>
+  calendarChannelEventAssociation: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'calendarChannelEventAssociation'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'calendarChannelEventAssociation',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
         standardId:
@@ -70,16 +87,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCalendar',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  calendarChannel: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  calendarChannel: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'calendarChannel'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'calendarChannel',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarChannel.universalIdentifier,
         standardId: STANDARD_OBJECTS.calendarChannel.universalIdentifier,
@@ -91,16 +119,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCalendar',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  calendarEventParticipant: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  calendarEventParticipant: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'calendarEventParticipant'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'calendarEventParticipant',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
         standardId:
@@ -113,16 +152,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCalendar',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  calendarEvent: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  calendarEvent: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'calendarEvent'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'calendarEvent',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         standardId: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         nameSingular: 'calendarEvent',
@@ -134,16 +184,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUIReadOnly: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'title',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  company: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  company: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'company'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'company',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
         standardId: STANDARD_OBJECTS.company.universalIdentifier,
         nameSingular: 'company',
@@ -154,16 +212,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconBuildingSkyscraper',
         isSearchable: true,
         shortcut: 'C',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  connectedAccount: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  connectedAccount: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'connectedAccount'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'connectedAccount',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.connectedAccount.universalIdentifier,
         standardId: STANDARD_OBJECTS.connectedAccount.universalIdentifier,
@@ -175,16 +244,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconAt',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  dashboard: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  dashboard: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'dashboard'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'dashboard',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.dashboard.universalIdentifier,
         standardId: STANDARD_OBJECTS.dashboard.universalIdentifier,
         nameSingular: 'dashboard',
@@ -195,16 +272,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconLayoutDashboard',
         isSearchable: true,
         shortcut: 'D',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'title',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  favorite: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  favorite: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'favorite'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'favorite',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,
         standardId: STANDARD_OBJECTS.favorite.universalIdentifier,
         nameSingular: 'favorite',
@@ -214,16 +299,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A favorite',
         icon: 'IconHeart',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  favoriteFolder: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  favoriteFolder: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'favoriteFolder'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'favoriteFolder',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
         standardId: STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
@@ -234,18 +330,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A favorite folder',
         icon: 'IconFolder',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  messageChannelMessageAssociation: (
-    args: BuildStandardFlatObjectMetadatasArgs,
-  ) =>
+  messageChannelMessageAssociation: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageChannelMessageAssociation'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'messageChannelMessageAssociation',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
         standardId:
@@ -258,16 +363,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconMessage',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  messageChannel: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  messageChannel: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageChannel'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'messageChannel',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.messageChannel.universalIdentifier,
         standardId: STANDARD_OBJECTS.messageChannel.universalIdentifier,
@@ -279,16 +395,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconMessage',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  messageFolder: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  messageFolder: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageFolder'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'messageFolder',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.messageFolder.universalIdentifier,
         standardId: STANDARD_OBJECTS.messageFolder.universalIdentifier,
         nameSingular: 'messageFolder',
@@ -299,16 +426,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconFolder',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  messageParticipant: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  messageParticipant: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageParticipant'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'messageParticipant',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.messageParticipant.universalIdentifier,
         standardId: STANDARD_OBJECTS.messageParticipant.universalIdentifier,
@@ -320,16 +458,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconUserCircle',
         isSystem: true,
         isAuditLogged: false,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'handle',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  messageThread: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  messageThread: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageThread'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'messageThread',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
         standardId: STANDARD_OBJECTS.messageThread.universalIdentifier,
         nameSingular: 'messageThread',
@@ -341,16 +490,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUIReadOnly: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  message: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  message: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'message'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'message',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
         standardId: STANDARD_OBJECTS.message.universalIdentifier,
         nameSingular: 'message',
@@ -362,16 +519,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUIReadOnly: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'subject',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  note: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  note: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'note'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'note',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
         standardId: STANDARD_OBJECTS.note.universalIdentifier,
         nameSingular: 'note',
@@ -382,16 +547,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconNotes',
         isSearchable: true,
         shortcut: 'N',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'title',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  noteTarget: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  noteTarget: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'noteTarget'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'noteTarget',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,
         standardId: STANDARD_OBJECTS.noteTarget.universalIdentifier,
         nameSingular: 'noteTarget',
@@ -401,16 +574,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A note target',
         icon: 'IconCheckbox',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  opportunity: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  opportunity: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'opportunity'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'opportunity',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.opportunity.universalIdentifier,
         standardId: STANDARD_OBJECTS.opportunity.universalIdentifier,
         nameSingular: 'opportunity',
@@ -421,16 +602,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconTargetArrow',
         isSearchable: true,
         shortcut: 'O',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  person: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  person: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'person'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'person',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
         standardId: STANDARD_OBJECTS.person.universalIdentifier,
         nameSingular: 'person',
@@ -441,16 +630,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconUser',
         isSearchable: true,
         shortcut: 'P',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  task: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  task: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'task'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'task',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
         standardId: STANDARD_OBJECTS.task.universalIdentifier,
         nameSingular: 'task',
@@ -461,16 +658,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSearchable: true,
         shortcut: 'T',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'title',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  taskTarget: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  taskTarget: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'taskTarget'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'taskTarget',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,
         standardId: STANDARD_OBJECTS.taskTarget.universalIdentifier,
         nameSingular: 'taskTarget',
@@ -480,16 +685,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A task target',
         icon: 'IconCheckbox',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  timelineActivity: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  timelineActivity: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'timelineActivity'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'timelineActivity',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.timelineActivity.universalIdentifier,
         standardId: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
@@ -501,16 +717,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
           'Aggregated / filtered event to be displayed on the timeline',
         icon: 'IconTimelineEvent',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  workflow: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  workflow: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'workflow'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'workflow',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
         standardId: STANDARD_OBJECTS.workflow.universalIdentifier,
         nameSingular: 'workflow',
@@ -521,16 +745,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconSettingsAutomation',
         isSearchable: true,
         shortcut: 'W',
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  workflowAutomatedTrigger: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  workflowAutomatedTrigger: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'workflowAutomatedTrigger'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'workflowAutomatedTrigger',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
         standardId:
@@ -542,16 +777,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A workflow automated trigger',
         icon: 'IconSettingsAutomation',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'id',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  workflowRun: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  workflowRun: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'workflowRun'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'workflowRun',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
         standardId: STANDARD_OBJECTS.workflowRun.universalIdentifier,
         nameSingular: 'workflowRun',
@@ -561,16 +804,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A workflow run',
         icon: 'IconHistoryToggle',
         isSearchable: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  workflowVersion: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  workflowVersion: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'workflowVersion'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'workflowVersion',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         standardId: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
@@ -581,16 +835,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A workflow version',
         icon: 'IconVersions',
         isSearchable: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-  workspaceMember: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  workspaceMember: ({
+    now,
+    workspaceId,
+    standardFieldMetadataIdByObjectAndFieldName,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'workspaceMember'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      options: {
+      objectName: 'workspaceMember',
+      dependencyFlatEntityMaps,
+      context: {
         universalIdentifier:
           STANDARD_OBJECTS.workspaceMember.universalIdentifier,
         standardId: STANDARD_OBJECTS.workspaceMember.universalIdentifier,
@@ -601,11 +866,15 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A workspace member',
         icon: 'IconUserCircle',
         isSystem: true,
-        createdAt: args.createdAt,
         labelIdentifierFieldMetadataName: 'name',
       },
-      workspaceId: args.workspaceId,
-      standardFieldMetadataIdByObjectAndFieldName:
-        args.standardFieldMetadataIdByObjectAndFieldName,
+      workspaceId,
+      standardFieldMetadataIdByObjectAndFieldName,
+      twentyStandardApplicationId,
+      now,
     }),
-} satisfies Record<AllStandardObjectName, StandardFlatObjectMetadataBuilder>;
+} satisfies {
+  [P in AllStandardObjectName]: (
+    args: Omit<CreateStandardObjectArgs<P>, 'context' | 'objectName'>,
+  ) => FlatObjectMetadata;
+};

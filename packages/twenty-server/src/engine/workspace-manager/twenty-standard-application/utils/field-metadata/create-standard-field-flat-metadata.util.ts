@@ -12,24 +12,28 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
-export type CreateStandardFieldOptions<O extends AllStandardObjectName> = {
-  fieldName: AllStandardObjectFieldName<O>;
-  type: Exclude<FieldMetadataType, typeof FieldMetadataType.RELATION>;
-  label: string;
-  description: string;
-  icon: string;
-  isSystem?: boolean;
-  isNullable?: boolean;
-  isUnique?: boolean;
-  isUIReadOnly?: boolean;
-  defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings?: Record<string, unknown> | null;
-  options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
-};
-
 export type CreateStandardFieldArgs<
   O extends AllStandardObjectName = AllStandardObjectName,
-> = StandardBuilderArgs<'fieldMetadata', O, CreateStandardFieldOptions<O>>;
+> = StandardBuilderArgs<'fieldMetadata'> & {
+  objectName: O;
+  context: {
+    fieldName: AllStandardObjectFieldName<O>;
+    type: Exclude<FieldMetadataType, typeof FieldMetadataType.RELATION>;
+    label: string;
+    description: string;
+    icon: string;
+    isSystem?: boolean;
+    isNullable?: boolean;
+    isUnique?: boolean;
+    isUIReadOnly?: boolean;
+    defaultValue?: FieldMetadataDefaultValueForAnyType;
+    settings?: Record<string, unknown> | null;
+    options?:
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[]
+      | null;
+  };
+};
 
 export const createStandardFieldFlatMetadata = <
   O extends AllStandardObjectName,

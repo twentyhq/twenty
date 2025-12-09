@@ -1,10 +1,8 @@
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  type BuildStandardFlatObjectMetadatasArgs,
-  STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util';
+import { STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util';
+import { type CreateStandardObjectArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 
 const createEmptyFlatObjectMetadataMaps =
   (): FlatEntityMaps<FlatObjectMetadata> => ({
@@ -14,7 +12,7 @@ const createEmptyFlatObjectMetadataMaps =
   });
 
 export const buildStandardFlatObjectMetadataMaps = (
-  args: BuildStandardFlatObjectMetadatasArgs,
+  args: Omit<CreateStandardObjectArgs, 'context' | 'objectName'>,
 ): FlatEntityMaps<FlatObjectMetadata> => {
   // Collect all object metadatas from all standard objects
   const allObjectMetadatas: FlatObjectMetadata[] = Object.values(
