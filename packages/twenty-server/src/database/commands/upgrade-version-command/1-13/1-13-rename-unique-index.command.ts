@@ -9,8 +9,10 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,8 +31,8 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
-    protected readonly dataSourceService: DataSourceService,
     protected readonly workspaceCacheService: WorkspaceCacheService,
+    protected readonly dataSourceService: DataSourceService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -54,27 +56,30 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
       this.logger.log('Dry run mode: No changes will be applied');
     }
 
-    const indexes = await this.indexMetadataRepository.find({
-      where: {
-        workspaceId,
-      },
-      relations: ['objectMetadata', 'indexFieldMetadatas.fieldMetadata'],
-    });
+    const { flatIndexMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatIndexMaps',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
     let hasIndexNameChanges = false;
 
-    for (const index of indexes) {
-      const indexNameV2 = generateDeterministicIndexNameV2({
-        flatObjectMetadata: {
-          nameSingular: index.objectMetadata.nameSingular,
-          isCustom: index.objectMetadata.isCustom,
-        },
-        relatedFieldNames: index.indexFieldMetadatas.map(
-          (indexFieldMetadata) => ({
-            name: indexFieldMetadata.fieldMetadata.name,
-          }),
-        ),
-        isUnique: index.isUnique,
+    for (const index of Object.values(flatIndexMaps.byId).filter(isDefined)) {
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: index.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      const { name: indexNameV2 } = generateFlatIndexMetadataWithNameOrThrow({
+        flatObjectMetadata,
+        objectFlatFieldMetadatas: flatFieldMetadatas,
+        flatIndex: index,
       });
 
       if (indexNameV2 === index.name) {

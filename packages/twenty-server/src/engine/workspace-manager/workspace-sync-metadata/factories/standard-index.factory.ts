@@ -5,11 +5,12 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 @Injectable()
@@ -123,18 +124,7 @@ export class StandardIndexFactory {
             const indexMetadata: PartialIndexMetadata = {
               workspaceId: context.workspaceId,
               objectMetadataId: customObjectMetadata.id,
-              name: generateDeterministicIndexNameV2({
-                flatObjectMetadata: {
-                  nameSingular: customObjectName,
-                  isCustom: true,
-                },
-                relatedFieldNames: workspaceIndexMetadataArgs.columns.map(
-                  (column) => ({
-                    name: column,
-                  }),
-                ),
-                isUnique: workspaceIndexMetadataArgs.isUnique,
-              }),
+              name: `IDX_${generateDeterministicIndexName([computeTableName(customObjectName, true), ...workspaceIndexMetadataArgs.columns])}`,
               columns: workspaceIndexMetadataArgs.columns,
               isCustom: false,
               isUnique: workspaceIndexMetadataArgs.isUnique,

@@ -47,12 +47,12 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
     });
 
   const isUnique = orderedFlatFields.some((flatField) => flatField.isUnique);
-  const orderedFlatFieldNames = orderedFlatFields.map((flatField) => ({
-    name: flatField.name,
-  }));
+  const orderedIndexColumnNames = orderedFlatFields.map(
+    (flatField) => flatField.name,
+  );
   const name = generateDeterministicIndexNameV2({
     flatObjectMetadata,
-    relatedFieldNames: orderedFlatFieldNames,
+    orderedIndexColumnNames,
     isUnique,
   });
 
