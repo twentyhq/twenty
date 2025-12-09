@@ -28,6 +28,7 @@ export enum JwtTokenTypeEnum {
   POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
+  APPLICATION = 'APPLICATION',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -83,6 +84,14 @@ export type ApiKeyTokenJwtPayload = CommonPropertiesJwtPayload & {
   jti?: string;
 };
 
+export type ApplicationTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPLICATION;
+  workspaceId: string;
+  applicationId: string;
+  userId?: string;
+  workspaceMemberId?: string;
+};
+
 export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.ACCESS;
   workspaceId: string;
@@ -106,6 +115,7 @@ export type RemoteServerTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
+  | ApplicationTokenJwtPayload
   | WorkspaceAgnosticTokenJwtPayload
   | LoginTokenJwtPayload
   | TransientTokenJwtPayload
