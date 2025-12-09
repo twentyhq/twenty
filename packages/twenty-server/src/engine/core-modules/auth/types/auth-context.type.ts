@@ -3,12 +3,14 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 export type AuthContext = {
   user?: UserEntity | null | undefined;
   apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
   workspace?: WorkspaceEntity;
+  application?: ApplicationEntity | null | undefined;
   userWorkspaceId?: string;
   userWorkspace?: UserWorkspaceEntity;
   authProvider?: AuthProviderEnum;
@@ -89,6 +91,7 @@ export type ApplicationTokenJwtPayload = CommonPropertiesJwtPayload & {
   workspaceId: string;
   applicationId: string;
   userId?: string;
+  userWorkspaceId?: string;
   workspaceMemberId?: string;
 };
 

@@ -18,6 +18,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   type AccessTokenJwtPayload,
+  ApplicationTokenJwtPayload,
   type FileTokenJwtPayload,
   type JwtPayload,
   JwtTokenTypeEnum,
@@ -62,6 +63,7 @@ export class JwtWrapperService {
       | RefreshTokenJwtPayload
       | WorkspaceAgnosticTokenJwtPayload
       | AccessTokenJwtPayload
+      | ApplicationTokenJwtPayload
       | FileTokenJwtPayload
     >(token, {
       json: true,

@@ -306,6 +306,10 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
+    if (isDefined(authContext.application?.defaultRoleId)) {
+      return authContext.application.defaultRoleId;
+    }
+
     if (!isDefined(authContext.userWorkspaceId)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',

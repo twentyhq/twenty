@@ -16,6 +16,7 @@ import {
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
+  ApplicationTokenJwtPayload,
   type AuthContext,
   type FileTokenJwtPayload,
   type JwtPayload,
@@ -27,12 +28,16 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -270,7 +275,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateWorkspaceAgnosticToken(
     payload: WorkspaceAgnosticTokenJwtPayload,
-  ) {
+  ): Promise<AuthContext> {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
@@ -281,6 +286,84 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     );
 
     return { user, authProvider: payload.authProvider };
+  }
+
+  private async validateApplicationToken(
+    payload: ApplicationTokenJwtPayload,
+  ): Promise<AuthContext> {
+    let user: UserEntity | null = null;
+    let userWorkspace: UserWorkspaceEntity | null = null;
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const applicationId = payload.sub ?? payload.applicationId;
+
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId },
+    });
+
+    if (!isDefined(application)) {
+      throw new AuthException(
+        'Application not found',
+        AuthExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const userId = payload.userId;
+
+    if (isDefined(userId)) {
+      user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!isDefined(user)) {
+        throw new AuthException(
+          'User not found',
+          AuthExceptionCode.USER_NOT_FOUND,
+        );
+      }
+
+      if (!payload.userWorkspaceId) {
+        throw new AuthException(
+          'UserWorkspaceEntity not found',
+          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { id: payload.userWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+      assertIsDefinedOrThrow(
+        userWorkspace,
+        new AuthException(
+          'UserWorkspaceEntity not found',
+          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`User does not have access to this workspace`,
+          },
+        ),
+      );
+    }
+
+    return {
+      application,
+      workspace,
+      user,
+      userWorkspace: userWorkspace ?? undefined,
+      userWorkspaceId: userWorkspace?.id,
+      workspaceMemberId: payload.workspaceMemberId,
+    };
   }
 
   private isLegacyApiKeyPayload(
@@ -302,6 +385,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     // `!payload.type` is here to support legacy token
     if (payload.type === 'ACCESS' || !payload.type) {
       return await this.validateAccessToken(payload);
+    }
+
+    if (payload.type === 'APPLICATION' || !payload.type) {
+      return await this.validateApplicationToken(payload);
     }
 
     throw new AuthException(

@@ -161,6 +161,7 @@ export class MiddlewareService {
   ) {
     request.user = data.user;
     request.apiKey = data.apiKey;
+    request.application = data.application;
     request.userWorkspace = data.userWorkspace;
     request.workspace = data.workspace;
     request.workspaceId = data.workspace?.id;
