@@ -18,5 +18,17 @@ export interface FlatEntity
 export type FlatEntityFrom<
   TEntity extends SyncableEntity,
   TEntityRelationProperties extends keyof TEntity,
+  TEntityNonNullableDateProperties extends keyof TEntity,
+  TEntityNullableDateProperties extends keyof TEntity,
 > = FlatEntity &
-  Omit<TEntity, TEntityRelationProperties | SyncableEntityRelationProperties>;
+  Omit<
+    TEntity,
+    | TEntityRelationProperties
+    | TEntityNonNullableDateProperties
+    | TEntityNullableDateProperties
+    | SyncableEntityRelationProperties
+  > & {
+    [P in TEntityNonNullableDateProperties]: string;
+  } & {
+    [P in TEntityNullableDateProperties]: string | null;
+  };
