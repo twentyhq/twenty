@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -13,7 +14,10 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 
 @Injectable()
 export class WorkspaceMemberPreQueryHookService {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly permissionsService: PermissionsService,
+    private readonly onboardingService: OnboardingService,
+  ) {}
 
   async validateWorkspaceMemberUpdatePermissionOrThrow({
     userWorkspaceId,
@@ -61,5 +65,35 @@ export class WorkspaceMemberPreQueryHookService {
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
     );
+  }
+
+  async completeOnboardingProfileStepIfNameProvided({
+    userId,
+    workspaceId,
+    firstName,
+    lastName,
+  }: {
+    userId?: string;
+    workspaceId: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    if (!userId) {
+      return;
+    }
+
+    if (firstName === '' && lastName === '') {
+      return;
+    }
+
+    if (!isDefined(firstName) && !isDefined(lastName)) {
+      return;
+    }
+
+    await this.onboardingService.setOnboardingCreateProfilePending({
+      userId,
+      workspaceId,
+      value: true,
+    });
   }
 }
