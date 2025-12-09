@@ -42,10 +42,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (rawCreateFieldInput.isRemoteCreation) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: "Remote fields aren't supported",
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: "Remote fields aren't supported",
+        },
+      ],
     };
   }
 
@@ -60,11 +62,13 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (!isDefined(parentFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        message: 'Provided object metadata id does not exist',
-        userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          message: 'Provided object metadata id does not exist',
+          userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
+        },
+      ],
     };
   }
 
@@ -149,10 +153,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.TS_VECTOR: {
       return {
         status: 'fail',
-        error: {
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: 'TS Vector is not supported for field creation',
-        },
+        errors: [
+          {
+            code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            message: 'TS Vector is not supported for field creation',
+          },
+        ],
       };
     }
     case FieldMetadataType.UUID:

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelWorkspaceEntity,
@@ -18,7 +18,7 @@ export class MessagingProcessGroupEmailActionsService {
   );
 
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
   ) {}
 
@@ -28,7 +28,8 @@ export class MessagingProcessGroupEmailActionsService {
     pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction,
   ): Promise<void> {
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -59,13 +60,17 @@ export class MessagingProcessGroupEmailActionsService {
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing group email action: ${pendingGroupEmailsAction}`,
     );
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
         try {
           const messageChannelRepository =
-            await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+              workspaceId,
               'messageChannel',
             );
 
@@ -120,6 +125,7 @@ export class MessagingProcessGroupEmailActionsService {
     );
 
     await this.resetCursors({
+      workspaceId,
       messageChannelId,
       transactionManager,
     });
@@ -135,6 +141,7 @@ export class MessagingProcessGroupEmailActionsService {
     transactionManager: WorkspaceEntityManager,
   ): Promise<void> {
     await this.resetCursors({
+      workspaceId,
       messageChannelId,
       transactionManager,
     });
@@ -145,14 +152,17 @@ export class MessagingProcessGroupEmailActionsService {
   }
 
   private async resetCursors({
+    workspaceId,
     messageChannelId,
     transactionManager,
   }: {
+    workspaceId: string;
     messageChannelId: string;
     transactionManager: WorkspaceEntityManager;
   }) {
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -165,7 +175,8 @@ export class MessagingProcessGroupEmailActionsService {
     );
 
     const messageFolderRepository =
-      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+        workspaceId,
         'messageFolder',
       );
 

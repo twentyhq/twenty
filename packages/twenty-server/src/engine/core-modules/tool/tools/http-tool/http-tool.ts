@@ -20,7 +20,10 @@ export class HttpTool implements Tool {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async execute(parameters: ToolInput): Promise<ToolOutput> {
+  async execute(
+    parameters: ToolInput,
+    _workspaceId: string,
+  ): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
     const headersCopy = { ...headers };
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);

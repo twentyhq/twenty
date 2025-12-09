@@ -111,7 +111,12 @@ export class DevSeederService {
       twentyStandardApplication,
     });
 
-    await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
+    await seedPageLayouts(
+      this.coreDataSource,
+      'core',
+      workspaceId,
+      workspaceCustomFlatApplication.id,
+    );
     await seedPageLayoutTabs({
       applicationId: workspaceCustomFlatApplication.id,
       workspaceId,
