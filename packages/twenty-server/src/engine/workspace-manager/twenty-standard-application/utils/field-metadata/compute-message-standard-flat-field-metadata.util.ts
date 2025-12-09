@@ -6,23 +6,27 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildMessageStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'message'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'message'>, 'context'>): Record<
+  AllStandardObjectFieldName<'message'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -32,14 +36,16 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -49,14 +55,16 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -66,14 +74,16 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -82,28 +92,32 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   headerMessageId: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'headerMessageId',
       type: FieldMetadataType.TEXT,
       label: 'Header message Id',
       description: 'Message id from the message header',
       icon: 'IconHash',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   direction: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'direction',
       type: FieldMetadataType.SELECT,
       label: 'Direction',
@@ -115,56 +129,64 @@ export const buildMessageStandardFlatFieldMetadatas = ({
         { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
         { value: 'OUTGOING', label: 'Outgoing', position: 1, color: 'blue' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   subject: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'subject',
       type: FieldMetadataType.TEXT,
       label: 'Subject',
       description: 'Subject',
       icon: 'IconMessage',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   text: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'text',
       type: FieldMetadataType.TEXT,
       label: 'Text',
       description: 'Text',
       icon: 'IconMessage',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   receivedAt: createStandardFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'receivedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Received At',
       description: 'The date the message was received',
       icon: 'IconCalendar',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   messageThread: createStandardRelationFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageThread',
       label: 'Message Thread Id',
       description: 'Message Thread Id',
@@ -182,9 +204,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -200,9 +222,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
-    objectName: 'message',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageChannelMessageAssociations',
       label: 'Message Channel Association',
       description: 'Messages from the channel.',

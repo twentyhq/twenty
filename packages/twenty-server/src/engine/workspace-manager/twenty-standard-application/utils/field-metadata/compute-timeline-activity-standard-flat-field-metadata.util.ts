@@ -6,27 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildTimelineActivityStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'timelineActivity'>, 'context'>): Record<
   AllStandardObjectFieldName<'timelineActivity'>,
   FlatFieldMetadata
 > => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -36,14 +37,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -53,14 +56,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -70,14 +75,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -86,16 +93,18 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // TimelineActivity-specific fields
   happensAt: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'happensAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -103,86 +112,98 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isNullable: false,
       defaultValue: 'now',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   name: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
       label: 'Event name',
       description: 'Event name',
       icon: 'IconAbc',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   properties: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'properties',
       type: FieldMetadataType.RAW_JSON,
       label: 'Event details',
       description: 'Json value for event details',
       icon: 'IconListDetails',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   linkedRecordCachedName: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'linkedRecordCachedName',
       type: FieldMetadataType.TEXT,
       label: 'Linked Record cached name',
       description: 'Cached record name',
       icon: 'IconAbc',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   linkedRecordId: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'linkedRecordId',
       type: FieldMetadataType.UUID,
       label: 'Linked Record id',
       description: 'Linked Record id',
       icon: 'IconAbc',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   linkedObjectMetadataId: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'linkedObjectMetadataId',
       type: FieldMetadataType.UUID,
       label: 'Linked Object Metadata Id',
       description: 'Linked Object Metadata Id',
       icon: 'IconAbc',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   workspaceMember: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workspaceMember',
       label: 'Workspace Member',
       description: 'Event workspace member',
@@ -200,9 +221,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   person: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'person',
       label: 'Person',
       description: 'Event person',
@@ -220,9 +241,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: 'Event company',
@@ -240,9 +261,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Event opportunity',
@@ -260,9 +281,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   note: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'note',
       label: 'Note',
       description: 'Event note',
@@ -280,9 +301,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   task: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'task',
       label: 'Task',
       description: 'Event task',
@@ -300,9 +321,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Event workflow',
@@ -320,9 +341,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowVersion: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflowVersion',
       label: 'WorkflowVersion',
       description: 'Event workflow version',
@@ -340,9 +361,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowRun: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflowRun',
       label: 'Workflow Run',
       description: 'Event workflow run',
@@ -360,9 +381,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Event dashboard',
@@ -380,9 +401,9 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   custom: createStandardRelationFieldFlatMetadata({
-    objectName: 'timelineActivity',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'custom',
       label: 'Custom',
       description: 'Timeline Activity custom object',

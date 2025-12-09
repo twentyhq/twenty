@@ -31,17 +31,7 @@ import { buildWorkflowRunStandardFlatFieldMetadatas } from 'src/engine/workspace
 import { buildWorkflowStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util';
 import { buildWorkflowVersionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util';
 import { buildWorkspaceMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-
-type BuildStandardFlatFieldMetadataMapsArgs = {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
-
-type StandardFlatFieldMetadataBuilder = (
-  args: BuildStandardFlatFieldMetadataMapsArgs,
-) => Record<string, FlatFieldMetadata>;
+import { type CreateStandardFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 
 const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: buildAttachmentStandardFlatFieldMetadatas,
@@ -77,7 +67,11 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflowRun: buildWorkflowRunStandardFlatFieldMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatFieldMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatFieldMetadatas,
-} satisfies Record<AllStandardObjectName, StandardFlatFieldMetadataBuilder>;
+} satisfies {
+  [P in AllStandardObjectName]: (
+    args: Omit<CreateStandardFieldArgs<P>, 'context'>,
+  ) => Record<string, FlatFieldMetadata>;
+};
 
 const createEmptyFlatFieldMetadataMaps =
   (): FlatEntityMaps<FlatFieldMetadata> => ({
@@ -86,23 +80,25 @@ const createEmptyFlatFieldMetadataMaps =
     universalIdentifiersByApplicationId: {},
   });
 
-export const buildStandardFlatFieldMetadataMaps = ({
-  createdAt,
-  workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
-}: BuildStandardFlatFieldMetadataMapsArgs): FlatEntityMaps<FlatFieldMetadata> => {
-  const builderArgs = {
-    createdAt,
-    workspaceId,
-    standardFieldMetadataIdByObjectAndFieldName,
-  };
+export const buildStandardFlatFieldMetadataMaps = (
+  args: Omit<CreateStandardFieldArgs, 'context' | 'objectName'>,
+): FlatEntityMaps<FlatFieldMetadata> => {
+  const allFieldMetadatas: FlatFieldMetadata[] = (
+    Object.keys(
+      STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
+    ) as (keyof typeof STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME)[]
+  ).flatMap((objectName) => {
+    const builder =
+      STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
 
-  // Collect all field metadatas from all standard objects
-  const allFieldMetadatas: FlatFieldMetadata[] = Object.values(
-    STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
-  ).flatMap((builder) => Object.values(builder(builderArgs)));
+    const result = builder({
+      ...args,
+      objectName,
+    });
 
-  // Build maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
+    return Object.values(result);
+  });
+
   let flatFieldMetadataMaps = createEmptyFlatFieldMetadataMaps();
 
   for (const fieldMetadata of allFieldMetadatas) {

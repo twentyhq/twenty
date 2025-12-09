@@ -8,15 +8,11 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
-const TWENTY_STANDARD_APPLICATION_ID =
-  TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
-export type CreateStandardRelationFieldOptions<
+export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
 > = {
@@ -32,7 +28,6 @@ export type CreateStandardRelationFieldOptions<
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<FieldMetadataType.RELATION>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
-  createdAt: Date;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -40,10 +35,8 @@ export type CreateStandardRelationFieldArgs<
   T extends AllStandardObjectName,
 > = {
   objectName: O;
-  workspaceId: string;
-  options: CreateStandardRelationFieldOptions<O, T>;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
+  context: CreateStandardRelationFieldContext<O, T>;
+} & Omit<StandardBuilderArgs<'fieldMetadata', O, any>, 'context' | 'objectName'>;
 
 export const createStandardRelationFieldFlatMetadata = <
   O extends AllStandardObjectName,
@@ -51,10 +44,7 @@ export const createStandardRelationFieldFlatMetadata = <
 >({
   objectName,
   workspaceId,
-  options,
-  standardFieldMetadataIdByObjectAndFieldName,
-}: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
-  const {
+  context: {
     fieldName,
     label,
     description,
@@ -67,9 +57,11 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue = null,
     settings,
     options: fieldOptions = null,
-    createdAt,
-  } = options;
-
+  },
+  standardFieldMetadataIdByObjectAndFieldName,
+  twentyStandardApplicationId,
+  now,
+}: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
   const fieldIds =
@@ -82,7 +74,7 @@ export const createStandardRelationFieldFlatMetadata = <
     id: fieldIds[fieldName as keyof typeof fieldIds],
     universalIdentifier: fieldDefinition.universalIdentifier,
     standardId: null,
-    applicationId: TWENTY_STANDARD_APPLICATION_ID,
+    applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId:
       standardFieldMetadataIdByObjectAndFieldName[objectName].id,
@@ -111,7 +103,7 @@ export const createStandardRelationFieldFlatMetadata = <
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: now,
+    updatedAt: now,
   };
 };

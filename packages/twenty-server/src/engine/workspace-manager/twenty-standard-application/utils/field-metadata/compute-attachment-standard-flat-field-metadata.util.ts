@@ -6,24 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildAttachmentStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'attachment'>, FlatFieldMetadata> => ({
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'attachment'>, 'context'>): Record<
+  AllStandardObjectFieldName<'attachment'>,
+  FlatFieldMetadata
+> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -33,14 +37,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -52,14 +58,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -71,14 +79,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -89,58 +99,66 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         displayFormat: 'RELATIVE',
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Attachment-specific fields
   name: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
       label: 'Name',
       description: 'Attachment name',
       icon: 'IconFileUpload',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   fullPath: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'fullPath',
       type: FieldMetadataType.TEXT,
       label: 'Full path',
       description: 'Attachment full path',
       icon: 'IconLink',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   type: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'type',
       type: FieldMetadataType.TEXT,
       label: 'Type (deprecated)',
       description: 'Attachment type (deprecated - use fileCategory)',
       icon: 'IconList',
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   fileCategory: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'fileCategory',
       type: FieldMetadataType.SELECT,
       label: 'File category',
@@ -173,14 +191,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
         { value: 'VIDEO', label: 'Video', position: 6, color: 'purple' },
         { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
       label: 'Created by',
@@ -188,16 +208,18 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
 
   // Relation fields
   author: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'author',
       label: 'Author',
       description: 'Attachment author (deprecated - use createdBy)',
@@ -215,9 +237,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   activity: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'activity',
       label: 'Activity',
       description: 'Attachment activity',
@@ -236,9 +258,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   task: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'task',
       label: 'Task',
       description: 'Attachment task',
@@ -256,9 +278,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   note: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'note',
       label: 'Note',
       description: 'Attachment note',
@@ -276,9 +298,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   person: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'person',
       label: 'Person',
       description: 'Attachment person',
@@ -296,9 +318,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'company',
       label: 'Company',
       description: 'Attachment company',
@@ -316,9 +338,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   opportunity: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Attachment opportunity',
@@ -336,9 +358,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   dashboard: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Attachment dashboard',
@@ -356,9 +378,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflow: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Attachment workflow',
@@ -376,9 +398,9 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   custom: createStandardRelationFieldFlatMetadata({
-    objectName: 'attachment',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'custom',
       label: 'Custom',
       description: 'Attachment custom object',

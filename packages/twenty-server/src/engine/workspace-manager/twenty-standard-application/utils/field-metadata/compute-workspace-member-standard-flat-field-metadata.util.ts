@@ -6,27 +6,28 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import {
+  type CreateStandardFieldArgs,
+  createStandardFieldFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
-  createdAt,
+  now,
+  objectName,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
-}: {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<
+  dependencyFlatEntityMaps,
+  twentyStandardApplicationId,
+}: Omit<CreateStandardFieldArgs<'workspaceMember'>, 'context'>): Record<
   AllStandardObjectFieldName<'workspaceMember'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
       label: 'Id',
@@ -36,14 +37,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'uuid',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Creation date',
@@ -53,14 +56,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Last update',
@@ -70,14 +75,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
       label: 'Deleted at',
@@ -86,14 +93,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: { displayFormat: 'RELATIVE' },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   position: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
@@ -102,28 +111,32 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 0,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   name: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'name',
       type: FieldMetadataType.FULL_NAME,
       label: 'Name',
       description: 'Workspace member name',
       icon: 'IconCircleUser',
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   colorScheme: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'colorScheme',
       type: FieldMetadataType.TEXT,
       label: 'Color Scheme',
@@ -132,14 +145,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: "'System'",
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   locale: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'locale',
       type: FieldMetadataType.TEXT,
       label: 'Language',
@@ -148,14 +163,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: "'en'",
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   avatarUrl: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
       label: 'Avatar Url',
@@ -163,14 +180,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   userEmail: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'userEmail',
       type: FieldMetadataType.TEXT,
       label: 'User Email',
@@ -179,14 +198,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUnique: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   calendarStartDay: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarStartDay',
       type: FieldMetadataType.NUMBER,
       label: 'Start of the week',
@@ -198,14 +219,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       settings: {
         dataType: NumberDataType.INT,
       },
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   userId: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'userId',
       type: FieldMetadataType.UUID,
       label: 'User Id',
@@ -213,14 +236,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCircleUsers',
       isSystem: true,
       isNullable: false,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timeZone: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timeZone',
       type: FieldMetadataType.TEXT,
       label: 'Time zone',
@@ -229,14 +254,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: "'system'",
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   dateFormat: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'dateFormat',
       type: FieldMetadataType.SELECT,
       label: 'Date format',
@@ -261,14 +288,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         },
         { value: 'YEAR_FIRST', label: 'Year First', position: 3, color: 'sky' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   timeFormat: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timeFormat',
       type: FieldMetadataType.SELECT,
       label: 'Time format',
@@ -282,14 +311,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         { value: 'HOUR_24', label: '24HRS', position: 1, color: 'red' },
         { value: 'HOUR_12', label: '12HRS', position: 2, color: 'purple' },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   numberFormat: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'numberFormat',
       type: FieldMetadataType.SELECT,
       label: 'Number format',
@@ -330,14 +361,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
           color: 'purple',
         },
       ],
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
       label: 'Search vector',
@@ -345,14 +378,16 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
   }),
   assignedTasks: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'assignedTasks',
       label: 'Assigned tasks',
       description: 'Tasks assigned to the workspace member',
@@ -368,9 +403,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workspace member',
@@ -386,9 +421,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   accountOwnerForCompanies: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'accountOwnerForCompanies',
       label: 'Account Owner For Companies',
       description: 'Account owner for companies',
@@ -404,9 +439,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   authoredAttachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'authoredAttachments',
       label: 'Authored attachments',
       description: 'Attachments created by the workspace member',
@@ -423,9 +458,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   connectedAccounts: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'connectedAccounts',
       label: 'Connected accounts',
       description: 'Connected accounts',
@@ -441,9 +476,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -459,9 +494,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   blocklist: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'blocklist',
       label: 'Blocklist',
       description: 'Blocklisted handles',
@@ -477,9 +512,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
@@ -495,9 +530,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'workspaceMember',
+    objectName,
     workspaceId,
-    options: {
+    context: {
       fieldName: 'timelineActivities',
       label: 'Events',
       description: 'Events linked to the workspace member',
