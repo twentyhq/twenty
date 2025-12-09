@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
@@ -38,7 +38,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       ],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const agentId = v4();
   const standardId = createAgentInput.standardId ?? null;
   const universalIdentifier = standardId ?? agentId;
