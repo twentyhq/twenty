@@ -1,3 +1,4 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
@@ -7,12 +8,6 @@ import { type CreateStandardViewGroupArgs } from 'src/engine/workspace-manager/t
 type StandardViewGroupBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewGroupArgs<P>, 'context'>,
 ) => Record<string, FlatViewGroup>;
-
-const createEmptyFlatViewGroupMaps = (): FlatEntityMaps<FlatViewGroup> => ({
-  byId: {},
-  idByUniversalIdentifier: {},
-  universalIdentifiersByApplicationId: {},
-});
 
 export const buildStandardFlatViewGroupMetadataMaps = (
   args: Omit<CreateStandardViewGroupArgs, 'context' | 'objectName'>,
@@ -37,7 +32,7 @@ export const buildStandardFlatViewGroupMetadataMaps = (
     return Object.values(result);
   });
 
-  let flatViewGroupMaps = createEmptyFlatViewGroupMaps();
+  let flatViewGroupMaps = createEmptyFlatEntityMaps();
 
   for (const viewGroupMetadata of allViewGroupMetadatas) {
     flatViewGroupMaps = addFlatEntityToFlatEntityMapsOrThrow({

@@ -1,3 +1,4 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -7,12 +8,6 @@ import { type CreateStandardViewFieldArgs } from 'src/engine/workspace-manager/t
 type StandardViewFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewFieldArgs<P>, 'context'>,
 ) => Record<string, FlatViewField>;
-
-const createEmptyFlatViewFieldMaps = (): FlatEntityMaps<FlatViewField> => ({
-  byId: {},
-  idByUniversalIdentifier: {},
-  universalIdentifiersByApplicationId: {},
-});
 
 export const buildStandardFlatViewFieldMetadataMaps = (
   args: Omit<CreateStandardViewFieldArgs, 'context' | 'objectName'>,
@@ -37,7 +32,7 @@ export const buildStandardFlatViewFieldMetadataMaps = (
     return Object.values(result);
   });
 
-  let flatViewFieldMaps = createEmptyFlatViewFieldMaps();
+  let flatViewFieldMaps = createEmptyFlatEntityMaps();
 
   for (const viewFieldMetadata of allViewFieldMetadatas) {
     flatViewFieldMaps = addFlatEntityToFlatEntityMapsOrThrow({
