@@ -6,11 +6,12 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
-import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import {
-  type CreateStandardFieldArgs
+  createStandardFieldFlatMetadata,
+  type CreateStandardFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { createStandardMorphRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-field-flat-metadata.util';
 
 export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   now,
@@ -222,7 +223,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetPerson: createStandardRelationFieldFlatMetadata({
+  targetPerson: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -244,7 +245,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetCompany: createStandardRelationFieldFlatMetadata({
+  targetCompany: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -266,7 +267,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetOpportunity: createStandardRelationFieldFlatMetadata({
+  targetOpportunity: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -288,7 +289,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetNote: createStandardRelationFieldFlatMetadata({
+  targetNote: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -310,7 +311,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetTask: createStandardRelationFieldFlatMetadata({
+  targetTask: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -332,11 +333,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflow: createStandardRelationFieldFlatMetadata({
+  targetWorkflow: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'wotargetWorkflowrkflow',
+      fieldName: 'targetWorkflow',
       label: 'Workflow',
       description: 'Event workflow',
       icon: 'IconTargetArrow',
@@ -354,7 +355,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflowVersion: createStandardRelationFieldFlatMetadata({
+  targetWorkflowVersion: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -376,7 +377,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflowRun: createStandardRelationFieldFlatMetadata({
+  targetWorkflowRun: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -398,7 +399,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetDashboard: createStandardRelationFieldFlatMetadata({
+  targetDashboard: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
@@ -420,7 +421,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetCustom: createStandardRelationFieldFlatMetadata({
+  targetCustom: createStandardMorphRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {

@@ -5,24 +5,16 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import {
   type CreateStandardRelationFieldArgs,
   createStandardRelationFieldFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 
 export const createStandardMorphRelationFieldFlatMetadata = <
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
->({
-  objectName,
-  workspaceId,
-  options,
-  standardFieldMetadataIdByObjectAndFieldName,
-}: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
+>(
+  args: CreateStandardRelationFieldArgs<O, T>,
+): FlatFieldMetadata => {
   const simpleRelationFlatFieldMetadata =
-    createStandardRelationFieldFlatMetadata({
-      objectName,
-      workspaceId,
-      options,
-      standardFieldMetadataIdByObjectAndFieldName,
-    });
+    createStandardRelationFieldFlatMetadata(args);
 
   return {
     ...simpleRelationFlatFieldMetadata,
