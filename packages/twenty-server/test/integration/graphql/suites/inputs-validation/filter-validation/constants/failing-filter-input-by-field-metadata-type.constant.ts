@@ -1,4 +1,5 @@
 import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
@@ -60,8 +61,26 @@ export const failingFilterInputByFieldMetadataType: {
     //   restErrorMessage: "'oneToManyRelationFieldId' does not exist",
     // },
   ],
-  // todo @guillim
-  [FieldMetadataType.MORPH_RELATION]: [],
+  [FieldMetadataType.MORPH_RELATION]: [
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: { eq: 'invalid-uuid' },
+      },
+      gqlErrorMessage: 'Invalid UUID',
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[eq]:"invalid-uuid"`,
+      restErrorMessage: 'invalid input syntax for type uuid',
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')]: {
+          eq: '6dd71a46-68fe-4420-82b3-0d5b00ad2642',
+        },
+      },
+      gqlErrorMessage: 'is not defined by type',
+      restFilterInput: `${[joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')]}[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"`,
+      restErrorMessage: `column apiInputValidationTestObject.${joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')} does not exist`,
+    },
+  ],
   [FieldMetadataType.UUID]: [
     {
       gqlFilterInput: { uuidField: { eq: 'invalid-uuid' } },

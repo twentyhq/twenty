@@ -5,6 +5,8 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { RelationType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
@@ -24,6 +26,15 @@ export const TEST_UUID_FIELD_VALUE = '20202020-b21e-4ec2-873b-de4264d89025';
 
 export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
   '20202020-b21e-4ec2-873b-de4264d89021';
+
+export const joinColumnNameForManyToOneMorphRelationField1 =
+  computeMorphRelationFieldName({
+    fieldName: 'manyToOneMorphRelationField',
+    relationType: RelationType.MANY_TO_ONE,
+    targetObjectMetadataNameSingular:
+      TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+    targetObjectMetadataNamePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
+  }) + 'Id';
 
 export const setupTestObjectsWithAllFieldTypes = async () => {
   const createdObjectMetadata = await createOneObjectMetadata({
@@ -89,11 +100,15 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
     createManyOperationFactory({
       objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
       objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
-      gqlFields: `id`,
+      gqlFields: `
+      id
+      ${joinColumnNameForManyToOneMorphRelationField1}`,
       data: [
         {
           id: randomUUID(),
           manyToOneRelationFieldId: TEST_TARGET_OBJECT_RECORD_ID,
+          [joinColumnNameForManyToOneMorphRelationField1]:
+            TEST_TARGET_OBJECT_RECORD_ID,
           uuidField: TEST_UUID_FIELD_VALUE,
           textField: 'test',
           phonesField: {

@@ -1,5 +1,6 @@
 import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
+  joinColumnNameForManyToOneMorphRelationField1,
   TEST_TARGET_OBJECT_RECORD_ID,
   TEST_UUID_FIELD_VALUE,
 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
@@ -141,12 +142,15 @@ export const successfulFilterInputByFieldMetadataType: {
   [FieldMetadataType.MORPH_RELATION]: [
     {
       gqlFilterInput: {
-        morphRelationFieldId: { neq: '00000000-0000-4000-8000-000000000000' },
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          neq: '00000000-0000-4000-8000-000000000000',
+        },
       },
-      restFilterInput: `morphRelationFieldId[neq]:"00000000-0000-4000-8000-000000000000"`,
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[neq]:"00000000-0000-4000-8000-000000000000"`,
       validateFilter: (record: Record<string, any>) => {
         return (
-          record.morphRelationFieldId !== '00000000-0000-4000-8000-000000000000'
+          record[joinColumnNameForManyToOneMorphRelationField1] !==
+          '00000000-0000-4000-8000-000000000000'
         );
       },
     },
