@@ -30,7 +30,8 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-to-page-layout-dto.util';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -39,7 +40,7 @@ export class PageLayoutService {
   private readonly logger = new Logger(PageLayoutService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -376,23 +377,30 @@ export class PageLayoutService {
     pageLayoutId: string,
     workspaceId: string,
   ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
     try {
-      const dashboardRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          'dashboard',
-          { shouldBypassPermissionChecks: true },
-        );
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const dashboardRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'dashboard',
+              { shouldBypassPermissionChecks: true },
+            );
 
-      const dashboards = await dashboardRepository.find({
-        where: {
-          pageLayoutId,
+          const dashboards = await dashboardRepository.find({
+            where: {
+              pageLayoutId,
+            },
+          });
+
+          for (const dashboard of dashboards) {
+            await dashboardRepository.delete(dashboard.id);
+          }
         },
-      });
-
-      for (const dashboard of dashboards) {
-        await dashboardRepository.delete(dashboard.id);
-      }
+      );
     } catch (error) {
       this.logger.error(
         `Failed to destroy associated dashboards for page layout ${pageLayoutId}: ${error}`,

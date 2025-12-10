@@ -120,6 +120,12 @@ export class GlobalWorkspaceOrmManager {
   }
 
   async destroyDataSourceForWorkspace(workspaceId: string): Promise<void> {
+    const isGlobalFlow = await this.isGlobalDataSourceFlow(workspaceId);
+
+    if (isGlobalFlow) {
+      return;
+    }
+
     await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
       workspaceId,
     );
@@ -137,6 +143,7 @@ export class GlobalWorkspaceOrmManager {
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
       ORMEntityMetadatas: entityMetadatas,
+      userWorkspaceRoleMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -144,6 +151,7 @@ export class GlobalWorkspaceOrmManager {
       'featureFlagsMap',
       'rolesPermissions',
       'ORMEntityMetadatas',
+      'userWorkspaceRoleMap',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -158,6 +166,7 @@ export class GlobalWorkspaceOrmManager {
       featureFlagsMap,
       permissionsPerRoleId,
       entityMetadatas,
+      userWorkspaceRoleMap,
     };
   }
 }
