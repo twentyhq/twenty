@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
@@ -299,5 +299,27 @@ export class AgentService {
       ...agentToDelete,
       roleId: roleId ?? null,
     };
+  }
+
+  async searchAgents(
+    query: string,
+    workspaceId: string,
+    options: { limit: number } = { limit: 2 },
+  ): Promise<AgentEntity[]> {
+    const queryLower = query.toLowerCase();
+
+    return this.agentRepository.find({
+      where: [
+        { workspaceId, deletedAt: IsNull(), name: ILike(`%${queryLower}%`) },
+        {
+          workspaceId,
+          deletedAt: IsNull(),
+          description: ILike(`%${queryLower}%`),
+        },
+        { workspaceId, deletedAt: IsNull(), label: ILike(`%${queryLower}%`) },
+      ],
+      take: options.limit,
+      order: { name: 'ASC' },
+    });
   }
 }

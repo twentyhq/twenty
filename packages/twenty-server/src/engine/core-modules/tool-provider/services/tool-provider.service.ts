@@ -159,7 +159,6 @@ export class ToolProviderService {
         actorContext: spec.actorContext,
       },
       [factory],
-      spec.toolHints,
     );
   }
 
@@ -227,7 +226,6 @@ export class ToolProviderService {
       await this.workflowToolService.generateRecordStepConfiguratorTools(
         spec.workspaceId,
         spec.rolePermissionConfig,
-        spec.toolHints,
       );
 
     return { ...workflowTools, ...recordStepTools };
