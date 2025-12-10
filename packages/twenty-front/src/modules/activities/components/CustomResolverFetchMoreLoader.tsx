@@ -25,7 +25,11 @@ export const CustomResolverFetchMoreLoader = ({
   onLastRowVisible,
 }: CustomResolverFetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
-    onChange: onLastRowVisible,
+    onChange: (inView) => {
+      if (inView) {
+        onLastRowVisible();
+      }
+    },
   });
 
   return (
