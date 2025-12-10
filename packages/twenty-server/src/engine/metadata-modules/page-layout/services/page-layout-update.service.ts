@@ -11,19 +11,18 @@ import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-la
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import {
-  type FlatPageLayoutWithTabsAndWidgets,
-  reconstructFlatPageLayoutWithTabsAndWidgets,
-} from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
+import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
+import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
   generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -45,7 +44,7 @@ export class PageLayoutUpdateService {
     id,
     workspaceId,
     input,
-  }: UpdatePageLayoutWithTabsParams): Promise<FlatPageLayoutWithTabsAndWidgets> {
+  }: UpdatePageLayoutWithTabsParams): Promise<PageLayoutDTO> {
     const {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
@@ -89,7 +88,7 @@ export class PageLayoutUpdateService {
       name: updateData.name,
       type: updateData.type,
       objectMetadataId: updateData.objectMetadataId,
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
 
     const { tabsToCreate, tabsToUpdate, tabsToDelete } =
@@ -161,11 +160,13 @@ export class PageLayoutUpdateService {
       flatEntityMaps: recomputedFlatPageLayoutMaps,
     });
 
-    return reconstructFlatPageLayoutWithTabsAndWidgets({
-      layout: flatLayout,
-      flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
-      flatPageLayoutWidgetMaps: recomputedFlatPageLayoutWidgetMaps,
-    });
+    return fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+      reconstructFlatPageLayoutWithTabsAndWidgets({
+        layout: flatLayout,
+        flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
+        flatPageLayoutWidgetMaps: recomputedFlatPageLayoutWidgetMaps,
+      }),
+    );
   }
 
   private computeTabOperations({
@@ -215,8 +216,8 @@ export class PageLayoutUpdateService {
           position: tabInput.position,
           pageLayoutId: existingPageLayout.id,
           workspaceId,
-          createdAt: now,
-          updatedAt: now,
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
           deletedAt: null,
           universalIdentifier: tabId,
           applicationId: workspaceCustomApplicationId,
@@ -233,7 +234,7 @@ export class PageLayoutUpdateService {
           ...existingTab!,
           title: tabInput.title,
           position: tabInput.position,
-          updatedAt: now,
+          updatedAt: now.toISOString(),
         };
       },
     );
@@ -247,7 +248,7 @@ export class PageLayoutUpdateService {
           title: tabInput.title,
           position: tabInput.position,
           deletedAt: null,
-          updatedAt: now,
+          updatedAt: now.toISOString(),
         };
       });
 
@@ -261,8 +262,8 @@ export class PageLayoutUpdateService {
 
         return {
           ...existingTab,
-          deletedAt: now,
-          updatedAt: now,
+          deletedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
         };
       })
       .filter(isDefined);
@@ -373,8 +374,8 @@ export class PageLayoutUpdateService {
           gridPosition: widgetInput.gridPosition,
           configuration: widgetInput.configuration ?? null,
           workspaceId,
-          createdAt: now,
-          updatedAt: now,
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
           deletedAt: null,
           universalIdentifier: widgetId,
           applicationId: workspaceCustomApplicationId,
@@ -394,7 +395,7 @@ export class PageLayoutUpdateService {
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
           configuration: widgetInput.configuration ?? null,
-          updatedAt: now,
+          updatedAt: now.toISOString(),
         };
       },
     );
@@ -412,7 +413,7 @@ export class PageLayoutUpdateService {
           gridPosition: widgetInput.gridPosition,
           configuration: widgetInput.configuration ?? null,
           deletedAt: null,
-          updatedAt: now,
+          updatedAt: now.toISOString(),
         };
       });
 
@@ -426,8 +427,8 @@ export class PageLayoutUpdateService {
 
         return {
           ...existingWidget,
-          deletedAt: now,
-          updatedAt: now,
+          deletedAt: now.toISOString(),
+          updatedAt: now.toISOString(),
         };
       })
       .filter(isDefined);

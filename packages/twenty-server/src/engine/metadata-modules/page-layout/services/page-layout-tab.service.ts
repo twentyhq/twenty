@@ -6,7 +6,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
 import { fromDeletePageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
 import { fromDestroyPageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
@@ -15,19 +14,19 @@ import {
   fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow,
   type UpdatePageLayoutTabInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util';
-import {
-  reconstructFlatPageLayoutTabWithWidgets,
-  type FlatPageLayoutTabWithWidgets,
-} from 'src/engine/metadata-modules/flat-page-layout-tab/utils/reconstruct-flat-page-layout-tab-with-widgets.util';
+import { reconstructFlatPageLayoutTabWithWidgets } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/reconstruct-flat-page-layout-tab-with-widgets.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
+import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-tab.dto';
 import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
   PageLayoutTabExceptionMessageKey,
   generatePageLayoutTabExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
+import { fromFlatPageLayoutTabToPageLayoutTabDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-tab-to-page-layout-tab-dto.util';
+import { fromFlatPageLayoutTabWithWidgetsToPageLayoutTabDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-tab-with-widgets-to-page-layout-tab-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -42,7 +41,7 @@ export class PageLayoutTabService {
   async findByPageLayoutId(
     workspaceId: string,
     pageLayoutId: string,
-  ): Promise<FlatPageLayoutTabWithWidgets[]> {
+  ): Promise<PageLayoutTabDTO[]> {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
@@ -53,17 +52,19 @@ export class PageLayoutTabService {
       )
       .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       .map((tab) =>
-        reconstructFlatPageLayoutTabWithWidgets({
-          tab,
-          flatPageLayoutWidgetMaps,
-        }),
+        fromFlatPageLayoutTabWithWidgetsToPageLayoutTabDto(
+          reconstructFlatPageLayoutTabWithWidgets({
+            tab,
+            flatPageLayoutWidgetMaps,
+          }),
+        ),
       );
   }
 
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
-  ): Promise<FlatPageLayoutTabWithWidgets> {
+  ): Promise<PageLayoutTabDTO> {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
@@ -79,10 +80,12 @@ export class PageLayoutTabService {
       );
     }
 
-    return reconstructFlatPageLayoutTabWithWidgets({
-      tab: flatTab,
-      flatPageLayoutWidgetMaps,
-    });
+    return fromFlatPageLayoutTabWithWidgetsToPageLayoutTabDto(
+      reconstructFlatPageLayoutTabWithWidgets({
+        tab: flatTab,
+        flatPageLayoutWidgetMaps,
+      }),
+    );
   }
 
   private async getPageLayoutTabFlatEntityMaps(workspaceId: string): Promise<{
@@ -100,7 +103,7 @@ export class PageLayoutTabService {
   async create(
     createPageLayoutTabInput: CreatePageLayoutTabInput,
     workspaceId: string,
-  ): Promise<FlatPageLayoutTab> {
+  ): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
     if (!isDefined(createPageLayoutTabInput.title)) {
       throw new PageLayoutTabException(
         generatePageLayoutTabExceptionMessage(
@@ -161,17 +164,19 @@ export class PageLayoutTabService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatPageLayoutTabToCreate.id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
+    return fromFlatPageLayoutTabToPageLayoutTabDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatPageLayoutTabToCreate.id,
+        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+      }),
+    );
   }
 
   async update(
     id: string,
     workspaceId: string,
     updateData: UpdatePageLayoutTabInput,
-  ): Promise<FlatPageLayoutTab> {
+  ): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
     const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -221,13 +226,18 @@ export class PageLayoutTabService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
+    return fromFlatPageLayoutTabToPageLayoutTabDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+      }),
+    );
   }
 
-  async delete(id: string, workspaceId: string): Promise<FlatPageLayoutTab> {
+  async delete(
+    id: string,
+    workspaceId: string,
+  ): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
     const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -272,10 +282,12 @@ export class PageLayoutTabService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
+    return fromFlatPageLayoutTabToPageLayoutTabDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+      }),
+    );
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -318,7 +330,10 @@ export class PageLayoutTabService {
     return true;
   }
 
-  async restore(id: string, workspaceId: string): Promise<FlatPageLayoutTab> {
+  async restore(
+    id: string,
+    workspaceId: string,
+  ): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
     const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -363,9 +378,11 @@ export class PageLayoutTabService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatPageLayoutTabMaps,
-    });
+    return fromFlatPageLayoutTabToPageLayoutTabDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutTabMaps,
+      }),
+    );
   }
 }

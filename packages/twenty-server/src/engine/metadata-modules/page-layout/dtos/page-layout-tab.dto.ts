@@ -23,11 +23,11 @@ export class PageLayoutTabDTO {
   widgets?: PageLayoutWidgetDTO[] | null;
 
   @Field()
-  createdAt: string;
+  createdAt: Date;
 
   @Field()
-  updatedAt: string;
+  updatedAt: Date;
 
-  @Field(() => String, { nullable: true })
-  deletedAt?: string | null;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | null;
 }

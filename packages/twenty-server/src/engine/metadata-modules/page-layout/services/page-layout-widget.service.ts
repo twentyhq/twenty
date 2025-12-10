@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
+import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-widget.dto';
 import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
@@ -27,6 +28,7 @@ import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout/utils/validate-widget-grid-position.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -142,7 +144,7 @@ export class PageLayoutWidgetService {
   async findByPageLayoutTabId(
     workspaceId: string,
     pageLayoutTabId: string,
-  ): Promise<FlatPageLayoutWidget[]> {
+  ): Promise<PageLayoutWidgetDTO[]> {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -157,13 +159,14 @@ export class PageLayoutWidgetService {
         (widgetA, widgetB) =>
           new Date(widgetA.createdAt).getTime() -
           new Date(widgetB.createdAt).getTime(),
-      );
+      )
+      .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
   }
 
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
-  ): Promise<FlatPageLayoutWidget> {
+  ): Promise<PageLayoutWidgetDTO> {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -179,13 +182,13 @@ export class PageLayoutWidgetService {
       );
     }
 
-    return flatWidget;
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(flatWidget);
   }
 
   async create(
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput,
     workspaceId: string,
-  ): Promise<FlatPageLayoutWidget> {
+  ): Promise<PageLayoutWidgetDTO> {
     this.validateCreateInput(createPageLayoutWidgetInput);
 
     validateWidgetGridPosition(
@@ -228,10 +231,12 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatPageLayoutWidgetToCreate.id,
-      flatEntityMaps: recomputedMaps,
-    });
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatPageLayoutWidgetToCreate.id,
+        flatEntityMaps: recomputedMaps,
+      }),
+    );
   }
 
   private validateCreateInput(input: CreatePageLayoutWidgetInput): void {
@@ -283,7 +288,7 @@ export class PageLayoutWidgetService {
     id: string,
     workspaceId: string,
     updateData: UpdatePageLayoutWidgetInput,
-  ): Promise<FlatPageLayoutWidget> {
+  ): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -333,10 +338,12 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedMaps,
-    });
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedMaps,
+      }),
+    );
   }
 
   private getExistingWidgetOrThrow(
@@ -383,7 +390,7 @@ export class PageLayoutWidgetService {
     });
   }
 
-  async delete(id: string, workspaceId: string): Promise<FlatPageLayoutWidget> {
+  async delete(id: string, workspaceId: string): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -406,10 +413,12 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedMaps,
-    });
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedMaps,
+      }),
+    );
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -436,10 +445,7 @@ export class PageLayoutWidgetService {
     return true;
   }
 
-  async restore(
-    id: string,
-    workspaceId: string,
-  ): Promise<FlatPageLayoutWidget> {
+  async restore(id: string, workspaceId: string): Promise<PageLayoutWidgetDTO> {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -462,9 +468,11 @@ export class PageLayoutWidgetService {
 
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedMaps,
-    });
+    return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedMaps,
+      }),
+    );
   }
 }
