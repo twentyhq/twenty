@@ -1,14 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { EntityManager, IsNull, Repository } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { v4 } from 'uuid';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
+import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
+import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
+import { fromCreatePageLayoutInputToFlatPageLayoutToCreate } from 'src/engine/metadata-modules/flat-page-layout/utils/from-create-page-layout-input-to-flat-page-layout-to-create.util';
+import { fromDeletePageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util';
+import { fromDestroyPageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util';
+import { fromRestorePageLayoutInputToFlatPageLayoutOrThrow } from 'src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util';
+import {
+  fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow,
+  type UpdatePageLayoutInputWithId,
+} from 'src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util';
+import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
-import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
+import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   PageLayoutException,
@@ -16,77 +28,87 @@ import {
   PageLayoutExceptionMessageKey,
   generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { fromFlatPageLayoutToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-to-page-layout-dto.util';
+import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class PageLayoutService {
   private readonly logger = new Logger(PageLayoutService.name);
 
   constructor(
-    @InjectRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
-  private getPageLayoutRepository(
-    transactionManager?: EntityManager,
-  ): Repository<PageLayoutEntity> {
-    return transactionManager
-      ? transactionManager.getRepository(PageLayoutEntity)
-      : this.pageLayoutRepository;
-  }
+  async findByWorkspaceId(workspaceId: string): Promise<PageLayoutDTO[]> {
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity[]> {
-    const repository = this.getPageLayoutRepository(transactionManager);
+    const activeLayouts = Object.values(flatPageLayoutMaps.byId)
+      .filter(isDefined)
+      .filter((layout) => !isDefined(layout.deletedAt));
 
-    return repository.find({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: ['tabs', 'tabs.widgets'],
-    });
+    return activeLayouts.map((layout) =>
+      fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+        reconstructFlatPageLayoutWithTabsAndWidgets({
+          layout,
+          flatPageLayoutTabMaps,
+          flatPageLayoutWidgetMaps,
+        }),
+      ),
+    );
   }
 
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity[]> {
-    const repository = this.getPageLayoutRepository(transactionManager);
+  ): Promise<PageLayoutDTO[]> {
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    return repository.find({
-      where: {
-        workspaceId,
-        objectMetadataId,
-        deletedAt: IsNull(),
-      },
-      relations: ['tabs', 'tabs.widgets'],
-    });
+    const activeLayouts = Object.values(flatPageLayoutMaps.byId)
+      .filter(isDefined)
+      .filter(
+        (layout) =>
+          layout.objectMetadataId === objectMetadataId &&
+          !isDefined(layout.deletedAt),
+      );
+
+    return activeLayouts.map((layout) =>
+      fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+        reconstructFlatPageLayoutWithTabsAndWidgets({
+          layout,
+          flatPageLayoutTabMaps,
+          flatPageLayoutWidgetMaps,
+        }),
+      ),
+    );
   }
 
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity> {
-    const repository = this.getPageLayoutRepository(transactionManager);
+  ): Promise<PageLayoutDTO> {
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const pageLayout = await repository.findOne({
-      where: {
-        id,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: ['tabs', 'tabs.widgets'],
-    });
+    const flatLayout = flatPageLayoutMaps.byId[id];
 
-    if (!isDefined(pageLayout)) {
+    if (!isDefined(flatLayout) || isDefined(flatLayout.deletedAt)) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(
           PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
@@ -96,15 +118,37 @@ export class PageLayoutService {
       );
     }
 
-    return pageLayout;
+    return fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+      reconstructFlatPageLayoutWithTabsAndWidgets({
+        layout: flatLayout,
+        flatPageLayoutTabMaps,
+        flatPageLayoutWidgetMaps,
+      }),
+    );
+  }
+
+  private async getPageLayoutFlatEntityMaps(workspaceId: string): Promise<{
+    flatPageLayoutMaps: FlatPageLayoutMaps;
+    flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
+  }> {
+    return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatPageLayoutMaps',
+          'flatPageLayoutTabMaps',
+          'flatPageLayoutWidgetMaps',
+        ],
+      },
+    );
   }
 
   async create(
-    pageLayoutData: CreatePageLayoutInput,
+    createPageLayoutInput: CreatePageLayoutInput,
     workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity> {
-    if (!isDefined(pageLayoutData.name)) {
+  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+    if (!isNonEmptyString(createPageLayoutInput.name)) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(
           PageLayoutExceptionMessageKey.NAME_REQUIRED,
@@ -113,96 +157,219 @@ export class PageLayoutService {
       );
     }
 
-    const workspace = await this.workspaceRepository.findOneOrFail({
-      where: { id: workspaceId },
-      select: ['workspaceCustomApplicationId'],
-    });
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
-    const repository = this.getPageLayoutRepository(transactionManager);
+    const flatPageLayoutToCreate =
+      fromCreatePageLayoutInputToFlatPageLayoutToCreate({
+        createPageLayoutInput,
+        workspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      });
 
-    const insertResult = await repository.insert({
-      ...pageLayoutData,
-      workspaceId,
-      universalIdentifier: v4(),
-      applicationId: workspace.workspaceCustomApplicationId,
-    });
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [flatPageLayoutToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
 
-    return this.findByIdOrThrow(
-      insertResult.identifiers[0].id,
-      workspaceId,
-      transactionManager,
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating page layout',
+      );
+    }
+
+    const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
+    return fromFlatPageLayoutToPageLayoutDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatPageLayoutToCreate.id,
+        flatEntityMaps: recomputedFlatPageLayoutMaps,
+      }),
     );
   }
 
   async update(
     id: string,
     workspaceId: string,
-    updateData: QueryDeepPartialEntity<PageLayoutEntity>,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity> {
-    const repository = this.getPageLayoutRepository(transactionManager);
+    updateData: UpdatePageLayoutInput,
+  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
 
-    await repository.update({ id, workspaceId }, updateData);
-
-    const updatedPageLayout = await this.findByIdOrThrow(
+    const updatePageLayoutInput: UpdatePageLayoutInputWithId = {
       id,
-      workspaceId,
-      transactionManager,
-    );
+      update: updateData,
+    };
 
-    return updatedPageLayout;
+    const flatPageLayoutToUpdate =
+      fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow({
+        updatePageLayoutInput,
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatPageLayoutToUpdate],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating page layout',
+      );
+    }
+
+    const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
+    return fromFlatPageLayoutToPageLayoutDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutMaps,
+      }),
+    );
   }
 
   async delete(
     id: string,
     workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity> {
-    const pageLayout = await this.findByIdOrThrow(
-      id,
-      workspaceId,
-      transactionManager,
+  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
+    const flatPageLayoutToDelete =
+      fromDeletePageLayoutInputToFlatPageLayoutOrThrow({
+        deletePageLayoutInput: { id },
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatPageLayoutToDelete],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deleting page layout',
+      );
+    }
+
+    const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
+    return fromFlatPageLayoutToPageLayoutDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutMaps,
+      }),
     );
-
-    const repository = this.getPageLayoutRepository(transactionManager);
-
-    await repository.softDelete(id);
-
-    return pageLayout;
   }
 
   async destroy(
     id: string,
     workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<PageLayoutEntity> {
-    const repository = this.getPageLayoutRepository(transactionManager);
+  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
 
-    const pageLayout = await repository.findOne({
-      where: {
-        id,
-        workspaceId,
-      },
-      withDeleted: true,
-    });
+    const flatPageLayoutToDestroy =
+      fromDestroyPageLayoutInputToFlatPageLayoutOrThrow({
+        destroyPageLayoutInput: { id },
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      });
 
-    if (!isDefined(pageLayout)) {
-      throw new PageLayoutException(
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          id,
-        ),
-        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [flatPageLayoutToDestroy],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while destroying page layout',
       );
     }
 
-    if (pageLayout.type === PageLayoutType.DASHBOARD) {
+    if (flatPageLayoutToDestroy.type === PageLayoutType.DASHBOARD) {
       await this.destroyAssociatedDashboards(id, workspaceId);
     }
 
-    await repository.delete(id);
-
-    return pageLayout;
+    return fromFlatPageLayoutToPageLayoutDto(flatPageLayoutToDestroy);
   }
 
   private async destroyAssociatedDashboards(
@@ -233,40 +400,59 @@ export class PageLayoutService {
     }
   }
 
-  async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
-    const pageLayout = await this.pageLayoutRepository.findOne({
-      select: {
-        id: true,
-        deletedAt: true,
-      },
-      where: {
-        id,
-        workspaceId,
-      },
-      withDeleted: true,
-    });
+  async restore(
+    id: string,
+    workspaceId: string,
+  ): Promise<Omit<PageLayoutDTO, 'tabs'>> {
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
 
-    if (!isDefined(pageLayout)) {
-      throw new PageLayoutException(
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          id,
-        ),
-        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+    const flatPageLayoutToRestore =
+      fromRestorePageLayoutInputToFlatPageLayoutOrThrow({
+        restorePageLayoutInput: { id },
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatPageLayoutToRestore],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while restoring page layout',
       );
     }
 
-    if (!isDefined(pageLayout.deletedAt)) {
-      throw new PageLayoutException(
-        'Page layout is not deleted and cannot be restored',
-        PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+    const { flatPageLayoutMaps: recomputedFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
       );
-    }
 
-    await this.pageLayoutRepository.restore(id);
-
-    const restoredPageLayout = await this.findByIdOrThrow(id, workspaceId);
-
-    return restoredPageLayout;
+    return fromFlatPageLayoutToPageLayoutDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatPageLayoutMaps,
+      }),
+    );
   }
 }
