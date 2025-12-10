@@ -19,7 +19,7 @@ export const useTasks = ({ targetableObjects }: UseTasksProps) => {
     objectNameSingular: CoreObjectNameSingular.Task,
     targetableObjects,
     activityTargetsOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-    limit: 30,
+    limit: 200,
   });
 
   return {

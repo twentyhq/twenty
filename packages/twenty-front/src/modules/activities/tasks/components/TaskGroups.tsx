@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
@@ -38,16 +37,9 @@ type TaskGroupsProps = {
 };
 
 export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
-  const { tasks, tasksLoading, fetchMoreTasks, hasNextPage, totalCountTasks } =
-    useTasks({
-      targetableObjects: [targetableObject],
-    });
-
-  const handleLastRowVisible = async () => {
-    if (hasNextPage) {
-      await fetchMoreTasks();
-    }
-  };
+  const { tasks, tasksLoading } = useTasks({
+    targetableObjects: [targetableObject],
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetableObject.targetObjectNameSingular,
@@ -123,7 +115,6 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
           key={status}
           title={status}
           tasks={tasksByStatus}
-          totalCount={totalCountTasks}
           button={
             (status === 'TODO' || !hasTodoStatus) && (
               <AddTaskButton activityTargetableObject={targetableObject} />
@@ -131,10 +122,6 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
           }
         />
       ))}
-      <CustomResolverFetchMoreLoader
-        loading={tasksLoading}
-        onLastRowVisible={handleLastRowVisible}
-      />
     </StyledContainer>
   );
 };

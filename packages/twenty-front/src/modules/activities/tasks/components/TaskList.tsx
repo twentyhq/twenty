@@ -9,7 +9,6 @@ type TaskListProps = {
   title: string;
   tasks: Task[];
   button?: ReactElement | false;
-  totalCount: number;
 };
 
 const StyledContainer = styled.div`
@@ -43,19 +42,14 @@ const StyledCount = styled.span`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const TaskList = ({
-  title,
-  tasks,
-  button,
-  totalCount,
-}: TaskListProps) => (
+export const TaskList = ({ title, tasks, button }: TaskListProps) => (
   <>
     {tasks && tasks.length > 0 && (
       <StyledContainer>
         <StyledTitleBar>
           {title && (
             <StyledTitle>
-              {title} <StyledCount>{totalCount}</StyledCount>
+              {title} <StyledCount>{tasks.length}</StyledCount>
             </StyledTitle>
           )}
           {button}
