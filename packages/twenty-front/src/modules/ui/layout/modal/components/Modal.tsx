@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
