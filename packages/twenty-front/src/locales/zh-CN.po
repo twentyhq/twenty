@@ -2199,6 +2199,11 @@ msgstr "配置 SMTP 设置以从您的账户发送电子邮件。"
 msgid "Configure these DNS records with your domain provider"
 msgstr "在您的域提供商处配置这些 DNS 记录"
 
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -4998,11 +5003,6 @@ msgstr "iFrame 设置"
 msgid "iFrame Widget"
 msgstr "iFrame 小部件"
 
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "Iframe 配置不支持"
-
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -6515,6 +6515,11 @@ msgstr ""
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
+msgstr ""
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
 msgstr ""
 
 #. js-lingui-id: 23Rceg
