@@ -9,6 +9,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type CreateRecordParams } from 'src/engine/core-modules/record-crud/types/create-record-params.type';
+import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
@@ -137,6 +138,17 @@ export class CreateRecordService {
         success: true,
         message: `Record created successfully in ${objectName}`,
         result: createdRecord,
+        recordReferences: [
+          {
+            objectNameSingular: objectName,
+            recordId: createdRecord.id,
+            displayName: getRecordDisplayName(
+              createdRecord,
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+          },
+        ],
       };
     } catch (error) {
       if (error instanceof RecordCrudException) {

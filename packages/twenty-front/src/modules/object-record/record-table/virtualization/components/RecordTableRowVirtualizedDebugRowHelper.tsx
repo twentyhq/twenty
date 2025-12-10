@@ -59,17 +59,13 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
   const record = useRecoilValue(recordStoreFamilyState(recordId ?? ''));
-  const { objectMetadataItem, objectNameSingular } =
+  const { objectMetadataItem } =
     useRecordTableContextOrThrow();
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
   const labelIdentifier = isDefined(record)
-    ? getLabelIdentifierFieldValue(
-        record,
-        labelIdentifierFieldMetadataItem,
-        objectNameSingular,
-      )
+    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
     : '-';
 
   const position = record?.position;

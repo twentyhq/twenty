@@ -4,7 +4,6 @@ import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
-import { type ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -127,7 +126,6 @@ export class WorkflowToolWorkspaceService {
   async generateRecordStepConfiguratorTools(
     workspaceId: string,
     rolePermissionConfig: RolePermissionConfig,
-    toolHints?: ToolHints,
   ): Promise<ToolSet> {
     const workflowStepToolsFactory = createWorkflowStepToolsFactory(
       this.workflowStepToolsDeps,
@@ -139,7 +137,6 @@ export class WorkflowToolWorkspaceService {
         rolePermissionConfig,
       },
       [workflowStepToolsFactory],
-      toolHints,
     );
   }
 }
