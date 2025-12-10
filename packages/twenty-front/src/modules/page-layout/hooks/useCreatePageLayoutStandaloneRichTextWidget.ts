@@ -15,9 +15,9 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
-    type PageLayoutWidget,
-    type RichTextV2Body,
-    WidgetType,
+  type PageLayoutWidget,
+  type RichTextV2Body,
+  WidgetType,
 } from '~/generated/graphql';
 
 export const useCreatePageLayoutStandaloneRichTextWidget = (

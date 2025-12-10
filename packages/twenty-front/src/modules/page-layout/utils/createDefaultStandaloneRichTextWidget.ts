@@ -1,8 +1,8 @@
 import {
-    type GridPosition,
-    type PageLayoutWidget,
-    type RichTextV2Body,
-    WidgetType,
+  type GridPosition,
+  type PageLayoutWidget,
+  type RichTextV2Body,
+  WidgetType,
 } from '~/generated/graphql';
 
 export const createDefaultStandaloneRichTextWidget = (

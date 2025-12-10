@@ -10,8 +10,8 @@ import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
 import { CustomFormattingToolbarController } from '@/page-layout/widgets/standalone-rich-text/components/CustomFormattingToolbarController';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
-    CustomSlashMenu,
-    type SuggestionItem,
+  CustomSlashMenu,
+  type SuggestionItem,
 } from '@/ui/input/editor/components/CustomSlashMenu';
 
 interface DashboardsBlockEditorProps {
@@ -50,9 +50,6 @@ const StyledEditor = styled.div`
   }
   & .bn-block-outer {
     line-height: 1.4;
-  }
-  & .bn-block-content {
-    padding: 8px 0 4px;
   }
   & .bn-side-menu {
     height: auto;
