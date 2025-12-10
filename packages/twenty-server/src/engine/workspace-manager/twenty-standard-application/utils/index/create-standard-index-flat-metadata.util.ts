@@ -41,7 +41,7 @@ export const createStandardIndexFlatMetadata = <
     indexWhereClause = null,
     isUnique = false,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
   twentyStandardApplicationId,
   now,
@@ -59,7 +59,7 @@ export const createStandardIndexFlatMetadata = <
   };
 
   const objectMetadataId =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].id;
+    standardObjectMetadataRelatedEntityIds[objectName].id;
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
@@ -67,7 +67,7 @@ export const createStandardIndexFlatMetadata = <
 
   const relatedFieldIds = relatedFieldNames.map(
     (fieldName) =>
-      standardFieldMetadataIdByObjectAndFieldName[objectName].fields[fieldName],
+      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
   );
   const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityIds: relatedFieldIds,

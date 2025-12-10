@@ -50,7 +50,6 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
             isSystemBuild: true,
           },
           fromToAllFlatEntityMaps: {
-            // Should be dynamic
             flatObjectMetadataMaps: {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatObjectMetadataMaps,
@@ -62,6 +61,22 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
             flatIndexMaps: {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatIndexMaps,
+            },
+            flatViewFieldMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFieldMaps,
+            },
+            flatViewFilterMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFilterMaps,
+            },
+            flatViewGroupMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewGroupMaps,
+            },
+            flatViewMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewMaps,
             },
           },
           workspaceId,

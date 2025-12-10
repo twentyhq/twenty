@@ -1,3 +1,4 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -75,13 +76,6 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   [P in AllStandardObjectName]: StandardFieldBuilder<P>;
 };
 
-const createEmptyFlatFieldMetadataMaps =
-  (): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: {},
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  });
-
 export const buildStandardFlatFieldMetadataMaps = (
   args: Omit<CreateStandardFieldArgs, 'context' | 'objectName'>,
 ): FlatEntityMaps<FlatFieldMetadata> => {
@@ -101,7 +95,7 @@ export const buildStandardFlatFieldMetadataMaps = (
     return Object.values(result);
   });
 
-  let flatFieldMetadataMaps = createEmptyFlatFieldMetadataMaps();
+  let flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
   for (const fieldMetadata of allFieldMetadatas) {
     flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
