@@ -1,0 +1,47 @@
+---
+title: How to Use Branches in Workflows
+description: Understand how branches work and how to control which path is executed.
+---
+
+## How Branches Work
+
+In the workflow editor, you can create multiple paths (branches) going out from a single node. This allows you to build complex automations with different outcomes.
+
+**Important**: When a workflow runs, **all branches execute in parallel by default**. There is no built-in "if/else" logic to choose one branch over another—every path will run simultaneously.
+
+## Controlling Which Branch Runs
+
+To execute only one branch based on specific conditions, **add a Filter node at the beginning of each branch**.
+
+### Example Setup
+
+1. Create your workflow with multiple branches from a single node
+2. Add a **Filter** node as the first step in each branch
+3. Set conditions on each Filter to determine when that branch should continue
+4. Only the branch(es) whose Filter conditions are met will proceed
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}}/>
+
+### How Filters Work
+
+- If the Filter condition is **met**: The branch continues executing
+- If the Filter condition is **not met**: The branch stops at the Filter node
+
+This effectively creates conditional logic where only the appropriate branch runs based on your data.
+
+## Example: Route by Deal Size
+
+**Scenario**: When a deal is closed, send different notifications based on deal size.
+
+1. **Trigger**: Opportunity updated (Stage = Closed Won)
+2. **Branch 1**: Filter for Amount > $10,000 → Send Slack message to #big-deals
+3. **Branch 2**: Filter for Amount ≤ $10,000 → Send email to sales manager
+
+Both branches start, but only the one matching the deal amount will continue past its Filter.
+
+## Best Practices
+
+- Always use **Filter nodes** at the start of branches when you want conditional execution
+- Keep branch conditions **mutually exclusive** to avoid duplicate actions
+- Test your workflows with different data to ensure the correct branches run
+

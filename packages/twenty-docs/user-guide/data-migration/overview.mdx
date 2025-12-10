@@ -10,14 +10,23 @@ image: /images/user-guide/import-export-data/cloud.png
 
 Twenty makes it easy to import your existing data and export your workspace data whenever you need it. Whether you're migrating from another CRM or backing up your data, we've got you covered.
 
+## Import Methods
+
+| Method | Best For | Volume |
+|--------|----------|--------|
+| **CSV Import** | Standard migrations, regular data updates | Up to 10,000 records per file |
+| **API Import** | Large-scale migrations, automated processes | Hundreds of thousands of records |
+
+<Note>For large migrations (100,000+ records) or complex data transformations, we recommend using the API. Our [implementation partners](/user-guide/getting-started/implementation-services) can help you run these scripts if needed.</Note>
+
 ## What's in this section
 
 <CardGroup cols={2}>
   <Card title="Getting Started" icon="rocket" href="/user-guide/data-migration/getting-started/import-export-data">
     Learn the basics of importing and exporting data in Twenty.
   </Card>
-  <Card title="Capabilities" icon="file-csv" href="/user-guide/data-migration/capabilities/supported-file-formats-and-field-mapping">
-    Understand supported file formats and field mapping options.
+  <Card title="Capabilities" icon="file-csv" href="/user-guide/data-migration/capabilities/file-formats">
+    Explore file formats, field mapping, relations, and error handling.
   </Card>
   <Card title="How-Tos" icon="book" href="/user-guide/data-migration/how-tos/how-to-import-contacts-via-csv">
     Step-by-step tutorials for importing, exporting, and migrating data.
@@ -30,10 +39,12 @@ Twenty makes it easy to import your existing data and export your workspace data
 - **Field mapping**: Map your CSV columns to Twenty fields during import
 - **Relation import**: Import relationships between objects via CSV
 - **Data export**: Export your entire workspace data
-- **API import**: Programmatically import data via the API
+- **API import**: Programmatically import large datasets via the API
 
 ## Quick links
 
 - [Import contacts via CSV](/user-guide/data-migration/how-tos/how-to-import-contacts-via-csv)
+- [Import relations between objects](/user-guide/data-migration/how-tos/how-to-import-relations-between-objects-via-csv)
+- [Import data via API](/user-guide/data-migration/how-tos/how-to-import-data-via-api)
 - [Migrate from another CRM](/user-guide/data-migration/how-tos/migrating-from-other-crms)
 - [Export your data](/user-guide/data-migration/how-tos/how-to-export-your-data)

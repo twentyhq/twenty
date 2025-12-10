@@ -118,13 +118,26 @@
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "user-guide/data-migration/capabilities/supported-file-formats-and-field-mapping"
+                      "user-guide/data-migration/capabilities/file-formats",
+                      "user-guide/data-migration/capabilities/field-mapping",
+                      "user-guide/data-migration/capabilities/uniqueness-constraints",
+                      "user-guide/data-migration/capabilities/import-relations",
+                      "user-guide/data-migration/capabilities/error-handling"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/data-migration/how-tos/migrating-from-other-crms"
+                      "user-guide/data-migration/how-tos/how-to-prepare-your-csv-files",
+                      "user-guide/data-migration/how-tos/how-to-import-companies-via-csv",
+                      "user-guide/data-migration/how-tos/how-to-import-contacts-via-csv",
+                      "user-guide/data-migration/how-tos/how-to-import-relations-between-objects-via-csv",
+                      "user-guide/data-migration/how-tos/how-to-update-existing-records-via-import",
+                      "user-guide/data-migration/how-tos/how-to-fix-import-errors",
+                      "user-guide/data-migration/how-tos/how-to-export-your-data",
+                      "user-guide/data-migration/how-tos/how-to-import-data-via-api",
+                      "user-guide/data-migration/how-tos/migrating-from-other-crms",
+                      "user-guide/data-migration/how-tos/migrating-from-self-hosted-to-cloud"
                     ]
                   }
                 ]
@@ -182,6 +195,7 @@
                     "pages": [
                       "user-guide/workflows/how-tos/internal-automations",
                       "user-guide/workflows/how-tos/external-tool-integration",
+                      "user-guide/workflows/how-tos/how-to-use-branches-in-workflows",
                       "user-guide/workflows/how-tos/workflow-troubleshooting"
                     ]
                   }
