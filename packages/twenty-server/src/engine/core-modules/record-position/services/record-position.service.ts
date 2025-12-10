@@ -4,7 +4,8 @@ import { isNumber } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type RecordPositionServiceCreateArgs = {
   value: number | 'first' | 'last';
@@ -16,7 +17,7 @@ export type RecordPositionServiceCreateArgs = {
 @Injectable()
 export class RecordPositionService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async buildRecordPosition({
@@ -153,20 +154,26 @@ export class RecordPositionService {
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
   ): Promise<{ id: string; position: number } | null> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const record = await repository.findOneBy({
-      position: positionValue,
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-    return record ? { id: record.id, position: record.position } : null;
+        const record = await repository.findOneBy({
+          position: positionValue,
+        });
+
+        return record ? { id: record.id, position: record.position } : null;
+      },
+    );
   }
 
   async updatePosition(
@@ -175,49 +182,67 @@ export class RecordPositionService {
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
   ): Promise<void> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    await repository.update(recordId, {
-      position: positionValue,
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        await repository.update(recordId, {
+          position: positionValue,
+        });
+      },
+    );
   }
 
   private async findMinPosition(
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
   ): Promise<number | null> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    return await repository.minimum('position');
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        return await repository.minimum('position');
+      },
+    );
   }
 
   private async findMaxPosition(
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
   ): Promise<number | null> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    return await repository.maximum('position');
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
+
+        return await repository.maximum('position');
+      },
+    );
   }
 }

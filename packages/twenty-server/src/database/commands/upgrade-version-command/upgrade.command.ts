@@ -41,7 +41,7 @@ import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/comm
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 @Command({
@@ -55,7 +55,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyConfigService: TwentyConfigService,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
@@ -106,7 +106,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     super(
       workspaceRepository,
       twentyConfigService,
-      twentyORMGlobalManager,
+      globalWorkspaceOrmManager,
       dataSourceService,
       syncWorkspaceMetadataCommand,
     );

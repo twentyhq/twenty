@@ -37,7 +37,8 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -48,7 +49,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
@@ -62,18 +63,25 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       return null;
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    return await workspaceMemberRepository.findOne({
-      where: {
-        userId: user.id,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.findOne({
+          where: {
+            userId: user.id,
+          },
+        });
       },
-    });
+    );
   }
 
   async loadWorkspaceMembers(workspace: WorkspaceEntity, withDeleted = false) {
@@ -81,14 +89,23 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       return [];
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    return await workspaceMemberRepository.find({ withDeleted: withDeleted });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.find({
+          withDeleted: withDeleted,
+        });
+      },
+    );
   }
 
   async loadDeletedWorkspaceMembersOnly(workspace: WorkspaceEntity) {
@@ -96,17 +113,24 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       return [];
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    return await workspaceMemberRepository.find({
-      where: { deletedAt: Not(IsNull()) },
-      withDeleted: true,
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.find({
+          where: { deletedAt: Not(IsNull()) },
+          withDeleted: true,
+        });
+      },
+    );
   }
 
   async deleteUser(userId: string) {
@@ -174,15 +198,22 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     userWorkspace: UserWorkspaceEntity,
   ) {
     const workspaceId = userWorkspace.workspaceId;
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
+    const workspaceMembers =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workspaceMemberRepository.find();
+        },
       );
-
-    const workspaceMembers = await workspaceMemberRepository.find();
 
     const userWorkspaceId = userWorkspace.id;
 
@@ -224,7 +255,21 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await workspaceMemberRepository.delete({ userId: userWorkspace.userId });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await workspaceMemberRepository.delete({
+          userId: userWorkspace.userId,
+        });
+      },
+    );
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId,
