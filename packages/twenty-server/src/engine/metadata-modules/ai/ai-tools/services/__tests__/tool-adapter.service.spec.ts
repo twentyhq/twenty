@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
 
 import { jsonSchema } from 'ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -85,38 +85,28 @@ describe('ToolAdapterService', () => {
     service = moduleRef.get(ToolAdapterService);
   });
 
-  it('should include unflagged tools regardless of role/workspace', async () => {
-    const toolsNoContext = await service.getTools();
+  it('should include unflagged tools regardless of rolePermissionConfig', async () => {
+    const toolsNoContext = await service.getTools('ws-1');
 
     expect(Object.keys(toolsNoContext)).toContain('http_request');
 
-    const toolsWithPartialContext = await service.getTools({
+    const toolsWithPartialContext = await service.getTools('ws-1', {
       unionOf: ['role-1'],
     });
 
     expect(Object.keys(toolsWithPartialContext)).toContain('http_request');
   });
 
-  it('should not include flagged tools when role/workspace are missing', async () => {
-    const toolsNoContext = await service.getTools();
+  it('should not include flagged tools when rolePermissionConfig is missing', async () => {
+    const toolsNoRoleConfig = await service.getTools('ws-1');
 
-    expect(Object.keys(toolsNoContext)).not.toContain('send_email');
-
-    const toolsRoleOnly = await service.getTools({
-      unionOf: ['role-1'],
-    });
-
-    expect(Object.keys(toolsRoleOnly)).not.toContain('send_email');
-
-    const toolsWorkspaceOnly = await service.getTools(undefined, 'ws-1');
-
-    expect(Object.keys(toolsWorkspaceOnly)).not.toContain('send_email');
+    expect(Object.keys(toolsNoRoleConfig)).not.toContain('send_email');
   });
 
   it('should include flagged tools when permission is granted', async () => {
     mockPermissions.hasToolPermission.mockResolvedValueOnce(true);
 
-    const tools = await service.getTools({ unionOf: ['role-1'] }, 'ws-1');
+    const tools = await service.getTools('ws-1', { unionOf: ['role-1'] });
 
     expect(mockPermissions.hasToolPermission).toHaveBeenCalledWith(
       { unionOf: ['role-1'] },
@@ -130,13 +120,13 @@ describe('ToolAdapterService', () => {
   it('should exclude flagged tools when permission is denied', async () => {
     mockPermissions.hasToolPermission.mockResolvedValueOnce(false);
 
-    const tools = await service.getTools({ unionOf: ['role-1'] }, 'ws-1');
+    const tools = await service.getTools('ws-1', { unionOf: ['role-1'] });
 
     expect(Object.keys(tools)).not.toContain('send_email');
   });
 
   it('should lowercase tool type keys in the returned ToolSet', async () => {
-    const tools = await service.getTools();
+    const tools = await service.getTools('ws-1');
 
     const keys = Object.keys(tools);
 
@@ -145,7 +135,7 @@ describe('ToolAdapterService', () => {
   });
 
   it('should forward execute input correctly and return underlying result', async () => {
-    const tools = await service.getTools();
+    const tools = await service.getTools('ws-1');
 
     const input = { url: 'https://example.com', method: 'GET' } as ToolInput;
     const result = await tools['http_request'].execute?.(
@@ -161,8 +151,8 @@ describe('ToolAdapterService', () => {
       },
     );
 
-    // Ensure wrapper forwards only parameters.input
-    expect(unflaggedToolExecute).toHaveBeenCalledWith(input);
+    // Ensure wrapper forwards parameters.input and workspaceId
+    expect(unflaggedToolExecute).toHaveBeenCalledWith(input, 'ws-1');
     expect(result).toEqual({
       success: true,
       message: 'Tool executed successfully',

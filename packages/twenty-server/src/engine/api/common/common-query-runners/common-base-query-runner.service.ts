@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Omit } from 'zod/v4/core/util.cjs';
 
@@ -22,6 +24,7 @@ import {
   CommonQueryNames,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -38,7 +41,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -48,7 +50,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -62,8 +63,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
   protected readonly dataArgProcessor: DataArgProcessor;
-  @Inject()
-  protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
@@ -124,12 +123,16 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     );
 
-    const processedArgs = await this.processArgs(
-      args,
-      queryRunnerContext,
-      this.operationName,
-      commonQueryParser,
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      args.selectedFields,
     );
+
+    this.validateQueryComplexity(selectedFieldsResult, args);
+
+    const processedArgs = {
+      ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
+      selectedFieldsResult,
+    } as CommonExtendedInput<Args>;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
@@ -166,16 +169,22 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
+  protected computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    _args: CommonInput<Args>,
+  ): number {
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
+    return selectedFieldsComplexity;
+  }
+
   private async processArgs(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
     operationName: CommonQueryNames,
-    commonQueryParser: GraphqlQueryParser,
-  ): Promise<CommonExtendedInput<Args>> {
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      args.selectedFields,
-    );
-
+  ): Promise<CommonInput<Args>> {
     const { authContext, flatObjectMetadata } = queryRunnerContext;
 
     const computedArgs = await this.computeArgs(args, queryRunnerContext);
@@ -188,10 +197,7 @@ export abstract class CommonBaseQueryRunnerService<
         computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
 
-    return {
-      ...hookedArgs,
-      selectedFieldsResult,
-    };
+    return hookedArgs;
   }
 
   private async executeQueryAndEnrichResults(
@@ -386,6 +392,40 @@ export abstract class CommonBaseQueryRunnerService<
       });
 
       throw error;
+    }
+  }
+
+  private validateQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<Args>,
+  ) {
+    const maximumComplexity = this.twentyConfigService.get(
+      'COMMON_QUERY_COMPLEXITY_LIMIT',
+    );
+
+    if (selectedFieldsResult.hasAtLeastTwoNestedOneToManyRelations) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: msg`Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
+        },
+      );
+    }
+
+    const queryComplexity = this.computeQueryComplexity(
+      selectedFieldsResult,
+      args,
+    );
+
+    if (queryComplexity > maximumComplexity) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: msg`Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+        },
+      );
     }
   }
 }

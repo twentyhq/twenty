@@ -1,4 +1,6 @@
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
+import { v4 } from 'uuid';
+
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { PAGE_LAYOUT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 
@@ -8,10 +10,13 @@ type PageLayoutSeed = {
   type: PageLayoutType;
   objectMetadataId: string | null;
   workspaceId: string;
+  universalIdentifier: string;
+  applicationId: string;
 };
 
 export const getPageLayoutDataSeeds = (
   workspaceId: string,
+  applicationId: string,
 ): PageLayoutSeed[] => [
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.SALES_DASHBOARD),
@@ -19,6 +24,8 @@ export const getPageLayoutDataSeeds = (
     type: PageLayoutType.DASHBOARD,
     objectMetadataId: null,
     workspaceId,
+    universalIdentifier: v4(),
+    applicationId,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.CUSTOMER_DASHBOARD),
@@ -26,6 +33,8 @@ export const getPageLayoutDataSeeds = (
     type: PageLayoutType.DASHBOARD,
     objectMetadataId: null,
     workspaceId,
+    universalIdentifier: v4(),
+    applicationId,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.TEAM_DASHBOARD),
@@ -33,5 +42,7 @@ export const getPageLayoutDataSeeds = (
     type: PageLayoutType.DASHBOARD,
     objectMetadataId: null,
     workspaceId,
+    universalIdentifier: v4(),
+    applicationId,
   },
 ];

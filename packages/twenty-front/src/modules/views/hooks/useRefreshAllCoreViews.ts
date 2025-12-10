@@ -24,11 +24,13 @@ export const useRefreshAllCoreViews = (
           .getLoadable(coreViewsState)
           .getValue();
 
+        const coreViewsFromResult = result.data.getCoreViews;
+
         if (
           isDefined(result.data?.getCoreViews) &&
-          !isDeeplyEqual(currentCoreViews, result.data.getCoreViews)
+          !isDeeplyEqual(currentCoreViews, coreViewsFromResult)
         ) {
-          set(coreViewsState, result.data.getCoreViews);
+          set(coreViewsState, coreViewsFromResult);
         }
 
         return result.data?.getCoreViews;

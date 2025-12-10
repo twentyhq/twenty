@@ -21,6 +21,8 @@ export type GraphqlQuerySelectedFieldsResult = {
   relations: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aggregate: Record<string, any>;
+  relationFieldsCount: number;
+  hasAtLeastTwoNestedOneToManyRelations: boolean;
 };
 
 export class GraphqlQuerySelectedFieldsParser {
@@ -47,11 +49,14 @@ export class GraphqlQuerySelectedFieldsParser {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
+    isFromOneToManyRelation?: boolean,
   ): GraphqlQuerySelectedFieldsResult {
     const accumulator: GraphqlQuerySelectedFieldsResult = {
       select: {},
       relations: {},
       aggregate: {},
+      relationFieldsCount: 0,
+      hasAtLeastTwoNestedOneToManyRelations: false,
     };
 
     if (this.isRootConnection(graphqlSelectedFields)) {
@@ -59,6 +64,7 @@ export class GraphqlQuerySelectedFieldsParser {
         graphqlSelectedFields,
         flatObjectMetadata,
         accumulator,
+        isFromOneToManyRelation,
       );
 
       return accumulator;
@@ -75,6 +81,7 @@ export class GraphqlQuerySelectedFieldsParser {
       graphqlSelectedFields,
       flatObjectMetadata,
       accumulator,
+      isFromOneToManyRelation,
     );
 
     return accumulator;
@@ -85,6 +92,7 @@ export class GraphqlQuerySelectedFieldsParser {
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
+    isFromOneToManyRelation?: boolean,
   ): void {
     for (const fieldMetadataId of flatObjectMetadata.fieldMetadataIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -116,6 +124,7 @@ export class GraphqlQuerySelectedFieldsParser {
           fieldMetadata.name,
           graphqlSelectedFieldValue,
           accumulator,
+          isFromOneToManyRelation,
         );
 
         continue;
@@ -160,6 +169,7 @@ export class GraphqlQuerySelectedFieldsParser {
           fieldMetadata.name,
           graphqlSelectedFieldValue,
           accumulator,
+          isFromOneToManyRelation,
         );
 
         continue;
@@ -197,6 +207,7 @@ export class GraphqlQuerySelectedFieldsParser {
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
+    isFromOneToManyRelation?: boolean,
   ): void {
     this.aggregateParser.parse(
       graphqlSelectedFields,
@@ -207,7 +218,12 @@ export class GraphqlQuerySelectedFieldsParser {
 
     const node = graphqlSelectedFields.edges.node;
 
-    this.parseRecordFields(node, flatObjectMetadata, accumulator);
+    this.parseRecordFields(
+      node,
+      flatObjectMetadata,
+      accumulator,
+      isFromOneToManyRelation,
+    );
   }
 
   private isRootConnection(

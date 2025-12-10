@@ -8,7 +8,7 @@ import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/worksp
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Command({
@@ -20,7 +20,7 @@ export class CleanOrphanedUserWorkspacesCommand extends ActiveOrSuspendedWorkspa
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -49,7 +49,7 @@ export class CleanOrphanedUserWorkspacesCommand extends ActiveOrSuspendedWorkspa
     }
 
     const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
         { shouldBypassPermissionChecks: true },

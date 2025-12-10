@@ -4,20 +4,22 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly timelineMessagingService: TimelineMessagingService,
   ) {}
 
   async getMessagesFromPersonIds(
     workspaceMemberId: string,
     personIds: string[],
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
@@ -26,6 +28,7 @@ export class GetMessagesService {
     const { messageThreads, totalNumberOfThreads } =
       await this.timelineMessagingService.getAndCountMessageThreads(
         personIds,
+        workspaceId,
         offset,
         pageSize,
       );
@@ -44,12 +47,14 @@ export class GetMessagesService {
     const threadParticipantsByThreadId =
       await this.timelineMessagingService.getThreadParticipantsByThreadId(
         messageThreadIds,
+        workspaceId,
       );
 
     const threadVisibilityByThreadId =
       await this.timelineMessagingService.getThreadVisibilityByThreadId(
         messageThreadIds,
         workspaceMemberId,
+        workspaceId,
       );
 
     return {
@@ -65,75 +70,95 @@ export class GetMessagesService {
   async getMessagesFromCompanyId(
     workspaceMemberId: string,
     companyId: string,
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const personRepository =
-      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
-        'person',
-      );
-    const personIds = (
-      await personRepository.find({
-        where: {
-          companyId,
-        },
-        select: {
-          id: true,
-        },
-      })
-    ).map((person) => person.id);
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    if (personIds.length === 0) {
-      return {
-        totalNumberOfThreads: 0,
-        timelineThreads: [],
-      };
-    }
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const personRepository =
+          await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+            workspaceId,
+            'person',
+          );
+        const personIds = (
+          await personRepository.find({
+            where: {
+              companyId,
+            },
+            select: {
+              id: true,
+            },
+          })
+        ).map((person) => person.id);
 
-    const messageThreads = await this.getMessagesFromPersonIds(
-      workspaceMemberId,
-      personIds,
-      page,
-      pageSize,
+        if (personIds.length === 0) {
+          return {
+            totalNumberOfThreads: 0,
+            timelineThreads: [],
+          };
+        }
+
+        const messageThreads = await this.getMessagesFromPersonIds(
+          workspaceMemberId,
+          personIds,
+          workspaceId,
+          page,
+          pageSize,
+        );
+
+        return messageThreads;
+      },
     );
-
-    return messageThreads;
   }
 
   async getMessagesFromOpportunityId(
     workspaceMemberId: string,
     opportunityId: string,
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const opportunityRepository =
-      await this.twentyORMManager.getRepository<OpportunityWorkspaceEntity>(
-        'opportunity',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const opportunity = await opportunityRepository.findOne({
-      where: {
-        id: opportunityId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const opportunityRepository =
+          await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
+            workspaceId,
+            'opportunity',
+          );
+
+        const opportunity = await opportunityRepository.findOne({
+          where: {
+            id: opportunityId,
+          },
+          select: {
+            companyId: true,
+          },
+        });
+
+        if (!opportunity?.companyId) {
+          return {
+            totalNumberOfThreads: 0,
+            timelineThreads: [],
+          };
+        }
+
+        const messageThreads = await this.getMessagesFromCompanyId(
+          workspaceMemberId,
+          opportunity.companyId,
+          workspaceId,
+          page,
+          pageSize,
+        );
+
+        return messageThreads;
       },
-      select: {
-        companyId: true,
-      },
-    });
-
-    if (!opportunity?.companyId) {
-      return {
-        totalNumberOfThreads: 0,
-        timelineThreads: [],
-      };
-    }
-
-    const messageThreads = await this.getMessagesFromCompanyId(
-      workspaceMemberId,
-      opportunity.companyId,
-      page,
-      pageSize,
     );
-
-    return messageThreads;
   }
 }

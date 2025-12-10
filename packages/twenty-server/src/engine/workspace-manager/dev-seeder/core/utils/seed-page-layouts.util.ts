@@ -6,8 +6,9 @@ export const seedPageLayouts = async (
   dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
+  applicationId: string,
 ) => {
-  const pageLayouts = getPageLayoutDataSeeds(workspaceId);
+  const pageLayouts = getPageLayoutDataSeeds(workspaceId, applicationId);
 
   if (pageLayouts.length > 0) {
     await dataSource
@@ -19,6 +20,8 @@ export const seedPageLayouts = async (
         'type',
         'objectMetadataId',
         'workspaceId',
+        'universalIdentifier',
+        'applicationId',
       ])
       .values(pageLayouts)
       .orIgnore()

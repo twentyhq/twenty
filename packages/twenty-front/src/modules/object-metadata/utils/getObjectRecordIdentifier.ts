@@ -27,7 +27,6 @@ export const getObjectRecordIdentifier = ({
   const labelIdentifierFieldValue = getLabelIdentifierFieldValue(
     record,
     labelIdentifierFieldMetadataItem,
-    objectMetadataItem.nameSingular,
   );
 
   const imageIdentifierFieldMetadata = objectMetadataItem.fields.find(

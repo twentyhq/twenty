@@ -10,9 +10,13 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
     currentView?.viewGroups
       .filter((recordGroup) => !recordGroup.isVisible)
       .map((recordGroup) => {
+        if (!isDefined(currentView.mainGroupByFieldMetadataId)) {
+          throw new Error('mainGroupByFieldMetadataId is required');
+        }
+
         return {
           id: recordGroup.id,
-          fieldMetadataId: recordGroup.fieldMetadataId,
+          fieldMetadataId: currentView.mainGroupByFieldMetadataId,
           value: JSON.stringify([recordGroup.fieldValue]),
           operand: ViewFilterOperand.IS_NOT,
           displayValue: '',

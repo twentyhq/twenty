@@ -8,6 +8,9 @@ import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 's
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/workspace-migration-v2-object-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout/workspace-migration-v2-page-layout-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-widget/workspace-migration-v2-page-layout-widget-actions-builder.service';
 import { WorkspaceMigrationV2RoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role-target/workspace-migration-v2-role-target-actions-builder.service';
 import { WorkspaceMigrationV2RoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role/workspace-migration-v2-role-actions-builder.service';
 import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
@@ -36,6 +39,9 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
   ],
   exports: [
     WorkspaceMigrationV2ViewActionsBuilderService,
@@ -52,6 +58,9 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
     FlatFieldMetadataTypeValidatorService,
   ],
 })

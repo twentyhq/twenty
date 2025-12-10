@@ -1,36 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { createUIMessageStream, pipeUIMessageStreamToResponse } from 'ai';
 import { type Response } from 'express';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { AgentChatRoutingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-routing.service';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+
+import { AgentChatService } from './agent-chat.service';
+import { ChatExecutionService } from './chat-execution.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
   workspace: WorkspaceEntity;
-  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   response: Response;
   messages: ExtendedUIMessage[];
+  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
 };
 
 @Injectable()
 export class AgentChatStreamingService {
+  private readonly logger = new Logger(AgentChatStreamingService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
-    private readonly agentChatRoutingService: AgentChatRoutingService,
+    private readonly chatExecutionService: ChatExecutionService,
   ) {}
 
   async streamAgentChat({
@@ -46,7 +51,6 @@ export class AgentChatStreamingService {
         id: threadId,
         userWorkspaceId,
       },
-      relations: ['messages'],
     });
 
     if (!thread) {
@@ -56,39 +60,104 @@ export class AgentChatStreamingService {
       );
     }
 
-    await this.agentChatRoutingService.streamAgentExecution({
-      userWorkspaceId,
-      workspace,
-      messages,
-      recordIdsByObjectMetadataNameSingular,
-      response,
-      persistenceCallbacks: {
-        saveSystemMessage: async (message) => {
-          const savedMessage = await this.agentChatService.addMessage({
-            threadId,
-            uiMessage: message,
+    try {
+      const uiStream = createUIMessageStream<ExtendedUIMessage>({
+        execute: async ({ writer }) => {
+          const { stream } = await this.chatExecutionService.streamChat({
+            workspace,
+            userWorkspaceId,
+            messages,
+            recordIdsByObjectMetadataNameSingular,
           });
 
-          return { turnId: savedMessage.turnId };
-        },
-        saveUserMessage: async (message, turnId) => {
-          const savedMessage = await this.agentChatService.addMessage({
-            threadId,
-            uiMessage: message,
-            turnId,
+          // Write initial status
+          writer.write({
+            type: 'data-routing-status' as const,
+            id: 'execution-status',
+            data: {
+              text: 'Processing your request...',
+              state: 'loading',
+            },
           });
 
-          return { turnId: savedMessage.turnId };
+          // Merge the AI stream
+          writer.merge(
+            stream.toUIMessageStream({
+              onError: (error) => {
+                this.logger.error('Stream error:', error);
+
+                return error instanceof Error ? error.message : String(error);
+              },
+              sendStart: false,
+              onFinish: async ({ responseMessage }) => {
+                if (responseMessage.parts.length === 0) {
+                  return;
+                }
+
+                // Update status to completed
+                writer.write({
+                  type: 'data-routing-status' as const,
+                  id: 'execution-status',
+                  data: {
+                    text: 'Completed',
+                    state: 'routed',
+                  },
+                });
+
+                // Save messages to database
+                // Use thread.id from the validated thread object to ensure it's not null
+                const validThreadId = thread.id;
+
+                if (!validThreadId) {
+                  this.logger.error('Thread ID is unexpectedly null/undefined');
+
+                  return;
+                }
+
+                try {
+                  const userMessage = await this.agentChatService.addMessage({
+                    threadId: validThreadId,
+                    uiMessage: {
+                      role: AgentMessageRole.USER,
+                      parts: [
+                        {
+                          type: 'text',
+                          text:
+                            messages[messages.length - 1].parts.find(
+                              (part) => part.type === 'text',
+                            )?.text ?? '',
+                        },
+                      ],
+                    },
+                  });
+
+                  await this.agentChatService.addMessage({
+                    threadId: validThreadId,
+                    uiMessage: responseMessage,
+                    turnId: userMessage.turnId,
+                  });
+                } catch (saveError) {
+                  this.logger.error(
+                    'Failed to save messages:',
+                    saveError instanceof Error
+                      ? saveError.message
+                      : String(saveError),
+                  );
+                }
+              },
+              sendReasoning: true,
+            }),
+          );
         },
-        saveAssistantMessage: async (message, turnId, agentId) => {
-          await this.agentChatService.addMessage({
-            threadId,
-            uiMessage: message,
-            agentId,
-            turnId,
-          });
-        },
-      },
-    });
+      });
+
+      pipeUIMessageStreamToResponse({ stream: uiStream, response });
+    } catch (error) {
+      this.logger.error(
+        'Failed to stream chat:',
+        error instanceof Error ? error.message : String(error),
+      );
+      response.end();
+    }
   }
 }

@@ -22,7 +22,7 @@ export const getDefaultFlatFieldMetadata = ({
     ['defaultValue', 'settings'],
   );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   return {
     calendarViewIds: [],
@@ -60,7 +60,6 @@ export const getDefaultFlatFieldMetadata = ({
     morphId: null,
     applicationId: workspaceCustomApplicationId,
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

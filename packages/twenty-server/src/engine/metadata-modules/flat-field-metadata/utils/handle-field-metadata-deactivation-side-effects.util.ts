@@ -46,8 +46,16 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     flatEntityMaps: flatViewFieldMaps,
   });
 
+  const flatViewsAffected: FlatView[] =
+    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
+      flatEntityMaps: flatViewMaps,
+    });
+
   const flatViewGroups = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: fromFlatFieldMetadata.viewGroupIds,
+    flatEntityIds: flatViewsAffected.flatMap(
+      (flatView) => flatView.viewGroupIds,
+    ),
     flatEntityMaps: flatViewGroupMaps,
   });
 
@@ -60,6 +68,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...new Set([
       ...Object.keys(flatViewGroupRecordByViewId),
       ...fromFlatFieldMetadata.calendarViewIds,
+      ...fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
     ]),
   ];
 

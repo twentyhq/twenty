@@ -8,21 +8,13 @@ First, authenticate to your workspace:
 yarn auth
 ```
 
-Then, run the development server:
+Then, install this app to your workspace:
 
 ```bash
-yarn dev
+yarn sync
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
-
-You can start adding twenty entities by running
-
-```bash
-yarn create-entity
-```
-
-The application auto-updates as you edit the file.
 
 ## Learn More
 

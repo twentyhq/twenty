@@ -29,6 +29,9 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   ORMEntityMetadatas: 'orm:entity-metadatas',
   flatAgentMaps: 'flat-maps:agent',
   flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
+  flatPageLayoutMaps: 'flat-maps:page-layout',
+  flatPageLayoutWidgetMaps: 'flat-maps:page-layout-widget',
+  flatPageLayoutTabMaps: 'flat-maps:flatPageLayoutTabMaps',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 type AdditionalCacheDataMap = {

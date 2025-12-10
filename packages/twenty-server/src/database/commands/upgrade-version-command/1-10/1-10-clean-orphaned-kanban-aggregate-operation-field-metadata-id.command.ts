@@ -11,7 +11,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
   name: 'upgrade:1-10:clean-orphaned-kanban-aggregate-operation-field-metadata-id',
@@ -22,7 +22,7 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,

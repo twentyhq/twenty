@@ -9,7 +9,7 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -22,7 +22,7 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
@@ -36,13 +36,13 @@ export class MigrateAttachmentAuthorToCreatedByCommand extends ActiveOrSuspended
     );
 
     const attachmentRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
       );
 
     const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
       );
