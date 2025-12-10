@@ -44,6 +44,8 @@ describe('Page layout creation should succeed', () => {
         expectToFail: false,
         input: { id: createdPageLayoutId },
       });
+
+      createdPageLayoutId = '';
     }
   });
 
