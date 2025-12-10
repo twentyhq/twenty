@@ -29,6 +29,7 @@ import { SetStandardApplicationNotUninstallableCommand } from 'src/database/comm
 import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
+import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
@@ -100,6 +101,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly deduplicateRoleTargetsCommand: DeduplicateRoleTargetsCommand,
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
     protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
+    protected readonly migrateStandardInvalidEntitiesCommand: MigrateStandardInvalidEntitiesCommand,
   ) {
     super(
       workspaceRepository,
@@ -172,6 +174,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.deduplicateRoleTargetsCommand,
         this.updateRoleTargetsUniqueConstraintMigrationCommand,
         this.backfillPageLayoutUniversalIdentifiersCommand,
+        this.migrateStandardInvalidEntitiesCommand,
       ],
       afterSyncMetadata: [],
     };

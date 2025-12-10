@@ -1,7 +1,7 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import { type GridLayoutItem } from '@/page-layout/types/GridLayoutItem';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 export const prepareGridLayoutItemsWithPlaceholders = (
   widgets: PageLayoutWidget[] | undefined,

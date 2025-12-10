@@ -1294,6 +1294,11 @@ msgstr "Dominios Aprobados"
 msgid "Arabic"
 msgstr "Árabe"
 
+#. js-lingui-id: i19Zro
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Archive files cannot be previewed. Please download the file to access its contents."
+msgstr ""
+
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
@@ -2198,6 +2203,11 @@ msgstr "Configura los ajustes SMTP para enviar correos desde tu cuenta."
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
 msgstr "Configure estos registros DNS con su proveedor de dominio"
+
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr ""
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -4390,6 +4400,8 @@ msgstr "Error al subir la imagen: "
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "Falso"
 
@@ -4995,11 +5007,6 @@ msgstr "Configuración de iFrame"
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "Widget de iFrame"
-
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "Configuración de iFrame no es compatible"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -6439,6 +6446,12 @@ msgstr "Ninguna variable de configuración coincide con sus filtros actuales. In
 msgid "No country"
 msgstr "Sin país"
 
+#. js-lingui-id: plhHQt
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+msgid "No data"
+msgstr ""
+
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No Data"
@@ -6508,6 +6521,11 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
 msgstr "No hay campos seleccionados"
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
+msgstr ""
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -7384,6 +7402,11 @@ msgstr "Evitar que los usuarios asignen el mismo valor a diferentes registros"
 msgid "Preview"
 msgstr "Vista previa"
 
+#. js-lingui-id: Fe5cbB
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Preview Not Available"
+msgstr ""
+
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Previous"
@@ -7531,6 +7554,14 @@ msgstr "Cola: {queueName}"
 #. js-lingui-id: GaAG2G
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Quick model for routing decisions"
+msgstr ""
+
+#. js-lingui-id: iaocTt
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "Ratio"
 msgstr ""
 
 #. js-lingui-id: BT7pY+
@@ -8119,6 +8150,11 @@ msgstr "Buscar objetos"
 msgid "Search operations"
 msgstr "Buscar operaciones"
 
+#. js-lingui-id: 996xRf
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Search options"
+msgstr ""
+
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8347,6 +8383,11 @@ msgstr "Selecciona los eventos que deseas enviar a este endpoint"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Selecciona la hoja a utilizar"
+
+#. js-lingui-id: iWf0Zj
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Select value"
+msgstr ""
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -9308,6 +9349,11 @@ msgstr "Esta acción no se puede deshacer. Esto eliminará permanentemente su me
 msgid "This database value overrides environment settings. "
 msgstr "Este valor de base de datos anula la configuración del entorno."
 
+#. js-lingui-id: hMvPrD
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file type cannot be previewed. Please download the file to view it."
+msgstr ""
+
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "This is required to enable manual row reordering."
@@ -9511,6 +9557,8 @@ msgstr "Activa la función con solicitud Http"
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "Verdadero"
 

@@ -29,7 +29,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Get('*')
+  @Get('*path')
   @UseGuards(FilePathGuard, NoPermissionGuard)
   async getFile(@Res() res: Response, @Req() req: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

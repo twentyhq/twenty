@@ -13,7 +13,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
   workspaceId: string;
   applicationId: string;
 }): FlatRole => {
-  const now = new Date();
+  const now = new Date().toISOString();
 
   const {
     label,

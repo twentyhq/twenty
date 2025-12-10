@@ -32,7 +32,7 @@ const StyledWidgetCardHeader = styled.div`
 const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   padding-inline: ${({ theme }) => theme.spacing(1)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;

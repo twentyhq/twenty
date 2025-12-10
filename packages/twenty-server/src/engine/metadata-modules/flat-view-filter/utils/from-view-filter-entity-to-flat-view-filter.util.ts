@@ -14,6 +14,9 @@ export const fromViewFilterEntityToFlatViewFilter = (
 
   return {
     ...viewFilterEntityWithoutRelations,
+    createdAt: viewFilterEntity.createdAt.toISOString(),
+    updatedAt: viewFilterEntity.updatedAt.toISOString(),
+    deletedAt: viewFilterEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       viewFilterEntityWithoutRelations.universalIdentifier ??
       viewFilterEntityWithoutRelations.id,
