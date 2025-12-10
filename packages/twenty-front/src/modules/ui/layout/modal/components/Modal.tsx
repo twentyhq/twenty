@@ -225,12 +225,14 @@ export const Modal = ({
   modalVariant = 'primary',
   dataGloballyPreventClickOutside = false,
   shouldCloseModalOnClickOutsideOrEscape = true,
-  ignoreContainer = false,
+  ignoreContainer = true,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
-  const effectiveContainer = ignoreContainer ? null : container;
+  const effectiveContainer = ignoreContainer
+    ? document.body || null
+    : container;
   const isInContainer = isDefined(effectiveContainer);
 
   const theme = useTheme();
