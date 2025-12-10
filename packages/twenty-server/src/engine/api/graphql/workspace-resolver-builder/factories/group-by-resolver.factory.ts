@@ -14,6 +14,7 @@ import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-qu
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { computeResolverContext } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-resolver-context.util';
 
 @Injectable()
 export class GroupByResolverFactory
@@ -26,12 +27,15 @@ export class GroupByResolverFactory
   ) {}
 
   create(
-    context: WorkspaceSchemaBuilderContext,
+    workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext,
   ): Resolver<GroupByResolverArgs> {
-    const internalContext = context;
-
     return async (_source, args, _context, info) => {
       const selectedFields = graphqlFields(info);
+
+      const resolverContext = computeResolverContext({
+        workspaceSchemaBuilderContext,
+        request: _context.req,
+      });
 
       const shouldIncludeRecords =
         isDefined(selectedFields.edges?.node) &&
@@ -40,20 +44,20 @@ export class GroupByResolverFactory
       try {
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.flatObjectMetadataMaps,
-            internalContext.flatFieldMetadataMaps,
-            internalContext.objectIdByNameSingular,
+            resolverContext.flatObjectMetadataMaps,
+            resolverContext.flatFieldMetadataMaps,
+            resolverContext.objectIdByNameSingular,
           );
 
         const results = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
-          internalContext,
+          resolverContext,
         );
 
         const formattedResults = results.map((group) => {
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
             objectRecords: group.records ?? [],
-            objectName: internalContext.flatObjectMetadata.nameSingular,
+            objectName: resolverContext.flatObjectMetadata.nameSingular,
             objectRecordsAggregatedValues: {},
             selectedAggregatedFields: {},
             take: group.records?.length || 0,

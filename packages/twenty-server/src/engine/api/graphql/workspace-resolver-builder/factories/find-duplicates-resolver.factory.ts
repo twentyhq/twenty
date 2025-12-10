@@ -14,6 +14,7 @@ import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/co
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { computeResolverContext } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-resolver-context.util';
 
 @Injectable()
 export class FindDuplicatesResolverFactory
@@ -26,31 +27,34 @@ export class FindDuplicatesResolverFactory
   ) {}
 
   create(
-    context: WorkspaceSchemaBuilderContext,
+    workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext,
   ): Resolver<FindDuplicatesResolverArgs> {
-    const internalContext = context;
-
     return async (_source, args, _context, info) => {
       const selectedFields = graphqlFields(info);
+
+      const resolverContext = computeResolverContext({
+        workspaceSchemaBuilderContext,
+        request: _context.req,
+      });
 
       try {
         const paginatedDuplicates =
           await this.commonFindDuplicatesQueryRunnerService.execute(
             { ...args, selectedFields },
-            internalContext,
+            resolverContext,
           );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.flatObjectMetadataMaps,
-            internalContext.flatFieldMetadataMaps,
-            internalContext.objectIdByNameSingular,
+            resolverContext.flatObjectMetadataMaps,
+            resolverContext.flatFieldMetadataMaps,
+            resolverContext.objectIdByNameSingular,
           );
 
         return paginatedDuplicates.map((duplicate) =>
           typeORMObjectRecordsParser.createConnection({
             objectRecords: duplicate.records,
-            objectName: internalContext.flatObjectMetadata.nameSingular,
+            objectName: resolverContext.flatObjectMetadata.nameSingular,
             take: duplicate.records.length,
             totalCount: duplicate.totalCount,
             order: [{ id: OrderByDirection.AscNullsFirst }],

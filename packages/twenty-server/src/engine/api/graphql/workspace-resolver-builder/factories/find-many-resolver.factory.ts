@@ -14,6 +14,7 @@ import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-q
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { computeResolverContext } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-resolver-context.util';
 
 @Injectable()
 export class FindManyResolverFactory
@@ -26,12 +27,15 @@ export class FindManyResolverFactory
   ) {}
 
   create(
-    context: WorkspaceSchemaBuilderContext,
+    workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext,
   ): Resolver<FindManyResolverArgs> {
-    const internalContext = context;
-
     return async (_source, args, _context, info) => {
       const selectedFields = graphqlFields(info);
+
+      const resolverContext = computeResolverContext({
+        workspaceSchemaBuilderContext,
+        request: _context.req,
+      });
 
       try {
         const {
@@ -42,21 +46,21 @@ export class FindManyResolverFactory
           selectedFieldsResult,
         } = await this.commonFindManyQueryRunnerService.execute(
           { ...args, selectedFields },
-          internalContext,
+          resolverContext,
         );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.flatObjectMetadataMaps,
-            internalContext.flatFieldMetadataMaps,
-            internalContext.objectIdByNameSingular,
+            resolverContext.flatObjectMetadataMaps,
+            resolverContext.flatFieldMetadataMaps,
+            resolverContext.objectIdByNameSingular,
           );
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
           objectRecordsAggregatedValues: aggregatedValues,
           selectedAggregatedFields: selectedFieldsResult.aggregate,
-          objectName: internalContext.flatObjectMetadata.nameSingular,
+          objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: args.first ?? args.last ?? QUERY_MAX_RECORDS,
           totalCount,
           order: args.orderBy,
