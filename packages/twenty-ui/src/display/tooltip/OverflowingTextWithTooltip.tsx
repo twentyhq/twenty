@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useId, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
@@ -83,7 +83,7 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows?: number;
   hideTooltip?: boolean;
 }) => {
-  const textElementId = useId();
+  const textElementId = `title-id-${+new Date()}`;
 
   const textRef = useRef<HTMLDivElement>(null);
 
