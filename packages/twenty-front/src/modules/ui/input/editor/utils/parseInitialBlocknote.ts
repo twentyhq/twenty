@@ -15,7 +15,7 @@ export const parseInitialBlocknote = (
       console.warn(logContext ?? `Failed to parse blocknote body`);
     }
 
-    if (isArray(parsedBody) && parsedBody.length === 0) {
+    if (!isArray(parsedBody) || parsedBody.length === 0) {
       return undefined;
     }
 

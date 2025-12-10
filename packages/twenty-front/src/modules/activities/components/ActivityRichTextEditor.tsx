@@ -27,6 +27,7 @@ import { isTitleCellInEditModeComponentState } from '@/object-record/record-titl
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/ui/input/editor/utils/prepareBodyWithSignedUrls';
@@ -318,10 +319,7 @@ export const ActivityRichTextEditor = ({
             type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
           },
           focusId: activityId,
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-            enableGlobalHotkeysWithModifiers: true,
-          },
+          globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
         });
       },
     [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],

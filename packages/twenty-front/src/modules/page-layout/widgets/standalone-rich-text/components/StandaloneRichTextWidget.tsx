@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -9,10 +9,14 @@ import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayo
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/ui/input/editor/utils/prepareBodyWithSignedUrls';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import '@blocknote/core/fonts/inter.css';
@@ -59,6 +63,10 @@ export const StandaloneRichTextWidget = ({
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
   const { uploadAttachmentFile } = useUploadAttachmentFile();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const isDashboard = layoutType === PageLayoutType.DASHBOARD;
   const dashboardId = isDashboard ? targetRecordIdentifier?.id : undefined;
@@ -136,6 +144,23 @@ export const StandaloneRichTextWidget = ({
   const isThisWidgetBeingEdited = editingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
 
+  const handleBlockEditorFocus = useCallback(() => {
+    pushFocusItemToFocusStack({
+      component: {
+        instanceId: widget.id,
+        type: FocusComponentType.STANDALONE_RICH_TEXT_WIDGET,
+      },
+      focusId: widget.id,
+      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
+    });
+  }, [pushFocusItemToFocusStack, widget.id]);
+
+  const handleBlockEditorBlur = useCallback(() => {
+    removeFocusItemFromFocusStackById({
+      focusId: widget.id,
+    });
+  }, [removeFocusItemFromFocusStackById, widget.id]);
+
   //TODO: this should be handled way earlier, because we should not be able to select this widget type record page layouts in the first place
   if (!isDefined(dashboardId)) {
     throw new Error(
@@ -149,6 +174,8 @@ export const StandaloneRichTextWidget = ({
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >
         <BlockEditor
+          onFocus={handleBlockEditorFocus}
+          onBlur={handleBlockEditorBlur}
           onChange={handleEditorChange}
           editor={editor}
           readonly={!isEditable}
