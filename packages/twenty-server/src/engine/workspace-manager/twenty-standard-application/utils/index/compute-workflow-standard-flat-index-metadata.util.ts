@@ -10,7 +10,7 @@ export const buildWorkflowStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'workflow'>, 'context'>): Record<
@@ -25,7 +25,7 @@ export const buildWorkflowStandardFlatIndexMetadatas = ({
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

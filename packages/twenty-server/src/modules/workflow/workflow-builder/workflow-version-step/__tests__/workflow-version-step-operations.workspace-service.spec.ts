@@ -9,6 +9,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import {
@@ -28,6 +29,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
+  let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
 
   beforeEach(async () => {
     serverlessFunctionService = {
@@ -68,6 +70,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     globalWorkspaceOrmManager = {
       getRepository: jest.fn(),
     } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
+    workspaceCacheService = {
+      flush: jest.fn(),
+    } as unknown as jest.Mocked<WorkspaceCacheService>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -103,6 +108,10 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: AiAgentRoleService,
           useValue: aiAgentRoleService,
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: workspaceCacheService,
         },
       ],
     }).compile();

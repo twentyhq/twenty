@@ -19,7 +19,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
+import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
@@ -141,7 +141,7 @@ export class AgentAsyncExecutorService {
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       const textResponse = await generateText({
-        system: `${AGENT_SYSTEM_PROMPTS.BASE}\n${AGENT_SYSTEM_PROMPTS.WORKFLOW_ADDITIONS}\n\n${agent ? agent.prompt : ''}`,
+        system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
@@ -177,7 +177,7 @@ export class AgentAsyncExecutorService {
       }
 
       const output = await generateObject({
-        system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+        system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: registeredModel.model,
         prompt: `Based on the following execution results, generate the structured output according to the schema:
 

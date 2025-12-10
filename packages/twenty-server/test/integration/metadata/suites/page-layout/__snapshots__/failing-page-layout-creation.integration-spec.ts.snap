@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout creation should fail when name is empty string 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "name should not be empty",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout creation should fail when name is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "name" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;

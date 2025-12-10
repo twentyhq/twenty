@@ -10,15 +10,14 @@ import {
 import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class DeleteRecordService {
   private readonly logger = new Logger(DeleteRecordService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
@@ -46,93 +45,85 @@ export class DeleteRecordService {
       };
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     try {
-      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectName,
-            rolePermissionConfig,
-          );
+      const repository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          objectName,
+          rolePermissionConfig,
+        );
 
-          const { flatObjectMetadataMaps, objectIdByNameSingular } =
-            repository.internalContext;
+      const { flatObjectMetadataMaps, objectIdByNameSingular } =
+        repository.internalContext;
 
-          const objectId = objectIdByNameSingular[objectName];
+      const objectId = objectIdByNameSingular[objectName];
 
-          if (!isDefined(objectId)) {
-            throw new RecordCrudException(
-              `Object ${objectName} not found`,
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
+      if (!isDefined(objectId)) {
+        throw new RecordCrudException(
+          `Object ${objectName} not found`,
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityMaps: flatObjectMetadataMaps,
-            flatEntityId: objectId,
-          });
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectId,
+      });
 
-          if (
-            !canObjectBeManagedByWorkflow({
-              nameSingular: flatObjectMetadata.nameSingular,
-              isSystem: flatObjectMetadata.isSystem,
-            })
-          ) {
-            throw new RecordCrudException(
-              'Failed to delete: Object cannot be deleted by workflow',
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
+      if (
+        !canObjectBeManagedByWorkflow({
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
+        })
+      ) {
+        throw new RecordCrudException(
+          'Failed to delete: Object cannot be deleted by workflow',
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-          const objectRecord = await repository.findOne({
-            where: {
-              id: objectRecordId,
-            },
-          });
-
-          if (!objectRecord) {
-            throw new RecordCrudException(
-              `Failed to delete: Record ${objectName} with id ${objectRecordId} not found`,
-              RecordCrudExceptionCode.RECORD_NOT_FOUND,
-            );
-          }
-
-          if (soft) {
-            const columnsToReturnForSoftDelete: string[] = [];
-
-            await repository.softDelete(
-              objectRecordId,
-              undefined,
-              columnsToReturnForSoftDelete,
-            );
-
-            this.logger.log(
-              `Record soft deleted successfully from ${objectName}`,
-            );
-
-            return {
-              success: true,
-              message: `Record soft deleted successfully from ${objectName}`,
-              result: objectRecord,
-            };
-          } else {
-            await repository.remove(objectRecord);
-
-            this.logger.log(
-              `Record permanently deleted successfully from ${objectName}`,
-            );
-
-            return {
-              success: true,
-              message: `Record permanently deleted successfully from ${objectName}`,
-              result: { id: objectRecordId },
-            };
-          }
+      const objectRecord = await repository.findOne({
+        where: {
+          id: objectRecordId,
         },
-      );
+      });
+
+      if (!objectRecord) {
+        throw new RecordCrudException(
+          `Failed to delete: Record ${objectName} with id ${objectRecordId} not found`,
+          RecordCrudExceptionCode.RECORD_NOT_FOUND,
+        );
+      }
+
+      if (soft) {
+        const columnsToReturnForSoftDelete: string[] = [];
+
+        await repository.softDelete(
+          objectRecordId,
+          undefined,
+          columnsToReturnForSoftDelete,
+        );
+
+        this.logger.log(`Record soft deleted successfully from ${objectName}`);
+
+        return {
+          success: true,
+          message: `Record soft deleted successfully from ${objectName}`,
+          result: objectRecord,
+        };
+      } else {
+        await repository.remove(objectRecord);
+
+        this.logger.log(
+          `Record permanently deleted successfully from ${objectName}`,
+        );
+
+        return {
+          success: true,
+          message: `Record permanently deleted successfully from ${objectName}`,
+          result: { id: objectRecordId },
+        };
+      }
     } catch (error) {
       if (error instanceof RecordCrudException) {
         return {
