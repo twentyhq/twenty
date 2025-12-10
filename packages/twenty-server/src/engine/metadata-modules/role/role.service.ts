@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
@@ -26,6 +25,7 @@ import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fr
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
 
 @Injectable()
 export class RoleService {
@@ -71,6 +71,31 @@ export class RoleService {
     });
   }
 
+  public async getRoleByUniversalIdentifier({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<RoleDTO | null> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
+    const flatRoleEntity = getFlatEntityByUniversalIdentifier(
+      flatRoleMaps,
+      universalIdentifier,
+    );
+
+    return isDefined(flatRoleEntity)
+      ? fromFlatRoleToRoleDto(flatRoleEntity)
+      : null;
+  }
+
   public async createRole({
     input,
     workspaceId,
@@ -80,14 +105,6 @@ export class RoleService {
     workspaceId: string;
     applicationId: string;
   }): Promise<RoleDTO> {
-    const { flatRoleMaps: existingFlatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
     const flatRoleToCreate = fromCreateRoleInputToFlatRoleToCreate({
       createRoleInput: input,
       workspaceId,
@@ -97,19 +114,15 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleMaps,
+          allFlatEntityOperationByMetadataName: {
+            role: {
               flatEntityToCreate: [flatRoleToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {},
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -159,19 +172,15 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleMaps,
+          allFlatEntityOperationByMetadataName: {
+            role: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatRoleToUpdate],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {},
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -255,22 +264,15 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleMaps,
+          allFlatEntityOperationByMetadataName: {
+            role: {
               flatEntityToCreate: [],
               flatEntityToDelete: [flatRoleToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {},
-          buildOptions: {
-            inferDeletionFromMissingEntities: {
-              role: true,
             },
-            isSystemBuild: false,
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -354,14 +356,10 @@ export class RoleService {
         workspaceId,
       );
 
-    await Promise.all(
-      userWorkspaceIds.map((userWorkspaceId) =>
-        this.userRoleService.assignRoleToUserWorkspace({
-          userWorkspaceId,
-          roleId: defaultRoleId,
-          workspaceId,
-        }),
-      ),
-    );
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      userWorkspaceIds,
+      roleId: defaultRoleId,
+      workspaceId,
+    });
   }
 }

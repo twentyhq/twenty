@@ -124,6 +124,7 @@ export class WorkspaceMigrationRunnerV2Service {
           'userWorkspaceRoleMap',
           'flatRoleTargetMaps',
           'apiKeyRoleMap',
+          'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
         ]),
       );

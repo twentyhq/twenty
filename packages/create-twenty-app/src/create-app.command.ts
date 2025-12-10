@@ -2,11 +2,11 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import { copyBaseApplicationProject } from './utils/app-template';
+import { copyBaseApplicationProject } from '@/utils/app-template';
 import kebabCase from 'lodash.kebabcase';
-import { convertToLabel } from './utils/convert-to-label';
-import { tryGitInit } from './utils/try-git-init';
-import { install } from './utils/install';
+import { convertToLabel } from '@/utils/convert-to-label';
+import { tryGitInit } from '@/utils/try-git-init';
+import { install } from '@/utils/install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
@@ -123,6 +123,6 @@ export class CreateAppCommand {
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(`cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
-    console.log('twenty app dev');
+    console.log('yarn auth');
   }
 }

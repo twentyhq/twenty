@@ -1,4 +1,4 @@
-import { type Sources } from '@/serverless-functions/types/sources.type';
+import { type Sources } from 'twenty-shared/types';
 
 export const computeNewSources = ({
   previousCode,

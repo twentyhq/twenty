@@ -17,8 +17,9 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-title-generation.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+
+import { AgentTitleGenerationService } from './agent-title-generation.service';
 
 @Injectable()
 export class AgentChatService {

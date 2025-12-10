@@ -28,6 +28,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RoleTargetModule,
   ],
   providers: [ApiKeyRoleService, PermissionsService],
-  exports: [PermissionsService],
+  exports: [PermissionsService, ApiKeyRoleService],
 })
 export class PermissionsModule {}

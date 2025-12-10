@@ -18,7 +18,6 @@ import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/t
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
@@ -36,7 +35,6 @@ export class SendEmailTool implements Tool {
   inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly sendMessageService: MessagingSendMessageService,
     @InjectRepository(FileEntity)
@@ -160,9 +158,10 @@ export class SendEmailTool implements Tool {
     return attachments;
   }
 
-  async execute(parameters: SendEmailInput): Promise<ToolOutput> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
+  async execute(
+    parameters: SendEmailInput,
+    workspaceId: string,
+  ): Promise<ToolOutput> {
     const { email, subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
 
@@ -177,13 +176,6 @@ export class SendEmailTool implements Tool {
         throw new SendEmailToolException(
           `Email '${email}' is invalid`,
           SendEmailToolExceptionCode.INVALID_EMAIL,
-        );
-      }
-
-      if (!workspaceId) {
-        throw new SendEmailToolException(
-          'Workspace ID not found',
-          SendEmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND,
         );
       }
 

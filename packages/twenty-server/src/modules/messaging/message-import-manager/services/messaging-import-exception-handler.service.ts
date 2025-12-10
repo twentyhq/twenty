@@ -5,7 +5,7 @@ import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStatus,
@@ -17,7 +17,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
-import { MessagingClearCursorsService } from 'src/modules/messaging/message-import-manager/services/messaging-clear-cursors.service';
 
 export enum MessageImportSyncStep {
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
@@ -28,9 +27,8 @@ export enum MessageImportSyncStep {
 @Injectable()
 export class MessageImportExceptionHandlerService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
-    private readonly messagingClearCursorsService: MessagingClearCursorsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -113,10 +111,6 @@ export class MessageImportExceptionHandlerService {
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
-
-    await this.messagingClearCursorsService.clearAllMessageChannelCursors(
-      messageChannel.id,
-    );
   }
 
   private async handleTemporaryException(
@@ -155,7 +149,8 @@ export class MessageImportExceptionHandlerService {
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -169,16 +164,20 @@ export class MessageImportExceptionHandlerService {
 
     switch (syncStep) {
       case MessageImportSyncStep.MESSAGE_LIST_FETCH:
-        await this.messageChannelSyncStatusService.scheduleMessageListFetch([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+          [messageChannel.id],
+          workspaceId,
+          true,
+        );
         break;
 
       case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
       case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
-        await this.messageChannelSyncStatusService.scheduleMessagesImport([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+          [messageChannel.id],
+          workspaceId,
+          true,
+        );
         break;
 
       default:
@@ -252,7 +251,7 @@ export class MessageImportExceptionHandlerService {
       return;
     }
 
-    await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
       [messageChannel.id],
       workspaceId,
     );

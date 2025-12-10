@@ -6,7 +6,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
@@ -43,7 +43,7 @@ export class MessagingMessagesImportService {
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
@@ -71,9 +71,10 @@ export class MessagingMessagesImportService {
         messageChannelId: messageChannel.id,
       });
 
-      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
-        messageChannel.id,
-      ]);
+      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
+        [messageChannel.id],
+        workspaceId,
+      );
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
@@ -92,6 +93,7 @@ export class MessagingMessagesImportService {
 
       await this.emailAliasManagerService.refreshHandleAliases(
         connectedAccountWithFreshTokens,
+        workspaceId,
       );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
@@ -100,8 +102,9 @@ export class MessagingMessagesImportService {
       );
 
       if (!messageIdsToFetch?.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
           [messageChannel.id],
+          workspaceId,
         );
 
         return await this.trackMessageImportCompleted(
@@ -156,17 +159,20 @@ export class MessagingMessagesImportService {
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
           [messageChannel.id],
+          workspaceId,
         );
       } else {
-        await this.messageChannelSyncStatusService.scheduleMessagesImport([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+          [messageChannel.id],
+          workspaceId,
+        );
       }
 
       const messageChannelRepository =
-        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+          workspaceId,
           'messageChannel',
         );
 

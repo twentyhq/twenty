@@ -6,7 +6,7 @@ import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emit
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -25,7 +25,7 @@ export type BlocklistReimportMessagesJobData = WorkspaceEventBatch<
 })
 export class BlocklistReimportMessagesJob {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -34,7 +34,8 @@ export class BlocklistReimportMessagesJob {
     const workspaceId = data.workspaceId;
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -52,7 +53,7 @@ export class BlocklistReimportMessagesJob {
         },
       });
 
-      await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
+      await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
         messageChannels.map((messageChannel) => messageChannel.id),
         workspaceId,
       );

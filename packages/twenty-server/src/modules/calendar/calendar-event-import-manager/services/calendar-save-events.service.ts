@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Any } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -20,7 +20,7 @@ type FetchedCalendarEventWithDBEvent = {
 @Injectable()
 export class CalendarSaveEventsService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
@@ -31,37 +31,42 @@ export class CalendarSaveEventsService {
     workspaceId: string,
   ): Promise<void> {
     const calendarEventRepository =
-      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventWorkspaceEntity>(
+        workspaceId,
         'calendarEvent',
       );
 
     const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelEventAssociationWorkspaceEntity>(
+        workspaceId,
         'calendarChannelEventAssociation',
       );
 
     const existingCalendarEvents = await calendarEventRepository.find({
       where: {
-        iCalUID: Any(
-          fetchedCalendarEvents.map((event) => event.iCalUID as string),
+        iCalUid: Any(
+          fetchedCalendarEvents.map((event) => event.iCalUid as string),
         ),
       },
     });
 
     const fetchedCalendarEventsWithDBEvents: FetchedCalendarEventWithDBEvent[] =
       fetchedCalendarEvents.map((event): FetchedCalendarEventWithDBEvent => {
-        const existingEventWithSameiCalUID = existingCalendarEvents.find(
-          (existingEvent) => existingEvent.iCalUID === event.iCalUID,
+        const existingEventWithSameiCalUid = existingCalendarEvents.find(
+          (existingEvent) => existingEvent.iCalUid === event.iCalUid,
         );
 
         return {
           fetchedCalendarEvent: event,
-          existingCalendarEvent: existingEventWithSameiCalUID ?? null,
+          existingCalendarEvent: existingEventWithSameiCalUid ?? null,
           newlyCreatedCalendarEvent: null,
         };
       });
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
@@ -73,7 +78,7 @@ export class CalendarSaveEventsService {
             .map(
               ({ fetchedCalendarEvent }) =>
                 ({
-                  iCalUID: fetchedCalendarEvent.iCalUID,
+                  iCalUid: fetchedCalendarEvent.iCalUid,
                   title: fetchedCalendarEvent.title,
                   description: fetchedCalendarEvent.description,
                   startsAt: fetchedCalendarEvent.startsAt,
@@ -108,7 +113,7 @@ export class CalendarSaveEventsService {
             ({ fetchedCalendarEvent, existingCalendarEvent }) => {
               const savedCalendarEvent = savedCalendarEvents.find(
                 (savedCalendarEvent) =>
-                  savedCalendarEvent.iCalUID === fetchedCalendarEvent.iCalUID,
+                  savedCalendarEvent.iCalUid === fetchedCalendarEvent.iCalUid,
               );
 
               return {
@@ -127,13 +132,13 @@ export class CalendarSaveEventsService {
             .map(({ fetchedCalendarEvent, existingCalendarEvent }) => {
               if (!existingCalendarEvent) {
                 throw new Error(
-                  `Existing calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Existing calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 
               return {
                 id: existingCalendarEvent.id,
-                iCalUID: fetchedCalendarEvent.iCalUID,
+                iCalUid: fetchedCalendarEvent.iCalUid,
                 title: fetchedCalendarEvent.title,
                 description: fetchedCalendarEvent.description,
                 startsAt: fetchedCalendarEvent.startsAt,
@@ -179,7 +184,7 @@ export class CalendarSaveEventsService {
 
             if (!calendarEventId) {
               throw new Error(
-                `Calendar event id not found for event with iCalUID ${fetchedCalendarEvent.iCalUID} - should never happen`,
+                `Calendar event id not found for event with iCalUid ${fetchedCalendarEvent.iCalUid} - should never happen`,
               );
             }
 
@@ -208,7 +213,7 @@ export class CalendarSaveEventsService {
             .flatMap(({ newlyCreatedCalendarEvent, fetchedCalendarEvent }) => {
               if (!newlyCreatedCalendarEvent?.id) {
                 throw new Error(
-                  `Newly created calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Newly created calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 
@@ -228,7 +233,7 @@ export class CalendarSaveEventsService {
             .flatMap(({ fetchedCalendarEvent, existingCalendarEvent }) => {
               if (!existingCalendarEvent?.id) {
                 throw new Error(
-                  `Existing calendar event with iCalUID ${fetchedCalendarEvent.iCalUID} not found - should never happen`,
+                  `Existing calendar event with iCalUid ${fetchedCalendarEvent.iCalUid} not found - should never happen`,
                 );
               }
 

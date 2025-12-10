@@ -35,6 +35,6 @@ export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
 
   return {
     ...existingFlatViewFilterToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };

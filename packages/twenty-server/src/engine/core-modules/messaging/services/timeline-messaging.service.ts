@@ -1,19 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
 @Injectable()
 export class TimelineMessagingService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
   public async getAndCountMessageThreads(
     personIds: string[],
+    workspaceId: string,
     offset: number,
     pageSize: number,
   ): Promise<{
@@ -28,7 +32,8 @@ export class TimelineMessagingService {
     totalNumberOfThreads: number;
   }> {
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 
@@ -87,11 +92,13 @@ export class TimelineMessagingService {
 
   public async getThreadParticipantsByThreadId(
     messageThreadIds: string[],
+    workspaceId: string,
   ): Promise<{
     [key: string]: MessageParticipantWorkspaceEntity[];
   }> {
     const messageParticipantRepository =
-      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
+        workspaceId,
         'messageParticipant',
       );
 
@@ -109,7 +116,9 @@ export class TimelineMessagingService {
       .where('message.messageThreadId = ANY(:messageThreadIds)', {
         messageThreadIds,
       })
-      .andWhere('messageParticipant.role = :role', { role: 'from' })
+      .andWhere('messageParticipant.role = :role', {
+        role: MessageParticipantRole.FROM,
+      })
       .orderBy('message.messageThreadId')
       .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
       .getMany();
@@ -176,11 +185,13 @@ export class TimelineMessagingService {
   public async getThreadVisibilityByThreadId(
     messageThreadIds: string[],
     workspaceMemberId: string,
+    workspaceId: string,
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 

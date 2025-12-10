@@ -26,6 +26,9 @@ export const useMetadataErrorHandler = () => {
     role: t`role`,
     roleTarget: t`role target`,
     agent: t`agent`,
+    pageLayout: t`page layout`,
+    pageLayoutTab: t`page layout tab`,
+    pageLayoutWidget: t`page layout widget`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(

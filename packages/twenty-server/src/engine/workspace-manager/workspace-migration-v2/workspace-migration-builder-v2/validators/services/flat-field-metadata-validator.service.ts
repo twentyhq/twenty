@@ -131,18 +131,25 @@ export class FlatFieldMetadataValidatorService {
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
-        ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+        ...validateFlatFieldMetadataName({
+          name: flatFieldMetadataToValidate.name,
+          buildOptions,
+        }),
         ...validateFlatFieldMetadataNameAvailability({
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata,
+          buildOptions,
         }),
       );
     }
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
@@ -307,13 +314,17 @@ export class FlatFieldMetadataValidatorService {
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata: parentFlatObjectMetadata,
+          buildOptions,
         }),
       );
     }
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
@@ -324,7 +335,10 @@ export class FlatFieldMetadataValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+      ...validateFlatFieldMetadataName({
+        name: flatFieldMetadataToValidate.name,
+        buildOptions,
+      }),
     );
 
     validationResult.errors.push(

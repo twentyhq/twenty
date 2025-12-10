@@ -1,10 +1,11 @@
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { AppSyncCommand } from './app-sync.command';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
+import { ApiService } from '@/cli/services/api.service';
+import { loadManifest } from '@/cli/utils/load-manifest';
 
 export class AppDevCommand {
-  private syncCommand = new AppSyncCommand();
+  private apiService = new ApiService();
 
   async execute(options: {
     appPath?: string;
@@ -17,7 +18,7 @@ export class AppDevCommand {
 
       this.logStartupInfo(appPath, debounceMs);
 
-      await this.syncCommand.execute(appPath);
+      await this.synchronize(appPath);
 
       const watcher = this.setupFileWatcher(appPath, debounceMs);
 
@@ -29,6 +30,16 @@ export class AppDevCommand {
       );
       process.exit(1);
     }
+  }
+
+  private async synchronize(appPath: string) {
+    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+
+    await this.apiService.syncApplication({
+      manifest,
+      packageJson,
+      yarnLock,
+    });
   }
 
   private logStartupInfo(appPath: string, debounceMs: number): void {
@@ -57,7 +68,7 @@ export class AppDevCommand {
       timeout = setTimeout(async () => {
         console.log(chalk.blue('🔄 Changes detected, syncing...'));
 
-        await this.syncCommand.execute(appPath);
+        await this.synchronize(appPath);
 
         console.log(
           chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),

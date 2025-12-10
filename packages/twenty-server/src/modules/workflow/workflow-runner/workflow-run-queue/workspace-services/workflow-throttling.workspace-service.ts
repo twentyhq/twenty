@@ -12,7 +12,6 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { getWorkflowRunNotStartedCountCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-workflow-run-not-started-count-cache-key.util';
 
 @Injectable()
 export class WorkflowThrottlingWorkspaceService {
@@ -26,7 +25,7 @@ export class WorkflowThrottlingWorkspaceService {
 
   async getRemainingRunsToEnqueueCount(workspaceId: string) {
     return this.throttlerService.getAvailableTokensCount(
-      `${workspaceId}-workflow-execution-soft-throttle`,
+      this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
     );
@@ -37,7 +36,7 @@ export class WorkflowThrottlingWorkspaceService {
     runsToConsume: number,
   ) {
     await this.throttlerService.consumeTokens(
-      `${workspaceId}-workflow-execution-soft-throttle`,
+      this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
       runsToConsume,
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
@@ -46,7 +45,7 @@ export class WorkflowThrottlingWorkspaceService {
 
   async throttleOrThrowIfHardLimitReached(workspaceId: string) {
     await this.throttlerService.tokenBucketThrottleOrThrow(
-      `${workspaceId}-workflow-execution-hard-throttle`,
+      this.getWorkflowExecutionHardThrottleCacheKey(workspaceId),
       1,
       this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_LIMIT'),
       this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_TTL'),
@@ -57,12 +56,9 @@ export class WorkflowThrottlingWorkspaceService {
     workspaceId: string,
     newlyEnqueuedCount = 1,
   ): Promise<void> {
-    const currentCount =
-      await this.getCurrentWorkflowRunNotStartedCount(workspaceId);
-
-    await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
-      currentCount + newlyEnqueuedCount,
+    await this.cacheStorage.incrBy(
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      newlyEnqueuedCount,
     );
   }
 
@@ -70,12 +66,9 @@ export class WorkflowThrottlingWorkspaceService {
     workspaceId: string,
     removedFromQueueCount = 1,
   ): Promise<void> {
-    const currentCount =
-      await this.getCurrentWorkflowRunNotStartedCount(workspaceId);
-
-    await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
-      currentCount - removedFromQueueCount,
+    await this.cacheStorage.incrBy(
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      -removedFromQueueCount,
     );
   }
 
@@ -123,12 +116,27 @@ export class WorkflowThrottlingWorkspaceService {
     });
   }
 
+  async acquireWorkflowEnqueueLock(
+    workspaceId: string,
+    ttlMs = 60_000,
+  ): Promise<boolean> {
+    const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
+
+    return this.cacheStorage.acquireLock(key, ttlMs);
+  }
+
+  async releaseWorkflowEnqueueLock(workspaceId: string): Promise<void> {
+    const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
+
+    await this.cacheStorage.releaseLock(key);
+  }
+
   private async setWorkflowRunNotStartedCount(
     workspaceId: string,
     count: number,
   ): Promise<void> {
     await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
       count,
     );
   }
@@ -136,10 +144,30 @@ export class WorkflowThrottlingWorkspaceService {
   private async getCurrentWorkflowRunNotStartedCount(
     workspaceId: string,
   ): Promise<number> {
-    const key = getWorkflowRunNotStartedCountCacheKey(workspaceId);
+    const key = this.getWorkflowRunNotStartedCountCacheKey(workspaceId);
 
     const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
 
     return Math.max(0, currentCount);
+  }
+
+  private getWorkflowRunNotStartedCountCacheKey(workspaceId: string): string {
+    return `workflow-run-not-started-count:${workspaceId}`;
+  }
+
+  private getWorkflowEnqueueRunningCacheKey(workspaceId: string): string {
+    return `workflow-enqueue-running:${workspaceId}`;
+  }
+
+  private getWorkflowExecutionSoftThrottleCacheKey(
+    workspaceId: string,
+  ): string {
+    return `workflow:execution-soft-throttle:${workspaceId}`;
+  }
+
+  private getWorkflowExecutionHardThrottleCacheKey(
+    workspaceId: string,
+  ): string {
+    return `workflow:execution-hard-throttle:${workspaceId}`;
   }
 }

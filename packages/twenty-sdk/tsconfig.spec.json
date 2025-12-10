@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "**/__mocks__/**/*",
+    "**/__tests__/**/*",
+    "vite.config.ts",
+    "scripts/generateBarrels.ts",
+    "jest.config.mjs",
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.e2e-spec.ts"
+  ]
+}
