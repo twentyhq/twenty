@@ -8,7 +8,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
+import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';
 import { DashboardGraphqlApiExceptionFilter } from 'src/modules/dashboard/utils/dashboard-graphql-api-exception.filter';
 
@@ -24,12 +24,12 @@ export class DashboardResolver {
     private readonly dashboardDuplicationService: DashboardDuplicationService,
   ) {}
 
-  @Mutation(() => DashboardDTO)
+  @Mutation(() => DuplicatedDashboardDTO)
   @UseGuards(NoPermissionGuard)
   async duplicateDashboard(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<DashboardDTO> {
+  ): Promise<DuplicatedDashboardDTO> {
     return this.dashboardDuplicationService.duplicateDashboard(
       id,
       workspace.id,

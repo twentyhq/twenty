@@ -3,7 +3,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
+import { type DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 
 import {
   type DuplicateOneDashboardFactoryInput,
@@ -21,7 +21,7 @@ export const duplicateOneDashboard = async ({
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  duplicateDashboard: DashboardDTO;
+  duplicateDashboard: DuplicatedDashboardDTO;
 }> => {
   const graphqlOperation = duplicateOneDashboardQueryFactory({
     input,

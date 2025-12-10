@@ -4,7 +4,7 @@ import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
+import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
   DashboardExceptionCode,
@@ -25,7 +25,7 @@ export class DashboardDuplicationService {
   async duplicateDashboard(
     dashboardId: string,
     workspaceId: string,
-  ): Promise<DashboardDTO> {
+  ): Promise<DuplicatedDashboardDTO> {
     const dashboardRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<DashboardWorkspaceEntity>(
         workspaceId,

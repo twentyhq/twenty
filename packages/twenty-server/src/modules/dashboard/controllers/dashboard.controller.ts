@@ -5,7 +5,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
+import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import { DashboardRestApiExceptionFilter } from 'src/modules/dashboard/filters/dashboard-rest-api-exception.filter';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';
 
@@ -21,7 +21,7 @@ export class DashboardController {
   async duplicate(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<DashboardDTO> {
+  ): Promise<DuplicatedDashboardDTO> {
     return this.dashboardDuplicationService.duplicateDashboard(
       id,
       workspace.id,
