@@ -1,5 +1,4 @@
 import { isDefined } from 'class-validator';
-import { v4 } from 'uuid';
 
 import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -92,7 +91,7 @@ export const createStandardViewFlatMetadata = <
     : null;
 
   return {
-    id: v4(),
+    id: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
     universalIdentifier: viewDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
