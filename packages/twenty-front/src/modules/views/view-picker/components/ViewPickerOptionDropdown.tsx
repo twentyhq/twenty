@@ -16,6 +16,7 @@ import {
   IconLock,
   IconPencil,
   IconTrash,
+  OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -97,7 +98,7 @@ export const ViewPickerOptionDropdown = ({
   return (
     <>
       <MenuItemWithOptionDropdown
-        text={view.name}
+        text={<OverflowingTextWithTooltip text={view.name} />}
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!shouldShowIconAlways}
