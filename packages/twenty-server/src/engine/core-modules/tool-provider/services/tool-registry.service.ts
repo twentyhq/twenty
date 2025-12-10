@@ -222,7 +222,7 @@ export class ToolRegistryService {
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
     const rolePermissionConfig: RolePermissionConfig = {
-      intersectionOf: [context.roleId],
+      unionOf: [context.roleId],
     };
 
     for (const name of names) {
@@ -264,7 +264,7 @@ export class ToolRegistryService {
     }
 
     const match = name.match(
-      /^(find|find_one|create|update|soft_delete)_(.+)$/,
+      /^(find_one|soft_delete|find|create|update)_(.+)$/,
     );
 
     if (match) {
@@ -430,51 +430,53 @@ export class ToolRegistryService {
         continue;
       }
 
-      const objectName = flatObject.nameSingular;
-      const objectLabel = flatObject.labelSingular;
+      const objectNameSingular = flatObject.nameSingular;
+      const objectNamePlural = flatObject.namePlural;
+      const objectLabelSingular = flatObject.labelSingular;
+      const objectLabelPlural = flatObject.labelPlural;
 
       if (permission.canReadObjectRecords) {
         index.push({
-          name: `find_${objectName}`,
-          description: `Search and find ${objectLabel} records`,
+          name: `find_${objectNamePlural}`,
+          description: `Search and find ${objectLabelPlural}`,
           category: 'database',
-          objectName,
+          objectName: objectNameSingular,
           operation: 'find',
         });
 
         index.push({
-          name: `find_one_${objectName}`,
-          description: `Get a single ${objectLabel} record by ID`,
+          name: `find_one_${objectNameSingular}`,
+          description: `Get a single ${objectLabelSingular} by ID`,
           category: 'database',
-          objectName,
+          objectName: objectNameSingular,
           operation: 'find_one',
         });
       }
 
       if (permission.canUpdateObjectRecords) {
         index.push({
-          name: `create_${objectName}`,
-          description: `Create new ${objectLabel} records`,
+          name: `create_${objectNameSingular}`,
+          description: `Create a new ${objectLabelSingular}`,
           category: 'database',
-          objectName,
+          objectName: objectNameSingular,
           operation: 'create',
         });
 
         index.push({
-          name: `update_${objectName}`,
-          description: `Update existing ${objectLabel} records`,
+          name: `update_${objectNameSingular}`,
+          description: `Update an existing ${objectLabelSingular}`,
           category: 'database',
-          objectName,
+          objectName: objectNameSingular,
           operation: 'update',
         });
       }
 
       if (permission.canSoftDeleteObjectRecords) {
         index.push({
-          name: `soft_delete_${objectName}`,
-          description: `Soft delete ${objectLabel} records`,
+          name: `soft_delete_${objectNameSingular}`,
+          description: `Soft delete a ${objectLabelSingular}`,
           category: 'database',
-          objectName,
+          objectName: objectNameSingular,
           operation: 'soft_delete',
         });
       }
@@ -505,6 +507,13 @@ export class ToolRegistryService {
         allRolePermissions.length === 1
           ? allRolePermissions[0]
           : computePermissionIntersection(allRolePermissions);
+    } else if ('unionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.unionOf.map(
+        (roleId: string) => rolesPermissions[roleId],
+      );
+
+      // For unionOf with single role, just use that role's permissions
+      objectPermissions = allRolePermissions[0];
     } else {
       return {};
     }
@@ -519,7 +528,10 @@ export class ToolRegistryService {
 
     const flatObject = Object.values(flatObjectMetadataMaps.byId)
       .filter(isDefined)
-      .find((obj) => obj.nameSingular === objectName);
+      .find(
+        (obj) =>
+          obj.nameSingular === objectName || obj.namePlural === objectName,
+      );
 
     if (!flatObject) {
       return {};

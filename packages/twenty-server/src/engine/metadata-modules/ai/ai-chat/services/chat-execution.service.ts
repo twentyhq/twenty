@@ -13,9 +13,7 @@ import {
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { In } from 'typeorm';
 
-import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import {
   type ToolIndexEntry,
@@ -30,28 +28,22 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
-  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
+  browsingContext: BrowsingContextType | null;
 };
 
 export type ChatExecutionResult = {
@@ -75,8 +67,6 @@ export class ChatExecutionService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
@@ -84,7 +74,7 @@ export class ChatExecutionService {
     workspace,
     userWorkspaceId,
     messages,
-    recordIdsByObjectMetadataNameSingular,
+    browsingContext,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -96,15 +86,9 @@ export class ChatExecutionService {
 
     const lastUserMessage = this.getLastUserMessage(messages);
 
-    let recordContext: string | undefined;
-
-    if (recordIdsByObjectMetadataNameSingular.length > 0) {
-      recordContext = await this.buildContextFromRecords(
-        workspace,
-        recordIdsByObjectMetadataNameSingular,
-        userWorkspaceId,
-      );
-    }
+    const contextString = browsingContext
+      ? this.buildContextFromBrowsingContext(workspace, browsingContext)
+      : undefined;
 
     const [toolCatalog, initialAgents] = await Promise.all([
       this.toolRegistry.buildToolIndex(workspace.id, roleId),
@@ -157,7 +141,7 @@ export class ChatExecutionService {
       toolCatalog,
       initialAgents,
       preloadedToolNames,
-      recordContext,
+      contextString,
     );
 
     this.logger.log(
@@ -207,111 +191,58 @@ export class ChatExecutionService {
     };
   }
 
-  private async buildContextFromRecords(
+  private buildContextFromBrowsingContext(
     workspace: WorkspaceEntity,
-    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
-    userWorkspaceId: string,
-  ): Promise<string> {
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'userWorkspaceRoleMap',
-      ]);
-
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
-
-    if (!roleId) {
-      throw new AgentException(
-        'Failed to retrieve user role.',
-        AgentExceptionCode.ROLE_NOT_FOUND,
+    browsingContext: BrowsingContextType,
+  ): string {
+    if (browsingContext.type === 'recordPage') {
+      return this.buildRecordPageContext(
+        workspace,
+        browsingContext.objectNameSingular,
+        browsingContext.recordId,
       );
     }
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId: workspace.id,
-      });
+    if (browsingContext.type === 'listView') {
+      return this.buildListViewContext(browsingContext);
+    }
 
-    const flatObjectMetadataMaps =
-      workspaceDataSource.internalContext.flatObjectMetadataMaps;
-    const flatFieldMetadataMaps =
-      workspaceDataSource.internalContext.flatFieldMetadataMaps;
-    const objectIdByNameSingular =
-      workspaceDataSource.internalContext.objectIdByNameSingular;
-    const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
+    return '';
+  }
 
-    const contextObject = (
-      await Promise.all(
-        recordIdsByObjectMetadataNameSingular.map(
-          async (recordsWithObjectMetadataNameSingular) => {
-            if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
-              return [];
-            }
+  private buildRecordPageContext(
+    workspace: WorkspaceEntity,
+    objectNameSingular: string,
+    recordId: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      }),
+    });
 
-            const objectMetadataId =
-              objectIdByNameSingular[
-                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular
-              ];
-            const objectMetadataMapItem = objectMetadataId
-              ? flatObjectMetadataMaps.byId[objectMetadataId]
-              : undefined;
+    return `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
+  }
 
-            if (!objectMetadataMapItem) {
-              this.logger.warn(
-                `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
-              );
+  private buildListViewContext(browsingContext: {
+    type: 'listView';
+    objectNameSingular: string;
+    viewId: string;
+    viewName: string;
+    filterDescriptions: string[];
+  }): string {
+    const { objectNameSingular, viewName, filterDescriptions } =
+      browsingContext;
 
-              return [];
-            }
+    let context = `The user is viewing a list of ${objectNameSingular} records in a view called "${viewName}".`;
 
-            const repository = workspaceDataSource.getRepository(
-              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              { unionOf: [roleId] },
-            );
+    if (filterDescriptions.length > 0) {
+      context += `\nFilters applied: ${filterDescriptions.join(', ')}`;
+    }
 
-            const restrictedFields =
-              objectMetadataPermissions?.[roleId]?.[objectMetadataMapItem.id]
-                ?.restrictedFields ?? {};
-
-            const hasRestrictedFields = Object.values(restrictedFields).some(
-              (field) => field.canRead === false,
-            );
-
-            const selectOptions = hasRestrictedFields
-              ? getAllSelectableColumnNames({
-                  restrictedFields,
-                  objectMetadata: {
-                    objectMetadataMapItem,
-                    flatFieldMetadataMaps,
-                  },
-                })
-              : undefined;
-
-            return (
-              await repository.find({
-                ...(selectOptions && { select: selectOptions }),
-                where: {
-                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
-                },
-              })
-            ).map((record) => {
-              return {
-                ...record,
-                resourceUrl: this.workspaceDomainsService.buildWorkspaceURL({
-                  workspace,
-                  pathname: getAppPath(AppPath.RecordShowPage, {
-                    objectNameSingular:
-                      recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-                    objectRecordId: record.id,
-                  }),
-                }),
-              };
-            });
-          },
-        ),
-      )
-    ).flat(2);
-
-    return JSON.stringify(contextObject);
+    return context;
   }
 
   private getLastUserMessage(
@@ -336,7 +267,7 @@ export class ChatExecutionService {
     toolCatalog: ToolIndexEntry[],
     agents: AgentEntity[],
     preloadedTools: string[],
-    recordContext?: string,
+    contextString?: string,
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
@@ -353,9 +284,9 @@ export class ChatExecutionService {
 
     parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
 
-    if (recordContext) {
+    if (contextString) {
       parts.push(
-        `\nCONTEXT (records the user is currently viewing):\n${recordContext}`,
+        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
       );
     }
 
