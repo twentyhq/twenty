@@ -38,6 +38,9 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
+          // Note: Configuration is null by default. For testing purposes,
+          // use useTempNoteFieldsConfiguration() hook at runtime to get
+          // a configuration with actual field metadata IDs from the backend.
           configuration: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
