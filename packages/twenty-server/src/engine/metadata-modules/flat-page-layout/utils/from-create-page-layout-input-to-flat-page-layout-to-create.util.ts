@@ -22,7 +22,7 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
       ['name'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const pageLayoutId = v4();
 
   return {

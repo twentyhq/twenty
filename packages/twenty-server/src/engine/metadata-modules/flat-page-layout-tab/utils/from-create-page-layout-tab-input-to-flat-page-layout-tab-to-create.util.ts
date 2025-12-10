@@ -21,7 +21,7 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
       ['title'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const pageLayoutTabId = v4();
 
   return {

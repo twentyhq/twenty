@@ -15,12 +15,12 @@ export const reconstructFlatPageLayoutTabWithWidgets = ({
   tab: FlatPageLayoutTab;
   flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
 }): FlatPageLayoutTabWithWidgets => {
-  const widgets = Object.values(flatPageLayoutWidgetMaps.byId)
-    .filter(isDefined)
-    .filter(
-      (widget) =>
-        widget.pageLayoutTabId === tab.id && !isDefined(widget.deletedAt),
-    );
+  const widgets = Object.values(flatPageLayoutWidgetMaps.byId).filter(
+    (widget): widget is FlatPageLayoutWidget =>
+      isDefined(widget) &&
+      widget.pageLayoutTabId === tab.id &&
+      !isDefined(widget.deletedAt),
+  );
 
   return {
     ...tab,

@@ -328,10 +328,6 @@ export class PageLayoutService {
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
       });
 
-    if (flatPageLayoutToDestroy.type === PageLayoutType.DASHBOARD) {
-      await this.destroyAssociatedDashboards(id, workspaceId);
-    }
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -352,6 +348,10 @@ export class PageLayoutService {
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying page layout',
       );
+    }
+
+    if (flatPageLayoutToDestroy.type === PageLayoutType.DASHBOARD) {
+      await this.destroyAssociatedDashboards(id, workspaceId);
     }
 
     return flatPageLayoutToDestroy;
