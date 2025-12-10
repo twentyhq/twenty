@@ -136,15 +136,15 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         instanceId={`select-option-label-${option.id}`}
         value={option.label}
         onChange={(label) => {
-          const optionNameHasBeenEdited = !(
-            option.value === computeOptionValueFromLabel(option.label)
-          );
+          const shouldAutoGenerateValue =
+            isNewRow &&
+            option.value === computeOptionValueFromLabel(option.label);
           onChange({
             ...option,
             label,
-            value: optionNameHasBeenEdited
-              ? option.value
-              : computeOptionValueFromLabel(label),
+            value: shouldAutoGenerateValue
+              ? computeOptionValueFromLabel(label)
+              : option.value,
           });
         }}
         RightIcon={isDefault ? IconCheck : undefined}
