@@ -2199,6 +2199,11 @@ msgstr "이메일을 보내기 위해 SMTP 설정을 구성하십시오."
 msgid "Configure these DNS records with your domain provider"
 msgstr "도메인 제공업체와 함께 이 DNS 기록 구성하기"
 
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -4998,11 +5003,6 @@ msgstr "iFrame 설정"
 msgid "iFrame Widget"
 msgstr "iFrame 위젯"
 
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "iFrameConfiguration은 지원되지 않습니다"
-
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -6515,6 +6515,11 @@ msgstr ""
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
+msgstr ""
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
 msgstr ""
 
 #. js-lingui-id: 23Rceg
