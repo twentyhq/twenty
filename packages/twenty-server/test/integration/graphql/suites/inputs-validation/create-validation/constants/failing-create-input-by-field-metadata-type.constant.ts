@@ -1,4 +1,5 @@
 import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
+import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const failingCreateInputByFieldMetadataType: {
@@ -160,8 +161,33 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
-  // todo @guillim
-  [FieldMetadataType.MORPH_RELATION]: [],
+  [FieldMetadataType.MORPH_RELATION]: [
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: 'not-a-morph-relation',
+      },
+    },
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {},
+      },
+    },
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: [],
+      },
+    },
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: true,
+      },
+    },
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: 1,
+      },
+    },
+  ],
   [FieldMetadataType.RATING]: [
     {
       input: {
