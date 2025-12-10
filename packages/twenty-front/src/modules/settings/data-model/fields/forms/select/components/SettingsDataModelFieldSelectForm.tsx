@@ -133,6 +133,8 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
 
+  const [newOptionIds, setNewOptionIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
 
@@ -142,6 +144,7 @@ export const SettingsDataModelFieldSelectForm = ({
       const optionsWithNew = [...initialOptions, newOption];
 
       setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setNewOptionIds((prev) => new Set([...prev, newOption.id]));
       setHasAppliedNewOption(true);
     }
   }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
@@ -228,24 +231,25 @@ export const SettingsDataModelFieldSelectForm = ({
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');
 
-    const newOptions = [
-      ...currentOptions,
-      generateNewSelectOption(currentOptions),
-    ];
+    const newOption = generateNewSelectOption(currentOptions);
 
-    return newOptions;
+    const newOptions = [...currentOptions, newOption];
+
+    return { newOptions, newOptionId: newOption.id };
   };
 
   const handleAddOption = () => {
-    const newOptions = getOptionsWithNewOption();
+    const { newOptions, newOptionId } = getOptionsWithNewOption();
 
     setFormValue('options', newOptions, { shouldDirty: true });
+    setNewOptionIds((prev) => new Set([...prev, newOptionId]));
   };
 
   const handleInputEnter = () => {
-    const newOptions = getOptionsWithNewOption();
+    const { newOptions, newOptionId } = getOptionsWithNewOption();
 
     setFormValue('options', newOptions, { shouldDirty: true });
+    setNewOptionIds((prev) => new Set([...prev, newOptionId]));
   };
 
   const theme = useTheme();
@@ -303,7 +307,7 @@ export const SettingsDataModelFieldSelectForm = ({
                           <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
-                            isNewRow={index === options.length - 1}
+                            isNewRow={newOptionIds.has(option.id)}
                             onChange={(nextOption) => {
                               if (disabled) {
                                 return;
