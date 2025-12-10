@@ -10,6 +10,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -68,6 +69,11 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       return;
     }
 
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const tableName = 'timelineActivity';
 
@@ -104,9 +110,26 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       }),
     );
 
+    const timelineActivityObjectMetadata =
+      await this.objectMetadataRepository.findOne({
+        where: {
+          workspaceId,
+          nameSingular: 'timelineActivity',
+        },
+        relations: ['fields'],
+      });
+
+    if (!timelineActivityObjectMetadata) {
+      this.logger.error(
+        `🟥 Timeline activity object metadata not found for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
     for (const { new: newField, old: oldField } of fieldMigrations) {
       try {
-        await this.coreDataSource.query(
+        await queryRunner.query(
           `ALTER TABLE "${schemaName}"."${tableName}"
            RENAME COLUMN "${oldField}" TO "${newField}"`,
         );
@@ -125,23 +148,6 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
 
     this.logger.log(`✅ Successfully migrated timeline activity records`);
 
-    const timelineActivityObjectMetadata =
-      await this.objectMetadataRepository.findOne({
-        where: {
-          workspaceId,
-          nameSingular: 'timelineActivity',
-        },
-        relations: ['fields'],
-      });
-
-    if (!timelineActivityObjectMetadata) {
-      this.logger.error(
-        `🟥 Timeline activity object metadata not found for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
     const objectNamesToMigrate = fieldNameMigrations.map(
       ({ old: oldFieldName }) => oldFieldName,
     );
@@ -156,7 +162,6 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       relatedObjectMetadata.map((obj) => [obj.nameSingular, obj]),
     );
 
-    // todo
     const morphId = TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId;
 
     for (const objectName of objectNamesToMigrate) {
@@ -186,11 +191,13 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
 
       const settings = {
         ...fieldToMigrate.settings,
-        joinColumnName: `${newFieldName}Id`,
+        joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+          name: newFieldName,
+        }),
       };
 
       try {
-        const result = await this.coreDataSource.query(
+        const result = await queryRunner.query(
           `UPDATE core."fieldMetadata"
            SET name = $1, type = 'MORPH_RELATION', "morphId" = $3, settings = $4
            WHERE id = $2`,
@@ -216,6 +223,8 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
 
     this.logger.log(`✅ Successfully migrated timeline activity fieldmetadata`);
 
+    await queryRunner.commitTransaction();
+
     await this.featureFlagService.enableFeatureFlags(
       [FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED],
       workspaceId,
@@ -224,6 +233,7 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
+      'featureFlagsMap',
     ]);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
