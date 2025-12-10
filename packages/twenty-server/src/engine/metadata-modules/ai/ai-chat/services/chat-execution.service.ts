@@ -44,8 +44,9 @@ import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/cons
 import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -75,8 +76,7 @@ export class ChatExecutionService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
@@ -212,106 +212,116 @@ export class ChatExecutionService {
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
   ): Promise<string> {
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'userWorkspaceRoleMap',
-      ]);
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+    const contextFromRecords =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+            permissionsPerRoleId: objectMetadataPermissions,
+            userWorkspaceRoleMap,
+          } = getWorkspaceContext();
 
-    if (!roleId) {
-      throw new AgentException(
-        'Failed to retrieve user role.',
-        AgentExceptionCode.ROLE_NOT_FOUND,
-      );
-    }
+          const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId: workspace.id,
-      });
+          if (!roleId) {
+            throw new AgentException(
+              'Failed to retrieve user role.',
+              AgentExceptionCode.ROLE_NOT_FOUND,
+            );
+          }
 
-    const flatObjectMetadataMaps =
-      workspaceDataSource.internalContext.flatObjectMetadataMaps;
-    const flatFieldMetadataMaps =
-      workspaceDataSource.internalContext.flatFieldMetadataMaps;
-    const objectIdByNameSingular =
-      workspaceDataSource.internalContext.objectIdByNameSingular;
-    const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
-
-    const contextObject = (
-      await Promise.all(
-        recordIdsByObjectMetadataNameSingular.map(
-          async (recordsWithObjectMetadataNameSingular) => {
-            if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
-              return [];
-            }
-
-            const objectMetadataId =
-              objectIdByNameSingular[
-                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular
-              ];
-            const objectMetadataMapItem = objectMetadataId
-              ? flatObjectMetadataMaps.byId[objectMetadataId]
-              : undefined;
-
-            if (!objectMetadataMapItem) {
-              this.logger.warn(
-                `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
-              );
-
-              return [];
-            }
-
-            const repository = workspaceDataSource.getRepository(
-              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              { unionOf: [roleId] },
+          const workspaceDataSource =
+            await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
+              workspace.id,
             );
 
-            const restrictedFields =
-              objectMetadataPermissions?.[roleId]?.[objectMetadataMapItem.id]
-                ?.restrictedFields ?? {};
+          const contextObject = (
+            await Promise.all(
+              recordIdsByObjectMetadataNameSingular.map(
+                async (recordsWithObjectMetadataNameSingular) => {
+                  if (
+                    recordsWithObjectMetadataNameSingular.recordIds.length === 0
+                  ) {
+                    return [];
+                  }
 
-            const hasRestrictedFields = Object.values(restrictedFields).some(
-              (field) => field.canRead === false,
-            );
+                  const objectMetadataId =
+                    objectIdByNameSingular[
+                      recordsWithObjectMetadataNameSingular
+                        .objectMetadataNameSingular
+                    ];
+                  const objectMetadataMapItem = objectMetadataId
+                    ? flatObjectMetadataMaps.byId[objectMetadataId]
+                    : undefined;
 
-            const selectOptions = hasRestrictedFields
-              ? getAllSelectableColumnNames({
-                  restrictedFields,
-                  objectMetadata: {
-                    objectMetadataMapItem,
-                    flatFieldMetadataMaps,
-                  },
-                })
-              : undefined;
+                  if (!objectMetadataMapItem) {
+                    this.logger.warn(
+                      `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
+                    );
 
-            return (
-              await repository.find({
-                ...(selectOptions && { select: selectOptions }),
-                where: {
-                  id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                    return [];
+                  }
+
+                  const repository = workspaceDataSource.getRepository(
+                    recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+                    { unionOf: [roleId] },
+                  );
+
+                  const restrictedFields =
+                    objectMetadataPermissions?.[roleId]?.[
+                      objectMetadataMapItem.id
+                    ]?.restrictedFields ?? {};
+
+                  const hasRestrictedFields = Object.values(
+                    restrictedFields,
+                  ).some((field) => field.canRead === false);
+
+                  const selectOptions = hasRestrictedFields
+                    ? getAllSelectableColumnNames({
+                        restrictedFields,
+                        objectMetadata: {
+                          objectMetadataMapItem,
+                          flatFieldMetadataMaps,
+                        },
+                      })
+                    : undefined;
+
+                  return (
+                    await repository.find({
+                      ...(selectOptions && { select: selectOptions }),
+                      where: {
+                        id: In(recordsWithObjectMetadataNameSingular.recordIds),
+                      },
+                    })
+                  ).map((record) => {
+                    return {
+                      ...record,
+                      resourceUrl:
+                        this.workspaceDomainsService.buildWorkspaceURL({
+                          workspace,
+                          pathname: getAppPath(AppPath.RecordShowPage, {
+                            objectNameSingular:
+                              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+                            objectRecordId: record.id,
+                          }),
+                        }),
+                    };
+                  });
                 },
-              })
-            ).map((record) => {
-              return {
-                ...record,
-                resourceUrl: this.workspaceDomainsService.buildWorkspaceURL({
-                  workspace,
-                  pathname: getAppPath(AppPath.RecordShowPage, {
-                    objectNameSingular:
-                      recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-                    objectRecordId: record.id,
-                  }),
-                }),
-              };
-            });
-          },
-        ),
-      )
-    ).flat(2);
+              ),
+            )
+          ).flat(2);
 
-    return JSON.stringify(contextObject);
+          return JSON.stringify(contextObject);
+        },
+      );
+
+    return contextFromRecords;
   }
 
   private getLastUserMessage(

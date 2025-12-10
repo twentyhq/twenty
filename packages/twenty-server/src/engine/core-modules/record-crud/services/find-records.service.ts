@@ -25,16 +25,17 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class FindRecordsService {
   private readonly logger = new Logger(FindRecordsService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -58,82 +59,88 @@ export class FindRecordsService {
       };
     }
 
+    const authContext = buildSystemAuthContext(workspaceId);
+
     try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          rolePermissionConfig,
-        );
+      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectName,
+            rolePermissionConfig,
+          );
 
-      const {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      } = repository.internalContext;
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          } = repository.internalContext;
 
-      const objectId = objectIdByNameSingular[objectName];
+          const objectId = objectIdByNameSingular[objectName];
 
-      if (!isDefined(objectId)) {
-        throw new RecordCrudException(
-          `Object ${objectName} not found`,
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
+          if (!isDefined(objectId)) {
+            throw new RecordCrudException(
+              `Object ${objectName} not found`,
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
+          }
 
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: objectId,
-      });
+          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatObjectMetadataMaps,
+            flatEntityId: objectId,
+          });
 
-      const graphqlQueryParser = new GraphqlQueryParser(
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
+          const graphqlQueryParser = new GraphqlQueryParser(
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
 
-      const records = await this.getObjectRecords({
-        objectName,
-        filter,
-        orderBy,
-        limit,
-        offset,
-        repository,
-        graphqlQueryParser,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      });
+          const records = await this.getObjectRecords({
+            objectName,
+            filter,
+            orderBy,
+            limit,
+            offset,
+            repository,
+            graphqlQueryParser,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          });
 
-      const totalCount = await this.getTotalCount({
-        objectName,
-        filter,
-        repository,
-        graphqlQueryParser,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      });
+          const totalCount = await this.getTotalCount({
+            objectName,
+            filter,
+            repository,
+            graphqlQueryParser,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          });
 
-      this.logger.log(`Found ${records.length} records in ${objectName}`);
+          this.logger.log(`Found ${records.length} records in ${objectName}`);
 
-      const recordReferences = records.map((record) => ({
-        objectNameSingular: objectName,
-        recordId: record.id as string,
-        displayName: getRecordDisplayName(
-          record,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        ),
-      }));
+          const recordReferences = records.map((record) => ({
+            objectNameSingular: objectName,
+            recordId: record.id as string,
+            displayName: getRecordDisplayName(
+              record,
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+          }));
 
-      return {
-        success: true,
-        message: `Found ${records.length} ${objectName} records`,
-        result: {
-          records,
-          count: totalCount,
+          return {
+            success: true,
+            message: `Found ${records.length} ${objectName} records`,
+            result: {
+              records,
+              count: totalCount,
+            },
+            recordReferences,
+          };
         },
-        recordReferences,
-      };
+      );
     } catch (error) {
       this.logger.error(`Failed to find records: ${error}`);
 

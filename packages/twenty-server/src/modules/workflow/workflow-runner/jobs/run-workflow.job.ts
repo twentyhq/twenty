@@ -7,6 +7,8 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
@@ -26,6 +28,7 @@ export class RunWorkflowJob {
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly metricsService: MetricsService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   @Process(RUN_WORKFLOW_JOB_NAME)
@@ -34,27 +37,34 @@ export class RunWorkflowJob {
     lastExecutedStepId,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
-    try {
-      if (lastExecutedStepId) {
-        await this.resumeWorkflowExecution({
-          workspaceId,
-          workflowRunId,
-          lastExecutedStepId,
-        });
-      } else {
-        await this.startWorkflowExecution({
-          workflowRunId,
-          workspaceId,
-        });
-      }
-    } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workspaceId,
-        workflowRunId,
-        status: WorkflowRunStatus.FAILED,
-        error: error.message,
-      });
-    }
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        try {
+          if (lastExecutedStepId) {
+            await this.resumeWorkflowExecution({
+              workspaceId,
+              workflowRunId,
+              lastExecutedStepId,
+            });
+          } else {
+            await this.startWorkflowExecution({
+              workflowRunId,
+              workspaceId,
+            });
+          }
+        } catch (error) {
+          await this.workflowRunWorkspaceService.endWorkflowRun({
+            workspaceId,
+            workflowRunId,
+            status: WorkflowRunStatus.FAILED,
+            error: error.message,
+          });
+        }
+      },
+    );
   }
 
   private async startWorkflowExecution({

@@ -7,9 +7,8 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -27,9 +26,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -37,7 +34,6 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
 export class ImapSmtpCaldavResolver {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
     private readonly featureFlagService: FeatureFlagService,
@@ -50,15 +46,11 @@ export class ImapSmtpCaldavResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+    const connectedAccount =
+      await this.imapSmtpCaldavApisService.getImapSmtpCaldavConnectedAccount(
         workspace.id,
-        'connectedAccount',
+        id,
       );
-
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id, provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV },
-    });
 
     if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
       throw new UserInputError(

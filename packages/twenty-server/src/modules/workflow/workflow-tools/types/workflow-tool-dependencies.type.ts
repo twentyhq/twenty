@@ -1,5 +1,5 @@
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import type { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import type { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import type { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import type { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import type { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -12,7 +12,7 @@ export type WorkflowToolDependencies = {
   workflowVersionService: WorkflowVersionWorkspaceService;
   workflowTriggerService: WorkflowTriggerWorkspaceService;
   workflowSchemaService: WorkflowSchemaWorkspaceService;
-  twentyORMGlobalManager: TwentyORMGlobalManager;
+  globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   recordPositionService: RecordPositionService;
 };
 

@@ -17,6 +17,7 @@ import {
   AppTooltip,
   type IconComponent,
   Label,
+  OverflowingTextWithTooltip,
   type TablerIconsProps,
   TooltipDelay,
   TooltipPosition,
@@ -345,7 +346,9 @@ export const NavigationDrawerItem = ({
 
           <StyledLabelParent>
             <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
+              <StyledItemLabel>
+                <OverflowingTextWithTooltip text={label} />
+              </StyledItemLabel>
               {secondaryLabel && (
                 <StyledItemSecondaryLabel>
                   {' · '}
