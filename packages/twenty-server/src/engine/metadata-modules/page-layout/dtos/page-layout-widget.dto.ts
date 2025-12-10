@@ -50,11 +50,11 @@ export class PageLayoutWidgetDTO {
   configuration: WidgetConfigurationInterface | null;
 
   @Field()
-  createdAt: Date;
+  createdAt: string;
 
   @Field()
-  updatedAt: Date;
+  updatedAt: string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+  @Field(() => String, { nullable: true })
+  deletedAt?: string | null;
 }
