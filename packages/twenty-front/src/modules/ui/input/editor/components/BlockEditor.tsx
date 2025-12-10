@@ -1,7 +1,7 @@
 import { filterSuggestionItems } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ClipboardEvent } from 'react';
 
@@ -21,17 +21,22 @@ interface BlockEditorProps {
   onChange?: () => void;
   readonly?: boolean;
   excludeSlashMenuItems?: string[];
+  minHeight?: number;
 }
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-const StyledEditor = styled.div`
+const StyledEditor = styled.div<{ minHeight?: number }>`
   width: 100%;
 
   & .editor {
     background: transparent;
     font-size: 13px;
     color: ${({ theme }) => theme.font.color.primary};
-    min-height: 400px;
+    ${({ minHeight }) =>
+      minHeight &&
+      css`
+        min-height: ${minHeight}px;
+      `}
   }
   & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
@@ -140,6 +145,7 @@ export const BlockEditor = ({
   onPaste,
   readonly,
   excludeSlashMenuItems,
+  minHeight,
 }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
@@ -161,7 +167,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor>
+    <StyledEditor minHeight={minHeight}>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}

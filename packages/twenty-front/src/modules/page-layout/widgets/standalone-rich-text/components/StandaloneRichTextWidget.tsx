@@ -37,7 +37,7 @@ const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   height: 100%;
   width: 100%;
   overflow: hidden;
-  padding-inline: ${({ theme, isPageLayoutInEditMode }) =>
+  padding-left: ${({ theme, isPageLayoutInEditMode }) =>
     isPageLayoutInEditMode ? theme.spacing(5) : 0};
 `;
 

@@ -60,6 +60,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
+  // TODO: when we have more widgets wihtout headers, we should use a more generic approach to hide the header
+  // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
@@ -99,6 +101,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   return (
     <WidgetCard
+      headerLess={!showHeader}
       variant={variant}
       isEditable={isPageLayoutInEditMode}
       onClick={isPageLayoutInEditMode ? handleClick : undefined}

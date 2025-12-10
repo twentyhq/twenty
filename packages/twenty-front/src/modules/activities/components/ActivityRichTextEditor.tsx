@@ -361,6 +361,7 @@ export const ActivityRichTextEditor = ({
         onChange={handleEditorChange}
         editor={editor}
         readonly={isRecordFieldReadOnly}
+        minHeight={400}
       />
     </>
   );
