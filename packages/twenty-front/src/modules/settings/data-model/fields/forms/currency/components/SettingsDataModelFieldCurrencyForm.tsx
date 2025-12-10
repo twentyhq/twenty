@@ -83,6 +83,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
+      <Separator />
       <Controller
         name="settings"
         control={control}
