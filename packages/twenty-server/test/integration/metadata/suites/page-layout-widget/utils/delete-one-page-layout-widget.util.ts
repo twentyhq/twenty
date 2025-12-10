@@ -1,6 +1,6 @@
 import {
-    type DeleteOnePageLayoutWidgetFactoryInput,
-    deleteOnePageLayoutWidgetQueryFactory,
+  type DeleteOnePageLayoutWidgetFactoryInput,
+  deleteOnePageLayoutWidgetQueryFactory,
 } from 'test/integration/metadata/suites/page-layout-widget/utils/delete-one-page-layout-widget-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';

@@ -1,6 +1,6 @@
 import {
-    type CreateOnePageLayoutWidgetFactoryInput,
-    createOnePageLayoutWidgetQueryFactory,
+  type CreateOnePageLayoutWidgetFactoryInput,
+  createOnePageLayoutWidgetQueryFactory,
 } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
