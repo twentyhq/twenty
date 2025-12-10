@@ -9,12 +9,12 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { type SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
-import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ActionToolProvider implements ToolProvider {

@@ -13,16 +13,16 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { type CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { type DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { type FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { type UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
+import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-crud/tool-factory/direct-record-tools.factory';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
