@@ -6,10 +6,13 @@ import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ToolProviderService } from './services/tool-provider.service';
+import { ToolRegistryService } from './services/tool-registry.service';
 
 // NOTE: This module does NOT import WorkflowToolsModule to avoid circular dependency:
 // ToolProviderModule -> WorkflowToolsModule -> WorkflowTriggerModule
@@ -30,8 +33,10 @@ import { ToolProviderService } from './services/tool-provider.service';
     ObjectMetadataModule,
     FieldMetadataModule,
     PermissionsModule,
+    WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [ToolProviderService],
-  exports: [ToolProviderService],
+  providers: [ToolProviderService, ToolRegistryService],
+  exports: [ToolProviderService, ToolRegistryService],
 })
 export class ToolProviderModule {}
