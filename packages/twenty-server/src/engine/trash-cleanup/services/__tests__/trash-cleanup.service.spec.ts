@@ -2,20 +2,23 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('TrashCleanupService', () => {
   let service: TrashCleanupService;
   let mockFlatEntityMapsCacheService: any;
-  let mockTwentyORMGlobalManager: any;
+  let mockGlobalWorkspaceOrmManager: any;
 
   beforeEach(async () => {
     mockFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
     };
 
-    mockTwentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn(),
+    mockGlobalWorkspaceOrmManager = {
+      getRepository: jest.fn(),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -26,8 +29,8 @@ describe('TrashCleanupService', () => {
           useValue: mockFlatEntityMapsCacheService,
         },
         {
-          provide: TwentyORMGlobalManager,
-          useValue: mockTwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
         },
       ],
     }).compile();
@@ -99,7 +102,7 @@ describe('TrashCleanupService', () => {
       const companyRepository = createRepositoryMock('company', 2);
       const personRepository = createRepositoryMock('person', 1);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+      mockGlobalWorkspaceOrmManager.getRepository
         .mockResolvedValueOnce(companyRepository)
         .mockResolvedValueOnce(personRepository);
 
@@ -130,7 +133,7 @@ describe('TrashCleanupService', () => {
 
       expect(result).toEqual(0);
       expect(
-        mockTwentyORMGlobalManager.getRepositoryForWorkspace,
+        mockGlobalWorkspaceOrmManager.getRepository,
       ).not.toHaveBeenCalled();
     });
 
@@ -145,7 +148,7 @@ describe('TrashCleanupService', () => {
       const companyRepository = createRepositoryMock('company', 2);
       const personRepository = createRepositoryMock('person', 5);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+      mockGlobalWorkspaceOrmManager.getRepository
         .mockResolvedValueOnce(companyRepository)
         .mockResolvedValueOnce(personRepository);
 
@@ -170,7 +173,7 @@ describe('TrashCleanupService', () => {
 
       const companyRepository = createRepositoryMock('company', 0);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+      mockGlobalWorkspaceOrmManager.getRepository.mockResolvedValueOnce(
         companyRepository,
       );
 
@@ -188,7 +191,7 @@ describe('TrashCleanupService', () => {
 
       const companyRepository = createRepositoryMock('company', 5);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+      mockGlobalWorkspaceOrmManager.getRepository.mockResolvedValueOnce(
         companyRepository,
       );
 

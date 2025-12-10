@@ -13,6 +13,7 @@ import {
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -29,7 +30,11 @@ type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
-export class WorkspaceDataSource extends DataSource {
+export class WorkspaceDataSource
+  extends DataSource
+  implements WorkspaceDataSourceInterface
+{
+  readonly isGlobalFlow = false;
   readonly internalContext: WorkspaceInternalContext;
   readonly manager: WorkspaceEntityManager;
   featureFlagMapVersion: string;

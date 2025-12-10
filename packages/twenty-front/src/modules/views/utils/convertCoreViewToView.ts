@@ -39,6 +39,7 @@ export const convertCoreViewToView = (
     ),
     viewSorts: coreView.viewSorts,
     mainGroupByFieldMetadataId: coreView.mainGroupByFieldMetadataId ?? null,
+    shouldHideEmptyGroups: coreView.shouldHideEmptyGroups,
     kanbanAggregateOperation: coreView.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       coreView.kanbanAggregateOperationFieldMetadataId ?? null,

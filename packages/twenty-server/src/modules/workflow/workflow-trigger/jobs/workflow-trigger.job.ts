@@ -10,7 +10,8 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { handleWorkflowTriggerException } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -33,7 +34,7 @@ const DEFAULT_WORKFLOW_NAME = 'Workflow';
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -41,77 +42,83 @@ export class WorkflowTriggerJob {
 
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
-    try {
-      const workflowRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-          data.workspaceId,
-          'workflow',
-          { shouldBypassPermissionChecks: true },
-        );
+    const authContext = buildSystemAuthContext(data.workspaceId);
 
-      const workflow = await workflowRepository.findOneBy({
-        id: data.workflowId,
-      });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        try {
+          const workflowRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+              data.workspaceId,
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
 
-      if (!workflow) {
-        throw new WorkflowTriggerException(
-          `Workflow ${data.workflowId} not found in workspace ${data.workspaceId}`,
-          WorkflowTriggerExceptionCode.NOT_FOUND,
-        );
-      }
+          const workflow = await workflowRepository.findOneBy({
+            id: data.workflowId,
+          });
 
-      if (!workflow.lastPublishedVersionId) {
-        throw new WorkflowTriggerException(
-          `Workflow ${data.workflowId} has no published version in workspace ${data.workspaceId}`,
-          WorkflowTriggerExceptionCode.INTERNAL_ERROR,
-        );
-      }
+          if (!workflow) {
+            throw new WorkflowTriggerException(
+              `Workflow ${data.workflowId} not found in workspace ${data.workspaceId}`,
+              WorkflowTriggerExceptionCode.NOT_FOUND,
+            );
+          }
 
-      const workflowVersionRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-          data.workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+          if (!workflow.lastPublishedVersionId) {
+            throw new WorkflowTriggerException(
+              `Workflow ${data.workflowId} has no published version in workspace ${data.workspaceId}`,
+              WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+            );
+          }
 
-      const workflowVersion = await workflowVersionRepository.findOneBy({
-        id: workflow.lastPublishedVersionId,
-      });
+          const workflowVersionRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+              data.workspaceId,
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
 
-      if (!workflowVersion) {
-        throw new WorkflowTriggerException(
-          `Workflow version ${workflow.lastPublishedVersionId} not found in workspace ${data.workspaceId}`,
-          WorkflowTriggerExceptionCode.NOT_FOUND,
-        );
-      }
-      if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-        throw new WorkflowTriggerException(
-          `Workflow version ${workflowVersion.id} is not active in workspace ${data.workspaceId}`,
-          WorkflowTriggerExceptionCode.INTERNAL_ERROR,
-        );
-      }
+          const workflowVersion = await workflowVersionRepository.findOneBy({
+            id: workflow.lastPublishedVersionId,
+          });
 
-      await this.workflowRunnerWorkspaceService.run({
-        workspaceId: data.workspaceId,
-        workflowVersionId: workflow.lastPublishedVersionId,
-        payload: data.payload,
-        source: {
-          source: FieldActorSource.WORKFLOW,
-          name:
-            isDefined(workflow.name) && !isEmpty(workflow.name)
-              ? workflow.name
-              : DEFAULT_WORKFLOW_NAME,
-          context: {},
-          workspaceMemberId: null,
-        },
-      });
-    } catch (e) {
-      // We remove cron if it exists when no valid workflowVersion exists
-      await this.messageQueueService.removeCron({
-        jobName: WorkflowTriggerJob.name,
-        jobId: data.workflowId,
-      });
-      handleWorkflowTriggerException(e);
-    }
+          if (!workflowVersion) {
+            throw new WorkflowTriggerException(
+              `Workflow version ${workflow.lastPublishedVersionId} not found in workspace ${data.workspaceId}`,
+              WorkflowTriggerExceptionCode.NOT_FOUND,
+            );
+          }
+          if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+            throw new WorkflowTriggerException(
+              `Workflow version ${workflowVersion.id} is not active in workspace ${data.workspaceId}`,
+              WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+            );
+          }
+
+          await this.workflowRunnerWorkspaceService.run({
+            workspaceId: data.workspaceId,
+            workflowVersionId: workflow.lastPublishedVersionId,
+            payload: data.payload,
+            source: {
+              source: FieldActorSource.WORKFLOW,
+              name:
+                isDefined(workflow.name) && !isEmpty(workflow.name)
+                  ? workflow.name
+                  : DEFAULT_WORKFLOW_NAME,
+              context: {},
+              workspaceMemberId: null,
+            },
+          });
+        } catch (e) {
+          await this.messageQueueService.removeCron({
+            jobName: WorkflowTriggerJob.name,
+            jobId: data.workflowId,
+          });
+          handleWorkflowTriggerException(e);
+        }
+      },
+    );
   }
 }

@@ -9,7 +9,7 @@ export const buildConnectedAccountStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'connectedAccount'>, 'context'>): Record<
@@ -23,7 +23,7 @@ export const buildConnectedAccountStandardFlatIndexMetadatas = ({
       indexName: 'accountOwnerIdIndex',
       relatedFieldNames: ['accountOwner'],
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

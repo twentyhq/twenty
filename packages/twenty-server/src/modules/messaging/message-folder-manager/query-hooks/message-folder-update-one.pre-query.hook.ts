@@ -12,7 +12,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   MessageFolderImportPolicy,
   type MessageChannelWorkspaceEntity,
@@ -24,7 +25,7 @@ export class MessageFolderUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -36,68 +37,75 @@ export class MessageFolderUpdateOnePreQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const messageFolderRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
-        workspace.id,
-        'messageFolder',
-      );
+    const systemAuthContext = buildSystemAuthContext(workspace.id);
 
-    const messageFolder = await messageFolderRepository.findOne({
-      where: { id: payload.id },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      systemAuthContext,
+      async () => {
+        const messageFolderRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
+            workspace.id,
+            'messageFolder',
+          );
 
-    if (!messageFolder) {
-      throw new WorkspaceQueryRunnerException(
-        'Message folder not found',
-        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Message folder not found`,
-        },
-      );
-    }
+        const messageFolder = await messageFolderRepository.findOne({
+          where: { id: payload.id },
+        });
 
-    if (payload.data.isSynced !== false) {
-      return payload;
-    }
+        if (!messageFolder) {
+          throw new WorkspaceQueryRunnerException(
+            'Message folder not found',
+            WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+            {
+              userFriendlyMessage: msg`Message folder not found`,
+            },
+          );
+        }
 
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspace.id,
-        'messageChannel',
-      );
+        if (payload.data.isSynced !== false) {
+          return payload;
+        }
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: messageFolder.messageChannelId },
-    });
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspace.id,
+            'messageChannel',
+          );
 
-    if (
-      messageChannel?.messageFolderImportPolicy !==
-      MessageFolderImportPolicy.SELECTED_FOLDERS
-    ) {
-      return payload;
-    }
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: messageFolder.messageChannelId },
+        });
 
-    const syncedFoldersCount = await messageFolderRepository.count({
-      where: {
-        messageChannelId: messageFolder.messageChannelId,
-        isSynced: true,
+        if (
+          messageChannel?.messageFolderImportPolicy !==
+          MessageFolderImportPolicy.SELECTED_FOLDERS
+        ) {
+          return payload;
+        }
+
+        const syncedFoldersCount = await messageFolderRepository.count({
+          where: {
+            messageChannelId: messageFolder.messageChannelId,
+            isSynced: true,
+          },
+        });
+
+        if (
+          isDefined(syncedFoldersCount) &&
+          isNumber(syncedFoldersCount) &&
+          syncedFoldersCount <= 1
+        ) {
+          throw new WorkspaceQueryRunnerException(
+            'Cannot unsync the last folder when folder import policy is set to selected folders',
+            WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            {
+              userFriendlyMessage: msg`At least one folder must be synced.`,
+            },
+          );
+        }
+
+        return payload;
       },
-    });
-
-    if (
-      isDefined(syncedFoldersCount) &&
-      isNumber(syncedFoldersCount) &&
-      syncedFoldersCount <= 1
-    ) {
-      throw new WorkspaceQueryRunnerException(
-        'Cannot unsync the last folder when folder import policy is set to selected folders',
-        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        {
-          userFriendlyMessage: msg`At least one folder must be synced.`,
-        },
-      );
-    }
-
-    return payload;
+    );
   }
 }

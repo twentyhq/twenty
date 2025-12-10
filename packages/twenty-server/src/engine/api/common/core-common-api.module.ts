@@ -23,7 +23,6 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -42,7 +41,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     RecordPositionModule,
     RecordTransformerModule,
-    GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
   ],

@@ -5,6 +5,7 @@ import { type FromTo } from 'twenty-shared/types';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
+import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
@@ -28,19 +29,6 @@ type RoleComparatorResult =
 
 type WorkspaceRoleComparatorArgs = FromTo<FlatRole[], 'FlatRoles'>;
 
-const rolePropertiesToIgnore = [
-  'id',
-  'createdAt',
-  'updatedAt',
-  'workspaceId',
-  'roleTargets',
-  'permissionFlags',
-  'objectPermissions',
-  'fieldPermissions',
-  'universalIdentifier',
-  'applicationId',
-];
-
 @Injectable()
 export class WorkspaceRoleComparator {
   compare({
@@ -54,13 +42,17 @@ export class WorkspaceRoleComparator {
 
     const fromRoleMap = transformMetadataForComparison(fromFlatRoles, {
       shouldIgnoreProperty: (property) =>
-        rolePropertiesToIgnore.includes(property),
+        !ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.role.propertiesToCompare.includes(
+          property as keyof FlatRole,
+        ),
       keyFactory,
     });
 
     const toRoleMap = transformMetadataForComparison(toFlatRoles, {
       shouldIgnoreProperty: (property) =>
-        rolePropertiesToIgnore.includes(property),
+        !ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.role.propertiesToCompare.includes(
+          property as keyof FlatRole,
+        ),
       keyFactory,
     });
 
