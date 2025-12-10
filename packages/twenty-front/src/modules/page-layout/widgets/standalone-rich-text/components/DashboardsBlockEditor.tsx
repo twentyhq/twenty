@@ -7,13 +7,14 @@ import { type ClipboardEvent } from 'react';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
+import { CustomFormattingToolbarController } from '@/page-layout/widgets/standalone-rich-text/components/CustomFormattingToolbarController';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
-  CustomSlashMenu,
-  type SuggestionItem,
+    CustomSlashMenu,
+    type SuggestionItem,
 } from '@/ui/input/editor/components/CustomSlashMenu';
 
-interface BlockEditorProps {
+interface DashboardsBlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -30,7 +31,6 @@ const StyledEditor = styled.div`
     background: transparent;
     font-size: 13px;
     color: ${({ theme }) => theme.font.color.primary};
-    min-height: 400px;
   }
   & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
@@ -47,6 +47,16 @@ const StyledEditor = styled.div`
   & .bn-container .bn-drag-handle {
     width: 20px;
     height: 20px;
+  }
+  & .bn-block-outer {
+    line-height: 1.4;
+  }
+  & .bn-block-content {
+    padding: 8px 0 4px;
+  }
+  & .bn-side-menu {
+    height: auto;
+    padding-top: 8px;
   }
   & .bn-block-content[data-content-type='checkListItem'] > div > div {
     display: flex;
@@ -131,14 +141,14 @@ const StyledEditor = styled.div`
   }
 `;
 
-export const BlockEditor = ({
+export const DashboardsBlockEditor = ({
   editor,
   onFocus,
   onBlur,
   onChange,
   onPaste,
   readonly,
-}: BlockEditorProps) => {
+}: DashboardsBlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
 
@@ -169,14 +179,17 @@ export const BlockEditor = ({
         theme={blockNoteTheme}
         slashMenu={false}
         sideMenu={false}
+        formattingToolbar={false}
         editable={!readonly}
       >
+        <CustomFormattingToolbarController />
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"
-          getItems={async (query) =>
-            filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
-          }
+          getItems={async (query) => {
+            const items = getSlashMenu(editor);
+            return filterSuggestionItems<SuggestionItem>(items, query);
+          }}
           suggestionMenuComponent={CustomSlashMenu}
         />
       </BlockNoteView>

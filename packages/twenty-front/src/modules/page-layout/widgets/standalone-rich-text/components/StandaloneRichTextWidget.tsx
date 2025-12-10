@@ -8,7 +8,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
@@ -31,8 +31,6 @@ import {
   type PageLayoutWidget,
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
-
-const STANDALONE_WIDGET_EXCLUDED_SLASH_MENU_ITEMS = ['File', 'Video'];
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;
@@ -113,6 +111,7 @@ export const StandaloneRichTextWidget = ({
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
     uploadFile: handleEditorBuiltInUploadFile,
+    sideMenuDetection: 'editor',
   });
 
   const handlePersistBody = useDebouncedCallback((blocknote: string) => {
@@ -173,13 +172,12 @@ export const StandaloneRichTextWidget = ({
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >
-        <BlockEditor
+        <DashboardsBlockEditor
           onFocus={handleBlockEditorFocus}
           onBlur={handleBlockEditorBlur}
           onChange={handleEditorChange}
           editor={editor}
           readonly={!isEditable}
-          excludeSlashMenuItems={STANDALONE_WIDGET_EXCLUDED_SLASH_MENU_ITEMS}
         />
       </ScrollWrapper>
     </StyledContainer>
