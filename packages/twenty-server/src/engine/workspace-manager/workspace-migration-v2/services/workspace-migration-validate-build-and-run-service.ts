@@ -193,7 +193,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     // As with the current implementation passing an empty workspace migration might result
     // in dependency flat entity maps invalidation
     if (validateAndBuildResult.workspaceMigration.actions.length === 0) {
-      return undefined;
+      return;
     }
 
     await this.workspaceMigrationRunnerV2Service
