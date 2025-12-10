@@ -6,7 +6,7 @@ exports[`Page layout widget update should fail when updating a non-existent page
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Page layout widget with ID "b3b99e07-bbd9-457c-8a0c-b16cb9a76846" not found",
+  "message": "Page layout widget with ID "ed3752e3-db7f-42ff-82c0-2757a5410044" not found",
   "name": "NotFoundError",
 }
 `;
