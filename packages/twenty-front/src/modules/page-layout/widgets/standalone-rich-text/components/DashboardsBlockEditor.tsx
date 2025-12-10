@@ -51,10 +51,6 @@ const StyledEditor = styled.div`
   & .bn-block-outer {
     line-height: 1.4;
   }
-  & .bn-side-menu {
-    height: auto;
-    padding-top: 8px;
-  }
   & .bn-block-content[data-content-type='checkListItem'] > div > div {
     display: flex;
     align-items: center;
