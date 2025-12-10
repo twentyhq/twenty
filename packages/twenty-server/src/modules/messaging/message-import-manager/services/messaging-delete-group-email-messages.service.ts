@@ -67,26 +67,27 @@ export class MessagingDeleteGroupEmailMessagesService {
         let totalDeletedCount = 0;
 
         while (isDefined(cursorId)) {
-          const batch = await messageChannelMessageAssociationRepository
-            .createQueryBuilder('mcma')
-            .select('mcma.id', 'mcmaId')
-            .addSelect('mcma.messageId', 'messageId')
-            .addSelect('mcma.messageExternalId', 'messageExternalId')
-            .addSelect('participant.handle', 'participantHandle')
-            .innerJoin('mcma.message', 'message')
-            .innerJoin(
-              'message.messageParticipants',
-              'participant',
-              'participant.role = :role',
-              { role: MessageParticipantRole.FROM },
-            )
-            .where('mcma.messageChannelId = :messageChannelId', {
-              messageChannelId,
-            })
-            .andWhere('mcma.id >= :cursorId', { cursorId })
-            .orderBy('mcma.id', 'ASC')
-            .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
-            .getRawMany<MessageBatchRawResult>();
+          const batch: MessageBatchRawResult[] =
+            await messageChannelMessageAssociationRepository
+              .createQueryBuilder('mcma')
+              .select('mcma.id', 'mcmaId')
+              .addSelect('mcma.messageId', 'messageId')
+              .addSelect('mcma.messageExternalId', 'messageExternalId')
+              .addSelect('participant.handle', 'participantHandle')
+              .innerJoin('mcma.message', 'message')
+              .innerJoin(
+                'message.messageParticipants',
+                'participant',
+                'participant.role = :role',
+                { role: MessageParticipantRole.FROM },
+              )
+              .where('mcma.messageChannelId = :messageChannelId', {
+                messageChannelId,
+              })
+              .andWhere('mcma.id >= :cursorId', { cursorId })
+              .orderBy('mcma.id', 'ASC')
+              .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
+              .getRawMany<MessageBatchRawResult>();
 
           if (batch.length === 0) {
             break;
