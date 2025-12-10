@@ -1,3 +1,4 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidget } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidget';
@@ -12,10 +13,7 @@ import { TimelineWidget } from '@/page-layout/widgets/timeline/components/Timeli
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
 import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
 import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
-import {
-  type PageLayoutWidget,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
   widget: PageLayoutWidget;
