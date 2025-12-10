@@ -107,6 +107,7 @@ export const createStandardViewFlatMetadata = <
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
     mainGroupByFieldMetadataId,
+    shouldHideEmptyGroups: false,
     calendarLayout: null,
     calendarFieldMetadataId,
     anyFieldFilterValue: null,
