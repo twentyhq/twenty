@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { isNonEmptyString } from '@sniptt/guards';
+import { AvatarChip, LinkChip } from 'twenty-ui/components';
 
 const StyledRecordLink = styled.span`
   align-items: center;
@@ -39,14 +39,19 @@ export const RecordLink = ({
   }
 
   return (
-    <StyledRecordLink onClick={handleClick}>
-      <RecordChip
-        objectNameSingular={objectNameSingular}
-        record={{
-          id: recordId,
-          name: displayName,
-          __typename: objectMetadataItem.nameSingular,
-        }}
+    <StyledRecordLink>
+      <LinkChip
+        label={displayName}
+        to={`/objects/${objectNameSingular}/${recordId}`}
+        onClick={handleClick}
+        leftComponent={
+          <AvatarChip
+            placeholder={displayName}
+            placeholderColorSeed={recordId}
+            avatarType="rounded"
+            avatarUrl=""
+          />
+        }
       />
     </StyledRecordLink>
   );

@@ -134,7 +134,7 @@ export class CreateRecordService {
 
       this.logger.log(`Record created successfully in ${objectName}`);
 
-      // Merge input data with created record for complete data (insert only returns generated columns)
+      // Merge input data with created record for complete data
       const fullRecord = { ...transformedObjectRecord, ...createdRecord };
 
       return {
