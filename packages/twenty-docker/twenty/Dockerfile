@@ -32,15 +32,15 @@ RUN npx nx run twenty-server:build
 
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
-# Build the front
-FROM common-deps AS twenty-front-build
-
-ARG REACT_APP_SERVER_BASE_URL
-
-COPY ./packages/twenty-front /app/packages/twenty-front
-COPY ./packages/twenty-ui /app/packages/twenty-ui
-COPY ./packages/twenty-shared /app/packages/twenty-shared
-RUN npx nx build twenty-front
+# Build the front (COMMENTED OUT - API-only deployment for internal access)
+# FROM common-deps AS twenty-front-build
+#
+# ARG REACT_APP_SERVER_BASE_URL
+#
+# COPY ./packages/twenty-front /app/packages/twenty-front
+# COPY ./packages/twenty-ui /app/packages/twenty-ui
+# COPY ./packages/twenty-shared /app/packages/twenty-shared
+# RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
@@ -57,8 +57,9 @@ COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
 
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
+# Frontend env vars commented out - API-only deployment
+# ARG REACT_APP_SERVER_BASE_URL
+# ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 
 ARG APP_VERSION
 ENV APP_VERSION=$APP_VERSION
@@ -66,7 +67,8 @@ ENV APP_VERSION=$APP_VERSION
 # Copy built applications from previous stages
 COPY --chown=1000 --from=twenty-server-build /app /app
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
-COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+# Frontend copy commented out - API-only deployment
+# COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 # Set metadata and labels
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
