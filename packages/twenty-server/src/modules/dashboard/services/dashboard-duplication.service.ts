@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
-import { DataSource, EntityManager } from 'typeorm';
 
-import { PageLayoutDuplicationService } from 'src/engine/core-modules/page-layout/services/page-layout-duplication.service';
+import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
 import {
@@ -22,56 +20,12 @@ export class DashboardDuplicationService {
   constructor(
     private readonly pageLayoutDuplicationService: PageLayoutDuplicationService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
   ) {}
 
   async duplicateDashboard(
     dashboardId: string,
     workspaceId: string,
   ): Promise<DashboardDTO> {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const newDashboard =
-        await this.duplicateDashboardWithPageLayoutDuplicationWithinTransaction(
-          dashboardId,
-          workspaceId,
-          queryRunner.manager,
-        );
-
-      await queryRunner.commitTransaction();
-
-      return {
-        id: newDashboard.id,
-        title: newDashboard.title,
-        pageLayoutId: newDashboard.pageLayoutId,
-        position: newDashboard.position,
-        createdAt: newDashboard.createdAt,
-        updatedAt: newDashboard.updatedAt,
-      };
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-
-      this.logger.error(
-        `Failed to duplicate dashboard ${dashboardId}: ${error.message}`,
-        error.stack,
-      );
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  private async duplicateDashboardWithPageLayoutDuplicationWithinTransaction(
-    dashboardId: string,
-    workspaceId: string,
-    transactionManager: EntityManager,
-  ): Promise<DashboardWorkspaceEntity> {
     const dashboardRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<DashboardWorkspaceEntity>(
         workspaceId,
@@ -103,19 +57,34 @@ export class DashboardDuplicationService {
       );
     }
 
-    const newPageLayout = await this.pageLayoutDuplicationService.duplicate({
-      pageLayoutId: originalDashboard.pageLayoutId,
-      workspaceId,
-      transactionManager,
-    });
+    try {
+      const newPageLayout = await this.pageLayoutDuplicationService.duplicate({
+        pageLayoutId: originalDashboard.pageLayoutId,
+        workspaceId,
+      });
 
-    const newDashboard = await this.createDuplicatedDashboard(
-      originalDashboard,
-      newPageLayout.id,
-      dashboardRepository,
-    );
+      const newDashboard = await this.createDuplicatedDashboard(
+        originalDashboard,
+        newPageLayout.id,
+        dashboardRepository,
+      );
 
-    return newDashboard;
+      return {
+        id: newDashboard.id,
+        title: newDashboard.title,
+        pageLayoutId: newDashboard.pageLayoutId,
+        position: newDashboard.position,
+        createdAt: newDashboard.createdAt,
+        updatedAt: newDashboard.updatedAt,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Failed to duplicate dashboard ${dashboardId}: ${error.message}`,
+        error.stack,
+      );
+
+      throw error;
+    }
   }
 
   private async createDuplicatedDashboard(
