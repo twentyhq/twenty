@@ -33,7 +33,7 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
     const twentyStandardApplicationId = '20202020-5adb-4091-81b7-d5be86a8bdd2';
     const twentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date(),
+        now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId,
       });

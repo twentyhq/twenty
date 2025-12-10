@@ -132,13 +132,14 @@ export const GraphWidgetBarChart = ({
       ? calculateStackedBarChartValueRange(data, keys)
       : calculateValueRangeFromBarChartKeys(data, keys);
 
-  const { effectiveMinimumValue, effectiveMaximumValue, hasNoData } =
+  const hasNoData = data.length === 0;
+
+  const { effectiveMinimumValue, effectiveMaximumValue } =
     computeEffectiveValueRange({
       calculatedMinimum: calculatedValueRange.minimum,
       calculatedMaximum: calculatedValueRange.maximum,
       rangeMin,
       rangeMax,
-      dataLength: data.length,
     });
 
   const tickConfig = getBarChartTickConfig({

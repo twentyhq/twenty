@@ -51,7 +51,7 @@ const generateSourceFlatFieldMetadata = ({
     );
   }
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const sourceFieldMetadataId = v4();
   const targetFieldMetadataId = v4();
   const icon =
@@ -119,7 +119,7 @@ const generateTargetFlatFieldMetadata = ({
     relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
     targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
   });
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const standardId = createRelationDeterministicUuid({
     objectId: sourceFlatObjectMetadata.id,
     standardId: customStandardFieldId,
