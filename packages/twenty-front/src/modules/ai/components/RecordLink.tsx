@@ -1,15 +1,6 @@
-import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AvatarChip, LinkChip } from 'twenty-ui/components';
-
-const StyledRecordLink = styled.span`
-  align-items: center;
-  cursor: pointer;
-  display: inline-flex;
-`;
+import { AvatarChip, ChipVariant, LinkChip } from 'twenty-ui/components';
 
 type RecordLinkProps = {
   objectNameSingular: string;
@@ -22,38 +13,28 @@ export const RecordLink = ({
   recordId,
   displayName,
 }: RecordLinkProps) => {
-  const navigate = useNavigate();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const handleClick = () => {
-    if (isNonEmptyString(recordId)) {
-      navigate(`/objects/${objectNameSingular}/${recordId}`);
-    }
-  };
-
-  if (!objectMetadataItem) {
+  if (!objectMetadataItem || !isNonEmptyString(recordId)) {
     return <span>{displayName}</span>;
   }
 
   return (
-    <StyledRecordLink>
-      <LinkChip
-        label={displayName}
-        to={`/objects/${objectNameSingular}/${recordId}`}
-        onClick={handleClick}
-        leftComponent={
-          <AvatarChip
-            placeholder={displayName}
-            placeholderColorSeed={recordId}
-            avatarType="rounded"
-            avatarUrl=""
-          />
-        }
-      />
-    </StyledRecordLink>
+    <LinkChip
+      label={displayName}
+      to={`/objects/${objectNameSingular}/${recordId}`}
+      variant={ChipVariant.Highlighted}
+      leftComponent={
+        <AvatarChip
+          placeholder={displayName}
+          placeholderColorSeed={recordId}
+          avatarType="rounded"
+          avatarUrl=""
+        />
+      }
+    />
   );
 };
 
