@@ -17,6 +17,7 @@ export const createTestDashboardWithGraphQL = async (data: {
   id?: string;
   title: string;
   position?: number;
+  pageLayoutId?: string;
 }): Promise<DashboardWorkspaceEntity> => {
   const operation = {
     query: gql`
@@ -31,6 +32,7 @@ export const createTestDashboardWithGraphQL = async (data: {
         id: data.id,
         title: data.title,
         position: data.position ?? 0,
+        pageLayoutId: data.pageLayoutId,
       },
     },
   };
