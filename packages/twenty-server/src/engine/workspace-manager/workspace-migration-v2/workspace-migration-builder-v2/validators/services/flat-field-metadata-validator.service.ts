@@ -164,7 +164,7 @@ export class FlatFieldMetadataValidatorService {
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Default value cannot be null for nullable fields',
+        message: 'Default value cannot be null for non-nullable fields',
         userFriendlyMessage: msg`Default value cannot be null.`,
       });
     }
