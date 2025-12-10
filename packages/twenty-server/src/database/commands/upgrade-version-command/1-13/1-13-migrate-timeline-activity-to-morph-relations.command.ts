@@ -221,7 +221,10 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       workspaceId,
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, []);
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+    ]);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
