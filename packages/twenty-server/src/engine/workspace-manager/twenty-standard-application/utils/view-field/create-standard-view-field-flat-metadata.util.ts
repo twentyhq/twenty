@@ -17,7 +17,6 @@ export type CreateStandardViewFieldOptions<
   viewName: V;
   viewFieldName: AllStandardObjectViewFieldName<O, V>;
   fieldName: AllStandardObjectFieldName<O>;
-  viewId: string;
   position: number;
   isVisible: boolean;
   size: number;
@@ -42,7 +41,6 @@ export const createStandardViewFieldFlatMetadata = <
     viewName,
     viewFieldName,
     fieldName,
-    viewId,
     position,
     isVisible,
     size,
@@ -64,15 +62,13 @@ export const createStandardViewFieldFlatMetadata = <
     );
   }
 
-  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
-
   return {
     id: v4(),
     universalIdentifier: viewFieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    viewId,
-    fieldMetadataId: fieldIds[fieldName].id,
+    viewId: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    fieldMetadataId: standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     position,
     isVisible,
     size,

@@ -4,6 +4,10 @@ import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
+import { buildStandardFlatViewFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util';
+import { buildStandardFlatViewFilterMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-filter/build-standard-flat-view-filter-metadata-maps.util';
+import { buildStandardFlatViewGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/build-standard-flat-view-group-metadata-maps.util';
+import { buildStandardFlatViewMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util';
 
 export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
@@ -15,7 +19,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
-}: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): AllFlatEntityMaps => {
+}: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): Partial<AllFlatEntityMaps> => {
   const standardObjectMetadataRelatedEntityIds =
     getStandardObjectMetadataRelatedEntityIds();
 
@@ -50,79 +54,55 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
   });
 
+  const flatViewMaps = buildStandardFlatViewMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
+  });
+
+  const flatViewGroupMaps = buildStandardFlatViewGroupMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
+  });
+
+  const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
+  });
+
+  const flatViewFieldMaps = buildStandardFlatViewFieldMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
+  });
+
   return {
-    flatAgentMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatCronTriggerMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatDatabaseEventTriggerMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatFieldMetadataMaps,
-    flatIndexMaps,
-    flatObjectMetadataMaps,
-    flatRoleMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatRoleTargetMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatRouteTriggerMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatServerlessFunctionMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatViewFieldMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatViewFilterMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatViewGroupMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatViewMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatPageLayoutMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatPageLayoutWidgetMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
-    flatPageLayoutTabMaps: {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
+    flatViewFieldMaps,
+    flatViewFilterMaps,
+    flatViewGroupMaps,
+    flatViewMaps,
   };
 };

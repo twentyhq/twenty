@@ -3,16 +3,18 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { computeStandardTaskViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-view-fields.util';
 import { type CreateStandardViewFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/create-standard-view-field-flat-metadata.util';
 
 type StandardViewFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewFieldArgs<P>, 'context'>,
 ) => Record<string, FlatViewField>;
 
-const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME =
-  {} as const satisfies {
-    [P in AllStandardObjectName]?: StandardViewFieldBuilder<P>;
-  };
+const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  task: computeStandardTaskViewFields,
+} as const satisfies {
+  [P in AllStandardObjectName]?: StandardViewFieldBuilder<P>;
+};
 
 export const buildStandardFlatViewFieldMetadataMaps = (
   args: Omit<CreateStandardViewFieldArgs, 'context' | 'objectName'>,
