@@ -96,7 +96,6 @@ export const ViewPickerDropdown = () => {
       dropdownComponents={(() => {
         switch (viewPickerMode) {
           case 'list':
-            // return <><h1>List Mode</h1></>
             return <ViewPickerListContent />;
           case 'favorite-folders-picker':
             return <ViewPickerFavoriteFoldersDropdown />;
