@@ -230,7 +230,7 @@ export const Modal = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
   const effectiveContainer = ignoreContainer ? null : container;
-  const isInContainer = effectiveContainer !== null;
+  const isInContainer = isDefined(effectiveContainer);
 
   const theme = useTheme();
 
