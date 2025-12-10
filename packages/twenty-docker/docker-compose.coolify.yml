@@ -7,8 +7,12 @@ services:
       dockerfile: packages/twenty-docker/twenty/Dockerfile
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
-    ports:
-      - "3000:3000"
+    # Internal-only: use expose instead of ports for no public access
+    expose:
+      - "3000"
+    networks:
+      - default
+      - coolify-internal
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
@@ -138,3 +142,10 @@ services:
 volumes:
   db-data:
   server-local-data:
+
+networks:
+  default:
+    # Internal network for db, redis, worker communication
+  coolify-internal:
+    external: true
+    # Shared network with NYCE CRM - must be created in Coolify first
