@@ -6,7 +6,7 @@ exports[`Dashboard duplication should fail when dashboard does not exist 1`] = `
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Dashboard with ID "31c90d13-1d0d-474b-a2cf-f5ab09fcbed2" not found",
+  "message": "Dashboard with ID "7f7b4ae6-ebe4-4d7b-91a9-0043dffd5837" not found",
   "name": "NotFoundError",
 }
 `;
@@ -17,7 +17,7 @@ exports[`Dashboard duplication should fail when dashboard page layout was delete
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Dashboard with ID "8f38c048-51db-4019-97a2-09c919b193f3" not found",
+  "message": "Dashboard with ID "8cbbc499-5a23-473d-ad0b-eaa92d4c9831" not found",
   "name": "NotFoundError",
 }
 `;

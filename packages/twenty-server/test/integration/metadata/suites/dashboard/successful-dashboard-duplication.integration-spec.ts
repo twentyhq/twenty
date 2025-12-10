@@ -21,6 +21,7 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 
 type TestContext = {
+  id: string;
   title: string;
   withTabs?: boolean;
   withWidgets?: boolean;
@@ -30,12 +31,14 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'duplicate a basic dashboard with page layout',
     context: {
+      id: 'a69899ef-ad51-4abc-8105-45e8e6de85ac',
       title: 'Basic Dashboard',
     },
   },
   {
     title: 'duplicate a dashboard with page layout and tabs',
     context: {
+      id: '8da0a29d-b459-4b09-af3e-9490d9b644b4',
       title: 'Dashboard With Tabs',
       withTabs: true,
     },
@@ -43,6 +46,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'duplicate a dashboard with page layout, tabs and widgets',
     context: {
+      id: 'a13e58f9-c5db-4e1d-a7fb-c282774c5053',
       title: 'Dashboard With Widgets',
       withTabs: true,
       withWidgets: true,
@@ -57,6 +61,7 @@ describe('Dashboard duplication should succeed', () => {
   let testDashboardId: string;
   let duplicatedDashboardId: string;
   let duplicatedPageLayoutId: string;
+  let currentTestContextId: string;
 
   const cleanup = async () => {
     if (isNonEmptyString(duplicatedDashboardId)) {
@@ -93,6 +98,11 @@ describe('Dashboard duplication should succeed', () => {
       testDashboardId = '';
     }
 
+    if (isNonEmptyString(currentTestContextId)) {
+      await destroyDashboardWithGraphQL(currentTestContextId);
+      currentTestContextId = '';
+    }
+
     if (isNonEmptyString(testPageLayoutId)) {
       await destroyOnePageLayout({
         expectToFail: false,
@@ -102,13 +112,25 @@ describe('Dashboard duplication should succeed', () => {
     }
   };
 
+  beforeEach(async () => {
+    testPageLayoutId = '';
+    testPageLayoutTabId = '';
+    testPageLayoutWidgetId = '';
+    testDashboardId = '';
+    duplicatedDashboardId = '';
+    duplicatedPageLayoutId = '';
+    currentTestContextId = '';
+  });
+
   afterEach(async () => {
     await cleanup();
   });
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     'should $title',
-    async ({ context: { title, withTabs, withWidgets } }) => {
+    async ({ context: { id, title, withTabs, withWidgets } }) => {
+      currentTestContextId = id;
+
       const { data: pageLayoutData } = await createOnePageLayout({
         expectToFail: false,
         input: {
@@ -152,6 +174,7 @@ describe('Dashboard duplication should succeed', () => {
       }
 
       const dashboard = await createTestDashboardWithGraphQL({
+        id,
         title,
         pageLayoutId: testPageLayoutId,
       });

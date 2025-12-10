@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import {
   createTestDashboardWithGraphQL,
@@ -27,7 +26,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'when dashboard does not exist',
     context: {
-      dashboardId: faker.string.uuid(),
+      dashboardId: '7f7b4ae6-ebe4-4d7b-91a9-0043dffd5837',
     },
   },
   {
@@ -35,6 +34,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
     context: {
       dashboardId: async () => {
         const dashboard = await createTestDashboardWithGraphQL({
+          id: '8cbbc499-5a23-473d-ad0b-eaa92d4c9831',
           title: 'Dashboard With Deleted Page Layout',
         });
 
