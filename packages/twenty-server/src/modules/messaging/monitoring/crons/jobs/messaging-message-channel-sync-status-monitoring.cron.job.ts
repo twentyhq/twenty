@@ -10,7 +10,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
@@ -23,7 +24,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly messagingMonitoringService: MessagingMonitoringService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -46,29 +47,36 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const messageChannelRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-            activeWorkspace.id,
-            'messageChannel',
-          );
-        const messageChannels = await messageChannelRepository.find({
-          select: ['id', 'syncStatus', 'connectedAccountId'],
-        });
+        const authContext = buildSystemAuthContext(activeWorkspace.id);
 
-        for (const messageChannel of messageChannels) {
-          if (!messageChannel.syncStatus) {
-            continue;
-          }
-          await this.messagingMonitoringService.track({
-            eventName: `message_channel.monitoring.sync_status.${snakeCase(
-              messageChannel.syncStatus,
-            )}`,
-            workspaceId: activeWorkspace.id,
-            connectedAccountId: messageChannel.connectedAccountId,
-            messageChannelId: messageChannel.id,
-            message: messageChannel.syncStatus,
-          });
-        }
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          authContext,
+          async () => {
+            const messageChannelRepository =
+              await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+                activeWorkspace.id,
+                'messageChannel',
+              );
+            const messageChannels = await messageChannelRepository.find({
+              select: ['id', 'syncStatus', 'connectedAccountId'],
+            });
+
+            for (const messageChannel of messageChannels) {
+              if (!messageChannel.syncStatus) {
+                continue;
+              }
+              await this.messagingMonitoringService.track({
+                eventName: `message_channel.monitoring.sync_status.${snakeCase(
+                  messageChannel.syncStatus,
+                )}`,
+                workspaceId: activeWorkspace.id,
+                connectedAccountId: messageChannel.connectedAccountId,
+                messageChannelId: messageChannel.id,
+                message: messageChannel.syncStatus,
+              });
+            }
+          },
+        );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {

@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type CreateConnectedAccountInput = {
@@ -21,7 +22,7 @@ export type CreateConnectedAccountInput = {
 @Injectable()
 export class CreateConnectedAccountService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async createConnectedAccount(
@@ -39,24 +40,31 @@ export class CreateConnectedAccountService {
       manager,
     } = input;
 
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    await connectedAccountRepository.save(
-      {
-        id: connectedAccountId,
-        handle,
-        provider,
-        accessToken,
-        refreshToken,
-        accountOwnerId,
-        scopes,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
+
+        await connectedAccountRepository.save(
+          {
+            id: connectedAccountId,
+            handle,
+            provider,
+            accessToken,
+            refreshToken,
+            accountOwnerId,
+            scopes,
+          },
+          {},
+          manager,
+        );
       },
-      {},
-      manager,
     );
   }
 }

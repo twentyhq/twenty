@@ -20,7 +20,8 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
   AutomatedTriggerType,
@@ -43,7 +44,7 @@ export class WorkflowDatabaseEventTriggerListener {
   );
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -242,57 +243,66 @@ export class WorkflowDatabaseEventTriggerListener {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }) {
-    const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const { fieldIdByJoinColumnName } =
+          buildFieldMapsFromFlatObjectMetadata(
+            flatFieldMetadataMaps,
+            flatObjectMetadata,
+          );
+
+        for (const [joinColumnName, joinFieldId] of Object.entries(
+          fieldIdByJoinColumnName,
+        )) {
+          const joinField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId: joinFieldId,
+          });
+
+          const joinRecordIds = records
+            .map((record) => record[joinColumnName])
+            .filter(isDefined);
+
+          if (joinRecordIds.length === 0) {
+            continue;
+          }
+
+          const relatedObjectMetadataId =
+            joinField.relationTargetObjectMetadataId;
+
+          if (!isDefined(relatedObjectMetadataId)) {
+            continue;
+          }
+
+          const relatedObjectMetadataNameSingular =
+            flatObjectMetadataMaps.byId[relatedObjectMetadataId]?.nameSingular;
+
+          if (!isDefined(relatedObjectMetadataNameSingular)) {
+            continue;
+          }
+
+          const relatedObjectRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              relatedObjectMetadataNameSingular,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const relatedRecords = await relatedObjectRepository.find({
+            where: { id: In(joinRecordIds) },
+          });
+
+          for (const record of records) {
+            record[joinField.name] = relatedRecords.find(
+              (relatedRecord) => relatedRecord.id === record[joinColumnName],
+            );
+          }
+        }
+      },
     );
-
-    for (const [joinColumnName, joinFieldId] of Object.entries(
-      fieldIdByJoinColumnName,
-    )) {
-      const joinField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: joinFieldId,
-      });
-
-      const joinRecordIds = records
-        .map((record) => record[joinColumnName])
-        .filter(isDefined);
-
-      if (joinRecordIds.length === 0) {
-        continue;
-      }
-
-      const relatedObjectMetadataId = joinField.relationTargetObjectMetadataId;
-
-      if (!isDefined(relatedObjectMetadataId)) {
-        continue;
-      }
-
-      const relatedObjectMetadataNameSingular =
-        flatObjectMetadataMaps.byId[relatedObjectMetadataId]?.nameSingular;
-
-      if (!isDefined(relatedObjectMetadataNameSingular)) {
-        continue;
-      }
-
-      const relatedObjectRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          relatedObjectMetadataNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const relatedRecords = await relatedObjectRepository.find({
-        where: { id: In(joinRecordIds) },
-      });
-
-      for (const record of records) {
-        record[joinField.name] = relatedRecords.find(
-          (relatedRecord) => relatedRecord.id === record[joinColumnName],
-        );
-      }
-    }
   }
 
   private async shouldIgnoreEvent(
@@ -325,45 +335,52 @@ export class WorkflowDatabaseEventTriggerListener {
     const databaseEventName = payload.name;
     const automatedTriggerTableName = 'workflowAutomatedTrigger';
 
-    const workflowAutomatedTriggerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
-        workspaceId,
-        automatedTriggerTableName,
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const eventListeners = await workflowAutomatedTriggerRepository.find({
-      where: {
-        type: AutomatedTriggerType.DATABASE_EVENT,
-        settings: Raw(
-          () =>
-            `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
-          { eventName: databaseEventName },
-        ),
-      },
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowAutomatedTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+            workspaceId,
+            automatedTriggerTableName,
+            { shouldBypassPermissionChecks: true },
+          );
 
-    for (const eventListener of eventListeners) {
-      for (const eventPayload of payload.events) {
-        const shouldTriggerJob = this.shouldTriggerJob({
-          eventPayload,
-          eventListener,
-          action,
+        const eventListeners = await workflowAutomatedTriggerRepository.find({
+          where: {
+            type: AutomatedTriggerType.DATABASE_EVENT,
+            settings: Raw(
+              () =>
+                `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
+              { eventName: databaseEventName },
+            ),
+          },
         });
 
-        if (shouldTriggerJob) {
-          await this.messageQueueService.add<WorkflowTriggerJobData>(
-            WorkflowTriggerJob.name,
-            {
-              workspaceId,
-              workflowId: eventListener.workflowId,
-              payload: eventPayload,
-            },
-            { retryLimit: 3 },
-          );
+        for (const eventListener of eventListeners) {
+          for (const eventPayload of payload.events) {
+            const shouldTriggerJob = this.shouldTriggerJob({
+              eventPayload,
+              eventListener,
+              action,
+            });
+
+            if (shouldTriggerJob) {
+              await this.messageQueueService.add<WorkflowTriggerJobData>(
+                WorkflowTriggerJob.name,
+                {
+                  workspaceId,
+                  workflowId: eventListener.workflowId,
+                  payload: eventPayload,
+                },
+                { retryLimit: 3 },
+              );
+            }
+          }
         }
-      }
-    }
+      },
+    );
   }
 
   private shouldTriggerJob({
