@@ -303,7 +303,7 @@ export const Modal = ({
     </AnimatePresence>
   );
 
-  if (effectiveContainer !== null) {
+  if (isDefined(effectiveContainer)) {
     return createPortal(modalContent, effectiveContainer);
   }
 
