@@ -56,9 +56,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
     restart: always
 
   worker:
