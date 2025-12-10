@@ -6,7 +6,7 @@ exports[`Page layout with tabs update should fail when updating a non-existent p
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Page layout with ID "d914b606-04a1-4b7b-8fb7-7a85e15f007c" not found",
+  "message": "Page layout with ID "d2fc4e53-c51b-4624-9206-f4a503d908d5" not found",
   "name": "NotFoundError",
 }
 `;
