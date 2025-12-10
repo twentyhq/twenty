@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarChip, ChipVariant, LinkChip } from 'twenty-ui/components';
 
@@ -21,10 +22,12 @@ export const RecordLink = ({
     return <span>{displayName}</span>;
   }
 
+  const linkToShowPage = getLinkToShowPage(objectNameSingular, { id: recordId });
+
   return (
     <LinkChip
       label={displayName}
-      to={`/objects/${objectNameSingular}/${recordId}`}
+      to={linkToShowPage}
       variant={ChipVariant.Highlighted}
       leftComponent={
         <AvatarChip
@@ -38,7 +41,6 @@ export const RecordLink = ({
   );
 };
 
-// Regex to match [[record:objectName:recordId:displayName]] pattern
 export const RECORD_REFERENCE_REGEX =
   /\[\[record:([a-zA-Z]+):([a-f0-9-]+):([^\]]+)\]\]/g;
 

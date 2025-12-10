@@ -102,7 +102,6 @@ const LoadingSkeleton = () => {
   );
 };
 
-// Parse text and replace [[record:...]] with RecordLink components
 const useTextWithRecordLinks = (text: string) => {
   return useMemo(() => {
     const parts: Array<
@@ -111,18 +110,15 @@ const useTextWithRecordLinks = (text: string) => {
     > = [];
     let lastIndex = 0;
 
-    // Reset regex state
     RECORD_REFERENCE_REGEX.lastIndex = 0;
 
     let match;
 
     while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
-      // Add text before the match
       if (match.index > lastIndex) {
         parts.push(text.slice(lastIndex, match.index));
       }
 
-      // Add the record reference
       const parsed = parseRecordReference(match[0]);
 
       if (isDefined(parsed)) {
@@ -132,7 +128,6 @@ const useTextWithRecordLinks = (text: string) => {
       lastIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
     if (lastIndex < text.length) {
       parts.push(text.slice(lastIndex));
     }
