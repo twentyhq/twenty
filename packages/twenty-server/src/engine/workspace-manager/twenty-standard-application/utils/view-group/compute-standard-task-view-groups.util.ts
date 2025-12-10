@@ -1,7 +1,7 @@
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import {
-    createStandardViewGroupFlatMetadata,
-    type CreateStandardViewGroupArgs,
+  createStandardViewGroupFlatMetadata,
+  type CreateStandardViewGroupArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/create-standard-view-group-flat-metadata.util';
 
 export const computeStandardTaskViewGroups = (
@@ -94,4 +94,3 @@ export const computeStandardTaskViewGroups = (
     }),
   };
 };
-

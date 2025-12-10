@@ -104,5 +104,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatViewFilterMaps,
     flatViewGroupMaps,
     flatViewMaps,
+    flatIndexMaps,
   };
 };

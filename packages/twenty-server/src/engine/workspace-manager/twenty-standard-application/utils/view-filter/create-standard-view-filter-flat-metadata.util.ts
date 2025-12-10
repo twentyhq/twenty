@@ -69,8 +69,10 @@ export const createStandardViewFilterFlatMetadata = <
     universalIdentifier: viewFilterDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    viewId: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
-    fieldMetadataId: standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
+    viewId:
+      standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    fieldMetadataId:
+      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     operand,
     value,
     subFieldName,

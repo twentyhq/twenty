@@ -67,8 +67,10 @@ export const createStandardViewFieldFlatMetadata = <
     universalIdentifier: viewFieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    viewId: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
-    fieldMetadataId: standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
+    viewId:
+      standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    fieldMetadataId:
+      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     position,
     isVisible,
     size,

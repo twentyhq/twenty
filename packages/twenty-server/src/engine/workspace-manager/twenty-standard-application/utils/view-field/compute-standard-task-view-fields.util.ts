@@ -255,4 +255,3 @@ export const computeStandardTaskViewFields = (
     }),
   };
 };
-

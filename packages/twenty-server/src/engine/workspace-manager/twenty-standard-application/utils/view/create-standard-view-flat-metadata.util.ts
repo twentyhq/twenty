@@ -74,15 +74,21 @@ export const createStandardViewFlatMetadata = <
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName
-      ? standardObjectMetadataRelatedEntityIds[objectName].fields[kanbanAggregateOperationFieldName].id
+      ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+          kanbanAggregateOperationFieldName
+        ].id
       : null;
 
   const mainGroupByFieldMetadataId = mainGroupByFieldName
-    ? standardObjectMetadataRelatedEntityIds[objectName].fields[mainGroupByFieldName].id
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+        mainGroupByFieldName
+      ].id
     : null;
 
   const calendarFieldMetadataId = calendarFieldName
-    ? standardObjectMetadataRelatedEntityIds[objectName].fields[calendarFieldName].id
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+        calendarFieldName
+      ].id
     : null;
 
   return {
