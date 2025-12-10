@@ -47,7 +47,7 @@ export const useDuplicateDashboard = () => {
   const duplicateDashboard = async (dashboardId: string) => {
     const result = await mutate({
       variables: { id: dashboardId },
-      update: async (cache, { data }) => {
+      update: (cache, { data }) => {
         const record = data?.duplicateDashboard;
 
         if (!isDefined(record)) return;

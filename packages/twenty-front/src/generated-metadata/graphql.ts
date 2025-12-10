@@ -1057,8 +1057,8 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type DashboardDto = {
-  __typename?: 'DashboardDTO';
+export type Dashboard = {
+  __typename?: 'Dashboard';
   createdAt: Scalars['String'];
   id: Scalars['UUID'];
   pageLayoutId?: Maybe<Scalars['UUID']>;
@@ -1862,7 +1862,7 @@ export type Mutation = {
   destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   dismissReconnectAccountBanner: Scalars['Boolean'];
-  duplicateDashboard: DashboardDto;
+  duplicateDashboard: Dashboard;
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
@@ -2402,7 +2402,7 @@ export type MutationDismissReconnectAccountBannerArgs = {
 
 
 export type MutationDuplicateDashboardArgs = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 

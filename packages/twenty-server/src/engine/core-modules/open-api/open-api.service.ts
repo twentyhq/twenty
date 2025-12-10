@@ -188,7 +188,7 @@ export class OpenApiService {
         operationId: 'duplicateDashboard',
         parameters: [{ $ref: '#/components/parameters/idPath' }],
         responses: {
-          '200': {
+          '201': {
             description: 'Dashboard duplicated successfully',
             content: {
               'application/json': {
