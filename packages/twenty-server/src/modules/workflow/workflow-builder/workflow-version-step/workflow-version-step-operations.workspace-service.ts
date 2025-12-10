@@ -16,6 +16,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -61,6 +62,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -369,7 +371,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           label: 'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
           icon: 'IconRobot',
           description: '',
-          prompt: '',
+          prompt:
+            'You are a helpful AI assistant. Complete the task based on the workflow context.',
           modelId: DEFAULT_SMART_MODEL,
           responseFormat: { type: 'text' },
           workspaceId,
@@ -382,6 +385,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
           );
         }
+
+        await this.workspaceCacheService.flush(workspaceId, ['flatAgentMaps']);
 
         return {
           builtStep: {

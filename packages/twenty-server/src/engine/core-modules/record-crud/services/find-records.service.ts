@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
+import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -114,6 +115,16 @@ export class FindRecordsService {
 
       this.logger.log(`Found ${records.length} records in ${objectName}`);
 
+      const recordReferences = records.map((record) => ({
+        objectNameSingular: objectName,
+        recordId: record.id as string,
+        displayName: getRecordDisplayName(
+          record,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        ),
+      }));
+
       return {
         success: true,
         message: `Found ${records.length} ${objectName} records`,
@@ -121,6 +132,7 @@ export class FindRecordsService {
           records,
           count: totalCount,
         },
+        recordReferences,
       };
     } catch (error) {
       this.logger.error(`Failed to find records: ${error}`);
