@@ -16,7 +16,12 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconList, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  IconList,
+  OverflowingTextWithTooltip,
+  useIcons,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledDropdownLabelAdornments = styled.span`
