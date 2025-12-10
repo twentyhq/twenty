@@ -1,9 +1,9 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import type { PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
-import type { PageLayoutWidget } from '~/generated/graphql';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
   const pageLayoutDraftCallbackState = useRecoilComponentCallbackState(

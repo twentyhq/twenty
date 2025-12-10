@@ -6,7 +6,7 @@ import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
 
 export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
-  now: Date;
+  now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
 };
