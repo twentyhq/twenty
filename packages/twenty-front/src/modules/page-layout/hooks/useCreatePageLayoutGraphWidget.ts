@@ -4,6 +4,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
@@ -18,7 +19,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type GraphType } from '~/generated-metadata/graphql';
-import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
+import { WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,
