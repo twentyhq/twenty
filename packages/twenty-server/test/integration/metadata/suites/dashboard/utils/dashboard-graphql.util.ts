@@ -1,9 +1,10 @@
 import gql from 'graphql-tag';
-import { DASHBOARD_GQL_FIELDS } from 'test/integration/constants/dashboard-gql-fields.constants';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
+
+import { DASHBOARD_GQL_FIELDS } from './dashboard-gql-fields.constants';
 
 interface CreateDashboardResponse extends Record<string, unknown> {
   createDashboard: DashboardWorkspaceEntity;

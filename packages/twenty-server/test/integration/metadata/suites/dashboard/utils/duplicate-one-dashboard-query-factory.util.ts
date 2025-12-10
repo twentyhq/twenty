@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
-import { DASHBOARD_GQL_FIELDS } from 'test/integration/constants/dashboard-gql-fields.constants';
+
+import { DASHBOARD_GQL_FIELDS } from './dashboard-gql-fields.constants';
 
 export type DuplicateOneDashboardFactoryInput = {
   id: string;
