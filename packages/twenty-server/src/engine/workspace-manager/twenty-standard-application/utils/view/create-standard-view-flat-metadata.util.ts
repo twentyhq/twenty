@@ -91,6 +91,7 @@ export const createStandardViewFlatMetadata = <
     : null;
 
   return {
+    shouldHideEmptyGroups: false,
     id: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
     universalIdentifier: viewDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
