@@ -52,7 +52,12 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         workflowProvider: WorkflowToolProvider,
-      ) => [actionProvider, databaseProvider, metadataProvider, workflowProvider],
+      ) => [
+        actionProvider,
+        databaseProvider,
+        metadataProvider,
+        workflowProvider,
+      ],
       inject: [
         ActionToolProvider,
         DatabaseToolProvider,
