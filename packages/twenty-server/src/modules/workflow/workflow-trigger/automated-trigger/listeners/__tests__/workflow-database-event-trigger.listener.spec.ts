@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -11,7 +11,7 @@ import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/w
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
-  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
 
   const mockRepository = {
@@ -48,8 +48,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     }) as FlatObjectMetadata;
 
   beforeEach(async () => {
-    twentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepository),
+    globalWorkspaceOrmManager = {
+      getRepository: jest.fn().mockResolvedValue(mockRepository),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
     } as any;
 
     messageQueueService = {
@@ -60,8 +63,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       providers: [
         WorkflowDatabaseEventTriggerListener,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
         {
           provide: MessageQueueService,

@@ -14,14 +14,15 @@ import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class UpdateRecordService {
   private readonly logger = new Logger(UpdateRecordService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
@@ -51,135 +52,141 @@ export class UpdateRecordService {
       };
     }
 
+    const authContext = buildSystemAuthContext(workspaceId);
+
     try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          rolePermissionConfig,
-        );
+      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const repository = await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            objectName,
+            rolePermissionConfig,
+          );
 
-      const {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      } = repository.internalContext;
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          } = repository.internalContext;
 
-      const objectId = objectIdByNameSingular[objectName];
+          const objectId = objectIdByNameSingular[objectName];
 
-      if (!isDefined(objectId)) {
-        throw new RecordCrudException(
-          `Object ${objectName} not found`,
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
+          if (!isDefined(objectId)) {
+            throw new RecordCrudException(
+              `Object ${objectName} not found`,
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
+          }
 
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: objectId,
-      });
+          const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: flatObjectMetadataMaps,
+            flatEntityId: objectId,
+          });
 
-      const restrictedFields =
-        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
-          ?.restrictedFields;
+          const restrictedFields =
+            repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+              ?.restrictedFields;
 
-      const selectedColumns = getSelectedColumnsFromRestrictedFields(
-        restrictedFields,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      );
+          const selectedColumns = getSelectedColumnsFromRestrictedFields(
+            restrictedFields,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          );
 
-      const previousObjectRecord = await repository.findOne({
-        where: {
-          id: objectRecordId,
-        },
-        select: selectedColumns,
-      });
+          const previousObjectRecord = await repository.findOne({
+            where: {
+              id: objectRecordId,
+            },
+            select: selectedColumns,
+          });
 
-      if (!previousObjectRecord) {
-        throw new RecordCrudException(
-          `Failed to update: Record ${objectName} with id ${objectRecordId} not found`,
-          RecordCrudExceptionCode.RECORD_NOT_FOUND,
-        );
-      }
+          if (!previousObjectRecord) {
+            throw new RecordCrudException(
+              `Failed to update: Record ${objectName} with id ${objectRecordId} not found`,
+              RecordCrudExceptionCode.RECORD_NOT_FOUND,
+            );
+          }
 
-      const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
+          const fieldsToUpdateArray =
+            fieldsToUpdate || Object.keys(objectRecord);
 
-      if (fieldsToUpdateArray.length === 0) {
-        return {
-          success: true,
-          message: 'No fields to update',
-          result: previousObjectRecord,
-        };
-      }
-
-      if (
-        !canObjectBeManagedByWorkflow({
-          nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
-        })
-      ) {
-        throw new RecordCrudException(
-          'Failed to update: Object cannot be updated by workflow',
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      const objectRecordWithFilteredFields = Object.keys(objectRecord).reduce(
-        (acc, key) => {
-          if (fieldsToUpdateArray.includes(key)) {
+          if (fieldsToUpdateArray.length === 0) {
             return {
-              ...acc,
-              [key]: objectRecord[key],
+              success: true,
+              message: 'No fields to update',
+              result: previousObjectRecord,
             };
           }
 
-          return acc;
-        },
-        {},
-      );
+          if (
+            !canObjectBeManagedByWorkflow({
+              nameSingular: flatObjectMetadata.nameSingular,
+              isSystem: flatObjectMetadata.isSystem,
+            })
+          ) {
+            throw new RecordCrudException(
+              'Failed to update: Object cannot be updated by workflow',
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
+          }
 
-      const transformedObjectRecord =
-        await this.recordInputTransformerService.process({
-          recordInput: objectRecordWithFilteredFields,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        });
+          const objectRecordWithFilteredFields = Object.keys(
+            objectRecord,
+          ).reduce((acc, key) => {
+            if (fieldsToUpdateArray.includes(key)) {
+              return {
+                ...acc,
+                [key]: objectRecord[key],
+              };
+            }
 
-      const updatedObjectRecord = {
-        ...previousObjectRecord,
-        ...objectRecordWithFilteredFields,
-      };
+            return acc;
+          }, {});
 
-      if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
-        await repository.update(
-          objectRecordId,
-          {
-            ...transformedObjectRecord,
-          },
-          undefined,
-          selectedColumns,
-        );
-      }
-
-      this.logger.log(`Record updated successfully in ${objectName}`);
-
-      return {
-        success: true,
-        message: `Record updated successfully in ${objectName}`,
-        result: updatedObjectRecord,
-        recordReferences: [
-          {
-            objectNameSingular: objectName,
-            recordId: objectRecordId,
-            displayName: getRecordDisplayName(
-              updatedObjectRecord,
+          const transformedObjectRecord =
+            await this.recordInputTransformerService.process({
+              recordInput: objectRecordWithFilteredFields,
               flatObjectMetadata,
               flatFieldMetadataMaps,
-            ),
-          },
-        ],
-      };
+            });
+
+          const updatedObjectRecord = {
+            ...previousObjectRecord,
+            ...objectRecordWithFilteredFields,
+          };
+
+          if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
+            await repository.update(
+              objectRecordId,
+              {
+                ...transformedObjectRecord,
+              },
+              undefined,
+              selectedColumns,
+            );
+          }
+
+          this.logger.log(`Record updated successfully in ${objectName}`);
+
+          return {
+            success: true,
+            message: `Record updated successfully in ${objectName}`,
+            result: updatedObjectRecord,
+            recordReferences: [
+              {
+                objectNameSingular: objectName,
+                recordId: objectRecordId,
+                displayName: getRecordDisplayName(
+                  updatedObjectRecord,
+                  flatObjectMetadata,
+                  flatFieldMetadataMaps,
+                ),
+              },
+            ],
+          };
+        },
+      );
     } catch (error) {
       if (error instanceof RecordCrudException) {
         return {
