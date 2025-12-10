@@ -1,8 +1,5 @@
-import { type STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-
-export type AllStandardObjectView<T extends AllStandardObjectName> =
-  (typeof STANDARD_OBJECTS)[T] extends { views: infer View } ? View : never;
+import { AllStandardObjectView } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view.type';
 
 export type AllStandardObjectViewName<T extends AllStandardObjectName> =
   AllStandardObjectView<T> extends never
