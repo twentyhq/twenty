@@ -2,6 +2,7 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 
 interface AuthContextWithDefinedWorkspaceProperties {
   user: AuthContext['user'];
+  application: AuthContext['application'];
   workspace: NonNullable<AuthContext['workspace']>;
   workspaceMetadataVersion?: string;
   workspaceMemberId: AuthContext['workspaceMemberId'];

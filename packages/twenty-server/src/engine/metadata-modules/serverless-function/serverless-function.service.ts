@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
 
-import { Request } from 'express';
 import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
@@ -97,19 +96,15 @@ export class ServerlessFunctionService {
     workspaceId,
     payload,
     version = 'latest',
-    request,
+    userId,
   }: {
     id: string;
     workspaceId: string;
     payload: object;
     version?: string;
-    request?: Request;
+    userId?: string;
   }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
-
-    const accessTokenPayload = isDefined(request)
-      ? this.accessTokenService.decode(request)
-      : undefined;
 
     const functionToExecute =
       await this.serverlessFunctionRepository.findOneOrFail({
@@ -126,7 +121,7 @@ export class ServerlessFunctionService {
     const applicationToken = isDefined(functionToExecute.applicationId)
       ? await this.applicationTokenService.generateApplicationToken({
           workspaceId,
-          userId: accessTokenPayload?.userId,
+          userId,
           applicationId: functionToExecute.applicationId,
           expiresInSeconds: functionToExecute.timeoutSeconds,
         })

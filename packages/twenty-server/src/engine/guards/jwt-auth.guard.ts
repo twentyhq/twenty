@@ -34,6 +34,7 @@ export class JwtAuthGuard implements CanActivate {
 
       request.user = data.user;
       request.apiKey = data.apiKey;
+      request.application = data.application;
       request.workspace = data.workspace;
       request.workspaceId = data.workspace?.id;
       request.workspaceMetadataVersion = metadataVersion;

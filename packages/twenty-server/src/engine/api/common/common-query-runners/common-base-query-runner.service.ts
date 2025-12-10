@@ -51,6 +51,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -295,32 +296,39 @@ export abstract class CommonBaseQueryRunnerService<
     }
   }
 
-  private async getRoleIdOrThrow(
+  private async getRoleIdsOrThrow(
     authContext: AuthContext,
     workspaceId: string,
-  ): Promise<string> {
+  ): Promise<string[]> {
     if (isDefined(authContext.apiKey)) {
-      return this.apiKeyRoleService.getRoleIdForApiKey(
-        authContext.apiKey.id,
-        workspaceId,
-      );
+      return [
+        await this.apiKeyRoleService.getRoleIdForApiKey(
+          authContext.apiKey.id,
+          workspaceId,
+        ),
+      ];
     }
 
-    if (isDefined(authContext.application?.defaultRoleId)) {
-      return authContext.application.defaultRoleId;
-    }
+    const applicationDefaultRoleId = authContext.application?.defaultRoleId;
 
-    if (!isDefined(authContext.userWorkspaceId)) {
+    if (
+      !isDefined(authContext.userWorkspaceId) &&
+      !isDefined(applicationDefaultRoleId)
+    ) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
       );
     }
 
-    return this.userRoleService.getRoleIdForUserWorkspace({
-      userWorkspaceId: authContext.userWorkspaceId,
-      workspaceId,
-    });
+    const userWorkspaceRoleId = isDefined(authContext.userWorkspaceId)
+      ? await this.userRoleService.getRoleIdForUserWorkspace({
+          userWorkspaceId: authContext.userWorkspaceId,
+          workspaceId,
+        })
+      : undefined;
+
+    return [userWorkspaceRoleId, applicationDefaultRoleId].filter(isDefined);
   }
 
   private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
@@ -329,9 +337,11 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const workspaceId = authContext.workspace.id;
 
-    const roleId = await this.getRoleIdOrThrow(authContext, workspaceId);
+    const roleIds = await this.getRoleIdsOrThrow(authContext, workspaceId);
 
-    const rolePermissionConfig = { unionOf: [roleId] };
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: roleIds,
+    };
 
     const repository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,

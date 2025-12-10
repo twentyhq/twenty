@@ -114,6 +114,7 @@ export class ApplicationTokenService {
 
       userPayload = {
         userId: user.id,
+        userWorkspaceId: userWorkspace.id,
         workspaceMemberId: workspaceMember.id,
       };
     }

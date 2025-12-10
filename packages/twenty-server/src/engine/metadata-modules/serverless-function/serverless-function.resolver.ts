@@ -1,4 +1,4 @@
-import { Inject, Req, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Inject, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { Request } from 'express';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -30,6 +29,9 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.dto';
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
 import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -158,7 +160,8 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneServerlessFunction(
-    @Req() request: Request,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
@@ -170,7 +173,7 @@ export class ServerlessFunctionResolver {
         workspaceId,
         payload,
         version,
-        request,
+        userId: user?.id,
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
