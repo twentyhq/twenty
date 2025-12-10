@@ -17,11 +17,12 @@ import {
 } from './StyledMenuItemBase';
 
 const StyledMainText = styled.div`
-  flex-shrink: 0;
+  flex-shrink: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  min-width: 0;
 `;
 
 const StyledIconContainer = styled.div`
