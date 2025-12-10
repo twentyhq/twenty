@@ -1,3 +1,5 @@
+import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
+import { LINE_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMinimumWidthPerTickRotated';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
@@ -26,9 +28,19 @@ export const computeLineChartCategoryTickValues = ({
   const availableWidth =
     width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT);
 
+  const dataPointCount = data[0].data.length;
+  const widthPerDataPoint =
+    dataPointCount > 0 ? availableWidth / dataPointCount : 0;
+
+  const willRotate = widthPerDataPoint < ROTATION_THRESHOLD_WIDTH;
+
+  const minimumSizePerTick = willRotate
+    ? LINE_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED
+    : LINE_CHART_MINIMUM_WIDTH_PER_TICK;
+
   return computeChartCategoryTickValues({
     availableSize: availableWidth,
-    minimumSizePerTick: LINE_CHART_MINIMUM_WIDTH_PER_TICK,
+    minimumSizePerTick,
     values,
   });
 };

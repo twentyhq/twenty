@@ -1,6 +1,5 @@
+import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
 import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
-
-const ROTATION_THRESHOLD_WIDTH = 50;
 
 const ROTATED_LABEL_CHARACTER_WIDTH_RATIO = 0.5;
 const HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO = 0.6;
