@@ -28,6 +28,7 @@ import { PermissionsException } from 'src/engine/metadata-modules/permissions/pe
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -104,6 +105,9 @@ describe('UserWorkspaceService', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation(async (_authContext, callback) => callback()),
             getRepository: jest.fn(),
           },
         },
@@ -159,6 +163,11 @@ describe('UserWorkspaceService', () => {
     globalWorkspaceOrmManager = module.get<GlobalWorkspaceOrmManager>(
       GlobalWorkspaceOrmManager,
     );
+    (globalWorkspaceOrmManager.getRepository as jest.Mock).mockResolvedValue({
+      findOne: jest.fn(),
+      update: jest.fn(),
+    } as unknown as WorkspaceRepository<UserWorkspaceEntity>);
+
     userRoleService = module.get<UserRoleService>(UserRoleService);
     fileUploadService = module.get<FileUploadService>(FileUploadService);
     onboardingService = module.get<OnboardingService>(OnboardingService);
