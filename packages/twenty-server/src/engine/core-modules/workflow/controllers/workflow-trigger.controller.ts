@@ -9,14 +9,15 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -36,7 +37,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 )
 export class WorkflowTriggerController {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
@@ -72,68 +73,78 @@ export class WorkflowTriggerController {
     payload?: object;
     workspaceId: string;
   }) {
-    const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflow = await workflowRepository.findOne({
-      where: { id: workflowId },
-    });
+    const { workflow } =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workflowRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+              workspaceId,
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
 
-    if (!isDefined(workflow)) {
-      throw new WorkflowTriggerException(
-        `[Webhook trigger] Workflow ${workflowId} not found in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.NOT_FOUND,
-      );
-    }
+          const workflow = await workflowRepository.findOne({
+            where: { id: workflowId },
+          });
 
-    if (
-      !isDefined(workflow.lastPublishedVersionId) ||
-      workflow.lastPublishedVersionId === ''
-    ) {
-      throw new WorkflowTriggerException(
-        `[Webhook trigger] Workflow ${workflowId} has not been activated in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
-      );
-    }
+          if (!isDefined(workflow)) {
+            throw new WorkflowTriggerException(
+              `[Webhook trigger] Workflow ${workflowId} not found in workspace ${workspaceId}`,
+              WorkflowTriggerExceptionCode.NOT_FOUND,
+            );
+          }
 
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: { id: workflow.lastPublishedVersionId },
-    });
+          if (
+            !isDefined(workflow.lastPublishedVersionId) ||
+            workflow.lastPublishedVersionId === ''
+          ) {
+            throw new WorkflowTriggerException(
+              `[Webhook trigger] Workflow ${workflowId} has not been activated in workspace ${workspaceId}`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
+            );
+          }
 
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowTriggerException(
-        `[Webhook trigger] No workflow version activated for workflow ${workflowId} in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
+          const workflowVersionRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+              workspaceId,
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
+          const workflowVersion = await workflowVersionRepository.findOne({
+            where: { id: workflow.lastPublishedVersionId },
+          });
 
-    if (workflowVersion.trigger?.type !== WorkflowTriggerType.WEBHOOK) {
-      throw new WorkflowTriggerException(
-        `[Webhook trigger] Workflow ${workflowId} does not have a Webhook trigger in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
-      );
-    }
+          if (!isDefined(workflowVersion)) {
+            throw new WorkflowTriggerException(
+              `[Webhook trigger] No workflow version activated for workflow ${workflowId} in workspace ${workspaceId}`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+            );
+          }
 
-    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-      throw new WorkflowTriggerException(
-        `[Webhook trigger] Workflow version ${workflowVersion.id} is not active in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
+          if (workflowVersion.trigger?.type !== WorkflowTriggerType.WEBHOOK) {
+            throw new WorkflowTriggerException(
+              `[Webhook trigger] Workflow ${workflowId} does not have a Webhook trigger in workspace ${workspaceId}`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+            );
+          }
+
+          if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+            throw new WorkflowTriggerException(
+              `[Webhook trigger] Workflow version ${workflowVersion.id} is not active in workspace ${workspaceId}`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
+            );
+          }
+
+          return { workflow, workflowVersion };
+        },
       );
-    }
 
     const { workflowRunId } =
       await this.workflowTriggerWorkspaceService.runWorkflowVersion({
-        workflowVersionId: workflow.lastPublishedVersionId,
+        workflowVersionId: workflow.lastPublishedVersionId!,
         payload: payload || {},
         createdBy: {
           source: FieldActorSource.WEBHOOK,

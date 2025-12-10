@@ -3,8 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
@@ -31,7 +32,7 @@ import { assertNever } from 'src/utils/assert';
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
@@ -69,71 +70,87 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId: string,
     workspaceId: string,
   ) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowVersionNullable = await workflowVersionRepository.findOne({
-      where: { id: workflowVersionId },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-        workflowVersionNullable,
-      );
+        const workflowVersionNullable = await workflowVersionRepository.findOne(
+          {
+            where: { id: workflowVersionId },
+          },
+        );
 
-    const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+        const workflowVersion =
+          await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
+            workflowVersionNullable,
+          );
 
-    const workflow = await workflowRepository.findOne({
-      where: { id: workflowVersion.workflowId },
-    });
+        const workflowRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    if (!workflow) {
-      throw new WorkflowTriggerException(
-        'No workflow found',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
+        const workflow = await workflowRepository.findOne({
+          where: { id: workflowVersion.workflowId },
+        });
 
-    assertVersionCanBeActivated(workflowVersion, workflow);
+        if (!workflow) {
+          throw new WorkflowTriggerException(
+            'No workflow found',
+            WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+          );
+        }
 
-    await this.performActivationSteps(
-      workflow,
-      workflowVersion,
-      workflowRepository,
-      workflowVersionRepository,
-      workspaceId,
+        assertVersionCanBeActivated(workflowVersion, workflow);
+
+        await this.performActivationSteps(
+          workflow,
+          workflowVersion,
+          workflowRepository,
+          workflowVersionRepository,
+          workspaceId,
+        );
+
+        return true;
+      },
     );
-
-    return true;
   }
 
   async deactivateWorkflowVersion(
     workflowVersionId: string,
     workspaceId: string,
   ) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.performDeactivationSteps(
-      workflowVersionId,
-      workflowVersionRepository,
-      workspaceId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await this.performDeactivationSteps(
+          workflowVersionId,
+          workflowVersionRepository,
+          workspaceId,
+        );
+
+        return true;
+      },
     );
-
-    return true;
   }
 
   async stopWorkflowRun(workflowRunId: string, workspaceId: string) {

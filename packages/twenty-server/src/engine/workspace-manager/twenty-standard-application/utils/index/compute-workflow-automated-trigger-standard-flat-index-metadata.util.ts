@@ -9,7 +9,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
@@ -26,7 +26,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatIndexMetadatas = ({
       indexName: 'workflowIdIndex',
       relatedFieldNames: ['workflow'],
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

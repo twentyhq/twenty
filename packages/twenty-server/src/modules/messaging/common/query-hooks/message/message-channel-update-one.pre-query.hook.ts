@@ -14,7 +14,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
@@ -39,7 +40,7 @@ export class MessageChannelUpdateOnePreQueryHook
   );
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
@@ -52,89 +53,97 @@ export class MessageChannelUpdateOnePreQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspace.id,
-        'messageChannel',
-      );
+    const systemAuthContext = buildSystemAuthContext(workspace.id);
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: payload.id },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      systemAuthContext,
+      async () => {
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspace.id,
+            'messageChannel',
+          );
 
-    if (!isDefined(messageChannel)) {
-      throw new WorkspaceQueryRunnerException(
-        'Message channel not found',
-        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Message channel not found`,
-        },
-      );
-    }
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: payload.id },
+        });
 
-    const isSyncOngoing = ONGOING_SYNC_STAGES.includes(
-      messageChannel.syncStage,
+        if (!isDefined(messageChannel)) {
+          throw new WorkspaceQueryRunnerException(
+            'Message channel not found',
+            WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+            {
+              userFriendlyMessage: msg`Message channel not found`,
+            },
+          );
+        }
+
+        const isSyncOngoing = ONGOING_SYNC_STAGES.includes(
+          messageChannel.syncStage,
+        );
+
+        const messageFolderRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
+            workspace.id,
+            'messageFolder',
+          );
+
+        const messageFoldersWithPendingActionCount =
+          await messageFolderRepository.count({
+            where: {
+              messageChannelId: messageChannel.id,
+              pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+            },
+          });
+
+        const hasPendingFolderActions =
+          messageFoldersWithPendingActionCount > 0;
+
+        const hasPendingGroupEmailsAction =
+          messageChannel.pendingGroupEmailsAction !==
+          MessageChannelPendingGroupEmailsAction.NONE;
+
+        if (
+          isSyncOngoing &&
+          (hasPendingFolderActions || hasPendingGroupEmailsAction)
+        ) {
+          throw new WorkspaceQueryRunnerException(
+            'Cannot update message channel while sync is ongoing with pending actions',
+            WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            {
+              userFriendlyMessage: msg`Cannot update message channel while sync is ongoing. Please wait for the sync to complete.`,
+            },
+          );
+        }
+
+        const hasCompletedConfiguration =
+          messageChannel.syncStage !==
+          MessageChannelSyncStage.PENDING_CONFIGURATION;
+
+        if (!hasCompletedConfiguration) {
+          this.logger.log(
+            `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
+          );
+
+          return payload;
+        }
+
+        const excludeGroupEmailsChanged =
+          isDefined(payload.data.excludeGroupEmails) &&
+          payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
+
+        if (excludeGroupEmailsChanged) {
+          await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
+            messageChannel,
+            workspace.id,
+            payload.data.excludeGroupEmails
+              ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION
+              : MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
+          );
+        }
+
+        return payload;
+      },
     );
-
-    const messageFolderRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
-        workspace.id,
-        'messageFolder',
-      );
-
-    const messageFoldersWithPendingActionCount =
-      await messageFolderRepository.count({
-        where: {
-          messageChannelId: messageChannel.id,
-          pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
-        },
-      });
-
-    const hasPendingFolderActions = messageFoldersWithPendingActionCount > 0;
-
-    const hasPendingGroupEmailsAction =
-      messageChannel.pendingGroupEmailsAction !==
-      MessageChannelPendingGroupEmailsAction.NONE;
-
-    if (
-      isSyncOngoing &&
-      (hasPendingFolderActions || hasPendingGroupEmailsAction)
-    ) {
-      throw new WorkspaceQueryRunnerException(
-        'Cannot update message channel while sync is ongoing with pending actions',
-        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        {
-          userFriendlyMessage: msg`Cannot update message channel while sync is ongoing. Please wait for the sync to complete.`,
-        },
-      );
-    }
-
-    const hasCompletedConfiguration =
-      messageChannel.syncStage !==
-      MessageChannelSyncStage.PENDING_CONFIGURATION;
-
-    if (!hasCompletedConfiguration) {
-      this.logger.log(
-        `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
-      );
-
-      return payload;
-    }
-
-    const excludeGroupEmailsChanged =
-      isDefined(payload.data.excludeGroupEmails) &&
-      payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
-
-    if (excludeGroupEmailsChanged) {
-      await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
-        messageChannel,
-        workspace.id,
-        payload.data.excludeGroupEmails
-          ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION
-          : MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
-      );
-    }
-
-    return payload;
   }
 }

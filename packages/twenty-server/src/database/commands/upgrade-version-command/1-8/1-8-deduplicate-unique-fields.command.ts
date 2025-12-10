@@ -5,6 +5,8 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 
+import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
+
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,8 +24,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
@@ -37,7 +38,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     protected readonly indexMetadataService: IndexMetadataService,
     protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -188,7 +189,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource,
     dryRun,
   }: {
-    dataSource: WorkspaceDataSource;
+    dataSource: WorkspaceDataSourceInterface;
     dryRun: boolean;
   }) {
     const workspaceMemberRepository = dataSource.getRepository(
@@ -248,7 +249,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource,
     dryRun,
   }: {
-    dataSource: WorkspaceDataSource;
+    dataSource: WorkspaceDataSourceInterface;
     dryRun: boolean;
   }) {
     const companyRepository = dataSource.getRepository('company', {
@@ -308,7 +309,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource,
     dryRun,
   }: {
-    dataSource: WorkspaceDataSource;
+    dataSource: WorkspaceDataSourceInterface;
     dryRun: boolean;
   }) {
     const personRepository = dataSource.getRepository('person', {
