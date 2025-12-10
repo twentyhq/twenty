@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -7,6 +5,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
@@ -105,7 +104,7 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
       ${joinColumnNameForManyToOneMorphRelationField1}`,
       data: [
         {
-          id: randomUUID(),
+          id: v4(),
           manyToOneRelationFieldId: TEST_TARGET_OBJECT_RECORD_ID,
           [joinColumnNameForManyToOneMorphRelationField1]:
             TEST_TARGET_OBJECT_RECORD_ID,
@@ -166,7 +165,7 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
           arrayField: ['test'],
         },
         {
-          id: randomUUID(),
+          id: v4(),
         },
       ],
     }),
