@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout update should succeed should update page layout name 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Updated Page Layout Name",
+  "objectMetadataId": null,
+  "type": "RECORD_PAGE",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout update should succeed should update page layout type 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Original Page Layout",
+  "objectMetadataId": null,
+  "type": "DASHBOARD",
+  "updatedAt": Any<String>,
+}
+`;

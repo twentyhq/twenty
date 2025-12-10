@@ -46,6 +46,9 @@ export const convertUpdateViewInputToCore = (
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
     ...(isDefined(view.visibility) && { visibility: view.visibility }),
+    ...(isDefined(view.shouldHideEmptyGroups) && {
+      shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+    }),
     ...(view.mainGroupByFieldMetadataId !== undefined && {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
     }),
