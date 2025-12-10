@@ -22,7 +22,9 @@ export const RecordLink = ({
     return <span>{displayName}</span>;
   }
 
-  const linkToShowPage = getLinkToShowPage(objectNameSingular, { id: recordId });
+  const linkToShowPage = getLinkToShowPage(objectNameSingular, {
+    id: recordId,
+  });
 
   return (
     <LinkChip
