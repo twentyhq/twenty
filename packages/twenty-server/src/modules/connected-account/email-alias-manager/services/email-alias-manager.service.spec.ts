@@ -33,6 +33,9 @@ describe('Email Alias Manager Service', () => {
             getRepository: jest
               .fn()
               .mockResolvedValue(connectedAccountRepository),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         EmailAliasManagerService,

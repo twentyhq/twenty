@@ -50,6 +50,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   beforeEach(async () => {
     globalWorkspaceOrmManager = {
       getRepository: jest.fn().mockResolvedValue(mockRepository),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
     } as any;
 
     messageQueueService = {

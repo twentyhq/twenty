@@ -54,6 +54,9 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
         return mockWorkspaceMemberRepository;
       }
     }),
+    executeInWorkspaceContext: jest
+      .fn()
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   beforeEach(async () => {

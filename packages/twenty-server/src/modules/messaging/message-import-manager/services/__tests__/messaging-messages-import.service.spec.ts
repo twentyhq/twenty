@@ -111,6 +111,9 @@ describe('MessagingMessagesImportService', () => {
           getRepository: jest.fn().mockResolvedValue({
             update: jest.fn().mockResolvedValue(undefined),
           }),
+          executeInWorkspaceContext: jest
+            .fn()
+            .mockImplementation((_authContext: any, fn: () => any) => fn()),
         },
       },
       {

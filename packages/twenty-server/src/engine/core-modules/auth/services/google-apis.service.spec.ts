@@ -96,6 +96,9 @@ describe('GoogleAPIsService', () => {
             getDataSourceForWorkspace: jest
               .fn()
               .mockImplementation(() => mockWorkspaceDataSource),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {

@@ -16,6 +16,9 @@ describe('TrashCleanupService', () => {
 
     mockGlobalWorkspaceOrmManager = {
       getRepository: jest.fn(),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
     };
 
     const module: TestingModule = await Test.createTestingModule({

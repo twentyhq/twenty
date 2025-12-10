@@ -37,9 +37,15 @@ describe('CreatedByFromAuthContextService', () => {
     findOneOrFail: jest.fn(),
   };
   const globalWorkspaceOrmManager: jest.Mocked<
-    Pick<GlobalWorkspaceOrmManager, 'getRepository'>
+    Pick<
+      GlobalWorkspaceOrmManager,
+      'getRepository' | 'executeInWorkspaceContext'
+    >
   > = {
     getRepository: jest.fn().mockResolvedValue(mockWorkspaceMemberRepository),
+    executeInWorkspaceContext: jest
+      .fn()
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   beforeEach(async () => {

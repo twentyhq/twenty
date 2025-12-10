@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -38,6 +38,9 @@ describe('TimelineCalendarEventService', () => {
 
     const mockGlobalWorkspaceOrmManager = {
       getRepository: jest.fn().mockResolvedValue(mockCalendarEventRepository),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((_authContext: any, fn: () => any) => fn()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
