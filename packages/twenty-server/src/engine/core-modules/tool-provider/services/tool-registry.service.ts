@@ -508,12 +508,13 @@ export class ToolRegistryService {
           ? allRolePermissions[0]
           : computePermissionIntersection(allRolePermissions);
     } else if ('unionOf' in rolePermissionConfig) {
-      const allRolePermissions = rolePermissionConfig.unionOf.map(
-        (roleId: string) => rolesPermissions[roleId],
-      );
-
-      // For unionOf with single role, just use that role's permissions
-      objectPermissions = allRolePermissions[0];
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = rolesPermissions[rolePermissionConfig.unionOf[0]];
+      } else {
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
+      }
     } else {
       return {};
     }
