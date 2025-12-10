@@ -6,6 +6,7 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
+import pLimit from 'p-limit';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
@@ -25,6 +26,9 @@ import {
 // Microsoft API limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
+/* reference: https://learn.microsoft.com/en-us/graph/throttling-limits#limits-per-mailbox */
+const FOLDER_PROCESSING_CONCURRENCY = 4;
+
 @Injectable()
 export class MicrosoftGetMessageListService {
   private readonly logger = new Logger(MicrosoftGetMessageListService.name);
@@ -38,8 +42,6 @@ export class MicrosoftGetMessageListService {
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    const result: GetMessageListsResponse = [];
-
     if (messageFolders.length === 0) {
       throw new MessageImportDriverException(
         `Message channel ${messageChannel.id} has no message folders`,
@@ -47,16 +49,22 @@ export class MicrosoftGetMessageListService {
       );
     }
 
-    for (const folder of messageFolders) {
-      const response = await this.getMessageList(connectedAccount, folder);
+    const limit = pLimit(FOLDER_PROCESSING_CONCURRENCY);
 
-      result.push({
-        ...response,
-        folderId: folder.id,
-      });
-    }
+    const results = await Promise.all(
+      messageFolders.map((folder) =>
+        limit(async () => {
+          const response = await this.getMessageList(connectedAccount, folder);
 
-    return result;
+          return {
+            ...response,
+            folderId: folder.id,
+          };
+        }),
+      ),
+    );
+
+    return results;
   }
 
   public async getMessageList(
