@@ -23,10 +23,12 @@ Permissions:
   RESPONSE_FORMAT: `
 Format responses with markdown for clarity (headings, lists, code blocks, tables).
 
-Record References:
-- When you create or find records, the tool response includes recordReferences with links
-- Always reference created/found records using: [[record:objectName:recordId:displayName]]
-- Example: "I created [[record:company:abc-123:Acme Corp]] with CEO [[record:person:def-456:John Smith]]"
-- This allows users to click directly to view the records
-- Include these references in your response so users can easily access the records`,
+Record References - IMPORTANT:
+- Tool responses include a "recordReferences" array with clickable links
+- ONLY use record references that are returned by tools - NEVER make up IDs
+- Copy the exact format from the tool response: [[record:objectName:recordId:displayName]]
+- The recordId MUST be a real UUID (like "abc12345-1234-5678-abcd-123456789012")
+- DO NOT create record references before calling the tool
+- DO NOT use placeholder IDs like "rec-snowflake" or "rec-person-1"
+- If a tool hasn't been called yet, don't reference records that don't exist`,
 };
