@@ -1057,16 +1057,6 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type Dashboard = {
-  __typename?: 'Dashboard';
-  createdAt: Scalars['String'];
-  id: Scalars['UUID'];
-  pageLayoutId?: Maybe<Scalars['UUID']>;
-  position: Scalars['Float'];
-  title?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['String'];
-};
-
 /** Database Event Action */
 export enum DatabaseEventAction {
   CREATED = 'CREATED',
@@ -1219,6 +1209,16 @@ export type DuplicateWorkflowInput = {
 export type DuplicateWorkflowVersionStepInput = {
   stepId: Scalars['String'];
   workflowVersionId: Scalars['String'];
+};
+
+export type DuplicatedDashboard = {
+  __typename?: 'DuplicatedDashboard';
+  createdAt: Scalars['String'];
+  id: Scalars['UUID'];
+  pageLayoutId?: Maybe<Scalars['UUID']>;
+  position: Scalars['Float'];
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
 };
 
 export type EditSsoInput = {
@@ -1862,7 +1862,7 @@ export type Mutation = {
   destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   dismissReconnectAccountBanner: Scalars['Boolean'];
-  duplicateDashboard: Dashboard;
+  duplicateDashboard: DuplicatedDashboard;
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
