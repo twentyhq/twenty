@@ -60,6 +60,8 @@ export const failingFilterInputByFieldMetadataType: {
     //   restErrorMessage: "'oneToManyRelationFieldId' does not exist",
     // },
   ],
+  // todo @guillim
+  [FieldMetadataType.MORPH_RELATION]: [],
   [FieldMetadataType.UUID]: [
     {
       gqlFilterInput: { uuidField: { eq: 'invalid-uuid' } },

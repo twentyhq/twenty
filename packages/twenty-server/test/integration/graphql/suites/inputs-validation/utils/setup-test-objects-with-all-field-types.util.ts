@@ -8,10 +8,14 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
-const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR =
-  'apiInputValidationTargetTestObject';
-const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL =
-  'apiInputValidationTargetTestObjects';
+const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1 =
+  'apiInputValidationTargetTestObject1';
+const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1 =
+  'apiInputValidationTargetTestObjects1';
+const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2 =
+  'apiInputValidationTargetTestObject2';
+const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2 =
+  'apiInputValidationTargetTestObjects2';
 
 export const TEST_TARGET_OBJECT_RECORD_ID =
   '20202020-a21e-4ec2-873b-de4264d89025';
@@ -33,21 +37,33 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   const objectMetadataId = createdObjectMetadata.data.createOneObject.id;
 
-  const createdTargetObjectMetadata = await createOneObjectMetadata({
+  const createdTargetObjectMetadata1 = await createOneObjectMetadata({
     input: {
-      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
-      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
+      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
     },
   });
 
-  const targetObjectMetadataId =
-    createdTargetObjectMetadata.data.createOneObject.id;
+  const createdTargetObjectMetadata2 = await createOneObjectMetadata({
+    input: {
+      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2,
+      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2,
+      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2,
+      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2,
+    },
+  });
+
+  const targetObjectMetadata1Id =
+    createdTargetObjectMetadata1.data.createOneObject.id;
+  const targetObjectMetadata2Id =
+    createdTargetObjectMetadata2.data.createOneObject.id;
 
   const fieldMetadataCreationInputs = getFieldMetadataCreationInputs(
     objectMetadataId,
-    targetObjectMetadataId,
+    targetObjectMetadata1Id,
+    targetObjectMetadata2Id,
   );
 
   for (const input of fieldMetadataCreationInputs) {
@@ -58,8 +74,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
-      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
       gqlFields: `id`,
       data: [
         {
@@ -143,8 +159,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
-      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
       gqlFields: `id`,
       data: [
         {
@@ -156,7 +172,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   return {
     objectMetadataId,
-    targetObjectMetadataId,
+    targetObjectMetadata1Id,
+    targetObjectMetadata2Id,
     objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
     objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
   };

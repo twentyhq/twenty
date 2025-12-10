@@ -120,6 +120,8 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
+  // todo @guillim
+  [FieldMetadataType.MORPH_RELATION]: [],
   [FieldMetadataType.RAW_JSON]: [
     {
       input: {

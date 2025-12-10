@@ -22,7 +22,7 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     objectMetadataId = setupTest.objectMetadataId;
     objectMetadataSingularName = setupTest.objectMetadataSingularName;
     objectMetadataPluralName = setupTest.objectMetadataPluralName;
-    targetObjectMetadataId = setupTest.targetObjectMetadataId;
+    targetObjectMetadataId = setupTest.targetObjectMetadata1Id;
   });
 
   afterAll(async () => {

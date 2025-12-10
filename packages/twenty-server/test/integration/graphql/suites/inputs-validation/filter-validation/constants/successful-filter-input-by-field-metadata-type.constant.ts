@@ -138,6 +138,19 @@ export const successfulFilterInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.MORPH_RELATION]: [
+    {
+      gqlFilterInput: {
+        morphRelationFieldId: { neq: '00000000-0000-4000-8000-000000000000' },
+      },
+      restFilterInput: `morphRelationFieldId[neq]:"00000000-0000-4000-8000-000000000000"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record.morphRelationFieldId !== '00000000-0000-4000-8000-000000000000'
+        );
+      },
+    },
+  ],
   [FieldMetadataType.UUID]: [
     {
       gqlFilterInput: {

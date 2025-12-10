@@ -160,6 +160,8 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
+  // todo @guillim
+  [FieldMetadataType.MORPH_RELATION]: [],
   [FieldMetadataType.RATING]: [
     {
       input: {
