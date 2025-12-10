@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import {
-    type ToolContext,
-    type ToolRegistryService,
+  type ToolContext,
+  type ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 
 export const LOAD_TOOLS_TOOL_NAME = 'load_tools' as const;
