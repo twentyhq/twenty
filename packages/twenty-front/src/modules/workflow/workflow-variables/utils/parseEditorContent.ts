@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const parseEditorContent = (json: JSONContent): string => {
   const parseNode = (node: JSONContent): string => {
+    console.log(node);
     if (
       (node.type === 'paragraph' || node.type === 'doc') &&
       isDefined(node.content)
@@ -16,7 +17,7 @@ export const parseEditorContent = (json: JSONContent): string => {
     }
 
     if (node.type === 'hardBreak') {
-      return '\n';
+      return '  \n';
     }
 
     if (node.type === 'variableTag') {
