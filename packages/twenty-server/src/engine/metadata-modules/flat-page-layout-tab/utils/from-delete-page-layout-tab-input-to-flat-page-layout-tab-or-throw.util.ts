@@ -39,6 +39,6 @@ export const fromDeletePageLayoutTabInputToFlatPageLayoutTabOrThrow = ({
 
   return {
     ...existingFlatPageLayoutTabToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };
