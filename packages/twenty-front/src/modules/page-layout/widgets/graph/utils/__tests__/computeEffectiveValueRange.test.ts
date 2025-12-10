@@ -1,59 +1,117 @@
 import { computeEffectiveValueRange } from '../computeEffectiveValueRange';
 
 describe('computeEffectiveValueRange', () => {
-  it('should return hasNoData true when dataLength is 0', () => {
-    const result = computeEffectiveValueRange({
-      calculatedMinimum: 0,
-      calculatedMaximum: 0,
-      dataLength: 0,
+  describe('minimum value calculation', () => {
+    it('should start from 0 for non-negative values', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 5,
+        calculatedMaximum: 100,
+      });
+
+      expect(result.effectiveMinimumValue).toBe(0);
     });
 
-    expect(result.hasNoData).toBe(true);
+    it('should use calculated minimum for negative values', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: -50,
+        calculatedMaximum: 100,
+      });
+
+      expect(result.effectiveMinimumValue).toBe(-50);
+    });
+
+    it('should use explicit rangeMin when provided', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 100,
+        rangeMin: 25,
+      });
+
+      expect(result.effectiveMinimumValue).toBe(25);
+    });
   });
 
-  it('should start from 0 for non-negative values', () => {
-    const result = computeEffectiveValueRange({
-      calculatedMinimum: 5,
-      calculatedMaximum: 100,
-      dataLength: 10,
+  describe('maximum value calculation', () => {
+    it('should add 10% padding for non-negative values without explicit rangeMax', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 100,
+      });
+
+      expect(result.effectiveMaximumValue).toBe(110);
     });
 
-    expect(result.effectiveMinimumValue).toBe(0);
-    expect(result.hasNoData).toBe(false);
+    it('should use minimum padding of 1 for small values', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 5,
+      });
+
+      expect(result.effectiveMaximumValue).toBe(6);
+    });
+
+    it('should not add padding when rangeMax is explicit', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 100,
+        rangeMax: 100,
+      });
+
+      expect(result.effectiveMaximumValue).toBe(100);
+    });
+
+    it('should not add padding when there are negative values', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: -50,
+        calculatedMaximum: 100,
+      });
+
+      expect(result.effectiveMaximumValue).toBe(100);
+    });
+
+    it('should use explicit rangeMax when provided', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 100,
+        rangeMax: 50,
+      });
+
+      expect(result.effectiveMaximumValue).toBe(50);
+    });
   });
 
-  it('should use calculated minimum for negative values', () => {
-    const result = computeEffectiveValueRange({
-      calculatedMinimum: -50,
-      calculatedMaximum: 100,
-      dataLength: 10,
+  describe('edge cases', () => {
+    it('should add padding when min equals max and no explicit range', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 50,
+        calculatedMaximum: 50,
+      });
+
+      expect(result.effectiveMaximumValue).toBeGreaterThan(
+        result.effectiveMinimumValue,
+      );
     });
 
-    expect(result.effectiveMinimumValue).toBe(-50);
-  });
+    it('should not add padding when min equals max but explicit range is provided', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 50,
+        calculatedMaximum: 50,
+        rangeMin: 0,
+        rangeMax: 100,
+      });
 
-  it('should respect explicit rangeMin and rangeMax', () => {
-    const result = computeEffectiveValueRange({
-      calculatedMinimum: 0,
-      calculatedMaximum: 100,
-      rangeMin: 10,
-      rangeMax: 50,
-      dataLength: 10,
+      expect(result.effectiveMinimumValue).toBe(0);
+      expect(result.effectiveMaximumValue).toBe(100);
     });
 
-    expect(result.effectiveMinimumValue).toBe(10);
-    expect(result.effectiveMaximumValue).toBe(50);
-  });
+    it('should handle zero values', () => {
+      const result = computeEffectiveValueRange({
+        calculatedMinimum: 0,
+        calculatedMaximum: 0,
+      });
 
-  it('should add padding when min equals max and no explicit range', () => {
-    const result = computeEffectiveValueRange({
-      calculatedMinimum: 50,
-      calculatedMaximum: 50,
-      dataLength: 1,
+      expect(result.effectiveMinimumValue).toBe(0);
+      expect(result.effectiveMaximumValue).toBe(1);
     });
-
-    expect(result.effectiveMaximumValue).toBeGreaterThan(
-      result.effectiveMinimumValue,
-    );
   });
 });

@@ -52,7 +52,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata<T>;
-  update: PropertyUpdate<FlatFieldMetadata<T>, P>;
+  update: PropertyUpdate<FlatFieldMetadata, P>;
 };
 
 @Injectable()
