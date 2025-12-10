@@ -152,6 +152,7 @@ export type AggregateChartConfiguration = {
   graphType: GraphType;
   label?: Maybe<Scalars['String']>;
   prefix?: Maybe<Scalars['String']>;
+  ratioAggregateConfig?: Maybe<RatioAggregateConfig>;
   suffix?: Maybe<Scalars['String']>;
   timezone?: Maybe<Scalars['String']>;
 };
@@ -3695,6 +3696,17 @@ export type QueueRetentionConfig = {
   failedMaxCount: Scalars['Float'];
 };
 
+export type RatioAggregateConfig = {
+  __typename?: 'RatioAggregateConfig';
+  fieldMetadataId: Scalars['UUID'];
+  optionValue: Scalars['String'];
+};
+
+export type RatioAggregateConfigInput = {
+  fieldMetadataId: Scalars['UUID'];
+  optionValue: Scalars['String'];
+};
+
 export type Relation = {
   __typename?: 'Relation';
   sourceFieldMetadata: Field;
@@ -5574,7 +5586,7 @@ export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
 }>;
 
 
-export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
+export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -10202,6 +10214,7 @@ export const GetConnectedImapSmtpCaldavAccountDocument = gql`
         host
         port
         secure
+        username
         password
       }
       SMTP {

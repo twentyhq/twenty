@@ -1,6 +1,9 @@
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import {
+  type BarChartTickConfig,
+  getBarChartTickConfig,
+} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
@@ -32,6 +35,8 @@ type GetBarChartAxisConfigsProps = {
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
   axisFontSize?: number;
+  valueTickValues?: number[];
+  tickConfig?: BarChartTickConfig;
 };
 
 export const getBarChartAxisConfigs = ({
@@ -44,6 +49,8 @@ export const getBarChartAxisConfigs = ({
   yAxisLabel,
   formatOptions,
   axisFontSize = DEFAULT_AXIS_FONT_SIZE,
+  valueTickValues,
+  tickConfig,
 }: GetBarChartAxisConfigsProps) => {
   const {
     categoryTickValues,
@@ -51,16 +58,23 @@ export const getBarChartAxisConfigs = ({
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
     bottomAxisTickRotation,
-  } = getBarChartTickConfig({
-    width,
-    height,
-    data,
-    indexBy,
-    xAxisLabel,
-    yAxisLabel,
-    axisFontSize,
-    layout,
-  });
+  } =
+    tickConfig ??
+    getBarChartTickConfig({
+      width,
+      height,
+      data,
+      indexBy,
+      xAxisLabel,
+      yAxisLabel,
+      axisFontSize,
+      layout,
+    });
+
+  const resolvedValueTickValues =
+    valueTickValues && valueTickValues.length > 0
+      ? valueTickValues
+      : numberOfValueTicks;
 
   const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
@@ -90,7 +104,7 @@ export const getBarChartAxisConfigs = ({
       axisLeft: {
         ...COMMON_AXIS_CONFIG,
         tickRotation: NO_ROTATION_ANGLE,
-        tickValues: numberOfValueTicks,
+        tickValues: resolvedValueTickValues,
         legend: yAxisLabel,
         legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
         format: (value: number) =>
@@ -107,7 +121,7 @@ export const getBarChartAxisConfigs = ({
     axisBottom: {
       ...COMMON_AXIS_CONFIG,
       tickRotation: NO_ROTATION_ANGLE,
-      tickValues: numberOfValueTicks,
+      tickValues: resolvedValueTickValues,
       legend: yAxisLabel,
       legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) =>

@@ -5,8 +5,8 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useRecoilCallback } from 'recoil';
@@ -16,8 +16,6 @@ import { type CoreView } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
-  const { deleteViewGroups } = usePersistViewGroupRecords();
-
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
@@ -30,6 +28,8 @@ export const useHandleRecordGroupField = () => {
 
   const { updateView } = usePersistView();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -127,6 +127,8 @@ export const useHandleRecordGroupField = () => {
           viewGroups: newViewGroupsList,
           objectMetadataItem,
         });
+
+        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
       },
     [
       currentViewIdCallbackState,
@@ -134,6 +136,7 @@ export const useHandleRecordGroupField = () => {
       updateView,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
+      refreshCoreViewsByObjectMetadataId,
       loadRecordIndexStates,
     ],
   );
@@ -159,32 +162,14 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        await deleteViewGroups(
-          view.viewGroups.map((group) => ({
-            input: {
-              id: group.id,
-            },
-          })),
-        );
-
-        if (!isDefined(view.mainGroupByFieldMetadataId)) {
-          throw new Error('mainGroupByFieldMetadataId is required');
-        }
-
-        setRecordGroupsFromViewGroups({
-          viewId: view.id,
-          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
-          viewGroups: [],
-          objectMetadataItem,
+        await updateView({
+          id: view.id,
+          input: {
+            mainGroupByFieldMetadataId: null,
+          },
         });
       },
-    [
-      deleteViewGroups,
-      currentViewIdCallbackState,
-      getViewFromPrefetchState,
-      setRecordGroupsFromViewGroups,
-      objectMetadataItem,
-    ],
+    [currentViewIdCallbackState, getViewFromPrefetchState, updateView],
   );
 
   return { handleRecordGroupFieldChange, resetRecordGroupField };

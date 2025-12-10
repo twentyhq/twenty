@@ -30,10 +30,12 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
 
     // TODO: Implement migration logic here
     const workspaceId = '20202020-ef6f-4118-953c-2b027324b54a';
+    const twentyStandardApplicationId = '20202020-5adb-4091-81b7-d5be86a8bdd2';
     const twentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        createdAt: new Date(),
+        now: new Date().toISOString(),
         workspaceId,
+        twentyStandardApplicationId,
       });
 
     writeFileSync(
@@ -55,6 +57,26 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
             flatFieldMetadataMaps: {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatFieldMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatIndexMaps,
+            },
+            flatViewFieldMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFieldMaps,
+            },
+            flatViewFilterMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFilterMaps,
+            },
+            flatViewGroupMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewGroupMaps,
+            },
+            flatViewMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewMaps,
             },
           },
           workspaceId,

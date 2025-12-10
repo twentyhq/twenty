@@ -52,7 +52,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
 
     if (!isDefined(labelMetadataIdentifierViewField)) {
       const viewFieldId = v4();
-      const createdAt = new Date();
+      const createdAt = new Date().toISOString();
       const flatViewFieldToCreate: FlatViewField = {
         fieldMetadataId: updatedLabelIdentifierFieldMetadataId,
         position: lowestViewFieldPosition - 1,

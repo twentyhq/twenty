@@ -22,7 +22,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
   flatObjectMetadata: { id: objectMetadataId, applicationId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const idFieldId = v4();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,

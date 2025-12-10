@@ -7,6 +7,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export type Tool = {
   description: string;
   inputSchema: FlexibleSchema<unknown>;
-  execute(input: ToolInput): Promise<ToolOutput>;
+  execute(input: ToolInput, workspaceId: string): Promise<ToolOutput>;
   flag?: PermissionFlagType;
 };

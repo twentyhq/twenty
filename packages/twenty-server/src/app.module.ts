@@ -122,7 +122,9 @@ export class AppModule {
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
-      consumer.apply(RestCoreMiddleware).forRoutes({ path: 'rest/*', method });
+      consumer
+        .apply(RestCoreMiddleware)
+        .forRoutes({ path: 'rest/*path', method });
     }
   }
 }

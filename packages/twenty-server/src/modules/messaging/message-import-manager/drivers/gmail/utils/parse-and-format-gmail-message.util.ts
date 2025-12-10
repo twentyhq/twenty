@@ -1,5 +1,6 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
 import planer from 'planer';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -43,17 +44,28 @@ export const parseAndFormatGmailMessage = (
 
   const participants = [
     ...(from
-      ? formatAddressObjectAsParticipants([{ address: from }], 'from')
+      ? formatAddressObjectAsParticipants(
+          [{ address: from }],
+          MessageParticipantRole.FROM,
+        )
       : []),
     ...(toParticipants
       ? formatAddressObjectAsParticipants(
           [{ address: toParticipants, name: '' }],
-          'to',
+          MessageParticipantRole.TO,
         )
       : []),
-    ...(cc ? formatAddressObjectAsParticipants([{ address: cc }], 'cc') : []),
+    ...(cc
+      ? formatAddressObjectAsParticipants(
+          [{ address: cc }],
+          MessageParticipantRole.CC,
+        )
+      : []),
     ...(bcc
-      ? formatAddressObjectAsParticipants([{ address: bcc }], 'bcc')
+      ? formatAddressObjectAsParticipants(
+          [{ address: bcc }],
+          MessageParticipantRole.BCC,
+        )
       : []),
   ];
 

@@ -7,7 +7,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
@@ -34,7 +34,7 @@ export class CalendarEventsImportService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
@@ -137,7 +137,8 @@ export class CalendarEventsImportService {
         );
       }
       const calendarChannelEventAssociationRepository =
-        await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelEventAssociationWorkspaceEntity>(
+          workspaceId,
           'calendarChannelEventAssociation',
         );
 
