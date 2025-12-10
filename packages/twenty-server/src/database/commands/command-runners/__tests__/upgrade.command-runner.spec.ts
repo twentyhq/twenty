@@ -137,6 +137,9 @@ const buildUpgradeCommandModule = async ({
           connect: jest.fn(),
           destroyDataSourceForWorkspace: jest.fn(),
           getDataSourceForWorkspace: jest.fn(),
+          executeInWorkspaceContext: jest
+            .fn()
+            .mockImplementation((_authContext: any, fn: () => any) => fn()),
         },
       },
       {

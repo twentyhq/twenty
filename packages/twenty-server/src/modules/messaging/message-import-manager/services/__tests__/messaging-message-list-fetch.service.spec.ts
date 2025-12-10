@@ -201,6 +201,10 @@ describe('MessagingMessageListFetchService', () => {
             getDataSourceForWorkspace: jest.fn().mockResolvedValue({
               manager: {},
             }),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
             getRepository: jest.fn().mockImplementation((workspaceId, name) => {
               if (name === 'messageChannelMessageAssociation') {
                 return mockMessageChannelMessageAssociationRepository;

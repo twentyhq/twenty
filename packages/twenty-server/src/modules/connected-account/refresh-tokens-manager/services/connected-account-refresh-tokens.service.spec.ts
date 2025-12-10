@@ -45,6 +45,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
             getRepository: jest.fn(),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
       ],

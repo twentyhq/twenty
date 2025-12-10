@@ -157,6 +157,10 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
             getDataSourceForWorkspace: jest
               .fn()
               .mockResolvedValue(datasourceInstance),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
       ],

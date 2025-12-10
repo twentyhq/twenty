@@ -46,6 +46,10 @@ describe('WorkflowStatusesUpdate', () => {
 
         return Promise.resolve(null);
       }),
+    executeInWorkspaceContext: jest
+      .fn()
+
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   const mockServerlessFunctionService = {

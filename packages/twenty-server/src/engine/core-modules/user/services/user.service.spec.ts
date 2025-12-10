@@ -20,8 +20,8 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserService', () => {
@@ -73,6 +73,10 @@ describe('UserService', () => {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
             getRepository: jest.fn(),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {
