@@ -1,5 +1,3 @@
-import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
-import { BAR_CHART_MINIMUM_WIDTH_PER_TICK } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTick';
 import { BAR_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTickRotated';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
@@ -39,25 +37,21 @@ export const computeBarChartCategoryTickValues = ({
 
   const availableAxisSize = axisSize - totalMargins;
 
+  if (layout === BarChartLayout.HORIZONTAL) {
+    return computeChartCategoryTickValues({
+      availableSize: availableAxisSize,
+      minimumSizePerTick: computeMinHeightPerTick({ axisFontSize }),
+      values,
+    });
+  }
+
   const widthPerDataPoint =
-    layout === BarChartLayout.VERTICAL && data.length > 0
-      ? availableAxisSize / data.length
-      : 0;
-
-  const willRotate =
-    layout === BarChartLayout.VERTICAL &&
-    widthPerDataPoint < ROTATION_THRESHOLD_WIDTH;
-
-  const minimumSizePerTick =
-    layout === BarChartLayout.VERTICAL
-      ? willRotate
-        ? BAR_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED
-        : BAR_CHART_MINIMUM_WIDTH_PER_TICK
-      : computeMinHeightPerTick({ axisFontSize });
+    data.length > 0 ? availableAxisSize / data.length : 0;
 
   return computeChartCategoryTickValues({
     availableSize: availableAxisSize,
-    minimumSizePerTick,
+    minimumSizePerTick: BAR_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
+    widthPerDataPoint,
   });
 };
