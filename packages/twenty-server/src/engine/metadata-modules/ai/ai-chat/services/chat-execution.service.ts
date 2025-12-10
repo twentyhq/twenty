@@ -55,7 +55,7 @@ export type ChatExecutionResult = {
 const INITIAL_AGENTS_LIMIT = 2;
 
 // Common tools to pre-load for quick access
-const COMMON_PRELOAD_TOOLS = ['http_request', 'search_articles'];
+const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
 
 @Injectable()
 export class ChatExecutionService {

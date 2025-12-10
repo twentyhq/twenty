@@ -3,26 +3,26 @@ import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { type CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { type DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
+import { type FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { type UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-crud/tool-factory/direct-record-tools.factory';
-import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
+import { type PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { type SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
-import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
+import { type ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 // Type-only import to avoid circular dependency at file level
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
@@ -41,7 +41,7 @@ export class ToolProviderService {
     // Action tools (individual tools)
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
-    private readonly searchArticlesTool: SearchArticlesTool,
+    private readonly searchHelpCenterTool: SearchHelpCenterTool,
     // Database CRUD tools
     private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
     private readonly createRecordService: CreateRecordService,
@@ -80,9 +80,9 @@ export class ToolProviderService {
         },
       ],
       [
-        ToolType.SEARCH_ARTICLES,
+        ToolType.SEARCH_HELP_CENTER,
         {
-          tool: this.searchArticlesTool,
+          tool: this.searchHelpCenterTool,
           // No permission flag - available to all agents
         },
       ],
