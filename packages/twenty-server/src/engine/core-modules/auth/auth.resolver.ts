@@ -615,10 +615,24 @@ export class AuthResolver {
     origin: string,
     tokenWorkspaceId: string,
   ): Promise<WorkspaceEntity> {
-    const workspace =
+    // First, try to get workspace by origin (for Twenty's native frontend)
+    let workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
+
+    // If workspace not found by origin, try to get it directly by token's workspace ID
+    // This supports external applications (like NYCE) that don't use Twenty's subdomain system
+    if (!workspace) {
+      const workspaceRepository =
+        this.userWorkspaceRepository.manager.getRepository(WorkspaceEntity);
+
+      workspace =
+        (await workspaceRepository.findOne({
+          where: { id: tokenWorkspaceId },
+          relations: ['workspaceSSOIdentityProviders'],
+        })) ?? undefined;
+    }
 
     assertIsDefinedOrThrow(
       workspace,
