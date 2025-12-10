@@ -265,7 +265,7 @@ describe('parseEditorContent', () => {
       ],
     };
 
-    expect(parseEditorContent(input)).toBe('First line\nSecond line');
+    expect(parseEditorContent(input)).toBe('First line  \nSecond line');
   });
 
   it('should handle spaces between variables correctly', () => {
