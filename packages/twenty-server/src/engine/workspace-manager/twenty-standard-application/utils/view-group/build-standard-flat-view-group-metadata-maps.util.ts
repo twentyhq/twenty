@@ -4,15 +4,17 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type CreateStandardViewGroupArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/create-standard-view-group-flat-metadata.util';
+import { computeStandardTaskViewGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/compute-standard-task-view-groups.util';
 
 type StandardViewGroupBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardViewGroupArgs<P>, 'context'>,
 ) => Record<string, FlatViewGroup>;
 
-const STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME =
-  {} as const satisfies {
-    [P in AllStandardObjectName]?: StandardViewGroupBuilder<P>;
-  };
+const STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  task: computeStandardTaskViewGroups,
+} as const satisfies {
+  [P in AllStandardObjectName]?: StandardViewGroupBuilder<P>;
+};
 
 export const buildStandardFlatViewGroupMetadataMaps = (
   args: Omit<CreateStandardViewGroupArgs, 'context' | 'objectName'>,

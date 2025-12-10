@@ -4,6 +4,6 @@ import { type AllStandardObjectView } from 'src/engine/workspace-manager/twenty-
 export type AllStandardObjectViewFilterName<
   T extends AllStandardObjectName,
   V extends keyof AllStandardObjectView<T>,
-> = AllStandardObjectView<T>[V] extends { viewFitlers: infer ViewFilters }
+> = AllStandardObjectView<T>[V] extends { viewFilters: infer ViewFilters }
   ? keyof ViewFilters
   : never;

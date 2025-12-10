@@ -61,9 +61,7 @@ export const createStandardViewFlatMetadata = <
   now,
 }: CreateStandardViewArgs<O>): FlatView => {
   // @ts-expect-error ignore
-  const viewDefinition = STANDARD_OBJECTS[objectName].views.objectViews[
-    viewName
-  ] as unknown as {
+  const viewDefinition = STANDARD_OBJECTS[objectName].views[viewName] as {
     universalIdentifier: string;
   };
 
@@ -73,19 +71,18 @@ export const createStandardViewFlatMetadata = <
 
   const objectMetadataId =
     standardObjectMetadataRelatedEntityIds[objectName].id;
-  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const kanbanAggregateOperationFieldMetadataId =
     kanbanAggregateOperationFieldName
-      ? fieldIds[kanbanAggregateOperationFieldName].id
+      ? standardObjectMetadataRelatedEntityIds[objectName].fields[kanbanAggregateOperationFieldName].id
       : null;
 
   const mainGroupByFieldMetadataId = mainGroupByFieldName
-    ? fieldIds[mainGroupByFieldName].id
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[mainGroupByFieldName].id
     : null;
 
   const calendarFieldMetadataId = calendarFieldName
-    ? fieldIds[calendarFieldName].id
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[calendarFieldName].id
     : null;
 
   return {

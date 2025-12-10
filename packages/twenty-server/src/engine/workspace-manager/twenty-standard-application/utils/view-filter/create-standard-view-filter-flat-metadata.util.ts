@@ -17,7 +17,6 @@ export type CreateStandardViewFilterOptions<
   viewName: V;
   viewFilterName: AllStandardObjectViewFilterName<O, V>;
   fieldName: AllStandardObjectFieldName<O>;
-  viewId: string;
   operand: ViewFilterOperand;
   value: string;
   subFieldName?: string | null;
@@ -43,7 +42,6 @@ export const createStandardViewFilterFlatMetadata = <
     viewName,
     viewFilterName,
     fieldName,
-    viewId,
     operand,
     value,
     subFieldName = null,
@@ -66,15 +64,13 @@ export const createStandardViewFilterFlatMetadata = <
     );
   }
 
-  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
-
   return {
     id: v4(),
     universalIdentifier: viewFilterDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    viewId,
-    fieldMetadataId: fieldIds[fieldName].id,
+    viewId: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    fieldMetadataId: standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     operand,
     value,
     subFieldName,
