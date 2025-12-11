@@ -45,7 +45,7 @@ export class ApplicationTokenService {
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const application = await this.applicationRepository.findOne({
-      where: { id: applicationId },
+      where: { id: applicationId, workspaceId },
     });
 
     assertIsDefinedOrThrow(application, ApplicationNotFoundDefaultError);
