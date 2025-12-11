@@ -2255,6 +2255,11 @@ msgstr "Під час створення відношення морфу нав�
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Під час створення відношення морфу всі відношення мають стосуватися одного об'єкта метаданих"
 
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr ""
+
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
