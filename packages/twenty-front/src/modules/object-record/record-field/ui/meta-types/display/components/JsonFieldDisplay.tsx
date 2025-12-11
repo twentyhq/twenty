@@ -16,7 +16,9 @@ export const JsonFieldDisplay = () => {
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
-    setIsJsonTreeViewOpen(true);
+    if (isRecordFieldReadOnly) {
+      setIsJsonTreeViewOpen(true);
+    }
   };
 
   const handleClickOutside = () => {
@@ -34,7 +36,7 @@ export const JsonFieldDisplay = () => {
       <div ref={anchorRef} onClick={handleClick}>
         <JsonDisplay text={value} maxWidth={maxWidth} />
       </div>
-      {isJsonTreeViewOpen && isRecordFieldReadOnly && (
+      {isJsonTreeViewOpen && (
         <ExpandedFieldDisplay
           anchorElement={anchorRef.current ?? undefined}
           onClickOutside={handleClickOutside}
