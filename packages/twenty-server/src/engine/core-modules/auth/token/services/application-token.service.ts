@@ -130,7 +130,7 @@ export class ApplicationTokenService {
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
         secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.ACCESS,
+          JwtTokenTypeEnum.APPLICATION,
           workspaceId,
         ),
         expiresIn,

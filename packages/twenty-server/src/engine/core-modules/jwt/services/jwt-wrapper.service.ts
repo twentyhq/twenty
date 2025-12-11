@@ -18,6 +18,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   type AccessTokenJwtPayload,
+  ApiKeyTokenJwtPayload,
   ApplicationTokenJwtPayload,
   type FileTokenJwtPayload,
   type JwtPayload,
@@ -53,18 +54,15 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(
-    token: string,
-    type: JwtTokenTypeEnum,
-    options?: JwtVerifyOptions,
-  ) {
+  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
     const payload = this.decode<
       | TransientTokenJwtPayload
       | RefreshTokenJwtPayload
       | WorkspaceAgnosticTokenJwtPayload
+      | FileTokenJwtPayload
       | AccessTokenJwtPayload
       | ApplicationTokenJwtPayload
-      | FileTokenJwtPayload
+      | ApiKeyTokenJwtPayload
     >(token, {
       json: true,
     });
@@ -73,11 +71,7 @@ export class JwtWrapperService {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
 
-    // @TODO: Migrate to use type from payload instead of parameter
-    type =
-      payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        : type;
+    const type = payload.type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {

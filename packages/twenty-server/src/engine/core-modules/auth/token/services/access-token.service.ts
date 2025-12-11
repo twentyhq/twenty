@@ -153,8 +153,8 @@ export class AccessTokenService {
     };
   }
 
-  async validateToken(token: string): Promise<AuthContext> {
-    await this.jwtWrapperService.verifyJwtToken(token, JwtTokenTypeEnum.ACCESS);
+  private async validateToken(token: string): Promise<AuthContext> {
+    await this.jwtWrapperService.verifyJwtToken(token);
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 

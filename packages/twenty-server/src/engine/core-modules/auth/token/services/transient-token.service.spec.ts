@@ -108,10 +108,7 @@ describe('TransientTokenService', () => {
         userId: mockPayload.userId,
         workspaceId: mockPayload.workspaceId,
       });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'LOGIN',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken);
     });
 
