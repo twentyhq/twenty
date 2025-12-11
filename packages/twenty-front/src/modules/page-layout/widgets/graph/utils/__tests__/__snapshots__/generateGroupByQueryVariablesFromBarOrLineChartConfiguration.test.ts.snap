@@ -10,6 +10,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
       "ownerId": true,
     },
   ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
 }
 `;
 
@@ -18,6 +26,11 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
   "groupBy": [
     {
       "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
     },
   ],
 }
@@ -29,6 +42,13 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
     {
       "name": {
         "firstName": true,
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "name": {
+        "firstName": "AscNullsLast",
       },
     },
   ],
@@ -44,6 +64,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
       },
     },
   ],
+  "orderBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "orderBy": "AscNullsLast",
+      },
+    },
+  ],
 }
 `;
 
@@ -52,6 +80,11 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
   "groupBy": [
     {
       "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
     },
   ],
 }
@@ -67,6 +100,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
       "ownerId": true,
     },
   ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
 }
 `;
 
@@ -79,6 +120,13 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
       },
     },
   ],
+  "orderBy": [
+    {
+      "name": {
+        "firstName": "AscNullsLast",
+      },
+    },
+  ],
 }
 `;
 
@@ -88,6 +136,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
     {
       "createdAt": {
         "granularity": "MONTH",
+      },
+    },
+  ],
+  "orderBy": [
+    {
+      "createdAt": {
+        "granularity": "MONTH",
+        "orderBy": "AscNullsLast",
       },
     },
   ],
@@ -104,6 +160,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
       "ownerId": true,
     },
   ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
+    },
+  ],
 }
 `;
 
@@ -112,6 +176,11 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
   "groupBy": [
     {
       "stage": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
     },
   ],
 }
@@ -125,6 +194,14 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
     },
     {
       "ownerId": true,
+    },
+  ],
+  "orderBy": [
+    {
+      "stage": "AscNullsLast",
+    },
+    {
+      "ownerId": "AscNullsLast",
     },
   ],
 }

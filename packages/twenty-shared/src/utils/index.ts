@@ -14,6 +14,8 @@ export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
 export { getContiguousIncrementalValues } from './array/getContiguousIncrementalValues';
 export { isNonEmptyArray } from './array/isNonEmptyArray';
+export { mapById } from './array/mapById';
+export { mapByProperty } from './array/mapByProperty';
 export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
 export { assertUnreachable } from './assertUnreachable';
@@ -94,6 +96,7 @@ export {
   getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
+export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
@@ -102,6 +105,7 @@ export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
+export { appendCopySuffix } from './strings/appendCopySuffix';
 export { capitalize } from './strings/capitalize';
 export { uncapitalize } from './strings/uncapitalize';
 export type {

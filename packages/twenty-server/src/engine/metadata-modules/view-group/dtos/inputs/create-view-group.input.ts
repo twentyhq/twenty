@@ -17,10 +17,6 @@ export class CreateViewGroupInput {
   @Field(() => UUIDScalarType, { nullable: true })
   id?: string;
 
-  @IsUUID()
-  @Field(() => UUIDScalarType, { nullable: false })
-  fieldMetadataId: string;
-
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true, defaultValue: true })

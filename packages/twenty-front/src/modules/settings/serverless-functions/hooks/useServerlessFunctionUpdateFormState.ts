@@ -6,7 +6,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { type ServerlessFunction } from '~/generated/graphql';
-import { type Sources } from '@/serverless-functions/types/sources.type';
+import { type Sources } from 'twenty-shared/types';
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 import { isDefined } from 'twenty-shared/utils';
 

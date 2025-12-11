@@ -9,17 +9,6 @@ export class RenameRoleTargets1764671363647 implements MigrationInterface {
       `ALTER TABLE "core"."roleTargets" RENAME TO "roleTarget"`,
     );
 
-    // Rename unique constraints
-    await queryRunner.query(
-      `ALTER TABLE "core"."roleTarget" RENAME CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_USER_WORKSPACE" TO "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."roleTarget" RENAME CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_AGENT" TO "IDX_ROLE_TARGET_UNIQUE_AGENT"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."roleTarget" RENAME CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_API_KEY" TO "IDX_ROLE_TARGET_UNIQUE_API_KEY"`,
-    );
-
     // Rename check constraint
     await queryRunner.query(
       `ALTER TABLE "core"."roleTarget" RENAME CONSTRAINT "CHK_role_targets_single_entity" TO "CHK_role_target_single_entity"`,

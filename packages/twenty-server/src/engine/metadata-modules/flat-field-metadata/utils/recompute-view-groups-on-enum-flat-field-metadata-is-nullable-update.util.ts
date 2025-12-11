@@ -12,7 +12,7 @@ type RecomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdateArgs = FromTo<
   FlatFieldMetadata,
   'flatFieldMetadata'
 > &
-  Pick<AllFlatEntityMaps, 'flatViewGroupMaps'>;
+  Pick<AllFlatEntityMaps, 'flatViewMaps' | 'flatViewGroupMaps'>;
 
 type EnumFieldMetadataIsNullableUpdateSideEffect = {
   flatViewGroupsToDelete: FlatViewGroup[];
@@ -25,6 +25,7 @@ const EMPTY_ENUM_FIELD_METADATA_IS_NULLABLE_UPDATE_SIDE_EFFECT_RESULT: EnumField
   };
 
 export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
+  flatViewMaps,
   flatViewGroupMaps: allFlatViewGroups,
   fromFlatFieldMetadata,
   toFlatFieldMetadata,
@@ -35,8 +36,15 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
   const sideEffectResult = structuredClone(
     EMPTY_ENUM_FIELD_METADATA_IS_NULLABLE_UPDATE_SIDE_EFFECT_RESULT,
   );
+  const flatViewsAffected = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityIds: fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
+    flatEntityMaps: flatViewMaps,
+  });
+
   const flatViewGroups = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: fromFlatFieldMetadata.viewGroupIds,
+    flatEntityIds: flatViewsAffected.flatMap(
+      (flatView) => flatView.viewGroupIds,
+    ),
     flatEntityMaps: allFlatViewGroups,
   });
   const { flatViewGroupRecordByViewId, highestViewGroupPositionByViewId } =
@@ -57,10 +65,9 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
     ) {
       const highestViewGroupPosition = highestViewGroupPositionByViewId[viewId];
       const viewGroupId = v4();
-      const createdAt = new Date();
+      const createdAt = new Date().toISOString();
 
       sideEffectResult.flatViewGroupsToCreate.push({
-        fieldMetadataId: toFlatFieldMetadata.id,
         id: viewGroupId,
         universalIdentifier: viewGroupId,
         fieldValue: '',
@@ -72,6 +79,7 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
         deletedAt: null,
         viewId,
         applicationId: toFlatFieldMetadata.applicationId,
+        fieldMetadataId: fromFlatFieldMetadata.id,
       });
     } else if (isDefined(emptyValueFlatViewGroup)) {
       sideEffectResult.flatViewGroupsToDelete.push(emptyValueFlatViewGroup);

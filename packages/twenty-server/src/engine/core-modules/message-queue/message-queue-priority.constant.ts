@@ -16,4 +16,5 @@ export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.triggerQueue]: 5,
   [MessageQueue.deleteCascadeQueue]: 6,
   [MessageQueue.cronQueue]: 7,
+  [MessageQueue.aiQueue]: 5,
 };

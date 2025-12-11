@@ -1,5 +1,4 @@
 import { GRAPH_TOOLTIP_BOUNDARY_PADDING_PX } from '@/page-layout/widgets/graph/constants/GraphTooltipBoundaryPaddingPx';
-import { GRAPH_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/constants/GraphTooltipOffsetPx';
 import { createVirtualElementFromSVGElement } from '@/page-layout/widgets/graph/utils/createVirtualElementFromSVGElement';
 import {
   autoUpdate,
@@ -13,36 +12,39 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGraphWidgetTooltipFloating = (
-  element: Element | VirtualElement | null,
-  boundaryElement?: Element | null,
+  referenceElement: Element | VirtualElement | null,
+  boundaryElement: Element | null,
+  tooltipOffsetFromAnchorInPx: number,
 ) => {
   const virtualElement = useMemo(() => {
-    if (!isDefined(element)) return null;
-    if (element instanceof Element) {
-      return createVirtualElementFromSVGElement(element);
+    if (!isDefined(referenceElement)) return null;
+    if (referenceElement instanceof Element) {
+      return createVirtualElementFromSVGElement(referenceElement);
     }
-    return element;
-  }, [element]);
+    return referenceElement;
+  }, [referenceElement]);
 
-  return useFloating({
+  const rootBoundary = document.querySelector('#root') ?? undefined;
+
+  const { refs, x, y, isPositioned } = useFloating({
     elements: {
       reference: virtualElement,
     },
     placement: 'left',
     strategy: 'fixed',
     middleware: [
-      offset(GRAPH_TOOLTIP_OFFSET_PX),
+      offset(tooltipOffsetFromAnchorInPx),
       flip({
         fallbackPlacements: ['right', 'top', 'bottom'],
-        boundary:
-          boundaryElement ?? document.querySelector('#root') ?? undefined,
+        boundary: boundaryElement ?? rootBoundary,
       }),
       shift({
-        boundary:
-          boundaryElement ?? document.querySelector('#root') ?? undefined,
+        boundary: boundaryElement ?? rootBoundary,
         padding: GRAPH_TOOLTIP_BOUNDARY_PADDING_PX,
       }),
     ],
     whileElementsMounted: autoUpdate,
   });
+
+  return { refs, x, y, isPositioned };
 };

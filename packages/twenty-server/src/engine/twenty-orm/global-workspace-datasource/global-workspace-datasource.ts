@@ -32,7 +32,7 @@ type CreateQueryBuilderOptions = {
 };
 
 export class GlobalWorkspaceDataSource extends DataSource {
-  private eventEmitterService: WorkspaceEventEmitter;
+  readonly eventEmitterService: WorkspaceEventEmitter;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
@@ -102,21 +102,7 @@ export class GlobalWorkspaceDataSource extends DataSource {
       return super.createEntityManager(queryRunner) as WorkspaceEntityManager;
     }
 
-    const context = getWorkspaceContext();
-
-    return new WorkspaceEntityManager(
-      {
-        workspaceId: context.authContext.workspace.id,
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        flatIndexMaps: context.flatIndexMaps,
-        objectIdByNameSingular: context.objectIdByNameSingular,
-        featureFlagsMap: context.featureFlagsMap,
-        eventEmitterService: this.eventEmitterService,
-      },
-      this,
-      queryRunner,
-    );
+    return new WorkspaceEntityManager(this, queryRunner);
   }
 
   override createQueryRunner(

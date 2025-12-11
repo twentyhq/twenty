@@ -84,7 +84,7 @@ export class CalDAVClient {
     if (!this.hasFileExtension(url)) return 'ics';
     const fileName = url.substring(url.lastIndexOf('/') + 1);
 
-    return fileName.substring(fileName.lastIndexOf('.') + 1);
+    return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
   }
 
   private isValidFormat(url: string): boolean {
@@ -272,7 +272,7 @@ export class CalDAVClient {
       return {
         id: objectUrl,
         title: event.summary || 'Untitled Event',
-        iCalUID: event.uid || '',
+        iCalUid: event.uid || '',
         description: event.description || '',
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),

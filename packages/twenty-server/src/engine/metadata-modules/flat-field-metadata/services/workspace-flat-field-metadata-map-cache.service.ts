@@ -15,7 +15,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -41,43 +41,36 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
-    const [fieldMetadatas, viewFields, viewFilters, viewGroups, views] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.viewFieldRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewFilterRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewGroupRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find({
-          where: { workspaceId },
-          select: [
-            'id',
-            'kanbanAggregateOperationFieldMetadataId',
-            'calendarFieldMetadataId',
-            'mainGroupByFieldMetadataId',
-          ],
-          withDeleted: true,
-        }),
-      ]);
+    const [fieldMetadatas, viewFields, viewFilters, views] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.viewFieldRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewFilterRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: [
+          'id',
+          'kanbanAggregateOperationFieldMetadataId',
+          'calendarFieldMetadataId',
+          'mainGroupByFieldMetadataId',
+        ],
+        withDeleted: true,
+      }),
+    ]);
 
     const [
       viewFieldsByFieldId,
       viewFiltersByFieldId,
-      viewGroupsByFieldId,
       calendarViewsByFieldId,
       kanbanViewsByFieldId,
       mainGroupByFieldMetadataViewsByFieldId,
@@ -89,10 +82,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         },
         {
           entities: viewFilters,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
-          entities: viewGroups,
           foreignKey: 'fieldMetadataId',
         },
         {
@@ -117,7 +106,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         ...fieldMetadataEntity,
         viewFields: viewFieldsByFieldId.get(fieldMetadataEntity.id) || [],
         viewFilters: viewFiltersByFieldId.get(fieldMetadataEntity.id) || [],
-        viewGroups: viewGroupsByFieldId.get(fieldMetadataEntity.id) || [],
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],

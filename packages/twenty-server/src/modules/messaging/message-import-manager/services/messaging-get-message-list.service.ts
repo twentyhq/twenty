@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import {
-  MessageFolderImportPolicy,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -33,30 +30,24 @@ export class MessagingGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
     messageFolders: MessageFolder[],
   ): Promise<GetMessageListsResponse> {
-    const messageFoldersToSync: MessageFolder[] =
-      messageChannel.messageFolderImportPolicy ===
-      MessageFolderImportPolicy.ALL_FOLDERS
-        ? messageFolders
-        : messageFolders.filter((folder) => folder.isSynced);
-
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return await this.gmailGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageFoldersToSync,
+          messageFolders,
         });
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageFoldersToSync,
+          messageFolders,
         });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         return await this.imapGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageFoldersToSync,
+          messageFolders,
         });
       }
       default:

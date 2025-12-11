@@ -1,1 +1,1 @@
-export const LINE_CHART_MARGIN_LEFT = 70;
+export const LINE_CHART_MARGIN_LEFT = 80;

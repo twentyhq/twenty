@@ -21,7 +21,7 @@ export class AgentDTO {
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  standardId: string | null;
+  standardId?: string | null;
 
   @IsString()
   @Field()
@@ -37,7 +37,7 @@ export class AgentDTO {
 
   @IsString()
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -48,7 +48,7 @@ export class AgentDTO {
   modelId: ModelId;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  responseFormat: object;
+  responseFormat?: object;
 
   @Field(() => UUIDScalarType, { nullable: true })
   roleId?: string;
@@ -72,7 +72,7 @@ export class AgentDTO {
   updatedAt: Date;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  modelConfiguration: ModelConfiguration;
+  modelConfiguration?: ModelConfiguration;
 
   @Field(() => [String])
   evaluationInputs: string[];

@@ -33,7 +33,6 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
@@ -55,8 +54,6 @@ export interface FormatResult {
 }
 
 export abstract class RestApiBaseHandler {
-  @Inject()
-  protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
@@ -99,6 +96,13 @@ export abstract class RestApiBaseHandler {
         authContext.workspace.id,
       );
     } else {
+      if (!isDefined(authContext.userWorkspaceId)) {
+        throw new PermissionsException(
+          'No user workspace ID found in authentication context',
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        );
+      }
+
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,

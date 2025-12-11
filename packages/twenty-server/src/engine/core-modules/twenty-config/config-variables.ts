@@ -989,10 +989,26 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Maximum complexity allowed for GQL queries',
+    description: 'Maximum fields allowed for GQL queries',
     type: ConfigVariableType.NUMBER,
   })
-  GRAPHQL_MAX_COMPLEXITY = 2000;
+  GRAPHQL_MAX_FIELDS = 2000;
+
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum root resolvers allowed for GQL queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  GRAPHQL_MAX_ROOT_RESOLVERS = 20;
+
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum complexity allowed for Common API queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  COMMON_QUERY_COMPLEXITY_LIMIT = 2000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1219,19 +1235,39 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Throttle limit for workflow execution',
+    description:
+      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Time-to-live for workflow execution throttle in milliseconds',
+    description:
+      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_TTL = 60_000;
+  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Throttle limit for workflow execution. Remaining will be marked as failed.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000; // 1 hour;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

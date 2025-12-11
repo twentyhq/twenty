@@ -67,20 +67,7 @@ export class CacheStorageService {
   async mset<T = unknown>(
     entries: Array<{ key: string; value: T; ttl?: Milliseconds }>,
   ): Promise<void> {
-    if (this.isRedisCache()) {
-      const pipeline = (this.cache as RedisCache).store.client.multi();
-
-      entries.forEach(({ key, value, ttl }) => {
-        const prefixedKey = this.getKey(key);
-
-        pipeline.set(prefixedKey, JSON.stringify(value));
-        if (ttl) {
-          pipeline.expire(prefixedKey, Math.floor(ttl / 1000));
-        }
-      });
-
-      await pipeline.exec();
-
+    if (entries.length === 0) {
       return;
     }
 
@@ -206,6 +193,22 @@ export class CacheStorageService {
     }
 
     await this.del(key);
+  }
+
+  async incrBy(key: string, increment: number): Promise<number> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.incrBy(
+        this.getKey(key),
+        increment,
+      );
+    }
+
+    const current = (await this.get<number>(key)) ?? 0;
+    const newValue = current + increment;
+
+    await this.set(key, newValue);
+
+    return newValue;
   }
 
   private isRedisCache() {

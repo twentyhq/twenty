@@ -6,7 +6,9 @@ export type ImapSyncCursor = {
   modSeq?: string;
 };
 
-export const parseSyncCursor = (cursor?: string): ImapSyncCursor | null => {
+export const parseSyncCursor = (
+  cursor: string | null,
+): ImapSyncCursor | null => {
   if (!isDefined(cursor)) {
     return null;
   }

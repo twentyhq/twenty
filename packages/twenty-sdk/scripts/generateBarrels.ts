@@ -1,12 +1,9 @@
-// @ts-ignore
 import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import { globSync } from 'glob';
-// @ts-ignore
 import path from 'path';
 import { type Options } from 'prettier';
 import slash from 'slash';
-// @ts-ignore
 import ts from 'typescript';
 
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
@@ -312,7 +309,8 @@ const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
 
   const visit = (node: ts.Node) => {
     if (!ts.canHaveModifiers(node)) {
-      return ts.forEachChild(node, visit);
+      ts.forEachChild(node, visit);
+      return;
     }
     const modifiers = ts.getModifiers(node);
     const isExport = modifiers?.some(
@@ -320,7 +318,8 @@ const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
     );
 
     if (!isExport && !ts.isExportDeclaration(node)) {
-      return ts.forEachChild(node, visit);
+      ts.forEachChild(node, visit);
+      return;
     }
 
     switch (true) {
@@ -410,7 +409,7 @@ const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
         }
         break;
     }
-    return ts.forEachChild(node, visit);
+    ts.forEachChild(node, visit);
   };
 
   visit(sourceFile);

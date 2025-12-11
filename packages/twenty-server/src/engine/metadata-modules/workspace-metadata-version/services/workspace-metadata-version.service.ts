@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   WorkspaceMetadataVersionException,
   WorkspaceMetadataVersionExceptionCode,
@@ -19,7 +18,6 @@ export class WorkspaceMetadataVersionService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
@@ -48,14 +46,5 @@ export class WorkspaceMetadataVersionService {
       workspaceId,
       newMetadataVersion,
     );
-
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ],
-    });
   }
 }

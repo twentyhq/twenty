@@ -1,0 +1,8 @@
+export enum ToolCategory {
+  DATABASE_CRUD = 'DATABASE_CRUD',
+  ACTION = 'ACTION',
+  WORKFLOW = 'WORKFLOW',
+  METADATA = 'METADATA',
+  NATIVE_MODEL = 'NATIVE_MODEL',
+  VIEW = 'VIEW',
+}

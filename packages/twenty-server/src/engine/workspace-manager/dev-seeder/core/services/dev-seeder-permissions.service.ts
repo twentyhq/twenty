@@ -99,9 +99,9 @@ export class DevSeederPermissionsService {
         applicationId: twentyStandardApplication.id,
       });
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: guestUserWorkspaceId,
+        userWorkspaceIds: [guestUserWorkspaceId],
         roleId: guestRole.id,
       });
 
@@ -110,9 +110,9 @@ export class DevSeederPermissionsService {
         applicationId: twentyStandardApplication.id,
       });
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: limitedUserWorkspaceId,
+        userWorkspaceIds: [limitedUserWorkspaceId],
         roleId: limitedRole.id,
       });
     } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
@@ -125,9 +125,9 @@ export class DevSeederPermissionsService {
     }
 
     if (adminUserWorkspaceId) {
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: adminUserWorkspaceId,
+        userWorkspaceIds: [adminUserWorkspaceId],
         roleId: adminRole.id,
       });
     }
@@ -144,14 +144,12 @@ export class DevSeederPermissionsService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 
-    if (memberUserWorkspaceIds) {
-      for (const memberUserWorkspaceId of memberUserWorkspaceIds) {
-        await this.userRoleService.assignRoleToUserWorkspace({
-          workspaceId,
-          userWorkspaceId: memberUserWorkspaceId,
-          roleId: memberRole.id,
-        });
-      }
+    if (memberUserWorkspaceIds.length > 0) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: memberUserWorkspaceIds,
+        roleId: memberRole.id,
+      });
     }
   }
 

@@ -4,27 +4,9 @@
   "projectType": "library",
   "tags": ["scope:create-app"],
   "targets": {
-    "before-build": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "cwd": "packages/create-twenty-app",
-        "commands": ["rimraf dist", "tsc --project tsconfig.json"]
-      },
-      "dependsOn": ["^build", "typecheck"]
-    },
     "build": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "cwd": "packages/create-twenty-app",
-        "commands": [
-          "mkdir -p dist/constants/base-application",
-          "cp -R src/constants/base-application dist/constants",
-          "cp -R ../../.yarn/releases dist/constants/base-application/.yarn"
-        ]
-      },
-      "dependsOn": ["before-build"]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -39,7 +21,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/create-twenty-app",
-        "command": "node dist/cli.js"
+        "command": "node dist/cli.cjs"
       }
     },
     "typecheck": {},

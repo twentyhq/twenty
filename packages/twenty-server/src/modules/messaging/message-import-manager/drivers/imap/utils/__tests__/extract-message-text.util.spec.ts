@@ -1,4 +1,4 @@
-import { type ParsedMail } from 'mailparser';
+import { type Email as ParsedMail } from 'postal-mime';
 
 import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 
@@ -97,9 +97,7 @@ Developer Support
 >>> -John
 `,
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
-      html: false,
+      headers: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -133,9 +131,7 @@ Developer Support`);
         
       `,
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
-      html: false,
+      headers: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -156,8 +152,7 @@ Developer Support`);
         </blockquote>
       </div>`,
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
+      headers: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -168,9 +163,7 @@ Developer Support`);
   it('should return empty string when no text or html content', () => {
     const parsed: ParsedMail = {
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
-      html: false,
+      headers: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -181,8 +174,7 @@ Developer Support`);
   it('should preserve new lines in html email', () => {
     const parsed: ParsedMail = {
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
+      headers: [],
       html: `<html><head><style>
   html, body {
     font-size: 14.5px;
@@ -323,8 +315,7 @@ John`);
       text: 'Plain text content\n\nOn 2023-01-01, user@example.com wrote:\n> Reply',
       html: '<html><body><p>HTML content</p></body></html>',
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
+      headers: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);

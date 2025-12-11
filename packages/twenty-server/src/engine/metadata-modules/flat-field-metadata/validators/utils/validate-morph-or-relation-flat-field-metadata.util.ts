@@ -18,6 +18,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   },
   updates,
   remainingFlatEntityMapsToValidate,
+  buildOptions,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadataToValidate;
@@ -92,6 +93,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   )
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
+        buildOptions,
         flatFieldMetadata: flatFieldMetadataToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,

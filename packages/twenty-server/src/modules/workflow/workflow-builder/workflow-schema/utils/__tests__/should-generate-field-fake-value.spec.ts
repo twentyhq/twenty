@@ -56,7 +56,7 @@ describe('shouldGenerateFieldFakeValue', () => {
     expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
 
-  it('should return false for many-to-one relation fields', () => {
+  it('should return true for many-to-one relation fields', () => {
     const field = getFlatFieldMetadataMock({
       objectMetadataId: '20202020-0000-0000-0000-000000000001',
       isSystem: false,
@@ -69,6 +69,6 @@ describe('shouldGenerateFieldFakeValue', () => {
       },
     });
 
-    expect(shouldGenerateFieldFakeValue(field)).toBe(false);
+    expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
 });

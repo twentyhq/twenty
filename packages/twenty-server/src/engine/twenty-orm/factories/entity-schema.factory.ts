@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
+import {
+  type EntitySchemaFieldMetadataMaps,
+  type EntitySchemaObjectMetadata,
+  type EntitySchemaObjectMetadataMaps,
+} from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -19,28 +21,28 @@ export class EntitySchemaFactory {
 
   create(
     workspaceId: string,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    objectMetadata: EntitySchemaObjectMetadata,
+    objectMetadataMaps: EntitySchemaObjectMetadataMaps,
+    fieldMetadataMaps: EntitySchemaFieldMetadataMaps,
   ): EntitySchema {
     const columns = this.entitySchemaColumnFactory.create(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
+      objectMetadata,
+      fieldMetadataMaps,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      objectMetadata,
+      objectMetadataMaps,
+      fieldMetadataMaps,
     );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const entitySchema = new EntitySchema({
-      name: flatObjectMetadata.nameSingular,
+      name: objectMetadata.nameSingular,
       tableName: computeTableName(
-        flatObjectMetadata.nameSingular,
-        flatObjectMetadata.isCustom,
+        objectMetadata.nameSingular,
+        objectMetadata.isCustom,
       ),
       columns,
       relations,

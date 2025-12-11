@@ -48,8 +48,8 @@ export enum MessageChannelVisibility {
 }
 
 export enum MessageChannelType {
-  EMAIL = 'email',
-  SMS = 'sms',
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
 }
 
 export enum MessageChannelContactAutoCreationPolicy {

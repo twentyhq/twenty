@@ -423,6 +423,13 @@ export const WorkflowEditTriggerCronForm = ({
                   return;
                 }
 
+                if (newMinute > 60) {
+                  setErrorMessages({
+                    MINUTES: t`Minute value cannot exceed 60. For intervals greater than 60 minutes, use the "Hours" trigger type or a custom cron expression`,
+                  });
+                  return;
+                }
+
                 setErrorMessages((prev) => ({
                   ...prev,
                   MINUTES: undefined,
@@ -439,7 +446,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder={t`Enter number greater than 1`}
+              placeholder={t`Enter number between 1 and 60`}
               readonly={triggerOptions.readonly}
             />
             <CronExpressionHelperLazy

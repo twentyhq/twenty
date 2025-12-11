@@ -3,8 +3,10 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
@@ -29,8 +31,9 @@ export class MessagingMessageListFetchJob {
   constructor(
     private readonly messagingMessageListFetchService: MessagingMessageListFetchService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
@@ -43,40 +46,57 @@ export class MessagingMessageListFetchJob {
       workspaceId,
     });
 
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: {
-        id: messageChannelId,
-      },
-      relations: ['connectedAccount', 'messageFolders'],
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-    if (!messageChannel) {
-      await this.messagingMonitoringService.track({
-        eventName: 'message_list_fetch_job.error.message_channel_not_found',
-        messageChannelId,
-        workspaceId,
-      });
+        const messageChannel = await messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+          },
+          relations: ['connectedAccount', 'messageFolders'],
+        });
 
-      return;
-    }
+        if (!messageChannel) {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch_job.error.message_channel_not_found',
+            messageChannelId,
+            workspaceId,
+          });
 
-    try {
-      if (
-        isThrottled(
-          messageChannel.syncStageStartedAt,
-          messageChannel.throttleFailureCount,
-        )
-      ) {
-        return;
-      }
+          return;
+        }
 
-      switch (messageChannel.syncStage) {
-        case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
+        if (
+          messageChannel.syncStage !==
+          MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED
+        ) {
+          return;
+        }
+
+        try {
+          if (
+            isThrottled(
+              messageChannel.syncStageStartedAt,
+              messageChannel.throttleFailureCount,
+            )
+          ) {
+            await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
+              [messageChannel.id],
+              workspaceId,
+              true,
+            );
+
+            return;
+          }
+
           await this.messagingMonitoringService.track({
             eventName: 'message_list_fetch.started',
             workspaceId,
@@ -95,19 +115,15 @@ export class MessagingMessageListFetchJob {
             connectedAccountId: messageChannel.connectedAccount.id,
             messageChannelId: messageChannel.id,
           });
-
-          break;
-
-        default:
-          break;
-      }
-    } catch (error) {
-      await this.messageImportErrorHandlerService.handleDriverException(
-        error,
-        MessageImportSyncStep.MESSAGE_LIST_FETCH,
-        messageChannel,
-        workspaceId,
-      );
-    }
+        } catch (error) {
+          await this.messageImportErrorHandlerService.handleDriverException(
+            error,
+            MessageImportSyncStep.MESSAGE_LIST_FETCH,
+            messageChannel,
+            workspaceId,
+          );
+        }
+      },
+    );
   }
 }

@@ -155,7 +155,7 @@ export const useIncrementalDestroyManyRecords = <T>({
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectNameSingular, {
+    registerObjectOperation(objectMetadataItem, {
       type: 'destroy-many',
     });
 

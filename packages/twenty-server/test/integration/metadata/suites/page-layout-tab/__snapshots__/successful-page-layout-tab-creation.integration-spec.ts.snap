@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout tab creation should succeed should create a page layout tab 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Test Tab",
+  "updatedAt": Any<String>,
+  "widgets": null,
+}
+`;
+
+exports[`Page layout tab creation should succeed should create a page layout tab with position 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 5,
+  "title": "Positioned Tab",
+  "updatedAt": Any<String>,
+  "widgets": null,
+}
+`;

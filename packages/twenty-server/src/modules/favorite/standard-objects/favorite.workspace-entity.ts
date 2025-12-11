@@ -251,6 +251,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   viewId: string;
 
+  // todo: remove this decorator and the custom field
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({

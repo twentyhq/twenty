@@ -135,7 +135,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   location: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
     type: FieldMetadataType.TEXT,
     label: msg`iCal UID`,
     description: msg`iCal UID`,
@@ -143,7 +143,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
-  iCalUID: string | null;
+  iCalUid: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,

@@ -52,7 +52,6 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
-
   namePlural: 'companies',
   labelSingular: msg`Company`,
   labelPlural: msg`Companies`,
@@ -267,6 +266,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetCompany',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
