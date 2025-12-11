@@ -18,7 +18,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 @Command({
   name: 'upgrade',
@@ -33,7 +32,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
     // 1.13 Commands
     protected readonly migrateTimelineActivityToMorphRelationsCommand: MigrateTimelineActivityToMorphRelationsCommand,
@@ -47,8 +45,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       twentyConfigService,
       globalWorkspaceOrmManager,
       dataSourceService,
-      syncWorkspaceMetadataCommand,
     );
+
+    // Note: Required empty commands array to allow retrieving previous version
+    const commands_1120: VersionCommands = [];
 
     const commands_1130: VersionCommands = [
       this.migrateTimelineActivityToMorphRelationsCommand,
@@ -59,7 +59,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     this.allCommands = {
-      '1.12.0': [], // We might be able to remove this but to be checked
+      '1.12.0': commands_1120,
       '1.13.0': commands_1130,
     };
   }

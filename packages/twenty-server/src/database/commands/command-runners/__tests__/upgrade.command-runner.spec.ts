@@ -17,27 +17,15 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
-    '1.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-    '2.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
+    '1.0.0': [],
+    '2.0.0': [],
   };
 }
 
 class InvalidUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
-    invalid: {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-    '2.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
+    invalid: [],
+    '2.0.0': [],
   };
 }
 
@@ -86,14 +74,12 @@ const buildUpgradeCommandModule = async ({
           twentyConfigService: TwentyConfigService,
           globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
           dataSourceService: DataSourceService,
-          syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
         ) => {
           return new commandRunner(
             workspaceRepository,
             twentyConfigService,
             globalWorkspaceOrmManager,
             dataSourceService,
-            syncWorkspaceMetadataCommand,
           );
         },
         inject: [
@@ -101,7 +87,6 @@ const buildUpgradeCommandModule = async ({
           TwentyConfigService,
           GlobalWorkspaceOrmManager,
           DataSourceService,
-          SyncWorkspaceMetadataCommand,
         ],
       },
       {
@@ -201,14 +186,6 @@ describe('UpgradeCommandRunner', () => {
     jest.spyOn(upgradeCommandRunner['logger'], 'error').mockImplementation();
     jest.spyOn(upgradeCommandRunner['logger'], 'warn').mockImplementation();
 
-    runBeforeSyncMetadataSpy = jest.spyOn(
-      upgradeCommandRunner,
-      'runBeforeSyncMetadata',
-    );
-    runAfterSyncMetadataSpy = jest.spyOn(
-      upgradeCommandRunner,
-      'runAfterSyncMetadata',
-    );
     jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
     runCoreMigrationsSpy = jest
       .spyOn(upgradeCommandRunner, 'runCoreMigrations')
@@ -254,9 +231,7 @@ describe('UpgradeCommandRunner', () => {
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
     [
-      upgradeCommandRunner.runBeforeSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
-      upgradeCommandRunner.runAfterSyncMetadata,
       workspaceRepository.update,
     ].forEach((fn) => expect(fn).not.toHaveBeenCalled());
   });
@@ -278,8 +253,6 @@ describe('UpgradeCommandRunner', () => {
 
     [
       upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      upgradeCommandRunner.runAfterSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
       globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
@@ -289,35 +262,6 @@ describe('UpgradeCommandRunner', () => {
       { version: appVersion },
     );
     expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
-    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
-  });
-
-  it('should run syncMetadataCommand betweensuccessful beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
-    await buildModuleAndSetupSpies({});
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
-
-    // @ts-expect-error legacy noImplicitAny
-    await upgradeCommandRunner.run(passedParams, options);
-
-    [
-      upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      upgradeCommandRunner.runAfterSyncMetadata,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
-
-    // Verify order of execution
-    const beforeSyncCall = runBeforeSyncMetadataSpy.mock.invocationCallOrder[0];
-    const afterSyncCall = runAfterSyncMetadataSpy.mock.invocationCallOrder[0];
-    const syncMetadataCall =
-      syncWorkspaceMetadataCommand.runOnWorkspace.mock.invocationCallOrder[0];
-
-    expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
-    expect(syncMetadataCall).toBeLessThan(afterSyncCall);
-    expect(upgradeCommandRunner.migrationReport.success.length).toBe(1);
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
@@ -379,8 +323,6 @@ describe('UpgradeCommandRunner', () => {
         expect(failReport.length).toBe(0);
         expect(successReport.length).toBe(1);
         expect(runCoreMigrationsSpy).toHaveBeenCalledTimes(1);
-        expect(runAfterSyncMetadataSpy).toHaveBeenCalledTimes(1);
-        expect(runBeforeSyncMetadataSpy).toHaveBeenCalledTimes(1);
         const { workspaceId } = successReport[0];
 
         expect(workspaceId).toBe('workspace_0');
