@@ -87,7 +87,6 @@ export const getRecordChipGenerators = (
                 name: getLabelIdentifierFieldValue(
                   record,
                   labelIdentifierFieldMetadataItemToUse,
-                  objectMetadataItemToUse.nameSingular,
                 ),
                 avatarUrl: getAvatarUrl(
                   objectMetadataItemToUse.nameSingular,

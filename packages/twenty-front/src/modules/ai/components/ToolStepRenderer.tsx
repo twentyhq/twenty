@@ -53,10 +53,34 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
   transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  justify-content: space-between;
+  width: 100%;
 
   &:hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledToolName = styled.span`
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  color: ${({ theme }) => theme.font.color.light};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(0.5)}
+    ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLeftContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRightContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDisplayMessage = styled.span`
@@ -120,13 +144,20 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   if (!output && !hasError) {
     return (
       <StyledContainer>
-        <StyledLoadingContainer>
-          <ShimmeringText>
-            <StyledDisplayMessage>
-              {getToolDisplayMessage(input, toolName, false)}
-            </StyledDisplayMessage>
-          </ShimmeringText>
-        </StyledLoadingContainer>
+        <StyledToggleButton isExpandable={false}>
+          <StyledLeftContent>
+            <StyledLoadingContainer>
+              <ShimmeringText>
+                <StyledDisplayMessage>
+                  {getToolDisplayMessage(input, toolName, false)}
+                </StyledDisplayMessage>
+              </ShimmeringText>
+            </StyledLoadingContainer>
+          </StyledLeftContent>
+          <StyledRightContent>
+            <StyledToolName>{toolName}</StyledToolName>
+          </StyledRightContent>
+        </StyledToggleButton>
       </StyledContainer>
     );
   }
@@ -153,16 +184,21 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
         onClick={() => setIsExpanded(!isExpanded)}
         isExpandable={isExpandable}
       >
-        <StyledIconTextContainer>
-          <ToolIcon size={theme.icon.size.sm} />
-          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
-        </StyledIconTextContainer>
-        {isExpandable &&
-          (isExpanded ? (
-            <IconChevronUp size={theme.icon.size.sm} />
-          ) : (
-            <IconChevronDown size={theme.icon.size.sm} />
-          ))}
+        <StyledLeftContent>
+          <StyledIconTextContainer>
+            <ToolIcon size={theme.icon.size.sm} />
+            <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+          </StyledIconTextContainer>
+        </StyledLeftContent>
+        <StyledRightContent>
+          <StyledToolName>{toolName}</StyledToolName>
+          {isExpandable &&
+            (isExpanded ? (
+              <IconChevronUp size={theme.icon.size.sm} />
+            ) : (
+              <IconChevronDown size={theme.icon.size.sm} />
+            ))}
+        </StyledRightContent>
       </StyledToggleButton>
 
       {isExpandable && (
