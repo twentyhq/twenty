@@ -14,14 +14,14 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
-  MessageChannelPendingGroupEmailsAction,
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
+    MessageChannelPendingGroupEmailsAction,
+    MessageChannelSyncStage,
+    MessageChannelWorkspaceEntity,
+    MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
+    MessageFolderPendingSyncAction,
+    MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
@@ -29,8 +29,8 @@ import { MessagingAccountAuthenticationService } from 'src/modules/messaging/mes
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
-  MessageImportExceptionHandlerService,
-  MessageImportSyncStep,
+    MessageImportExceptionHandlerService,
+    MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
@@ -128,9 +128,7 @@ export class MessagingMessageListFetchService {
           };
 
           const datasource =
-            await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-              workspaceId,
-            );
+            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
           await this.syncMessageFoldersService.syncMessageFolders({
             workspaceId,

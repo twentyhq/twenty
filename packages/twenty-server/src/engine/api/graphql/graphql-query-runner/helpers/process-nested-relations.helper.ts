@@ -9,7 +9,7 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class ProcessNestedRelationsHelper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSourceInterface;
     rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedFields: Record<string, any>;

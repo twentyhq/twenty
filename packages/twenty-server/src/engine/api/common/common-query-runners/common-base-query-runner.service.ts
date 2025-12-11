@@ -48,7 +48,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -341,8 +340,7 @@ export abstract class CommonBaseQueryRunnerService<
     return {
       ...queryRunnerContext,
       authContext,
-      workspaceDataSource:
-        globalWorkspaceDataSource as unknown as WorkspaceDataSource,
+      workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
     };
