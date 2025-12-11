@@ -14,7 +14,7 @@ export const duplicateOneDashboardQueryFactory = ({
   gqlFields?: string;
 }) => ({
   query: gql`
-    mutation DuplicateDashboard($id: String!) {
+    mutation DuplicateDashboard($id: UUID!) {
       duplicateDashboard(id: $id) {
         ${gqlFields}
       }
