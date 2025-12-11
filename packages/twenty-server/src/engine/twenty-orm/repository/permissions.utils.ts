@@ -9,12 +9,14 @@ import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMa
 
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const getTargetEntityAndOperationType = (
@@ -66,7 +68,9 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
   updatedColumns: string[];
@@ -76,13 +80,14 @@ export const validateOperationIsPermittedOrThrow = ({
   entityName,
   operationType,
   objectsPermissions,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  objectIdByNameSingular,
   selectedColumns,
   allFieldsSelected,
   updatedColumns,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
-  const objectMetadataIdForEntity =
-    objectMetadataMaps.idByNameSingular[entityName];
+  const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
   if (!isNonEmptyString(objectMetadataIdForEntity)) {
     throw new PermissionsException(
@@ -91,7 +96,7 @@ export const validateOperationIsPermittedOrThrow = ({
     );
   }
 
-  const objectMetadata = objectMetadataMaps.byId[objectMetadataIdForEntity];
+  const objectMetadata = flatObjectMetadataMaps.byId[objectMetadataIdForEntity];
 
   if (!isDefined(objectMetadata)) {
     throw new PermissionsException(
@@ -106,8 +111,10 @@ export const validateOperationIsPermittedOrThrow = ({
     return;
   }
 
-  const columnNameToFieldMetadataIdMap =
-    getColumnNameToFieldMetadataIdMap(objectMetadata);
+  const columnNameToFieldMetadataIdMap = getColumnNameToFieldMetadataIdMap(
+    objectMetadata,
+    flatFieldMetadataMaps,
+  );
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
@@ -194,14 +201,18 @@ export const validateOperationIsPermittedOrThrow = ({
 type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
   objectsPermissions: ObjectsPermissions;
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
   shouldBypassPermissionChecks: boolean;
 };
 
 export const validateQueryIsPermittedOrThrow = ({
   expressionMap,
   objectsPermissions,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  objectIdByNameSingular,
   shouldBypassPermissionChecks,
 }: ValidateQueryIsPermittedOrThrowArgs) => {
   if (shouldBypassPermissionChecks) {
@@ -222,7 +233,9 @@ export const validateQueryIsPermittedOrThrow = ({
       validatePermissionsForJoinsAndReturnSelectsWithoutJoins({
         expressionMap,
         objectsPermissions,
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
       });
 
     expressionMapSelectsOnMainEntity = selectsWithoutJoinedAliases;
@@ -266,7 +279,9 @@ export const validateQueryIsPermittedOrThrow = ({
     entityName: mainEntity,
     operationType: operationType as OperationType,
     objectsPermissions,
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    objectIdByNameSingular,
     selectedColumns,
     allFieldsSelected,
     updatedColumns,
@@ -276,11 +291,15 @@ export const validateQueryIsPermittedOrThrow = ({
 const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
   expressionMap,
   objectsPermissions,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  objectIdByNameSingular,
 }: {
   expressionMap: QueryExpressionMap;
   objectsPermissions: ObjectsPermissions;
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
 }) => {
   const joinAttributesAliases = new Set(
     expressionMap.joinAttributes.map((join) => join.alias.name),
@@ -313,7 +332,9 @@ const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
             entityName: entity.name,
             operationType: 'select' as OperationType,
             objectsPermissions,
-            objectMetadataMaps,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
             selectedColumns,
             allFieldsSelected: false,
             updatedColumns: [],

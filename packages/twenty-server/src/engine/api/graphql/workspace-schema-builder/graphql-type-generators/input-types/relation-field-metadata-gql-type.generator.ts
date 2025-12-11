@@ -14,11 +14,11 @@ import {
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 @Injectable()
 export class RelationFieldMetadataGqlInputTypeGenerator {
@@ -35,7 +35,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     fieldMetadata,
     typeOptions,
   }: {
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
@@ -77,7 +77,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     fieldMetadata,
     typeOptions,
   }: {
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
@@ -118,13 +118,15 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateSimpleRelationFieldOrderByInputType({
     fieldMetadata,
     typeOptions,
-    objectMetadataMaps,
+    isForGroupBy,
+    context,
   }: {
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
-    objectMetadataMaps?: ObjectMetadataMaps;
+    isForGroupBy?: boolean;
+    context?: SchemaGenerationContext;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
@@ -158,15 +160,19 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
 
     if (
       isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
-      isDefined(objectMetadataMaps)
+      isDefined(context)
     ) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+        context.flatObjectMetadataMaps.byId[
+          fieldMetadata.relationTargetObjectMetadataId
+        ];
 
       if (isDefined(targetObjectMetadata)) {
         const targetOrderByInputTypeKey = computeObjectMetadataInputTypeKey(
           targetObjectMetadata.nameSingular,
-          GqlInputTypeDefinitionKind.OrderBy,
+          isForGroupBy
+            ? GqlInputTypeDefinitionKind.OrderByWithGroupBy
+            : GqlInputTypeDefinitionKind.OrderBy,
         );
 
         const targetOrderByInputType = this.gqlTypesStorage.getGqlTypeByKey(
@@ -189,10 +195,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   }
 
   public generateSimpleRelationFieldGroupByInputType(
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >,
-    objectMetadataMaps?: ObjectMetadataMaps,
+    context?: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
@@ -204,10 +210,12 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
 
     if (
       isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
-      isDefined(objectMetadataMaps)
+      isDefined(context)
     ) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+        context.flatObjectMetadataMaps.byId[
+          fieldMetadata.relationTargetObjectMetadataId
+        ];
 
       if (isDefined(targetObjectMetadata)) {
         const targetGroupByInputTypeKey = computeObjectMetadataInputTypeKey(
@@ -238,7 +246,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     fieldMetadata,
     typeOptions,
   }: {
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;

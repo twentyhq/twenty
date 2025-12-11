@@ -12,6 +12,7 @@ export const spreadsheetImportFilterAvailableFieldMetadataItems = (
         (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
         fieldMetadataItem.name !== 'createdAt' &&
         fieldMetadataItem.name !== 'updatedAt' &&
+        fieldMetadataItem.name !== 'deletedAt' &&
         (![FieldMetadataType.RELATION, FieldMetadataType.RICH_TEXT].includes(
           fieldMetadataItem.type,
         ) ||

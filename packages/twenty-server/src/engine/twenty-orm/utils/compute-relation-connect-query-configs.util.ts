@@ -5,11 +5,16 @@ import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import {
   type RelationConnectQueryConfig,
@@ -26,11 +31,18 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 
 export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-  objectMetadataMap: ObjectMetadataMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
 ) => {
   const allConnectQueryConfigs: Record<string, RelationConnectQueryConfig> = {};
+
+  const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  );
 
   for (const [entityIndex, entity] of entities.entries()) {
     const nestedRelationConnectFields =
@@ -48,9 +60,12 @@ export const computeRelationConnectQueryConfigs = (
       } = computeRecordToConnectCondition(
         connectFieldName,
         connectObject,
-        objectMetadata,
-        objectMetadataMap,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
         entity,
+        fieldMaps,
       );
 
       const connectQueryConfig = allConnectQueryConfigs[connectFieldName];
@@ -102,7 +117,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
+  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -121,26 +136,30 @@ const createConnectQueryConfig = (
 const computeRecordToConnectCondition = (
   connectFieldName: string,
   connectObject: ConnectObject,
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-  objectMetadataMap: ObjectMetadataMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   entity: Record<string, unknown>,
+  fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[];
+  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
   const field =
-    objectMetadata.fieldsById[objectMetadata.fieldIdByName[connectFieldName]];
+    flatFieldMetadataMaps.byId[fieldMaps.fieldIdByName[connectFieldName]];
 
   if (
+    !isDefined(field) ||
     (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       !isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) ||
     field.settings?.relationType !== RelationType.MANY_TO_ONE
   ) {
-    const objectMetadataNameSingular = objectMetadata.nameSingular;
+    const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
 
     throw new TwentyORMException(
-      `Connect is not allowed for ${connectFieldName} on ${objectMetadata.nameSingular}`,
+      `Connect is not allowed for ${connectFieldName} on ${flatObjectMetadata.nameSingular}`,
       TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
       {
         userFriendlyMessage: msg`Connect is not allowed for ${connectFieldName} on ${objectMetadataNameSingular}`,
@@ -150,7 +169,7 @@ const computeRecordToConnectCondition = (
   checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
 
   const targetObjectMetadata =
-    objectMetadataMap.byId[field.relationTargetObjectMetadataId || ''];
+    flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId || ''];
 
   if (!isDefined(targetObjectMetadata)) {
     throw new TwentyORMException(
@@ -164,6 +183,8 @@ const computeRecordToConnectCondition = (
 
   const uniqueConstraintFields = checkUniqueConstraintFullyPopulated(
     targetObjectMetadata,
+    flatFieldMetadataMaps,
+    flatIndexMaps,
     connectObject,
     connectFieldName,
   );
@@ -179,16 +200,41 @@ const computeRecordToConnectCondition = (
 };
 
 const checkUniqueConstraintFullyPopulated = (
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   connectObject: ConnectObject,
   connectFieldName: string,
 ) => {
+  const fields = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
+
+  const indexMetadatas = flatObjectMetadata.indexMetadataIds
+    .map((indexId) => flatIndexMaps.byId[indexId])
+    .filter(isDefined)
+    .map((index) => ({
+      id: index.id,
+      isUnique: index.isUnique,
+      indexFieldMetadatas: index.flatIndexFieldMetadatas.map(
+        (fieldMetadata) => ({
+          fieldMetadataId: fieldMetadata.fieldMetadataId,
+        }),
+      ),
+    }));
+
   const uniqueConstraintsFields = getUniqueConstraintsFields<
-    FieldMetadataEntity,
-    ObjectMetadataEntity
+    FlatFieldMetadata,
+    {
+      id: string;
+      indexMetadatas: typeof indexMetadatas;
+      fields: FlatFieldMetadata[];
+    }
   >({
-    ...objectMetadata,
-    fields: Object.values(objectMetadata.fieldsById),
+    id: flatObjectMetadata.id,
+    indexMetadatas,
+    fields,
   });
 
   const hasUniqueConstraintFieldFullyPopulated = uniqueConstraintsFields.some(
@@ -243,7 +289,7 @@ const checkNoRelationFieldConflictOrThrow = (
 };
 
 const computeUniqueConstraintCondition = (
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
+  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
   connectObject: ConnectObject,
 ): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
@@ -271,7 +317,7 @@ const computeUniqueConstraintCondition = (
 
 const checkUniqueConstraintsAreSameOrThrow = (
   relationConnectQueryConfig: RelationConnectQueryConfig,
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
+  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
 ) => {
   if (
     !deepEqual(

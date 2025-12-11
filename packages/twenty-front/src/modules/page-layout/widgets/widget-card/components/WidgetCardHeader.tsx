@@ -32,7 +32,7 @@ const StyledWidgetCardHeader = styled.div`
 const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   padding-inline: ${({ theme }) => theme.spacing(1)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;
@@ -70,7 +70,7 @@ export const WidgetCardHeader = ({
 
   return (
     <StyledWidgetCardHeader className={className}>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {!isEmpty && isInEditMode && (
           <WidgetGrip
             className="drag-handle"
@@ -83,7 +83,7 @@ export const WidgetCardHeader = ({
       </StyledTitleContainer>
       <StyledRightContainer>
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {!isResizing &&
             !isEmpty &&
             isInEditMode &&

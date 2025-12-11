@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -47,7 +47,8 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     description: msg`Handle`,
     icon: 'IconMail',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
@@ -56,7 +57,8 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     description: msg`Display Name`,
     icon: 'IconUser',
   })
-  displayName: string;
+  @WorkspaceIsNullable()
+  displayName: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,

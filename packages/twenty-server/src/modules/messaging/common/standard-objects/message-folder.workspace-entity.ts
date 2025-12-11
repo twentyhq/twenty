@@ -1,9 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -47,7 +47,8 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Folder name`,
     icon: 'IconFolder',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
@@ -68,7 +69,8 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Sync Cursor`,
     icon: 'IconHash',
   })
-  syncCursor: string;
+  @WorkspaceIsNullable()
+  syncCursor: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,

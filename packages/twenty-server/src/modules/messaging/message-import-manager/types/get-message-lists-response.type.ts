@@ -1,7 +1,7 @@
 export type GetOneMessageListResponse = {
   messageExternalIds: string[];
   messageExternalIdsToDelete: string[];
-  previousSyncCursor: string;
+  previousSyncCursor: string | null;
   nextSyncCursor: string;
   folderId: string | undefined;
 };

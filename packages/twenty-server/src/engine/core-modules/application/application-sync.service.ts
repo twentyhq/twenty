@@ -3,6 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Sources } from 'twenty-shared/types';
+import {
+  ApplicationManifest,
+  FieldManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
+} from 'twenty-shared/application';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -11,34 +19,30 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import {
-  FieldManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
-} from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -48,8 +52,8 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
-    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -57,6 +61,11 @@ export class ApplicationSyncService {
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly roleService: RoleService,
+    private readonly roleTargetService: RoleTargetService,
+    private readonly objectPermissionService: ObjectPermissionService,
+    private readonly fieldPermissionService: FieldPermissionService,
+    private readonly permissionService: PermissionFlagService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -126,6 +135,12 @@ export class ApplicationSyncService {
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
 
+    await this.syncApplicationRole({
+      applicationId: application.id,
+      manifest,
+      workspaceId,
+    });
+
     if (manifest.serverlessFunctions.length > 0) {
       if (!isDefined(serverlessFunctionLayerId)) {
         serverlessFunctionLayerId = (
@@ -161,6 +176,114 @@ export class ApplicationSyncService {
       version: packageJson.version,
       serverlessFunctionLayerId,
     });
+  }
+
+  private async syncApplicationRole({
+    manifest,
+    applicationId,
+    workspaceId,
+  }: {
+    manifest: ApplicationManifest;
+    applicationId: string;
+    workspaceId: string;
+  }) {
+    const applicationRole = manifest.application.applicationRole;
+
+    if (
+      isDefined(applicationRole) &&
+      isDefined(applicationRole.universalIdentifier)
+    ) {
+      let role = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: applicationRole.universalIdentifier,
+        workspaceId,
+      });
+
+      if (role) {
+        await this.roleService.updateRole({
+          input: {
+            id: role.id,
+            update: {
+              ...applicationRole,
+              canAccessAllTools: false,
+              canUpdateAllSettings: false,
+              canBeAssignedToAgents: false,
+              canBeAssignedToUsers: false,
+              canBeAssignedToApiKeys: false,
+              canBeAssignedToApplications: true,
+            },
+          },
+          workspaceId,
+        });
+      } else {
+        role = await this.roleService.createRole({
+          input: {
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: false,
+            canSoftDeleteAllObjectRecords: false,
+            canDestroyAllObjectRecords: false,
+            ...applicationRole,
+            canAccessAllTools: false,
+            canUpdateAllSettings: false,
+            canBeAssignedToAgents: false,
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
+            canBeAssignedToApplications: true,
+          },
+          workspaceId,
+          applicationId: applicationId,
+        });
+
+        await this.roleTargetService.create({
+          createRoleTargetInput: {
+            roleId: role.id,
+            applicationId: applicationId,
+            universalIdentifier: role.universalIdentifier,
+            targetMetadataForeignKey: 'targetApplicationId',
+            targetId: applicationId,
+          },
+          workspaceId,
+        });
+      }
+
+      if (
+        isDefined(applicationRole.objectPermissions) &&
+        applicationRole.objectPermissions.length > 0
+      ) {
+        await this.objectPermissionService.upsertObjectPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            objectPermissions: applicationRole.objectPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.fieldPermissions) &&
+        applicationRole.fieldPermissions.length > 0
+      ) {
+        await this.fieldPermissionService.upsertFieldPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            fieldPermissions: applicationRole.fieldPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.permissionFlags) &&
+        applicationRole.permissionFlags.length > 0
+      ) {
+        await this.permissionService.upsertPermissionFlags({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            permissionFlagKeys: applicationRole.permissionFlags,
+          },
+        });
+      }
+    }
   }
 
   private async syncFields({
@@ -219,14 +342,14 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
         },
         workspaceId,
       });
-      await this.fieldMetadataServiceV2.deleteOneField({
+      await this.fieldMetadataService.deleteOneField({
         deleteOneFieldInput: { id: fieldToDelete.id },
         workspaceId,
       });
@@ -256,7 +379,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput,
         workspaceId,
       });
@@ -264,7 +387,7 @@ export class ApplicationSyncService {
 
     for (const fieldToCreate of fieldsToCreate) {
       const createFieldInput: CreateFieldInput = {
-        name: computeMetadataNameFromLabel(fieldToCreate.label),
+        name: computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
         type: fieldToCreate.type,
         label: fieldToCreate.label,
         description: fieldToCreate.description ?? undefined,
@@ -281,7 +404,7 @@ export class ApplicationSyncService {
         workspaceId,
       };
 
-      await this.fieldMetadataServiceV2.createOneField({
+      await this.fieldMetadataService.createOneField({
         createFieldInput,
         workspaceId,
         applicationId,
@@ -342,7 +465,7 @@ export class ApplicationSyncService {
     );
 
     for (const objectToDelete of objectsToDelete) {
-      await this.objectMetadataServiceV2.deleteOneObject({
+      await this.objectMetadataService.deleteOneObject({
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -373,7 +496,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOneObject({
+      await this.objectMetadataService.updateOneObject({
         updateObjectInput,
         workspaceId,
       });
@@ -405,7 +528,7 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      const createdObject = await this.objectMetadataServiceV2.createOneObject({
+      const createdObject = await this.objectMetadataService.createOneObject({
         createObjectInput,
         applicationId,
         workspaceId,
@@ -990,54 +1113,37 @@ export class ApplicationSyncService {
         application.id,
       );
 
-    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatObjectMetadataMapsByApplicationId.map((obj) => obj.id),
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-    });
-
     const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatIndexMetadataMaps,
       application.id,
     );
-
-    const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
-        (field) => field.id,
-      ),
-      flatEntityMaps: existingFlatIndexMetadataMaps,
-    });
 
     const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
       existingFlatFieldMetadataMaps,
       application.id,
     );
 
-    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-    });
-
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: fromFlatObjectMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+        allFlatEntityOperationByMetadataName: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatIndexMaps: {
-            from: fromFlatIndexMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatFieldMetadataMaps: {
-            from: fromFlatFieldMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
         },
         workspaceId,
-        buildOptions: {
-          isSystemBuild: true,
-          inferDeletionFromMissingEntities: true,
-        },
+        isSystemBuild: true,
       },
     );
 

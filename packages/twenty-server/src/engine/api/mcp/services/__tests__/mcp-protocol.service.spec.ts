@@ -8,9 +8,9 @@ import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
-import { ToolService } from 'src/engine/metadata-modules/ai-tools/services/tool.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -19,7 +19,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 describe('McpProtocolService', () => {
   let service: McpProtocolService;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
-  let toolService: jest.Mocked<ToolService>;
+  let toolProviderService: jest.Mocked<ToolProviderService>;
   let userRoleService: jest.Mocked<UserRoleService>;
   let mcpToolExecutorService: jest.Mocked<McpToolExecutorService>;
 
@@ -34,8 +34,8 @@ describe('McpProtocolService', () => {
       isFeatureEnabled: jest.fn(),
     };
 
-    const mockToolService = {
-      listTools: jest.fn(),
+    const mockToolProviderService = {
+      getTools: jest.fn(),
     };
 
     const mockUserRoleService = {
@@ -60,8 +60,8 @@ describe('McpProtocolService', () => {
           useValue: mockFeatureFlagService,
         },
         {
-          provide: ToolService,
-          useValue: mockToolService,
+          provide: ToolProviderService,
+          useValue: mockToolProviderService,
         },
         {
           provide: UserRoleService,
@@ -82,7 +82,7 @@ describe('McpProtocolService', () => {
 
     service = module.get<McpProtocolService>(McpProtocolService);
     featureFlagService = module.get(FeatureFlagService);
-    toolService = module.get(ToolService);
+    toolProviderService = module.get(ToolProviderService);
     userRoleService = module.get(UserRoleService);
     mcpToolExecutorService = module.get(McpToolExecutorService);
   });
@@ -156,7 +156,9 @@ describe('McpProtocolService', () => {
     });
 
     it('should throw when role ID is missing', async () => {
-      userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(undefined);
+      userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(
+        undefined as unknown as string,
+      );
 
       await expect(
         service.getRoleId('workspace-1', 'user-workspace-1'),
@@ -219,7 +221,7 @@ describe('McpProtocolService', () => {
         testTool: mockTool,
       };
 
-      toolService.listTools.mockResolvedValue(mockToolsMap);
+      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
 
       const mockToolCallResponse = {
         id: '123',
@@ -273,7 +275,7 @@ describe('McpProtocolService', () => {
         testTool: mockTool,
       };
 
-      toolService.listTools.mockResolvedValue(mockToolsMap);
+      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
 
       const mockToolCallResponse = {
         id: '123',
@@ -307,10 +309,7 @@ describe('McpProtocolService', () => {
       });
 
       expect(result).toEqual(mockToolCallResponse);
-      expect(toolService.listTools).toHaveBeenCalledWith(
-        { unionOf: [mockAdminRoleId] },
-        mockWorkspace.id,
-      );
+      expect(toolProviderService.getTools).toHaveBeenCalled();
     });
 
     it('should handle tools listing', async () => {
@@ -324,7 +323,7 @@ describe('McpProtocolService', () => {
         },
       };
 
-      toolService.listTools.mockResolvedValue(mockToolsMap);
+      toolProviderService.getTools.mockResolvedValue(mockToolsMap);
 
       const mockToolsListingResponse = {
         id: '123',
@@ -390,7 +389,7 @@ describe('McpProtocolService', () => {
     it('should handle error when tool is not found', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
-      toolService.listTools.mockResolvedValue({});
+      toolProviderService.getTools.mockResolvedValue({});
 
       mcpToolExecutorService.handleToolCall.mockRejectedValue(
         new HttpException(

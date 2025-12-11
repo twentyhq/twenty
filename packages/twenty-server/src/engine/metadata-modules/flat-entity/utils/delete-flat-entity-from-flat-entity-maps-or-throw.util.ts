@@ -6,17 +6,17 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export type DeleteFlatEntityFromFlatEntityMapsOrThrowArgs<
-  T extends FlatEntity,
+  T extends SyncableFlatEntity,
 > = {
   entityToDeleteId: string;
   flatEntityMaps: FlatEntityMaps<T>;
 };
 
 export const deleteFlatEntityFromFlatEntityMapsOrThrow = <
-  T extends FlatEntity,
+  T extends SyncableFlatEntity,
 >({
   flatEntityMaps,
   entityToDeleteId,

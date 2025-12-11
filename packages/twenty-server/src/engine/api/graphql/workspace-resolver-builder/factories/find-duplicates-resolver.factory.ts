@@ -42,14 +42,15 @@ export class FindDuplicatesResolverFactory
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.objectMetadataMaps,
+            internalContext.flatObjectMetadataMaps,
+            internalContext.flatFieldMetadataMaps,
+            internalContext.objectIdByNameSingular,
           );
 
         return paginatedDuplicates.map((duplicate) =>
           typeORMObjectRecordsParser.createConnection({
             objectRecords: duplicate.records,
-            objectName:
-              internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+            objectName: internalContext.flatObjectMetadata.nameSingular,
             take: duplicate.records.length,
             totalCount: duplicate.totalCount,
             order: [{ id: OrderByDirection.AscNullsFirst }],

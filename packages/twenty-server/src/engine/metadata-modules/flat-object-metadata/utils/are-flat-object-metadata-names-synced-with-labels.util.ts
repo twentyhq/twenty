@@ -1,16 +1,26 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
-export const areFlatObjectMetadataNamesSyncedWithLabels = (
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+export const areFlatObjectMetadataNamesSyncedWithLabels = ({
+  flatObjectdMetadata,
+  isSystemBuild,
+}: {
+  isSystemBuild: boolean;
   flatObjectdMetadata: Pick<
     FlatObjectMetadata,
     'namePlural' | 'nameSingular' | 'labelPlural' | 'labelSingular'
-  >,
-) => {
+  >;
+}) => {
   const [computedSingularName, computedPluralName] = [
     flatObjectdMetadata.labelSingular,
     flatObjectdMetadata.labelPlural,
-  ].map(computeMetadataNameFromLabel);
+  ].map((label) =>
+    computeMetadataNameFromLabel({
+      label,
+      applyCustomSuffix: !isSystemBuild,
+    }),
+  );
 
   return (
     flatObjectdMetadata.nameSingular === computedSingularName &&

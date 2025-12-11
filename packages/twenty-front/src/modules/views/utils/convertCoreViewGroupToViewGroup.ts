@@ -4,13 +4,12 @@ import { type CoreViewGroup } from '~/generated/graphql';
 export const convertCoreViewGroupToViewGroup = (
   coreViewGroup: Pick<
     CoreViewGroup,
-    'id' | 'fieldMetadataId' | 'isVisible' | 'fieldValue' | 'position'
+    'id' | 'isVisible' | 'fieldValue' | 'position'
   >,
 ): ViewGroup => {
   return {
     __typename: 'ViewGroup',
     id: coreViewGroup.id,
-    fieldMetadataId: coreViewGroup.fieldMetadataId,
     isVisible: coreViewGroup.isVisible,
     fieldValue: coreViewGroup.fieldValue,
     position: coreViewGroup.position,

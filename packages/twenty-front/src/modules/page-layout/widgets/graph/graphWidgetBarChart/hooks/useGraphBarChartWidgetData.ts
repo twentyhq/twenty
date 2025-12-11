@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
@@ -22,6 +23,7 @@ type UseGraphBarChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   layout?: BarChartLayout;
   loading: boolean;
   error?: Error;
@@ -39,6 +41,7 @@ export const useGraphBarChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const limit = getBarChartQueryLimit(configuration);
 
@@ -58,10 +61,17 @@ export const useGraphBarChartWidgetData = ({
       transformGroupByDataToBarChartData({
         groupByData,
         objectMetadataItem,
+        objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
       }),
-    [groupByData, objectMetadataItem, configuration, aggregateOperation],
+    [
+      groupByData,
+      objectMetadataItem,
+      objectMetadataItems,
+      configuration,
+      aggregateOperation,
+    ],
   );
 
   return {

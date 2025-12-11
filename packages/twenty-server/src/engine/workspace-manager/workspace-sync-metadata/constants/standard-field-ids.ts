@@ -102,7 +102,7 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   externalUpdatedAt: '20202020-b355-4c18-8825-ef42c8a5a755',
   description: '20202020-52c4-4266-a98f-e90af0b4d271',
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
-  iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
+  iCalUid: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
@@ -416,6 +416,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   kanbanAggregateOperation: '20202020-8da2-45de-a731-61bed84b17a8',
   kanbanAggregateOperationFieldMetadataId:
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
+  mainGroupByFieldMetadataId: '20202020-f782-4f89-96eb-083a02cca887',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',

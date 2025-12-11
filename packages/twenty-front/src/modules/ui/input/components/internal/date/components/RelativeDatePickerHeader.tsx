@@ -21,6 +21,7 @@ const StyledContainer = styled.div<{ noPadding: boolean }>`
 `;
 
 type RelativeDatePickerHeaderProps = {
+  instanceId: string;
   direction: RelativeDateFilterDirection;
   amount?: Nullable<number>;
   unit: RelativeDateFilterUnit;
@@ -31,6 +32,7 @@ type RelativeDatePickerHeaderProps = {
 };
 
 export const RelativeDatePickerHeader = ({
+  instanceId,
   direction,
   unit,
   amount,
@@ -53,7 +55,7 @@ export const RelativeDatePickerHeader = ({
   return (
     <StyledContainer noPadding={isFormField ?? false}>
       <Select
-        dropdownId="direction-select"
+        dropdownId={`direction-select-${instanceId}`}
         value={direction}
         onChange={(newDirection) => {
           if (amount === undefined && newDirection !== 'THIS') {
@@ -71,7 +73,7 @@ export const RelativeDatePickerHeader = ({
         disabled={readonly}
       />
       <SettingsTextInput
-        instanceId="relative-date-picker-amount"
+        instanceId={`relative-date-picker-amount-${instanceId}`}
         width={50}
         value={textInputValue}
         onChange={(text) => {
@@ -92,7 +94,7 @@ export const RelativeDatePickerHeader = ({
         disabled={direction === 'THIS' || readonly}
       />
       <Select
-        dropdownId="unit-select"
+        dropdownId={`unit-select-${instanceId}`}
         value={unit}
         onChange={(newUnit) => {
           if (direction !== 'THIS' && amount === undefined) {

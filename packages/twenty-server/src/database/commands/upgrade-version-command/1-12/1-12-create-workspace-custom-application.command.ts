@@ -2,29 +2,38 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  WorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
   name: 'upgrade:1-12:create-workspace-custom-application',
   description:
     'Create workspace-custom application for workspaces that do not have them',
 })
-export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class CreateWorkspaceCustomApplicationCommand extends WorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
+    protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
+      WorkspaceActivationStatus.ONGOING_CREATION,
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ACTIVE,
+      WorkspaceActivationStatus.INACTIVE,
+      WorkspaceActivationStatus.SUSPENDED,
+    ]);
   }
 
   override async runOnWorkspace({

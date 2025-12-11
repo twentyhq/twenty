@@ -4,18 +4,15 @@ import { transformActorField } from 'src/engine/api/common/common-args-processor
 
 describe('transformActorField', () => {
   it('should return null when value is null', () => {
-    const result = transformActorField(null, true);
+    const result = transformActorField(null);
 
     expect(result).toBeNull();
   });
 
   it('should transform actor with source only', () => {
-    const result = transformActorField(
-      {
-        source: FieldActorSource.EMAIL,
-      },
-      true,
-    );
+    const result = transformActorField({
+      source: FieldActorSource.EMAIL,
+    });
 
     expect(result).toEqual({
       source: FieldActorSource.EMAIL,
@@ -23,13 +20,10 @@ describe('transformActorField', () => {
   });
 
   it('should transform actor with source and context', () => {
-    const result = transformActorField(
-      {
-        source: FieldActorSource.WORKFLOW,
-        context: { workflowId: '123', stepId: 'step-1' },
-      },
-      true,
-    );
+    const result = transformActorField({
+      source: FieldActorSource.WORKFLOW,
+      context: { workflowId: '123', stepId: 'step-1' },
+    });
 
     expect(result).toEqual({
       source: FieldActorSource.WORKFLOW,
@@ -38,13 +32,10 @@ describe('transformActorField', () => {
   });
 
   it('should transform actor with null source', () => {
-    const result = transformActorField(
-      {
-        source: null,
-        context: { userId: '456' },
-      },
-      true,
-    );
+    const result = transformActorField({
+      source: null,
+      context: { userId: '456' },
+    });
 
     expect(result).toEqual({
       source: null,
@@ -53,13 +44,10 @@ describe('transformActorField', () => {
   });
 
   it('should transform actor with null context', () => {
-    const result = transformActorField(
-      {
-        source: FieldActorSource.API,
-        context: null,
-      },
-      true,
-    );
+    const result = transformActorField({
+      source: FieldActorSource.API,
+      context: null,
+    });
 
     expect(result).toEqual({
       source: FieldActorSource.API,
@@ -68,13 +56,10 @@ describe('transformActorField', () => {
   });
 
   it('should transform empty context object to null', () => {
-    const result = transformActorField(
-      {
-        source: FieldActorSource.EMAIL,
-        context: {},
-      },
-      true,
-    );
+    const result = transformActorField({
+      source: FieldActorSource.EMAIL,
+      context: {},
+    });
 
     expect(result).toEqual({
       source: FieldActorSource.EMAIL,

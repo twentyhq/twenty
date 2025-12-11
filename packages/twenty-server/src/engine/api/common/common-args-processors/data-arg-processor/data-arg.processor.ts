@@ -44,7 +44,6 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
@@ -52,8 +51,10 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class DataArgProcessor {
@@ -65,12 +66,14 @@ export class DataArgProcessor {
   async process({
     partialRecordInputs,
     authContext,
-    objectMetadataItemWithFieldMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
     shouldBackfillPositionIfUndefined = true,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: AuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
@@ -81,10 +84,10 @@ export class DataArgProcessor {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const isNullEquivalenceEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-        workspace.id,
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
       );
 
     const processedRecords: Partial<ObjectRecord>[] = [];
@@ -94,18 +97,23 @@ export class DataArgProcessor {
 
       for (const [key, value] of Object.entries(record)) {
         const fieldMetadataId =
-          objectMetadataItemWithFieldMaps.fieldIdByName[key] ||
-          objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[key];
+          fieldIdByName[key] || fieldIdByJoinColumnName[key];
 
         if (!isDefined(fieldMetadataId)) {
           throw new CommonQueryRunnerException(
-            `Object ${objectMetadataItemWithFieldMaps.nameSingular} doesn't have any "${key}" field.`,
+            `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
           );
         }
 
-        const fieldMetadata =
-          objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+        const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+
+        if (!fieldMetadata) {
+          throw new CommonQueryRunnerException(
+            `Field metadata not found for field ${key}`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          );
+        }
 
         if (
           !isDefined(fieldMetadata.defaultValue) &&
@@ -126,7 +134,6 @@ export class DataArgProcessor {
           fieldMetadata,
           key,
           value,
-          isNullEquivalenceEnabled,
         );
       }
       processedRecords.push(processedRecord);
@@ -137,9 +144,9 @@ export class DataArgProcessor {
         partialRecordInputs: processedRecords,
         workspaceId: workspace.id,
         objectMetadata: {
-          isCustom: objectMetadataItemWithFieldMaps.isCustom,
-          nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
-          fieldIdByName: objectMetadataItemWithFieldMaps.fieldIdByName,
+          isCustom: flatObjectMetadata.isCustom,
+          nameSingular: flatObjectMetadata.nameSingular,
+          fieldIdByName,
         },
         shouldBackfillPositionIfUndefined,
       });
@@ -148,10 +155,9 @@ export class DataArgProcessor {
   }
 
   private async processField(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     key: string,
     value: unknown,
-    isNullEquivalenceEnabled: boolean,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
@@ -167,7 +173,7 @@ export class DataArgProcessor {
       case FieldMetadataType.TEXT: {
         const validatedValue = validateTextFieldOrThrow(value, key);
 
-        return transformTextField(validatedValue, isNullEquivalenceEnabled);
+        return transformTextField(validatedValue);
       }
       case FieldMetadataType.DATE_TIME:
       case FieldMetadataType.DATE:
@@ -192,19 +198,19 @@ export class DataArgProcessor {
           fieldMetadata.options?.map((option) => option.value),
         );
 
-        return transformArrayField(validatedValue, isNullEquivalenceEnabled);
+        return transformArrayField(validatedValue);
       }
       case FieldMetadataType.UUID:
         return validateUUIDFieldOrThrow(value, key);
       case FieldMetadataType.ARRAY: {
         const validatedValue = validateArrayFieldOrThrow(value, key);
 
-        return transformArrayField(validatedValue, isNullEquivalenceEnabled);
+        return transformArrayField(validatedValue);
       }
       case FieldMetadataType.RAW_JSON: {
         const validatedValue = validateRawJsonFieldOrThrow(value, key);
 
-        return transformRawJsonField(validatedValue, isNullEquivalenceEnabled);
+        return transformRawJsonField(validatedValue);
       }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
@@ -235,18 +241,18 @@ export class DataArgProcessor {
       case FieldMetadataType.EMAILS: {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
-        return transformEmailsValue(validatedValue, isNullEquivalenceEnabled);
+        return transformEmailsValue(validatedValue);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);
 
-        return transformFullNameField(validatedValue, isNullEquivalenceEnabled);
+        return transformFullNameField(validatedValue);
       }
 
       case FieldMetadataType.ADDRESS: {
         const validatedValue = validateAddressFieldOrThrow(value, key);
 
-        return transformAddressField(validatedValue, isNullEquivalenceEnabled);
+        return transformAddressField(validatedValue);
       }
       case FieldMetadataType.CURRENCY: {
         const validatedValue = validateCurrencyFieldOrThrow(value, key);
@@ -256,7 +262,7 @@ export class DataArgProcessor {
       case FieldMetadataType.ACTOR: {
         const validatedValue = validateActorFieldOrThrow(value, key);
 
-        return transformActorField(validatedValue, isNullEquivalenceEnabled);
+        return transformActorField(validatedValue);
       }
       case FieldMetadataType.RICH_TEXT_V2: {
         const validatedValue = validateRichTextV2FieldOrThrow(value, key);

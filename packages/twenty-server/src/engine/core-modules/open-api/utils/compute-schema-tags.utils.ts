@@ -1,10 +1,10 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeSchemaTags = (
-  items: ObjectMetadataEntity[],
+  items: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>[],
 ): OpenAPIV3_1.TagObject[] => {
   const results = [{ name: 'General', description: 'General requests' }];
 

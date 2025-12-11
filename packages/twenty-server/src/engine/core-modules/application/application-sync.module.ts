@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -14,8 +14,12 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
-import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
+import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 
 @Module({
   imports: [
@@ -32,11 +36,15 @@ import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadat
     RouteTriggerModule,
     WorkspaceMigrationV2Module,
     PermissionsModule,
+    RoleModule,
+    RoleTargetModule,
+    ObjectPermissionModule,
+    PermissionFlagModule,
   ],
   providers: [
     ApplicationResolver,
     ApplicationSyncService,
-    ObjectMetadataGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
   exports: [ApplicationSyncService],
 })

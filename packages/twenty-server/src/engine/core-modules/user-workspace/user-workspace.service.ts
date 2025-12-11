@@ -31,9 +31,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
@@ -44,13 +45,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
@@ -92,48 +93,54 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   }
 
   async createWorkspaceMember(workspaceId: string, user: UserEntity) {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-      where: {
-        userId: user.id,
-        workspaceId,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+          where: {
+            userId: user.id,
+            workspaceId,
+          },
+        });
+
+        await workspaceMemberRepository.insert({
+          name: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+          },
+          colorScheme: 'System',
+          userId: user.id,
+          userEmail: user.email,
+          avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
+          locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+        });
+
+        const workspaceMember = await workspaceMemberRepository.find({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        assert(
+          workspaceMember?.length === 1,
+          `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
+        );
       },
-    });
-
-    await workspaceMemberRepository.insert({
-      name: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      colorScheme: 'System',
-      userId: user.id,
-      userEmail: user.email,
-      avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
-      locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
-    });
-
-    const workspaceMember = await workspaceMemberRepository.find({
-      where: {
-        userId: user.id,
-      },
-    });
-
-    assert(
-      workspaceMember?.length === 1,
-      `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
     );
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
-    queryRunner?: QueryRunner,
   ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
@@ -141,14 +148,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     if (!userWorkspace) {
-      userWorkspace = await this.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser: true,
-        },
-        queryRunner,
-      );
+      userWorkspace = await this.create({
+        userId: user.id,
+        workspaceId: workspace.id,
+        isExistingUser: true,
+      });
 
       await this.createWorkspaceMember(workspace.id, user);
 
@@ -161,29 +165,22 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: defaultRoleId,
-        },
-        queryRunner,
-      );
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: defaultRoleId,
+      });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
         workspace.id,
         user.email,
-        queryRunner,
       );
 
-      await this.onboardingService.setOnboardingCreateProfilePending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     }
   }
 
@@ -257,10 +254,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.roleTargetRepository.softRemove({ userWorkspaceId });
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.roleTargetRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
     }
   }
@@ -354,24 +351,31 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspaceMemberId: string;
     workspaceId: string;
   }): Promise<WorkspaceMemberWorkspaceEntity> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        id: workspaceMemberId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workspaceMember = await workspaceMemberRepository.findOne({
+          where: {
+            id: workspaceMemberId,
+          },
+        });
+
+        if (!isDefined(workspaceMember)) {
+          throw new Error('Workspace member not found');
+        }
+
+        return workspaceMember;
       },
-    });
-
-    if (!isDefined(workspaceMember)) {
-      throw new Error('Workspace member not found');
-    }
-
-    return workspaceMember;
+    );
   }
 
   private async computeDefaultAvatarUrl(

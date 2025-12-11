@@ -10,7 +10,6 @@ import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/obj
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthClassName';
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -18,7 +17,6 @@ import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { css, type Theme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
   &::before {
@@ -64,7 +62,6 @@ export const HorizontalScrollBoxShadowCSS = ({
 const StyledTable = styled.div<{
   isDragging?: boolean;
   visibleRecordFields: RecordField[];
-  lastColumnWidth: number;
   hasRecordGroups: boolean;
 }>`
   & > * {
@@ -128,12 +125,6 @@ const StyledTable = styled.div<{
         : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
-
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-      max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-      min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-    }
   }
 
   div.table-cell:nth-of-type(1) {
@@ -192,7 +183,7 @@ const StyledTable = styled.div<{
     max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
-  ${({ visibleRecordFields, lastColumnWidth }) => {
+  ${({ visibleRecordFields }) => {
     let returnedCSS = '';
 
     for (let i = 0; i < visibleRecordFields.length; i++) {
@@ -200,27 +191,12 @@ const StyledTable = styled.div<{
     }
 
     for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
-        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
-        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
-        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
+      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
+        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
       } \n`;
-
-      const isLabelIdentifierColumn = i === 0;
-
-      if (isLabelIdentifierColumn) {
-        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
-          @media (max-width: ${MOBILE_VIEWPORT}px) {
-            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-          }
-        } \n`;
-      }
     }
-
-    returnedCSS += `${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
-    returnedCSS += `${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
 
     return returnedCSS;
   }};

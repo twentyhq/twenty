@@ -18,4 +18,20 @@ describe('computeMetadataNameFromLabel', () => {
 
     expect(computeMetadataNameFromLabel(label)).toEqual('');
   });
+
+  it('adds "Custom" suffix to reserved keywords', () => {
+    expect(computeMetadataNameFromLabel('Plan')).toEqual('planCustom');
+    expect(computeMetadataNameFromLabel('Event')).toEqual('eventCustom');
+    expect(computeMetadataNameFromLabel('User')).toEqual('userCustom');
+  });
+
+  it('adds "Custom" suffix to plural reserved keywords', () => {
+    expect(computeMetadataNameFromLabel('Plans')).toEqual('plansCustom');
+    expect(computeMetadataNameFromLabel('Events')).toEqual('eventsCustom');
+  });
+
+  it('does not modify non-reserved keywords', () => {
+    expect(computeMetadataNameFromLabel('Customer')).toEqual('customer');
+    expect(computeMetadataNameFromLabel('Order')).toEqual('order');
+  });
 });

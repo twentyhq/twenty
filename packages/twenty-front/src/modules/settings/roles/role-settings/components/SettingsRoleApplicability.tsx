@@ -56,7 +56,7 @@ export const SettingsRoleApplicability = ({
   const options = [
     {
       key: 'canBeAssignedToUsers' as const,
-      label: t`Assignable to team members`,
+      label: t`Assignable to Workspace Members`,
       Icon: IconUsers,
     },
     {

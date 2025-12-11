@@ -13,16 +13,16 @@ import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflo
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class WorkflowRunEnqueueJob {
+export class WorkflowRunEnqueueCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
   ) {}
 
-  @Process(WorkflowRunEnqueueJob.name)
+  @Process(WorkflowRunEnqueueCronJob.name)
   @SentryCronMonitor(
-    WorkflowRunEnqueueJob.name,
+    WorkflowRunEnqueueCronJob.name,
     WORKFLOW_RUN_ENQUEUE_CRON_PATTERN,
   )
   async handle() {
@@ -34,6 +34,7 @@ export class WorkflowRunEnqueueJob {
 
     await this.workflowRunEnqueueWorkspaceService.enqueueRuns({
       workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
+      isCacheMode: false,
     });
   }
 }

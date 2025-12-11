@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
@@ -17,6 +18,7 @@ type UseGraphLineChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   loading: boolean;
@@ -33,6 +35,7 @@ export const useGraphLineChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const limit = getLineChartQueryLimit(configuration);
 
@@ -52,10 +55,17 @@ export const useGraphLineChartWidgetData = ({
       transformGroupByDataToLineChartData({
         groupByData,
         objectMetadataItem,
+        objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
       }),
-    [groupByData, objectMetadataItem, configuration, aggregateOperation],
+    [
+      groupByData,
+      objectMetadataItem,
+      objectMetadataItems,
+      configuration,
+      aggregateOperation,
+    ],
   );
 
   return {

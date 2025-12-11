@@ -1,13 +1,19 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 import { WorkspaceEntityManager } from './workspace-entity-manager';
 
@@ -18,7 +24,7 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
 jest.mock(
   'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
   () => ({
-    getObjectMetadataFromEntityTarget: jest.fn().mockReturnValue({}),
+    getObjectMetadataFromEntityTarget: jest.fn(),
   }),
 );
 
@@ -79,47 +85,109 @@ describe('WorkspaceEntityManager', () => {
   };
 
   beforeEach(() => {
+    const mockFlatObjectMetadata: FlatObjectMetadata = {
+      id: 'test-entity-id',
+      nameSingular: 'test-entity',
+      namePlural: 'test-entities',
+      labelSingular: 'Test Entity',
+      labelPlural: 'Test Entities',
+      workspaceId: 'test-workspace-id',
+      icon: 'test-icon',
+      isCustom: false,
+      isRemote: false,
+      isAuditLogged: false,
+      isSearchable: false,
+      isSystem: false,
+      isActive: true,
+      targetTableName: 'test_entity',
+      fieldMetadataIds: ['field-id'],
+      indexMetadataIds: [],
+      viewIds: [],
+      universalIdentifier: 'test-entity-id',
+      description: null,
+      imageIdentifierFieldMetadataId: null,
+      labelIdentifierFieldMetadataId: null,
+      shortcut: null,
+      standardId: null,
+      standardOverrides: null,
+      applicationId: null,
+      isLabelSyncedWithName: false,
+      isUIReadOnly: false,
+      duplicateCriteria: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(
+      mockFlatObjectMetadata,
+    );
+
+    const mockFlatFieldMetadata: FlatFieldMetadata = {
+      id: 'field-id',
+      type: 'TEXT' as FieldMetadataType,
+      name: 'fieldName',
+      label: 'Field Name',
+      objectMetadataId: 'test-entity-id',
+      isNullable: true,
+      isLabelSyncedWithName: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      universalIdentifier: 'field-id',
+      defaultValue: null,
+      description: null,
+      icon: null,
+      isActive: true,
+      isCustom: false,
+      isSystem: false,
+      isUIReadOnly: false,
+      isUnique: false,
+      options: null,
+      settings: null,
+      standardId: null,
+      standardOverrides: null,
+      workspaceId: 'test-workspace-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      mainGroupByFieldMetadataViewIds: [],
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadataId: null,
+      morphId: null,
+      applicationId: null,
+    };
+
+    const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
+      byId: {
+        'test-entity-id': mockFlatObjectMetadata,
+      },
+      idByUniversalIdentifier: {
+        'test-entity-id': 'test-entity-id',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+      byId: {
+        'field-id': mockFlatFieldMetadata,
+      },
+      idByUniversalIdentifier: {
+        'field-id': 'field-id',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
     mockInternalContext = {
       workspaceId: 'test-workspace-id',
-      objectMetadataMaps: {
-        byId: {
-          'test-entity-id': {
-            id: 'test-entity-id',
-            nameSingular: 'test-entity',
-            namePlural: 'test-entities',
-            labelSingular: 'Test Entity',
-            labelPlural: 'Test Entities',
-            workspaceId: 'test-workspace-id',
-            icon: 'test-icon',
-            color: 'test-color',
-            isCustom: false,
-            isRemote: false,
-            isAuditLogged: false,
-            isSearchable: false,
-            isSystem: false,
-            isActive: true,
-            targetTableName: 'test_entity',
-            indexMetadatas: [],
-            fieldsById: {
-              'field-id': {
-                id: 'field-id',
-                type: 'TEXT',
-                name: 'fieldName',
-                label: 'Field Name',
-                objectMetadataId: 'test-entity-id',
-                isNullable: true,
-                isLabelSyncedWithName: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              },
-            },
-            fieldIdByName: { fieldName: 'field-id' },
-            fieldIdByJoinColumnName: {},
-          } as unknown as ObjectMetadataItemWithFieldMaps,
-        },
-        idByNameSingular: {
-          'test-entity': 'test-entity-id',
-        },
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      objectIdByNameSingular: {
+        'test-entity': 'test-entity-id',
       },
       featureFlagsMap: {
         IS_AIRTABLE_INTEGRATION_ENABLED: false,
@@ -131,16 +199,13 @@ describe('WorkspaceEntityManager', () => {
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
-        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
-        IS_NULL_EQUIVALENCE_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -159,16 +224,13 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
-        IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
-        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
-        IS_NULL_EQUIVALENCE_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
@@ -333,7 +395,9 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'update',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
+        flatObjectMetadataMaps: mockInternalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: mockInternalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular: mockInternalContext.objectIdByNameSingular,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,
@@ -366,7 +430,9 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        objectMetadataMaps: mockInternalContext.objectMetadataMaps,
+        flatObjectMetadataMaps: mockInternalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: mockInternalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular: mockInternalContext.objectIdByNameSingular,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
         allFieldsSelected: false,

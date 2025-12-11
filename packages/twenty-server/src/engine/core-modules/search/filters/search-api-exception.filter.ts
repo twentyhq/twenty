@@ -14,6 +14,7 @@ export class SearchApiExceptionFilter implements ExceptionFilter {
   catch(exception: SearchException) {
     switch (exception.code) {
       case SearchExceptionCode.LABEL_IDENTIFIER_FIELD_NOT_FOUND:
+      case SearchExceptionCode.OBJECT_METADATA_NOT_FOUND:
         throw exception;
       default: {
         assertUnreachable(exception.code);

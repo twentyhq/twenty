@@ -12,7 +12,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { createViewGroups, updateViewGroups } = usePersistViewGroupRecords();
+  const { updateViewGroups } = usePersistViewGroupRecords();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
@@ -74,7 +74,6 @@ export const useSaveCurrentViewGroups = () => {
               update: {
                 isVisible: viewGroupToSave.isVisible,
                 position: viewGroupToSave.position,
-                fieldMetadataId: viewGroupToSave.fieldMetadataId,
                 fieldValue: viewGroupToSave.fieldValue,
               },
             },
@@ -144,7 +143,6 @@ export const useSaveCurrentViewGroups = () => {
                 update: {
                   isVisible: viewGroupToSave.isVisible,
                   position: viewGroupToSave.position,
-                  fieldMetadataId: viewGroupToSave.fieldMetadataId,
                   fieldValue: viewGroupToSave.fieldValue,
                 },
               },
@@ -152,27 +150,14 @@ export const useSaveCurrentViewGroups = () => {
           })
           .filter(isDefined);
 
-        const viewGroupsToCreate = viewGroupsToSave.filter(
-          (viewFieldToSave) =>
-            !currentViewGroups.some(
-              (currentViewGroup) =>
-                currentViewGroup.fieldValue === viewFieldToSave.fieldValue,
-            ),
-        );
+        if (!isDefined(view.mainGroupByFieldMetadataId)) {
+          throw new Error('mainGroupByFieldMetadataId is required');
+        }
 
-        await Promise.all([
-          createViewGroups({
-            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              ...viewGroup,
-              viewId: view.id,
-            })),
-          }),
-          updateViewGroups(viewGroupsToUpdate),
-        ]);
+        await updateViewGroups(viewGroupsToUpdate);
       },
     [
       canPersistChanges,
-      createViewGroups,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
       updateViewGroups,

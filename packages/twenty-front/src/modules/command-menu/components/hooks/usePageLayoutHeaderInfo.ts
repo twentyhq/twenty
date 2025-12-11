@@ -2,15 +2,16 @@ import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constan
 import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,
   IconFrame,
+  IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;
@@ -142,6 +143,18 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: commandMenuPage === CommandMenuPages.PageLayoutGraphFilter,
         tab: undefined,
         widgetInEditMode,
+      };
+    }
+
+    case CommandMenuPages.PageLayoutWidgetTypeSelect: {
+      return {
+        headerIcon: IconPlus,
+        headerIconColor: iconColor,
+        headerType: '',
+        title: t`New widget`,
+        isReadonly: true,
+        tab: undefined,
+        widgetInEditMode: undefined,
       };
     }
 

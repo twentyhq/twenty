@@ -27,6 +27,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         additionalProperties: false as const,
       },
     },
+    evaluationInputs: [],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,6 +71,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
             additionalProperties: false as const,
           },
         },
+        evaluationInputs: [],
       });
     }
   };

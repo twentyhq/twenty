@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -12,10 +13,7 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import {
-  HTTPMethod,
-  RouteTriggerEntity,
-} from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 @Injectable()

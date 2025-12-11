@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -31,7 +31,7 @@ const createMockCalendarEvent = (
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
   updatedAt: '2024-03-20T09:00:00Z',
-  iCalUID: '',
+  iCalUid: '',
   conferenceSolution: '',
   calendarChannelEventAssociations: [],
   calendarEventParticipants: [],
@@ -52,8 +52,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     findOneByOrFail: jest.fn(),
   };
 
-  const mockTwentyORMManager = {
-    getRepository: jest.fn().mockImplementation((name) => {
+  const mockGlobalWorkspaceOrmManager = {
+    getRepository: jest.fn().mockImplementation((workspaceId, name) => {
       if (name === 'calendarChannelEventAssociation') {
         return mockCalendarEventAssociationRepository;
       }
@@ -64,6 +64,9 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
         return mockWorkspaceMemberRepository;
       }
     }),
+    executeInWorkspaceContext: jest
+      .fn()
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   beforeEach(async () => {
@@ -71,8 +74,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       providers: [
         ApplyCalendarEventsVisibilityRestrictionsService,
         {
-          provide: TwentyORMManager,
-          useValue: mockTwentyORMManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
         },
       ],
     }).compile();
@@ -106,6 +109,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -143,6 +147,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -178,6 +183,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -213,6 +219,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -260,6 +267,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -315,6 +323,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       undefined,
     );
 

@@ -35,10 +35,13 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
         const recordToMove = visibleRecordFields[fromIndex];
 
+        const isDroppedAfterList = toIndex >= visibleRecordFields.length;
+
         const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
           arrayOfRecordsWithPosition: currentRecordFields,
           idOfItemToMove: idOfRecordToMove,
           idOfTargetItem: idOfTargetRecord,
+          isDroppedAfterList,
         });
 
         updateRecordField(recordToMove.fieldMetadataItemId, {

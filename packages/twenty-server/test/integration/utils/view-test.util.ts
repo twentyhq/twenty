@@ -78,7 +78,6 @@ export const assertViewGroupStructure = (
 ) => {
   expect(viewGroup).toBeDefined();
   expect(viewGroup.id).toBeDefined();
-  expect(viewGroup.fieldMetadataId).toBeDefined();
   expect(viewGroup.viewId).toBeDefined();
   expect(viewGroup.fieldValue).toBeDefined();
   expect(typeof viewGroup.isVisible).toBe('boolean');

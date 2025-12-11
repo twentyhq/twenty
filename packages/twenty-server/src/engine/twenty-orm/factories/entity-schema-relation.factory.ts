@@ -1,74 +1,68 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type EntitySchemaRelationOptions } from 'typeorm';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import {
+  type EntitySchemaFieldMetadata,
+  type EntitySchemaFieldMetadataMaps,
+  type EntitySchemaObjectMetadata,
+  type EntitySchemaObjectMetadataMaps,
+} from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
 };
 
+type RelationFieldMetadata = EntitySchemaFieldMetadata<
+  FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+>;
+
 @Injectable()
 export class EntitySchemaRelationFactory {
   constructor() {}
 
-  async create(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ): Promise<EntitySchemaRelationMap> {
+  create(
+    objectMetadata: EntitySchemaObjectMetadata,
+    objectMetadataMaps: EntitySchemaObjectMetadataMaps,
+    fieldMetadataMaps: EntitySchemaFieldMetadataMaps,
+  ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const fieldMetadataCollection = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
-    );
+    const fieldMetadatas = objectMetadata.fieldMetadataIds
+      .map((fieldId) => fieldMetadataMaps.byId[fieldId])
+      .filter(isDefined);
 
-    for (const fieldMetadata of fieldMetadataCollection) {
-      const isRelation =
-        isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        ) ||
-        isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        );
-
-      if (!isRelation) {
+    for (const fieldMetadata of fieldMetadatas) {
+      if (!this.isRelationField(fieldMetadata)) {
         continue;
       }
 
-      if (!fieldMetadata.settings) {
-        throw new Error(
-          `Field metadata settings are missing for field ${fieldMetadata.name}`,
-        );
-      }
-
-      const schemaRelationDetails = await determineSchemaRelationDetails(
+      const relationDetails = determineSchemaRelationDetails(
         fieldMetadata,
         objectMetadataMaps,
+        fieldMetadataMaps,
       );
 
-      const targetObjectMetadata =
-        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
-
-      if (!targetObjectMetadata) {
-        throw new Error(
-          `Target object metadata not found for field ${fieldMetadata.name}`,
-        );
-      }
-
       entitySchemaRelationMap[fieldMetadata.name] = {
-        type: schemaRelationDetails.relationType,
-        target: schemaRelationDetails.target,
-        inverseSide: schemaRelationDetails.inverseSide,
-        joinColumn: schemaRelationDetails.joinColumn,
+        type: relationDetails.relationType,
+        target: relationDetails.target,
+        inverseSide: relationDetails.inverseSide,
+        joinColumn: relationDetails.joinColumn,
       } satisfies EntitySchemaRelationOptions;
     }
 
     return entitySchemaRelationMap;
+  }
+
+  private isRelationField(
+    fieldMetadata: EntitySchemaFieldMetadata,
+  ): fieldMetadata is RelationFieldMetadata {
+    return (
+      fieldMetadata.type === FieldMetadataType.RELATION ||
+      fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+    );
   }
 }

@@ -18,6 +18,7 @@ import assert from 'assert';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -70,10 +71,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -238,10 +239,14 @@ export class WorkspaceResolver {
       return null;
     }
 
-    return await this.roleService.getRoleById(
+    const defaultRoleEntity = await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
+
+    return isDefined(defaultRoleEntity)
+      ? fromRoleEntityToRoleDto(defaultRoleEntity)
+      : null;
   }
 
   @ResolveField(() => String, { nullable: true })

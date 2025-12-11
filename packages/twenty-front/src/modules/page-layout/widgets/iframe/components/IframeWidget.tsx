@@ -1,11 +1,11 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -103,7 +103,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
         title={title}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-scripts allow-forms allow-popups"
+        sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
         allow="encrypted-media"
         allowFullScreen
       />

@@ -17,6 +17,7 @@ import {
   AppTooltip,
   type IconComponent,
   Label,
+  OverflowingTextWithTooltip,
   type TablerIconsProps,
   TooltipDelay,
   TooltipPosition,
@@ -51,6 +52,7 @@ export type NavigationDrawerItemProps = {
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
   mouseUpNavigation?: boolean;
+  preventCollapseOnMobile?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -267,6 +269,7 @@ export const NavigationDrawerItem = ({
   isRightOptionsDropdownOpen,
   triggerEvent,
   mouseUpNavigation = false,
+  preventCollapseOnMobile = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -282,7 +285,7 @@ export const NavigationDrawerItem = ({
   );
 
   const handleMobileNavigation = () => {
-    if (isMobile) {
+    if (isMobile && !preventCollapseOnMobile) {
       setIsNavigationDrawerExpanded(false);
     }
   };
@@ -343,7 +346,9 @@ export const NavigationDrawerItem = ({
 
           <StyledLabelParent>
             <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
+              <StyledItemLabel>
+                <OverflowingTextWithTooltip text={label} />
+              </StyledItemLabel>
               {secondaryLabel && (
                 <StyledItemSecondaryLabel>
                   {' · '}

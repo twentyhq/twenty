@@ -8,6 +8,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 import {
@@ -468,7 +469,7 @@ describe('Relative Date Filter Utils', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'WEEK',
-          firstDayOfTheWeek: 'MONDAY',
+          firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
         };
 
         expect(

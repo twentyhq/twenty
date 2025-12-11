@@ -1,21 +1,24 @@
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export type GroupByRegularField = {
-  fieldMetadata: FieldMetadataEntity;
+  fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
 };
 export type GroupByDateField = {
-  fieldMetadata: FieldMetadataEntity;
+  fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
   dateGranularity: ObjectRecordGroupByDateGranularity;
+  weekStartDay?: FirstDayOfTheWeek;
 };
 export type GroupByRelationField = {
-  fieldMetadata: FieldMetadataEntity;
-  nestedFieldMetadata: FieldMetadataEntity;
+  fieldMetadata: FlatFieldMetadata;
+  nestedFieldMetadata: FlatFieldMetadata;
   nestedSubFieldName?: string;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
+  weekStartDay?: FirstDayOfTheWeek;
 };
 export type GroupByField =
   | GroupByRegularField

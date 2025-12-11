@@ -16,7 +16,10 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import { STANDARD_OBJECT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  STANDARD_OBJECT_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
@@ -36,7 +39,19 @@ const generateSourceFlatFieldMetadata = ({
     targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
   });
 
-  const createdAt = new Date();
+  const standardId =
+    CUSTOM_OBJECT_STANDARD_FIELD_IDS[
+      targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
+    ];
+
+  if (!isDefined(standardId)) {
+    throw new ObjectMetadataException(
+      `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
+      ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  const createdAt = new Date().toISOString();
   const sourceFieldMetadataId = v4();
   const targetFieldMetadataId = v4();
   const icon =
@@ -46,10 +61,10 @@ const generateSourceFlatFieldMetadata = ({
 
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
     viewFieldIds: [],
-    viewGroupIds: [],
     createdAt,
     updatedAt: createdAt,
     defaultValue: null,
@@ -72,7 +87,7 @@ const generateSourceFlatFieldMetadata = ({
     settings: {
       relationType: RelationType.ONE_TO_MANY,
     },
-    standardId: null,
+    standardId,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
     universalIdentifier: sourceFieldMetadataId,
@@ -104,7 +119,7 @@ const generateTargetFlatFieldMetadata = ({
     relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
     targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
   });
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const standardId = createRelationDeterministicUuid({
     objectId: sourceFlatObjectMetadata.id,
     standardId: customStandardFieldId,
@@ -113,10 +128,10 @@ const generateTargetFlatFieldMetadata = ({
   return {
     morphId: null,
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,

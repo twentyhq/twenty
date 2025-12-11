@@ -37,15 +37,17 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
-  private readonly internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   public readonly objectRecordsPermissions?: ObjectsPermissions;
   private authContext?: AuthContext;
   declare manager: WorkspaceEntityManager;
 
+  get internalContext(): WorkspaceInternalContext {
+    return this.manager.internalContext;
+  }
+
   constructor(
-    internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
     manager: WorkspaceEntityManager,
     featureFlagMap: FeatureFlagMap,
@@ -55,7 +57,6 @@ export class WorkspaceRepository<
     authContext?: AuthContext,
   ) {
     super(target, manager, queryRunner);
-    this.internalContext = internalContext;
     this.featureFlagMap = featureFlagMap;
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
@@ -968,6 +969,10 @@ export class WorkspaceRepository<
   private async formatData<T>(data: T): Promise<T> {
     const objectMetadata = await this.getObjectMetadataFromTarget();
 
-    return formatData(data, objectMetadata) as T;
+    return formatData(
+      data,
+      objectMetadata,
+      this.internalContext.flatFieldMetadataMaps,
+    ) as T;
   }
 }

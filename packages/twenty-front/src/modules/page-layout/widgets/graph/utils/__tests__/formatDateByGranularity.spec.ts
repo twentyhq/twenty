@@ -27,12 +27,14 @@ describe('formatDateByGranularity', () => {
   const testCases: {
     granularity:
       | ObjectRecordGroupByDateGranularity.DAY
+      | ObjectRecordGroupByDateGranularity.WEEK
       | ObjectRecordGroupByDateGranularity.MONTH
       | ObjectRecordGroupByDateGranularity.QUARTER
       | ObjectRecordGroupByDateGranularity.YEAR
       | ObjectRecordGroupByDateGranularity.NONE;
   }[] = [
     { granularity: ObjectRecordGroupByDateGranularity.DAY },
+    { granularity: ObjectRecordGroupByDateGranularity.WEEK },
     { granularity: ObjectRecordGroupByDateGranularity.MONTH },
     { granularity: ObjectRecordGroupByDateGranularity.QUARTER },
     { granularity: ObjectRecordGroupByDateGranularity.YEAR },
@@ -45,6 +47,53 @@ describe('formatDateByGranularity', () => {
       expect(formatDateByGranularity(testDate, granularity)).toMatchSnapshot();
     },
   );
+
+  describe('week calculations', () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    afterEach(() => {
+      jest
+        .spyOn(Date.prototype, 'toLocaleDateString')
+        .mockImplementation((_locales, options) => {
+          if (options?.weekday === 'long') return 'Wednesday';
+          if (options?.month === 'long' && !isDefined(options?.year))
+            return 'March';
+          if (options?.month === 'long' && isDefined(options?.year))
+            return 'March 2024';
+          if (options?.month === 'short') return 'Mar 20, 2024';
+          return '3/20/2024';
+        });
+    });
+
+    it('should format week within same month', () => {
+      const date = new Date('2024-05-06');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+      );
+      expect(result).toBe('May 6 - 12, 2024');
+    });
+
+    it('should format week crossing months', () => {
+      const date = new Date('2024-05-27');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+      );
+      expect(result).toBe('May 27 - Jun 2, 2024');
+    });
+
+    it('should format week crossing years', () => {
+      const date = new Date('2024-12-30');
+      const result = formatDateByGranularity(
+        date,
+        ObjectRecordGroupByDateGranularity.WEEK,
+      );
+      expect(result).toBe('Dec 30, 2024 - Jan 5, 2025');
+    });
+  });
 
   describe('quarter calculations', () => {
     const quarterTestCases: {

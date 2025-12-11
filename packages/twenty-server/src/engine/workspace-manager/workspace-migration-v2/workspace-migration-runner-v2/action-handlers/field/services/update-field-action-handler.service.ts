@@ -10,7 +10,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -53,7 +52,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata<T>;
-  update: PropertyUpdate<FlatFieldMetadata<T>, P>;
+  update: PropertyUpdate<FlatFieldMetadata, P>;
 };
 
 @Injectable()
@@ -270,6 +269,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
+    } else if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      await this.workspaceSchemaManagerService.columnManager.renameColumn({
+        queryRunner,
+        schemaName,
+        tableName,
+        oldColumnName: update.from,
+        newColumnName: update.to,
+      });
     }
 
     const enumOperations = collectEnumOperationsForField({
@@ -410,34 +417,5 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         oldToNewEnumOptionMap: valueMapping,
       });
     }
-  }
-
-  private async handleMorphOrRelationSettingsUpdate({
-    queryRunner,
-    schemaName,
-    tableName,
-    update,
-  }: UpdateFieldPropertyUpdateHandlerArgs<
-    'settings',
-    MorphOrRelationFieldMetadataType
-  >) {
-    const fromJoinColumnName = update.from.joinColumnName;
-    const toJoinColumnName = update.to.joinColumnName;
-
-    if (
-      !isDefined(fromJoinColumnName) ||
-      !isDefined(toJoinColumnName) ||
-      fromJoinColumnName === toJoinColumnName
-    ) {
-      return;
-    }
-
-    await this.workspaceSchemaManagerService.columnManager.renameColumn({
-      oldColumnName: fromJoinColumnName,
-      newColumnName: toJoinColumnName,
-      queryRunner,
-      schemaName,
-      tableName,
-    });
   }
 }

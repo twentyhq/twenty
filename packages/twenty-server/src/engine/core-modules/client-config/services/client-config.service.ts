@@ -12,14 +12,14 @@ import {
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
 import {
   AI_MODELS,
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
   ModelProvider,
-} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
 export class ClientConfigService {

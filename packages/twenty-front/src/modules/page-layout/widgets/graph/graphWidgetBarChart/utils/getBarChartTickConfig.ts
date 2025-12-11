@@ -1,10 +1,12 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BAR_CHART_MAXIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumValueTickCount';
+import { BAR_CHART_MINIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumValueTickCount';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { type BarDatum } from '@nivo/bar';
 
 const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 
@@ -27,13 +29,19 @@ export const getBarChartTickConfig = ({
 }: {
   width: number;
   height: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   axisFontSize: number;
   layout: BarChartLayout;
 }): BarChartTickConfig => {
+  const clampValueTickCount = (tickCount: number) =>
+    Math.min(
+      BAR_CHART_MAXIMUM_VALUE_TICK_COUNT,
+      Math.max(BAR_CHART_MINIMUM_VALUE_TICK_COUNT, tickCount),
+    );
+
   const categoryTickValues = computeBarChartCategoryTickValues({
     axisSize: layout === BarChartLayout.VERTICAL ? width : height,
     axisFontSize,
@@ -49,12 +57,14 @@ export const getBarChartTickConfig = ({
   const availableWidth = width - (margins.left + margins.right);
   const availableHeight = height - (margins.top + margins.bottom);
 
-  const numberOfValueTicks = computeBarChartValueTickCount({
-    axisSize:
-      layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
-    axisFontSize,
-    layout,
-  });
+  const numberOfValueTicks = clampValueTickCount(
+    computeBarChartValueTickCount({
+      axisSize:
+        layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
+      axisFontSize,
+      layout,
+    }),
+  );
 
   const widthPerTick = calculateWidthPerTick({
     layout,

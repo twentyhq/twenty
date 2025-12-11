@@ -1,4 +1,5 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -271,12 +272,21 @@ describe('calendar-field-deactivation-deletes-views', () => {
   });
 
   it('should delete calendar view but not other view types when calendar field is deactivated', async () => {
+    const { selectFieldMetadataId } =
+      await createOneSelectFieldMetadataForIntegrationTests({
+        input: {
+          objectMetadataId: testSetup.objectMetadataId,
+          name: 'selectField',
+        },
+      });
+
     const {
       data: { createCoreView: kanbanViewWithSameObject },
     } = await createOneCoreView({
       input: {
         name: generateRecordName('Kanban View'),
         objectMetadataId: testSetup.objectMetadataId,
+        mainGroupByFieldMetadataId: selectFieldMetadataId,
         type: ViewType.KANBAN,
         icon: 'IconLayoutKanban',
       },

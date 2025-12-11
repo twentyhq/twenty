@@ -97,9 +97,13 @@ const StyledFooterText = styled.span`
   width: 100%;
 `;
 
-const StyledTextAction = styled.span`
-  cursor: pointer;
-  text-decoration: underline;
+const StyledButtonsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  max-width: 200px;
+  width: 100%;
 `;
 
 type DropZoneProps = {
@@ -184,12 +188,17 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
           <StyledText>
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
-          <MainButton onClick={open} title={t`Select file`} />
+          <StyledButtonsContainer>
+            <MainButton onClick={open} title={t`Select file`} fullWidth />
+            <MainButton
+              onClick={downloadSample}
+              title={t`Download sample`}
+              variant="secondary"
+              fullWidth
+            />
+          </StyledButtonsContainer>
           <StyledFooterText>
-            {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}{' '}
-            <StyledTextAction onClick={downloadSample}>
-              {t`Download sample file.`}
-            </StyledTextAction>
+            {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}
           </StyledFooterText>
         </>
       )}

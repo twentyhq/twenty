@@ -34,7 +34,7 @@ import {
   CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
@@ -44,9 +44,11 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -77,12 +79,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const {
       repository,
       commonQueryParser,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       authContext,
     } = queryRunnerContext;
 
-    const objectMetadataNameSingular =
-      objectMetadataItemWithFieldMaps.nameSingular;
+    const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
 
     let queryBuilder = repository.createQueryBuilder(
       objectMetadataNameSingular,
@@ -90,11 +93,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const groupByFields = parseGroupByArgs(
       args,
-      objectMetadataItemWithFieldMaps,
-      queryRunnerContext.objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
-    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
+    const objectAlias = getObjectAlias(flatObjectMetadata);
 
     this.addJoinForGroupByOnRelationFields({
       queryBuilder,
@@ -108,7 +112,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       args,
       appliedFilters,
       queryBuilder,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
     });
@@ -153,6 +158,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         queryRunnerContext,
         orderByForRecords: args.orderByForRecords ?? [],
         groupLimit: args.limit,
+        offsetForRecords: args.offsetForRecords,
       });
     }
 
@@ -166,8 +172,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   async processQueryResult(
     queryResult: CommonGroupByOutputItem[],
-    _objectMetadataItemId: string,
-    _objectMetadataMaps: ObjectMetadataMaps,
+    _flatObjectMetadata: FlatObjectMetadata,
+    _flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    _flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     _authContext: WorkspaceAuthContext,
   ): Promise<CommonGroupByOutputItem[]> {
     return queryResult;
@@ -175,12 +182,14 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   private async addFiltersFromView({
     args,
-    objectMetadataItemWithFieldMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
     appliedFilters,
     workspaceId,
   }: {
     args: GroupByQueryArgs;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     appliedFilters: ObjectRecordFilter;
     workspaceId: string;
   }): Promise<ObjectRecordFilter> {
@@ -197,14 +206,21 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const recordFilters = viewFilters.map((viewFilter) => {
-      const fieldMetadataItem =
-        objectMetadataItemWithFieldMaps.fieldsById[viewFilter.fieldMetadataId];
+      const fieldMetadata =
+        flatFieldMetadataMaps.byId[viewFilter.fieldMetadataId];
+
+      if (!fieldMetadata) {
+        throw new CommonQueryRunnerException(
+          `Field metadata not found for field ${viewFilter.fieldMetadataId}`,
+          CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: convertViewFilterValueToString(viewFilter.value),
-        type: getFilterTypeFromFieldType(fieldMetadataItem.type),
+        type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
@@ -221,8 +237,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       };
     });
 
-    const fields = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
+    const fields = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     ).map((field) => ({
       id: field.id,
       name: field.name,
@@ -263,24 +280,26 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     args,
     appliedFilters,
     queryBuilder,
-    objectMetadataItemWithFieldMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
     workspaceId,
     commonQueryParser,
   }: {
     args: GroupByQueryArgs;
     appliedFilters: ObjectRecordFilter;
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
   }): Promise<void> {
-    const objectMetadataNameSingular =
-      objectMetadataItemWithFieldMaps.nameSingular;
+    const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
 
     if (args.viewId) {
       appliedFilters = await this.addFiltersFromView({
         args,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         appliedFilters,
         workspaceId,
       });
@@ -303,7 +322,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
@@ -336,7 +355,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
         if (
           !groupByField.fieldMetadata.settings ||
-          !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
+          !isMorphOrRelationFlatFieldMetadata(groupByField.fieldMetadata)
         ) {
           throw new CommonQueryRunnerException(
             `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
@@ -370,14 +389,30 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     args: CommonInput<GroupByQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<GroupByQueryArgs>> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
     return {
       ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
         args.filter,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       ),
     };
+  }
+
+  protected override computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<GroupByQueryArgs>,
+  ): number {
+    const groupByQueryComplexity = 1;
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
+    return (args.includeRecords ?? false)
+      ? groupByQueryComplexity +
+          selectedFieldsComplexity * getGroupLimit(args.limit)
+      : groupByQueryComplexity;
   }
 }

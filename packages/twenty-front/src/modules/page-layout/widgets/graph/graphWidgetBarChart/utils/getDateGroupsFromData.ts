@@ -5,7 +5,8 @@ export type SupportedDateGranularity =
   | ObjectRecordGroupByDateGranularity.DAY
   | ObjectRecordGroupByDateGranularity.MONTH
   | ObjectRecordGroupByDateGranularity.QUARTER
-  | ObjectRecordGroupByDateGranularity.YEAR;
+  | ObjectRecordGroupByDateGranularity.YEAR
+  | ObjectRecordGroupByDateGranularity.WEEK;
 
 export const getDateGroupsFromData = (
   parsedDates: Date[],

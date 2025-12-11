@@ -2,7 +2,7 @@
 
 exports[`generateGroupByQuery should generate valid GraphQL query for empty aggregate operations 1`] = `
 "
-    query PeopleGroupBy(
+    query PeopleGroupByAggregates(
       $groupBy: [PersonGroupByInput!]!
       $filter: PersonFilterInput
       $orderBy: [PersonOrderByWithGroupByInput!]
@@ -24,7 +24,7 @@ exports[`generateGroupByQuery should generate valid GraphQL query for empty aggr
 
 exports[`generateGroupByQuery should generate valid GraphQL query for multiple aggregate operations 1`] = `
 "
-    query OpportunitiesGroupBy(
+    query OpportunitiesGroupByAggregates(
       $groupBy: [OpportunityGroupByInput!]!
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
@@ -49,7 +49,7 @@ exports[`generateGroupByQuery should generate valid GraphQL query for multiple a
 
 exports[`generateGroupByQuery should generate valid GraphQL query for single aggregate operation 1`] = `
 "
-    query OpportunitiesGroupBy(
+    query OpportunitiesGroupByAggregates(
       $groupBy: [OpportunityGroupByInput!]!
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]

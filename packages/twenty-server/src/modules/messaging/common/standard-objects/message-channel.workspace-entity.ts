@@ -47,8 +47,8 @@ export enum MessageChannelVisibility {
 }
 
 export enum MessageChannelType {
-  EMAIL = 'email',
-  SMS = 'sms',
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
 }
 
 export enum MessageChannelContactAutoCreationPolicy {
@@ -146,7 +146,8 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
@@ -304,7 +305,8 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync cursor`,
     icon: 'IconHistory',
   })
-  syncCursor: string;
+  @WorkspaceIsNullable()
+  syncCursor: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,

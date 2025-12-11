@@ -5,15 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
-import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
@@ -23,6 +21,7 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -36,10 +35,9 @@ export class DevSeederService {
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -61,18 +59,16 @@ export class DevSeederService {
         workspaceId,
       );
 
-    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-    });
+      ['flatApplicationMaps', 'featureFlagsMap'],
+    );
 
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
         schemaName,
       );
-
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
     const twentyStandardApplication =
       await this.applicationService.findByUniversalIdentifier({
@@ -86,7 +82,7 @@ export class DevSeederService {
       );
     }
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -96,13 +92,13 @@ export class DevSeederService {
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
-      featureFlags,
+      featureFlags: featureFlagsMap,
     });
 
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
-      featureFlags,
+      featureFlags: featureFlagsMap,
       twentyStandardFlatApplication,
     });
 
@@ -115,8 +111,18 @@ export class DevSeederService {
       twentyStandardApplication,
     });
 
-    await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
-    await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
+    await seedPageLayouts(
+      this.coreDataSource,
+      'core',
+      workspaceId,
+      workspaceCustomFlatApplication.id,
+    );
+    await seedPageLayoutTabs({
+      applicationId: workspaceCustomFlatApplication.id,
+      workspaceId,
+      dataSource: this.coreDataSource,
+      schemaName: 'core',
+    });
 
     const objectMetadataRepository =
       this.coreDataSource.getRepository(ObjectMetadataEntity);
@@ -125,10 +131,8 @@ export class DevSeederService {
       relations: { fields: true },
     });
 
-    const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
-      workspaceId,
-    );
+    const isDashboardV2Enabled =
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     await seedPageLayoutWidgets({
       dataSource: this.coreDataSource,
@@ -136,17 +140,15 @@ export class DevSeederService {
       workspaceId,
       objectMetadataItems,
       isDashboardV2Enabled,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
       workspaceId,
-      featureFlags,
+      featureFlags: featureFlagsMap,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId,
-    });
   }
 }

@@ -8,6 +8,7 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -16,6 +17,7 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',
   decorators: [
+    ContextStoreDecorator,
     (Story) => {
       const instanceId = 'child-field-display-scope';
 

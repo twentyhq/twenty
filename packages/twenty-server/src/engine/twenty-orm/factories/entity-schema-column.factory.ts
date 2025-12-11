@@ -9,17 +9,20 @@ import { type ColumnType, type EntitySchemaColumnOptions } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import {
+  type EntitySchemaFieldMetadata,
+  type EntitySchemaFieldMetadataMaps,
+  type EntitySchemaObjectMetadata,
+} from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaColumnMap = {
@@ -29,13 +32,14 @@ type EntitySchemaColumnMap = {
 @Injectable()
 export class EntitySchemaColumnFactory {
   create(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadata: EntitySchemaObjectMetadata,
+    fieldMetadataMaps: EntitySchemaFieldMetadataMaps,
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
-    );
+    const fieldMetadataCollection = objectMetadata.fieldMetadataIds
+      .map((fieldId) => fieldMetadataMaps.byId[fieldId])
+      .filter(isDefined);
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
@@ -117,7 +121,7 @@ export class EntitySchemaColumnFactory {
   }
 
   private createCompositeColumns(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: EntitySchemaFieldMetadata,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
     const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);

@@ -3,17 +3,17 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, In, Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export class PermissionFlagService {
   constructor(
@@ -21,7 +21,7 @@ export class PermissionFlagService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async upsertPermissionFlags({
@@ -128,12 +128,9 @@ export class PermissionFlagService {
     } finally {
       await queryRunner.release();
 
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId,
-          roleIds: [input.roleId],
-        },
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
     }
   }
 

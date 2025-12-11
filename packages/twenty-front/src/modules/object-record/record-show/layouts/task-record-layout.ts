@@ -7,7 +7,7 @@ export const TASK_RECORD_LAYOUT: RecordLayout = {
       title: 'Note',
       position: 101,
       icon: 'IconNotes',
-      cards: [{ type: CardType.RichTextCard }],
+      cards: [{ type: CardType.FieldRichTextCard }],
       hide: {
         ifMobile: false,
         ifDesktop: false,

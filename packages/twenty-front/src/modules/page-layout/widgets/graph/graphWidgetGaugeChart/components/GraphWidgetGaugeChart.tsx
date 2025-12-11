@@ -2,7 +2,6 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { GaugeChartEndLine } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GaugeChartEndLine';
 import { useGaugeChartData } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/hooks/useGaugeChartData';
-import { useGaugeChartHandlers } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/hooks/useGaugeChartHandlers';
 import { useGaugeChartTooltip } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/hooks/useGaugeChartTooltip';
 import { type GaugeChartData } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/types/GaugeChartData';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -17,7 +16,7 @@ import {
   type RadialBarCustomLayerProps,
   ResponsiveRadialBar,
 } from '@nivo/radial-bar';
-import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
 type GraphWidgetGaugeChartProps = {
@@ -25,6 +24,7 @@ type GraphWidgetGaugeChartProps = {
   showValue?: boolean;
   showLegend?: boolean;
   id: string;
+  onGaugeClick?: (data: GaugeChartData) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -61,15 +61,14 @@ export const GraphWidgetGaugeChart = ({
   data,
   showValue = true,
   showLegend = true,
-  id,
   displayType,
   decimals,
   prefix,
   suffix,
   customFormatter,
+  onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
   const theme = useTheme();
-  const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
 
   const formatOptions: GraphValueFormatOptions = {
@@ -79,24 +78,17 @@ export const GraphWidgetGaugeChart = ({
     suffix,
     customFormatter,
   };
+  const handleClick = () => {
+    onGaugeClick?.(data);
+  };
 
-  const { isHovered, setIsHovered, handleClick, hasClickableItems } =
-    useGaugeChartHandlers({ data });
+  const hasClickableItems = isDefined(onGaugeClick);
 
-  const {
-    colorScheme,
-    normalizedValue,
-    clampedNormalizedValue,
-    chartData,
-    gradientId,
-    defs,
-  } = useGaugeChartData({
-    data,
-    colorRegistry,
-    id,
-    instanceId,
-    isHovered,
-  });
+  const { colorScheme, normalizedValue, clampedNormalizedValue, chartData } =
+    useGaugeChartData({
+      data,
+      colorRegistry,
+    });
 
   const { createTooltipData } = useGaugeChartTooltip({
     value: data.value,
@@ -131,23 +123,13 @@ export const GraphWidgetGaugeChart = ({
           endAngle={90}
           innerRadius={0.7}
           padding={0.2}
-          colors={[`url(#${gradientId})`, theme.background.tertiary]}
-          defs={defs}
-          fill={[
-            {
-              match: (d: { x: string }) => d.x === 'value',
-              id: gradientId,
-            },
-          ]}
           enableTracks={false}
           enableRadialGrid={false}
           enableCircularGrid={false}
           enableLabels={false}
           isInteractive={true}
           tooltip={renderTooltip}
-          onClick={handleClick}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          onClick={hasClickableItems ? handleClick : undefined}
           layers={['bars', renderValueEndLine]}
         />
         {showValue && (

@@ -1,10 +1,8 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
+import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
 import { lazy, Suspense } from 'react';
-import {
-  type AggregateChartConfiguration,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
 
 const GraphWidgetAggregateChart = lazy(() =>
   import(
@@ -19,9 +17,11 @@ export const GraphWidgetAggregateChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  assertAggregateChartWidgetOrThrow(widget);
+
   const { value, loading } = useGraphWidgetAggregateQuery({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as AggregateChartConfiguration,
+    configuration: widget.configuration,
   });
 
   if (loading) {
@@ -30,7 +30,11 @@ export const GraphWidgetAggregateChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetAggregateChart value={value ?? '-'} />
+      <GraphWidgetAggregateChart
+        value={value ?? '-'}
+        prefix={widget.configuration.prefix ?? undefined}
+        suffix={widget.configuration.suffix ?? undefined}
+      />
     </Suspense>
   );
 };
