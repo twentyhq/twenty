@@ -2,6 +2,11 @@ import { forwardRef, Module } from '@nestjs/common';
 
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
+import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
+import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
+import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
+import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
@@ -28,7 +33,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ToolGeneratorModule,
     RecordCrudModule,
     AiModelsModule,
-    // forwardRef needed: AiAgentExecutionModule imports ToolProviderModule
     forwardRef(() => AiAgentExecutionModule),
     ObjectMetadataModule,
     FieldMetadataModule,
@@ -36,7 +40,34 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [ToolProviderService, ToolRegistryService],
+  providers: [
+    ActionToolProvider,
+    DatabaseToolProvider,
+    MetadataToolProvider,
+    WorkflowToolProvider,
+    {
+      provide: TOOL_PROVIDERS,
+      useFactory: (
+        actionProvider: ActionToolProvider,
+        databaseProvider: DatabaseToolProvider,
+        metadataProvider: MetadataToolProvider,
+        workflowProvider: WorkflowToolProvider,
+      ) => [
+        actionProvider,
+        databaseProvider,
+        metadataProvider,
+        workflowProvider,
+      ],
+      inject: [
+        ActionToolProvider,
+        DatabaseToolProvider,
+        MetadataToolProvider,
+        WorkflowToolProvider,
+      ],
+    },
+    ToolProviderService,
+    ToolRegistryService,
+  ],
   exports: [ToolProviderService, ToolRegistryService],
 })
 export class ToolProviderModule {}

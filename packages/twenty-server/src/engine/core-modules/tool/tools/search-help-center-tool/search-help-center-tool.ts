@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
-import { SearchArticlesToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool.schema';
+import { SearchHelpCenterToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class SearchArticlesTool implements Tool {
+export class SearchHelpCenterTool implements Tool {
   description =
-    'Search Twenty documentation and help articles to find information about features, setup, usage, and troubleshooting.';
-  inputSchema = SearchArticlesToolParametersZodSchema;
+    'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
+  inputSchema = SearchHelpCenterToolParametersZodSchema;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -46,14 +46,14 @@ export class SearchArticlesTool implements Tool {
       if (results.length === 0) {
         return {
           success: true,
-          message: `No help articles found for "${query}"`,
+          message: `No help center articles found for "${query}"`,
           result: [],
         };
       }
 
       return {
         success: true,
-        message: `Found ${results.length} relevant help article${results.length === 1 ? '' : 's'} for "${query}"`,
+        message: `Found ${results.length} relevant help center article${results.length === 1 ? '' : 's'} for "${query}"`,
         result: results,
       };
     } catch (error) {
@@ -61,11 +61,11 @@ export class SearchArticlesTool implements Tool {
         ? error.response?.data?.message || error.message
         : error instanceof Error
           ? error.message
-          : 'Documentation search failed';
+          : 'Help center search failed';
 
       return {
         success: false,
-        message: `Failed to search help articles for "${query}"`,
+        message: `Failed to search help center for "${query}"`,
         error: errorDetail,
       };
     }
