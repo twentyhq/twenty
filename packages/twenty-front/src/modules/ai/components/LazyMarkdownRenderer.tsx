@@ -46,6 +46,22 @@ const TextWithRecordLinks = ({ text }: { text: string }) => {
   return <>{parts}</>;
 };
 
+const processChildrenForRecordLinks = (
+  children: React.ReactNode,
+): React.ReactNode => {
+  if (typeof children === 'string') {
+    return <TextWithRecordLinks text={children} />;
+  }
+
+  if (Array.isArray(children)) {
+    return children.map((child, index) => (
+      <span key={index}>{processChildrenForRecordLinks(child)}</span>
+    ));
+  }
+
+  return children;
+};
+
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
     import('react-markdown'),
@@ -68,23 +84,9 @@ const MarkdownRenderer = lazy(async () => {
               <table>{children}</table>
             </TableScrollContainer>
           ),
-          p: ({ children }) => (
-            <p>
-              {typeof children === 'string' ? (
-                <TextWithRecordLinks text={children} />
-              ) : (
-                children
-              )}
-            </p>
-          ),
+          p: ({ children }) => <p>{processChildrenForRecordLinks(children)}</p>,
           li: ({ children }) => (
-            <li>
-              {typeof children === 'string' ? (
-                <TextWithRecordLinks text={children} />
-              ) : (
-                children
-              )}
-            </li>
+            <li>{processChildrenForRecordLinks(children)}</li>
           ),
         }}
       >
