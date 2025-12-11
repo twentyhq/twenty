@@ -5,19 +5,50 @@ description: Learn what a data model is and how to design one that fits your bus
 
 ## What is a Data Model?
 
-A data model is the structure that defines how information is organized in your CRM. It determines:
-- **What objects exist** — like Companies, People, or Opportunities
-- **What properties they have** — those are the fields
-- **How they relate to each other** — the connections between objects
+A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
 
-Think of it as the **map of your customer data**.
+## Key Concepts
+
+### Objects
+
+**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+
+Twenty comes with standard objects:
+- **People** — individuals (contacts, leads, partners)
+- **Companies** — organizations
+- **Opportunities** — deals or sales
+- **Notes** — attached notes on records
+- **Tasks** — to-dos linked to records
+
+You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+
+### Fields
+
+**Fields** are the properties or attributes that describe each object. They store the actual information.
+
+For example, the **People** object has fields like:
+- Name
+- Email
+- Phone
+- Job Title
+- Company (a relation to the Companies object)
+
+Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+
+### Records
+
+**Records** are the individual entries within an object — the actual data you create and manage.
+
+For example:
+- "John Smith" is a **record** in the People object
+- "Acme Corp" is a **record** in the Companies object
 
 **An analogy:**
 | Data Model Concept | Real-World Analogy |
 |-------------------|-------------------|
 | **Objects** | Sections in a book (the categories) |
-| **Fields** | Subsections (the properties/attributes) |
-| **Records** | Individual articles (the actual content) |
+| **Fields** | Columns in a spreadsheet (the properties) |
+| **Records** | Rows in a spreadsheet (the actual entries) |
 
 You design the data model (objects + fields) once, then create many records within that structure.
 

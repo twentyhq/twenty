@@ -84,7 +84,7 @@
                   {
                     "group": "Getting Started",
                     "pages": [
-                      "user-guide/data-model/getting-started/creating-records"
+                      "user-guide/data-model/getting-started/understanding-your-data-model"
                     ]
                   },
                   {
@@ -98,6 +98,9 @@
                   {
                     "group": "How-Tos",
                     "pages": [
+                      "user-guide/data-model/how-tos/how-to-create-custom-objects",
+                      "user-guide/data-model/how-tos/how-to-create-custom-fields",
+                      "user-guide/data-model/how-tos/how-to-create-relation-fields",
                       "user-guide/data-model/how-tos/customize-your-data-model",
                       "user-guide/data-model/how-tos/data-model-faq"
                     ]

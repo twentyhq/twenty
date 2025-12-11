@@ -1,14 +1,10 @@
 ---
 title: Objects
 description: Learn about standard and custom objects in Twenty.
-image: /images/user-guide/objects/objects_orange.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<Frame>
-  <img src="/images/user-guide/objects/objects_orange.png" alt="Objects" />
-</Frame>
 
 ## Standard Objects
 
@@ -28,6 +24,14 @@ The `Companies` object stores your business accounts. It includes details like i
 
 The `Opportunities` object stores deal-related data. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. You can view your sales pipeline in a kanban layout.
 
+### Notes
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Tasks
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
 ## Custom Objects
 
 Custom objects let you store information that's unique to your organization and that standard objects can't handle. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
@@ -45,9 +49,6 @@ To create a new custom object:
 
 3. Click on `+ New object` at the top. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
 
-<Warning>
-**Important note:** Once you create a custom object, you cannot delete it. You can only deactivate it. This is to prevent accidental data loss. If you deactivate an object, all its data will be hidden but preserved.
-</Warning>
 
 4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
 

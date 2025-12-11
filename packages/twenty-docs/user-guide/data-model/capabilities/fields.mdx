@@ -1,14 +1,10 @@
 ---
 title: Fields
 description: Understand the role of fields and how to manage them.
-image: /images/user-guide/fields/field.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Fields" />
-</Frame>
 
 ## About Fields
 
@@ -40,19 +36,24 @@ Twenty supports various field types:
 
 | Type | Description | Example |
 |------|-------------|---------|
-| Text | Single line of text | Name, Email |
-| Long Text | Multi-line text | Description, Notes |
-| Number | Numeric values | Quantity, Score |
-| Currency | Monetary values | Deal Amount |
+| Address | Structured address with street, city, state, country, postal code | Office Address |
+| Array | List of text values | Tags |
+| Boolean | True/false checkbox | Is Active |
+| Currency | Monetary value with currency code | Deal Amount (USD) |
 | Date | Date values | Close Date |
 | Date & Time | Date with time | Meeting Time |
-| Select | Single choice from list | Stage, Status |
-| Multi-Select | Multiple choices | Tags, Categories |
-| Checkbox | True/false | Is Active |
-| Phone | Phone numbers | Work Phone |
-| Email | Email addresses | Contact Email |
-| Link | URLs | Website |
-| Relation | Links to other objects | Company → People |
+| Domain | Website domain (used for Companies) | acme.com |
+| Email | Email addresses (with primary + additional) | Contact Email |
+| JSON | Structured JSON data | Custom metadata |
+| Links | URLs with labels (primary + secondary) | Website, LinkedIn |
+| Long Text | Multi-line text | Description, Notes |
+| Multi-Select | Multiple choices from a predefined list | Tags, Categories |
+| Number | Numeric values (integers or decimals) | Quantity, Score |
+| Phone | Phone numbers with country code | Work Phone |
+| Rating | Star rating (1-5) | Priority, Score |
+| Relation | Links to records in other objects | Company → People |
+| Select | Single choice from a predefined list | Stage, Status |
+| Text | Single line of text | Name, Title |
 
 ## Create a Custom Field
 
@@ -103,9 +104,8 @@ If you get an error when setting uniqueness, check for duplicate values in your 
 ## Field Configuration Best Practices
 
 ### Naming Conventions and Limitations
-- **Relation field names cannot be updated** after creation (impacts API structure)
 - **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
-- **Protected field names**: some names are reserved for system usage (e.g., `Type`)
+- **Protected field names**: some names are reserved for system usage (e.g., `Type, `Application`)
 
 ### Currency and Phone Fields
 - **Default currency**: can be configured via the data model
