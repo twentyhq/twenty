@@ -1,0 +1,74 @@
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
+import { type CreateRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/create-row-level-permission-predicate.input';
+import { RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
+
+export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate =
+  ({
+    createRowLevelPermissionPredicateInput:
+      rawCreateRowLevelPermissionPredicateInput,
+  }: {
+    createRowLevelPermissionPredicateInput: CreateRowLevelPermissionPredicateInput;
+  }): FlatRowLevelPermissionPredicate => {
+    const sanitizedInput = (
+      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties as unknown as (
+        input: CreateRowLevelPermissionPredicateInput,
+        keys: string[],
+      ) => CreateRowLevelPermissionPredicateInput
+    )(rawCreateRowLevelPermissionPredicateInput, [
+      'fieldMetadataId',
+      'objectMetadataId',
+      'roleId',
+      'rowLevelPermissionPredicateGroupId',
+      'workspaceId',
+      'workspaceMemberFieldMetadataId',
+      'subFieldName',
+      'workspaceMemberSubFieldName',
+      'operand',
+    ]);
+
+    const {
+      fieldMetadataId,
+      objectMetadataId,
+      roleId,
+      workspaceId,
+      value,
+      ...createRowLevelPermissionPredicateInput
+    } = sanitizedInput;
+
+    const createdAt = new Date().toISOString();
+    const predicateId = v4();
+
+    return {
+      id: predicateId,
+      fieldMetadataId,
+      objectMetadataId,
+      roleId,
+      workspaceId,
+      createdAt,
+      updatedAt: createdAt,
+      deletedAt: null,
+      universalIdentifier: predicateId,
+      operand:
+        (createRowLevelPermissionPredicateInput.operand as RowLevelPermissionPredicateOperand) ??
+        RowLevelPermissionPredicateOperand.CONTAINS,
+      value: value as RowLevelPermissionPredicateValue,
+      rowLevelPermissionPredicateGroupId:
+        createRowLevelPermissionPredicateInput.rowLevelPermissionPredicateGroupId ??
+        null,
+      positionInRowLevelPermissionPredicateGroup:
+        createRowLevelPermissionPredicateInput.positionInRowLevelPermissionPredicateGroup ??
+        null,
+      subFieldName: createRowLevelPermissionPredicateInput.subFieldName ?? null,
+      workspaceMemberFieldMetadataId:
+        createRowLevelPermissionPredicateInput.workspaceMemberFieldMetadataId ??
+        null,
+      workspaceMemberSubFieldName:
+        createRowLevelPermissionPredicateInput.workspaceMemberSubFieldName ??
+        null,
+      applicationId: null,
+    };
+  };

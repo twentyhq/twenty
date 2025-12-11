@@ -166,6 +166,7 @@ export class MiddlewareService {
     request.workspaceId = data.workspace?.id;
     request.workspaceMetadataVersion = metadataVersion;
     request.workspaceMemberId = data.workspaceMemberId;
+    request.workspaceMember = data.workspaceMember;
     request.userWorkspaceId = data.userWorkspaceId;
     request.authProvider = data.authProvider;
     request.impersonationContext = data.impersonationContext;

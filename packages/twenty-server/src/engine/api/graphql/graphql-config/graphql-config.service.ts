@@ -117,6 +117,7 @@ export class GraphQLConfigService
             apiKey,
             workspaceMemberId,
             userWorkspaceId,
+            workspaceMember,
           } = context.req;
 
           if (!workspace) {
@@ -129,6 +130,7 @@ export class GraphQLConfigService
             apiKey,
             workspaceMemberId,
             userWorkspaceId,
+            workspaceMember,
           });
         } catch (error) {
           if (error instanceof UnauthorizedException) {

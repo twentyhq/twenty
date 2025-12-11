@@ -58,6 +58,7 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -79,6 +80,7 @@ import { FileModule } from './file/file.module';
     ClientConfigModule,
     FeatureFlagModule,
     FileModule,
+    RowLevelPermissionModule,
     OpenApiModule,
     ApplicationModule,
     ApplicationSyncModule,
@@ -144,6 +146,7 @@ import { FileModule } from './file/file.module';
     ImpersonationModule,
     TrashCleanupModule,
     DashboardModule,
+    RowLevelPermissionModule,
   ],
   exports: [
     AuditModule,

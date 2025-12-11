@@ -3,11 +3,13 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type AuthContext = {
   user?: UserEntity | null | undefined;
   apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
+  workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspace?: WorkspaceEntity;
   userWorkspaceId?: string;
   userWorkspace?: UserWorkspaceEntity;

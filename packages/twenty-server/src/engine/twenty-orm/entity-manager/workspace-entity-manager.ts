@@ -33,6 +33,7 @@ import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/tr
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -87,6 +88,12 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.eventEmitterService;
   }
 
+  get authContext(): WorkspaceAuthContext {
+    const context = getWorkspaceContext();
+
+    return context.authContext;
+  }
+
   get internalContext(): WorkspaceInternalContext {
     const context = getWorkspaceContext();
 
@@ -95,8 +102,13 @@ export class WorkspaceEntityManager extends EntityManager {
       flatObjectMetadataMaps: context.flatObjectMetadataMaps,
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
       flatIndexMaps: context.flatIndexMaps,
+      flatRowLevelPermissionPredicateMaps:
+        context.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        context.flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular: context.objectIdByNameSingular,
       featureFlagsMap: context.featureFlagsMap,
+      userWorkspaceRoleMap: context.userWorkspaceRoleMap,
       eventEmitterService: this.eventEmitterService,
     };
   }
@@ -211,7 +223,7 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
-      {},
+      this.authContext,
       this.getFeatureFlagMap(),
     );
   }
