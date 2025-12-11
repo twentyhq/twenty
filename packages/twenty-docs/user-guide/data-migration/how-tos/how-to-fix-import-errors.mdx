@@ -26,11 +26,11 @@ Click on a highlighted row to see the specific error message. Common error types
 
 | Error Message | What It Means |
 |---------------|---------------|
-| "Duplicate value" | Value already exists in Twenty or your file |
-| "Invalid format" | Data doesn't match expected format |
-| "Required field missing" | A required field is empty |
-| "Relation not found" | Referenced record doesn't exist |
-| "File too large" | More than 10,000 records |
+| Duplicate values highlighted in yellow | Value already exists in Twenty or appears twice in your file |
+| `{field} is not a valid {type}` (hover on yellow cell) | Data doesn't match expected format |
+| Required field highlighted | A required field is empty |
+| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist |
+| `Too many records. Up to 10000 allowed` (upload blocked) | File has more than 10,000 records |
 
 ### Step 2: Fix the Error
 
@@ -38,7 +38,10 @@ Follow the specific instructions below for each error type.
 
 ---
 
-## Error: "Duplicate Value"
+## Error: Duplicate Value
+
+### What You'll See
+Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
 
 ### What It Means
 A unique field (email, domain) either:
@@ -61,6 +64,15 @@ A unique field (email, domain) either:
 2. Map the unique identifier field
 3. Twenty will update the existing record instead of creating a duplicate
 
+<Note>
+**You can update unique fields too.**
+
+- If you keep the `id` but change the `email` → the email will be updated
+- If you keep the `email` but change the `id` → the id will be updated
+
+As long as one unique identifier matches, Twenty updates the record.
+</Note>
+
 ### How to Prevent This Error
 
 Before importing:
@@ -78,7 +90,13 @@ For more details: [Uniqueness Constraints](/user-guide/data-migration/capabiliti
 
 ---
 
-## Error: "Invalid Format"
+## Error: Invalid Format
+
+### What You'll See
+The cell value is highlighted in yellow. Hover over it to see the error message:
+```
+{field name} is not a valid {field type}
+```
 
 ### What It Means
 The data doesn't match the expected format for that field type.
@@ -96,14 +114,16 @@ The data doesn't match the expected format for that field type.
 ```
 
 #### Domain
-**Problem:** Wrong URL format
-**Solution:** Use `https://domain.com` format
+**Problem:** Inconsistent format may cause duplicates
+**Solution:** Use `https://domain.com` format (recommended)
 
 ```
-❌ acme.com
-❌ www.acme.com
-✓ https://acme.com
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
 ```
+
+<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
 
 #### Date
 **Problem:** Unrecognized date format
@@ -175,7 +195,10 @@ For complete format reference: [Field Mapping](/user-guide/data-migration/capabi
 
 ---
 
-## Error: "Required Field Missing"
+## Error: Required Field Missing
+
+### What You'll See
+The row is highlighted in yellow with the required field cell marked.
 
 ### What It Means
 A required field is empty for this row.
@@ -199,7 +222,17 @@ Before importing, identify required fields:
 
 ---
 
-## Error: "Relation Not Found"
+## Error: Relation Not Found
+
+### What You'll See
+This error appears **after the import starts** — the import fails with a message like:
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+This means there is no Company in Twenty with that specific identifier.
+
+<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
 
 ### What It Means
 You're trying to link to a record that doesn't exist in Twenty.
@@ -242,7 +275,15 @@ For more details: [Import Relations](/user-guide/data-migration/capabilities/imp
 
 ---
 
-## Error: "File Too Large"
+## Error: File Too Large
+
+### What You'll See
+This error appears **when uploading your file** — the upload is blocked entirely:
+```
+Too many records. Up to 10000 allowed
+```
+
+You won't be able to proceed to the data review step until you reduce the file size.
 
 ### What It Means
 Your file has more than 10,000 records.
