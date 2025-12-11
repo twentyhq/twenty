@@ -40,7 +40,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
@@ -77,7 +76,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
@@ -114,7 +112,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
@@ -151,7 +148,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
@@ -189,7 +185,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
@@ -227,7 +222,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
             targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,

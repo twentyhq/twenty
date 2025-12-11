@@ -149,7 +149,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           generateMorphOrRelationFlatFieldMetadataPair({
             sourceFlatObjectMetadata,
             targetFlatObjectMetadata,
-            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
             targetFlatFieldMetadataType: isObjectMigratedToMorphRelations
               ? FieldMetadataType.MORPH_RELATION
               : FieldMetadataType.RELATION,

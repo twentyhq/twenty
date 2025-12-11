@@ -70,7 +70,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       }),
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata,
-    sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
     targetFlatFieldMetadataType: FieldMetadataType.RELATION,
     workspaceId,
     workspaceCustomApplicationId,

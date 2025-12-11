@@ -92,7 +92,6 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           sourceFlatObjectMetadataJoinColumnName,
           sourceFlatObjectMetadata,
           targetFlatObjectMetadata,
-          sourceFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
           targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           workspaceId,
           morphId,
