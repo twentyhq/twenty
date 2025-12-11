@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
@@ -205,7 +205,7 @@ export class TimelineActivityRepository {
     isFeatureFlagTimelineActivityMigrated: boolean,
   ) {
     return isFeatureFlagTimelineActivityMigrated
-      ? `target${capitalize(objectSingularName)}Id`
+      ? `${buildTimelineActivityRelatedMorphFieldMetadataName(objectSingularName)}Id`
       : `${objectSingularName}Id`;
   }
 }

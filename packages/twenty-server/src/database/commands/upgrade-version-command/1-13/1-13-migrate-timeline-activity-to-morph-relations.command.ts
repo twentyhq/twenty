@@ -18,6 +18,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 @Command({
   name: 'upgrade:1-13:migrate-timeline-activity-to-morph-relations',
@@ -138,9 +139,11 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
         );
       } catch (error) {
         this.logger.error(
-          `Error renaming column "${oldField}" to "${newField}" for "${tableName}" in workspace ${workspaceId}`,
+          `Error renaming column "${oldField}" to "${newField}" for "${tableName}" in workspace ${workspaceId} (rollbacking transaction)`,
           error,
         );
+
+        await queryRunner.rollbackTransaction();
 
         return;
       }
@@ -187,7 +190,9 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
         continue;
       }
 
-      const newFieldName = `target${capitalize(fieldToMigrate.name)}`;
+      const newFieldName = buildTimelineActivityRelatedMorphFieldMetadataName(
+        fieldToMigrate.name,
+      );
 
       const settings = {
         ...fieldToMigrate.settings,
@@ -213,9 +218,11 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
         }
       } catch (error) {
         this.logger.error(
-          `Error updating fieldMetadata for ${objectName} in workspace ${workspaceId}`,
+          `Error updating fieldMetadata for ${objectName} in workspace ${workspaceId} (rollbacking transaction)`,
           error,
         );
+
+        await queryRunner.rollbackTransaction();
 
         return;
       }

@@ -28,6 +28,7 @@ import { TASK_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/co
 import { TASK_TARGET_DATA_SEEDS_MAP } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 type RecordSeedWithId = Pick<ObjectRecord, 'id'> & Record<string, unknown>;
 
@@ -311,7 +312,7 @@ export class TimelineActivitySeederService {
     ]);
 
     if (entitiesWithTargetColumns.has(entityType)) {
-      const targetIdKey = `target${capitalize(entityType)}Id`;
+      const targetIdKey = `${buildTimelineActivityRelatedMorphFieldMetadataName(entityType)}Id`;
 
       // @ts-expect-error - This is okay for morph
       timelineActivity[targetIdKey] = recordId;
