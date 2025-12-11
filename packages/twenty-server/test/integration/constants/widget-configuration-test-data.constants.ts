@@ -145,6 +145,8 @@ export const TEST_PIE_CHART_CONFIG = {
   aggregateOperation: AggregateOperations.SUM,
   orderBy: GraphOrderBy.VALUE_DESC,
   displayDataLabel: true,
+  displayLegend: true,
+  showCenterMetric: true,
   color: 'yellow',
   description: 'Distribution by category',
   filter: {

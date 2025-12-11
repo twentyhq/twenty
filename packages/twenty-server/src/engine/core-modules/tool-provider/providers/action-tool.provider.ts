@@ -1,0 +1,80 @@
+import { Injectable } from '@nestjs/common';
+
+import { type ToolSet } from 'ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
+
+import {
+  type ToolProvider,
+  type ToolProviderContext,
+} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+
+@Injectable()
+export class ActionToolProvider implements ToolProvider {
+  readonly category = ToolCategory.ACTION;
+
+  constructor(
+    private readonly httpTool: HttpTool,
+    private readonly sendEmailTool: SendEmailTool,
+    private readonly searchHelpCenterTool: SearchHelpCenterTool,
+    private readonly permissionsService: PermissionsService,
+  ) {}
+
+  async isAvailable(_context: ToolProviderContext): Promise<boolean> {
+    // Action tools are always available (individual tool permissions checked in generateTools)
+    return true;
+  }
+
+  async generateTools(context: ToolProviderContext): Promise<ToolSet> {
+    const tools: ToolSet = {};
+
+    const hasHttpPermission = await this.permissionsService.hasToolPermission(
+      context.rolePermissionConfig,
+      context.workspaceId,
+      PermissionFlagType.HTTP_REQUEST_TOOL,
+    );
+
+    if (hasHttpPermission) {
+      tools['http_request'] = this.createToolEntry(
+        this.httpTool,
+        context.workspaceId,
+      );
+    }
+
+    const hasEmailPermission = await this.permissionsService.hasToolPermission(
+      context.rolePermissionConfig,
+      context.workspaceId,
+      PermissionFlagType.SEND_EMAIL_TOOL,
+    );
+
+    if (hasEmailPermission) {
+      tools['send_email'] = this.createToolEntry(
+        this.sendEmailTool,
+        context.workspaceId,
+      );
+    }
+
+    tools['search_help_center'] = this.createToolEntry(
+      this.searchHelpCenterTool,
+      context.workspaceId,
+    );
+
+    return tools;
+  }
+
+  private createToolEntry(tool: Tool, workspaceId: string) {
+    return {
+      description: tool.description,
+      inputSchema: tool.inputSchema,
+      execute: async (parameters: { input: ToolInput }) =>
+        tool.execute(parameters.input, workspaceId),
+    };
+  }
+}

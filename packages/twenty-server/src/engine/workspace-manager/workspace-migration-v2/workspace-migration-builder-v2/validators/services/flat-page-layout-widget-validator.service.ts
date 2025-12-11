@@ -4,7 +4,9 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -95,6 +97,7 @@ export class FlatPageLayoutWidgetValidatorService {
   public validateFlatPageLayoutWidgetCreation({
     flatEntityToValidate: flatPageLayoutWidgetToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
     },
   }: FlatEntityValidationArgs<
@@ -121,6 +124,19 @@ export class FlatPageLayoutWidgetValidatorService {
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         message: t`Page layout widget with id ${flatPageLayoutWidgetId} already exists`,
         userFriendlyMessage: msg`Page layout widget already exists`,
+      });
+    }
+
+    const referencedPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatPageLayoutWidgetToValidate.pageLayoutTabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
+
+    if (!isDefined(referencedPageLayoutTab)) {
+      validationResult.errors.push({
+        code: PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
+        message: t`Page layout tab not found`,
+        userFriendlyMessage: msg`Page layout tab not found`,
       });
     }
 

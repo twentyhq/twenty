@@ -18,9 +18,6 @@ import { AgentMessageEntity } from './entities/agent-message.entity';
 import { AgentTurnEntity } from './entities/agent-turn.entity';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
-import { AgentExecutionService } from './services/agent-execution.service';
-import { AgentPlanExecutorService } from './services/agent-plan-executor.service';
-import { AgentToolGeneratorService } from './services/agent-tool-generator.service';
 
 @Module({
   imports: [
@@ -41,18 +38,9 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
       RoleTargetEntity,
     ]),
   ],
-  providers: [
-    AgentAsyncExecutorService,
-    AgentExecutionService,
-    AgentToolGeneratorService,
-    AgentActorContextService,
-    AgentPlanExecutorService,
-  ],
+  providers: [AgentAsyncExecutorService, AgentActorContextService],
   exports: [
     AgentAsyncExecutorService,
-    AgentExecutionService,
-    AgentPlanExecutorService,
-    AgentToolGeneratorService,
     AgentActorContextService,
     TypeOrmModule.forFeature([
       AgentMessageEntity,

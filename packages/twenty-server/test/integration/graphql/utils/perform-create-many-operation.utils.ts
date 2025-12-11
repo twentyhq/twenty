@@ -1,8 +1,7 @@
-import { randomUUID } from 'crypto';
-
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { capitalize } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 export const performCreateManyOperation = async (
   objectMetadataSingularName: string,
@@ -16,7 +15,7 @@ export const performCreateManyOperation = async (
       objectMetadataPluralName,
       gqlFields,
       data: data.map((item) => ({
-        id: randomUUID(),
+        id: v4(),
         ...item,
       })),
     }),

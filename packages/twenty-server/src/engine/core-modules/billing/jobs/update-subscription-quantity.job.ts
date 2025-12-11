@@ -7,7 +7,8 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
 
@@ -21,41 +22,48 @@ export class UpdateSubscriptionQuantityJob {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   @Process(UpdateSubscriptionQuantityJob.name)
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        data.workspaceId,
-        'workspaceMember',
-      );
+    const authContext = buildSystemAuthContext(data.workspaceId);
 
-    const workspaceMembersCount = await workspaceMemberRepository.count();
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            data.workspaceId,
+            'workspaceMember',
+          );
 
-    if (!workspaceMembersCount || workspaceMembersCount <= 0) {
-      return;
-    }
+        const workspaceMembersCount = await workspaceMemberRepository.count();
 
-    try {
-      const billingBaseProductSubscriptionItem =
-        await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
-          data.workspaceId,
-        );
+        if (!workspaceMembersCount || workspaceMembersCount <= 0) {
+          return;
+        }
 
-      await this.stripeSubscriptionItemService.updateSubscriptionItem(
-        billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
-        { quantity: workspaceMembersCount },
-      );
+        try {
+          const billingBaseProductSubscriptionItem =
+            await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+              data.workspaceId,
+            );
 
-      this.logger.log(
-        `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
-      );
-    } catch (e) {
-      this.logger.warn(
-        `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
-      );
-    }
+          await this.stripeSubscriptionItemService.updateSubscriptionItem(
+            billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
+            { quantity: workspaceMembersCount },
+          );
+
+          this.logger.log(
+            `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
+          );
+        } catch (e) {
+          this.logger.warn(
+            `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
+          );
+        }
+      },
+    );
   }
 }

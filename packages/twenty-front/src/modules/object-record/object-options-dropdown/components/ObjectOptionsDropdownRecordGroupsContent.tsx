@@ -63,6 +63,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
+  const shouldHideEmptyGroups =
+    hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
+
   const recordGroupSort = useRecoilComponentValue(
     recordIndexRecordGroupSortComponentState,
   );
@@ -148,7 +151,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
               onToggleChange={handleHideEmptyRecordGroupChange}
-              toggled={hideEmptyRecordGroup}
+              toggled={shouldHideEmptyGroups}
               text={t`Hide empty groups`}
               toggleSize="small"
             />

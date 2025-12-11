@@ -37,7 +37,6 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceRepository<
   T extends ObjectLiteral,
 > extends Repository<T> {
-  private readonly _internalContext: WorkspaceInternalContext;
   private shouldBypassPermissionChecks: boolean;
   private featureFlagMap: FeatureFlagMap;
   public readonly objectRecordsPermissions?: ObjectsPermissions;
@@ -45,11 +44,10 @@ export class WorkspaceRepository<
   declare manager: WorkspaceEntityManager;
 
   get internalContext(): WorkspaceInternalContext {
-    return this._internalContext;
+    return this.manager.internalContext;
   }
 
   constructor(
-    internalContext: WorkspaceInternalContext,
     target: EntityTarget<T>,
     manager: WorkspaceEntityManager,
     featureFlagMap: FeatureFlagMap,
@@ -59,7 +57,6 @@ export class WorkspaceRepository<
     authContext?: AuthContext,
   ) {
     super(target, manager, queryRunner);
-    this._internalContext = internalContext;
     this.featureFlagMap = featureFlagMap;
     this.objectRecordsPermissions = objectRecordsPermissions;
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
@@ -83,7 +80,7 @@ export class WorkspaceRepository<
     return new WorkspaceSelectQueryBuilder(
       queryBuilder,
       this.objectRecordsPermissions,
-      this._internalContext,
+      this.internalContext,
       this.shouldBypassPermissionChecks,
       this.authContext ?? {},
       this.featureFlagMap,
@@ -948,10 +945,7 @@ export class WorkspaceRepository<
    * PRIVATE METHODS
    */
   private async getObjectMetadataFromTarget() {
-    return getObjectMetadataFromEntityTarget(
-      this.target,
-      this._internalContext,
-    );
+    return getObjectMetadataFromEntityTarget(this.target, this.internalContext);
   }
 
   private async transformOptions<
@@ -978,7 +972,7 @@ export class WorkspaceRepository<
     return formatData(
       data,
       objectMetadata,
-      this._internalContext.flatFieldMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
     ) as T;
   }
 }

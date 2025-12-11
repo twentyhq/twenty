@@ -1,11 +1,11 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { checkFieldPermissions } from '@/page-layout/utils/checkFieldPermissions';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 export type UseWidgetPermissionsReturn = {
   hasAccess: boolean;

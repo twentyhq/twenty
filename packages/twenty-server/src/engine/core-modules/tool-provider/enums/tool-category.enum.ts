@@ -4,4 +4,5 @@ export enum ToolCategory {
   WORKFLOW = 'WORKFLOW',
   METADATA = 'METADATA',
   NATIVE_MODEL = 'NATIVE_MODEL',
+  VIEW = 'VIEW',
 }
