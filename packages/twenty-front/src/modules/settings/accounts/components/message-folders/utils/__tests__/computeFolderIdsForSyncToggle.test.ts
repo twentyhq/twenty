@@ -1,7 +1,7 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { collectFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/collectFolderIdsForSyncToggle';
+import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 
-describe('collectFolderIdsForSyncToggle', () => {
+describe('computeFolderIdsForSyncToggle', () => {
   const createFolder = (
     id: string,
     name: string,
@@ -23,7 +23,7 @@ describe('collectFolderIdsForSyncToggle', () => {
   describe('when syncing a folder', () => {
     it('should include the folder itself for a root folder', () => {
       const inbox = createFolder('inbox', 'Inbox');
-      const result = collectFolderIdsForSyncToggle('inbox', [inbox], true);
+      const result = computeFolderIdsForSyncToggle('inbox', [inbox], true);
 
       expect(result).toEqual(['inbox']);
     });
@@ -31,7 +31,7 @@ describe('collectFolderIdsForSyncToggle', () => {
     it('should include ancestors when syncing a nested folder', () => {
       const work = createFolder('work', 'Work', null, 'ext-work');
       const nested = createFolder('nested', 'Nested', 'ext-work', 'ext-nested');
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'nested',
         [work, nested],
         true,
@@ -46,7 +46,7 @@ describe('collectFolderIdsForSyncToggle', () => {
       const work = createFolder('work', 'Work', null, 'ext-work');
       const nested = createFolder('nested', 'Nested', 'ext-work', 'ext-nested');
       const deep = createFolder('deep', 'Deep', 'ext-nested', 'ext-deep');
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'deep',
         [work, nested, deep],
         true,
@@ -62,7 +62,7 @@ describe('collectFolderIdsForSyncToggle', () => {
       const work = createFolder('work', 'Work', null, 'ext-work');
       const child1 = createFolder('child1', 'Child 1', 'ext-work', 'ext-c1');
       const child2 = createFolder('child2', 'Child 2', 'ext-work', 'ext-c2');
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'work',
         [work, child1, child2],
         true,
@@ -78,7 +78,7 @@ describe('collectFolderIdsForSyncToggle', () => {
       const root = createFolder('root', 'Root', null, 'ext-root');
       const middle = createFolder('middle', 'Middle', 'ext-root', 'ext-middle');
       const leaf = createFolder('leaf', 'Leaf', 'ext-middle', 'ext-leaf');
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'middle',
         [root, middle, leaf],
         true,
@@ -94,7 +94,7 @@ describe('collectFolderIdsForSyncToggle', () => {
   describe('when unsyncing a folder', () => {
     it('should include only the folder for a root folder', () => {
       const inbox = createFolder('inbox', 'Inbox', null, 'ext-inbox', true);
-      const result = collectFolderIdsForSyncToggle('inbox', [inbox], false);
+      const result = computeFolderIdsForSyncToggle('inbox', [inbox], false);
 
       expect(result).toEqual(['inbox']);
     });
@@ -115,7 +115,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         'ext-c2',
         true,
       );
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'work',
         [work, child1, child2],
         false,
@@ -143,7 +143,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         'ext-c2',
         true,
       );
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'child1',
         [work, child1, child2],
         false,
@@ -164,7 +164,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         'ext-nested',
         true,
       );
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'nested',
         [work, nested],
         false,
@@ -185,7 +185,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         true,
       );
       const leaf = createFolder('leaf', 'Leaf', 'ext-middle', 'ext-leaf', true);
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'leaf',
         [root, middle, leaf],
         false,
@@ -214,7 +214,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         true,
       );
       const leaf = createFolder('leaf', 'Leaf', 'ext-b1', 'ext-leaf', true);
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'leaf',
         [root, branch1, branch2, leaf],
         false,
@@ -243,7 +243,7 @@ describe('collectFolderIdsForSyncToggle', () => {
         'ext-c2',
         false,
       );
-      const result = collectFolderIdsForSyncToggle(
+      const result = computeFolderIdsForSyncToggle(
         'child1',
         [work, child1, child2],
         false,

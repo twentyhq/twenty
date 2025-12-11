@@ -1,6 +1,6 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 
-export const collectFolderIdsForSyncToggle = (
+export const computeFolderIdsForSyncToggle = (
   folderId: string,
   allFolders: MessageFolder[],
   isSyncing: boolean,
@@ -12,50 +12,50 @@ export const collectFolderIdsForSyncToggle = (
       .map((folder) => [folder.externalId, folder]),
   );
 
-  const collectDescendants = (id: string): string[] => {
+  const collectChildren = (id: string): string[] => {
     const folder = folderById.get(id);
     const children = folder?.externalId
       ? allFolders.filter((f) => f.parentFolderId === folder.externalId)
       : [];
 
-    return [id, ...children.flatMap((child) => collectDescendants(child.id))];
+    return [id, ...children.flatMap((child) => collectChildren(child.id))];
   };
 
-  const collectAncestors = (id: string): MessageFolder[] => {
-    const ancestors: MessageFolder[] = [];
+  const collectParents = (id: string): MessageFolder[] => {
+    const parents: MessageFolder[] = [];
     let current = folderById.get(id);
 
     while (current?.parentFolderId) {
       const parent = folderByExternalId.get(current.parentFolderId);
 
       if (!parent) break;
-      ancestors.push(parent);
+      parents.push(parent);
       current = parent;
     }
 
-    return ancestors;
+    return parents;
   };
 
-  const descendantIds = collectDescendants(folderId);
+  const childIds = collectChildren(folderId);
 
   if (isSyncing) {
-    const ancestorIds = collectAncestors(folderId).map((folder) => folder.id);
+    const parentIds = collectParents(folderId).map((folder) => folder.id);
 
-    return [...new Set([...descendantIds, ...ancestorIds])];
+    return [...new Set([...childIds, ...parentIds])];
   }
 
-  const idsToUnsync = new Set(descendantIds);
+  const idsToUnsync = new Set(childIds);
 
-  for (const ancestor of collectAncestors(folderId)) {
+  for (const parent of collectParents(folderId)) {
     const children = allFolders.filter(
-      (folder) => folder.parentFolderId === ancestor.externalId,
+      (folder) => folder.parentFolderId === parent.externalId,
     );
     const hasOtherSyncedChild = children.some(
       (child) => child.isSynced && !idsToUnsync.has(child.id),
     );
 
     if (hasOtherSyncedChild) break;
-    idsToUnsync.add(ancestor.id);
+    idsToUnsync.add(parent.id);
   }
 
   return [...idsToUnsync];

@@ -6,7 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
-import { collectFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/collectFolderIdsForSyncToggle';
+import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
@@ -130,7 +130,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const handleToggleFolder = async (folderToToggle: MessageFolder) => {
     const isSyncing = !folderToToggle.isSynced;
-    const folderIdsToToggle = collectFolderIdsForSyncToggle(
+    const folderIdsToToggle = computeFolderIdsForSyncToggle(
       folderToToggle.id,
       messageFolders,
       isSyncing,
