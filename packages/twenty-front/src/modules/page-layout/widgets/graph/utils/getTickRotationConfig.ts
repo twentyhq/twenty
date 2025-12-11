@@ -1,4 +1,4 @@
-import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 
 const ROTATED_LABEL_CHARACTER_WIDTH_RATIO = 0.5;
@@ -10,6 +10,7 @@ const MAX_HORIZONTAL_LABEL_LENGTH = 30;
 
 const TICK_ROTATION_ANGLE = -45;
 const MIN_CALCULATED_LENGTH = 1;
+const TICK_MARGIN = 1;
 
 export type TickRotationConfig = {
   tickRotation: number;
@@ -23,7 +24,12 @@ export const getTickRotationConfig = ({
   widthPerTick: number;
   axisFontSize: number;
 }): TickRotationConfig => {
-  const shouldRotate = widthPerTick < ROTATION_THRESHOLD_WIDTH;
+  const shouldRotate =
+    widthPerTick <
+    COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS *
+      HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO *
+      COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE +
+      TICK_MARGIN;
 
   if (shouldRotate) {
     const rotatedWidthPerTick = widthPerTick * Math.cos(TICK_ROTATION_ANGLE);

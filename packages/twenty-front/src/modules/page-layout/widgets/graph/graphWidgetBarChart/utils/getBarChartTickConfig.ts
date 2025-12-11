@@ -1,12 +1,10 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
-import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
-import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 import { type BarDatum } from '@nivo/bar';
 
 export type BarChartTickConfig = {
@@ -81,21 +79,10 @@ export const getBarChartTickConfig = ({
       ? availableWidth / actualDataPointCount
       : widthPerTick;
 
-  const tickRotationConfig =
-    layout === BarChartLayout.VERTICAL
-      ? getTickRotationConfig({ widthPerTick: widthPerDataPoint, axisFontSize })
-      : {
-          tickRotation: NO_ROTATION_ANGLE,
-          maxLabelLength: BAR_CHART_CONSTANTS.MAX_LEFT_AXIS_LABEL_LENGTH,
-        };
-
-  const maxBottomAxisTickLabelLength =
-    layout === BarChartLayout.VERTICAL
-      ? tickRotationConfig.maxLabelLength
-      : calculateMaxTickLabelLength({
-          widthPerTick,
-          axisFontSize,
-        });
+  const tickRotationConfig = getTickRotationConfig({
+    widthPerTick: widthPerDataPoint,
+    axisFontSize,
+  });
 
   // TODO: Make this dynamic based on the data
   const maxLeftAxisTickLabelLength =
@@ -104,7 +91,7 @@ export const getBarChartTickConfig = ({
   return {
     categoryTickValues,
     numberOfValueTicks,
-    maxBottomAxisTickLabelLength,
+    maxBottomAxisTickLabelLength: tickRotationConfig.maxLabelLength,
     maxLeftAxisTickLabelLength,
     bottomAxisTickRotation: tickRotationConfig.tickRotation,
   };

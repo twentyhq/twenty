@@ -1,9 +1,6 @@
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import {
-  type BarChartTickConfig,
-  getBarChartTickConfig,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
@@ -26,19 +23,14 @@ type GetBarChartAxisConfigsProps = {
   formatOptions?: GraphValueFormatOptions;
   axisFontSize?: number;
   valueTickValues?: number[];
-  tickConfig?: BarChartTickConfig;
+  tickConfig: BarChartTickConfig;
 };
 
 export const getBarChartAxisConfigs = ({
-  width,
-  height,
-  data,
   layout,
-  indexBy,
   xAxisLabel,
   yAxisLabel,
   formatOptions,
-  axisFontSize = COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE,
   valueTickValues,
   tickConfig,
 }: GetBarChartAxisConfigsProps) => {
@@ -48,18 +40,7 @@ export const getBarChartAxisConfigs = ({
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
     bottomAxisTickRotation,
-  } =
-    tickConfig ??
-    getBarChartTickConfig({
-      width,
-      height,
-      data,
-      indexBy,
-      xAxisLabel,
-      yAxisLabel,
-      axisFontSize,
-      layout,
-    });
+  } = tickConfig;
 
   const resolvedValueTickValues =
     valueTickValues && valueTickValues.length > 0
