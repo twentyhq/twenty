@@ -16,7 +16,9 @@ import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
+import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
@@ -39,7 +41,17 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   controllers: [ViewController],
-  providers: [ViewService, ViewResolver],
-  exports: [ViewService, TypeOrmModule.forFeature([ViewEntity])],
+  providers: [
+    ViewService,
+    ViewResolver,
+    ViewQueryParamsService,
+    ViewToolsFactory,
+  ],
+  exports: [
+    ViewService,
+    ViewQueryParamsService,
+    ViewToolsFactory,
+    TypeOrmModule.forFeature([ViewEntity]),
+  ],
 })
 export class ViewModule {}

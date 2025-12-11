@@ -233,14 +233,16 @@ export class ChatExecutionService {
     viewName: string;
     filterDescriptions: string[];
   }): string {
-    const { objectNameSingular, viewName, filterDescriptions } =
+    const { objectNameSingular, viewId, viewName, filterDescriptions } =
       browsingContext;
 
-    let context = `The user is viewing a list of ${objectNameSingular} records in a view called "${viewName}".`;
+    let context = `The user is viewing a list of ${objectNameSingular} records in a view called "${viewName}" (viewId: ${viewId}).`;
 
     if (filterDescriptions.length > 0) {
       context += `\nFilters applied: ${filterDescriptions.join(', ')}`;
     }
+
+    context += `\nUse get-view-query-parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
   }
@@ -323,7 +325,13 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
 
 ### Tool Catalog by Category`);
 
-    const categoryOrder = ['database', 'action', 'workflow', 'metadata'];
+    const categoryOrder = [
+      'database',
+      'action',
+      'workflow',
+      'metadata',
+      'view',
+    ];
 
     for (const category of categoryOrder) {
       const tools = toolsByCategory.get(category);
@@ -365,6 +373,8 @@ ${tools
         return 'Workflow Tools (create/manage workflows)';
       case 'metadata':
         return 'Metadata Tools (schema management)';
+      case 'view':
+        return 'View Tools (query views)';
       default:
         return category;
     }
