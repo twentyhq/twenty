@@ -4,11 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 export type ConflictingRecordInfo = {
   conflictingRecordId: string;
   conflictingObjectNameSingular: string;
-} | null;
+};
 
 export const getConflictingRecordFromApolloError = (
   error: ApolloError,
-): ConflictingRecordInfo => {
+): ConflictingRecordInfo | null => {
   const extensions = error.graphQLErrors?.[0]?.extensions;
 
   if (!extensions) {

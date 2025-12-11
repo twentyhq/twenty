@@ -8,12 +8,11 @@ import {
   snackBarInternalComponentState,
   type SnackBarOptions,
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
+import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/build-error-action.util';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
+import { isDefined } from 'twenty-shared/utils';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useSnackBar = () => {
@@ -145,26 +144,13 @@ export const useSnackBar = () => {
           ? getErrorMessageFromApolloError(apolloError)
           : t`An error occurred.`;
 
-      const conflictingRecord = apolloError
-        ? getConflictingRecordFromApolloError(apolloError)
-        : null;
-
-      const link = conflictingRecord
-        ? {
-            href: getAppPath(AppPath.RecordShowPage, {
-              objectNameSingular:
-                conflictingRecord.conflictingObjectNameSingular,
-              objectRecordId: conflictingRecord.conflictingRecordId,
-            }),
-            text: t`View existing record`,
-          }
-        : undefined;
+      const errorAction = buildErrorAction(apolloError);
 
       setSnackBarQueue({
         id: uuidv4(),
         message: errorMessage,
+        ...errorAction,
         ...options,
-        link,
         variant: SnackBarVariant.Error,
       });
     },
