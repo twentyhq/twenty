@@ -1,10 +1,9 @@
+import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { computeLineChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartCategoryTickValues';
-import { ELLIPSIS_LENGTH } from '@/page-layout/widgets/graph/utils/ellipsisLength';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
-import { MIN_DISPLAY_CHARS } from '@/page-layout/widgets/graph/utils/minDisplayChars';
-import { MIN_LABEL_LENGTH_FOR_TRUNCATION } from '@/page-layout/widgets/graph/utils/minLabelLengthForTruncation';
+import { isNonEmptyArray } from '@sniptt/guards';
 
 const LINE_CHART_MARGIN_LEFT = 70;
 const LINE_CHART_MARGIN_RIGHT = 20;
@@ -15,18 +14,6 @@ const LINE_CHART_TICK_PADDING = 5;
 const LINE_CHART_LEGEND_OFFSET_BASE = 40;
 const FALLBACK_DATA_POINT_COUNT = 1;
 const FALLBACK_WIDTH = 0;
-
-const truncateTickLabel = (value: string, maxLength: number): string => {
-  if (
-    maxLength < MIN_LABEL_LENGTH_FOR_TRUNCATION ||
-    value.length <= maxLength
-  ) {
-    return value;
-  }
-
-  const charsToShow = Math.max(MIN_DISPLAY_CHARS, maxLength - ELLIPSIS_LENGTH);
-  return `${value.slice(0, charsToShow)}...`;
-};
 
 export type LineChartAxisBottomResult = {
   config: {
@@ -56,10 +43,9 @@ export const getLineChartAxisBottomConfig = (
     ? width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT)
     : 0;
 
-  const actualDataPointCount =
-    data && data.length > 0 && data[0].data.length > 0
-      ? data[0].data.length
-      : FALLBACK_DATA_POINT_COUNT;
+  const actualDataPointCount = isNonEmptyArray(data?.[0]?.data)
+    ? data[0].data.length
+    : FALLBACK_DATA_POINT_COUNT;
 
   const widthPerDataPoint =
     actualDataPointCount > 0 && availableWidth > 0
