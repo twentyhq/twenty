@@ -46,13 +46,13 @@ export const handleDuplicateKeyError = async (
     entityManager,
   );
 
-  const exception = new TwentyORMException(
+  const exception: DuplicateKeyErrorWithMetadata = new TwentyORMException(
     `A duplicate entry was detected`,
     TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
     {
       userFriendlyMessage: msg`This record already exists. Please check your data and try again.`,
     },
-  ) as DuplicateKeyErrorWithMetadata;
+  );
 
   if (conflictingRecord) {
     exception.conflictingRecordId = conflictingRecord.conflictingRecordId;
