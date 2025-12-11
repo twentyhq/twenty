@@ -41,9 +41,11 @@ export class GenerateService {
     console.log(chalk.gray(`Output: ${outputPath}`));
 
     const getSchemaResponse = await this.apiService.getSchema();
+
     if (!getSchemaResponse.success) {
       return;
     }
+
     const { data: schema } = getSchemaResponse;
 
     const output = resolve(outputPath);
@@ -58,10 +60,17 @@ export class GenerateService {
       },
     });
 
+    await this.injectTwentyClient(output);
+
+    console.log(chalk.green('✓ Client generated successfully!'));
+    console.log(chalk.gray(`Generated files at: ${outputPath}`));
+  }
+
+  private async injectTwentyClient(output: string) {
     const twentyClientContent = `
 
 // ----------------------------------------------------
-// ✨ Custom Core Twenty client (auto-injected)
+// ✨ Custom Twenty client (auto-injected)
 // ----------------------------------------------------
 
 const defaultOptions: ClientOptions = {
@@ -99,8 +108,5 @@ export default class Twenty {
 `;
 
     await fs.appendFile(join(output, 'index.ts'), twentyClientContent);
-
-    console.log(chalk.green('✓ Client generated successfully!'));
-    console.log(chalk.gray(`Generated files at: ${outputPath}`));
   }
 }
