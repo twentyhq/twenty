@@ -1111,20 +1111,21 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for speed-optimized operations (lightweight tasks, high throughput)',
+      'Comma-separated list of AI model IDs for speed-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_SPEED_MODEL_ID = 'gpt-4o-mini';
+  DEFAULT_AI_SPEED_MODEL_ID =
+    'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for performance-optimized operations (complex reasoning, quality focus)',
+      'Comma-separated list of AI model IDs for performance-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4o';
+  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4.1,claude-sonnet-4-5-20250929,grok-4';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
