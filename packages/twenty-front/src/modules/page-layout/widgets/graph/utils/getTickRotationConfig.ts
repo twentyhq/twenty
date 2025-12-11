@@ -5,10 +5,10 @@ const ROTATED_LABEL_CHARACTER_WIDTH_RATIO = 0.5;
 const HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO = 0.6;
 
 const MIN_LABEL_LENGTH = 13;
-const MAX_ROTATED_LABEL_LENGTH = 25;
 const MAX_HORIZONTAL_LABEL_LENGTH = 30;
 
 const TICK_ROTATION_ANGLE = -45;
+const TICK_ROTATION_ANGLE_RAD = (Math.abs(TICK_ROTATION_ANGLE) * Math.PI) / 180;
 const MIN_CALCULATED_LENGTH = 1;
 const TICK_MARGIN = 1;
 
@@ -32,19 +32,18 @@ export const getTickRotationConfig = ({
       TICK_MARGIN;
 
   if (shouldRotate) {
-    const rotatedWidthPerTick = widthPerTick * Math.cos(TICK_ROTATION_ANGLE);
     const characterWidth = axisFontSize * ROTATED_LABEL_CHARACTER_WIDTH_RATIO;
     const calculatedLength = Math.max(
       MIN_CALCULATED_LENGTH,
-      Math.floor(rotatedWidthPerTick / characterWidth),
+      Math.floor(
+        COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL /
+          (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
+      ),
     );
 
     return {
       tickRotation: TICK_ROTATION_ANGLE,
-      maxLabelLength: Math.min(
-        MAX_ROTATED_LABEL_LENGTH,
-        Math.max(MIN_LABEL_LENGTH, calculatedLength),
-      ),
+      maxLabelLength: Math.max(MIN_LABEL_LENGTH, calculatedLength),
     };
   }
 
