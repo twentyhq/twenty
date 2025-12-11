@@ -1,6 +1,5 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { ELLIPSIS_LENGTH } from '@/page-layout/widgets/graph/utils/ellipsisLength';
-import { MIN_LABEL_LENGTH_FOR_TRUNCATION } from '@/page-layout/widgets/graph/utils/minLabelLengthForTruncation';
 
 const CHARACTER_WIDTH_RATIO = 0.6;
 const TICK_PADDING_ALLOWANCE = 10;
@@ -20,5 +19,5 @@ export const computeMaxLabelLengthForMargin = ({
     Math.floor(availableWidth / characterWidth),
   );
 
-  return Math.max(MIN_LABEL_LENGTH_FOR_TRUNCATION, calculatedLength);
+  return calculatedLength;
 };

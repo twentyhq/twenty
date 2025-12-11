@@ -4,9 +4,6 @@ import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationA
 const ROTATED_LABEL_CHARACTER_WIDTH_RATIO = 0.5;
 const HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO = 0.6;
 
-const MIN_LABEL_LENGTH = 13;
-const MAX_HORIZONTAL_LABEL_LENGTH = 30;
-
 const TICK_ROTATION_ANGLE = -45;
 const TICK_ROTATION_ANGLE_RAD = (Math.abs(TICK_ROTATION_ANGLE) * Math.PI) / 180;
 const MIN_CALCULATED_LENGTH = 1;
@@ -33,17 +30,14 @@ export const getTickRotationConfig = ({
 
   if (shouldRotate) {
     const characterWidth = axisFontSize * ROTATED_LABEL_CHARACTER_WIDTH_RATIO;
-    const calculatedLength = Math.max(
-      MIN_CALCULATED_LENGTH,
-      Math.floor(
-        COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL /
-          (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
-      ),
+    const calculatedLength = Math.floor(
+      COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL /
+        (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
     );
 
     return {
       tickRotation: TICK_ROTATION_ANGLE,
-      maxLabelLength: Math.max(MIN_LABEL_LENGTH, calculatedLength),
+      maxLabelLength: calculatedLength,
     };
   }
 
@@ -55,9 +49,6 @@ export const getTickRotationConfig = ({
 
   return {
     tickRotation: NO_ROTATION_ANGLE,
-    maxLabelLength: Math.min(
-      MAX_HORIZONTAL_LABEL_LENGTH,
-      Math.max(MIN_LABEL_LENGTH, calculatedLength),
-    ),
+    maxLabelLength: calculatedLength,
   };
 };
