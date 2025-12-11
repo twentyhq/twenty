@@ -1,14 +1,23 @@
 import { type DefaultProps } from '@blocknote/core';
 import {
+  BasicTextStyleButton,
+  BlockTypeSelect,
+  CreateLinkButton,
   FormattingToolbar,
+  NestBlockButton,
+  TextAlignButton,
+  UnnestBlockButton,
   useBlockNoteEditor,
   useEditorContentOrSelectionChange,
   useUIElementPositioning,
   useUIPluginState,
 } from '@blocknote/react';
-import { flip, offset, shift } from '@floating-ui/react';
+import { useTheme } from '@emotion/react';
+import { flip, FloatingPortal, offset, shift } from '@floating-ui/react';
 import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+import { CustomColorStyleButton } from '@/page-layout/widgets/standalone-rich-text/components/CustomColorStyleButton';
 
 const textAlignmentToPlacement = (
   textAlignment: DefaultProps['textAlignment'],
@@ -25,11 +34,19 @@ const textAlignmentToPlacement = (
   }
 };
 
-// This is a copy of the BlockNote's FormattingToolbarController component with a custom check to prevent toolbar from showing when a block is selected via drag handle (NodeSelection)
-export const CustomFormattingToolbarController = () => {
-  // eslint-disable-next-line @nx/workspace-no-state-useref -- This ref holds a DOM element reference for innerHTML access during fade-out, not state
+type CustomFormattingToolbarControllerProps = {
+  boundaryElement?: HTMLElement | null;
+};
+
+// This is a copy of the BlockNote's FormattingToolbarController component with a custom check to prevent toolbar from showing when a block is selected via drag handle (NodeSelection).
+export const CustomFormattingToolbarController = ({
+  boundaryElement,
+}: CustomFormattingToolbarControllerProps) => {
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const divRef = useRef<HTMLDivElement | null>(null);
   const editor = useBlockNoteEditor();
+  const theme = useTheme();
+  const colorScheme = theme.name === 'light' ? 'light' : 'dark';
 
   const [placement, setPlacement] = useState<'top-start' | 'top' | 'top-end'>(
     () => {
@@ -63,7 +80,6 @@ export const CustomFormattingToolbarController = () => {
     editor.formattingToolbar.onUpdate.bind(editor.formattingToolbar),
   );
 
-  // Custom check: don't show toolbar for NodeSelection (drag handle click)
   const isNodeSelection =
     editor.prosemirrorView?.state.selection.toJSON().type === 'node';
 
@@ -75,7 +91,16 @@ export const CustomFormattingToolbarController = () => {
     3000,
     {
       placement,
-      middleware: [offset(10), shift(), flip()],
+      middleware: [
+        offset(10),
+        shift({
+          boundary: boundaryElement ?? undefined,
+          padding: 8,
+        }),
+        flip({
+          boundary: boundaryElement ?? undefined,
+        }),
+      ],
       onOpenChange: (open) => {
         if (!open) {
           editor.formattingToolbar.closeMenu();
@@ -101,18 +126,54 @@ export const CustomFormattingToolbarController = () => {
 
   if (!shouldShow && isDefined(divRef.current)) {
     return (
-      <div
-        ref={combinedRef}
-        style={style}
-        dangerouslySetInnerHTML={{ __html: divRef.current.innerHTML }}
-      />
+      <FloatingPortal>
+        <div
+          className="bn-container bn-mantine bn-ui-container"
+          data-color-scheme={colorScheme}
+          data-mantine-color-scheme={colorScheme}
+          ref={combinedRef}
+          style={style}
+          dangerouslySetInnerHTML={{ __html: divRef.current.innerHTML }}
+        />
+      </FloatingPortal>
     );
   }
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading -- We need to spread the props from the floating props
-    <div ref={combinedRef} style={style} {...getFloatingProps()}>
-      <FormattingToolbar />
-    </div>
+    <FloatingPortal>
+      <div
+        className="bn-container bn-mantine bn-ui-container"
+        data-color-scheme={colorScheme}
+        data-mantine-color-scheme={colorScheme}
+        ref={combinedRef}
+        style={style}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...getFloatingProps()}
+      >
+        <FormattingToolbar>
+          <BlockTypeSelect key="blockTypeSelect" />
+          <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
+          <BasicTextStyleButton
+            basicTextStyle="italic"
+            key="italicStyleButton"
+          />
+          <BasicTextStyleButton
+            basicTextStyle="underline"
+            key="underlineStyleButton"
+          />
+          <BasicTextStyleButton
+            basicTextStyle="strike"
+            key="strikeStyleButton"
+          />
+          <TextAlignButton textAlignment="left" key="textAlignLeftButton" />
+          <TextAlignButton textAlignment="center" key="textAlignCenterButton" />
+          <TextAlignButton textAlignment="right" key="textAlignRightButton" />
+          <CustomColorStyleButton key="colorStyleButton" />
+          <NestBlockButton key="nestBlockButton" />
+          <UnnestBlockButton key="unnestBlockButton" />
+          <CreateLinkButton key="createLinkButton" />
+        </FormattingToolbar>
+      </div>
+    </FloatingPortal>
   );
 };

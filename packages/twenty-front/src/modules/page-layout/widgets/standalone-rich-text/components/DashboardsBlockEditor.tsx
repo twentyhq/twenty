@@ -8,7 +8,7 @@ import { type ClipboardEvent } from 'react';
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
 import { CustomFormattingToolbarController } from '@/page-layout/widgets/standalone-rich-text/components/CustomFormattingToolbarController';
-import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
+import { PortaledSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/PortaledSideMenu';
 import {
   CustomSlashMenu,
   type SuggestionItem,
@@ -21,6 +21,7 @@ interface DashboardsBlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
+  boundaryElement?: HTMLElement | null;
 }
 
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
@@ -66,7 +67,6 @@ const StyledEditor = styled.div`
     padding: 4px;
     border-radius: 8px;
     border: 1px solid ${({ theme }) => theme.border.color.medium};
-    left: 26px;
   }
 
   & .bn-editor {
@@ -141,6 +141,7 @@ export const DashboardsBlockEditor = ({
   onChange,
   onPaste,
   readonly,
+  boundaryElement,
 }: DashboardsBlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
@@ -175,8 +176,8 @@ export const DashboardsBlockEditor = ({
         formattingToolbar={false}
         editable={!readonly}
       >
-        <CustomFormattingToolbarController />
-        <CustomSideMenu editor={editor} />
+        <CustomFormattingToolbarController boundaryElement={boundaryElement} />
+        <PortaledSideMenu editor={editor} boundaryElement={boundaryElement} />
         <SuggestionMenuController
           triggerCharacter="/"
           getItems={async (query) => {

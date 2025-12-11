@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -50,6 +50,7 @@ type StandaloneRichTextWidgetProps = {
 export const StandaloneRichTextWidget = ({
   widget,
 }: StandaloneRichTextWidgetProps) => {
+  const containerElementRef = useRef<HTMLDivElement>(null);
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -160,15 +161,15 @@ export const StandaloneRichTextWidget = ({
     });
   }, [removeFocusItemFromFocusStackById, widget.id]);
 
-  //TODO: this should be handled way earlier, because we should not be able to select this widget type record page layouts in the first place
   if (!isDefined(dashboardId)) {
-    throw new Error(
-      'StandaloneRichTextWidget should only be rendered on dashboards. This widget type should not be selectable on other layout types.',
-    );
+    return null;
   }
 
   return (
-    <StyledContainer isPageLayoutInEditMode={isPageLayoutInEditMode}>
+    <StyledContainer
+      ref={containerElementRef}
+      isPageLayoutInEditMode={isPageLayoutInEditMode}
+    >
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >
@@ -178,6 +179,7 @@ export const StandaloneRichTextWidget = ({
           onChange={handleEditorChange}
           editor={editor}
           readonly={!isEditable}
+          boundaryElement={containerElementRef.current}
         />
       </ScrollWrapper>
     </StyledContainer>
