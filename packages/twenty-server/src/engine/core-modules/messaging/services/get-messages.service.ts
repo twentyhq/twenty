@@ -4,14 +4,15 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly timelineMessagingService: TimelineMessagingService,
   ) {}
 
@@ -73,38 +74,46 @@ export class GetMessagesService {
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
-        workspaceId,
-        'person',
-      );
-    const personIds = (
-      await personRepository.find({
-        where: {
-          companyId,
-        },
-        select: {
-          id: true,
-        },
-      })
-    ).map((person) => person.id);
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    if (personIds.length === 0) {
-      return {
-        totalNumberOfThreads: 0,
-        timelineThreads: [],
-      };
-    }
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const personRepository =
+          await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+            workspaceId,
+            'person',
+            { shouldBypassPermissionChecks: true },
+          );
+        const personIds = (
+          await personRepository.find({
+            where: {
+              companyId,
+            },
+            select: {
+              id: true,
+            },
+          })
+        ).map((person) => person.id);
 
-    const messageThreads = await this.getMessagesFromPersonIds(
-      workspaceMemberId,
-      personIds,
-      workspaceId,
-      page,
-      pageSize,
+        if (personIds.length === 0) {
+          return {
+            totalNumberOfThreads: 0,
+            timelineThreads: [],
+          };
+        }
+
+        const messageThreads = await this.getMessagesFromPersonIds(
+          workspaceMemberId,
+          personIds,
+          workspaceId,
+          page,
+          pageSize,
+        );
+
+        return messageThreads;
+      },
     );
-
-    return messageThreads;
   }
 
   async getMessagesFromOpportunityId(
@@ -114,36 +123,44 @@ export class GetMessagesService {
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const opportunityRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<OpportunityWorkspaceEntity>(
-        workspaceId,
-        'opportunity',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const opportunity = await opportunityRepository.findOne({
-      where: {
-        id: opportunityId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const opportunityRepository =
+          await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
+            workspaceId,
+            'opportunity',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const opportunity = await opportunityRepository.findOne({
+          where: {
+            id: opportunityId,
+          },
+          select: {
+            companyId: true,
+          },
+        });
+
+        if (!opportunity?.companyId) {
+          return {
+            totalNumberOfThreads: 0,
+            timelineThreads: [],
+          };
+        }
+
+        const messageThreads = await this.getMessagesFromCompanyId(
+          workspaceMemberId,
+          opportunity.companyId,
+          workspaceId,
+          page,
+          pageSize,
+        );
+
+        return messageThreads;
       },
-      select: {
-        companyId: true,
-      },
-    });
-
-    if (!opportunity?.companyId) {
-      return {
-        totalNumberOfThreads: 0,
-        timelineThreads: [],
-      };
-    }
-
-    const messageThreads = await this.getMessagesFromCompanyId(
-      workspaceMemberId,
-      opportunity.companyId,
-      workspaceId,
-      page,
-      pageSize,
     );
-
-    return messageThreads;
   }
 }

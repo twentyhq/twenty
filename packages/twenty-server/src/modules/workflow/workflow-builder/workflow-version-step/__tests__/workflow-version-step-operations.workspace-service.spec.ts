@@ -8,7 +8,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
@@ -21,7 +21,7 @@ const mockWorkspaceId = 'workspace-id';
 
 describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let service: WorkflowVersionStepOperationsWorkspaceService;
-  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let serverlessFunctionService: jest.Mocked<ServerlessFunctionService>;
   let agentRepository: jest.Mocked<any>;
   let roleTargetRepository: jest.Mocked<any>;
@@ -67,20 +67,19 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       deleteAgentOnlyRoleIfUnused: jest.fn(),
     } as unknown as jest.Mocked<AiAgentRoleService>;
 
+    globalWorkspaceOrmManager = {
+      getRepository: jest.fn(),
+    } as unknown as jest.Mocked<GlobalWorkspaceOrmManager>;
     workspaceCacheService = {
       flush: jest.fn(),
     } as unknown as jest.Mocked<WorkspaceCacheService>;
-
-    twentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn(),
-    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowVersionStepOperationsWorkspaceService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: twentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: globalWorkspaceOrmManager,
         },
         {
           provide: ServerlessFunctionService,

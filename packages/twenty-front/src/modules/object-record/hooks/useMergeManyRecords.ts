@@ -103,7 +103,7 @@ export const useMergeManyRecords = <
 
         if (!preview) {
           await refetchAggregateQueries();
-          registerObjectOperation(objectNameSingular, {
+          registerObjectOperation(objectMetadataItem, {
             type: 'merge-records',
           });
         }
@@ -115,14 +115,13 @@ export const useMergeManyRecords = <
       }
     },
     [
-      objectMetadataItem.namePlural,
+      objectMetadataItem,
       apolloCoreClient,
       mergeManyRecordsMutation,
       findOneRecordQuery,
       findDuplicateRecordsQuery,
-      registerObjectOperation,
-      objectNameSingular,
       refetchAggregateQueries,
+      registerObjectOperation,
     ],
   );
 

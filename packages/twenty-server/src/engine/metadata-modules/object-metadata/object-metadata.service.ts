@@ -31,7 +31,8 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -46,7 +47,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
   ) {
     super(objectMetadataRepository);
@@ -323,13 +324,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         },
       );
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      featureFlagsMap: existingFeatureFlagsMap,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'featureFlagsMap',
+    ]);
 
     const {
       flatObjectMetadataToCreate,
@@ -342,6 +343,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceCustomApplicationId:
         applicationId ?? workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      existingFeatureFlagsMap,
     });
 
     const optimisticFlatFieldMetadataMaps = [
@@ -509,18 +511,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     view: FlatView;
     workspaceId: string;
   }) {
-    const favoriteRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
-        workspaceId,
-        'favorite',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const favoriteCount = await favoriteRepository.count();
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const favoriteRepository =
+          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+            workspaceId,
+            'favorite',
+          );
 
-    await favoriteRepository.insert({
-      viewId: view.id,
-      position: favoriteCount,
-    });
+        const favoriteCount = await favoriteRepository.count();
+
+        await favoriteRepository.insert({
+          viewId: view.id,
+          position: favoriteCount,
+        });
+      },
+    );
   }
 
   public async deleteWorkspaceAllObjectMetadata({

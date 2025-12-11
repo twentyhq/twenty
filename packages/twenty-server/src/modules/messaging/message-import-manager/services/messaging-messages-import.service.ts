@@ -6,7 +6,8 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
@@ -30,6 +31,7 @@ import {
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
+
 @Injectable()
 export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
@@ -43,7 +45,7 @@ export class MessagingMessagesImportService {
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
@@ -56,162 +58,171 @@ export class MessagingMessagesImportService {
   ) {
     let messageIdsToFetch: string[] = [];
 
-    try {
-      if (
-        messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
-      ) {
-        return;
-      }
+    const authContext = buildSystemAuthContext(workspaceId);
 
-      await this.messagingMonitoringService.track({
-        eventName: 'messages_import.started',
-        workspaceId,
-        connectedAccountId: messageChannel.connectedAccountId,
-        messageChannelId: messageChannel.id,
-      });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        try {
+          if (
+            messageChannel.syncStage !==
+            MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+          ) {
+            return;
+          }
 
-      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
-        [messageChannel.id],
-        workspaceId,
-      );
-
-      const { accessToken, refreshToken } =
-        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-          {
-            connectedAccount,
+          await this.messagingMonitoringService.track({
+            eventName: 'messages_import.started',
             workspaceId,
+            connectedAccountId: messageChannel.connectedAccountId,
             messageChannelId: messageChannel.id,
-          },
-        );
+          });
 
-      const connectedAccountWithFreshTokens = {
-        ...connectedAccount,
-        accessToken,
-        refreshToken,
-      };
+          await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
+            [messageChannel.id],
+            workspaceId,
+          );
 
-      await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccountWithFreshTokens,
-        workspaceId,
-      );
+          const { accessToken, refreshToken } =
+            await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+              {
+                connectedAccount,
+                workspaceId,
+                messageChannelId: messageChannel.id,
+              },
+            );
 
-      messageIdsToFetch = await this.cacheStorage.setPop(
-        `messages-to-import:${workspaceId}:${messageChannel.id}`,
-        MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
-      );
+          const connectedAccountWithFreshTokens = {
+            ...connectedAccount,
+            accessToken,
+            refreshToken,
+          };
 
-      if (!messageIdsToFetch?.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
-          [messageChannel.id],
-          workspaceId,
-        );
+          await this.emailAliasManagerService.refreshHandleAliases(
+            connectedAccountWithFreshTokens,
+            workspaceId,
+          );
 
-        return await this.trackMessageImportCompleted(
-          messageChannel,
-          workspaceId,
-        );
-      }
+          messageIdsToFetch = await this.cacheStorage.setPop(
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
+          );
 
-      const allMessages = await this.messagingGetMessagesService.getMessages(
-        messageIdsToFetch,
-        connectedAccountWithFreshTokens,
-      );
+          if (!messageIdsToFetch?.length) {
+            await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
+              [messageChannel.id],
+              workspaceId,
+            );
 
-      const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-        connectedAccountWithFreshTokens.accountOwnerId,
-        workspaceId,
-      );
+            return await this.trackMessageImportCompleted(
+              messageChannel,
+              workspaceId,
+            );
+          }
 
-      if (!isDefined(messageChannel.handle)) {
-        throw new MessageImportDriverException(
-          'Message channel handle is required',
-          MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-        );
-      }
+          const allMessages =
+            await this.messagingGetMessagesService.getMessages(
+              messageIdsToFetch,
+              connectedAccountWithFreshTokens,
+            );
 
-      if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
-        throw new MessageImportDriverException(
-          'Message channel handle is required',
-          MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-        );
-      }
+          const blocklist =
+            await this.blocklistRepository.getByWorkspaceMemberId(
+              connectedAccountWithFreshTokens.accountOwnerId,
+              workspaceId,
+            );
 
-      const messagesToSave = filterEmails(
-        messageChannel.handle,
-        [...connectedAccountWithFreshTokens.handleAliases.split(',')],
-        allMessages,
-        blocklist
-          .map((blocklistItem) => blocklistItem.handle)
-          .filter(isDefined),
-        messageChannel.excludeGroupEmails,
-      );
+          if (!isDefined(messageChannel.handle)) {
+            throw new MessageImportDriverException(
+              'Message channel handle is required',
+              MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+            );
+          }
 
-      if (messagesToSave.length > 0) {
-        await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-          messagesToSave,
-          messageChannel,
-          connectedAccountWithFreshTokens,
-          workspaceId,
-        );
-      }
+          if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
+            throw new MessageImportDriverException(
+              'Message channel handle is required',
+              MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+            );
+          }
 
-      if (
-        messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
-      ) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
-          [messageChannel.id],
-          workspaceId,
-        );
-      } else {
-        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-          [messageChannel.id],
-          workspaceId,
-        );
-      }
+          const messagesToSave = filterEmails(
+            messageChannel.handle,
+            [...connectedAccountWithFreshTokens.handleAliases.split(',')],
+            allMessages,
+            blocklist
+              .map((blocklistItem) => blocklistItem.handle)
+              .filter(isDefined),
+            messageChannel.excludeGroupEmails,
+          );
 
-      const messageChannelRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
+          if (messagesToSave.length > 0) {
+            await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+              messagesToSave,
+              messageChannel,
+              connectedAccountWithFreshTokens,
+              workspaceId,
+            );
+          }
 
-      await messageChannelRepository.update(
-        {
-          id: messageChannel.id,
-        },
-        {
-          throttleFailureCount: 0,
-          syncStageStartedAt: null,
-        },
-      );
+          if (
+            messageIdsToFetch.length <
+            MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
+          ) {
+            await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
+              [messageChannel.id],
+              workspaceId,
+            );
+          } else {
+            await this.messageChannelSyncStatusService.markAsMessagesImportPending(
+              [messageChannel.id],
+              workspaceId,
+            );
+          }
 
-      return await this.trackMessageImportCompleted(
-        messageChannel,
-        workspaceId,
-      );
-    } catch (error) {
-      // TODO: remove this log once we catch better the error codes
-      this.logger.error(
-        `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
-      );
-      await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:${messageChannel.id}`,
-        messageIdsToFetch,
-      );
+          const messageChannelRepository =
+            await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+              workspaceId,
+              'messageChannel',
+            );
 
-      await this.messageImportErrorHandlerService.handleDriverException(
-        error,
-        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
-        messageChannel,
-        workspaceId,
-      );
+          await messageChannelRepository.update(
+            {
+              id: messageChannel.id,
+            },
+            {
+              throttleFailureCount: 0,
+              syncStageStartedAt: null,
+            },
+          );
 
-      return await this.trackMessageImportCompleted(
-        messageChannel,
-        workspaceId,
-      );
-    }
+          return await this.trackMessageImportCompleted(
+            messageChannel,
+            workspaceId,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+          );
+          await this.cacheStorage.setAdd(
+            `messages-to-import:${workspaceId}:${messageChannel.id}`,
+            messageIdsToFetch,
+          );
+
+          await this.messageImportErrorHandlerService.handleDriverException(
+            error,
+            MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
+            messageChannel,
+            workspaceId,
+          );
+
+          return await this.trackMessageImportCompleted(
+            messageChannel,
+            workspaceId,
+          );
+        }
+      },
+    );
   }
 
   private async trackMessageImportCompleted(

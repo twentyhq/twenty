@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -70,6 +70,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       }),
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata,
+    targetFlatFieldMetadataType: FieldMetadataType.RELATION,
     workspaceId,
     workspaceCustomApplicationId,
   });

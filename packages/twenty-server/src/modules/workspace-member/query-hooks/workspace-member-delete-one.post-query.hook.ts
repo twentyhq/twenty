@@ -4,6 +4,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -15,7 +16,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -27,7 +28,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
   implements WorkspacePostQueryHookInstance
 {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
@@ -60,18 +61,24 @@ export class WorkspaceMemberDeleteOnePostQueryHook
       },
     );
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-      );
+    const workspaceMember =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext as WorkspaceAuthContext,
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspace.id,
+              'workspaceMember',
+            );
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        id: targettedWorkspaceMemberId,
-      },
-      withDeleted: true,
-    });
+          return workspaceMemberRepository.findOne({
+            where: {
+              id: targettedWorkspaceMemberId,
+            },
+            withDeleted: true,
+          });
+        },
+      );
 
     if (!isDefined(workspaceMember)) {
       throw new PermissionsException(

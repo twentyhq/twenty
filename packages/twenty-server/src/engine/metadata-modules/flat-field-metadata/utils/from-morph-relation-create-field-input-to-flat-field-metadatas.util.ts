@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -92,6 +92,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           sourceFlatObjectMetadataJoinColumnName,
           sourceFlatObjectMetadata,
           targetFlatObjectMetadata,
+          targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           workspaceId,
           morphId,
           workspaceCustomApplicationId,
