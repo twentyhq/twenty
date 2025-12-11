@@ -35,10 +35,18 @@ const StyledCheckboxContainer = styled.div`
   margin-left: auto;
 `;
 
+const StyledIconsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  flex-shrink: 1;
+`;
+
 const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
+  width: 100%; 
 `;
 
 export const RecordBoardCardHeader = () => {
@@ -79,7 +87,7 @@ export const RecordBoardCardHeader = () => {
 
   return (
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
-      <StyledRecordChipContainer>
+      <StyledRecordChipContainer className="record-chip-container">
         <StopPropagationContainer>
           {isDefined(record) && (
             <RecordChip
@@ -97,20 +105,16 @@ export const RecordBoardCardHeader = () => {
         </StopPropagationContainer>
       </StyledRecordChipContainer>
 
-      {isCompactModeActive && (
-        <StyledCompactIconContainer className="compact-icon-container">
-          <StopPropagationContainer>
-            <LightIconButton
-              Icon={isCardExpanded ? IconEyeOff : IconEye}
-              accent="tertiary"
-              onClick={() => {
-                setIsCardExpanded(!isCardExpanded);
-              }}
-            />
-          </StopPropagationContainer>
-        </StyledCompactIconContainer>
-      )}
-      <StyledCheckboxContainer className="checkbox-container">
+      <StyledIconsContainer className="icons-container">
+        <StopPropagationContainer>
+          <LightIconButton
+            Icon={isCardExpanded ? IconEyeOff : IconEye}
+            accent="tertiary"
+            onClick={() => {
+              setIsCardExpanded(!isCardExpanded);
+            }}
+          />
+        </StopPropagationContainer>
         <StopPropagationContainer>
           <Checkbox
             hoverable
@@ -122,7 +126,7 @@ export const RecordBoardCardHeader = () => {
             variant={CheckboxVariant.Secondary}
           />
         </StopPropagationContainer>
-      </StyledCheckboxContainer>
+      </StyledIconsContainer>
     </RecordCardHeaderContainer>
   );
 };
