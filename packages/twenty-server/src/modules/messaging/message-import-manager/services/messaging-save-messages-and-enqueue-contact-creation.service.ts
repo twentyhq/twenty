@@ -10,16 +10,16 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    CreateCompanyAndContactJob,
-    type CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+  type CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import {
-    MessageChannelContactAutoCreationPolicy,
-    type MessageChannelWorkspaceEntity,
+  MessageChannelContactAutoCreationPolicy,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    type Participant,
-    type ParticipantWithMessageId,
+  type Participant,
+  type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';

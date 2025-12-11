@@ -32,7 +32,6 @@ type CreateQueryBuilderOptions = {
 };
 
 export class GlobalWorkspaceDataSource extends DataSource {
-  readonly isGlobalFlow = true;
   readonly eventEmitterService: WorkspaceEventEmitter;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
@@ -103,7 +102,7 @@ export class GlobalWorkspaceDataSource extends DataSource {
       return super.createEntityManager(queryRunner) as WorkspaceEntityManager;
     }
 
-    return new WorkspaceEntityManager(undefined, this, queryRunner);
+    return new WorkspaceEntityManager(this, queryRunner);
   }
 
   override createQueryRunner(

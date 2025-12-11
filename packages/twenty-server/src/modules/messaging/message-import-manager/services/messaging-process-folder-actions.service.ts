@@ -8,8 +8,8 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessageFolderPendingSyncAction,
-    MessageFolderWorkspaceEntity,
+  MessageFolderPendingSyncAction,
+  MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 

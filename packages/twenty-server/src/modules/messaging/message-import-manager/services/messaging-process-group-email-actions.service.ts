@@ -6,8 +6,8 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-    MessageChannelPendingGroupEmailsAction,
-    MessageChannelWorkspaceEntity,
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
