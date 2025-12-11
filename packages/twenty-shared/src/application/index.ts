@@ -10,6 +10,7 @@
 export type { ApplicationManifest } from './applicationManifestType';
 export type { Application } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
+export { DEFAULT_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultApplicationAccessTokenName';
 export type { FieldManifest } from './fieldManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';

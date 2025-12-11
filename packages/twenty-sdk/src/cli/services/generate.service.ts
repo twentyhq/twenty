@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import { join, resolve } from 'path';
 import { ApiService } from '@/cli/services/api.service';
 import { ConfigService } from '@/cli/services/config.service';
+import * as fs from 'fs-extra';
+import { DEFAULT_APPLICATION_ACCESS_TOKEN_NAME } from 'twenty-shared/application';
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
@@ -44,16 +46,59 @@ export class GenerateService {
     }
     const { data: schema } = getSchemaResponse;
 
+    const output = resolve(outputPath);
+
     await generate({
       schema,
-      output: resolve(outputPath),
+      output,
       scalarTypes: {
         DateTime: 'string',
         JSON: 'Record<string, unknown>',
         UUID: 'string',
       },
-      verbose: true,
     });
+
+    const twentyClientContent = `
+
+// ----------------------------------------------------
+// ✨ Custom Core Twenty client (auto-injected)
+// ----------------------------------------------------
+
+const defaultOptions: ClientOptions = {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: \`Bearer \${process.env.${DEFAULT_APPLICATION_ACCESS_TOKEN_NAME}}\`,
+  },
+}
+
+export default class Twenty {
+  private client: Client;
+
+  constructor(options?: ClientOptions) {
+    const merged: ClientOptions = {
+      ...defaultOptions,
+      ...options,
+      headers: {
+        ...defaultOptions.headers,
+        ...(options?.headers ?? {}),
+      },
+    };
+
+    this.client = createClient(merged);
+  }
+
+  query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
+    return this.client.query(request);
+  }
+
+  mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
+    return this.client.mutation(request);
+  }
+}
+
+`;
+
+    await fs.appendFile(join(output, 'index.ts'), twentyClientContent);
 
     console.log(chalk.green('✓ Client generated successfully!'));
     console.log(chalk.gray(`Generated files at: ${outputPath}`));

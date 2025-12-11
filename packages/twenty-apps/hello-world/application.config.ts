@@ -6,11 +6,6 @@ const config: ApplicationConfig = {
   description: 'A simple hello world app',
   icon: 'IconWorld',
   applicationVariables: {
-    TWENTY_API_KEY: {
-      universalIdentifier: 'dedc53eb-9c12-4fe2-ba86-4a2add19d305',
-      description: 'Twenty API Key',
-      isSecret: true,
-    },
     TWENTY_API_URL: {
       universalIdentifier: 'ef8ab489-e68a-4841-b402-261f440e6185',
       description: 'Twenty API Url',
