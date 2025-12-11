@@ -12,6 +12,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -70,6 +71,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${MessageParticipantRole.FROM}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   role: MessageParticipantRole;
 
   @WorkspaceField({
@@ -79,6 +81,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   handle: string | null;
 
@@ -89,6 +92,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Display Name`,
     icon: 'IconUser',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   displayName: string | null;
 
@@ -102,6 +106,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   message: Relation<MessageWorkspaceEntity>;
 
   @WorkspaceJoinColumn('message')
@@ -117,6 +122,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
@@ -133,6 +139,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 

@@ -11,6 +11,7 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -50,6 +51,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
+  @WorkspaceIsFieldUIReadOnly()
   happensAt: Date;
 
   @WorkspaceField({
@@ -59,6 +61,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Event name`,
     icon: 'IconAbc',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   name: string | null;
 
@@ -69,6 +72,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Json value for event details`,
     icon: 'IconListDetails',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   properties: JSON | null;
 
@@ -80,6 +84,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Cached record name`,
     icon: 'IconAbc',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   linkedRecordCachedName: string | null;
 
@@ -90,6 +95,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Linked Record id`,
     icon: 'IconAbc',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   linkedRecordId: string | null;
 
@@ -100,6 +106,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Linked Object Metadata Id`,
     icon: 'IconAbc',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   linkedObjectMetadataId: string | null;
 
@@ -114,6 +121,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'timelineActivities',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
@@ -132,6 +140,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetPerson: Relation<PersonWorkspaceEntity> | null;
 
@@ -150,6 +159,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetCompany: Relation<CompanyWorkspaceEntity> | null;
 
@@ -168,6 +178,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetOpportunity: Relation<OpportunityWorkspaceEntity> | null;
 
@@ -186,6 +197,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetNote: Relation<NoteWorkspaceEntity> | null;
 
@@ -204,6 +216,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetTask: Relation<TaskWorkspaceEntity> | null;
 
@@ -222,6 +235,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetWorkflow: Relation<WorkflowWorkspaceEntity> | null;
 
@@ -240,6 +254,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetWorkflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
 
@@ -258,6 +273,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetWorkflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
 
@@ -276,6 +292,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     isMorphRelation: true,
     morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   targetDashboard: Relation<DashboardWorkspaceEntity> | null;
 

@@ -7,6 +7,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -36,6 +37,7 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => MessageWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messages: Relation<MessageWorkspaceEntity[]>;
 }
