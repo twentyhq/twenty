@@ -4,6 +4,7 @@ import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
@@ -16,11 +17,12 @@ const GetViewsInputSchema = z.object({
     .optional()
     .describe('A clear description of the action being performed.'),
   input: z.object({
-    objectMetadataId: z
+    objectNameSingular: z
       .string()
-      .uuid()
       .optional()
-      .describe('Filter views by object. If omitted, returns all views.'),
+      .describe(
+        'Filter views by object name (e.g., "task", "person", "company"). If omitted, returns all views.',
+      ),
     limit: z
       .number()
       .int()
@@ -51,17 +53,24 @@ const CreateViewInputSchema = z.object({
     .describe('A clear description of the action being performed.'),
   input: z.object({
     name: z.string().describe('View name'),
-    objectMetadataId: z
+    objectNameSingular: z
       .string()
-      .uuid()
-      .describe('Object metadata ID this view is for'),
-    icon: z.string().describe('Icon identifier (e.g., "IconList")'),
+      .describe(
+        'Object name this view is for (e.g., "task", "person", "company")',
+      ),
+    icon: z
+      .string()
+      .optional()
+      .default('IconList')
+      .describe('Icon identifier (e.g., "IconList", "IconCheckbox")'),
     type: z
       .enum([ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR])
+      .optional()
       .default(ViewType.TABLE)
       .describe('View type'),
     visibility: z
       .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
+      .optional()
       .default(ViewVisibility.WORKSPACE)
       .describe('View visibility'),
   }),
@@ -94,7 +103,33 @@ export class ViewToolsFactory {
   constructor(
     private readonly viewService: ViewService,
     private readonly viewQueryParamsService: ViewQueryParamsService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  private async resolveObjectMetadataId(
+    workspaceId: string,
+    objectNameSingular: string,
+  ): Promise<string> {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const objectMetadata = Object.values(flatObjectMetadataMaps.byId).find(
+      (obj) => obj?.nameSingular === objectNameSingular,
+    );
+
+    if (!objectMetadata) {
+      throw new Error(
+        `Object "${objectNameSingular}" not found. Use get_object_metadata to list available objects.`,
+      );
+    }
+
+    return objectMetadata.id;
+  }
 
   generateReadTools(
     workspaceId: string,
@@ -107,14 +142,19 @@ export class ViewToolsFactory {
           'List views in the workspace. Views define how records are displayed, filtered, and sorted.',
         inputSchema: GetViewsInputSchema,
         execute: async (parameters: {
-          input: { objectMetadataId?: string; limit?: number };
+          input: { objectNameSingular?: string; limit?: number };
         }) => {
           let views;
 
-          if (parameters.input.objectMetadataId) {
+          if (parameters.input.objectNameSingular) {
+            const objectMetadataId = await this.resolveObjectMetadataId(
+              workspaceId,
+              parameters.input.objectNameSingular,
+            );
+
             views = await this.viewService.findByObjectMetadataId(
               workspaceId,
-              parameters.input.objectMetadataId,
+              objectMetadataId,
               userWorkspaceId,
             );
           } else {
@@ -161,18 +201,23 @@ export class ViewToolsFactory {
         execute: async (parameters: {
           input: {
             name: string;
-            objectMetadataId: string;
-            icon: string;
+            objectNameSingular: string;
+            icon?: string;
             type?: ViewType;
             visibility?: ViewVisibility;
           };
         }) => {
           try {
+            const objectMetadataId = await this.resolveObjectMetadataId(
+              workspaceId,
+              parameters.input.objectNameSingular,
+            );
+
             const view = await this.viewService.createOne({
               createViewInput: {
                 name: parameters.input.name,
-                objectMetadataId: parameters.input.objectMetadataId,
-                icon: parameters.input.icon,
+                objectMetadataId,
+                icon: parameters.input.icon ?? 'IconList',
                 type: parameters.input.type ?? ViewType.TABLE,
                 visibility:
                   parameters.input.visibility ?? ViewVisibility.WORKSPACE,
@@ -184,7 +229,7 @@ export class ViewToolsFactory {
             return {
               id: view.id,
               name: view.name,
-              objectMetadataId: view.objectMetadataId,
+              objectNameSingular: parameters.input.objectNameSingular,
               type: view.type,
               icon: view.icon,
               visibility: view.visibility,

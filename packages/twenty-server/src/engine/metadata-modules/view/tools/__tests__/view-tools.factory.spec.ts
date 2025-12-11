@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { OrderByDirection } from 'twenty-shared/types';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
@@ -12,11 +13,13 @@ describe('ViewToolsFactory', () => {
   let viewToolsFactory: ViewToolsFactory;
   let viewService: jest.Mocked<ViewService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
+  let _flatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
   const mockViewId = 'view-id';
   const mockObjectMetadataId = 'object-metadata-id';
+  const mockObjectNameSingular = 'company';
 
   const mockView = {
     id: mockViewId,
@@ -29,7 +32,20 @@ describe('ViewToolsFactory', () => {
     createdByUserWorkspaceId: mockUserWorkspaceId,
   };
 
-  // Helper to call execute without TypeScript issues
+  const mockFlatObjectMetadataMaps = {
+    byId: {
+      [mockObjectMetadataId]: {
+        id: mockObjectMetadataId,
+        nameSingular: mockObjectNameSingular,
+        namePlural: 'companies',
+        labelSingular: 'Company',
+        labelPlural: 'Companies',
+      },
+    },
+    idByUniversalIdentifier: {},
+    universalIdentifiersByApplicationId: {},
+  };
+
   const callExecute = async (tool: any, input: any) => {
     return tool.execute(input);
   };
@@ -55,12 +71,23 @@ describe('ViewToolsFactory', () => {
             resolveViewToQueryParams: jest.fn(),
           },
         },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+            }),
+          },
+        },
       ],
     }).compile();
 
     viewToolsFactory = module.get<ViewToolsFactory>(ViewToolsFactory);
     viewService = module.get(ViewService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
+    _flatEntityMapsCacheService = module.get(
+      WorkspaceManyOrAllFlatEntityMapsCacheService,
+    );
   });
 
   it('should be defined', () => {
@@ -81,8 +108,8 @@ describe('ViewToolsFactory', () => {
       expect(tools['get_view_query_parameters']).toHaveProperty('execute');
     });
 
-    describe('get-views tool', () => {
-      it('should return all views when no objectMetadataId filter', async () => {
+    describe('get_views tool', () => {
+      it('should return all views when no objectNameSingular filter', async () => {
         const mockViews = [mockView];
 
         viewService.findByWorkspaceId.mockResolvedValue(mockViews as any);
@@ -112,7 +139,7 @@ describe('ViewToolsFactory', () => {
         });
       });
 
-      it('should filter views by objectMetadataId', async () => {
+      it('should filter views by objectNameSingular', async () => {
         const mockViews = [mockView];
 
         viewService.findByObjectMetadataId.mockResolvedValue(mockViews as any);
@@ -123,7 +150,7 @@ describe('ViewToolsFactory', () => {
         );
 
         const result = await callExecute(tools['get_views'], {
-          input: { objectMetadataId: mockObjectMetadataId, limit: 50 },
+          input: { objectNameSingular: mockObjectNameSingular, limit: 50 },
         });
 
         expect(viewService.findByObjectMetadataId).toHaveBeenCalledWith(
@@ -173,7 +200,7 @@ describe('ViewToolsFactory', () => {
           'workspace-member-id',
         );
 
-        const result = await callExecute(tools['get-view-query-parameters'], {
+        const result = await callExecute(tools['get_view_query_parameters'], {
           input: { viewId: mockViewId },
         });
 
@@ -198,7 +225,7 @@ describe('ViewToolsFactory', () => {
       expect(tools).toHaveProperty('delete_view');
     });
 
-    describe('create-view tool', () => {
+    describe('create_view tool', () => {
       it('should create a new view', async () => {
         const createdView = {
           id: 'new-view-id',
@@ -219,7 +246,7 @@ describe('ViewToolsFactory', () => {
         const result = await callExecute(tools['create_view'], {
           input: {
             name: 'New View',
-            objectMetadataId: mockObjectMetadataId,
+            objectNameSingular: mockObjectNameSingular,
             icon: 'IconTable',
           },
         });
@@ -238,7 +265,7 @@ describe('ViewToolsFactory', () => {
         expect(result).toEqual({
           id: 'new-view-id',
           name: 'New View',
-          objectMetadataId: mockObjectMetadataId,
+          objectNameSingular: mockObjectNameSingular,
           type: ViewType.TABLE,
           icon: 'IconTable',
           visibility: ViewVisibility.WORKSPACE,
@@ -320,7 +347,7 @@ describe('ViewToolsFactory', () => {
         );
 
         await expect(
-          callExecute(tools['update-view'], {
+          callExecute(tools['update_view'], {
             input: {
               id: mockViewId,
               name: 'Updated Name',
@@ -335,7 +362,7 @@ describe('ViewToolsFactory', () => {
         const tools = viewToolsFactory.generateWriteTools(mockWorkspaceId);
 
         await expect(
-          callExecute(tools['update-view'], {
+          callExecute(tools['update_view'], {
             input: {
               id: 'non-existent-id',
               name: 'Updated Name',
