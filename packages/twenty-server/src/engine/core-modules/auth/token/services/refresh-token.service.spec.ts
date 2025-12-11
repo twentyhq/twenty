@@ -100,10 +100,7 @@ describe('RefreshTokenService', () => {
       const result = await service.verifyRefreshToken(mockToken);
 
       expect(result).toEqual({ user: mockUser, token: mockAppToken });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'REFRESH',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
     });
 
     it('should throw an error if the token is malformed', async () => {

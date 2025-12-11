@@ -10,3 +10,8 @@ export enum ApplicationExceptionCode {
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
 }
+
+export const ApplicationNotFoundDefaultError = new ApplicationException(
+  'Application not found',
+  ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+);
