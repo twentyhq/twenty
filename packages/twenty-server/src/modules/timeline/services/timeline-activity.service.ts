@@ -10,7 +10,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -26,8 +27,8 @@ export class TimelineActivityService {
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -187,20 +188,28 @@ export class TimelineActivityService {
 
     const { action } = parseEventNameOrThrow(name);
 
-    const activityTargetRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        this.targetObjects[activityType],
-        {
-          shouldBypassPermissionChecks: true,
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const activityTargets =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const activityTargetRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              this.targetObjects[activityType],
+              {
+                shouldBypassPermissionChecks: true,
+              },
+            );
+
+          return activityTargetRepository.find({
+            where: {
+              [`${activityType}Id`]: In(events.map((event) => event.recordId)),
+            },
+          });
         },
       );
-
-    const activityTargets = await activityTargetRepository.find({
-      where: {
-        [`${activityType}Id`]: In(events.map((event) => event.recordId)),
-      },
-    });
 
     if (activityTargets.length === 0) {
       return [];
@@ -264,29 +273,37 @@ export class TimelineActivityService {
   }): Promise<TimelineActivityPayload[]> {
     const { action } = parseEventNameOrThrow(name);
 
-    const activityRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        activityType,
-        {
-          shouldBypassPermissionChecks: true,
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const activities =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const activityRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              activityType,
+              {
+                shouldBypassPermissionChecks: true,
+              },
+            );
+
+          return activityRepository.find({
+            where: {
+              id: In(
+                events
+                  .map((event) =>
+                    this.extractActivityIdFromActivityTargetEvent(
+                      event,
+                      activityType,
+                    ),
+                  )
+                  .filter(isDefined),
+              ),
+            },
+          });
         },
       );
-
-    const activities = await activityRepository.find({
-      where: {
-        id: In(
-          events
-            .map((event) =>
-              this.extractActivityIdFromActivityTargetEvent(
-                event,
-                activityType,
-              ),
-            )
-            .filter(isDefined),
-        ),
-      },
-    });
 
     if (activities.length === 0) {
       return [];

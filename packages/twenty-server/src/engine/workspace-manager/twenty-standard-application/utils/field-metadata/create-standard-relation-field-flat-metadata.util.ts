@@ -64,26 +64,24 @@ export const createStandardRelationFieldFlatMetadata = <
     settings,
     options: fieldOptions = null,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
-  const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const targetFieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[targetObjectName].fields;
+    standardObjectMetadataRelatedEntityIds[targetObjectName].fields;
 
   return {
-    id: fieldIds[fieldName as keyof typeof fieldIds],
+    id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
     standardId: null,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    objectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[objectName].id,
+    objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
     type: FieldMetadataType.RELATION,
     name: fieldName.toString(),
     label,
@@ -100,9 +98,9 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue,
     settings,
     options: fieldOptions,
-    relationTargetFieldMetadataId: targetFieldIds[targetFieldName],
+    relationTargetFieldMetadataId: targetFieldIds[targetFieldName].id,
     relationTargetObjectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[targetObjectName].id,
+      standardObjectMetadataRelatedEntityIds[targetObjectName].id,
     morphId: null,
     viewFieldIds: [],
     viewFilterIds: [],
