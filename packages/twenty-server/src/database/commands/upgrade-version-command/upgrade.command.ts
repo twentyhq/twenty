@@ -30,6 +30,7 @@ import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/com
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
+import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-timeline-activity-to-morph-relations.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
@@ -98,6 +99,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanNullEquivalentValuesCommand: CleanNullEquivalentValuesCommand,
 
     // 1.13 Commands
+    protected readonly migrateTimelineActivityToMorphRelationsCommand: MigrateTimelineActivityToMorphRelationsCommand,
     protected readonly deduplicateRoleTargetsCommand: DeduplicateRoleTargetsCommand,
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
     protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
@@ -173,6 +175,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.deduplicateRoleTargetsCommand,
         this.updateRoleTargetsUniqueConstraintMigrationCommand,
+        this.migrateTimelineActivityToMorphRelationsCommand,
         this.backfillPageLayoutUniversalIdentifiersCommand,
         this.migrateStandardInvalidEntitiesCommand,
       ],
