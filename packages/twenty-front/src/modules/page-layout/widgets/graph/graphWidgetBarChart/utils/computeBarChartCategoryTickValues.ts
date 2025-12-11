@@ -1,4 +1,4 @@
-import { BAR_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTickRotated';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
@@ -50,7 +50,7 @@ export const computeBarChartCategoryTickValues = ({
 
   return computeChartCategoryTickValues({
     availableSize: availableAxisSize,
-    minimumSizePerTick: BAR_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED,
+    minimumSizePerTick: BAR_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
     widthPerDataPoint,
   });

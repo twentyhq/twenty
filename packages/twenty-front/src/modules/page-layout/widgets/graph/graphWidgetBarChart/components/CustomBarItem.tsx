@@ -1,5 +1,4 @@
-import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
-import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
@@ -23,7 +22,7 @@ const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
 
   &:hover {
     filter: ${({ $isInteractive }) =>
-      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+      $isInteractive ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})` : 'none'};
   }
 `;
 
@@ -134,12 +133,12 @@ export const CustomBarItem = <D extends BarDatum>({
 
   const constrainedThicknessDimension = to(
     unconstrainedThicknessDimension,
-    (dimension) => Math.min(dimension, BAR_CHART_MAXIMUM_WIDTH),
+      (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
   );
 
   const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
-    dimension > BAR_CHART_MAXIMUM_WIDTH
-      ? (dimension - BAR_CHART_MAXIMUM_WIDTH) / 2
+    dimension > BAR_CHART_CONSTANTS.MAXIMUM_WIDTH
+      ? (dimension - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2
       : 0,
   );
 

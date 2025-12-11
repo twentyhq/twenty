@@ -1,16 +1,17 @@
-import { LINE_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMinimumWidthPerTickRotated';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
-
-const LINE_CHART_MARGIN_LEFT = 70;
-const LINE_CHART_MARGIN_RIGHT = 20;
 
 export const computeLineChartCategoryTickValues = ({
   width,
   data,
+  marginLeft,
+  marginRight,
 }: {
   width: number;
   data: LineChartSeries[];
+  marginLeft: number;
+  marginRight: number;
 }): (string | number)[] => {
   if (data.length === 0 || data[0].data.length === 0) {
     return [];
@@ -23,8 +24,7 @@ export const computeLineChartCategoryTickValues = ({
       : String(value);
   });
 
-  const availableWidth =
-    width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT);
+  const availableWidth = width - (marginLeft + marginRight);
 
   const dataPointCount = data[0].data.length;
   const widthPerDataPoint =
@@ -32,7 +32,7 @@ export const computeLineChartCategoryTickValues = ({
 
   return computeChartCategoryTickValues({
     availableSize: availableWidth,
-    minimumSizePerTick: LINE_CHART_MINIMUM_WIDTH_PER_TICK_ROTATED,
+    minimumSizePerTick: LINE_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
     widthPerDataPoint,
   });

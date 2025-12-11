@@ -1,19 +1,10 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
-import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { computeLineChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartCategoryTickValues';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { isNonEmptyArray } from '@sniptt/guards';
-
-const LINE_CHART_MARGIN_LEFT = 70;
-const LINE_CHART_MARGIN_RIGHT = 20;
-const LINE_CHART_AXIS_FONT_SIZE = 11;
-const ROTATED_LABELS_EXTRA_BOTTOM_MARGIN = 20;
-const LINE_CHART_TICK_SIZE = 0;
-const LINE_CHART_TICK_PADDING = 5;
-const LINE_CHART_LEGEND_OFFSET_BASE = 40;
-const FALLBACK_DATA_POINT_COUNT = 1;
-const FALLBACK_WIDTH = 0;
+import { isDefined } from 'twenty-shared/utils';
 
 export type LineChartAxisBottomResult = {
   config: {
@@ -33,46 +24,61 @@ export const getLineChartAxisBottomConfig = (
   xAxisLabel?: string,
   width?: number,
   data?: LineChartSeries[],
+  marginLeft?: number,
 ): LineChartAxisBottomResult => {
+  const effectiveMarginLeft =
+    marginLeft ?? COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL;
+
   const tickValues =
     width && data
-      ? computeLineChartCategoryTickValues({ width, data })
+      ? computeLineChartCategoryTickValues({
+          width,
+          data,
+          marginLeft: effectiveMarginLeft,
+          marginRight: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+        })
       : undefined;
 
   const availableWidth = width
-    ? width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT)
+    ? width - (effectiveMarginLeft + COMMON_CHART_CONSTANTS.MARGIN_RIGHT)
     : 0;
 
   const actualDataPointCount = isNonEmptyArray(data?.[0]?.data)
     ? data[0].data.length
-    : FALLBACK_DATA_POINT_COUNT;
+    : 1;
 
   const widthPerDataPoint =
     actualDataPointCount > 0 && availableWidth > 0
       ? availableWidth / actualDataPointCount
-      : FALLBACK_WIDTH;
+      : 0;
 
   const { tickRotation, maxLabelLength } = getTickRotationConfig({
     widthPerTick: widthPerDataPoint,
-    axisFontSize: LINE_CHART_AXIS_FONT_SIZE,
+    axisFontSize: COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE,
   });
 
   const hasRotation = tickRotation !== 0;
+  const baseMarginBottom = isDefined(xAxisLabel)
+    ? COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITH_LABEL
+    : COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL;
   const marginBottom = hasRotation
-    ? LINE_CHART_MARGIN_BOTTOM + ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
-    : LINE_CHART_MARGIN_BOTTOM;
+    ? baseMarginBottom +
+      COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
+    : baseMarginBottom;
 
   return {
     config: {
-      tickSize: LINE_CHART_TICK_SIZE,
-      tickPadding: LINE_CHART_TICK_PADDING,
+      tickSize: COMMON_CHART_CONSTANTS.TICK_SIZE,
+      tickPadding: COMMON_CHART_CONSTANTS.TICK_PADDING,
       tickRotation,
       tickValues,
       legend: xAxisLabel,
       legendPosition: 'middle' as const,
       legendOffset:
-        LINE_CHART_LEGEND_OFFSET_BASE +
-        (hasRotation ? ROTATED_LABELS_EXTRA_BOTTOM_MARGIN : 0),
+        COMMON_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET +
+        (hasRotation
+          ? COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
+          : 0),
       format: (value: string | number) =>
         truncateTickLabel(String(value), maxLabelLength),
     },

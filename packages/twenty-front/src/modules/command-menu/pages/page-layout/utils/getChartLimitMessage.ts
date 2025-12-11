@@ -1,6 +1,6 @@
 import { getDateGranularityPluralLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { t } from '@lingui/core/macro';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
@@ -24,10 +24,10 @@ export const getChartLimitMessage = ({
 }: GetChartLimitMessageParams): string => {
   const maxItems =
     graphType === GraphType.LINE
-      ? LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS
+      ? LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS
       : graphType === GraphType.VERTICAL_BAR ||
           graphType === GraphType.HORIZONTAL_BAR
-        ? BAR_CHART_MAXIMUM_NUMBER_OF_BARS
+        ? BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
         : PIE_CHART_MAXIMUM_NUMBER_OF_SLICES;
 
   if (isPrimaryAxisDate && isDefined(primaryAxisDateGranularity)) {

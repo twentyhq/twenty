@@ -1,5 +1,4 @@
-import { BAR_CHART_MAXIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumValueTickCount';
-import { BAR_CHART_MINIMUM_VALUE_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumValueTickCount';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
@@ -9,8 +8,6 @@ import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 import { type BarDatum } from '@nivo/bar';
-
-const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 
 export type BarChartTickConfig = {
   categoryTickValues: (string | number)[];
@@ -41,8 +38,8 @@ export const getBarChartTickConfig = ({
 }): BarChartTickConfig => {
   const clampValueTickCount = (tickCount: number) =>
     Math.min(
-      BAR_CHART_MAXIMUM_VALUE_TICK_COUNT,
-      Math.max(BAR_CHART_MINIMUM_VALUE_TICK_COUNT, tickCount),
+      BAR_CHART_CONSTANTS.MAXIMUM_VALUE_TICK_COUNT,
+      Math.max(BAR_CHART_CONSTANTS.MINIMUM_VALUE_TICK_COUNT, tickCount),
     );
 
   const categoryTickValues = computeBarChartCategoryTickValues({
@@ -89,7 +86,7 @@ export const getBarChartTickConfig = ({
       ? getTickRotationConfig({ widthPerTick: widthPerDataPoint, axisFontSize })
       : {
           tickRotation: NO_ROTATION_ANGLE,
-          maxLabelLength: MAX_LEFT_AXIS_LABEL_LENGTH,
+          maxLabelLength: BAR_CHART_CONSTANTS.MAX_LEFT_AXIS_LABEL_LENGTH,
         };
 
   const maxBottomAxisTickLabelLength =
@@ -101,7 +98,8 @@ export const getBarChartTickConfig = ({
         });
 
   // TODO: Make this dynamic based on the data
-  const maxLeftAxisTickLabelLength = MAX_LEFT_AXIS_LABEL_LENGTH;
+  const maxLeftAxisTickLabelLength =
+    BAR_CHART_CONSTANTS.MAX_LEFT_AXIS_LABEL_LENGTH;
 
   return {
     categoryTickValues,

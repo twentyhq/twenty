@@ -4,7 +4,7 @@ import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer'
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
-import { BAR_CHART_OUTER_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartOuterPaddingRatio';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
@@ -19,20 +19,20 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
+    formatGraphValue,
+    type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  ResponsiveBar,
-  type BarCustomLayerProps,
-  type BarDatum,
-  type BarItemProps,
-  type ComputedBarDatum,
-  type ComputedDatum,
+    ResponsiveBar,
+    type BarCustomLayerProps,
+    type BarDatum,
+    type BarItemProps,
+    type ComputedBarDatum,
+    type ComputedDatum,
 } from '@nivo/bar';
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -283,7 +283,7 @@ export const GraphWidgetBarChart = ({
           keys={keys}
           indexBy={indexBy}
           margin={margins}
-          padding={BAR_CHART_OUTER_PADDING_RATIO}
+          padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
           groupMode={groupMode}
           layout={layout}
           valueScale={{

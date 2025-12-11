@@ -1,1 +1,0 @@
-export const BAR_CHART_OUTER_PADDING_RATIO = 0.05;
