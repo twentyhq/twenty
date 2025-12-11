@@ -121,7 +121,7 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -130,7 +130,7 @@ export class WorkspaceSelectQueryBuilder<
     try {
       this.validatePermissions();
 
-      return await super.getRawOne();
+      return super.getRawOne();
     } catch (error) {
       throw await computeTwentyORMException(error);
     }
@@ -141,7 +141,7 @@ export class WorkspaceSelectQueryBuilder<
     try {
       this.validatePermissions();
 
-      return await super.getRawMany();
+      return super.getRawMany();
     } catch (error) {
       throw await computeTwentyORMException(error);
     }
@@ -197,7 +197,7 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult[0];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -205,7 +205,7 @@ export class WorkspaceSelectQueryBuilder<
     try {
       this.validatePermissions();
 
-      return await super.getCount();
+      return super.getCount();
     } catch (error) {
       throw await computeTwentyORMException(error);
     }
