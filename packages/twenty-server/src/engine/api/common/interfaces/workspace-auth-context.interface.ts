@@ -18,5 +18,9 @@ interface UserWorkspaceAuthContext extends Request {
   userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
 }
 
+interface ApplicationAuthContext extends Request {
+  application: NonNullable<AuthContext['application']>;
+}
+
 export type WorkspaceAuthContext = AuthContextWithDefinedWorkspaceProperties &
-  (ApiKeyAuthContext | UserWorkspaceAuthContext);
+  (ApiKeyAuthContext | UserWorkspaceAuthContext | ApplicationAuthContext);
