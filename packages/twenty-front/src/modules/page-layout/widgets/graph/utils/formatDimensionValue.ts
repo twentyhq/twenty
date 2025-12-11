@@ -4,8 +4,8 @@ import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/forma
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-    FieldMetadataType,
-    ObjectRecordGroupByDateGranularity,
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';

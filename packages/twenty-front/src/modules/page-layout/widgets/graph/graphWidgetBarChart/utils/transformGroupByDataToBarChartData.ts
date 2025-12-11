@@ -18,8 +18,8 @@ import { type BarDatum } from '@nivo/bar';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
 import {
-    AxisNameDisplay,
-    type BarChartConfiguration,
+  AxisNameDisplay,
+  type BarChartConfiguration,
 } from '~/generated/graphql';
 
 type TransformGroupByDataToBarChartDataParams = {

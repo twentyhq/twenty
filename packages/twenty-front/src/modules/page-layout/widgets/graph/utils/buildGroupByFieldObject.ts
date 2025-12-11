@@ -5,8 +5,8 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { CalendarStartDay } from 'twenty-shared';
 import {
-    type FirstDayOfTheWeek,
-    ObjectRecordGroupByDateGranularity,
+  type FirstDayOfTheWeek,
+  ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 

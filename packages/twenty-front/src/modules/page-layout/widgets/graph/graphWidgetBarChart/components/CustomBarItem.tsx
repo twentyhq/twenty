@@ -22,7 +22,9 @@ const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
 
   &:hover {
     filter: ${({ $isInteractive }) =>
-      $isInteractive ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})` : 'none'};
+      $isInteractive
+        ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
+        : 'none'};
   }
 `;
 
@@ -133,7 +135,7 @@ export const CustomBarItem = <D extends BarDatum>({
 
   const constrainedThicknessDimension = to(
     unconstrainedThicknessDimension,
-      (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
+    (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
   );
 
   const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>

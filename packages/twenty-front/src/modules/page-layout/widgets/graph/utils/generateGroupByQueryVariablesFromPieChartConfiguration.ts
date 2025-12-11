@@ -3,17 +3,17 @@ import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/cons
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import {
-    type AggregateOrderByWithGroupByField,
-    type ObjectRecordOrderByForCompositeField,
-    type ObjectRecordOrderByForRelationField,
-    type ObjectRecordOrderByForScalarField,
-    type ObjectRecordOrderByWithGroupByDateField,
+  type AggregateOrderByWithGroupByField,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
+  type ObjectRecordOrderByForScalarField,
+  type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 import {
-    buildGroupByFieldObject,
-    type GroupByFieldObject,
+  buildGroupByFieldObject,
+  type GroupByFieldObject,
 } from './buildGroupByFieldObject';
 
 export const generateGroupByQueryVariablesFromPieChartConfiguration = ({

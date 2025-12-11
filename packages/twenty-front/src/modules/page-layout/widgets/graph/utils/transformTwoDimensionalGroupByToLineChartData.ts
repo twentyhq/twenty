@@ -73,7 +73,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
     const isNewX = !xValueSet.has(xValue);
 
-    if (isNewX && xValueSet.size >= LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS) {
+    if (
+      isNewX &&
+      xValueSet.size >= LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS
+    ) {
       hasTooManyGroups = true;
       return;
     }

@@ -19,20 +19,20 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
-    formatGraphValue,
-    type GraphValueFormatOptions,
+  formatGraphValue,
+  type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    ResponsiveBar,
-    type BarCustomLayerProps,
-    type BarDatum,
-    type BarItemProps,
-    type ComputedBarDatum,
-    type ComputedDatum,
+  ResponsiveBar,
+  type BarCustomLayerProps,
+  type BarDatum,
+  type BarItemProps,
+  type ComputedBarDatum,
+  type ComputedDatum,
 } from '@nivo/bar';
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';

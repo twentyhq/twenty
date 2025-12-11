@@ -5,12 +5,12 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { getRelationFieldOrderBy } from '@/page-layout/widgets/graph/utils/getRelationFieldOrderBy';
 import {
-    type ObjectRecordGroupByDateGranularity,
-    type ObjectRecordOrderByForCompositeField,
-    type ObjectRecordOrderByForRelationField,
-    type ObjectRecordOrderByForScalarField,
-    type ObjectRecordOrderByWithGroupByDateField,
-    type OrderByDirection,
+  type ObjectRecordGroupByDateGranularity,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
+  type ObjectRecordOrderByForScalarField,
+  type ObjectRecordOrderByWithGroupByDateField,
+  type OrderByDirection,
 } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
