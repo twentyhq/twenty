@@ -235,7 +235,7 @@ export const Modal = ({
       ? document.body
       : null
     : container;
-  const isInContainer = isDefined(effectiveContainer);
+  const isInContainer = isDefined(container) && !ignoreContainer;
 
   const theme = useTheme();
 
