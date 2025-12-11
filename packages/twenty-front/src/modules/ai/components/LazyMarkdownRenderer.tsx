@@ -6,9 +6,45 @@ import {
 } from '@/ai/components/RecordLink';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Fragment, lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
+
+const TextWithRecordLinks = ({ text }: { text: string }) => {
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  RECORD_REFERENCE_REGEX.lastIndex = 0;
+
+  let match;
+
+  while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    const parsed = parseRecordReference(match[0]);
+
+    if (isDefined(parsed)) {
+      parts.push(
+        <RecordLink
+          key={match.index}
+          objectNameSingular={parsed.objectNameSingular}
+          recordId={parsed.recordId}
+          displayName={parsed.displayName}
+        />,
+      );
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return <>{parts}</>;
+};
 
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
@@ -31,6 +67,24 @@ const MarkdownRenderer = lazy(async () => {
             <TableScrollContainer>
               <table>{children}</table>
             </TableScrollContainer>
+          ),
+          p: ({ children }) => (
+            <p>
+              {typeof children === 'string' ? (
+                <TextWithRecordLinks text={children} />
+              ) : (
+                children
+              )}
+            </p>
+          ),
+          li: ({ children }) => (
+            <li>
+              {typeof children === 'string' ? (
+                <TextWithRecordLinks text={children} />
+              ) : (
+                children
+              )}
+            </li>
           ),
         }}
       >
@@ -102,87 +156,12 @@ const LoadingSkeleton = () => {
   );
 };
 
-const useTextWithRecordLinks = (text: string) => {
-  return useMemo(() => {
-    const parts: Array<
-      | string
-      | { type: 'record'; props: ReturnType<typeof parseRecordReference> }
-    > = [];
-    let lastIndex = 0;
-
-    RECORD_REFERENCE_REGEX.lastIndex = 0;
-
-    let match;
-
-    while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(text.slice(lastIndex, match.index));
-      }
-
-      const parsed = parseRecordReference(match[0]);
-
-      if (isDefined(parsed)) {
-        parts.push({ type: 'record', props: parsed });
-      }
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    if (lastIndex < text.length) {
-      parts.push(text.slice(lastIndex));
-    }
-
-    return parts;
-  }, [text]);
-};
-
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const parts = useTextWithRecordLinks(text);
-
-  // If there are no record references, render normally
-  const hasRecordReferences = parts.some(
-    (part) => typeof part === 'object' && part.type === 'record',
-  );
-
-  if (!hasRecordReferences) {
-    return (
-      <Suspense fallback={<LoadingSkeleton />}>
-        <MarkdownRenderer TableScrollContainer={StyledTableScrollContainer}>
-          {text}
-        </MarkdownRenderer>
-      </Suspense>
-    );
-  }
-
-  // Render with record links inline
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      {parts.map((part, index) => {
-        if (typeof part === 'string') {
-          return (
-            <MarkdownRenderer
-              key={index}
-              TableScrollContainer={StyledTableScrollContainer}
-            >
-              {part}
-            </MarkdownRenderer>
-          );
-        }
-
-        if (part.type === 'record' && isDefined(part.props)) {
-          return (
-            <Fragment key={index}>
-              <RecordLink
-                objectNameSingular={part.props.objectNameSingular}
-                recordId={part.props.recordId}
-                displayName={part.props.displayName}
-              />
-            </Fragment>
-          );
-        }
-
-        return null;
-      })}
+      <MarkdownRenderer TableScrollContainer={StyledTableScrollContainer}>
+        {text}
+      </MarkdownRenderer>
     </Suspense>
   );
 };

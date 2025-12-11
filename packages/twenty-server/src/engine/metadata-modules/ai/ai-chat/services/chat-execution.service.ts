@@ -242,7 +242,7 @@ export class ChatExecutionService {
       context += `\nFilters applied: ${filterDescriptions.join(', ')}`;
     }
 
-    context += `\nUse get-view-query-parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
+    context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
   }

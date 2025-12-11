@@ -71,14 +71,14 @@ describe('ViewToolsFactory', () => {
     it('should generate get-views and get-view-query-parameters tools', () => {
       const tools = viewToolsFactory.generateReadTools(mockWorkspaceId);
 
-      expect(tools).toHaveProperty('get-views');
-      expect(tools).toHaveProperty('get-view-query-parameters');
-      expect(tools['get-views']).toHaveProperty('description');
-      expect(tools['get-views']).toHaveProperty('inputSchema');
-      expect(tools['get-views']).toHaveProperty('execute');
-      expect(tools['get-view-query-parameters']).toHaveProperty('description');
-      expect(tools['get-view-query-parameters']).toHaveProperty('inputSchema');
-      expect(tools['get-view-query-parameters']).toHaveProperty('execute');
+      expect(tools).toHaveProperty('get_views');
+      expect(tools).toHaveProperty('get_view_query_parameters');
+      expect(tools['get_views']).toHaveProperty('description');
+      expect(tools['get_views']).toHaveProperty('inputSchema');
+      expect(tools['get_views']).toHaveProperty('execute');
+      expect(tools['get_view_query_parameters']).toHaveProperty('description');
+      expect(tools['get_view_query_parameters']).toHaveProperty('inputSchema');
+      expect(tools['get_view_query_parameters']).toHaveProperty('execute');
     });
 
     describe('get-views tool', () => {
@@ -92,7 +92,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['get-views'], {
+        const result = await callExecute(tools['get_views'], {
           input: { limit: 50 },
         });
 
@@ -122,7 +122,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['get-views'], {
+        const result = await callExecute(tools['get_views'], {
           input: { objectMetadataId: mockObjectMetadataId, limit: 50 },
         });
 
@@ -145,7 +145,7 @@ describe('ViewToolsFactory', () => {
 
         const tools = viewToolsFactory.generateReadTools(mockWorkspaceId);
 
-        const result = await callExecute(tools['get-views'], {
+        const result = await callExecute(tools['get_views'], {
           input: { limit: 2 },
         });
 
@@ -193,9 +193,9 @@ describe('ViewToolsFactory', () => {
     it('should generate create-view, update-view, and delete-view tools', () => {
       const tools = viewToolsFactory.generateWriteTools(mockWorkspaceId);
 
-      expect(tools).toHaveProperty('create-view');
-      expect(tools).toHaveProperty('update-view');
-      expect(tools).toHaveProperty('delete-view');
+      expect(tools).toHaveProperty('create_view');
+      expect(tools).toHaveProperty('update_view');
+      expect(tools).toHaveProperty('delete_view');
     });
 
     describe('create-view tool', () => {
@@ -216,7 +216,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['create-view'], {
+        const result = await callExecute(tools['create_view'], {
           input: {
             name: 'New View',
             objectMetadataId: mockObjectMetadataId,
@@ -265,7 +265,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['update-view'], {
+        const result = await callExecute(tools['update_view'], {
           input: {
             id: mockViewId,
             name: 'Updated Name',
@@ -295,7 +295,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['update-view'], {
+        const result = await callExecute(tools['update_view'], {
           input: {
             id: mockViewId,
             name: 'Updated Name',
@@ -364,7 +364,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['delete-view'], {
+        const result = await callExecute(tools['delete_view'], {
           input: { id: mockViewId },
         });
 
@@ -394,7 +394,7 @@ describe('ViewToolsFactory', () => {
         );
 
         await expect(
-          callExecute(tools['delete-view'], {
+          callExecute(tools['delete_view'], {
             input: { id: mockViewId },
           }),
         ).rejects.toThrow('You can only delete your own unlisted views');

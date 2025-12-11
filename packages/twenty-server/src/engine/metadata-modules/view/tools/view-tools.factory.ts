@@ -102,7 +102,7 @@ export class ViewToolsFactory {
     currentWorkspaceMemberId?: string,
   ): ToolSet {
     return {
-      'get-views': {
+      get_views: {
         description:
           'List views in the workspace. Views define how records are displayed, filtered, and sorted.',
         inputSchema: GetViewsInputSchema,
@@ -137,7 +137,7 @@ export class ViewToolsFactory {
           }));
         },
       },
-      'get-view-query-parameters': {
+      get_view_query_parameters: {
         description:
           'Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.',
         inputSchema: GetViewQueryParamsInputSchema,
@@ -154,7 +154,7 @@ export class ViewToolsFactory {
 
   generateWriteTools(workspaceId: string, userWorkspaceId?: string): ToolSet {
     return {
-      'create-view': {
+      create_view: {
         description:
           'Create a new view for an object. Views define how records are displayed.',
         inputSchema: CreateViewInputSchema,
@@ -197,7 +197,7 @@ export class ViewToolsFactory {
           }
         },
       },
-      'update-view': {
+      update_view: {
         description:
           'Update an existing view. You can change the name and icon.',
         inputSchema: UpdateViewInputSchema,
@@ -251,7 +251,7 @@ export class ViewToolsFactory {
           }
         },
       },
-      'delete-view': {
+      delete_view: {
         description: 'Delete a view by its ID.',
         inputSchema: DeleteViewInputSchema,
         execute: async (parameters: { input: { id: string } }) => {
