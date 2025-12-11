@@ -47,7 +47,7 @@ export const ExpandedFieldDisplay = ({
   });
 
   useListenClickOutside({
-    refs: [refs.domReference],
+    refs: [refs.domReference, refs.floating],
     callback: () => {
       onClickOutside?.();
     },
