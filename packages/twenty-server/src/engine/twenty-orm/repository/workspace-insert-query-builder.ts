@@ -226,7 +226,12 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadata);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadata,
+        this.connection.manager as WorkspaceEntityManager,
+        this.internalContext,
+      );
     }
   }
 

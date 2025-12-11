@@ -95,7 +95,7 @@ export class WorkspaceSelectQueryBuilder<
         identifiers: result.identifiers,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -126,24 +126,24 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawOne<U = any>(): Promise<U | undefined> {
+  override async getRawOne<U = any>(): Promise<U | undefined> {
     try {
       this.validatePermissions();
 
-      return super.getRawOne();
+      return await super.getRawOne();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawMany<U = any>(): Promise<U[]> {
+  override async getRawMany<U = any>(): Promise<U[]> {
     try {
       this.validatePermissions();
 
-      return super.getRawMany();
+      return await super.getRawMany();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -171,7 +171,7 @@ export class WorkspaceSelectQueryBuilder<
 
       return formattedResult;
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -201,13 +201,13 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  override getCount(): Promise<number> {
+  override async getCount(): Promise<number> {
     try {
       this.validatePermissions();
 
-      return super.getCount();
+      return await super.getCount();
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
@@ -240,7 +240,7 @@ export class WorkspaceSelectQueryBuilder<
 
       return [formattedResult, count];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 
