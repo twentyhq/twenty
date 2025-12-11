@@ -4,6 +4,7 @@ import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBa
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
 import { type BarDatum } from '@nivo/bar';
 
@@ -84,9 +85,10 @@ export const getBarChartTickConfig = ({
     axisFontSize,
   });
 
-  // TODO: Make this dynamic based on the data
-  const maxLeftAxisTickLabelLength =
-    BAR_CHART_CONSTANTS.MAX_LEFT_AXIS_LABEL_LENGTH;
+  const maxLeftAxisTickLabelLength = computeMaxLabelLengthForMargin({
+    marginSize: margins.left,
+    axisFontSize,
+  });
 
   return {
     categoryTickValues,
