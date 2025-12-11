@@ -13,7 +13,7 @@ export const findConflictingRecord = async (
   objectMetadata: FlatObjectMetadata,
   internalContext: WorkspaceInternalContext,
   entityManager: WorkspaceEntityManager,
-): Promise<{ conflictingRecordId: string } | null> => {
+): Promise<{ conflictingRecordId: string; fieldLabel: string } | null> => {
   const flatFields = getFlatFieldsFromFlatObjectMetadata(
     objectMetadata,
     internalContext.flatFieldMetadataMaps,
@@ -66,6 +66,7 @@ export const findConflictingRecord = async (
 
     return {
       conflictingRecordId: conflictingRecord.id,
+      fieldLabel: matchingField.label,
     };
   } catch {
     // If query fails (e.g., permission denied, record not found), return null

@@ -46,11 +46,16 @@ export const handleDuplicateKeyError = async (
     entityManager,
   );
 
+  const fieldLabel = conflictingRecord?.fieldLabel;
+  const userFriendlyMessage = fieldLabel
+    ? msg`This ${fieldLabel} value is already in use. Please check your data and try again.`
+    : msg`This record already exists. Please check your data and try again.`;
+
   const exception: DuplicateKeyErrorWithMetadata = new TwentyORMException(
     `A duplicate entry was detected`,
     TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
     {
-      userFriendlyMessage: msg`This record already exists. Please check your data and try again.`,
+      userFriendlyMessage,
     },
   );
 
