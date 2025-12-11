@@ -36,7 +36,9 @@ export class GlobalWorkspaceDataSourceService
         poolSize: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
         extra: {
           query_timeout: 10000, // 10 seconds,
-          idleTimeoutMillis: 120_000, // 2 minutes,
+          idleTimeoutMillis: this.twentyConfigService.get(
+            'PG_POOL_IDLE_TIMEOUT_MS',
+          ),
           allowExitOnIdle: this.twentyConfigService.get(
             'PG_POOL_ALLOW_EXIT_ON_IDLE',
           ),
