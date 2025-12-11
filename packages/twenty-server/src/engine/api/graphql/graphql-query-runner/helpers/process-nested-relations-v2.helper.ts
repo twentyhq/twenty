@@ -4,7 +4,6 @@ import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -23,6 +22,7 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -55,7 +55,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSourceInterface;
+    workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedFields: Record<string, any>;
@@ -111,7 +111,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSourceInterface;
+    workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
