@@ -1,11 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -278,4 +281,37 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('targetDashboard')
   targetDashboardId: string | null;
+
+  // todo: remove this decorator and the custom field
+  @WorkspaceDynamicRelation({
+    type: RelationType.MANY_TO_ONE,
+    argsFactory: (oppositeObjectMetadata) => ({
+      standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCustom,
+      name: oppositeObjectMetadata.nameSingular,
+      label: oppositeObjectMetadata.labelSingular,
+      description: `Timeline Activity ${oppositeObjectMetadata.labelSingular}`,
+      joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
+      icon: 'IconTimeline',
+    }),
+    inverseSideTarget: () => CustomWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  custom: Relation<CustomWorkspaceEntity>;
+
+  @WorkspaceDynamicRelation({
+    type: RelationType.MANY_TO_ONE,
+    argsFactory: (oppositeObjectMetadata) => ({
+      standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCustom,
+      name: oppositeObjectMetadata.nameSingular,
+      label: oppositeObjectMetadata.labelSingular,
+      description: `Timeline Activity ${oppositeObjectMetadata.labelSingular}`,
+      joinColumn: `target${capitalize(oppositeObjectMetadata.nameSingular)}Id`,
+      icon: 'IconTimeline',
+    }),
+    inverseSideTarget: () => CustomWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  targetCustom: Relation<CustomWorkspaceEntity>;
 }
