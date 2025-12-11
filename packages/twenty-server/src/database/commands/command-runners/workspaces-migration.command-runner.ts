@@ -4,11 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, type Repository } from 'typeorm';
 
-import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
-
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -23,7 +22,7 @@ export type WorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: WorkspacesMigrationCommandOptions;
   workspaceId: string;
-  dataSource?: WorkspaceDataSourceInterface;
+  dataSource?: GlobalWorkspaceDataSource;
   index: number;
   total: number;
 };
@@ -151,9 +150,7 @@ export abstract class WorkspacesMigrationCommandRunner<
               );
 
             const dataSource = isDefined(workspaceHasDataSource)
-              ? await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-                  workspaceId,
-                )
+              ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
               : undefined;
 
             await this.runOnWorkspace({
@@ -177,14 +174,6 @@ export abstract class WorkspacesMigrationCommandRunner<
         this.logger.warn(
           chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
         );
-      }
-
-      try {
-        await this.globalWorkspaceOrmManager.destroyDataSourceForWorkspace(
-          workspaceId,
-        );
-      } catch (error) {
-        this.logger.error(error);
       }
     }
 
