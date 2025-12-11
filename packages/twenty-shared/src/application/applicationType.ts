@@ -1,22 +1,50 @@
 import { type ApplicationVariables } from '@/application';
 import { type PermissionFlagType } from '@/constants';
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-type ObjectPermission = {
-  objectMetadataId: string;
+type WithObjectIdentifier = {
+  objectUniversalIdentifier: string;
+  objectNameSingular?: never;
+};
+
+type WithObjectName = {
+  objectNameSingular: string;
+  objectUniversalIdentifier?: never;
+};
+
+type BaseObjectPermission = {
   canReadObjectRecords?: boolean;
   canUpdateObjectRecords?: boolean;
   canSoftDeleteObjectRecords?: boolean;
   canDestroyObjectRecords?: boolean;
 };
 
-type FieldPermission = {
-  objectMetadataId: string;
-  fieldMetadataId: string;
+type ObjectPermission =
+  | (BaseObjectPermission & WithObjectIdentifier)
+  | (BaseObjectPermission & WithObjectName);
+
+type WithFieldIdentifier = {
+  fieldUniversalIdentifier: string;
+  fieldName?: never;
+};
+
+type WithFieldName = {
+  fieldName: string;
+  fieldUniversalIdentifier?: never;
+};
+
+type BaseFieldPermission = {
   canReadFieldValue?: boolean;
   canUpdateFieldValue?: boolean;
 };
 
-type Role = {
+type FieldPermission =
+  | (BaseFieldPermission & WithObjectIdentifier & WithFieldIdentifier)
+  | (BaseFieldPermission & WithObjectIdentifier & WithFieldName)
+  | (BaseFieldPermission & WithObjectName & WithFieldIdentifier)
+  | (BaseFieldPermission & WithObjectName & WithFieldName);
+
+type Role = SyncableEntityOptions & {
   label: string;
   description?: string;
   icon?: string;
@@ -30,14 +58,12 @@ type Role = {
   canBeAssignedToAgents?: boolean;
   canBeAssignedToApiKeys?: boolean;
   canBeAssignedToApplications?: boolean;
-  universalIdentifier: string;
   objectPermissions?: ObjectPermission[];
   fieldPermissions?: FieldPermission[];
   permissionFlags?: PermissionFlagType[];
 };
 
-export type Application = {
-  universalIdentifier: string;
+export type Application = SyncableEntityOptions & {
   displayName?: string;
   description?: string;
   icon?: string;

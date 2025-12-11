@@ -17,6 +17,24 @@ const config: ApplicationConfig = {
       isSecret: false,
     },
   },
+  applicationRole: {
+    universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+    label: 'hello-world-role',
+    description: 'A role to define app permissions',
+    canReadAllObjectRecords: false,
+    canUpdateAllObjectRecords: false,
+    canSoftDeleteAllObjectRecords: false,
+    canDestroyAllObjectRecords: false,
+    objectPermissions: [
+      {
+        objectNameSingular: 'postCard',
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      },
+    ],
+  },
 };
 
 export default config;

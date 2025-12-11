@@ -40,7 +40,6 @@ import {
   type ApplicationManifest,
   type ServerlessFunctionManifest,
   type ObjectManifest,
-  type FieldManifest,
 } from 'twenty-shared/application';
 import { findPathFile } from '@/cli/utils/find-path-file';
 import { getTsProgramAndDiagnostics } from '@/cli/utils/get-ts-program-and-diagnostics';
@@ -185,7 +184,7 @@ const collectObjects = (program: Program) => {
               }
 
               fields.push({
-                ...(fieldCfg as FieldManifest),
+                ...(fieldCfg as any),
                 ...(name ? { name } : {}),
               });
             }
@@ -429,7 +428,9 @@ export const extractTwentyAppConfig = (program: Program): Application => {
                   decl.initializer &&
                   isObjectLiteralExpression(decl.initializer)
                 ) {
-                  found = exprToValue(decl.initializer) as Application;
+                  found = exprToValue(
+                    decl.initializer,
+                  ) as unknown as Application;
                 }
               }
             }
