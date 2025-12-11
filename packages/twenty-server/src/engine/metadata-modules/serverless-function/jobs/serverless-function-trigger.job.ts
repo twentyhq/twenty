@@ -22,11 +22,11 @@ export class ServerlessFunctionTriggerJob {
 
   @Process(ServerlessFunctionTriggerJob.name)
   async handle(data: ServerlessFunctionTriggerJobData) {
-    await this.serverlessFunctionService.executeOneServerlessFunction(
-      data.serverlessFunctionId,
-      data.workspaceId,
-      data.payload || {},
-      'draft',
-    );
+    await this.serverlessFunctionService.executeOneServerlessFunction({
+      id: data.serverlessFunctionId,
+      workspaceId: data.workspaceId,
+      payload: data.payload || {},
+      version: 'draft',
+    });
   }
 }

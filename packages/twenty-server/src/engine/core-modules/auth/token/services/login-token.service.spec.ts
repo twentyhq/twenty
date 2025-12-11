@@ -143,10 +143,7 @@ describe('LoginTokenService', () => {
       const result = await service.verifyLoginToken(mockToken);
 
       expect(result).toEqual({ sub: mockEmail });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'LOGIN',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken, {
         json: true,
       });

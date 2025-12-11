@@ -36,10 +36,7 @@ export class RefreshTokenService {
   async verifyRefreshToken(refreshToken: string) {
     const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
 
-    await this.jwtWrapperService.verifyJwtToken(
-      refreshToken,
-      JwtTokenTypeEnum.REFRESH,
-    );
+    await this.jwtWrapperService.verifyJwtToken(refreshToken);
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 

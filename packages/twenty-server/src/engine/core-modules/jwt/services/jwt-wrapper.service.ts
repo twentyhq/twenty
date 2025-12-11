@@ -17,13 +17,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  type AccessTokenJwtPayload,
-  type FileTokenJwtPayload,
   type JwtPayload,
   JwtTokenTypeEnum,
-  type RefreshTokenJwtPayload,
-  type TransientTokenJwtPayload,
-  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -52,18 +47,8 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(
-    token: string,
-    type: JwtTokenTypeEnum,
-    options?: JwtVerifyOptions,
-  ) {
-    const payload = this.decode<
-      | TransientTokenJwtPayload
-      | RefreshTokenJwtPayload
-      | WorkspaceAgnosticTokenJwtPayload
-      | AccessTokenJwtPayload
-      | FileTokenJwtPayload
-    >(token, {
+  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
+    const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
 
@@ -71,11 +56,14 @@ export class JwtWrapperService {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
 
-    // @TODO: Migrate to use type from payload instead of parameter
-    type =
-      payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        : type;
+    // This is due to an unfortunate mistake in the secret generation of api_key
+    // tokens. Changing that would break the existing api_key, so we leave it
+    // like this for now
+    // (see api-key.service.ts generateApiKeyToken method)
+    const type =
+      payload.type === JwtTokenTypeEnum.API_KEY
+        ? JwtTokenTypeEnum.ACCESS
+        : payload.type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
@@ -95,7 +83,11 @@ export class JwtWrapperService {
       }
 
       const appSecretBody =
-        'workspaceId' in payload ? payload.workspaceId : payload.userId;
+        'workspaceId' in payload
+          ? payload.workspaceId
+          : 'userId' in payload
+            ? payload.userId
+            : undefined;
 
       if (!isDefined(appSecretBody)) {
         throw new AuthException(

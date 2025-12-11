@@ -16,6 +16,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       WorkspaceEntity,
       UserWorkspaceEntity,
       ApiKeyEntity,
+      ApplicationEntity,
     ]),
     TypeORMModule,
     DataSourceModule,
@@ -38,6 +41,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     LoginTokenService,
     RefreshTokenService,
     WorkspaceAgnosticTokenService,
+    ApplicationTokenService,
   ],
   exports: [
     RenewTokenService,
@@ -45,6 +49,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     LoginTokenService,
     RefreshTokenService,
     WorkspaceAgnosticTokenService,
+    ApplicationTokenService,
   ],
 })
 export class TokenModule {}

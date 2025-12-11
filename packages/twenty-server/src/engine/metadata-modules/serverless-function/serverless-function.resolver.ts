@@ -163,12 +163,12 @@ export class ServerlessFunctionResolver {
     try {
       const { id, payload, version } = input;
 
-      return await this.serverlessFunctionService.executeOneServerlessFunction(
+      return await this.serverlessFunctionService.executeOneServerlessFunction({
         id,
         workspaceId,
         payload,
         version,
-      );
+      });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }
