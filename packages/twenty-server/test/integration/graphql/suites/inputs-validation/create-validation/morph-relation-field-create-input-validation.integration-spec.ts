@@ -8,7 +8,7 @@ import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inpu
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const FIELD_METADATA_TYPE = FieldMetadataType.TEXT;
+const FIELD_METADATA_TYPE = FieldMetadataType.MORPH_RELATION;
 
 const failingTestCases =
   failingCreateInputByFieldMetadataType[FIELD_METADATA_TYPE];
@@ -57,7 +57,8 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     );
   });
 
-  describe('Rest create input - failure', () => {
+  // TODO - add when REST API can handle morph relations
+  xdescribe('Rest create input - failure', () => {
     it.each(
       failingTestCases.map((testCase) => ({
         ...testCase,
@@ -92,7 +93,8 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     );
   });
 
-  describe('Rest create input - success', () => {
+  // TODO - add when REST API can handle morph relations
+  xdescribe('Rest create input - success', () => {
     it.each(
       successfulTestCases.map((testCase) => ({
         ...testCase,
