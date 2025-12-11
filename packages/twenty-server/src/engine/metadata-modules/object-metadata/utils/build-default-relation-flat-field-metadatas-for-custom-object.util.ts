@@ -8,7 +8,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -29,6 +29,17 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'noteTarget',
   'taskTarget',
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
+
+const morphIdByRelationObjectNameSingular = {
+  timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+  favorite: null,
+  attachment: null,
+  noteTarget: null,
+  taskTarget: null,
+} satisfies Record<
+  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
+  string | null
+>;
 
 // TODO: once we have finished migrating, we can delete custom code
 // once we migrate timeline activity to morph relations, we can add it.
@@ -74,24 +85,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
     };
   }, {});
 
-  const morphIdByRelationObjectNameSingular =
-    DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.filter(
-      (objectNameSingular) => objectNameSingular === 'timelineActivity',
-    ).reduce<Record<string, string>>((acc, objectNameSingular) => {
-      if (objectNameSingular === 'timelineActivity') {
-        return {
-          ...acc,
-          [objectNameSingular]:
-            TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
-        };
-      }
-
-      return {
-        ...acc,
-        [objectNameSingular]: null,
-      };
-    }, {});
-
   const result =
     DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
       (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
@@ -118,17 +111,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           );
         }
 
-        const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityMaps: existingFlatObjectMetadataMaps,
-          flatEntityId: targetFlatObjectMetadataId,
-        });
-
-        if (!isDefined(targetFlatObjectMetadata)) {
-          throw new ObjectMetadataException(
-            `Standard target object metadata of id ${targetFlatObjectMetadataId} not found in cache`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityMaps: existingFlatObjectMetadataMaps,
+            flatEntityId: targetFlatObjectMetadataId,
+          });
 
         const standardId =
           CUSTOM_OBJECT_STANDARD_FIELD_IDS[
