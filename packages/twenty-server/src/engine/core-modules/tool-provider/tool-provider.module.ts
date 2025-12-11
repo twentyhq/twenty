@@ -6,6 +6,7 @@ import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
+import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
@@ -14,6 +15,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ToolProviderService } from './services/tool-provider.service';
@@ -37,6 +39,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ObjectMetadataModule,
     FieldMetadataModule,
     PermissionsModule,
+    ViewModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
@@ -44,6 +47,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ActionToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
+    ViewToolProvider,
     WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
@@ -51,17 +55,20 @@ import { ToolRegistryService } from './services/tool-registry.service';
         actionProvider: ActionToolProvider,
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
+        viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         metadataProvider,
+        viewProvider,
         workflowProvider,
       ],
       inject: [
         ActionToolProvider,
         DatabaseToolProvider,
         MetadataToolProvider,
+        ViewToolProvider,
         WorkflowToolProvider,
       ],
     },

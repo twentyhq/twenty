@@ -15,14 +15,14 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type ToolIndexEntry = {
   name: string;
   description: string;
-  category: 'database' | 'action' | 'workflow' | 'metadata';
+  category: 'database' | 'action' | 'workflow' | 'metadata' | 'view';
   objectName?: string;
   operation?: string;
 };
 
 export type ToolSearchOptions = {
   limit?: number;
-  category?: 'database' | 'action' | 'workflow' | 'metadata';
+  category?: 'database' | 'action' | 'workflow' | 'metadata' | 'view';
 };
 
 export type ToolContext = {
@@ -173,6 +173,7 @@ export class ToolRegistryService {
       WORKFLOW: 'workflow',
       METADATA: 'metadata',
       NATIVE_MODEL: 'action',
+      VIEW: 'view',
     };
 
     return Object.entries(tools).map(([name, tool]) => ({
