@@ -12,6 +12,7 @@ import {
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
+  GraphOrderBy,
   type LineChartConfiguration,
 } from '~/generated/graphql';
 import {
@@ -117,24 +118,21 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     | ObjectRecordOrderByForRelationField
   > = [];
 
-  if (isDefined(chartConfiguration.primaryAxisOrderBy)) {
-    orderBy.push(
-      getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.primaryAxisOrderBy,
-        groupByField: groupByFieldX,
-        groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
-        aggregateOperation,
-        dateGranularity: shouldApplyDateGranularityX
-          ? (chartConfiguration.primaryAxisDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY)
-          : undefined,
-      }),
-    );
-  }
-  if (
-    isDefined(groupByFieldY) &&
-    isDefined(chartConfiguration.secondaryAxisOrderBy)
-  ) {
+  orderBy.push(
+    getGroupByOrderBy({
+      graphOrderBy:
+        chartConfiguration.primaryAxisOrderBy ?? GraphOrderBy.FIELD_ASC,
+      groupByField: groupByFieldX,
+      groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyDateGranularityX
+        ? (chartConfiguration.primaryAxisDateGranularity ??
+          GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    }),
+  );
+
+  if (isDefined(groupByFieldY)) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
     const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind({
@@ -148,7 +146,8 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
     orderBy.push(
       getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.secondaryAxisOrderBy,
+        graphOrderBy:
+          chartConfiguration.secondaryAxisOrderBy ?? GraphOrderBy.FIELD_ASC,
         groupByField: groupByFieldY,
         groupBySubFieldName:
           chartConfiguration.secondaryAxisGroupBySubFieldName,
