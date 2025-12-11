@@ -36,6 +36,7 @@ import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/se
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -96,13 +97,13 @@ export class ServerlessFunctionService {
     workspaceId,
     payload,
     version = 'latest',
-    userId,
+    authContext,
   }: {
     id: string;
     workspaceId: string;
     payload: object;
     version?: string;
-    userId?: string;
+    authContext?: AuthContext;
   }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
@@ -121,7 +122,7 @@ export class ServerlessFunctionService {
     const applicationToken = isDefined(functionToExecute.applicationId)
       ? await this.applicationTokenService.generateApplicationToken({
           workspaceId,
-          userId,
+          userId: authContext?.user?.id,
           applicationId: functionToExecute.applicationId,
           expiresInSeconds: functionToExecute.timeoutSeconds,
         })

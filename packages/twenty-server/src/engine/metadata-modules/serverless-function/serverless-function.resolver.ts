@@ -29,9 +29,8 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.dto';
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
 import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { FullAuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -160,10 +159,9 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneServerlessFunction(
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @FullAuthContext() authContext: AuthContext,
   ) {
     try {
       const { id, payload, version } = input;
@@ -173,7 +171,7 @@ export class ServerlessFunctionResolver {
         workspaceId,
         payload,
         version,
-        userId: user?.id,
+        authContext,
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);

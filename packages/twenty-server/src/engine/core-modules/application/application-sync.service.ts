@@ -41,8 +41,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -64,7 +64,6 @@ export class ApplicationSyncService {
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly permissionService: PermissionFlagService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -245,10 +244,16 @@ export class ApplicationSyncService {
       isDefined(applicationRole?.objectPermissions) &&
       applicationRole.objectPermissions.length > 0
     ) {
-      const { flatObjectMetadataMaps, objectIdByNameSingular } =
-        await this.workflowCommonWorkspaceService.getFlatEntityMaps(
-          workspaceId,
+      const { flatObjectMetadataMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps'],
+          },
         );
+
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const formattedObjectPermissions = applicationRole.objectPermissions
         .map((perm) => ({

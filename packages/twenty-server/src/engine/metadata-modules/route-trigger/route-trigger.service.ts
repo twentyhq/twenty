@@ -15,6 +15,7 @@ import {
 } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class RouteTriggerService {
@@ -88,22 +89,24 @@ export class RouteTriggerService {
     request: Request;
     workspaceId: string;
   }) {
-    const { workspace } =
+    const authContext =
       await this.accessTokenService.validateTokenByRequest(request);
 
-    if (!isDefined(workspace)) {
+    if (!isDefined(authContext.workspace)) {
       throw new RouteTriggerException(
         'Workspace not found',
         RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 
-    if (workspace.id !== workspaceId) {
+    if (authContext.workspace.id !== workspaceId) {
       throw new RouteTriggerException(
         'You are not authorized',
         RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+
+    return authContext;
   }
 
   async handle({
@@ -119,8 +122,10 @@ export class RouteTriggerService {
         httpMethod,
       });
 
+    let authContext: AuthContext | undefined = undefined;
+
     if (routeTriggerWithPathParams.routeTrigger.isAuthRequired) {
-      await this.validateWorkspaceFromRequest({
+      authContext = await this.validateWorkspaceFromRequest({
         request,
         workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
       });
@@ -142,7 +147,7 @@ export class RouteTriggerService {
         workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
         payload: executionParams,
         version: 'draft',
-        request,
+        authContext,
       });
 
     if (!isDefined(result)) {
