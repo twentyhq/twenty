@@ -1,14 +1,10 @@
 import { type FunctionConfig } from 'twenty-sdk';
-import { createClient } from '../../generated';
+import Twenty from '../../generated';
 
 export const main = async (params: { recipient?: string }) => {
   try {
-    const client = createClient({
+    const client = new Twenty({
       url: `${process.env.TWENTY_API_URL}/graphql`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.APPLICATION_TOKEN}`,
-      },
     });
 
     const createPostCard = await client.mutation({
