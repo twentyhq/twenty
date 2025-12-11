@@ -7,7 +7,7 @@ export const main = async (params: { recipient?: string }) => {
       url: `${process.env.TWENTY_API_URL}/graphql`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+        Authorization: `Bearer ${process.env.APPLICATION_TOKEN}`,
       },
     });
 

@@ -20,3 +20,4 @@ export type {
   RouteTrigger,
   ServerlessFunctionTriggerManifest,
 } from './serverlessFunctionManifestType';
+export type { SyncableEntityOptions } from './syncableEntityOptionsType';
