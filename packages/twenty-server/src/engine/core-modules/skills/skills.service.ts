@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { SKILL_DEFINITIONS } from './skill-definitions';
+import { SkillDefinition } from 'src/engine/core-modules/skills/skill-definition.type';
+import { DASHBOARD_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/dashboard-building.skill';
+import { DATA_MANIPULATION_SKILL } from 'src/engine/core-modules/skills/skills/data-manipulation.skill';
+import { METADATA_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/metadata-building.skill';
+import { RESEARCH_SKILL } from 'src/engine/core-modules/skills/skills/research.skill';
+import { WORKFLOW_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/workflow-building.skill';
+
+const SKILL_DEFINITIONS: SkillDefinition[] = [
+  WORKFLOW_BUILDING_SKILL,
+  DATA_MANIPULATION_SKILL,
+  DASHBOARD_BUILDING_SKILL,
+  METADATA_BUILDING_SKILL,
+  RESEARCH_SKILL,
+];
 
 export type Skill = {
   name: string;

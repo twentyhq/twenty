@@ -15,7 +15,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { SkillsService } from 'src/engine/core-modules/skills';
+import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
   type ToolIndexEntry,
   ToolRegistryService,

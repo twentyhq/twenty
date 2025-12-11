@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type Skill } from 'src/engine/core-modules/skills';
+import { type Skill } from 'src/engine/core-modules/skills/skills.service';
 
 export const LOAD_SKILL_TOOL_NAME = 'load_skill';
 
