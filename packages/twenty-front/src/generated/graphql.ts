@@ -1891,6 +1891,7 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateMessageFoldersSyncStatus: UpdateMessageFoldersSyncStatusSuccess;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
@@ -2623,6 +2624,11 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateMessageFoldersSyncStatusArgs = {
+  input: UpdateMessageFoldersSyncStatusInput;
 };
 
 
@@ -4138,6 +4144,17 @@ export type UpdateFieldInput = {
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
+};
+
+export type UpdateMessageFoldersSyncStatusInput = {
+  isSynced: Scalars['Boolean'];
+  messageChannelId: Scalars['UUID'];
+  messageFolderIds: Array<Scalars['UUID']>;
+};
+
+export type UpdateMessageFoldersSyncStatusSuccess = {
+  __typename?: 'UpdateMessageFoldersSyncStatusSuccess';
+  success: Scalars['Boolean'];
 };
 
 export type UpdateObjectPayload = {

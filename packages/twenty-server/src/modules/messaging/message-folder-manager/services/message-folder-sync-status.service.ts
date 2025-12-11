@@ -134,7 +134,7 @@ export class MessageFolderSyncStatusService {
                 );
 
                 await messageFolderRepository.update(
-                  { id: In(foldersToUnsync) },
+                  { id: In(foldersToUnsync), messageChannelId },
                   { isSynced: false },
                   transactionManager,
                 );
@@ -154,7 +154,7 @@ export class MessageFolderSyncStatusService {
         }
 
         await messageFolderRepository.update(
-          { id: In(messageFolderIds) },
+          { id: In(messageFolderIds), messageChannelId },
           { isSynced },
           transactionManager,
         );
