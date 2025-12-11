@@ -189,6 +189,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
+    // Note: This should be removed once we've refactored the runner optimistic rendering
+    // As with the current implementation passing an empty workspace migration might result
+    // in dependency flat entity maps invalidation
+    if (validateAndBuildResult.workspaceMigration.actions.length === 0) {
+      return;
+    }
+
     await this.workspaceMigrationRunnerV2Service
       .run(validateAndBuildResult.workspaceMigration)
       .catch((error) => {

@@ -20,7 +20,7 @@ export const fromFlatAgentWithRoleIdToAgentDto = ({
   workspaceId,
   roleId,
 }: FlatAgentWithRoleId): AgentDTO => ({
-  createdAt,
+  createdAt: new Date(createdAt),
   description: description ?? undefined,
   evaluationInputs,
   id,
@@ -32,7 +32,7 @@ export const fromFlatAgentWithRoleIdToAgentDto = ({
   prompt,
   responseFormat,
   standardId,
-  updatedAt,
+  updatedAt: new Date(updatedAt),
   workspaceId,
   applicationId: applicationId ?? undefined,
   icon: icon ?? undefined,

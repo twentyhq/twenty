@@ -211,6 +211,7 @@ export const AttachmentList = ({
             size="large"
             isClosable
             onClose={handleClosePreview}
+            ignoreContainer
           >
             <StyledModalHeader>
               <StyledHeader>

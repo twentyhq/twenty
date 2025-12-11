@@ -14,15 +14,20 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
 
   return {
     ...indexMetadataEntityWithoutRelations,
+    createdAt: indexMetadataEntity.createdAt.toISOString(),
+    updatedAt: indexMetadataEntity.updatedAt.toISOString(),
     universalIdentifier:
       indexMetadataEntityWithoutRelations.universalIdentifier ??
       indexMetadataEntityWithoutRelations.id,
     flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
-      (indexFieldMetadata) =>
-        removePropertiesFromRecord(indexFieldMetadata, [
+      (indexFieldMetadata) => ({
+        ...removePropertiesFromRecord(indexFieldMetadata, [
           'indexMetadata',
           'fieldMetadata',
         ]),
+        createdAt: indexFieldMetadata.createdAt.toISOString(),
+        updatedAt: indexFieldMetadata.updatedAt.toISOString(),
+      }),
     ),
   };
 };

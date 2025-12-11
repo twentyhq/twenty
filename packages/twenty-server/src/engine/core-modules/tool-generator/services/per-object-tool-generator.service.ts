@@ -10,10 +10,6 @@ import {
   type ToolGeneratorContext,
 } from 'src/engine/core-modules/tool-generator/types/tool-generator.types';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
-import {
-  type ToolHints,
-  type ToolOperation,
-} from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -32,12 +28,10 @@ export class PerObjectToolGeneratorService {
   async generate(
     context: ToolGeneratorContext,
     factories: ToolFactory[],
-    toolHints?: ToolHints,
   ): Promise<ToolSet> {
-    const objects = await this.getFilteredObjectsWithPermissions(
+    const objects = await this.getObjectsWithPermissions(
       context.workspaceId,
       context.rolePermissionConfig,
-      toolHints,
     );
 
     const tools: ToolSet = {};
@@ -55,11 +49,10 @@ export class PerObjectToolGeneratorService {
     return tools;
   }
 
-  // Get workspace objects with their permissions, filtered by toolHints
-  async getFilteredObjectsWithPermissions(
+  // Get workspace objects with their permissions
+  async getObjectsWithPermissions(
     workspaceId: string,
     rolePermissionConfig: RolePermissionConfig,
-    toolHints?: ToolHints,
   ): Promise<ObjectWithPermission[]> {
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -110,40 +103,12 @@ export class PerObjectToolGeneratorService {
     }));
 
     // Filter out workflow-related objects
-    let filteredObjectMetadata = allObjectMetadata.filter(
+    const filteredObjectMetadata = allObjectMetadata.filter(
       (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
     );
 
-    // Apply toolHints filtering if provided
-    if (toolHints?.relevantObjects && toolHints.relevantObjects.length > 0) {
-      const relevantSet = new Set(toolHints.relevantObjects);
-      const originalCount = filteredObjectMetadata.length;
-
-      filteredObjectMetadata = filteredObjectMetadata.filter(
-        (obj) =>
-          relevantSet.has(obj.nameSingular) || relevantSet.has(obj.namePlural),
-      );
-
-      this.logger.log(
-        `Tool filtering: reduced from ${originalCount} to ${filteredObjectMetadata.length} objects based on hints: ${toolHints.relevantObjects.join(', ')}`,
-      );
-
-      if (filteredObjectMetadata.length === 0) {
-        this.logger.warn(
-          `Tool filtering resulted in 0 objects. Hints may be incorrect: ${toolHints.relevantObjects.join(', ')}`,
-        );
-      }
-    }
-
     // Map to ObjectWithPermission
     const result: ObjectWithPermission[] = [];
-
-    const operationsSet = toolHints?.operations
-      ? new Set(toolHints.operations)
-      : null;
-
-    const shouldIncludeOperation = (operation: ToolOperation) =>
-      !operationsSet || operationsSet.has(operation);
 
     for (const objectMetadata of filteredObjectMetadata) {
       const permission = objectPermissions[objectMetadata.id];
@@ -155,22 +120,11 @@ export class PerObjectToolGeneratorService {
       result.push({
         objectMetadata,
         restrictedFields: permission.restrictedFields,
-        canCreate:
-          shouldIncludeOperation('create') && permission.canUpdateObjectRecords,
-        canRead:
-          shouldIncludeOperation('find') && permission.canReadObjectRecords,
-        canUpdate:
-          shouldIncludeOperation('update') && permission.canUpdateObjectRecords,
-        canDelete:
-          shouldIncludeOperation('delete') &&
-          permission.canSoftDeleteObjectRecords,
+        canCreate: permission.canUpdateObjectRecords,
+        canRead: permission.canReadObjectRecords,
+        canUpdate: permission.canUpdateObjectRecords,
+        canDelete: permission.canSoftDeleteObjectRecords,
       });
-    }
-
-    if (operationsSet) {
-      this.logger.log(
-        `Tool filtering: included operations [${Array.from(operationsSet).join(', ')}]`,
-      );
     }
 
     return result;

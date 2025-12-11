@@ -14,7 +14,9 @@ const generateFakeObjectRecordEventWithPrefix = ({
   prefix: string;
 }): RecordOutputSchema => {
   const { flatObjectMetadata } = objectMetadataInfo;
-  const recordFields = generateObjectRecordFields({ objectMetadataInfo });
+  const recordFields = generateObjectRecordFields({
+    objectMetadataInfo,
+  });
   const prefixedRecordFields = Object.entries(recordFields).reduce(
     (acc, [key, value]) => {
       acc[`${prefix}.${key}`] = value;

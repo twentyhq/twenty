@@ -12,7 +12,7 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
@@ -84,14 +84,14 @@ const buildUpgradeCommandModule = async ({
         useFactory: (
           workspaceRepository: Repository<WorkspaceEntity>,
           twentyConfigService: TwentyConfigService,
-          twentyORMGlobalManager: TwentyORMGlobalManager,
+          globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
           dataSourceService: DataSourceService,
           syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
         ) => {
           return new commandRunner(
             workspaceRepository,
             twentyConfigService,
-            twentyORMGlobalManager,
+            globalWorkspaceOrmManager,
             dataSourceService,
             syncWorkspaceMetadataCommand,
           );
@@ -99,7 +99,7 @@ const buildUpgradeCommandModule = async ({
         inject: [
           getRepositoryToken(WorkspaceEntity),
           TwentyConfigService,
-          TwentyORMGlobalManager,
+          GlobalWorkspaceOrmManager,
           DataSourceService,
           SyncWorkspaceMetadataCommand,
         ],
@@ -132,11 +132,14 @@ const buildUpgradeCommandModule = async ({
         },
       },
       {
-        provide: TwentyORMGlobalManager,
+        provide: GlobalWorkspaceOrmManager,
         useValue: {
           connect: jest.fn(),
           destroyDataSourceForWorkspace: jest.fn(),
           getDataSourceForWorkspace: jest.fn(),
+          executeInWorkspaceContext: jest
+            .fn()
+            .mockImplementation((_authContext: any, fn: () => any) => fn()),
         },
       },
       {
@@ -162,7 +165,7 @@ describe('UpgradeCommandRunner', () => {
   let runAfterSyncMetadataSpy: jest.SpyInstance;
   let runBeforeSyncMetadataSpy: jest.SpyInstance;
   let runCoreMigrationsSpy: jest.SpyInstance;
-  let twentyORMGlobalManagerSpy: TwentyORMGlobalManager;
+  let globalWorkspaceOrmManagerSpy: GlobalWorkspaceOrmManager;
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
@@ -215,8 +218,8 @@ describe('UpgradeCommandRunner', () => {
       getRepositoryToken(WorkspaceEntity),
     );
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
-    twentyORMGlobalManagerSpy = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
+    globalWorkspaceOrmManagerSpy = module.get<GlobalWorkspaceOrmManager>(
+      GlobalWorkspaceOrmManager,
     );
   };
 
@@ -246,7 +249,7 @@ describe('UpgradeCommandRunner', () => {
     expect(failReport.length).toBe(0);
 
     [
-      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
+      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
       upgradeCommandRunner.runOnWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
@@ -278,7 +281,7 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.runBeforeSyncMetadata,
       upgradeCommandRunner.runAfterSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
-      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
+      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
       numberOfWorkspace,
@@ -303,7 +306,7 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.runBeforeSyncMetadata,
       upgradeCommandRunner.runAfterSyncMetadata,
       syncWorkspaceMetadataCommand.runOnWorkspace,
-      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
+      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
     // Verify order of execution
