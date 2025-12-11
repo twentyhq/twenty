@@ -13,7 +13,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
@@ -131,12 +130,6 @@ const buildUpgradeCommandModule = async ({
         provide: DataSourceService,
         useValue: mockDataSourceService,
       },
-      {
-        provide: SyncWorkspaceMetadataCommand,
-        useValue: {
-          runOnWorkspace: jest.fn(),
-        },
-      },
     ],
   }).compile();
 
@@ -146,7 +139,6 @@ const buildUpgradeCommandModule = async ({
 describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
   let workspaceRepository: Repository<WorkspaceEntity>;
-  let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let runCoreMigrationsSpy: jest.SpyInstance;
   let globalWorkspaceOrmManagerSpy: GlobalWorkspaceOrmManager;
 
@@ -192,7 +184,6 @@ describe('UpgradeCommandRunner', () => {
     workspaceRepository = module.get<Repository<WorkspaceEntity>>(
       getRepositoryToken(WorkspaceEntity),
     );
-    syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
     globalWorkspaceOrmManagerSpy = module.get<GlobalWorkspaceOrmManager>(
       GlobalWorkspaceOrmManager,
     );
@@ -228,10 +219,9 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.runOnWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
 
-    [
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      workspaceRepository.update,
-    ].forEach((fn) => expect(fn).not.toHaveBeenCalled());
+    [workspaceRepository.update].forEach((fn) =>
+      expect(fn).not.toHaveBeenCalled(),
+    );
   });
 
   it('should run upgrade over several workspaces', async () => {
@@ -251,7 +241,6 @@ describe('UpgradeCommandRunner', () => {
 
     [
       upgradeCommandRunner.runOnWorkspace,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
       globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
     ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
