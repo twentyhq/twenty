@@ -147,8 +147,6 @@ describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
   let workspaceRepository: Repository<WorkspaceEntity>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
-  let runAfterSyncMetadataSpy: jest.SpyInstance;
-  let runBeforeSyncMetadataSpy: jest.SpyInstance;
   let runCoreMigrationsSpy: jest.SpyInstance;
   let globalWorkspaceOrmManagerSpy: GlobalWorkspaceOrmManager;
 
