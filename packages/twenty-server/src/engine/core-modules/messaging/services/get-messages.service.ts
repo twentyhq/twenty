@@ -83,6 +83,7 @@ export class GetMessagesService {
           await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
             workspaceId,
             'person',
+            { shouldBypassPermissionChecks: true },
           );
         const personIds = (
           await personRepository.find({
@@ -131,6 +132,7 @@ export class GetMessagesService {
           await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
             workspaceId,
             'opportunity',
+            { shouldBypassPermissionChecks: true },
           );
 
         const opportunity = await opportunityRepository.findOne({

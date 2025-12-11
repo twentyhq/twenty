@@ -13,6 +13,7 @@ import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils
 const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 500;
 
 type MessageBatchRawResult = {
+  mcmaId: string;
   messageId: string;
   messageExternalId: string;
   participantHandle: string;
@@ -48,28 +49,45 @@ export class MessagingDeleteGroupEmailMessagesService {
             'messageChannelMessageAssociation',
           );
 
-        let offset = 0;
+        const firstRecord =
+          await messageChannelMessageAssociationRepository.findOne({
+            where: { messageChannelId },
+            order: { id: 'ASC' },
+          });
+
+        if (!firstRecord) {
+          this.logger.log(
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message associations found`,
+          );
+
+          return 0;
+        }
+
+        let cursorId: string | undefined = firstRecord.id;
         let totalDeletedCount = 0;
 
-        while (true) {
-          const batch = await messageChannelMessageAssociationRepository
-            .createQueryBuilder('mcma')
-            .select('mcma.messageId', 'messageId')
-            .addSelect('mcma.messageExternalId', 'messageExternalId')
-            .addSelect('participant.handle', 'participantHandle')
-            .innerJoin('mcma.message', 'message')
-            .innerJoin(
-              'message.messageParticipants',
-              'participant',
-              'participant.role = :role',
-              { role: MessageParticipantRole.FROM },
-            )
-            .where('mcma.messageChannelId = :messageChannelId', {
-              messageChannelId,
-            })
-            .skip(offset)
-            .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
-            .getRawMany<MessageBatchRawResult>();
+        while (isDefined(cursorId)) {
+          const batch: MessageBatchRawResult[] =
+            await messageChannelMessageAssociationRepository
+              .createQueryBuilder('mcma')
+              .select('mcma.id', 'mcmaId')
+              .addSelect('mcma.messageId', 'messageId')
+              .addSelect('mcma.messageExternalId', 'messageExternalId')
+              .addSelect('participant.handle', 'participantHandle')
+              .innerJoin('mcma.message', 'message')
+              .innerJoin(
+                'message.messageParticipants',
+                'participant',
+                'participant.role = :role',
+                { role: MessageParticipantRole.FROM },
+              )
+              .where('mcma.messageChannelId = :messageChannelId', {
+                messageChannelId,
+              })
+              .andWhere('mcma.id >= :cursorId', { cursorId })
+              .orderBy('mcma.id', 'ASC')
+              .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
+              .getRawMany<MessageBatchRawResult>();
 
           if (batch.length === 0) {
             break;
@@ -119,9 +137,7 @@ export class MessagingDeleteGroupEmailMessagesService {
             break;
           }
 
-          if (groupEmailRecords.length === 0) {
-            offset += MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE;
-          }
+          cursorId = batch[batch.length - 1].mcmaId;
         }
 
         this.logger.log(

@@ -266,6 +266,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetCompany',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

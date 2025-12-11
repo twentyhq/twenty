@@ -258,7 +258,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'note',
+      targetFieldName: 'targetNote',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

@@ -963,6 +963,11 @@ msgstr "Dicembre"
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Il valore predefinito \"{defaultValue}\" deve essere uno dei valori opzione"
 
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr ""
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
@@ -2249,6 +2254,11 @@ msgstr "I payload di creazione di relazioni morfologiche devono contenere solo r
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "I payload di creazione di relazioni morfologiche devono contenere solo relazioni allo stesso metadato dell'oggetto"
+
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr ""
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

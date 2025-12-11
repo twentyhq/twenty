@@ -472,7 +472,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'company',
+      targetFieldName: 'targetCompany',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

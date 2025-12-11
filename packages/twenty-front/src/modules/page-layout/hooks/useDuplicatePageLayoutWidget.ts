@@ -4,6 +4,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -11,10 +12,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { generateDuplicatedTimestamps } from '../utils/generateDuplicatedTimestamps';
-import { getDuplicatedTitle } from '../utils/getDuplicatedTitle';
 
 export const useDuplicatePageLayoutWidget = (
   pageLayoutIdFromProps?: string,
@@ -77,7 +76,7 @@ export const useDuplicatePageLayoutWidget = (
         const clonedWidget: PageLayoutWidget = {
           ...sourceWidget,
           id: newWidgetId,
-          title: getDuplicatedTitle(sourceWidget.title),
+          title: appendCopySuffix(sourceWidget.title),
           ...generateDuplicatedTimestamps(),
         };
 

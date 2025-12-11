@@ -97,6 +97,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the dashboard`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetDashboard',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
