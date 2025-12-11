@@ -14,6 +14,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CreateInput = Record<string, any>;
@@ -106,7 +107,7 @@ export class CreatedByFromAuthContextService {
   private async buildCreatedBy(
     authContext: AuthContext,
   ): Promise<ActorMetadata> {
-    const { workspace, user, apiKey } = authContext;
+    const { workspace, user, apiKey, application } = authContext;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
@@ -140,6 +141,12 @@ export class CreatedByFromAuthContextService {
     if (isDefined(apiKey)) {
       return buildCreatedByFromApiKey({
         apiKey,
+      });
+    }
+
+    if (isDefined(application)) {
+      return buildCreatedByFromApplication({
+        application,
       });
     }
 

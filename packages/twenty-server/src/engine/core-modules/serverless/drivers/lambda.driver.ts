@@ -27,7 +27,6 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
@@ -305,11 +304,17 @@ export class LambdaDriver implements ServerlessDriver {
       .trim();
   }
 
-  async execute(
-    serverlessFunction: ServerlessFunctionEntity,
-    payload: object,
-    version: string,
-  ): Promise<ServerlessExecuteResult> {
+  async execute({
+    serverlessFunction,
+    payload,
+    version,
+    env,
+  }: {
+    serverlessFunction: ServerlessFunctionEntity;
+    payload: object;
+    version: string;
+    env?: Record<string, string>;
+  }): Promise<ServerlessExecuteResult> {
     await this.build(serverlessFunction);
     await this.waitFunctionUpdates(serverlessFunction);
 
@@ -348,7 +353,7 @@ export class LambdaDriver implements ServerlessDriver {
       const executorPayload: LambdaDriverExecutorPayload = {
         params: payload,
         code: compiledCode,
-        env: buildEnvVar(serverlessFunction),
+        env: env ?? {},
         handlerName: serverlessFunction.handlerName,
       };
 

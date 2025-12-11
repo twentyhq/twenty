@@ -9,6 +9,8 @@ export const isWorkspaceAuthContext = (
 ): context is WorkspaceAuthContext => {
   return (
     isDefined(context.workspace) &&
-    (isDefined(context.userWorkspaceId) || isDefined(context.apiKey))
+    (isDefined(context.userWorkspaceId) ||
+      isDefined(context.apiKey) ||
+      isDefined(context.application))
   );
 };

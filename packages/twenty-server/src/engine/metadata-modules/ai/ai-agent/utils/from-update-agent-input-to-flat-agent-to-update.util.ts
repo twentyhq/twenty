@@ -67,7 +67,6 @@ const computeAgentFlatRoleTargetToUpdate = ({
       userWorkspaceId: null,
       agentId: flatAgent.id,
       apiKeyId: null,
-      targetApplicationId: null,
       createdAt: updatedAt,
       updatedAt,
       universalIdentifier: v4(),
