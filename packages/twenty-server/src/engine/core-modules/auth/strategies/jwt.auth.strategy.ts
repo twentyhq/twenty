@@ -20,6 +20,7 @@ import {
   type AuthContext,
   type FileTokenJwtPayload,
   type JwtPayload,
+  JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -57,7 +58,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         >(rawJwtToken);
 
         const appSecretBody =
-          decodedToken.type === 'WORKSPACE_AGNOSTIC'
+          decodedToken.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
             ? decodedToken.userId
             : decodedToken.workspaceId;
 
@@ -329,19 +330,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
     // Support legacy api keys
-    if (payload.type === 'API_KEY' || this.isLegacyApiKeyPayload(payload)) {
+    if (
+      payload.type === JwtTokenTypeEnum.API_KEY ||
+      this.isLegacyApiKeyPayload(payload)
+    ) {
       return await this.validateAPIKey(payload);
     }
 
-    if (payload.type === 'WORKSPACE_AGNOSTIC') {
+    if (payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    if (payload.type === 'ACCESS') {
+    if (payload.type === JwtTokenTypeEnum.ACCESS) {
       return await this.validateAccessToken(payload);
     }
 
-    if (payload.type === 'APPLICATION') {
+    if (payload.type === JwtTokenTypeEnum.APPLICATION) {
       return await this.validateApplicationToken(payload);
     }
 

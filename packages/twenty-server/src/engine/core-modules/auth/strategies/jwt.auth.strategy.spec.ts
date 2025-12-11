@@ -4,7 +4,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type JwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -71,7 +74,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(null);
@@ -97,7 +100,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthExceptionCode if type is API_KEY not found', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -128,7 +131,7 @@ describe('JwtAuthStrategy', () => {
     it('should throw AuthExceptionCode if API_KEY is revoked', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -162,7 +165,7 @@ describe('JwtAuthStrategy', () => {
     it('should be truthy if type is API_KEY and API_KEY is not revoked', async () => {
       const payload = {
         ...jwt,
-        type: 'API_KEY',
+        type: JwtTokenTypeEnum.API_KEY,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -207,7 +210,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -244,7 +247,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -283,7 +286,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
       };
@@ -322,7 +325,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validApplicationId,
-        type: 'APPLICATION',
+        type: JwtTokenTypeEnum.APPLICATION,
         applicationId: validApplicationId,
         workspaceId: validWorkspaceId,
       };
@@ -361,7 +364,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -408,7 +411,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -453,7 +456,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -502,7 +505,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -561,7 +564,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -615,7 +618,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -685,7 +688,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -756,7 +759,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -826,7 +829,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,
@@ -896,7 +899,7 @@ describe('JwtAuthStrategy', () => {
 
       const payload = {
         sub: validUserId,
-        type: 'ACCESS',
+        type: JwtTokenTypeEnum.ACCESS,
         userWorkspaceId: validUserWorkspaceId,
         workspaceId: validWorkspaceId,
         isImpersonating: true,

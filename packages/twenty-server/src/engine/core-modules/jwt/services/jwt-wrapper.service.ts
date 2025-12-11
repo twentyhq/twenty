@@ -66,7 +66,7 @@ export class JwtWrapperService {
         : payload.type;
 
     // TODO: check if this is really needed
-    if (type !== 'FILE' && !payload.sub) {
+    if (type !== JwtTokenTypeEnum.FILE && !payload.sub) {
       throw new AuthException(
         'No payload sub',
         AuthExceptionCode.UNAUTHENTICATED,
@@ -75,7 +75,11 @@ export class JwtWrapperService {
 
     try {
       // TODO: Deprecate this once old API KEY tokens are no longer in use
-      if (!payload.type && !('workspaceId' in payload) && type === 'ACCESS') {
+      if (
+        !payload.type &&
+        !('workspaceId' in payload) &&
+        type === JwtTokenTypeEnum.ACCESS
+      ) {
         return this.jwtService.verify(token, {
           ...options,
           secret: this.generateAppSecretLegacy(),
