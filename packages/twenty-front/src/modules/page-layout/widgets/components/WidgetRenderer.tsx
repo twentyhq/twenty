@@ -60,7 +60,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
+  const showHeader = layoutMode !== 'canvas';
 
   const handleClick = () => {
     handleEditWidget({
