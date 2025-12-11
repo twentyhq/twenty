@@ -71,29 +71,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const sourceFlatFieldMetadataType = createFieldInput.type;
 
-  // todo: add a test to make sure this is not possible in the Validate and build
-  // if (
-  //   sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION &&
-  //   targetFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
-  // ) {
-  //   throw new FieldMetadataException(
-  //     'Morph relation field cannot target a morph relation field',
-  //     FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-  //   );
-  // }
-
-  // if (
-  //   [sourceFlatFieldMetadataType, targetFlatFieldMetadataType].includes(
-  //     FieldMetadataType.MORPH_RELATION,
-  //   ) &&
-  //   morphId === null
-  // ) {
-  //   throw new FieldMetadataException(
-  //     'Morph relation field must have a morph id',
-  //     FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-  //   );
-  // }
-
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =

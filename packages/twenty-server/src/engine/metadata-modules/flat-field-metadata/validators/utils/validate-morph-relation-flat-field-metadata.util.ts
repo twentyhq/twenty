@@ -56,5 +56,13 @@ export const validateMorphRelationFlatFieldMetadata = (
     });
   }
 
+  if (!isDefined(flatFieldMetadataToValidate.morphId)) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: 'Morph relation field must have a morph id',
+      userFriendlyMessage: msg`Morph relation field must have a morph id`,
+    });
+  }
+
   return errors;
 };
