@@ -15,7 +15,6 @@ declare module '@jest/types' {
       INVALID_ACCESS_TOKEN: string;
       APPLE_JONY_MEMBER_ACCESS_TOKEN: string;
       APPLE_PHIL_GUEST_ACCESS_TOKEN: string;
-      ACME_JONY_MEMBER_ACCESS_TOKEN: string;
       APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
       API_KEY_ACCESS_TOKEN: string;
       testDataSource?: DataSource;
@@ -32,8 +31,6 @@ declare global {
   const APPLE_PHIL_GUEST_ACCESS_TOKEN: string;
   const API_KEY_ACCESS_TOKEN: string;
   const APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
-  const ACME_JONY_MEMBER_ACCESS_TOKEN: string;
-  const WORKSPACE_AGNOSTIC_TOKEN: string;
 
   // Additional global properties set during test setup
   var testDataSource: DataSource;
