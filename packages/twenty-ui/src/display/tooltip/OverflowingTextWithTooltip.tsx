@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { THEME_COMMON } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
@@ -109,8 +110,11 @@ export const OverflowingTextWithTooltip = ({
     event.preventDefault();
   };
 
-  const tooltipText =
-    tooltipContent || (typeof text === 'string' ? text : null);
+  const tooltipText = isNonEmptyString(tooltipContent)
+    ? tooltipContent
+    : isNonEmptyString(text)
+      ? text
+      : null;
 
   return (
     <>
@@ -143,7 +147,7 @@ export const OverflowingTextWithTooltip = ({
 
       {shouldRenderTooltip &&
         isTitleOverflowing &&
-        tooltipText &&
+        isDefined(tooltipText) &&
         createPortal(
           <div onClick={handleTooltipClick}>
             <AppTooltip
