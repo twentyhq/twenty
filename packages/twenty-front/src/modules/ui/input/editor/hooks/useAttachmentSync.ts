@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
@@ -34,66 +32,58 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
-  const syncAttachments = useCallback(
-    async (newBody: string, previousBody?: string | null) => {
-      if (!newBody) return;
+  const syncAttachments = async (
+    newBody: string,
+    previousBody?: string | null,
+  ) => {
+    if (!newBody) return;
 
-      const previousBodyOrEmptyArray = previousBody?.trim()
-        ? previousBody
-        : '[]';
+    const previousBodyOrEmptyArray = previousBody?.trim() ? previousBody : '[]';
 
-      const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
-        newBody,
-        attachments,
-        previousBodyOrEmptyArray,
-      );
-
-      if (attachmentIdsToDelete.length > 0) {
-        await deleteAttachments({
-          recordIdsToDelete: attachmentIdsToDelete,
-        });
-      }
-
-      const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
-        newBody,
-        attachments,
-      );
-
-      if (attachmentPathsToRestore.length > 0) {
-        const softDeletedAttachments =
-          (await findSoftDeletedAttachments()) as Attachment[];
-
-        const attachmentIdsToRestore = filterAttachmentsToRestore(
-          attachmentPathsToRestore,
-          softDeletedAttachments ?? [],
-        );
-
-        await restoreAttachments({
-          idsToRestore: attachmentIdsToRestore,
-        });
-      }
-
-      const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
-        newBody,
-        attachments,
-      );
-
-      for (const attachmentToUpdate of attachmentsToUpdate) {
-        if (!attachmentToUpdate.id || !attachmentToUpdate.name) continue;
-        await updateOneAttachment({
-          idToUpdate: attachmentToUpdate.id,
-          updateOneRecordInput: { name: attachmentToUpdate.name },
-        });
-      }
-    },
-    [
+    const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
+      newBody,
       attachments,
-      deleteAttachments,
-      restoreAttachments,
-      findSoftDeletedAttachments,
-      updateOneAttachment,
-    ],
-  );
+      previousBodyOrEmptyArray,
+    );
+
+    if (attachmentIdsToDelete.length > 0) {
+      await deleteAttachments({
+        recordIdsToDelete: attachmentIdsToDelete,
+      });
+    }
+
+    const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
+      newBody,
+      attachments,
+    );
+
+    if (attachmentPathsToRestore.length > 0) {
+      const softDeletedAttachments =
+        (await findSoftDeletedAttachments()) as Attachment[];
+
+      const attachmentIdsToRestore = filterAttachmentsToRestore(
+        attachmentPathsToRestore,
+        softDeletedAttachments ?? [],
+      );
+
+      await restoreAttachments({
+        idsToRestore: attachmentIdsToRestore,
+      });
+    }
+
+    const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
+      newBody,
+      attachments,
+    );
+
+    for (const attachmentToUpdate of attachmentsToUpdate) {
+      if (!attachmentToUpdate.id || !attachmentToUpdate.name) continue;
+      await updateOneAttachment({
+        idToUpdate: attachmentToUpdate.id,
+        updateOneRecordInput: { name: attachmentToUpdate.name },
+      });
+    }
+  };
 
   return { syncAttachments };
 };

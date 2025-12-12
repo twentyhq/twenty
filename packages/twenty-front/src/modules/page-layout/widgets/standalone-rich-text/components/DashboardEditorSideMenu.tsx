@@ -2,7 +2,7 @@ import { useBlockNoteEditor, useUIPluginState } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconGripVertical } from 'twenty-ui/display';
 
@@ -69,12 +69,9 @@ export const DashboardEditorSideMenu = ({
     blockNoteEditor.sideMenu.onUpdate.bind(blockNoteEditor.sideMenu),
   );
 
-  const virtualReference = useMemo(() => {
-    if (!isDefined(state?.referencePos)) return null;
-    return {
-      getBoundingClientRect: () => state.referencePos,
-    };
-  }, [state?.referencePos]);
+  const virtualReference = isDefined(state?.referencePos)
+    ? { getBoundingClientRect: () => state.referencePos }
+    : null;
 
   const { refs, floatingStyles } = useFloating({
     placement: 'left-start',
