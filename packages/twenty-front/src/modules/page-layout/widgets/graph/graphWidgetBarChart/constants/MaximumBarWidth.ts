@@ -1,1 +1,0 @@
-export const BAR_CHART_MAXIMUM_WIDTH = 32;

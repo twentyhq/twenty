@@ -1,6 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import {
   CustomCrosshairLayer,
   type SliceHoverData,
@@ -8,10 +9,7 @@ import {
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
-import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
-import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
-import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
-import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
@@ -46,8 +44,6 @@ type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type StackedAreasLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type NoDataLayerWrapperProps = LineCustomSvgLayerProps<LineSeries>;
-
-const LINE_CHART_DEFAULT_TICK_COUNT = 5;
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -166,8 +162,8 @@ export const GraphWidgetLineChart = ({
       points: sliceData.nearestSlice.points,
     };
 
-    const offsetLeft = sliceData.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
-    const offsetTop = sliceData.mouseY + LINE_CHART_MARGIN_TOP;
+    const offsetLeft = sliceData.nearestSlice.x + marginLeft;
+    const offsetTop = sliceData.mouseY + COMMON_CHART_CONSTANTS.MARGIN_TOP;
 
     debouncedHideTooltip.cancel();
     setCrosshairX(sliceData.sliceX);
@@ -207,6 +203,8 @@ export const GraphWidgetLineChart = ({
         points={layerProps.points}
         innerHeight={layerProps.innerHeight}
         innerWidth={layerProps.innerWidth}
+        marginLeft={marginLeft}
+        marginTop={COMMON_CHART_CONSTANTS.MARGIN_TOP}
         onSliceHover={handleSliceEnter}
         onSliceClick={
           isDefined(onSliceClick)
@@ -243,29 +241,24 @@ export const GraphWidgetLineChart = ({
     />
   );
 
-  const axisBottomConfig = getLineChartAxisBottomConfig(
-    xAxisLabel,
-    chartWidth,
-    data,
-  );
-  const chartMargins = {
-    top: LINE_CHART_MARGIN_TOP,
-    right: LINE_CHART_MARGIN_RIGHT,
-    bottom: LINE_CHART_MARGIN_BOTTOM,
-    left: LINE_CHART_MARGIN_LEFT,
-  };
+  const marginLeft = isDefined(yAxisLabel)
+    ? COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL
+    : COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITHOUT_LABEL;
+
+  const { config: axisBottomConfig, marginBottom } =
+    getLineChartAxisBottomConfig(xAxisLabel, chartWidth, data, marginLeft);
+
   const { tickValues: valueTickValues, domain: valueDomain } =
     computeValueTickValues({
       minimum: effectiveMinimumValue,
       maximum: effectiveMaximumValue,
-      tickCount: LINE_CHART_DEFAULT_TICK_COUNT,
+      tickCount: LINE_CHART_CONSTANTS.DEFAULT_TICK_COUNT,
     });
 
   const axisLeftConfig = getLineChartAxisLeftConfig(
     yAxisLabel,
     formatOptions,
     valueTickValues,
-    chartMargins.left,
   );
 
   return (
@@ -284,10 +277,10 @@ export const GraphWidgetLineChart = ({
         <ResponsiveLine
           data={nivoData}
           margin={{
-            top: chartMargins.top,
-            right: chartMargins.right,
-            bottom: chartMargins.bottom,
-            left: chartMargins.left,
+            top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
+            right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+            bottom: marginBottom,
+            left: marginLeft,
           }}
           xScale={{ type: 'point' }}
           yScale={{

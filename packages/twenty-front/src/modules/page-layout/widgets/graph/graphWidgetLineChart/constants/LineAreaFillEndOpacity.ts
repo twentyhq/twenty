@@ -1,1 +1,0 @@
-export const LINE_AREA_FILL_END_OPACITY = 0.01;

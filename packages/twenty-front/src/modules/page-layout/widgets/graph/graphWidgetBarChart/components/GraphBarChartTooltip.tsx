@@ -1,5 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { BAR_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartTooltipOffsetPx';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
@@ -63,7 +63,7 @@ export const GraphBarChartTooltip = ({
     <GraphWidgetFloatingTooltip
       reference={reference}
       boundary={containerElement}
-      tooltipOffsetFromAnchorInPx={BAR_CHART_TOOLTIP_OFFSET_PX}
+      tooltipOffsetFromAnchorInPx={BAR_CHART_CONSTANTS.TOOLTIP_OFFSET_PX}
       items={tooltipData?.tooltipItems ?? []}
       indexLabel={tooltipData?.indexLabel}
       highlightedKey={tooltipData?.hoveredKey}

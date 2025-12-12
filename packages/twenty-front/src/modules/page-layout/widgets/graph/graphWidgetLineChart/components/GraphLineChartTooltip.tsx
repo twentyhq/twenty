@@ -1,5 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { LINE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipOffsetPx';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { graphWidgetLineTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineTooltipComponentState';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
@@ -71,7 +71,7 @@ export const GraphLineChartTooltip = ({
     <GraphWidgetFloatingTooltip
       reference={reference}
       boundary={containerElement}
-      tooltipOffsetFromAnchorInPx={LINE_CHART_TOOLTIP_OFFSET_PX}
+      tooltipOffsetFromAnchorInPx={LINE_CHART_CONSTANTS.TOOLTIP_OFFSET_PX}
       items={tooltipData?.items ?? []}
       indexLabel={tooltipData?.indexLabel}
       highlightedKey={tooltipState?.highlightedSeriesId}

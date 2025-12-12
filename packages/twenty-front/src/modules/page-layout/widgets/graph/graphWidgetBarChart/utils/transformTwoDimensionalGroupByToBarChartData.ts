@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -97,7 +97,10 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const isNewY = !yValues.has(yValue);
 
     if (configuration.groupMode === BarChartGroupMode.STACKED) {
-      if (isNewX && xValues.size >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+      if (
+        isNewX &&
+        xValues.size >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
+      ) {
         hasTooManyGroups = true;
         return;
       }
@@ -110,7 +113,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
       if (
         totalUniqueDimensions + additionalDimensions >
-        BAR_CHART_MAXIMUM_NUMBER_OF_BARS
+        BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS
       ) {
         hasTooManyGroups = true;
         return;

@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';

@@ -1,4 +1,4 @@
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { generateDateGroupsInRange } from '../generateDateGroupsInRange';
 
@@ -63,9 +63,11 @@ describe('generateDateGroupsInRange', () => {
     });
 
     expect(result.dates.length).toBeLessThanOrEqual(
-      BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+      BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
     );
-    expect(result.dates.length).toBe(BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
+    expect(result.dates.length).toBe(
+      BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS,
+    );
     expect(result.wasTruncated).toBe(true);
   });
 });

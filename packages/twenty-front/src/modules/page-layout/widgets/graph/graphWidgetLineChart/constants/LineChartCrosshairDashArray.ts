@@ -1,1 +1,0 @@
-export const LINE_CHART_CROSSHAIR_DASH_ARRAY = '4 4';
