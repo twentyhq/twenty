@@ -15,7 +15,10 @@ import {
 import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationNotFoundDefaultError } from 'src/engine/core-modules/application/application.exception';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 
 @Injectable()
 export class ApplicationTokenService {
@@ -48,7 +51,13 @@ export class ApplicationTokenService {
       where: { id: applicationId, workspaceId },
     });
 
-    assertIsDefinedOrThrow(application, ApplicationNotFoundDefaultError);
+    assertIsDefinedOrThrow(
+      application,
+      new ApplicationException(
+        'Application not found',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      ),
+    );
 
     const jwtPayload: ApplicationTokenJwtPayload = {
       sub: applicationId,
