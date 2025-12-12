@@ -203,29 +203,4 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  custom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'custom',
-      label: 'Custom',
-      description: 'NoteTarget custom object',
-      icon: 'IconBuildingSkyscraper',
-      isNullable: true,
-      // Custom is a dynamic relation
-      targetObjectName: 'note',
-      targetFieldName: 'noteTargets',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
 });
