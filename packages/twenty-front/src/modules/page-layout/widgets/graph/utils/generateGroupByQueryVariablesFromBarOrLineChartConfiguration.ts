@@ -27,6 +27,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
+  userTimeZone,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
@@ -34,6 +35,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   aggregateOperation?: string;
   limit?: number;
   firstDayOfTheWeek?: number;
+  userTimeZone?: string;
 }) => {
   const groupByFieldXId = chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
@@ -72,6 +74,10 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   const groupBy: Array<GroupByFieldObject> = [];
 
+  console.log({
+    userTimeZone,
+  });
+
   groupBy.push(
     buildGroupByFieldObject({
       field: groupByFieldX,
@@ -82,8 +88,11 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         : undefined,
       firstDayOfTheWeek,
       isNestedDateField: isFieldXNestedDate,
+      timeZone: userTimeZone,
     }),
   );
+
+  console.log(groupBy);
 
   if (isDefined(groupByFieldY)) {
     const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
@@ -106,6 +115,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
           : undefined,
         firstDayOfTheWeek,
         isNestedDateField: isFieldYNestedDate,
+        timeZone: userTimeZone,
       }),
     );
   }

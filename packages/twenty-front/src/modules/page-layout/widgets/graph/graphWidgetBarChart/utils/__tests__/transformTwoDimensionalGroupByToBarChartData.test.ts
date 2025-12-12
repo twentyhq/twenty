@@ -11,6 +11,8 @@ import {
 import { transformTwoDimensionalGroupByToBarChartData } from '../transformTwoDimensionalGroupByToBarChartData';
 
 describe('transformTwoDimensionalGroupByToBarChartData', () => {
+  const userTimezone = 'Europe/Paris';
+
   const mockGroupByFieldX = {
     id: 'field-x',
     name: 'createdAt',
@@ -85,6 +87,7 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
       configuration: mockConfiguration,
       aggregateOperation: 'sumAmount',
       objectMetadataItem: mockObjectMetadataItem,
+      userTimezone,
     });
 
     expect(result.keys).toEqual(['SCREENING', 'PROPOSAL', 'NEW', 'CUSTOMER']);

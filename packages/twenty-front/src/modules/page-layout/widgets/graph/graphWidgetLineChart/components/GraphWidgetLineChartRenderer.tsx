@@ -8,6 +8,7 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
@@ -31,6 +32,8 @@ export const GraphWidgetLineChartRenderer = ({
   widget: PageLayoutWidget;
 }) => {
   assertLineChartWidgetOrThrow(widget);
+
+  const { userTimezone } = useUserTimezone();
 
   const {
     series,
@@ -86,7 +89,7 @@ export const GraphWidgetLineChartRenderer = ({
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: configuration.timezone ?? undefined,
+      timezone: userTimezone,
     });
 
     const url = getAppPath(

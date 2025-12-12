@@ -2,7 +2,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
 import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 import { isCyclicalDateGranularity } from '@/page-layout/widgets/graph/utils/isCyclicalDateGranularity';
 import { isTimeRangeDateGranularity } from '@/page-layout/widgets/graph/utils/isTimeRangeDateGranularity';
@@ -15,6 +14,7 @@ import {
   getFilterTypeFromFieldType,
   isDefined,
   isFieldMetadataDateKind,
+  parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -79,36 +79,56 @@ export const buildFilterFromChartBucket = ({
   }
 
   if (isFieldMetadataDateKind(fieldMetadataItem.type)) {
-    const parsedBucketDate = new Date(String(bucketRawValue));
-
-    if (isNaN(parsedBucketDate.getTime())) {
-      return [];
-    }
-
     if (isCyclicalDateGranularity(dateGranularity)) {
       return [];
     }
 
-    if (
+    const shouldAssumeDayRangeFilter =
       !isDefined(dateGranularity) ||
       dateGranularity === ObjectRecordGroupByDateGranularity.DAY ||
-      dateGranularity === ObjectRecordGroupByDateGranularity.NONE
-    ) {
-      return buildDateFilterForDayGranularity(
-        parsedBucketDate,
+      dateGranularity === ObjectRecordGroupByDateGranularity.NONE;
+
+    if (shouldAssumeDayRangeFilter) {
+      if (!isNonEmptyString(timezone)) {
+        throw new Error(
+          `Timezone should be defined for date granularity group by day`,
+        );
+      }
+
+      console.log({ bucketRawValue });
+
+      const parsedDateTime1 = parseToPlainDateOrThrow(String(bucketRawValue));
+
+      const parsedDateTime2 = parsedDateTime1.toZonedDateTime(timezone);
+
+      console.log({ parsedDateTime1, parsedDateTime2 });
+
+      return buildDateRangeFiltersForGranularity(
+        parsedDateTime2,
+        ObjectRecordGroupByDateGranularity.DAY,
         fieldMetadataItem.type,
         fieldName,
-        timezone,
       );
     }
 
     if (isTimeRangeDateGranularity(dateGranularity)) {
+      if (!isNonEmptyString(timezone)) {
+        throw new Error(
+          `Timezone should be defined for date granularity group by`,
+        );
+      }
+
+      console.log({ bucketRawValue });
+
+      const parsedDateTime = parseToPlainDateOrThrow(
+        String(bucketRawValue),
+      ).toZonedDateTime(timezone);
+
       return buildDateRangeFiltersForGranularity(
-        parsedBucketDate,
+        parsedDateTime,
         dateGranularity,
         fieldMetadataItem.type,
         fieldName,
-        timezone,
       );
     }
 

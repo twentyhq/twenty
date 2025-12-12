@@ -1,9 +1,11 @@
+import { Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { formatDateByGranularity } from '../formatDateByGranularity';
 
 describe('formatDateByGranularity', () => {
-  const testDate = new Date('2024-03-20T12:00:00Z');
+  const testDate = Temporal.PlainDate.from('2024-03-20');
+  const userTimezone = 'Europe/Paris';
 
   beforeAll(() => {
     // Mock toLocaleDateString to avoid timezone/locale issues
@@ -44,7 +46,9 @@ describe('formatDateByGranularity', () => {
   it.each(testCases)(
     'should format date for $granularity granularity',
     ({ granularity }) => {
-      expect(formatDateByGranularity(testDate, granularity)).toMatchSnapshot();
+      expect(
+        formatDateByGranularity(testDate, granularity, userTimezone),
+      ).toMatchSnapshot();
     },
   );
 
@@ -68,28 +72,31 @@ describe('formatDateByGranularity', () => {
     });
 
     it('should format week within same month', () => {
-      const date = new Date('2024-05-06');
+      const date = Temporal.PlainDate.from('2024-05-06');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
       );
       expect(result).toBe('May 6 - 12, 2024');
     });
 
     it('should format week crossing months', () => {
-      const date = new Date('2024-05-27');
+      const date = Temporal.PlainDate.from('2024-05-27');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
       );
       expect(result).toBe('May 27 - Jun 2, 2024');
     });
 
     it('should format week crossing years', () => {
-      const date = new Date('2024-12-30');
+      const date = Temporal.PlainDate.from('2024-12-30');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
+        userTimezone,
       );
       expect(result).toBe('Dec 30, 2024 - Jan 5, 2025');
     });
@@ -97,31 +104,37 @@ describe('formatDateByGranularity', () => {
 
   describe('quarter calculations', () => {
     const quarterTestCases: {
-      date: Date;
+      dayString: string;
       granularity: ObjectRecordGroupByDateGranularity.QUARTER;
     }[] = [
       {
-        date: new Date('2024-01-15'),
+        dayString: '2024-01-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-04-15'),
+        dayString: '2024-04-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-07-15'),
+        dayString: '2024-07-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
       {
-        date: new Date('2024-10-15'),
+        dayString: '2024-10-15',
         granularity: ObjectRecordGroupByDateGranularity.QUARTER,
       },
     ];
 
     it.each(quarterTestCases)(
       'should calculate quarter for $granularity with date $date',
-      ({ date, granularity }) => {
-        expect(formatDateByGranularity(date, granularity)).toMatchSnapshot();
+      ({ dayString, granularity }) => {
+        expect(
+          formatDateByGranularity(
+            Temporal.PlainDate.from(dayString),
+            granularity,
+            'Europe/Paris',
+          ),
+        ).toMatchSnapshot();
       },
     );
   });

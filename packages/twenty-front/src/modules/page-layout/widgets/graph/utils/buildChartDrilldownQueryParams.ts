@@ -44,6 +44,10 @@ export const buildChartDrilldownQueryParams = ({
       timezone,
     });
 
+    console.log({
+      primaryFilters,
+    });
+
     primaryFilters.forEach((filter) => {
       drilldownQueryParams.append(
         `filter[${filter.fieldName}][${filter.operand}]`,

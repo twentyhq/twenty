@@ -5,6 +5,7 @@ import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetL
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useMemo } from 'react';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -50,6 +51,8 @@ export const useGraphLineChartWidgetData = ({
     limit,
   });
 
+  const { userTimezone } = useUserTimezone();
+
   const transformedData = useMemo(
     () =>
       transformGroupByDataToLineChartData({
@@ -58,6 +61,7 @@ export const useGraphLineChartWidgetData = ({
         objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
       }),
     [
       groupByData,
@@ -65,6 +69,7 @@ export const useGraphLineChartWidgetData = ({
       objectMetadataItems,
       configuration,
       aggregateOperation,
+      userTimezone,
     ],
   );
 

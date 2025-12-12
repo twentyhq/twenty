@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date $date 1`] = `"Q1 2024"`;
+
+exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date $date 2`] = `"Q2 2024"`;
+
+exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date $date 3`] = `"Q3 2024"`;
+
+exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date $date 4`] = `"Q4 2024"`;
+
 exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-01-15T00:00:00.000Z 1`] = `"Q1 2024"`;
 
 exports[`formatDateByGranularity quarter calculations should calculate quarter for QUARTER with date 2024-04-15T00:00:00.000Z 1`] = `"Q2 2024"`;

@@ -272,7 +272,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         case RecordFilterOperand.IS_AFTER: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              gt: date.toISOString(),
+              gte: date.toISOString(),
             } as DateTimeFilter,
           };
         }

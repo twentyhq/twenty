@@ -20,6 +20,7 @@ const { formatPrimaryDimensionValues } = jest.requireMock(
 ) as { formatPrimaryDimensionValues: jest.Mock };
 
 describe('transformGroupByDataToPieChartData', () => {
+  const userTimezone = 'Europe/Paris';
   it('keeps null group buckets aligned with their aggregate values', () => {
     const groupByField = {
       id: 'group-by-field',
@@ -76,6 +77,7 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
     });
 
     expect(result.data).toEqual([
@@ -143,6 +145,7 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
     });
 
     expect(result.showLegend).toBe(false);

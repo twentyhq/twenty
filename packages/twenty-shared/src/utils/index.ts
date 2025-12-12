@@ -20,6 +20,7 @@ export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { parseToPlainDateOrThrow } from './date/parseToPlainDateOrThrow';
 export { deepMerge } from './deepMerge';
 export { CustomError } from './errors/CustomError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
@@ -38,6 +39,13 @@ export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema'
 export { getDateFromPlainDate } from './filter/dates/utils/getDateFromPlainDate';
 export { getEndUnitOfDateTime } from './filter/dates/utils/getEndUnitOfDateTime';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
+export { getFirstDayOfTheWeekAsISONumber } from './filter/dates/utils/getFirstDayOfTheWeekAsISONumber';
+export {
+  FIRST_DAY_OF_WEEK_ISO_8601_MONDAY,
+  getNextPeriodStart,
+} from './filter/dates/utils/getNextPeriodStart';
+export type { DateTimePeriod } from './filter/dates/utils/getPeriodStart';
+export { getPeriodStart } from './filter/dates/utils/getPeriodStart';
 export { getPlainDateFromDate } from './filter/dates/utils/getPlainDateFromDate';
 export { getStartUnitOfDateTime } from './filter/dates/utils/getStartUnitOfDateTime';
 export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';

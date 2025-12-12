@@ -39,6 +39,8 @@ const { fillDateGapsInBarChartData } = jest.requireMock(
 ) as { fillDateGapsInBarChartData: jest.Mock };
 
 describe('transformGroupByDataToBarChartData', () => {
+  const userTimezone = 'Europe/Paris';
+
   it('fills date gaps when grouping by a relation date subfield with granularity', () => {
     const groupByField = {
       id: 'group-by-field',
@@ -91,6 +93,7 @@ describe('transformGroupByDataToBarChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
     });
 
     expect(fillDateGapsInBarChartData).toHaveBeenCalledTimes(1);

@@ -22,6 +22,7 @@ type TransformGroupByDataToLineChartDataParams = {
   objectMetadataItems: ObjectMetadataItem[];
   configuration: LineChartConfiguration;
   aggregateOperation: string;
+  userTimezone: string;
 };
 
 type TransformGroupByDataToLineChartDataResult = {
@@ -51,6 +52,7 @@ export const transformGroupByDataToLineChartData = ({
   objectMetadataItems,
   configuration,
   aggregateOperation,
+  userTimezone,
 }: TransformGroupByDataToLineChartDataParams): TransformGroupByDataToLineChartDataResult => {
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
@@ -194,6 +196,7 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
       })
     : transformOneDimensionalGroupByToLineChartData({
         rawResults: filteredResults,
@@ -203,6 +206,7 @@ export const transformGroupByDataToLineChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
       });
 
   return {

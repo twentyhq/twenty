@@ -7,7 +7,7 @@ import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseToPlainDateOrThrow } from 'twenty-shared/utils';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 type FormatDimensionValueParams = {
@@ -15,6 +15,7 @@ type FormatDimensionValueParams = {
   fieldMetadata: FieldMetadataItem;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   subFieldName?: string;
+  userTimezone: string;
 };
 
 const normalizeMultiSelectValue = (value: unknown): unknown[] => {
@@ -43,6 +44,7 @@ export const formatDimensionValue = ({
   fieldMetadata,
   dateGranularity,
   subFieldName,
+  userTimezone,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
     return t`Not Set`;
@@ -78,12 +80,6 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
-      const parsedDate = new Date(String(value));
-
-      if (isNaN(parsedDate.getTime())) {
-        return String(value);
-      }
-
       if (
         effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -94,15 +90,20 @@ export const formatDimensionValue = ({
       ) {
         return String(value);
       }
-      return formatDateByGranularity(parsedDate, effectiveDateGranularity);
+
+      const parsedPlainDate = parseToPlainDateOrThrow(String(value));
+
+      return formatDateByGranularity(
+        parsedPlainDate,
+        effectiveDateGranularity,
+        userTimezone,
+      );
     }
 
     case FieldMetadataType.RELATION: {
       if (isDefined(dateGranularity)) {
-        const parsedDate = new Date(String(value));
-        if (isNaN(parsedDate.getTime())) {
-          return String(value);
-        }
+        const parsedDayString = String(value);
+
         if (
           dateGranularity ===
             ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -113,7 +114,7 @@ export const formatDimensionValue = ({
         ) {
           return String(value);
         }
-        return formatDateByGranularity(parsedDate, dateGranularity);
+        return parsedDayString;
       }
       return String(value);
     }

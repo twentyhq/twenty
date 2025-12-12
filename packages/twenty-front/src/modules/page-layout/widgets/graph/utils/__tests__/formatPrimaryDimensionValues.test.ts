@@ -14,6 +14,8 @@ const { formatDimensionValue } = jest.requireMock(
   '@/page-layout/widgets/graph/utils/formatDimensionValue',
 ) as { formatDimensionValue: jest.Mock };
 
+const userTimezone = 'Europe/Paris';
+
 describe('formatPrimaryDimensionValues', () => {
   it('includes buckets where the primary dimension value is null', () => {
     const result = formatPrimaryDimensionValues({
@@ -25,6 +27,7 @@ describe('formatPrimaryDimensionValues', () => {
         name: 'status',
         type: FieldMetadataType.TEXT,
       } as any,
+      userTimezone,
     });
 
     expect(result).toHaveLength(2);
@@ -46,6 +49,7 @@ describe('formatPrimaryDimensionValues', () => {
       } as any,
       primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
       primaryAxisGroupBySubFieldName: 'createdAt',
+      userTimezone,
     });
 
     expect(formatDimensionValue).toHaveBeenCalledWith({

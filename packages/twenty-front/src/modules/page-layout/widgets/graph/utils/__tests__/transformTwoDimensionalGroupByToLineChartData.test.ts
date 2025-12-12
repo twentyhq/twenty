@@ -10,6 +10,8 @@ import {
 import { transformTwoDimensionalGroupByToLineChartData } from '../transformTwoDimensionalGroupByToLineChartData';
 
 describe('transformTwoDimensionalGroupByToLineChartData', () => {
+  const userTimezone = 'Europe/Paris';
+
   const mockAggregateField: FieldMetadataItem = {
     id: 'amount-field',
     name: 'amount',
@@ -90,6 +92,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       expect(result.series).toHaveLength(2);
@@ -141,6 +144,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       const series = result.series[0];
@@ -180,6 +184,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       const stageA = result.series.find((s) => s.id === 'Stage A');
@@ -222,6 +227,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       expect(result.series[0].data).toHaveLength(2);
@@ -242,6 +248,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       expect(result.series).toEqual([]);
@@ -269,6 +276,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: 'sumAmount',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       expect(result.series).toHaveLength(1);
@@ -300,6 +308,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
         aggregateOperation: '_count',
         objectMetadataItem: mockObjectMetadataItem,
         primaryAxisSubFieldName: null,
+        userTimezone,
       });
 
       expect(result.series[0].data.map((d) => d.y)).toEqual([5, 10]);

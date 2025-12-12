@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { buildDateFilterForDayGranularity } from '../buildDateFilterForDayGranularity';
@@ -5,7 +6,10 @@ import { buildDateFilterForDayGranularity } from '../buildDateFilterForDayGranul
 describe('buildDateFilterForDayGranularity', () => {
   describe('DATE field type', () => {
     it('should return single IS filter with plain date for DATE field', () => {
-      const date = new Date('2024-03-15T10:00:00Z');
+      const date = Temporal.PlainDate.from('2024-03-15').toZonedDateTime({
+        timeZone: 'Europe/Paris',
+      });
+
       const result = buildDateFilterForDayGranularity(
         date,
         FieldMetadataType.DATE,
@@ -21,7 +25,10 @@ describe('buildDateFilterForDayGranularity', () => {
 
   describe('DATE_TIME field type', () => {
     it('should return IS_AFTER and IS_BEFORE filters for DATE_TIME field', () => {
-      const date = new Date('2024-03-15T10:00:00Z');
+      const date = Temporal.PlainDate.from('2024-03-15').toZonedDateTime({
+        timeZone: 'Europe/Paris',
+      });
+
       const result = buildDateFilterForDayGranularity(
         date,
         FieldMetadataType.DATE_TIME,
@@ -36,14 +43,14 @@ describe('buildDateFilterForDayGranularity', () => {
     });
 
     it('should apply timezone for DATE_TIME field when provided', () => {
-      const date = new Date('2024-03-15T10:00:00Z');
-      const timezone = 'America/New_York';
+      const date = Temporal.PlainDate.from('2024-03-15').toZonedDateTime({
+        timeZone: 'America/New_York',
+      });
 
       const result = buildDateFilterForDayGranularity(
         date,
         FieldMetadataType.DATE_TIME,
         'createdAt',
-        timezone,
       );
 
       expect(result).toHaveLength(2);
@@ -54,7 +61,7 @@ describe('buildDateFilterForDayGranularity', () => {
 
   describe('unsupported field types', () => {
     it('should return empty array for non-date field types', () => {
-      const date = new Date('2024-03-15T10:00:00Z');
+      const date = Temporal.ZonedDateTime.from('2024-03-15T10:00:00Z');
       const result = buildDateFilterForDayGranularity(
         date,
         FieldMetadataType.TEXT as FieldMetadataType.DATE,
@@ -67,7 +74,10 @@ describe('buildDateFilterForDayGranularity', () => {
 
   describe('field name handling', () => {
     it('should use provided fieldName in filters', () => {
-      const date = new Date('2024-03-15');
+      const date = Temporal.PlainDate.from('2024-03-15').toZonedDateTime({
+        timeZone: 'Europe/Paris',
+      });
+
       const result = buildDateFilterForDayGranularity(
         date,
         FieldMetadataType.DATE,

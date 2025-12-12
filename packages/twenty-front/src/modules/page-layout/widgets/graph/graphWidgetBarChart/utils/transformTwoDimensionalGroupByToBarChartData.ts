@@ -30,6 +30,7 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -50,6 +51,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
@@ -65,6 +67,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
   });
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
@@ -79,6 +82,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       fieldMetadata: groupByFieldX,
       dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
     });
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
@@ -86,6 +90,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
     });
 
     if (isDefined(dimensionValues[0])) {

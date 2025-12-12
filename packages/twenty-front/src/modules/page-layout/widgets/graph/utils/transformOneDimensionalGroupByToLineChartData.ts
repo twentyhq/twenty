@@ -24,6 +24,7 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
 };
 
 type TransformOneDimensionalGroupByToLineChartDataResult = {
@@ -40,6 +41,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
 }: TransformOneDimensionalGroupByToLineChartDataParams): TransformOneDimensionalGroupByToLineChartDataResult => {
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(
@@ -53,6 +55,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
   });
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
@@ -73,6 +76,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
             dateGranularity:
               configuration.primaryAxisDateGranularity ?? undefined,
             subFieldName: primaryAxisSubFieldName ?? undefined,
+            userTimezone,
           })
         : '';
 

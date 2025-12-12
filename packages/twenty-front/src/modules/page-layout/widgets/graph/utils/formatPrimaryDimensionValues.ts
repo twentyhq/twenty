@@ -9,6 +9,7 @@ type FormatPrimaryDimensionValuesParameters = {
   primaryAxisGroupByField: FieldMetadataItem;
   primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisGroupBySubFieldName?: string;
+  userTimezone: string;
 };
 
 export type FormattedDimensionValue = {
@@ -21,6 +22,7 @@ export const formatPrimaryDimensionValues = ({
   primaryAxisGroupByField,
   primaryAxisDateGranularity,
   primaryAxisGroupBySubFieldName,
+  userTimezone,
 }: FormatPrimaryDimensionValuesParameters): FormattedDimensionValue[] => {
   return groupByRawResults.reduce<FormattedDimensionValue[]>(
     (accumulator, rawResult) => {
@@ -34,6 +36,7 @@ export const formatPrimaryDimensionValues = ({
         fieldMetadata: primaryAxisGroupByField,
         dateGranularity: primaryAxisDateGranularity,
         subFieldName: primaryAxisGroupBySubFieldName,
+        userTimezone,
       });
 
       return [

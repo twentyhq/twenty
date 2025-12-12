@@ -7,6 +7,7 @@ import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPi
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useMemo } from 'react';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -48,6 +49,8 @@ export const useGraphPieChartWidgetData = ({
       PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
   });
 
+  const { userTimezone } = useUserTimezone();
+
   const transformedData = useMemo(
     () =>
       transformGroupByDataToPieChartData({
@@ -56,6 +59,7 @@ export const useGraphPieChartWidgetData = ({
         objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
       }),
     [
       groupByData,
@@ -63,6 +67,7 @@ export const useGraphPieChartWidgetData = ({
       objectMetadataItems,
       configuration,
       aggregateOperation,
+      userTimezone,
     ],
   );
 

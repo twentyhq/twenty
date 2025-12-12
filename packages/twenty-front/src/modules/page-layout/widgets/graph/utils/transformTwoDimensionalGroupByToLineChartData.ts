@@ -25,6 +25,7 @@ type TransformTwoDimensionalGroupByToLineChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
 };
 
 type TransformTwoDimensionalGroupByToLineChartDataResult = {
@@ -42,6 +43,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
 }: TransformTwoDimensionalGroupByToLineChartDataParams): TransformTwoDimensionalGroupByToLineChartDataResult => {
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
@@ -52,6 +54,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
   });
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
   let hasTooManyGroups = false;
@@ -68,6 +71,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       fieldMetadata: groupByFieldX,
       dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: primaryAxisSubFieldName ?? undefined,
+      userTimezone,
     });
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
@@ -91,6 +95,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
     });
 
     const aggregateValue = computeAggregateValueFromGroupByResult({
