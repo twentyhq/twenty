@@ -10,5 +10,9 @@ export const truncateTickLabel = (
     return stringValue;
   }
 
+  if (maxLength <= ELLIPSIS_LENGTH) {
+    return '...'.slice(0, maxLength);
+  }
+
   return `${stringValue.slice(0, maxLength - ELLIPSIS_LENGTH)}...`;
 };

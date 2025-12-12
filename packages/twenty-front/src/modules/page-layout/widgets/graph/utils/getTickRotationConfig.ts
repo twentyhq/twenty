@@ -28,9 +28,12 @@ export const getTickRotationConfig = ({
   if (shouldRotate) {
     const characterWidth =
       axisFontSize * COMMON_CHART_CONSTANTS.ROTATED_LABEL_CHARACTER_WIDTH_RATIO;
-    const calculatedLength = Math.floor(
-      COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL /
-        (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
+    const calculatedLength = Math.max(
+      MIN_CALCULATED_LENGTH,
+      Math.floor(
+        COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL /
+          (characterWidth * Math.sin(TICK_ROTATION_ANGLE_RAD)),
+      ),
     );
 
     return {
