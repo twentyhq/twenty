@@ -46,11 +46,11 @@ export class ApplicationDTO {
 
   @IsOptional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   defaultServerlessFunctionRoleId?: string;
 
   @IsOptional()
-  @Field(() => RoleDTO)
+  @Field(() => RoleDTO, { nullable: true })
   defaultServerlessFunctionRole?: RoleDTO;
 
   @Field(() => [AgentDTO])
