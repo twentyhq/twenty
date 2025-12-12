@@ -111,6 +111,8 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'note',
       label: 'Note',
       description: 'NoteTarget note',
@@ -133,6 +135,8 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'NoteTarget person',
@@ -155,6 +159,8 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'NoteTarget company',
@@ -177,6 +183,8 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'NoteTarget opportunity',
@@ -188,29 +196,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
         joinColumnName: 'opportunityId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  custom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'custom',
-      label: 'Custom',
-      description: 'NoteTarget custom object',
-      icon: 'IconBuildingSkyscraper',
-      isNullable: true,
-      // Custom is a dynamic relation
-      targetObjectName: 'note',
-      targetFieldName: 'noteTargets',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

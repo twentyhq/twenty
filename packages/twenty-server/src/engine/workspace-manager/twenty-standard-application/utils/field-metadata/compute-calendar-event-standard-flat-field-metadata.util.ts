@@ -292,6 +292,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarChannelEventAssociations',
       label: 'Calendar Channel Event Associations',
       description: 'Calendar Channel Event Associations',
@@ -312,6 +314,8 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarEventParticipants',
       label: 'Event Participants',
       description: 'Event Participants',

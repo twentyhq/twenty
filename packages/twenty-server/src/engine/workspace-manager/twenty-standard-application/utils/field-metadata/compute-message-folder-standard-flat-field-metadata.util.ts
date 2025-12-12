@@ -226,6 +226,8 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageChannel',
       label: 'Message Channel',
       description: 'Message Channel',

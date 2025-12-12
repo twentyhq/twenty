@@ -220,6 +220,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'author',
       label: 'Author',
       description: 'Attachment author (deprecated - use createdBy)',
@@ -238,33 +240,12 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  activity: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'activity',
-      label: 'Activity',
-      description: 'Attachment activity',
-      icon: 'IconNotes',
-      isNullable: true,
-      // Activity is deprecated, pointing to a non-existent target
-      targetObjectName: 'note',
-      targetFieldName: 'attachments',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'activityId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   task: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'task',
       label: 'Task',
       description: 'Attachment task',
@@ -287,6 +268,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'note',
       label: 'Note',
       description: 'Attachment note',
@@ -309,6 +292,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'Attachment person',
@@ -331,6 +316,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'Attachment company',
@@ -353,6 +340,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Attachment opportunity',
@@ -375,6 +364,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Attachment dashboard',
@@ -397,6 +388,8 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Attachment workflow',
@@ -408,29 +401,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
         joinColumnName: 'workflowId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  custom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'custom',
-      label: 'Custom',
-      description: 'Attachment custom object',
-      icon: 'IconBuildingSkyscraper',
-      isNullable: true,
-      // Custom is a dynamic relation, pointing to custom objects
-      targetObjectName: 'note',
-      targetFieldName: 'attachments',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

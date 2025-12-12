@@ -388,6 +388,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'assignedTasks',
       label: 'Assigned tasks',
       description: 'Tasks assigned to the workspace member',
@@ -408,6 +410,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workspace member',
@@ -428,6 +432,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'accountOwnerForCompanies',
       label: 'Account Owner For Companies',
       description: 'Account owner for companies',
@@ -448,6 +454,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'authoredAttachments',
       label: 'Authored attachments',
       description: 'Attachments created by the workspace member',
@@ -469,6 +477,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'connectedAccounts',
       label: 'Connected accounts',
       description: 'Connected accounts',
@@ -489,6 +499,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -509,6 +521,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'blocklist',
       label: 'Blocklist',
       description: 'Blocklisted handles',
@@ -529,6 +543,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
@@ -549,6 +565,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Events',
       description: 'Events linked to the workspace member',
