@@ -241,8 +241,8 @@ export type Application = {
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
   canBeUninstalled: Scalars['Boolean'];
-  defaultServerlessFunctionRole: Role;
-  defaultServerlessFunctionRoleId: Scalars['String'];
+  defaultServerlessFunctionRole?: Maybe<Role>;
+  defaultServerlessFunctionRoleId?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
