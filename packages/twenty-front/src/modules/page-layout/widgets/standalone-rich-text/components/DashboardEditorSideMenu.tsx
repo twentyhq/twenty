@@ -81,7 +81,7 @@ export const DashboardEditorSideMenu = ({
     },
   });
 
-  if (!isDefined(state?.show) || !isDefined(virtualReference)) {
+  if (!state?.show || !isDefined(virtualReference)) {
     return null;
   }
 
