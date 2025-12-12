@@ -6,7 +6,7 @@ import { STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME } from 'src/engine/wo
 import { type CreateStandardRoleArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/create-standard-role-flat-metadata.util';
 
 export const buildStandardFlatRoleMetadataMaps = (
-  args: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>,
+  args: Omit<CreateStandardRoleArgs, 'context'>,
 ): FlatEntityMaps<FlatRole> => {
   const allRoleMetadatas: FlatRole[] = Object.values(
     STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME,
@@ -23,4 +23,3 @@ export const buildStandardFlatRoleMetadataMaps = (
 
   return flatRoleMetadataMaps;
 };
-

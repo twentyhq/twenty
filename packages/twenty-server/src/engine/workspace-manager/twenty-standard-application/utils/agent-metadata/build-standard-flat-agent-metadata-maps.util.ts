@@ -6,7 +6,7 @@ import { STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME } from 'src/engine/
 import { type CreateStandardAgentArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-agent-flat-metadata.util';
 
 export const buildStandardFlatAgentMetadataMaps = (
-  args: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>,
+  args: Omit<CreateStandardAgentArgs, 'context'>,
 ): FlatEntityMaps<FlatAgent> => {
   const allAgentMetadatas: FlatAgent[] = Object.values(
     STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME,
@@ -23,4 +23,3 @@ export const buildStandardFlatAgentMetadataMaps = (
 
   return flatAgentMetadataMaps;
 };
-

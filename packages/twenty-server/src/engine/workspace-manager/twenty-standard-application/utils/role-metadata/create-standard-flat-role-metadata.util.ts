@@ -7,15 +7,11 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/create-standard-role-flat-metadata.util';
 
 export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
-  admin: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardRoleRelatedEntityIds,
-  }: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>) =>
+  admin: (args: Omit<CreateStandardRoleArgs, 'context'>) =>
     createStandardRoleFlatMetadata({
-      roleName: 'admin',
+      ...args,
       context: {
+        roleName: 'admin',
         universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
         standardId: STANDARD_ROLE.admin.universalIdentifier,
         label: 'Admin',
@@ -33,20 +29,12 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canBeAssignedToApiKeys: true,
         canBeAssignedToApplications: false,
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardRoleRelatedEntityIds,
-      now,
     }),
-  dashboardManager: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardRoleRelatedEntityIds,
-  }: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>) =>
+  dashboardManager: (args: Omit<CreateStandardRoleArgs, 'context'>) =>
     createStandardRoleFlatMetadata({
-      roleName: 'dashboardManager',
+      ...args,
       context: {
+        roleName: 'dashboardManager',
         universalIdentifier: STANDARD_ROLE.dashboardManager.universalIdentifier,
         standardId: STANDARD_ROLE.dashboardManager.universalIdentifier,
         label: 'Dashboard Manager',
@@ -64,20 +52,12 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canBeAssignedToApiKeys: false,
         canBeAssignedToApplications: true,
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardRoleRelatedEntityIds,
-      now,
     }),
-  dataManipulator: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardRoleRelatedEntityIds,
-  }: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>) =>
+  dataManipulator: (args: Omit<CreateStandardRoleArgs, 'context'>) =>
     createStandardRoleFlatMetadata({
-      roleName: 'dataManipulator',
+      ...args,
       context: {
+        roleName: 'dataManipulator',
         universalIdentifier: STANDARD_ROLE.dataManipulator.universalIdentifier,
         standardId: STANDARD_ROLE.dataManipulator.universalIdentifier,
         label: 'Data Manipulator',
@@ -95,20 +75,12 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canBeAssignedToApiKeys: false,
         canBeAssignedToApplications: true,
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardRoleRelatedEntityIds,
-      now,
     }),
-  dataModelManager: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardRoleRelatedEntityIds,
-  }: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>) =>
+  dataModelManager: (args: Omit<CreateStandardRoleArgs, 'context'>) =>
     createStandardRoleFlatMetadata({
-      roleName: 'dataModelManager',
+      ...args,
       context: {
+        roleName: 'dataModelManager',
         universalIdentifier: STANDARD_ROLE.dataModelManager.universalIdentifier,
         standardId: STANDARD_ROLE.dataModelManager.universalIdentifier,
         label: 'Data Model Manager',
@@ -126,20 +98,12 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canBeAssignedToApiKeys: false,
         canBeAssignedToApplications: true,
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardRoleRelatedEntityIds,
-      now,
     }),
-  workflowManager: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardRoleRelatedEntityIds,
-  }: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>) =>
+  workflowManager: (args: Omit<CreateStandardRoleArgs, 'context'>) =>
     createStandardRoleFlatMetadata({
-      roleName: 'workflowManager',
+      ...args,
       context: {
+        roleName: 'workflowManager',
         universalIdentifier: STANDARD_ROLE.workflowManager.universalIdentifier,
         standardId: STANDARD_ROLE.workflowManager.universalIdentifier,
         label: 'Workflow Manager',
@@ -157,13 +121,9 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canBeAssignedToApiKeys: false,
         canBeAssignedToApplications: true,
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardRoleRelatedEntityIds,
-      now,
     }),
 } satisfies {
   [P in AllStandardRoleName]: (
-    args: Omit<CreateStandardRoleArgs, 'context' | 'roleName'>,
+    args: Omit<CreateStandardRoleArgs, 'context'>,
   ) => FlatRole;
 };

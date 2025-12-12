@@ -1,6 +1,11 @@
+import { v4 } from 'uuid';
+
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type AllStandardRoleName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-role-name.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardRoleContext = {
+  roleName: AllStandardRoleName;
   universalIdentifier: string;
   standardId: string;
   label: string;
@@ -19,13 +24,8 @@ export type CreateStandardRoleContext = {
   canBeAssignedToApplications: boolean;
 };
 
-export type CreateStandardRoleArgs = {
-  workspaceId: string;
-  twentyStandardApplicationId: string;
-  now: string;
+export type CreateStandardRoleArgs = StandardBuilderArgs<'role'> & {
   context: CreateStandardRoleContext;
-  standardRoleRelatedEntityIds: Record<string, { id: string }>;
-  roleName: string;
 };
 
 export const createStandardRoleFlatMetadata = ({
@@ -50,10 +50,8 @@ export const createStandardRoleFlatMetadata = ({
   workspaceId,
   twentyStandardApplicationId,
   now,
-  standardRoleRelatedEntityIds,
-  roleName,
 }: CreateStandardRoleArgs): FlatRole => ({
-  id: standardRoleRelatedEntityIds[roleName].id,
+  id: v4(),
   universalIdentifier,
   standardId,
   label,

@@ -1,9 +1,14 @@
+import { v4 } from 'uuid';
+
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardAgentContext = {
+  agentName: AllStandardAgentName;
   universalIdentifier: string;
   standardId: string;
   name: string;
@@ -18,13 +23,8 @@ export type CreateStandardAgentContext = {
   evaluationInputs: string[];
 };
 
-export type CreateStandardAgentArgs = {
-  workspaceId: string;
-  twentyStandardApplicationId: string;
-  now: string;
+export type CreateStandardAgentArgs = StandardBuilderArgs<'agent'> & {
   context: CreateStandardAgentContext;
-  standardAgentRelatedEntityIds: Record<string, { id: string }>;
-  agentName: string;
 };
 
 export const createStandardAgentFlatMetadata = ({
@@ -45,10 +45,8 @@ export const createStandardAgentFlatMetadata = ({
   workspaceId,
   twentyStandardApplicationId,
   now,
-  standardAgentRelatedEntityIds,
-  agentName,
 }: CreateStandardAgentArgs): FlatAgent => ({
-  id: standardAgentRelatedEntityIds[agentName].id,
+  id: v4(),
   universalIdentifier,
   standardId,
   name,
@@ -67,4 +65,3 @@ export const createStandardAgentFlatMetadata = ({
   updatedAt: now,
   deletedAt: null,
 });
-
