@@ -75,13 +75,6 @@ export const PhonesDisplay = ({
     }
   };
 
-  const handleClick = (
-    number: string,
-    event: React.MouseEvent<HTMLElement>,
-  ) => {
-    onPhoneNumberClick?.(number, event);
-  };
-
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, callingCode }, index) => {
@@ -95,7 +88,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
@@ -113,7 +108,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
