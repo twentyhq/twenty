@@ -4,6 +4,7 @@ import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -34,14 +35,34 @@ export const triggerDestroyRecordsOptimisticEffect = ({
         rootQueryCachedResponse,
         { readField },
       ) => {
-        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
+        if (
+          !isObjectRecordConnection(
+            objectMetadataItem.nameSingular,
+            rootQueryCachedResponse,
+          )
+        ) {
+          return rootQueryCachedResponse;
+        }
+
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryCachedResponse,
+        );
+
+        const newTotalCount = isDefined(totalCount)
+          ? Math.max(totalCount - recordsToDestroy.length, 0)
+          : undefined;
+
+        if (
           !isObjectRecordConnectionWithRefs(
             objectMetadataItem.nameSingular,
             rootQueryCachedResponse,
-          );
-
-        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
-          return rootQueryCachedResponse;
+          )
+        ) {
+          return {
+            ...rootQueryCachedResponse,
+            totalCount: newTotalCount,
+          };
         }
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
@@ -49,11 +70,6 @@ export const triggerDestroyRecordsOptimisticEffect = ({
         const recordIdsToDestroy = recordsToDestroy.map(({ id }) => id);
         const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
-          rootQueryCachedObjectRecordConnection,
-        );
-
-        const totalCount = readField<number | undefined>(
-          'totalCount',
           rootQueryCachedObjectRecordConnection,
         );
 
@@ -65,14 +81,15 @@ export const triggerDestroyRecordsOptimisticEffect = ({
           }) || [];
 
         if (nextCachedEdges.length === cachedEdges?.length)
-          return rootQueryCachedObjectRecordConnection;
+          return {
+            ...rootQueryCachedObjectRecordConnection,
+            totalCount: newTotalCount,
+          };
 
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
-          totalCount: isDefined(totalCount)
-            ? totalCount - recordIdsToDestroy.length
-            : undefined,
+          totalCount: newTotalCount,
         };
       },
     },

@@ -9,6 +9,8 @@ export const ApolloCoreProvider = ({
 }) => {
   const apolloCoreClient = useApolloFactory();
 
+  window.__APOLLO_CLIENT__ = apolloCoreClient;
+
   return (
     <ApolloCoreClientContext.Provider value={apolloCoreClient}>
       {children}
