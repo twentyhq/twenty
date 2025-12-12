@@ -82,6 +82,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -496,6 +497,11 @@ msgstr "ACS Url copied to clipboard"
 msgid "Action"
 msgstr "Action"
 
+#. js-lingui-id: j6ogTf
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Action on click"
+msgstr "Action on click"
+
 #. js-lingui-id: 7L01XJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -581,6 +587,7 @@ msgstr "Add Approved Access Domain"
 
 #. js-lingui-id: We0vOO
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Add Block"
 msgstr "Add Block"
 
@@ -1572,6 +1579,11 @@ msgstr "Back"
 msgid "Back to content"
 msgstr "Back to content"
 
+#. js-lingui-id: Hv/jpu
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Background Colors"
+msgstr "Background Colors"
+
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
 msgid "between {startMonth} and {endMonth}"
@@ -1836,6 +1848,7 @@ msgstr "Catalan"
 
 #. js-lingui-id: tHntRt
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Change Color"
 msgstr "Change Color"
 
@@ -1961,6 +1974,21 @@ msgstr "Choose the fields that will identify your records"
 msgid "Choose the format used to display date value"
 msgstr "Choose the format used to display date value"
 
+#. js-lingui-id: CiPJbh
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a link"
+msgstr "Choose what happens when you click a link"
+
+#. js-lingui-id: D3MauW
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a phone number"
+msgstr "Choose what happens when you click a phone number"
+
+#. js-lingui-id: QR1yAR
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click an email"
+msgstr "Choose what happens when you click an email"
+
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -2054,6 +2082,7 @@ msgstr "Code your function"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2392,6 +2421,11 @@ msgstr "Copy Setup Key"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "Copy this key as it will not be visible again"
+
+#. js-lingui-id: /4gGIX
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Copy to clipboard"
+msgstr "Copy to clipboard"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -3076,6 +3110,7 @@ msgstr "delete"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -3609,6 +3644,7 @@ msgstr "Email cannot be empty"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 msgid "Email copied to clipboard"
 msgstr "Email copied to clipboard"
 
@@ -3722,6 +3758,7 @@ msgstr "Empty"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3740,6 +3777,7 @@ msgstr "Empty Inbox"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3900,11 +3938,6 @@ msgstr "Environment Variables"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Erasure of soft-deleted records"
 msgstr "Erasure of soft-deleted records"
-
-#. js-lingui-id: XOEl9R
-#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-msgid "Error copying to clipboard"
-msgstr "Error copying to clipboard"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4158,6 +4191,7 @@ msgstr "Exit Settings"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -5696,6 +5730,7 @@ msgstr "Line Chart"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -6992,6 +7027,11 @@ msgstr "Only the timestamp & participants will be shared with your team."
 msgid "Open"
 msgstr "Open"
 
+#. js-lingui-id: JG4LoU
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open as link"
+msgstr "Open as link"
+
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
@@ -7901,6 +7941,11 @@ msgstr "Return Value"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Revoked for this object"
 msgstr "Revoked for this object"
+
+#. js-lingui-id: NP5Nbf
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Rich Text"
+msgstr "Rich Text"
 
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9182,6 +9227,11 @@ msgstr "text"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Text"
 msgstr "Text"
+
+#. js-lingui-id: fq+5a1
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Text Colors"
+msgstr "Text Colors"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx

@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type RichTextV2Metadata,
@@ -5,13 +7,31 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+const logger = new Logger('TransformRichTextV2');
+
+const calculateInputSize = (input: unknown): number => {
+  if (typeof input === 'string') {
+    return Buffer.byteLength(input, 'utf8');
+  }
+  if (typeof input === 'object' && input !== null) {
+    return Buffer.byteLength(JSON.stringify(input), 'utf8');
+  }
+
+  return 0;
+};
+
 export const transformRichTextV2Value = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   richTextValue: any,
 ): Promise<RichTextV2Metadata> => {
+  const startTime = performance.now();
+  const inputSize = calculateInputSize(richTextValue);
+
   const parsedValue = isNonEmptyString(richTextValue)
     ? richTextV2ValueSchema.parse(richTextValue)
     : richTextValue;
+
+  const afterParsingTime = performance.now();
 
   const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
 
@@ -31,6 +51,8 @@ export const transformRichTextV2Value = async (
     convertedMarkdown = parsedValue.blocknote || null;
   }
 
+  const afterMarkdownConversionTime = performance.now();
+
   const convertedBlocknote = parsedValue.markdown
     ? JSON.stringify(
         await serverBlockNoteEditor.tryParseMarkdownToBlocks(
@@ -38,6 +60,12 @@ export const transformRichTextV2Value = async (
         ),
       )
     : null;
+
+  const endTime = performance.now();
+
+  logger.debug(
+    `transformRichTextV2Value completed - total: ${endTime - startTime}ms, parsing: ${afterParsingTime - startTime}ms, markdown_conversion: ${afterMarkdownConversionTime - afterParsingTime}ms, blocknote_conversion: ${endTime - afterMarkdownConversionTime}ms, size: ${inputSize} bytes`,
+  );
 
   return {
     markdown: parsedValue.markdown || convertedMarkdown,

@@ -92,9 +92,9 @@ describe('MicrosoftAPIsService', () => {
 
                 return {};
               }),
-            getDataSourceForWorkspace: jest
+            getGlobalWorkspaceDataSource: jest
               .fn()
-              .mockImplementation(() => mockWorkspaceDataSource),
+              .mockResolvedValue(mockWorkspaceDataSource),
             executeInWorkspaceContext: jest
               .fn()
               .mockImplementation((_authContext: any, fn: () => any) => fn()),

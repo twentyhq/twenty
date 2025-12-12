@@ -146,7 +146,7 @@ export class FieldMetadataToolsFactory {
 
   generateTools(workspaceId: string): ToolSet {
     return {
-      'get-field-metadata': {
+      get_field_metadata: {
         description:
           'Find fields metadata. Retrieve information about the fields of objects in the workspace data model.',
         inputSchema: GetFieldMetadataInputSchema,
@@ -169,7 +169,7 @@ export class FieldMetadataToolsFactory {
           });
         },
       },
-      'create-field-metadata': {
+      create_field_metadata: {
         description:
           'Create a new field metadata on an object. Specify the objectMetadataId and field properties.',
         inputSchema: CreateFieldMetadataInputSchema,
@@ -209,7 +209,7 @@ export class FieldMetadataToolsFactory {
           }
         },
       },
-      'update-field-metadata': {
+      update_field_metadata: {
         description:
           'Update an existing field metadata. Provide the field ID and the properties to update.',
         inputSchema: UpdateFieldMetadataInputSchema,
@@ -249,7 +249,7 @@ export class FieldMetadataToolsFactory {
           }
         },
       },
-      'delete-field-metadata': {
+      delete_field_metadata: {
         description: 'Delete a field metadata by its ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
         execute: async (parameters: { input: { id: string } }) => {

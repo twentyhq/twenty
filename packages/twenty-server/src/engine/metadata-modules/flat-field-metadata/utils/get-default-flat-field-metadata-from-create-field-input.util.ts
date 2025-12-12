@@ -38,7 +38,7 @@ export const getDefaultFlatFieldMetadata = ({
       createFieldInput.isNullable,
       createFieldInput.isRemoteCreation,
     ),
-    isSystem: false,
+    isSystem: createFieldInput.isSystem ?? false,
     isUnique: createFieldInput.isUnique ?? false,
     label: createFieldInput.label,
     name: createFieldInput.name,

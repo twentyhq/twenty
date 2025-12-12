@@ -64,9 +64,9 @@ describe('ImapSmtpCalDavAPIService', () => {
 
                 return {};
               }),
-            getDataSourceForWorkspace: jest
+            getGlobalWorkspaceDataSource: jest
               .fn()
-              .mockImplementation(() => mockWorkspaceDataSource),
+              .mockResolvedValue(mockWorkspaceDataSource),
             executeInWorkspaceContext: jest
               .fn()
 
