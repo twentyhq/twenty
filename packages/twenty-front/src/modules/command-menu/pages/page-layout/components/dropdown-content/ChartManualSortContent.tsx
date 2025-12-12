@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type DropResult } from '@hello-pangea/dnd';
 
@@ -11,6 +12,8 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
+import { IconGripVertical } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type ChartManualSortAxis = 'primary' | 'secondary' | 'pie';
@@ -20,22 +23,8 @@ type ChartManualSortContentProps = {
   axis: ChartManualSortAxis;
 };
 
-const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledOptionRow = styled.div`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  cursor: grab;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(8)};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
+const StyledIconGripVertical = styled(IconGripVertical)`
+  margin-right: ${({ theme }) => theme.spacing(0.75)};
 `;
 
 const getManualSortConfigKey = (axis: ChartManualSortAxis) => {
@@ -84,6 +73,7 @@ export const ChartManualSortContent = ({
   fieldMetadataItem,
   axis,
 }: ChartManualSortContentProps) => {
+  const theme = useTheme();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
@@ -124,32 +114,40 @@ export const ChartManualSortContent = ({
   return (
     <>
       <DropdownMenuSeparator />
-      <StyledContainer>
-        <DraggableList
-          onDragEnd={handleDragEnd}
-          draggableItems={
-            <>
-              {sortedOptions.map((option, index) => (
-                <DraggableItem
-                  key={option.value}
-                  draggableId={option.value}
-                  index={index}
-                  isDragDisabled={sortedOptions.length === 1}
-                  itemComponent={
-                    <StyledOptionRow>
-                      <Tag
-                        preventShrink
-                        color={option.color}
-                        text={option.label}
-                      />
-                    </StyledOptionRow>
-                  }
-                />
-              ))}
-            </>
-          }
-        />
-      </StyledContainer>
+      <DraggableList
+        onDragEnd={handleDragEnd}
+        draggableItems={
+          <>
+            {sortedOptions.map((option, index) => (
+              <DraggableItem
+                key={option.value}
+                draggableId={option.value}
+                index={index}
+                isDragDisabled={sortedOptions.length === 1}
+                itemComponent={
+                  <MenuItem
+                    text=""
+                    LeftComponent={
+                      <>
+                        <IconGripVertical
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.extraLight}
+                        />
+                        <Tag
+                          preventShrink
+                          color={option.color}
+                          text={option.label}
+                        />
+                      </>
+                    }
+                  />
+                }
+              />
+            ))}
+          </>
+        }
+      />
     </>
   );
 };

@@ -15,10 +15,7 @@ import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type LineChartConfiguration,
-  GraphOrderBy,
-} from '~/generated/graphql';
+import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToLineChartDataParams = {
   rawResults: GroupByRawResult[];

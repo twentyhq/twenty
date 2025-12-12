@@ -1,7 +1,7 @@
 import {
   IconArrowDown,
   IconArrowUp,
-  IconGripVertical,
+  IconHandMove,
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui/display';
@@ -26,6 +26,6 @@ export const X_SORT_BY_OPTIONS = [
   },
   {
     value: GraphOrderBy.MANUAL,
-    icon: IconGripVertical,
+    icon: IconHandMove,
   },
 ];
