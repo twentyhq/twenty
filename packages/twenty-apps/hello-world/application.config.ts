@@ -13,7 +13,7 @@ const config: ApplicationConfig = {
       isSecret: false,
     },
   },
-  applicationRole: {
+  role: {
     universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     label: 'hello-world-role',
     description: 'A role to define app permissions',

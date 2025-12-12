@@ -1,8 +1,8 @@
 import { type Application } from 'twenty-shared/application';
 
-export type ApplicationConfig = Omit<Application, 'applicationRole'> & {
-  applicationRole?: Omit<
-    NonNullable<Application['applicationRole']>,
+export type ApplicationConfig = Omit<Application, 'ole'> & {
+  ole?: Omit<
+    NonNullable<Application['role']>,
     | 'canAccessAllTools'
     | 'canUpdateAllSettings'
     | 'canBeAssignedToAgents'

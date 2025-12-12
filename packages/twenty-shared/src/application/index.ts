@@ -15,6 +15,7 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export type { FieldManifest } from './fieldManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
+export type { Role } from './roleType';
 export type {
   ServerlessFunctionManifest,
   DatabaseEventTrigger,
