@@ -90,7 +90,7 @@ export const RecordFieldList = ({
         instanceId,
       }}
     >
-      <PropertyBox>
+      <PropertyBox ariaLabel="Record fields list">
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
         ) : (
