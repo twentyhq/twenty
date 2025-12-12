@@ -20,4 +20,3 @@ export const getStandardAgentRelatedEntityIds =
 
     return result;
   };
-

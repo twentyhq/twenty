@@ -18,8 +18,7 @@ export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
         standardId: STANDARD_AGENT.dashboardBuilder.universalIdentifier,
         name: 'dashboard-builder',
         label: 'Dashboard Builder',
-        description:
-          'AI agent specialized in creating and managing dashboards',
+        description: 'AI agent specialized in creating and managing dashboards',
         icon: 'IconLayoutDashboard',
         prompt: `You are a Dashboard Builder Agent for Twenty. You help users create and manage dashboards with widgets.
 
@@ -174,8 +173,7 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
       ...args,
       context: {
         agentName: 'metadataBuilder',
-        universalIdentifier:
-          STANDARD_AGENT.metadataBuilder.universalIdentifier,
+        universalIdentifier: STANDARD_AGENT.metadataBuilder.universalIdentifier,
         standardId: STANDARD_AGENT.metadataBuilder.universalIdentifier,
         name: 'metadata-builder',
         label: 'Metadata Builder',
@@ -299,8 +297,7 @@ Be persistent in finding accurate information.`,
       ...args,
       context: {
         agentName: 'workflowBuilder',
-        universalIdentifier:
-          STANDARD_AGENT.workflowBuilder.universalIdentifier,
+        universalIdentifier: STANDARD_AGENT.workflowBuilder.universalIdentifier,
         standardId: STANDARD_AGENT.workflowBuilder.universalIdentifier,
         name: 'workflow-builder',
         label: 'Workflow Builder',

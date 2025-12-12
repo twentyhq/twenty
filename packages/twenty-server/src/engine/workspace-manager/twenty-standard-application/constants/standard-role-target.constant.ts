@@ -1,4 +1,4 @@
-import { AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
+import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
 
 export const STANDARD_ROLE_TARGET = {
   agent: {

@@ -4,4 +4,3 @@ import { type AllStandardRoleTargetTypeName } from 'src/engine/workspace-manager
 export type AllStandardRoleTargetName<
   T extends AllStandardRoleTargetTypeName = AllStandardRoleTargetTypeName,
 > = keyof (typeof STANDARD_ROLE_TARGET)[T];
-

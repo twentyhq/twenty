@@ -78,4 +78,3 @@ export const STANDARD_FLAT_ROLE_TARGET_METADATA_BUILDERS = {
     [P in AllStandardAgentName]: StandardRoleTargetBuilder<T>;
   };
 };
-
