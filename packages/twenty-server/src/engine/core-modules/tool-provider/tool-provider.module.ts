@@ -26,8 +26,9 @@ import { ToolRegistryService } from './services/tool-registry.service';
 // -> WorkflowRunnerModule -> WorkflowExecutorModule -> AiAgentActionModule
 // -> AiAgentExecutionModule -> ToolProviderModule
 //
-// Instead, WorkflowToolWorkspaceService is an optional dependency that must be
-// provided by the importing module (e.g., AiChatModule imports WorkflowToolsModule).
+// Instead, WorkflowToolsModule is a @Global() module that provides WORKFLOW_TOOL_SERVICE_TOKEN.
+// When WorkflowToolsModule is imported anywhere in the app (e.g., AiChatModule),
+// the token becomes available globally to WorkflowToolProvider via @Optional() injection.
 
 @Module({
   imports: [
