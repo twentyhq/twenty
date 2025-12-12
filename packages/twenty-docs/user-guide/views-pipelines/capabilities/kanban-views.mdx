@@ -6,10 +6,6 @@ image: /images/user-guide/kanban-views/kanban.png
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<Frame>
-  <img src="/images/user-guide/kanban-views/kanban.png" alt="Kanban Views" />
-</Frame>
-
 ## About Kanban Views
 
 Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
@@ -34,11 +30,9 @@ To add a stage, access the Select field settings by navigating to Settings > Dat
 
 To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
 
-<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
-
 ## Display Fields
 
-You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Hover the field you want to hide to bring up the `-` button. Click on it to hide the field.
+You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
 
 You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
 
@@ -46,9 +40,33 @@ You can also rearrange the order of fields by holding down the field name and dr
 
 ## Compact View
 
-You can also hide all the fields and get an overview of all the opportunities at a glance. To do so, click on **Options** on the top right and turn on the toggle for **Compact view** after selecting layout in Kanban view.
+You can hide all the fields and get an overview of all records at a glance. To enable:
+1. Click **Options** on the top right
+2. Turn on the toggle for **Compact view**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>
+
+## Column Aggregations
+
+Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+
+### Available Aggregations
+
+| Aggregation | Description |
+|-------------|-------------|
+| **Count** | Number of records in the column |
+| **Sum** | Total of a numeric field (e.g., deal amounts) |
+| **Average** | Average value of a numeric field |
+| **Min** | Lowest value |
+| **Max** | Highest value |
+
+### Configuring Aggregations
+
+1. Click on the number displayed next to the Stage value, at the top of a column
+2. Select the aggregation type
+3. Choose the field to aggregate
+
+**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
 
 ## When to Use Kanban Views
 

@@ -159,16 +159,24 @@
                   {
                     "group": "Capabilities",
                     "pages": [
+                      "user-guide/views-pipelines/capabilities/table-views",
                       "user-guide/views-pipelines/capabilities/kanban-views",
-                      "user-guide/views-pipelines/capabilities/views-sort-filter",
-                      "user-guide/views-pipelines/capabilities/pipeline"
+                      "user-guide/views-pipelines/capabilities/calendar-view",
+                      "user-guide/views-pipelines/capabilities/filters-and-sorting",
+                      "user-guide/views-pipelines/capabilities/fields-and-columns",
+                      "user-guide/views-pipelines/capabilities/view-settings"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/views-pipelines/how-tos/create-custom-views",
-                      "user-guide/views-pipelines/how-tos/sales-use-cases"
+                      "user-guide/views-pipelines/how-tos/how-to-create-a-table-view-with-grouping",
+                      "user-guide/views-pipelines/how-tos/how-to-create-a-kanban-view-for-projects",
+                      "user-guide/views-pipelines/how-tos/how-to-create-a-calendar-view-for-tasks-due",
+                      "user-guide/views-pipelines/how-tos/how-to-restrict-access-to-your-view",
+                      "user-guide/views-pipelines/how-tos/how-to-set-up-a-sales-pipeline",
+                      "user-guide/views-pipelines/how-tos/how-to-show-expected-amount-in-pipeline",
+                      "user-guide/views-pipelines/how-tos/how-to-track-time-in-stage"
                     ]
                   }
                 ]
@@ -199,6 +207,8 @@
                       "user-guide/workflows/how-tos/internal-automations",
                       "user-guide/workflows/how-tos/external-tool-integration",
                       "user-guide/workflows/how-tos/how-to-use-branches-in-workflows",
+                      "user-guide/workflows/how-tos/how-to-calculate-expected-amount-with-workflows",
+                      "user-guide/workflows/how-tos/how-to-track-deal-velocity-with-workflows",
                       "user-guide/workflows/how-tos/workflow-troubleshooting"
                     ]
                   }
