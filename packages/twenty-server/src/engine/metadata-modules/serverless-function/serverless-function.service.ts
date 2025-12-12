@@ -42,6 +42,8 @@ import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/bu
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
+const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
+
 @Injectable()
 export class ServerlessFunctionService {
   constructor(
@@ -125,7 +127,10 @@ export class ServerlessFunctionService {
       ? await this.applicationTokenService.generateApplicationToken({
           workspaceId,
           applicationId: functionToExecute.applicationId,
-          expiresInSeconds: functionToExecute.timeoutSeconds,
+          expiresInSeconds: Math.max(
+            functionToExecute.timeoutSeconds,
+            MIN_TOKEN_EXPIRATION_IN_SECONDS,
+          ),
         })
       : undefined;
 
