@@ -1,7 +1,8 @@
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.contant';
@@ -12,7 +13,6 @@ import { type AllStandardRoleName } from 'src/engine/workspace-manager/twenty-st
 import { type AllStandardRoleTargetName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-role-target-name.type';
 import { type AllStandardRoleTargetTypeName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-role-target-type-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-import { isDefined } from 'twenty-shared/utils';
 
 export type CreateStandardRoleTargetContext<
   T extends AllStandardRoleTargetTypeName = AllStandardRoleTargetTypeName,
@@ -68,6 +68,7 @@ export const createStandardRoleTargetFlatMetadata = <
   if (roleTargetTypeName === 'agent' && agentName) {
     const agentUniversalIdentifier =
       STANDARD_AGENT[agentName as AllStandardAgentName].universalIdentifier;
+
     agentId =
       flatAgentMaps.idByUniversalIdentifier[agentUniversalIdentifier] ?? null;
 
