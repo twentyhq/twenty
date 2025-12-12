@@ -85,26 +85,33 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     });
 
     for (const objectMetadataItem of objectMetadataItems) {
-      const tableName = computeObjectTargetTable(objectMetadataItem);
+      try {
+        const tableName = computeObjectTargetTable(objectMetadataItem);
 
-      if (!objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
-        );
-      }
+        if (!objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
 
-      if (objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
+        if (objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Could not cleanup ${objectMetadataItem.isCustom ? 'custom' : 'standard'} object ${objectMetadataItem.nameSingular} records for workspace ${workspaceId}`,
         );
+        this.logger.error(error);
       }
     }
   }
