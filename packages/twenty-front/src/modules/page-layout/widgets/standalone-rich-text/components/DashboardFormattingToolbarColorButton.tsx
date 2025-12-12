@@ -10,7 +10,7 @@ import {
   shift,
   useFloating,
 } from '@floating-ui/react';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { DashboardColorIcon } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorIcon';
@@ -84,29 +84,23 @@ export const DashboardFormattingToolbarColorButton = () => {
     setIsOpen(!isOpen);
   };
 
-  const applyTextColor = useCallback(
-    (color: string) => {
-      if (color === 'default') {
-        editor.removeStyles({ textColor: color });
-      } else {
-        editor.addStyles({ textColor: color });
-      }
-      setTimeout(() => editor.focus());
-    },
-    [editor],
-  );
+  const applyTextColor = (color: string) => {
+    if (color === 'default') {
+      editor.removeStyles({ textColor: color });
+    } else {
+      editor.addStyles({ textColor: color });
+    }
+    setTimeout(() => editor.focus());
+  };
 
-  const applyBackgroundColor = useCallback(
-    (color: string) => {
-      if (color === 'default') {
-        editor.removeStyles({ backgroundColor: color });
-      } else {
-        editor.addStyles({ backgroundColor: color });
-      }
-      setTimeout(() => editor.focus());
-    },
-    [editor],
-  );
+  const applyBackgroundColor = (color: string) => {
+    if (color === 'default') {
+      editor.removeStyles({ backgroundColor: color });
+    } else {
+      editor.addStyles({ backgroundColor: color });
+    }
+    setTimeout(() => editor.focus());
+  };
 
   const handleTextColorSelect = (color: BlockNoteColor) => {
     applyTextColor(color);
