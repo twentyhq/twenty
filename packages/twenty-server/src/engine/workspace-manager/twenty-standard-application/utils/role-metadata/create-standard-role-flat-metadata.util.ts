@@ -54,7 +54,7 @@ export const createStandardRoleFlatMetadata = ({
   return {
     id: v4(),
     universalIdentifier,
-    standardId: universalIdentifier,
+    standardId: null,
     label,
     description,
     icon,

@@ -49,7 +49,7 @@ export const createStandardAgentFlatMetadata = ({
   return {
     id: v4(),
     universalIdentifier,
-    standardId: universalIdentifier,
+    standardId: null,
     name,
     label,
     icon,
