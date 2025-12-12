@@ -101,7 +101,7 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         isEditable: false,
         canUpdateAllSettings: false,
         canAccessAllTools: false,
-        canReadAllObjectRecords: false,
+        canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: false,
         canDestroyAllObjectRecords: false,
