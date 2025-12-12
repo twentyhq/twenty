@@ -101,6 +101,7 @@ export const ChartDataSourceDropdownContent = () => {
           groupByFieldMetadataId: null,
           groupBySubFieldName: null,
           filter: {},
+          ratioAggregateConfig: null,
         },
       });
 

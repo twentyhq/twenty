@@ -6,6 +6,7 @@ import { RecordTableContextProvider as RecordTableContextInternalProvider } from
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilValue } from 'recoil';
@@ -52,7 +53,10 @@ export const RecordTableContextProvider = ({
         recordTableId,
         objectNameSingular,
         objectPermissions,
-        visibleRecordFields,
+        visibleRecordFields: visibleRecordFields.map((field) => ({
+          ...field,
+          size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
+        })),
         onRecordIdentifierClick,
         triggerEvent,
       }}

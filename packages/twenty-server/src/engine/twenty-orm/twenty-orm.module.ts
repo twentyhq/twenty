@@ -12,11 +12,8 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-
-import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
 @Global()
 @Module({
@@ -33,10 +30,9 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     WorkspaceFeatureFlagsMapCacheModule,
     FeatureFlagModule,
     TwentyConfigModule,
-    PgPoolSharedModule,
     WorkspaceCacheModule,
   ],
-  providers: [...entitySchemaFactories, TwentyORMGlobalManager],
-  exports: [EntitySchemaFactory, TwentyORMGlobalManager, PgPoolSharedModule],
+  providers: [...entitySchemaFactories],
+  exports: [EntitySchemaFactory],
 })
 export class TwentyORMModule {}

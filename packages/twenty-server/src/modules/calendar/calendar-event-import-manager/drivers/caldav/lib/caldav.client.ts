@@ -272,7 +272,7 @@ export class CalDAVClient {
       return {
         id: objectUrl,
         title: event.summary || 'Untitled Event',
-        iCalUID: event.uid || '',
+        iCalUid: event.uid || '',
         description: event.description || '',
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),

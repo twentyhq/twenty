@@ -28,10 +28,11 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 
-const LOCAL_TTL_MS = 100;
-const MEMOIZER_TTL_MS = 10_000;
-const STALE_VERSION_TTL_MS = 5_000;
-const MAX_LOCAL_STALE_VERSIONS = 5;
+const LOCAL_TTL_MS = 100; // 100ms
+const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const MEMOIZER_TTL_MS = 10_000; // 10 seconds
+const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
+const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
@@ -97,6 +98,8 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResult<K>> {
+    this.evictExpiredLocalEntries();
+
     if (
       !isDefined(workspaceId) ||
       cacheKeyNames.length === 0 ||
@@ -418,6 +421,28 @@ export class WorkspaceCacheService implements OnModuleInit {
         if (isDefined(oldestEntry)) {
           entry.versions.delete(oldestEntry[0]);
         }
+      }
+    }
+  }
+
+  private evictExpiredLocalEntries(): void {
+    const now = Date.now();
+
+    for (const [localKey, entry] of this.localCache) {
+      for (const [hash, version] of entry.versions) {
+        if (now - version.lastReadAt > LOCAL_ENTRY_TTL_MS) {
+          entry.versions.delete(hash);
+        }
+      }
+
+      if (entry.versions.size === 0) {
+        this.localCache.delete(localKey);
+        continue;
+      }
+
+      if (!entry.versions.has(entry.latestHash)) {
+        // Latest was evicted; drop the entire entry to avoid serving stale data.
+        this.localCache.delete(localKey);
       }
     }
   }

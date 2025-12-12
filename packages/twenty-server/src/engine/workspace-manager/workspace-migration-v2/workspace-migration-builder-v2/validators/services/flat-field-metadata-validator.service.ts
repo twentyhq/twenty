@@ -146,12 +146,26 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: `Name is not synced with label.`,
         userFriendlyMessage: msg`Updated field name is not synced with label`,
+      });
+    }
+
+    if (
+      flatFieldMetadataToValidate.isNullable === false &&
+      flatFieldMetadataToValidate.defaultValue === null
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Default value cannot be null for non-nullable fields',
+        userFriendlyMessage: msg`Default value cannot be null.`,
       });
     }
 
@@ -318,7 +332,10 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,

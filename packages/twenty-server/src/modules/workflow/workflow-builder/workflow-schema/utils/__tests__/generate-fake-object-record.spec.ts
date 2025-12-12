@@ -42,8 +42,6 @@ describe('generateFakeObjectRecord', () => {
 
     expect(generateObjectRecordFields).toHaveBeenCalledWith({
       objectMetadataInfo: mockCompanyObjectMetadataInfo,
-      depth: 0,
-      maxDepth: 1,
     });
   });
 });

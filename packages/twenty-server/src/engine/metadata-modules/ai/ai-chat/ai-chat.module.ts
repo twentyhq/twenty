@@ -2,32 +2,32 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { SkillsModule } from 'src/engine/core-modules/skills/skills.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
-import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
-import { AgentChatRoutingService } from './services/agent-chat-routing.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
-import { ChatToolsProviderService } from './services/chat-tools-provider.service';
+import { ChatExecutionService } from './services/chat-execution.service';
 
 @Module({
   imports: [
@@ -36,20 +36,22 @@ import { ChatToolsProviderService } from './services/chat-tools-provider.service
       FileEntity,
       UserWorkspaceEntity,
     ]),
-    AiAgentModule,
     AiAgentExecutionModule,
-    AiChatRouterModule,
     ThrottlerModule,
     FeatureFlagModule,
     FileUploadModule,
     FileModule,
     PermissionsModule,
+    SkillsModule,
     WorkspaceCacheStorageModule,
+    WorkspaceCacheModule,
+    WorkspaceDomainsModule,
+    TwentyORMModule,
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
     ToolProviderModule,
-    // WorkflowToolsModule provides workflow tools for chat context
+    DashboardToolsModule,
     WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
@@ -57,14 +59,8 @@ import { ChatToolsProviderService } from './services/chat-tools-provider.service
     AgentChatResolver,
     AgentChatService,
     AgentChatStreamingService,
-    AgentChatRoutingService,
     AgentTitleGenerationService,
-    ChatToolsProviderService,
-    // Provide WorkflowToolWorkspaceService via token for ToolProviderService
-    {
-      provide: WORKFLOW_TOOL_SERVICE_TOKEN,
-      useExisting: WorkflowToolWorkspaceService,
-    },
+    ChatExecutionService,
   ],
   exports: [
     AgentChatService,

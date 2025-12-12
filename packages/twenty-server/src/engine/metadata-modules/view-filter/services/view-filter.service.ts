@@ -17,6 +17,7 @@ import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -86,10 +87,12 @@ export class ViewFilterService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewFilterToCreate.id,
-      flatEntityMaps: recomputedExistingFlatViewFilterMaps,
-    });
+    return fromFlatViewFilterToViewFilterDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatViewFilterToCreate.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterMaps,
+      }),
+    );
   }
 
   async updateOne({
@@ -143,10 +146,12 @@ export class ViewFilterService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatViewFilter.id,
-      flatEntityMaps: recomputedExistingFlatViewFilterMaps,
-    });
+    return fromFlatViewFilterToViewFilterDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewFilter.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterMaps,
+      }),
+    );
   }
 
   async deleteOne({
@@ -202,10 +207,12 @@ export class ViewFilterService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatViewFilterWithDeletedAt.id,
-      flatEntityMaps: recomputedExistingFlatViewFilterMaps,
-    });
+    return fromFlatViewFilterToViewFilterDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: optimisticallyUpdatedFlatViewFilterWithDeletedAt.id,
+        flatEntityMaps: recomputedExistingFlatViewFilterMaps,
+      }),
+    );
   }
 
   async destroyOne({
@@ -251,7 +258,7 @@ export class ViewFilterService {
       );
     }
 
-    return existingViewFilterToDelete;
+    return fromFlatViewFilterToViewFilterDto(existingViewFilterToDelete);
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {

@@ -1,6 +1,7 @@
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import {
   MessageChannelSyncStage,
+  MessageChannelType,
   MessageChannelVisibility,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -10,7 +11,7 @@ type MessageChannelDataSeed = {
   updatedAt: Date;
   deletedAt: Date | null;
   isContactAutoCreationEnabled: boolean;
-  type: string;
+  type: MessageChannelType;
   connectedAccountId: string;
   handle: string;
   isSyncEnabled: boolean;
@@ -54,7 +55,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     updatedAt: new Date(),
     deletedAt: null,
     isContactAutoCreationEnabled: true,
-    type: 'email',
+    type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
     handle: 'tim@apple.dev',
     isSyncEnabled: true,
@@ -67,7 +68,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     updatedAt: new Date(),
     deletedAt: null,
     isContactAutoCreationEnabled: true,
-    type: 'email',
+    type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
     handle: 'jony.ive@apple.dev',
     isSyncEnabled: true,
@@ -80,7 +81,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     updatedAt: new Date(),
     deletedAt: null,
     isContactAutoCreationEnabled: true,
-    type: 'email',
+    type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.PHIL,
     handle: 'phil.schiler@apple.dev',
     isSyncEnabled: true,
@@ -93,7 +94,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     updatedAt: new Date(),
     deletedAt: null,
     isContactAutoCreationEnabled: true,
-    type: 'email',
+    type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM, // Use TIM's connected account for shared inbox
     handle: 'support@apple.dev',
     isSyncEnabled: true,
@@ -106,7 +107,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     updatedAt: new Date(),
     deletedAt: null,
     isContactAutoCreationEnabled: true,
-    type: 'email',
+    type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM, // Use TIM's connected account for shared inbox
     handle: 'sales@apple.dev',
     isSyncEnabled: true,

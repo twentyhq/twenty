@@ -1,4 +1,4 @@
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldRichTextV2Value } from '@/object-record/record-field/ui/types/FieldMetadata';
 
@@ -14,6 +14,22 @@ type FormRichTextV2FieldInputProps = {
   VariablePicker?: VariablePickerComponent;
 };
 
+const RICH_TEXT_V2_EDITOR_MIN_HEIGHT = 340;
+
+const RICH_TEXT_V2_EDITOR_MAX_WIDTH = 600;
+
+const mapTipTapToBlockNote = (tiptapJson: string): string => {
+  try {
+    const json = JSON.parse(tiptapJson);
+    if (json.type === 'doc' && Array.isArray(json.content)) {
+      return JSON.stringify(json.content);
+    }
+    return tiptapJson;
+  } catch {
+    return tiptapJson;
+  }
+};
+
 export const FormRichTextV2FieldInput = ({
   label,
   error,
@@ -21,29 +37,28 @@ export const FormRichTextV2FieldInput = ({
   defaultValue,
   placeholder,
   onChange,
-  onBlur,
   readonly,
   VariablePicker,
 }: FormRichTextV2FieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
-      blocknote: null,
-      markdown: value,
+      blocknote: mapTipTapToBlockNote(value),
+      markdown: null,
     });
   };
 
   return (
-    <FormTextFieldInput
+    <FormAdvancedTextFieldInput
       label={label}
       error={error}
       hint={hint}
-      defaultValue={defaultValue?.markdown ?? ''}
+      defaultValue={defaultValue?.blocknote ?? defaultValue?.markdown}
       placeholder={placeholder}
       onChange={handleChange}
-      onBlur={onBlur}
-      multiline
       readonly={readonly}
       VariablePicker={VariablePicker}
+      minHeight={RICH_TEXT_V2_EDITOR_MIN_HEIGHT}
+      maxWidth={RICH_TEXT_V2_EDITOR_MAX_WIDTH}
     />
   );
 };

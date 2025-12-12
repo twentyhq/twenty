@@ -92,4 +92,9 @@ export class UpdateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   mainGroupByFieldMetadataId?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
+  shouldHideEmptyGroups?: boolean;
 }

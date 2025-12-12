@@ -70,7 +70,32 @@ export const STANDARD_OBJECTS = {
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
       custom: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.custom },
     },
-    views: {},
+    indexes: {
+      authorIdIndex: {
+        universalIdentifier: 'a7c3e8f2-9b14-4d6a-8e5f-1c2d3b4a5e6f',
+      },
+      taskIdIndex: {
+        universalIdentifier: 'b8d4f9a3-0c25-4e7b-9f6a-2d3e4c5b6f70',
+      },
+      noteIdIndex: {
+        universalIdentifier: 'c9e5a0b4-1d36-4f8c-0a7b-3e4f5d6c7a81',
+      },
+      personIdIndex: {
+        universalIdentifier: 'd0f6b1c5-2e47-4a9d-1b8c-4f5a6e7d8b92',
+      },
+      companyIdIndex: {
+        universalIdentifier: 'e1a7c2d6-3f58-4b0e-2c9d-5a6b7f8e9c03',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: 'f2b8d3e7-4a69-4c1f-3d0e-6b7c8a9f0d14',
+      },
+      dashboardIdIndex: {
+        universalIdentifier: '03c9e4f8-5b70-4d2a-4e1f-7c8d9b0a1e25',
+      },
+      workflowIdIndex: {
+        universalIdentifier: '14d0f5a9-6c81-4e3b-5f2a-8d9e0c1b2f36',
+      },
+    },
   },
   blocklist: {
     universalIdentifier: STANDARD_OBJECT_IDS.blocklist,
@@ -90,7 +115,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
       },
     },
-    views: {},
+    indexes: {
+      workspaceMemberIdIndex: {
+        universalIdentifier: '25e1a6b0-7d92-4f4c-6a3b-9e0f1d2c3a47',
+      },
+    },
   },
   calendarChannelEventAssociation: {
     universalIdentifier: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
@@ -124,7 +153,14 @@ export const STANDARD_OBJECTS = {
           CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
       },
     },
-    views: {},
+    indexes: {
+      calendarChannelIdIndex: {
+        universalIdentifier: '36f2b7c1-8e03-4a5d-7b4c-0f1a2e3d4b58',
+      },
+      calendarEventIdIndex: {
+        universalIdentifier: '47a3c8d2-9f14-4b6e-8c5d-1a2b3f4e5c69',
+      },
+    },
   },
   calendarChannel: {
     universalIdentifier: STANDARD_OBJECT_IDS.calendarChannel,
@@ -185,7 +221,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
       },
     },
-    views: {},
+    indexes: {
+      connectedAccountIdIndex: {
+        universalIdentifier: '58b4d9e3-0a25-4c7f-9d6e-2b3c4a5f6d70',
+      },
+    },
   },
   calendarEventParticipant: {
     universalIdentifier: STANDARD_OBJECT_IDS.calendarEventParticipant,
@@ -231,7 +271,17 @@ export const STANDARD_OBJECTS = {
           CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
       },
     },
-    views: {},
+    indexes: {
+      calendarEventIdIndex: {
+        universalIdentifier: '69c5e0f4-1b36-4d8a-0e7f-3c4d5b6a7e81',
+      },
+      personIdIndex: {
+        universalIdentifier: '70d6f1a5-2c47-4e9b-1f8a-4d5e6c7b8f92',
+      },
+      workspaceMemberIdIndex: {
+        universalIdentifier: '81e7a2b6-3d58-4f0c-2a9b-5e6f7d8c9003',
+      },
+    },
   },
   calendarEvent: {
     universalIdentifier: STANDARD_OBJECT_IDS.calendarEvent,
@@ -271,8 +321,8 @@ export const STANDARD_OBJECTS = {
       location: {
         universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
       },
-      iCalUID: {
-        universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+      iCalUid: {
+        universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
       },
       conferenceSolution: {
         universalIdentifier:
@@ -290,6 +340,7 @@ export const STANDARD_OBJECTS = {
           CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
       },
     },
+    indexes: {},
     views: {
       allCalendarEvents: {
         universalIdentifier: '20202020-c001-4c01-8c01-ca1ebe0ca001',
@@ -378,6 +429,17 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      accountOwnerIdIndex: {
+        universalIdentifier: '92f8b3c7-4e69-4a1d-3b0c-6f7a8e9d0114',
+      },
+      domainNameUniqueIndex: {
+        universalIdentifier: 'a3a9c4d8-5f70-4b2e-4c1d-7a8b9f0e1225',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: 'b4b0d5e9-6a81-4c3f-5d2e-8b9c0a1f2336',
       },
     },
     views: {
@@ -470,7 +532,11 @@ export const STANDARD_OBJECTS = {
           CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
       },
     },
-    views: {},
+    indexes: {
+      accountOwnerIdIndex: {
+        universalIdentifier: 'c5c1e6f0-7b92-4d4a-6e3f-9c0d1b2a3447',
+      },
+    },
   },
   dashboard: {
     universalIdentifier: STANDARD_OBJECT_IDS.dashboard,
@@ -504,6 +570,11 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'd6d2f7a1-8c03-4e5b-7f4a-0d1e2c3b4558',
       },
     },
     views: {
@@ -564,7 +635,41 @@ export const STANDARD_OBJECTS = {
       },
       dashboard: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.dashboard },
     },
-    views: {},
+    indexes: {
+      forWorkspaceMemberIdIndex: {
+        universalIdentifier: 'e7e3a8b2-9d14-4f6c-8a5b-1e2f3d4c5669',
+      },
+      personIdIndex: {
+        universalIdentifier: 'f8f4b9c3-0e25-4a7d-9b6c-2f3a4e5d677a',
+      },
+      companyIdIndex: {
+        universalIdentifier: '0905c0d4-1f36-4b8e-0c7d-3a4b5f6e788b',
+      },
+      favoriteFolderIdIndex: {
+        universalIdentifier: '1016d1e5-2a47-4c9f-1d8e-4b5c6a7f899c',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '2127e2f6-3b58-4d0a-2e9f-5c6d7b80900d',
+      },
+      workflowIdIndex: {
+        universalIdentifier: '3238f3a7-4c69-4e1b-3f0a-6d7e8c91011e',
+      },
+      workflowVersionIdIndex: {
+        universalIdentifier: '4349a4b8-5d70-4f2c-4a1b-7e8f9d02122f',
+      },
+      workflowRunIdIndex: {
+        universalIdentifier: '5450b5c9-6e81-4a3d-5b2c-8f90ae132340',
+      },
+      taskIdIndex: {
+        universalIdentifier: '6561c6d0-7f92-4b4e-6c3d-90a1bf243451',
+      },
+      noteIdIndex: {
+        universalIdentifier: '7672d7e1-8003-4c5f-7d4e-01b2c0354562',
+      },
+      dashboardIdIndex: {
+        universalIdentifier: '8783e8f2-9114-4d6a-8e5f-12c3d1465673',
+      },
+    },
   },
   favoriteFolder: {
     universalIdentifier: STANDARD_OBJECT_IDS.favoriteFolder,
@@ -587,7 +692,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
       },
     },
-    views: {},
+    indexes: {},
   },
   messageChannelMessageAssociation: {
     universalIdentifier: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
@@ -628,7 +733,17 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
       },
     },
-    views: {},
+    indexes: {
+      messageChannelIdIndex: {
+        universalIdentifier: '9894f9a3-0225-4e7b-9f6a-23d4e2576784',
+      },
+      messageIdIndex: {
+        universalIdentifier: '0905a0b4-1336-4f8c-0a7b-34e5f3687895',
+      },
+      messageChannelIdMessageIdUniqueIndex: {
+        universalIdentifier: '1a16b1c5-2447-4a9d-1b8c-45f6a47989a6',
+      },
+    },
   },
   messageChannel: {
     universalIdentifier: STANDARD_OBJECT_IDS.messageChannel,
@@ -709,7 +824,11 @@ export const STANDARD_OBJECTS = {
           MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
       },
     },
-    views: {},
+    indexes: {
+      connectedAccountIdIndex: {
+        universalIdentifier: '2b27c2d6-3558-4b0e-2c9d-56a7b58a9ab7',
+      },
+    },
   },
   messageFolder: {
     universalIdentifier: STANDARD_OBJECT_IDS.messageFolder,
@@ -748,7 +867,11 @@ export const STANDARD_OBJECTS = {
           MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
       },
     },
-    views: {},
+    indexes: {
+      messageChannelIdIndex: {
+        universalIdentifier: '3c38d3e7-4669-4c1f-3d0e-67b8c69b0bc8',
+      },
+    },
   },
   messageParticipant: {
     universalIdentifier: STANDARD_OBJECT_IDS.messageParticipant,
@@ -783,7 +906,17 @@ export const STANDARD_OBJECTS = {
           MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
       },
     },
-    views: {},
+    indexes: {
+      messageIdIndex: {
+        universalIdentifier: '4d49e4f8-5770-4d2a-4e1f-78c9d70c1cd9',
+      },
+      personIdIndex: {
+        universalIdentifier: '5e50f5a9-6881-4e3b-5f2a-89d0e81d2de0',
+      },
+      workspaceMemberIdIndex: {
+        universalIdentifier: '6f61a6b0-7992-4f4c-6a3b-90e1f92e3ef1',
+      },
+    },
   },
   messageThread: {
     universalIdentifier: STANDARD_OBJECT_IDS.messageThread,
@@ -806,6 +939,7 @@ export const STANDARD_OBJECTS = {
           MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
       },
     },
+    indexes: {},
     views: {
       allMessageThreads: {
         universalIdentifier: '20202020-d002-4d02-8d02-ae55a9ba2002',
@@ -853,6 +987,11 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociations: {
         universalIdentifier:
           MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
+      },
+    },
+    indexes: {
+      messageThreadIdIndex: {
+        universalIdentifier: '7072b7c1-8003-4a5d-7b4c-01f2a03f4f02',
       },
     },
     views: {
@@ -912,6 +1051,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: NOTE_STANDARD_FIELD_IDS.searchVector,
       },
     },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a13',
+      },
+    },
     views: {
       allNotes: {
         universalIdentifier: '20202020-a005-4a05-8a05-a0be5a11a000',
@@ -956,7 +1100,20 @@ export const STANDARD_OBJECTS = {
       },
       custom: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.custom },
     },
-    views: {},
+    indexes: {
+      noteIdIndex: {
+        universalIdentifier: '9294d9e3-0225-4c7f-9d6e-23b4c25b6b24',
+      },
+      personIdIndex: {
+        universalIdentifier: '0305e0f4-1336-4d8a-0e7f-34c5d36c7c35',
+      },
+      companyIdIndex: {
+        universalIdentifier: '1416f1a5-2447-4e9b-1f8a-45d6e47d8d46',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '2527a2b6-3558-4f0c-2a9b-56e7f58e9e57',
+      },
+    },
   },
   opportunity: {
     universalIdentifier: STANDARD_OBJECT_IDS.opportunity,
@@ -1004,6 +1161,20 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      pointOfContactIdIndex: {
+        universalIdentifier: '3638b3c7-4669-4a1d-3b0c-67f8a69f0f68',
+      },
+      companyIdIndex: {
+        universalIdentifier: '4749c4d8-5770-4b2e-4c1d-78a9b70a1a79',
+      },
+      stageIndex: {
+        universalIdentifier: '5850d5e9-6881-4c3f-5d2e-89b0c81b2b80',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '6961e6f0-7992-4d4a-6e3f-90c1d92c3c91',
       },
     },
     views: {
@@ -1128,6 +1299,17 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.searchVector,
       },
     },
+    indexes: {
+      companyIdIndex: {
+        universalIdentifier: '7072f7a1-8003-4e5b-7f4a-01d2e03d4d02',
+      },
+      emailsUniqueIndex: {
+        universalIdentifier: '8183a8b2-9114-4f6c-8a5b-12e3f14e5e13',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '9294b9c3-0225-4a7d-9b6c-23f4a25f6f24',
+      },
+    },
     views: {
       allPeople: {
         universalIdentifier: '20202020-a002-4a02-8a02-ae0a1ea11a00',
@@ -1195,6 +1377,14 @@ export const STANDARD_OBJECTS = {
       favorites: { universalIdentifier: TASK_STANDARD_FIELD_IDS.favorites },
       searchVector: {
         universalIdentifier: TASK_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      assigneeIdIndex: {
+        universalIdentifier: '0305c0d4-1336-4b8e-0c7d-34a5b36a7a35',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '1416d1e5-2447-4c9f-1d8e-45b6c47b8b46',
       },
     },
     views: {
@@ -1326,7 +1516,20 @@ export const STANDARD_OBJECTS = {
       },
       custom: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.custom },
     },
-    views: {},
+    indexes: {
+      taskIdIndex: {
+        universalIdentifier: '2527e2f6-3558-4d0a-2e9f-56c7d58c9c57',
+      },
+      personIdIndex: {
+        universalIdentifier: '3638f3a7-4669-4e1b-3f0a-67d8e69d0d68',
+      },
+      companyIdIndex: {
+        universalIdentifier: '4749a4b8-5770-4f2c-4a1b-78e9f70e1e79',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '5850b5c9-6881-4a3d-5b2c-89f0a81f2f80',
+      },
+    },
   },
   timelineActivity: {
     universalIdentifier: STANDARD_OBJECT_IDS.timelineActivity,
@@ -1352,32 +1555,40 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workspaceMember,
       },
-      person: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
+      targetPerson: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetPerson,
       },
-      company: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
+      targetCompany: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCompany,
       },
-      opportunity: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
-      },
-      task: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task },
-      note: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.note },
-      workflow: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflow,
-      },
-      workflowVersion: {
+      targetOpportunity: {
         universalIdentifier:
-          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowVersion,
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetOpportunity,
       },
-      workflowRun: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowRun,
+      targetTask: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetTask,
       },
-      dashboard: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.dashboard,
+      targetNote: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetNote,
       },
-      custom: {
-        universalIdentifier: '20202020-a9b2-4f85-b3c7-6d8e9f1a4c2b',
+      targetWorkflow: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflow,
+      },
+      targetWorkflowVersion: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflowVersion,
+      },
+      targetWorkflowRun: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflowRun,
+      },
+      targetDashboard: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetDashboard,
+      },
+      targetCustom: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCustom,
       },
       linkedRecordCachedName: {
         universalIdentifier:
@@ -1390,6 +1601,38 @@ export const STANDARD_OBJECTS = {
       linkedObjectMetadataId: {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
+      },
+    },
+    indexes: {
+      workspaceMemberIdIndex: {
+        universalIdentifier: '6961c6d0-7992-4b4e-6c3d-90a1b92a3a91',
+      },
+      personIdIndex: {
+        universalIdentifier: '7072d7e1-8003-4c5f-7d4e-01b2c03b4b02',
+      },
+      companyIdIndex: {
+        universalIdentifier: '8183e8f2-9114-4d6a-8e5f-12c3d14c5c13',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '9294f9a3-0225-4e7b-9f6a-23d4e25d6d24',
+      },
+      noteIdIndex: {
+        universalIdentifier: '0305a0b4-1336-4f8c-0a7b-34e5f36e7e35',
+      },
+      taskIdIndex: {
+        universalIdentifier: '1416b1c5-2447-4a9d-1b8c-45f6a47f8f46',
+      },
+      workflowIdIndex: {
+        universalIdentifier: '2527c2d6-3558-4b0e-2c9d-56a7b58a9a57',
+      },
+      workflowVersionIdIndex: {
+        universalIdentifier: '3638d3e7-4669-4c1f-3d0e-67b8c69b0b68',
+      },
+      workflowRunIdIndex: {
+        universalIdentifier: '4749e4f8-5770-4d2a-4e1f-78c9d70c1c79',
+      },
+      dashboardIdIndex: {
+        universalIdentifier: '5850f5a9-6881-4e3b-5f2a-89d0e81d2d80',
       },
     },
     views: {
@@ -1454,6 +1697,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.searchVector,
       },
     },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '6961a6b0-7992-4f4c-6a3b-90e1f92e3e91',
+      },
+    },
     views: {
       allWorkflows: {
         universalIdentifier: '20202020-a009-4a09-8a09-a0bcf10aa11a',
@@ -1507,7 +1755,11 @@ export const STANDARD_OBJECTS = {
           WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.workflow,
       },
     },
-    views: {},
+    indexes: {
+      workflowIdIndex: {
+        universalIdentifier: '7072b7c1-8003-4a5d-7b4c-01f2a03f4f03',
+      },
+    },
   },
   workflowRun: {
     universalIdentifier: STANDARD_OBJECT_IDS.workflowRun,
@@ -1554,6 +1806,17 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      workflowVersionIdIndex: {
+        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
+      },
+      workflowIdIndex: {
+        universalIdentifier: '9294d9e3-0225-4c7f-9d6e-23b4c25b6b25',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '0305e0f4-1336-4d8a-0e7f-34c5d36c7c36',
       },
     },
     views: {
@@ -1619,6 +1882,14 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.searchVector,
+      },
+    },
+    indexes: {
+      workflowIdIndex: {
+        universalIdentifier: '1416f1a5-2447-4e9b-1f8a-45d6e47d8d47',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '2527a2b6-3558-4f0c-2a9b-56e7f58e9e58',
       },
     },
     views: {
@@ -1729,6 +2000,14 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
       },
     },
+    indexes: {
+      userEmailUniqueIndex: {
+        universalIdentifier: '3638b3c7-4669-4a1d-3b0c-67f8a69f0f69',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '4749c4d8-5770-4b2e-4c1d-78a9b70a1a7a',
+      },
+    },
     views: {
       allWorkspaceMembers: {
         universalIdentifier: '20202020-e001-4e01-8e01-a0bcaeabe100',
@@ -1769,7 +2048,8 @@ export const STANDARD_OBJECTS = {
   {
     universalIdentifier: string;
     fields: Record<string, { universalIdentifier: string }>;
-    views: Record<
+    indexes: Record<string, { universalIdentifier: string }>;
+    views?: Record<
       string,
       {
         universalIdentifier: string;

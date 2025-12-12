@@ -1,8 +1,5 @@
-import { AgentChatContextRecordPreview } from '@/ai/components/internal/AgentChatContextRecordPreview';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
@@ -29,15 +26,18 @@ export const AgentChatContextPreview = () => {
     agentChatUploadedFilesState,
   );
 
-  const handleRemoveUploadedFile = async (fileIndex: number) => {
+  const handleRemoveUploadedFile = (fileIndex: number) => {
     setAgentChatUploadedFiles(
-      agentChatUploadedFiles.filter((f, index) => fileIndex !== index),
+      agentChatUploadedFiles.filter((_, index) => fileIndex !== index),
     );
   };
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
+  const hasFiles =
+    agentChatSelectedFiles.length > 0 || agentChatUploadedFiles.length > 0;
+
+  if (!hasFiles) {
+    return null;
+  }
 
   return (
     <StyledContainer>
@@ -62,13 +62,6 @@ export const AgentChatContextPreview = () => {
             isUploading={false}
           />
         ))}
-        {contextStoreCurrentObjectMetadataItemId && (
-          <AgentChatContextRecordPreview
-            contextStoreCurrentObjectMetadataItemId={
-              contextStoreCurrentObjectMetadataItemId
-            }
-          />
-        )}
       </StyledPreviewsContainer>
     </StyledContainer>
   );

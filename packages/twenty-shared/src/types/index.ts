@@ -84,6 +84,7 @@ export {
   FieldMetadataDefaultArray,
 } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
+export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
 export {
   FieldMetadataDefaultOption,
@@ -114,6 +115,7 @@ export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
