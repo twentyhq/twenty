@@ -284,21 +284,15 @@
                 "pages": [
                   "user-guide/billing/overview",
                   {
-                    "group": "Getting Started",
+                    "group": "Pricing Plans",
                     "pages": [
                       "user-guide/billing/getting-started/understanding-your-plan"
                     ]
                   },
                   {
-                    "group": "Capabilities",
+                    "group": "FAQ",
                     "pages": [
                       "user-guide/billing/capabilities/billing-and-pricing-faq"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "user-guide/billing/how-tos/manage-subscription"
                     ]
                   }
                 ]
