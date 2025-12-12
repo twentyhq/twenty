@@ -23,6 +23,7 @@ export type LightIconButtonGroupProps = Pick<
     accent?: LightIconButtonProps['accent'];
     onClick?: (event: MouseEvent<any>) => void;
     disabled?: boolean;
+    ariaLabel?: string;
   }[];
 };
 
@@ -32,7 +33,7 @@ export const LightIconButtonGroup = ({
   className,
 }: LightIconButtonGroupProps) => (
   <StyledLightIconButtonGroupContainer className={className}>
-    {iconButtons.map(({ Wrapper, Icon, accent, onClick }, index) => {
+    {iconButtons.map(({ Wrapper, Icon, accent, onClick, ariaLabel }, index) => {
       const iconButton = (
         <LightIconButton
           key={`light-icon-button-${index}`}
@@ -41,6 +42,7 @@ export const LightIconButtonGroup = ({
           disabled={!onClick}
           onClick={onClick}
           size={size}
+          aria-label={ariaLabel}
         />
       );
 

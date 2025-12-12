@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { getAuthToken } from '../utils/getAuthToken';
+import { getAuthToken } from '../utils/getAccessAuthToken';
 import { backendGraphQLUrl } from './backend';
 
 export const destroyWorkflow = async ({

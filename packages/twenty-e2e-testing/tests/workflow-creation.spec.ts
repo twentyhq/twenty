@@ -1,11 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../lib/fixtures/screenshot';
 import { deleteWorkflow } from '../lib/requests/delete-workflow';
 import { destroyWorkflow } from '../lib/requests/destroy-workflow';
 
+if (process.env.LINK) {
+  const baseURL = new URL(process.env.LINK).origin;
+  test.use({ baseURL });
+}
 test('Create workflow', async ({ page }) => {
   const NEW_WORKFLOW_NAME = 'Test Workflow';
 
-  await page.goto('/');
+  await page.goto(process.env.LINK);
 
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
@@ -25,7 +29,7 @@ test('Create workflow', async ({ page }) => {
       return requestBody.operationName === 'CreateOneWorkflow';
     }),
 
-    createWorkflowButton.click(),
+    createWorkflowButton.click()
   ]);
 
   const recordName = page.getByTestId('top-bar-title').getByText('Untitled');

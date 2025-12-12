@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 interface PropertyBoxProps {
   children: React.ReactNode;
   className?: string;
+  ariaLabel?: string;
 }
 
 const StyledPropertyBoxContainer = styled.div`
@@ -17,8 +18,12 @@ const StyledPropertyBoxContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const PropertyBox = ({ children, className }: PropertyBoxProps) => (
-  <StyledPropertyBoxContainer className={className}>
+export const PropertyBox = ({
+  children,
+  className,
+  ariaLabel,
+}: PropertyBoxProps) => (
+  <StyledPropertyBoxContainer className={className} aria-label={ariaLabel}>
     {children}
   </StyledPropertyBoxContainer>
 );
