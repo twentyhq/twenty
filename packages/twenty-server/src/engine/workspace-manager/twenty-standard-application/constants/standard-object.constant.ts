@@ -1671,9 +1671,6 @@ export const STANDARD_OBJECTS = {
       position: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.position },
       versions: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.versions },
       runs: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.runs },
-      eventListeners: {
-        universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
-      },
       automatedTriggers: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
       },
