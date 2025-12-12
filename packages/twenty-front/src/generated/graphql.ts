@@ -70,9 +70,15 @@ export type Agent = {
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
+  contextWindowTokens?: Maybe<Scalars['Int']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
+  inputCostPer1kTokensInCents?: Maybe<Scalars['Float']>;
+  outputCostPer1kTokensInCents?: Maybe<Scalars['Float']>;
   title?: Maybe<Scalars['String']>;
+  totalInputTokens: Scalars['Int'];
+  totalOutputTokens: Scalars['Int'];
+  totalTokens: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
 

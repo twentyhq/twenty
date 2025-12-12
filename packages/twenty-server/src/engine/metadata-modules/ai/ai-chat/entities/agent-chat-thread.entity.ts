@@ -34,6 +34,24 @@ export class AgentChatThreadEntity {
   @Column({ nullable: true, type: 'varchar' })
   title: string;
 
+  @Column({ type: 'int', default: 0 })
+  totalInputTokens: number;
+
+  @Column({ type: 'int', default: 0 })
+  totalOutputTokens: number;
+
+  @Column({ type: 'int', default: 0 })
+  totalTokens: number;
+
+  @Column({ type: 'int', nullable: true })
+  contextWindowTokens: number | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  inputCostPer1kTokensInCents: number | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
+  outputCostPer1kTokensInCents: number | null;
+
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: Relation<AgentTurnEntity[]>;
 

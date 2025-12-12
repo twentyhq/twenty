@@ -1,17 +1,49 @@
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
+import {
+  agentChatUsageState,
+  type AgentChatUsageState,
+} from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
-import { useRecoilState } from 'recoil';
+import {
+  type SetterOrUpdater,
+  useRecoilState,
+  useSetRecoilState,
+} from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  type AgentChatThread,
   useGetChatMessagesQuery,
   useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
+
+const setUsageFromThread = (
+  thread: AgentChatThread,
+  setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
+) => {
+  const hasUsageData =
+    thread.totalTokens > 0 && isDefined(thread.contextWindowTokens);
+
+  setAgentChatUsage(
+    hasUsageData
+      ? {
+          inputTokens: thread.totalInputTokens,
+          outputTokens: thread.totalOutputTokens,
+          totalTokens: thread.totalTokens,
+          contextWindowTokens: thread.contextWindowTokens ?? 0,
+          inputCostPer1kTokensInCents: thread.inputCostPer1kTokensInCents ?? 0,
+          outputCostPer1kTokensInCents:
+            thread.outputCostPer1kTokensInCents ?? 0,
+        }
+      : null,
+  );
+};
 
 export const useAgentChatData = () => {
   const [currentAIChatThread, setCurrentAIChatThread] = useRecoilState(
     currentAIChatThreadState,
   );
+  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
@@ -19,7 +51,10 @@ export const useAgentChatData = () => {
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
       if (data.chatThreads.length > 0) {
-        setCurrentAIChatThread(data.chatThreads[0].id);
+        const firstThread = data.chatThreads[0];
+
+        setCurrentAIChatThread(firstThread.id);
+        setUsageFromThread(firstThread, setAgentChatUsage);
       }
     },
   });

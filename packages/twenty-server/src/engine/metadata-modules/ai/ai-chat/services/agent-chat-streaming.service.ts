@@ -81,6 +81,9 @@ export class AgentChatStreamingService {
             },
           });
 
+          // Track usage from the stream for persisting to thread
+          let streamUsage = { inputTokens: 0, outputTokens: 0 };
+
           // Merge the AI stream
           writer.merge(
             stream.toUIMessageStream({
@@ -92,11 +95,16 @@ export class AgentChatStreamingService {
               sendStart: false,
               messageMetadata: ({ part }) => {
                 if (part.type === 'finish') {
+                  streamUsage = {
+                    inputTokens: part.totalUsage?.inputTokens ?? 0,
+                    outputTokens: part.totalUsage?.outputTokens ?? 0,
+                  };
+
                   return {
                     createdAt: new Date().toISOString(),
                     usage: {
-                      inputTokens: part.totalUsage?.inputTokens ?? 0,
-                      outputTokens: part.totalUsage?.outputTokens ?? 0,
+                      inputTokens: streamUsage.inputTokens,
+                      outputTokens: streamUsage.outputTokens,
                       totalTokens: part.totalUsage?.totalTokens ?? 0,
                     },
                     model: {
@@ -158,6 +166,21 @@ export class AgentChatStreamingService {
                     threadId: validThreadId,
                     uiMessage: responseMessage,
                     turnId: userMessage.turnId,
+                  });
+
+                  // Update thread usage statistics
+                  await this.threadRepository.update(validThreadId, {
+                    totalInputTokens: () =>
+                      `"totalInputTokens" + ${streamUsage.inputTokens}`,
+                    totalOutputTokens: () =>
+                      `"totalOutputTokens" + ${streamUsage.outputTokens}`,
+                    totalTokens: () =>
+                      `"totalTokens" + ${streamUsage.inputTokens + streamUsage.outputTokens}`,
+                    contextWindowTokens: modelConfig.contextWindowTokens,
+                    inputCostPer1kTokensInCents:
+                      modelConfig.inputCostPer1kTokensInCents,
+                    outputCostPer1kTokensInCents:
+                      modelConfig.outputCostPer1kTokensInCents,
                   });
                 } catch (saveError) {
                   this.logger.error(

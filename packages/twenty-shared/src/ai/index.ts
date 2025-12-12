@@ -8,15 +8,14 @@
  */
 
 export type {
-    AgentResponseFieldType,
-    AgentResponseSchema
+  AgentResponseFieldType,
+  AgentResponseSchema,
 } from './types/agent-response-schema.type';
 export type { DataMessagePart } from './types/DataMessagePart';
 export type {
-    AIChatModelMetadata,
-    AIChatUsageMetadata,
-    ExtendedUIMessage
+  AIChatUsageMetadata,
+  AIChatModelMetadata,
+  ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
-
