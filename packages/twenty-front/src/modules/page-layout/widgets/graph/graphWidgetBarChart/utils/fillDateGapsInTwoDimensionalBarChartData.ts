@@ -9,17 +9,20 @@ import {
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getDateGroupsFromData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { isDefined } from 'twenty-shared/utils';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 type TwoDimensionalFillParams = {
   data: GroupByRawResult[];
   keys: string[];
   dateGranularity: SupportedDateGranularity;
+  orderBy?: GraphOrderBy | null;
 };
 
 export const fillDateGapsInTwoDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
+  orderBy,
 }: TwoDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
@@ -52,10 +55,11 @@ export const fillDateGapsInTwoDimensionalBarChartData = ({
     return { data, wasTruncated: false };
   }
 
-  const { dates: allDates, wasTruncated } = getDateGroupsFromData(
+  const { dates: allDates, wasTruncated } = getDateGroupsFromData({
     parsedDates,
     dateGranularity,
-  );
+    orderBy,
+  });
 
   const filledData = allDates.flatMap((date) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {

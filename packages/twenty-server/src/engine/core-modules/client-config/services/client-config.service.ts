@@ -59,6 +59,7 @@ export class ClientConfigService {
                 builtInModel.outputCostPer1kTokensInCents,
               )
             : 0,
+          deprecated: builtInModel?.deprecated,
         };
       },
     );

@@ -3,6 +3,8 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -12,11 +14,11 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   type BarChartConfiguration,
-  type GraphOrderBy,
+  GraphOrderBy,
   type LineChartConfiguration,
 } from '~/generated/graphql';
 
@@ -54,8 +56,48 @@ export const ChartSortBySelectionDropdownContent = () => {
     objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === widgetInEditMode.objectMetadataId,
+  );
+
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
   const isLineChart = configuration.__typename === 'LineChartConfiguration';
+  const isBarChart = configuration.__typename === 'BarChartConfiguration';
+
+  let currentOrderBy: GraphOrderBy | undefined;
+  let groupByFieldMetadataId: string | undefined;
+  let groupBySubFieldName: string | null | undefined;
+
+  if (isPieChart) {
+    currentOrderBy = configuration.orderBy ?? undefined;
+    groupByFieldMetadataId = configuration.groupByFieldMetadataId;
+    groupBySubFieldName = configuration.groupBySubFieldName;
+  } else {
+    const barOrLineChartConfiguration = configuration as
+      | BarChartConfiguration
+      | LineChartConfiguration;
+    currentOrderBy =
+      barOrLineChartConfiguration.primaryAxisOrderBy ?? undefined;
+    groupByFieldMetadataId =
+      barOrLineChartConfiguration.primaryAxisGroupByFieldMetadataId;
+    groupBySubFieldName =
+      barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
+  }
+
+  const primaryAxisField = objectMetadataItem?.fields.find(
+    (field) => field.id === groupByFieldMetadataId,
+  );
+
+  const isPrimaryAxisDateField =
+    isFieldMetadataDateKind(primaryAxisField?.type) ||
+    (isDefined(primaryAxisField) &&
+      isRelationNestedFieldDateKind({
+        relationField: primaryAxisField,
+        relationNestedFieldName: groupBySubFieldName ?? undefined,
+        objectMetadataItems,
+      }));
 
   const handleSelect = (orderBy: GraphOrderBy) => {
     if (isPieChart) {
@@ -71,31 +113,20 @@ export const ChartSortBySelectionDropdownContent = () => {
   };
 
   const availableOptions = X_SORT_BY_OPTIONS.filter((option) => {
+    const isValueSort =
+      option.value === GraphOrderBy.VALUE_ASC ||
+      option.value === GraphOrderBy.VALUE_DESC;
+
     if (isLineChart) {
-      return option.value !== 'VALUE_ASC' && option.value !== 'VALUE_DESC';
+      return !isValueSort;
     }
+
+    if ((isBarChart || isPieChart) && isPrimaryAxisDateField) {
+      return !isValueSort;
+    }
+
     return true;
   });
-
-  let currentOrderBy: GraphOrderBy | undefined;
-  let groupByFieldMetadataId: string | undefined;
-  let groupBySubFieldName: string | null | undefined;
-
-  if (configuration.__typename === 'PieChartConfiguration') {
-    currentOrderBy = configuration.orderBy ?? undefined;
-    groupByFieldMetadataId = configuration.groupByFieldMetadataId;
-    groupBySubFieldName = configuration.groupBySubFieldName;
-  } else {
-    const barOrLineChartConfiguration = configuration as
-      | BarChartConfiguration
-      | LineChartConfiguration;
-    currentOrderBy =
-      barOrLineChartConfiguration.primaryAxisOrderBy ?? undefined;
-    groupByFieldMetadataId =
-      barOrLineChartConfiguration.primaryAxisGroupByFieldMetadataId;
-    groupBySubFieldName =
-      barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
-  }
 
   return (
     <DropdownMenuItemsContainer>

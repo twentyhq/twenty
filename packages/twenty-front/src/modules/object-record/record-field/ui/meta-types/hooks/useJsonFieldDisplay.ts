@@ -7,7 +7,8 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useJsonFieldDisplay = () => {
-  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth, isRecordFieldReadOnly } =
+    useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -25,5 +26,6 @@ export const useJsonFieldDisplay = () => {
     maxWidth,
     fieldDefinition,
     fieldValue: formattedFieldValue,
+    isRecordFieldReadOnly,
   };
 };

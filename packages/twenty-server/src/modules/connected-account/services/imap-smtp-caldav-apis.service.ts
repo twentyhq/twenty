@@ -89,9 +89,7 @@ export class ImapSmtpCalDavAPIService {
           existingAccount?.id ?? connectedAccountId ?? v4();
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-            workspaceId,
-          );
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
         const existingMessageChannel = existingAccount
           ? await messageChannelRepository.findOne({
