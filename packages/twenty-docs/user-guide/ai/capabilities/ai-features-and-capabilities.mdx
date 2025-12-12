@@ -1,82 +1,73 @@
 ---
 title: AI Features and Capabilities
-description: Discover the AI-powered features available in Twenty.
-image: /images/user-guide/workflows/robot.png
+description: Preview of AI-powered features coming to Twenty.
 ---
 
-<Frame>
-  <img src="/images/user-guide/workflows/robot.png" alt="AI Features" />
-</Frame>
+<Note>
+These features are in development and will be available in beta soon.
+</Note>
 
-## AI in Twenty
+## AI Chatbot
 
-Twenty integrates AI capabilities to help you work smarter and more efficiently with your CRM data.
-
-## AI Chat
-
-### What It Does
-AI Chat allows you to interact with your CRM data using natural language. Ask questions, get insights, and find information without navigating through menus.
-
-### How to Use It
-1. Click the AI icon in the navigation
-2. Type your question in natural language
-3. The AI analyzes your data and responds
-
-### Example Queries
-- "Show me all opportunities closing this month"
-- "Find contacts at healthcare companies"
-- "What's the total pipeline value?"
-- "List companies I haven't contacted in 30 days"
-
-## AI Agents
-
-### What They Are
-AI agents are configurable assistants that can automate tasks and provide intelligent insights based on your CRM data.
+An intelligent assistant that helps you interact with your CRM data using natural language.
 
 ### Capabilities
-- **Data Analysis**: Identify patterns and trends in your data
-- **Task Automation**: Automate repetitive tasks
-- **Smart Recommendations**: Get suggestions based on your workflow
 
-### Configuration
-Configure AI agents in **Settings → AI** to:
-- Enable/disable specific capabilities
-- Set data access permissions
-- Customize agent behavior
+| Feature | Description |
+|---------|-------------|
+| **Natural language queries** | Ask questions in plain English instead of building filters |
+| **Full data access** | Query records, relationships, and metrics across your workspace |
+| **Page context** | Reference "this company" or "this opportunity" based on your current view |
+| **Conversational** | Follow-up questions maintain context from previous queries |
 
-## AI in Workflows
+### Example Interactions
 
-### AI-Powered Actions
-Integrate AI into your workflows for:
-- **Data Enrichment**: Automatically enhance records
-- **Classification**: Categorize records based on content
-- **Summarization**: Generate summaries from text fields
-- **Smart Routing**: Route records based on AI analysis
+**Finding records:**
+- "Show me all opportunities over $50,000"
+- "Find contacts I haven't emailed in 2 weeks"
+- "List companies in the healthcare industry"
 
-### Coming Soon
-- AI prompts in workflow actions
-- Advanced natural language processing
-- Predictive analytics
+**Getting insights:**
+- "What's my total pipeline value?"
+- "How many deals closed last month?"
+- "Which stage has the most stuck opportunities?"
 
-## Best Practices
+**Using page context:**
+- "Summarize my interactions with this person" (on a contact page)
+- "What opportunities are linked to this company?" (on a company page)
+- "When was this deal last updated?" (on an opportunity page)
 
-### Getting Good Results
-- **Be specific**: Clear questions get better answers
-- **Provide context**: Include relevant details in your queries
-- **Iterate**: Refine your questions based on results
+## AI Agents in Workflows
 
-### Data Quality
-- **Clean data**: AI works best with well-organized data
-- **Complete records**: Fill in key fields for better analysis
-- **Consistent naming**: Use consistent naming conventions
+Integrate AI capabilities directly into your automation workflows.
 
-### Security
-- AI respects your permission settings
-- Data is processed securely
-- Configure access controls appropriately
+### Capabilities
 
-## Current Limitations
+| Feature | Description |
+|---------|-------------|
+| **AI actions** | Add AI-powered steps to any workflow |
+| **Data enrichment** | Automatically enhance records with external data |
+| **Classification** | Categorize records based on content analysis |
+| **Summarization** | Generate summaries from text fields |
+| **Custom prompts** | Define exactly how AI processes your data |
 
-- AI features are being actively developed
-- Some capabilities require specific plan levels
-- Complex queries may need refinement
+### Use Cases
+
+- **Lead scoring**: Automatically score and prioritize inbound leads
+- **Data cleanup**: Standardize company names and contact information
+- **Email drafts**: Generate follow-up emails based on meeting notes
+- **Record routing**: Assign records to the right team member based on content
+
+## Permissions
+
+AI agents respect your existing permission structure:
+
+- Permissions configured in **Settings → Roles**
+- Each agent can have different access levels
+- Read/write permissions apply per object
+- Audit trail tracks AI actions
+
+## Related
+
+- [Workflows Overview](/user-guide/workflows/overview) — automation basics
+- [Permissions](/user-guide/settings/capabilities/permissions) — access control

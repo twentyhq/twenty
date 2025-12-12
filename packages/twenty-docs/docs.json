@@ -220,21 +220,9 @@
                 "pages": [
                   "user-guide/ai/overview",
                   {
-                    "group": "Getting Started",
-                    "pages": [
-                      "user-guide/ai/getting-started/getting-started-with-ai"
-                    ]
-                  },
-                  {
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/ai/capabilities/ai-features-and-capabilities"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "user-guide/ai/how-tos/using-ai-assistant"
                     ]
                   }
                 ]
