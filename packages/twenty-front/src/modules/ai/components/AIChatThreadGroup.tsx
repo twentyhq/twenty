@@ -85,7 +85,8 @@ export const AIChatThreadGroup = ({
     setCurrentAIChatThread(thread.id);
 
     const totalTokens = thread.totalInputTokens + thread.totalOutputTokens;
-    const hasUsageData = totalTokens > 0 && isDefined(thread.contextWindowTokens);
+    const hasUsageData =
+      totalTokens > 0 && isDefined(thread.contextWindowTokens);
 
     setAgentChatUsage(
       hasUsageData

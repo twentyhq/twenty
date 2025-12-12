@@ -123,7 +123,8 @@ export const AIChatContextUsageButton = () => {
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
-  const totalCredits = agentChatUsage.inputCredits + agentChatUsage.outputCredits;
+  const totalCredits =
+    agentChatUsage.inputCredits + agentChatUsage.outputCredits;
 
   return (
     <StyledContainer
