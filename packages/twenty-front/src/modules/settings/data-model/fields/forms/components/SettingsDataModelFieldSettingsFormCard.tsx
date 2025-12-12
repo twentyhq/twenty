@@ -25,11 +25,14 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
+import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema.util';
+import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
+import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -91,17 +94,27 @@ const phonesFieldFormSchema = z
 
 const emailsFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.EMAILS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(
+    mergeSettingsSchemas(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldOnClickActionSchema,
+    ),
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const linksFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.LINKS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(
+    mergeSettingsSchemas(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldOnClickActionSchema,
+    ),
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const arrayFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ARRAY) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema))
   .extend(isUniqueFieldFormSchema.shape);
 
 const otherFieldsFormSchema = z
@@ -317,6 +330,22 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
                 fieldType={fieldType}
+                disabled={disabled}
+              />
+              <Separator />
+            </>
+          )}
+          {[FieldMetadataType.EMAILS, FieldMetadataType.LINKS].includes(
+            fieldType,
+          ) && (
+            <>
+              <SettingsDataModelFieldOnClickActionForm
+                existingFieldMetadataId={existingFieldMetadataId}
+                fieldType={
+                  fieldType as
+                    | FieldMetadataType.EMAILS
+                    | FieldMetadataType.LINKS
+                }
                 disabled={disabled}
               />
               <Separator />

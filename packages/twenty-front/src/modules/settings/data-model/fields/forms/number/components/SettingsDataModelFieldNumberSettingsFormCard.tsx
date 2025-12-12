@@ -1,3 +1,4 @@
+import { Separator } from '@/settings/components/Separator';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldNumberForm } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
@@ -37,7 +38,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
           />
-
+          <Separator />
           <SettingsDataModelFieldIsUniqueForm
             fieldType={FieldMetadataType.NUMBER}
             existingFieldMetadataId={existingFieldMetadataId}
