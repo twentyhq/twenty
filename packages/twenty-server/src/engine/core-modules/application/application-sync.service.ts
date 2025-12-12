@@ -106,11 +106,11 @@ export class ApplicationSyncService {
       });
     }
 
-    if (isDefined(application.defaultRoleId)) {
+    if (isDefined(application.defaultServerlessFunctionRoleId)) {
       await this.syncApplicationRolePermissions({
         manifest,
         workspaceId,
-        roleId: application.defaultRoleId,
+        roleId: application.defaultServerlessFunctionRoleId,
       });
     }
 
@@ -165,7 +165,7 @@ export class ApplicationSyncService {
       );
     }
 
-    const applicationRole = manifest.application.applicationRole;
+    const applicationRole = manifest.application.role;
 
     let role: RoleDTO | null = null;
 
@@ -183,7 +183,7 @@ export class ApplicationSyncService {
           input: {
             id: role.id,
             update: {
-              ...applicationRole,
+              ...role,
               canAccessAllTools: false,
               canUpdateAllSettings: false,
               canBeAssignedToAgents: false,
@@ -227,7 +227,7 @@ export class ApplicationSyncService {
       description: manifest.application.description,
       version: packageJson.version,
       serverlessFunctionLayerId,
-      defaultRoleId: role?.id,
+      defaultServerlessFunctionRoleId: role?.id,
     });
   }
 
@@ -240,7 +240,7 @@ export class ApplicationSyncService {
     workspaceId: string;
     roleId: string;
   }) {
-    const applicationRole = manifest.application.applicationRole;
+    const applicationRole = manifest.application.role;
 
     if (
       (isDefined(applicationRole?.objectPermissions) &&

@@ -8,13 +8,13 @@ export class UpdateRoleColumns1765206100942 implements MigrationInterface {
       `ALTER TABLE "core"."roleTarget" DROP COLUMN "targetApplicationId"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."application" ADD "defaultRoleId" uuid`,
+      `ALTER TABLE "core"."application" ADD "defaultServerlessFunctionRoleId" uuid`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."application" DROP COLUMN "defaultRoleId"`,
+      `ALTER TABLE "core"."application" DROP COLUMN "defaultServerlessFunctionRoleId"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."roleTarget" ADD "targetApplicationId" uuid`,

@@ -62,10 +62,10 @@ export class ApplicationEntity {
   serverlessFunctionLayerId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  defaultRoleId: string | null;
+  defaultServerlessFunctionRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
-  defaultRole: RoleDTO | null;
+  defaultServerlessFunctionRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
