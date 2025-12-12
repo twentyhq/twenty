@@ -114,8 +114,8 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIReadOnly: false,
       duplicateCriteria: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(
@@ -130,8 +130,8 @@ describe('WorkspaceEntityManager', () => {
       objectMetadataId: 'test-entity-id',
       isNullable: true,
       isLabelSyncedWithName: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       universalIdentifier: 'field-id',
       defaultValue: null,
       description: null,

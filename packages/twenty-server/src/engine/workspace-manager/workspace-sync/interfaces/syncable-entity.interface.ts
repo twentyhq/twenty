@@ -7,7 +7,8 @@ import type { ApplicationEntity } from 'src/engine/core-modules/application/appl
 })
 export abstract class SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
-  universalIdentifier: string | null;
+  // TODO should not be nullable
+  universalIdentifier: string;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationId: string | null;

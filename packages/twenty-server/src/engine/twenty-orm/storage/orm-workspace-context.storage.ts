@@ -20,6 +20,7 @@ export type ORMWorkspaceContext = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   permissionsPerRoleId: ObjectsPermissionsByRoleId;
   entityMetadatas: EntityMetadata[];
+  userWorkspaceRoleMap: Record<string, string>;
 };
 
 export const workspaceContextStorage =

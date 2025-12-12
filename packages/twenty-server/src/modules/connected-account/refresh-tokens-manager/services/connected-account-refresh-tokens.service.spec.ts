@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
@@ -17,7 +17,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
   let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
-  let twentyORMGlobalManager: TwentyORMGlobalManager;
+  let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
 
   const mockWorkspaceId = 'workspace-123';
   const mockConnectedAccountId = 'account-456';
@@ -42,9 +42,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
           },
         },
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest.fn(),
+            getRepository: jest.fn(),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
       ],
@@ -61,8 +65,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       module.get<MicrosoftAPIRefreshAccessTokenService>(
         MicrosoftAPIRefreshAccessTokenService,
       );
-    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
-      TwentyORMGlobalManager,
+    globalWorkspaceOrmManager = module.get<GlobalWorkspaceOrmManager>(
+      GlobalWorkspaceOrmManager,
     );
   });
 
@@ -92,9 +96,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
-      expect(
-        twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).not.toHaveBeenCalled();
+      expect(globalWorkspaceOrmManager.getRepository).not.toHaveBeenCalled();
     });
 
     it('should refresh and save new Microsoft token when expired (lastCredentialsRefreshedAt is old)', async () => {
@@ -116,7 +118,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(mockRepository as any);
 
       const result = await service.refreshAndSaveTokens(
@@ -156,7 +158,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(mockRepository as any);
 
       const result = await service.refreshAndSaveTokens(
@@ -196,7 +198,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
       jest
-        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .spyOn(globalWorkspaceOrmManager, 'getRepository')
         .mockResolvedValue(mockRepository as any);
 
       const result = await service.refreshAndSaveTokens(

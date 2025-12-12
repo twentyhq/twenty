@@ -9,8 +9,9 @@ import { v4 } from 'uuid';
 import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageFolderPendingSyncAction,
@@ -52,7 +53,7 @@ type MessageFolderToUpdate = Partial<
 @Injectable()
 export class SyncMessageFoldersService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly gmailGetAllFoldersService: GmailGetAllFoldersService,
     private readonly microsoftGetAllFoldersService: MicrosoftGetAllFoldersService,
     private readonly imapGetAllFoldersService: ImapGetAllFoldersService,
@@ -61,17 +62,24 @@ export class SyncMessageFoldersService {
   async syncMessageFolders(input: SyncMessageFoldersInput): Promise<void> {
     const { workspaceId, messageChannel, manager } = input;
 
-    const folders = await this.discoverAllFolders(
-      messageChannel.connectedAccount,
-      messageChannel,
-    );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.upsertDiscoveredFolders({
-      workspaceId,
-      messageChannelId: messageChannel.id,
-      folders,
-      manager,
-    });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const folders = await this.discoverAllFolders(
+          messageChannel.connectedAccount,
+          messageChannel,
+        );
+
+        await this.upsertDiscoveredFolders({
+          workspaceId,
+          messageChannelId: messageChannel.id,
+          folders,
+          manager,
+        });
+      },
+    );
   }
 
   private async upsertDiscoveredFolders({
@@ -86,7 +94,7 @@ export class SyncMessageFoldersService {
     manager: WorkspaceEntityManager;
   }): Promise<void> {
     const messageFolderRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
         workspaceId,
         'messageFolder',
       );

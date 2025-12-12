@@ -16,7 +16,12 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconList, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  IconList,
+  OverflowingTextWithTooltip,
+  useIcons,
+} from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledDropdownLabelAdornments = styled.span`
@@ -37,10 +42,7 @@ const StyledViewName = styled.span`
   @media (min-width: 376px) and (max-width: ${MOBILE_VIEWPORT}px) {
     max-width: 110px;
   }
-  overflow: hidden;
-  text-overflow: ellipsis;
   vertical-align: middle;
-  white-space: nowrap;
 `;
 
 export const ViewPickerDropdown = () => {
@@ -82,7 +84,9 @@ export const ViewPickerDropdown = () => {
           ) : (
             <IconList size={theme.icon.size.md} />
           )}
-          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledViewName>
+            <OverflowingTextWithTooltip text={currentView?.name ?? 'All'} />
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
