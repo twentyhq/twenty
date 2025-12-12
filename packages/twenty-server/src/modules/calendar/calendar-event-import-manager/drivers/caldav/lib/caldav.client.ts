@@ -169,6 +169,59 @@ export class CalDAVClient {
     return false;
   }
 
+  /**
+   * Extracts the string value from an iCal property that may have parameters.
+   * Per RFC 5545, properties can have parameters like LANGUAGE=de-DE, which causes
+   * node-ical to return an object with `val` and `params` instead of a plain string.
+   *
+   * RFC 5545 Section 3.1.2 also allows multiple values in a single property.
+   *
+   * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.2 (Property Parameters)
+   * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.1.2 (Multiple Values)
+   */
+  private extractPropertyValue(
+    property:
+      | string
+      | { val?: string; params?: Record<string, unknown> }
+      | undefined,
+    defaultValue = '',
+  ): string {
+    if (property === undefined || property === null) {
+      return defaultValue;
+    }
+
+    if (typeof property === 'string') {
+      return property;
+    }
+
+    if (typeof property === 'object' && property !== null) {
+      if (
+        'val' in property &&
+        property.val !== undefined &&
+        property.val !== null
+      ) {
+        return typeof property.val === 'string'
+          ? property.val
+          : String(property.val);
+      }
+
+      if (Array.isArray(property)) {
+        const values = property
+          .map((item) => {
+            if (typeof item === 'string') return item;
+            if (typeof item === 'object' && item?.val) return String(item.val);
+
+            return '';
+          })
+          .filter(Boolean);
+
+        return values.length > 0 ? values.join(', ') : defaultValue;
+      }
+    }
+
+    return defaultValue;
+  }
+
   private extractOrganizerFromEvent(
     event: ical.VEvent,
   ): FetchedCalendarEventParticipant | null {
@@ -269,18 +322,23 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
       const participants = this.extractParticipantsFromEvent(event);
 
+      const title = this.extractPropertyValue(event.summary, 'Untitled Event');
+      const description = this.extractPropertyValue(event.description);
+      const location = this.extractPropertyValue(event.location);
+      const conferenceLinkUrl = this.extractPropertyValue(event.url);
+
       return {
         id: objectUrl,
-        title: event.summary || 'Untitled Event',
+        title,
         iCalUid: event.uid || '',
-        description: event.description || '',
+        description,
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),
-        location: event.location || '',
+        location,
         isFullDay: this.isFullDayEvent(rawData),
         isCanceled: event.status === 'CANCELLED',
         conferenceLinkLabel: '',
-        conferenceLinkUrl: event.url,
+        conferenceLinkUrl,
         externalCreatedAt:
           event.created?.toISOString() || new Date().toISOString(),
         externalUpdatedAt:
