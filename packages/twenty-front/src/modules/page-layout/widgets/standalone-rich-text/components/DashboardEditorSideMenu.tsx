@@ -8,6 +8,7 @@ import { IconGripVertical } from 'twenty-ui/display';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
+import { isDefined } from 'twenty-shared/utils';
 
 type DashboardEditorSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -58,7 +59,7 @@ export const DashboardEditorSideMenu = ({
   );
 
   const virtualReference = useMemo(() => {
-    if (!state?.referencePos) return null;
+    if (!isDefined(state?.referencePos)) return null;
     return {
       getBoundingClientRect: () => state.referencePos,
     };
@@ -72,7 +73,7 @@ export const DashboardEditorSideMenu = ({
     },
   });
 
-  if (!state?.show || !virtualReference) {
+  if (!isDefined(state?.show) || !isDefined(virtualReference)) {
     return null;
   }
 
