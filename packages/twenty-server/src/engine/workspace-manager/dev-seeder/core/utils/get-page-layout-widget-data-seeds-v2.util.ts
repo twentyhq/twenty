@@ -152,6 +152,35 @@ export const getPageLayoutWidgetDataSeedsV2 = (
       objectMetadataId: companyObject?.id ?? null,
     },
 
+    // WAFFLE chart: Revenue Distribution (Customer Analytics)
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_REVENUE_DISTRIBUTION,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
+      ),
+      title: 'Revenue Distribution',
+      type: WidgetType.GRAPH,
+      gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
+      configuration:
+        isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
+          ? {
+              graphType: 'WAFFLE',
+              aggregateFieldMetadataId: companyArrFieldId,
+              aggregateOperation: AggregateOperations.SUM,
+              groupByFieldMetadataId: companyNameFieldId,
+              orderBy: 'VALUE_DESC',
+              displayDataLabel: true,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
+            }
+          : null,
+      objectMetadataId: companyObject?.id ?? null,
+    },
+	
     // GAUGE chart: Average ARR (Customer Analytics)
     {
       id: generateSeedId(

@@ -1502,7 +1502,8 @@ export enum GraphType {
   HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
   PIE = 'PIE',
-  VERTICAL_BAR = 'VERTICAL_BAR'
+  VERTICAL_BAR = 'VERTICAL_BAR',
+  WAFFLE = 'WAFFLE'
 }
 
 export type GridPosition = {
@@ -4689,6 +4690,24 @@ export enum ViewVisibility {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type WaffleChartConfiguration = {
+  __typename?: 'WaffleChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
+  description?: Maybe<Scalars['String']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
+  graphType: GraphType;
+  groupByFieldMetadataId: Scalars['UUID'];
+  groupBySubFieldName?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<GraphOrderBy>;
+  timezone?: Maybe<Scalars['String']>;
+};
+
 export type Webhook = {
   __typename?: 'Webhook';
   createdAt: Scalars['DateTime'];
@@ -4703,7 +4722,7 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | WaffleChartConfiguration;
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',

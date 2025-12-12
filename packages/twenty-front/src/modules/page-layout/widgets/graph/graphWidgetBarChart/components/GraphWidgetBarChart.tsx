@@ -133,7 +133,7 @@ export const GraphWidgetBarChart = ({
 
   const handleBarEnter = useCallback(
     (datum: ComputedDatum<BarDatum>, event: MouseEvent<SVGRectElement>) => {
-      debouncedHideTooltip.cancel();
+	  debouncedHideTooltip.cancel();
       setActiveBarTooltip({
         datum,
         anchorElement: event.currentTarget,

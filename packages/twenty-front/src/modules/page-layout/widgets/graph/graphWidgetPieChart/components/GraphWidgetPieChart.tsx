@@ -104,7 +104,7 @@ export const GraphWidgetPieChart = ({
   const renderTooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
     const tooltipData = createTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
-
+	
     const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
       ? () => handleSliceClick(datum)
       : undefined;

@@ -7,6 +7,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
+  type WaffleChartConfiguration,
 } from '~/generated/graphql';
 
 type ChartSort = {
@@ -18,7 +19,8 @@ type BuildSortsFromChartConfigParams = {
   configuration:
     | BarChartConfiguration
     | LineChartConfiguration
-    | PieChartConfiguration;
+    | PieChartConfiguration
+	| WaffleChartConfiguration;
   objectMetadataItem: ObjectMetadataItem;
 };
 

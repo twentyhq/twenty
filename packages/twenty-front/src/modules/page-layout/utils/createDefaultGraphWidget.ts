@@ -37,6 +37,9 @@ const createDefaultGraphConfiguration = (
     case GraphType.PIE:
       return null;
 
+    case GraphType.WAFFLE:
+      return null;
+
     case GraphType.VERTICAL_BAR:
       if (
         !isDefined(fieldSelection?.aggregateFieldMetadataId) ||

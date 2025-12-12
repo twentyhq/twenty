@@ -106,7 +106,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     configuration.__typename === 'BarChartConfiguration' ||
     configuration.__typename === 'LineChartConfiguration'
       ? configuration.primaryAxisGroupByFieldMetadataId
-      : configuration.__typename === 'PieChartConfiguration'
+      : configuration.__typename === 'PieChartConfiguration' ||
+	    configuration.__typename === 'WaffleChartConfiguration'
         ? configuration.groupByFieldMetadataId
         : null;
 
@@ -120,7 +121,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     configuration.__typename === 'BarChartConfiguration' ||
     configuration.__typename === 'LineChartConfiguration'
       ? configuration.primaryAxisDateGranularity
-      : configuration.__typename === 'PieChartConfiguration'
+      : configuration.__typename === 'PieChartConfiguration' ||
+	    configuration.__typename === 'WaffleChartConfiguration'
         ? configuration.dateGranularity
         : null;
 

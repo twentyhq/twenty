@@ -8,6 +8,8 @@
     "@floating-ui/react": "^0.24.3",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
+    "@nivo/funnel": "^0.99.0",
+    "@nivo/waffle": "^0.99.0",
     "@radix-ui/colors": "^3.0.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",

@@ -7,6 +7,7 @@ export enum GraphType {
   VERTICAL_BAR = 'VERTICAL_BAR',
   HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
+  WAFFLE = 'WAFFLE',
 }
 
 registerEnumType(GraphType, {

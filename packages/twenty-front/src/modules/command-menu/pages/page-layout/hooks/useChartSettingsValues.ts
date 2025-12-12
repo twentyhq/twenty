@@ -49,9 +49,11 @@ export const useChartSettingsValues = ({
   const hasColorProperty =
     isBarOrLineChart ||
     configuration.__typename === 'GaugeChartConfiguration' ||
-    configuration.__typename === 'PieChartConfiguration';
+    configuration.__typename === 'PieChartConfiguration' ||
+	configuration.__typename === 'WaffleChartConfiguration';
 
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
+  const isWaffleChart = configuration.__typename === 'WaffleChartConfiguration';
 
   let groupByFieldXId: string | undefined;
   let groupByFieldYId: string | undefined;
@@ -136,6 +138,28 @@ export const useChartSettingsValues = ({
         : undefined;
   }
 
+  if (configuration.__typename === 'WaffleChartConfiguration') {
+    groupByOrderBy = configuration.orderBy;
+    groupByFieldYId = configuration.groupByFieldMetadataId;
+    groupBySubFieldNameY = configuration.groupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+
+    pieChartSortByLabel =
+      isDefined(configuration.orderBy) &&
+      isDefined(configuration.groupByFieldMetadataId)
+        ? getXSortOptionLabel({
+            graphOrderBy: configuration.orderBy,
+            groupByFieldMetadataIdX: configuration.groupByFieldMetadataId,
+            groupBySubFieldNameX: configuration.groupBySubFieldName as
+              | CompositeFieldSubFieldName
+              | undefined,
+            aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+            aggregateOperation: configuration.aggregateOperation ?? undefined,
+          })
+        : undefined;
+  }
+  
   const finalGroupByFieldYId = groupByFieldYId;
   const finalGroupBySubFieldNameY = groupBySubFieldNameY;
 

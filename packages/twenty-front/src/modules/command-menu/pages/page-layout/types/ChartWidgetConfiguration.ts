@@ -4,6 +4,7 @@ import {
   type GaugeChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
+  type WaffleChartConfiguration,
 } from '~/generated/graphql';
 
 export type ChartWidgetConfiguration =
@@ -11,4 +12,5 @@ export type ChartWidgetConfiguration =
   | GaugeChartConfiguration
   | LineChartConfiguration
   | AggregateChartConfiguration
-  | PieChartConfiguration;
+  | PieChartConfiguration
+  | WaffleChartConfiguration;

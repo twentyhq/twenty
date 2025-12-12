@@ -11926,6 +11926,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nivo/funnel@npm:^0.99.0":
+  version: 0.99.0
+  resolution: "@nivo/funnel@npm:0.99.0"
+  dependencies:
+    "@nivo/annotations": "npm:0.99.0"
+    "@nivo/colors": "npm:0.99.0"
+    "@nivo/core": "npm:0.99.0"
+    "@nivo/text": "npm:0.99.0"
+    "@nivo/theming": "npm:0.99.0"
+    "@nivo/tooltip": "npm:0.99.0"
+    "@react-spring/web": "npm:9.4.5 || ^9.7.2 || ^10.0"
+    "@types/d3-scale": "npm:^4.0.8"
+    "@types/d3-shape": "npm:^3.1.6"
+    d3-scale: "npm:^4.0.2"
+    d3-shape: "npm:^3.2.0"
+  peerDependencies:
+    react: ^16.14 || ^17.0 || ^18.0 || ^19.0
+  checksum: 10c0/0c765dde2b81e67bfd815b05ff8d3fbca35be272b6e4515d705af37e14796245e0b13c83a622f4d9a70a6b910ed87c5589246d9a050188625d31987d4f6f37a4
+  languageName: node
+  linkType: hard
+
+"@nivo/grid@npm:0.99.0":
+  version: 0.99.0
+  resolution: "@nivo/grid@npm:0.99.0"
+  checksum: 10c0/7b2b505032ce7a40fb06338f228223efbdcfcdb6beeee38fbc73f5da6975ae5a711d60007f55b6ee41e6a84620b1f8a8b5dd6d00891603a76f39d6d9cbcf9ff9
+  languageName: node
+  linkType: hard
+
 "@nivo/legends@npm:0.99.0":
   version: 0.99.0
   resolution: "@nivo/legends@npm:0.99.0"
@@ -12089,6 +12117,26 @@ __metadata:
   peerDependencies:
     react: ^16.14 || ^17.0 || ^18.0 || ^19.0
   checksum: 10c0/948610972553ec31785804a03304c14e81a5aabae077560803721068582d6fcde8d6d4bc71c77f0ca6c1c6350f48bb638dda15ffd3aa8878b598017c0be117f0
+  languageName: node
+  linkType: hard
+
+"@nivo/waffle@npm:^0.99.0":
+  version: 0.99.0
+  resolution: "@nivo/waffle@npm:0.99.0"
+  dependencies:
+    "@nivo/canvas": "npm:0.99.0"
+    "@nivo/colors": "npm:0.99.0"
+    "@nivo/core": "npm:0.99.0"
+    "@nivo/grid": "npm:0.99.0"
+    "@nivo/legends": "npm:0.99.0"
+    "@nivo/theming": "npm:0.99.0"
+    "@nivo/tooltip": "npm:0.99.0"
+    "@react-spring/web": "npm:9.4.5 || ^9.7.2 || ^10.0"
+    "@types/d3-shape": "npm:^3.1.6"
+    d3-shape: "npm:^3.2.0"
+  peerDependencies:
+    react: ^16.14 || ^17.0 || ^18.0 || ^19.0
+  checksum: 10c0/157c909d23e17ab9c3be682841999747227c7c42ad93c52f49659ff6ddf106708b3a9f659858501e78f6c3475b6e7a036dbb6148311548f424b8bfa57c37d4bb
   languageName: node
   linkType: hard
 
@@ -55603,9 +55651,11 @@ __metadata:
     "@monaco-editor/react": "npm:^4.6.0"
     "@nivo/bar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
+    "@nivo/funnel": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
     "@nivo/pie": "npm:^0.99.0"
     "@nivo/radial-bar": "npm:^0.99.0"
+    "@nivo/waffle": "npm:^0.99.0"
     "@playwright/test": "npm:^1.56.1"
     "@react-email/components": "npm:^0.5.3"
     "@react-pdf/renderer": "npm:^4.1.6"
@@ -56081,6 +56131,8 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": "npm:^3.3.7"
     "@linaria/core": "npm:^6.2.0"
     "@linaria/react": "npm:^6.2.1"
+    "@nivo/funnel": "npm:^0.99.0"
+    "@nivo/waffle": "npm:^0.99.0"
     "@nx/eslint": "npm:22.0.3"
     "@nx/eslint-plugin": "npm:22.0.3"
     "@nx/jest": "npm:22.0.3"

@@ -13,6 +13,7 @@ import {
   TEST_NUMBER_CHART_CONFIG,
   TEST_NUMBER_CHART_CONFIG_MINIMAL,
   TEST_PIE_CHART_CONFIG,
+  TEST_WAFFLE_CHART_CONFIG,
   TEST_VERTICAL_BAR_CHART_CONFIG,
   TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
@@ -280,6 +281,24 @@ describe('validateAndTransformWidgetConfiguration', () => {
         validateAndTransformWidgetConfiguration({
           type: WidgetType.GRAPH,
           configuration: TEST_PIE_CHART_CONFIG,
+          isDashboardV2Enabled: true,
+        }),
+      ).not.toThrow();
+    });
+
+	it('should not throw error for WAFFLE chart type regardless of IS_DASHBOARD_V2_ENABLED', () => {
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.GRAPH,
+          configuration: TEST_WAFFLE_CHART_CONFIG,
+          isDashboardV2Enabled: false,
+        }),
+      ).not.toThrow();
+
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.GRAPH,
+          configuration: TEST_WAFFLE_CHART_CONFIG,
           isDashboardV2Enabled: true,
         }),
       ).not.toThrow();

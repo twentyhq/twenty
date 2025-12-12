@@ -130,6 +130,26 @@ export const TEST_PIE_CHART_CONFIG = {
   },
 };
 
+export const TEST_WAFFLE_CHART_CONFIG = {
+  graphType: GraphType.WAFFLE,
+  groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
+  aggregateOperation: AggregateOperations.SUM,
+  orderBy: GraphOrderBy.VALUE_DESC,
+  displayDataLabel: false,
+  color: 'yellow',
+  description: 'Distribution by category',
+  filter: {
+    and: [
+      {
+        field: 'status',
+        operator: 'eq',
+        value: 'active',
+      },
+    ],
+  },
+};
+
 export const TEST_PIE_CHART_CONFIG_MINIMAL = {
   graphType: GraphType.PIE,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
@@ -161,7 +181,7 @@ export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT_TRUE,
   displayDataLabel: false,
-};
+};--
 
 export const INVALID_IFRAME_CONFIG_BAD_URL = {
   url: 'not-a-valid-url',

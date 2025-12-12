@@ -85,6 +85,23 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         timezone
         firstDayOfTheWeek
       }
+	        ... on WaffleChartConfiguration {
+        graphType
+        groupByFieldMetadataId
+        aggregateFieldMetadataId
+        aggregateOperation
+        groupBySubFieldName
+        dateGranularity
+        orderBy
+        displayDataLabel
+        showCenterMetric
+        displayLegend
+        color
+        description
+        filter
+        timezone
+        firstDayOfTheWeek
+      }
       ... on AggregateChartConfiguration {
         graphType
         aggregateFieldMetadataId

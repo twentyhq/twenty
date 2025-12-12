@@ -2,7 +2,9 @@ import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
+import { convertBarOrLineChartConfigToWaffleChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToWaffleChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
+import { convertWaffleChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertWaffleChartConfigToBarOrLineChart';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -103,6 +105,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         }
 
         const isPieChart = graphType === GraphType.PIE;
+		const isWaffleChart = graphType === GraphType.WAFFLE;
         const isBarOrLineChart =
           graphType === GraphType.VERTICAL_BAR ||
           graphType === GraphType.HORIZONTAL_BAR ||
@@ -112,8 +115,17 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           currentConfiguration.__typename === 'LineChartConfiguration';
         const wasPieChart =
           currentConfiguration.__typename === 'PieChartConfiguration';
+		const wasWaffleChart = 
+		  currentConfiguration.__typename === 'WaffleChartConfiguration';
 
         if (isPieChart && wasBarOrLineChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertBarOrLineChartConfigToPieChart(currentConfiguration),
+          };
+        }
+
+        if (isWaffleChart && wasBarOrLineChart) {
           configToUpdate = {
             ...configToUpdate,
             ...convertBarOrLineChartConfigToPieChart(currentConfiguration),
@@ -124,6 +136,13 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           configToUpdate = {
             ...configToUpdate,
             ...convertPieChartConfigToBarOrLineChart(currentConfiguration),
+          };
+        }
+
+        if (isBarOrLineChart && wasWaffleChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertWaffleChartConfigToBarOrLineChart(currentConfiguration),
           };
         }
 

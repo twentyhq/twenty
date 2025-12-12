@@ -7,4 +7,5 @@ export const GRAPH_TYPE_TO_CONFIG_TYPENAME = {
   [GraphType.PIE]: 'PieChartConfiguration',
   [GraphType.AGGREGATE]: 'AggregateChartConfiguration',
   [GraphType.GAUGE]: 'GaugeChartConfiguration',
+  [GraphType.WAFFLE]: 'WaffleChartConfiguration',
 } as const;

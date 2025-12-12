@@ -4,6 +4,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
+  type WaffleChartConfiguration,
 } from '~/generated/graphql';
 
 export type BuildChartDrilldownQueryParamsInput = {
@@ -11,7 +12,8 @@ export type BuildChartDrilldownQueryParamsInput = {
   configuration:
     | BarChartConfiguration
     | LineChartConfiguration
-    | PieChartConfiguration;
+    | PieChartConfiguration
+	| WaffleChartConfiguration;
   clickedData: {
     primaryBucketRawValue: RawDimensionValue;
   };

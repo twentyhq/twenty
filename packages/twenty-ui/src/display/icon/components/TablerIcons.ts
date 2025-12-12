@@ -184,6 +184,7 @@ export {
   IconGitBranchDeleted,
   IconGitCommit,
   IconGizmo,
+  IconGridDots,
   IconGripVertical,
   IconH1,
   IconH2,

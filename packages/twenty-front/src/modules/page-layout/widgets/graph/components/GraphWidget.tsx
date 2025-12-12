@@ -6,6 +6,7 @@ import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/g
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChartRenderer';
 import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChartRenderer';
+import { GraphWidgetWaffleChartRenderer } from '@/page-layout/widgets/graph/graphWidgetWaffleChart/components/GraphWidgetWaffleChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -70,7 +71,8 @@ export const GraphWidget = ({
 
     case GraphType.PIE:
       return <GraphWidgetPieChartRenderer widget={widget} />;
-
+    case GraphType.WAFFLE:
+      return <GraphWidgetWaffleChartRenderer widget={widget} />;
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:
       return <GraphWidgetBarChartRenderer widget={widget} />;

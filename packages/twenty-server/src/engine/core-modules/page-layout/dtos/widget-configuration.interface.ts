@@ -6,6 +6,7 @@ import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { WaffleChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/waffle-chart-configuration.dto';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 
@@ -15,8 +16,9 @@ export const WidgetConfiguration = createUnionType({
     BarChartConfigurationDTO,
     LineChartConfigurationDTO,
     PieChartConfigurationDTO,
-    AggregateChartConfigurationDTO,
     GaugeChartConfigurationDTO,
+	AggregateChartConfigurationDTO,
+	WaffleChartConfigurationDTO,
     IframeConfigurationDTO,
   ],
   resolveType(configuration: Record<string, unknown>) {
@@ -41,6 +43,8 @@ export const WidgetConfiguration = createUnionType({
           return AggregateChartConfigurationDTO;
         case GraphType.GAUGE:
           return GaugeChartConfigurationDTO;
+		case GraphType.WAFFLE:
+		  return WaffleChartConfigurationDTO;
         default:
           throw new Error(`Unknown graph type: ${configuration.graphType}`);
       }
@@ -64,4 +68,5 @@ export type WidgetConfigurationInterface =
   | PieChartConfigurationDTO
   | AggregateChartConfigurationDTO
   | GaugeChartConfigurationDTO
+  | WaffleChartConfigurationDTO
   | IframeConfigurationDTO;

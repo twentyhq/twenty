@@ -28,7 +28,8 @@ export const ChartSortBySelectionDropdownContent = () => {
   if (
     configuration?.__typename !== 'BarChartConfiguration' &&
     configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'PieChartConfiguration'
+    configuration?.__typename !== 'PieChartConfiguration' &&
+	configuration?.__typename !== 'WaffleChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
@@ -54,11 +55,12 @@ export const ChartSortBySelectionDropdownContent = () => {
     objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
+  const isWaffleChart = configuration.__typename === 'WaffleChartConfiguration';
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
   const isLineChart = configuration.__typename === 'LineChartConfiguration';
 
   const handleSelect = (orderBy: GraphOrderBy) => {
-    if (isPieChart) {
+    if (isWaffleChart) {
       updateCurrentWidgetConfig({
         configToUpdate: { orderBy },
       });
@@ -81,7 +83,8 @@ export const ChartSortBySelectionDropdownContent = () => {
   let groupByFieldMetadataId: string | undefined;
   let groupBySubFieldName: string | null | undefined;
 
-  if (configuration.__typename === 'PieChartConfiguration') {
+  if (configuration.__typename === 'PieChartConfiguration' ||
+      configuration.__typename === 'WaffleChartConfiguration') {
     currentOrderBy = configuration.orderBy ?? undefined;
     groupByFieldMetadataId = configuration.groupByFieldMetadataId;
     groupBySubFieldName = configuration.groupBySubFieldName;

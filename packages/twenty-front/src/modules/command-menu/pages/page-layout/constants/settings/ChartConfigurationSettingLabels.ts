@@ -12,6 +12,7 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   DATA_ON_DISPLAY_X: msg`Data on display`,
   DATA_ON_DISPLAY_Y: msg`Data on display`,
   DATA_ON_DISPLAY_PIE_CHART: msg`Data on display`,
+  DATA_ON_DISPLAY_WAFFLE_CHART: msg`Data on display`,
   DATA_ON_DISPLAY_AGGREGATE: msg`Data on display`,
   EACH_SLICE_REPRESENTS: msg`Each slice represents`,
   AXIS_NAME: msg`Axis name`,

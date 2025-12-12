@@ -4,6 +4,7 @@ import {
   type LineChartConfiguration,
   type ObjectRecordGroupByDateGranularity,
   type PieChartConfiguration,
+  type WaffleChartConfiguration,
 } from '~/generated-metadata/graphql';
 
 export type NormalizedChartConfigurationFields = {
@@ -17,7 +18,8 @@ export const normalizeChartConfigurationFields = (
   configuration:
     | BarChartConfiguration
     | LineChartConfiguration
-    | PieChartConfiguration,
+    | PieChartConfiguration
+	| WaffleChartConfiguration
 ): NormalizedChartConfigurationFields => {
   if (
     configuration.__typename === 'BarChartConfiguration' ||
@@ -31,7 +33,8 @@ export const normalizeChartConfigurationFields = (
     };
   }
 
-  if (configuration.__typename === 'PieChartConfiguration') {
+  if (configuration.__typename === 'PieChartConfiguration' ||
+      configuration.__typename === 'WaffleChartConfiguration') {
     return {
       groupByFieldMetadataId: configuration.groupByFieldMetadataId,
       groupBySubFieldName: configuration.groupBySubFieldName,

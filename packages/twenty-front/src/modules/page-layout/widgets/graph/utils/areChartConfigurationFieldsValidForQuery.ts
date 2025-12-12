@@ -52,6 +52,15 @@ export const areChartConfigurationFieldsValidForQuery = (
         ) &&
         fieldExists(configuration.groupByFieldMetadataId, objectMetadataItem)
       );
+	  
+	case 'WaffleChartConfiguration':
+      return (
+        fieldExists(
+          configuration.aggregateFieldMetadataId,
+          objectMetadataItem,
+        ) &&
+        fieldExists(configuration.groupByFieldMetadataId, objectMetadataItem)
+      );
 
     case 'AggregateChartConfiguration':
     case 'GaugeChartConfiguration':

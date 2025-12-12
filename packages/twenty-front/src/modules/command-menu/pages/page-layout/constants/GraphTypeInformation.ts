@@ -2,6 +2,7 @@ import { AGGREGATE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/const
 import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/GaugeChartSettings';
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
+import { WAFFLE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/WaffleChartSettings';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
 import { type MessageDescriptor } from '@lingui/core';
@@ -13,6 +14,7 @@ import {
   IconChartPie,
   type IconComponent,
   IconGauge,
+  IconGridDots,
   IconSum,
 } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -39,6 +41,11 @@ export const GRAPH_TYPE_INFORMATION: Record<
     label: msg`Pie Chart`,
     icon: IconChartPie,
     settings: PIE_CHART_SETTINGS,
+  },
+  [GraphType.WAFFLE]: {
+    label: msg`Waffle Chart`,
+    icon: IconGridDots,
+    settings: WAFFLE_CHART_SETTINGS,
   },
   [GraphType.LINE]: {
     label: msg`Line Chart`,

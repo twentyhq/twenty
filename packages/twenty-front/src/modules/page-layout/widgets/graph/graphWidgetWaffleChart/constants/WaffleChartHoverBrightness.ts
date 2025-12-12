@@ -1,0 +1,1 @@
+export const WAFFLE_CHART_HOVER_BRIGHTNESS = 0.85;

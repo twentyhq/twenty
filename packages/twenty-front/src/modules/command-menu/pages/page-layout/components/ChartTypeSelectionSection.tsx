@@ -11,6 +11,7 @@ const graphTypeOptions = [
   GraphType.HORIZONTAL_BAR,
   GraphType.LINE,
   GraphType.PIE,
+  GraphType.WAFFLE,
   GraphType.AGGREGATE,
   GraphType.GAUGE,
 ];

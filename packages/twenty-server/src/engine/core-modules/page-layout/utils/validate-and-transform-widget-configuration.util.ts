@@ -8,6 +8,7 @@ import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { WaffleChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/waffle-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
@@ -125,6 +126,23 @@ const validateGraphConfiguration = ({
     case GraphType.GAUGE: {
       const instance = plainToInstance(
         GaugeChartConfigurationDTO,
+        configuration,
+      );
+
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
+
+      if (errors.length > 0) {
+        throw errors;
+      }
+
+      return instance;
+    }
+	case GraphType.WAFFLE: {
+      const instance = plainToInstance(
+        WaffleChartConfigurationDTO,
         configuration,
       );
 

@@ -32,6 +32,10 @@ const getCurrentDateGranularity = ({
     return configuration.dateGranularity || defaultGranularity;
   }
 
+  if (configuration?.__typename === 'WaffleChartConfiguration') {
+    return configuration.dateGranularity || defaultGranularity;
+  }
+
   const isBarOrLineChart =
     configuration?.__typename === 'BarChartConfiguration' ||
     configuration?.__typename === 'LineChartConfiguration';
@@ -58,6 +62,13 @@ export const ChartDateGranularitySelectionDropdownContent = ({
   if (
     !isDefined(axis) &&
     widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
+  if (
+    !isDefined(axis) &&
+    widgetInEditMode?.configuration?.__typename !== 'WaffleChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }

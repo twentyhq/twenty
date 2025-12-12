@@ -58,7 +58,8 @@ export const ChartColorSelectionDropdownContent = () => {
     configuration.__typename !== 'BarChartConfiguration' &&
     configuration.__typename !== 'LineChartConfiguration' &&
     configuration.__typename !== 'GaugeChartConfiguration' &&
-    configuration.__typename !== 'PieChartConfiguration'
+    configuration.__typename !== 'PieChartConfiguration' &&
+	configuration.__typename !== 'WaffleChartConfiguration'
   ) {
     return null;
   }

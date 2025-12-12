@@ -94,6 +94,17 @@ export const shouldHideChartSetting = (
       }
     }
 
+    if (item.id === CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY) {
+      if (configuration.__typename === 'WaffleChartConfiguration') {
+        return shouldHideDateGranularityBasedOnFieldType(
+          configuration.groupByFieldMetadataId,
+          configuration.groupBySubFieldName,
+          objectMetadataItem,
+          objectMetadataItems ?? [],
+        );
+      }
+    }
+
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE) {
       const isBarOrLineChart =
         configuration.__typename === 'BarChartConfiguration' ||

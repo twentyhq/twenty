@@ -14,6 +14,10 @@ export const GRAPH_WIDGET_SIZES: Record<GraphType, WidgetSizeConfig> = {
     default: { w: 4, h: 4 },
     minimum: { w: 3, h: 4 },
   },
+  [GraphType.WAFFLE]: {
+    default: { w: 4, h: 4 },
+    minimum: { w: 4, h: 4 },
+  },                
   [GraphType.VERTICAL_BAR]: {
     default: { w: 6, h: 6 },
     minimum: { w: 4, h: 4 },
