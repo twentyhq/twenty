@@ -1,14 +1,14 @@
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
+import { Separator } from '@/settings/components/Separator';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
-import { SettingsDataModelFieldClickBehaviorForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldClickBehaviorForm';
+import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import {
   SettingsDataModelFieldPhonesForm,
   type SettingsDataModelFieldPhonesFormValues,
 } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
-import { Separator } from '@/settings/components/Separator';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -55,7 +55,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
             fieldType={FieldMetadataType.PHONES}
           />
           <Separator />
-          <SettingsDataModelFieldClickBehaviorForm
+          <SettingsDataModelFieldOnClickActionForm
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
             fieldType={FieldMetadataType.PHONES}

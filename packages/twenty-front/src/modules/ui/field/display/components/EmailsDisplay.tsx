@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
-import { FieldClickAction } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -34,7 +33,6 @@ export const EmailsDisplay = ({
   value,
   isFocused,
   onEmailClick,
-  clickAction,
 }: EmailsDisplayProps) => {
   const emails = useMemo(
     () =>
@@ -45,12 +43,6 @@ export const EmailsDisplay = ({
     [value?.primaryEmail, value?.additionalEmails],
   );
 
-  const handleClick = (email: string, event: React.MouseEvent<HTMLElement>) => {
-    if (clickAction === FieldClickAction.COPY) {
-      onEmailClick?.(email, event);
-    }
-  };
-
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {emails.map((email, index) => (
@@ -58,7 +50,7 @@ export const EmailsDisplay = ({
           key={index}
           label={email}
           href={`mailto:${email}`}
-          onClick={(event) => handleClick(email, event)}
+          onClick={(event) => onEmailClick?.(email, event)}
         />
       ))}
     </ExpandableList>
@@ -69,7 +61,7 @@ export const EmailsDisplay = ({
           key={index}
           label={email}
           href={`mailto:${email}`}
-          onClick={(event) => handleClick(email, event)}
+          onClick={(event) => onEmailClick?.(email, event)}
         />
       ))}
     </StyledContainer>

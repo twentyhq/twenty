@@ -7,7 +7,6 @@ import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/f
 import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
-import { SettingsDataModelFieldClickBehaviorForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldClickBehaviorForm';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import { settingsDataModelFieldTextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
@@ -27,11 +26,12 @@ import {
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
-import { settingsDataModelFieldClickBehaviorSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldClickBehaviorSchema';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
+import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -94,13 +94,13 @@ const phonesFieldFormSchema = z
 const emailsFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.EMAILS) })
   .extend(settingsDataModelFieldMaxValuesSchema.shape)
-  .extend(settingsDataModelFieldClickBehaviorSchema.shape)
+  .extend(settingsDataModelFieldOnClickActionSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
 
 const linksFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.LINKS) })
   .extend(settingsDataModelFieldMaxValuesSchema.shape)
-  .extend(settingsDataModelFieldClickBehaviorSchema.shape)
+  .extend(settingsDataModelFieldOnClickActionSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
 
 const arrayFieldFormSchema = z
@@ -313,7 +313,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       form={
         <>
           {[
-            FieldMetadataType.PHONES,
             FieldMetadataType.EMAILS,
             FieldMetadataType.LINKS,
             FieldMetadataType.ARRAY,
@@ -327,15 +326,17 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <Separator />
             </>
           )}
-          {[
-            FieldMetadataType.PHONES,
-            FieldMetadataType.EMAILS,
-            FieldMetadataType.LINKS,
-          ].includes(fieldType) && (
+          {[FieldMetadataType.EMAILS, FieldMetadataType.LINKS].includes(
+            fieldType,
+          ) && (
             <>
-              <SettingsDataModelFieldClickBehaviorForm
+              <SettingsDataModelFieldOnClickActionForm
                 existingFieldMetadataId={existingFieldMetadataId}
-                fieldType={fieldType}
+                fieldType={
+                  fieldType as
+                    | FieldMetadataType.EMAILS
+                    | FieldMetadataType.LINKS
+                }
                 disabled={disabled}
               />
               <Separator />

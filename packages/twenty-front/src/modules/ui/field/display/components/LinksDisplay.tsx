@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { FieldClickAction } from 'twenty-shared/types';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
@@ -15,14 +14,9 @@ import { checkUrlType } from '~/utils/checkUrlType';
 type LinksDisplayProps = {
   value?: FieldLinksValue;
   onLinkClick?: (url: string, event: React.MouseEvent<HTMLElement>) => void;
-  clickAction?: FieldClickAction;
 };
 
-export const LinksDisplay = ({
-  value,
-  onLinkClick,
-  clickAction,
-}: LinksDisplayProps) => {
+export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   const links = useMemo(() => {
     if (!isDefined(value)) {
       return [];
@@ -46,12 +40,6 @@ export const LinksDisplay = ({
     });
   }, [value]);
 
-  const handleClick = (url: string, event: React.MouseEvent<HTMLElement>) => {
-    if (clickAction === FieldClickAction.COPY) {
-      onLinkClick?.(url, event);
-    }
-  };
-
   return (
     <ExpandableList>
       {links.map(({ url, label, type }, index) =>
@@ -61,14 +49,14 @@ export const LinksDisplay = ({
             href={url}
             type={type}
             label={label}
-            onClick={(event) => handleClick(url, event)}
+            onClick={(event) => onLinkClick?.(url, event)}
           />
         ) : (
           <RoundedLink
             key={index}
             href={url}
             label={label}
-            onClick={(event) => handleClick(url, event)}
+            onClick={(event) => onLinkClick?.(url, event)}
           />
         ),
       )}

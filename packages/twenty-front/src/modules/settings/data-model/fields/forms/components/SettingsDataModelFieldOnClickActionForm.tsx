@@ -2,27 +2,31 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { type SettingsDataModelFieldClickBehaviorFormValues } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldClickBehaviorSchema';
+import { getSettingsDataModelFieldOnClickActionDescription } from '@/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util';
+import { type SettingsDataModelFieldClickBehaviorFormValues } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import {
-  FieldClickAction,
   type FieldMetadataMultiItemSettings,
-  FieldMetadataType,
+  FieldMetadataSettingsOnClickAction,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 import { IconClick } from 'twenty-ui/display';
 
-type SettingsDataModelFieldClickBehaviorFormProps = {
+type SettingsDataModelFieldOnClickActionFormProps = {
   disabled?: boolean;
   existingFieldMetadataId: string;
-  fieldType: FieldMetadataType;
+  fieldType:
+    | FieldMetadataType.PHONES
+    | FieldMetadataType.EMAILS
+    | FieldMetadataType.LINKS;
 };
 
-export const SettingsDataModelFieldClickBehaviorForm = ({
+export const SettingsDataModelFieldOnClickActionForm = ({
   disabled,
   existingFieldMetadataId,
   fieldType,
-}: SettingsDataModelFieldClickBehaviorFormProps) => {
+}: SettingsDataModelFieldOnClickActionFormProps) => {
   const { t } = useLingui();
   const { control } =
     useFormContext<SettingsDataModelFieldClickBehaviorFormValues>();
@@ -31,42 +35,19 @@ export const SettingsDataModelFieldClickBehaviorForm = ({
     existingFieldMetadataId,
   );
 
-  let title: string;
-  let description: string;
-  let defaultValue: FieldClickAction;
-  const options: Array<{ label: string; value: FieldClickAction }> = [];
+  const options = [
+    {
+      label: t`Open as link`,
+      value: FieldMetadataSettingsOnClickAction.OPEN_LINK,
+    },
+    {
+      label: t`Copy to clipboard`,
+      value: FieldMetadataSettingsOnClickAction.COPY,
+    },
+  ];
 
-  switch (fieldType) {
-    case FieldMetadataType.PHONES:
-      title = t`Click Behavior`;
-      description = t`Choose what happens when you click a phone number`;
-      defaultValue = FieldClickAction.COPY;
-      options.push(
-        { label: t`Copy to clipboard`, value: FieldClickAction.COPY },
-        { label: t`Open as link`, value: FieldClickAction.OPEN_LINK },
-      );
-      break;
-    case FieldMetadataType.EMAILS:
-      title = t`Click Behavior`;
-      description = t`Choose what happens when you click an email`;
-      defaultValue = FieldClickAction.OPEN_LINK;
-      options.push(
-        { label: t`Open as link`, value: FieldClickAction.OPEN_LINK },
-        { label: t`Copy to clipboard`, value: FieldClickAction.COPY },
-      );
-      break;
-    case FieldMetadataType.LINKS:
-      title = t`Click Behavior`;
-      description = t`Choose what happens when you click a link`;
-      defaultValue = FieldClickAction.OPEN_LINK;
-      options.push(
-        { label: t`Open as link`, value: FieldClickAction.OPEN_LINK },
-        { label: t`Copy to clipboard`, value: FieldClickAction.COPY },
-      );
-      break;
-    default:
-      return null;
-  }
+  const description =
+    getSettingsDataModelFieldOnClickActionDescription(fieldType);
 
   const existingSettings =
     (fieldMetadataItem?.settings as FieldMetadataMultiItemSettings) ?? {};
@@ -77,22 +58,26 @@ export const SettingsDataModelFieldClickBehaviorForm = ({
       control={control}
       defaultValue={{
         ...existingSettings,
-        clickAction: existingSettings.clickAction ?? defaultValue,
+        clickAction:
+          existingSettings.clickAction ??
+          FieldMetadataSettingsOnClickAction.OPEN_LINK,
       }}
       render={({ field: { value, onChange } }) => {
         const currentSettings =
           (value as FieldMetadataMultiItemSettings | undefined) ?? {};
 
-        const clickAction = currentSettings.clickAction ?? defaultValue;
+        const clickAction =
+          currentSettings.clickAction ??
+          FieldMetadataSettingsOnClickAction.OPEN_LINK;
 
         return (
           <SettingsOptionCardContentSelect
             Icon={IconClick}
-            title={title}
+            title={t`Action on click`}
             description={description}
             disabled={disabled}
           >
-            <Select<FieldClickAction>
+            <Select<FieldMetadataSettingsOnClickAction>
               dropdownWidth={180}
               value={clickAction}
               onChange={(newValue) =>

@@ -3,9 +3,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
-import { settingsDataModelFieldClickBehaviorSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldClickBehaviorSchema';
+import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
+import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
@@ -30,7 +30,7 @@ export const settingsDataModelFieldPhonesFormSchema = z
     defaultValue: phonesFieldDefaultValueSchema,
   })
   .merge(settingsDataModelFieldMaxValuesSchema)
-  .merge(settingsDataModelFieldClickBehaviorSchema);
+  .merge(settingsDataModelFieldOnClickActionSchema);
 
 export type SettingsDataModelFieldPhonesFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema

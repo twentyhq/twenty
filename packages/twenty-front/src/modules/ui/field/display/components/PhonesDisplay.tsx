@@ -5,7 +5,6 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { FieldClickAction } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -18,7 +17,6 @@ type PhonesDisplayProps = {
     phoneNumber: string,
     event: React.MouseEvent<HTMLElement>,
   ) => void;
-  clickAction?: FieldClickAction;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -40,7 +38,6 @@ export const PhonesDisplay = ({
   value,
   isFocused,
   onPhoneNumberClick,
-  clickAction,
 }: PhonesDisplayProps) => {
   const phones = useMemo(
     () =>
@@ -78,15 +75,6 @@ export const PhonesDisplay = ({
     }
   };
 
-  const handleClick = (
-    number: string,
-    event: React.MouseEvent<HTMLElement>,
-  ) => {
-    if (clickAction === FieldClickAction.COPY) {
-      onPhoneNumberClick?.(number, event);
-    }
-  };
-
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, callingCode }, index) => {
@@ -100,7 +88,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
@@ -118,7 +108,9 @@ export const PhonesDisplay = ({
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handleClick(callingCode + number, event)}
+            onClick={(event) =>
+              onPhoneNumberClick?.(callingCode + number, event)
+            }
           />
         );
       })}
