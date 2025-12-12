@@ -1296,7 +1296,12 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadataItem);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadataItem,
+        this,
+        this.internalContext,
+      );
     }
   }
 

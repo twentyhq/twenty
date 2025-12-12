@@ -8,6 +8,7 @@ import {
   snackBarInternalComponentState,
   type SnackBarOptions,
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
+import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/build-error-action.util';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -143,9 +144,12 @@ export const useSnackBar = () => {
           ? getErrorMessageFromApolloError(apolloError)
           : t`An error occurred.`;
 
+      const errorAction = buildErrorAction(apolloError);
+
       setSnackBarQueue({
         id: uuidv4(),
         message: errorMessage,
+        ...errorAction,
         ...options,
         variant: SnackBarVariant.Error,
       });
