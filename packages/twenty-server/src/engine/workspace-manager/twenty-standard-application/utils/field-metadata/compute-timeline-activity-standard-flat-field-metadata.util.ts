@@ -441,28 +441,4 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetCustom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
-      fieldName: 'targetCustom',
-      label: 'Custom',
-      description: 'Timeline Activity custom object',
-      icon: 'IconTimeline',
-      isNullable: true,
-      targetObjectName: 'note',
-      targetFieldName: 'timelineActivities',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'targetCustomId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
 });

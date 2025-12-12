@@ -203,29 +203,4 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  custom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'custom',
-      label: 'Custom',
-      description: 'TaskTarget custom object',
-      icon: 'IconBuildingSkyscraper',
-      isNullable: true,
-      // Custom is a dynamic relation
-      targetObjectName: 'task',
-      targetFieldName: 'taskTargets',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
 });
