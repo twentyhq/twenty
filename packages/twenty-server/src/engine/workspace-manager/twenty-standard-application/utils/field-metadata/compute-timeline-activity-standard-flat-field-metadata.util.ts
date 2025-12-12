@@ -11,7 +11,7 @@ import {
   type CreateStandardFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { createStandardMorphRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-field-flat-metadata.util';
+import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   now,
@@ -205,6 +205,8 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workspaceMember',
       label: 'Workspace Member',
       description: 'Event workspace member',
@@ -223,10 +225,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetPerson: createStandardMorphRelationFieldFlatMetadata({
+  targetPerson: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetPerson',
       label: 'Person',
       description: 'Event person',
@@ -245,10 +249,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetCompany: createStandardMorphRelationFieldFlatMetadata({
+  targetCompany: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetCompany',
       label: 'Company',
       description: 'Event company',
@@ -267,10 +273,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetOpportunity: createStandardMorphRelationFieldFlatMetadata({
+  targetOpportunity: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'Event opportunity',
@@ -289,10 +297,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetNote: createStandardMorphRelationFieldFlatMetadata({
+  targetNote: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetNote',
       label: 'Note',
       description: 'Event note',
@@ -311,10 +321,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetTask: createStandardMorphRelationFieldFlatMetadata({
+  targetTask: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetTask',
       label: 'Task',
       description: 'Event task',
@@ -333,10 +345,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflow: createStandardMorphRelationFieldFlatMetadata({
+  targetWorkflow: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetWorkflow',
       label: 'Workflow',
       description: 'Event workflow',
@@ -355,10 +369,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflowVersion: createStandardMorphRelationFieldFlatMetadata({
+  targetWorkflowVersion: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetWorkflowVersion',
       label: 'WorkflowVersion',
       description: 'Event workflow version',
@@ -377,10 +393,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflowRun: createStandardMorphRelationFieldFlatMetadata({
+  targetWorkflowRun: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetWorkflowRun',
       label: 'Workflow Run',
       description: 'Event workflow run',
@@ -399,10 +417,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetDashboard: createStandardMorphRelationFieldFlatMetadata({
+  targetDashboard: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetDashboard',
       label: 'Dashboard',
       description: 'Event dashboard',
@@ -421,10 +441,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetCustom: createStandardMorphRelationFieldFlatMetadata({
+  targetCustom: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
       fieldName: 'targetCustom',
       label: 'Custom',
       description: 'Timeline Activity custom object',
