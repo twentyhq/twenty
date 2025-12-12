@@ -92,7 +92,7 @@ export const useIncrementalUpdateManyRecords = <
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectNameSingular, {
+    registerObjectOperation(objectMetadataItem, {
       type: 'update-many',
     });
 
