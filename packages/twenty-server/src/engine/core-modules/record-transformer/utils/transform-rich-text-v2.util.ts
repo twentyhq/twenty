@@ -24,19 +24,14 @@ export const transformRichTextV2Value = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   richTextValue: any,
 ): Promise<RichTextV2Metadata> => {
-  const startTime = Date.now();
+  const startTime = performance.now();
   const inputSize = calculateInputSize(richTextValue);
 
   const parsedValue = isNonEmptyString(richTextValue)
     ? richTextV2ValueSchema.parse(richTextValue)
     : richTextValue;
 
-  const afterParsingTime = Date.now();
-  const parsingDuration = afterParsingTime - startTime;
-
-  logger.log(
-    `Input parsed - duration: ${parsingDuration}ms, size: ${inputSize} bytes, has_blocknote: ${!!parsedValue.blocknote}, has_markdown: ${!!parsedValue.markdown}`,
-  );
+  const afterParsingTime = performance.now();
 
   const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
 
@@ -56,13 +51,7 @@ export const transformRichTextV2Value = async (
     convertedMarkdown = parsedValue.blocknote || null;
   }
 
-  const afterMarkdownConversionTime = Date.now();
-  const markdownConversionDuration =
-    afterMarkdownConversionTime - afterParsingTime;
-
-  logger.debug(
-    `Markdown conversion completed - duration: ${markdownConversionDuration}ms, blocknote_length: ${parsedValue.blocknote?.length || 0}, conversion_succeeded: ${!!convertedMarkdown}`,
-  );
+  const afterMarkdownConversionTime = performance.now();
 
   const convertedBlocknote = parsedValue.markdown
     ? JSON.stringify(
@@ -72,12 +61,10 @@ export const transformRichTextV2Value = async (
       )
     : null;
 
-  const totalDuration = Date.now() - startTime;
-  const blocknoteConversionDuration =
-    totalDuration - markdownConversionDuration - parsingDuration;
+  const endTime = performance.now();
 
   logger.debug(
-    `transformRichTextV2Value completed - total: ${totalDuration}ms, parsing: ${parsingDuration}ms, markdown_conversion: ${markdownConversionDuration}ms, blocknote_conversion: ${blocknoteConversionDuration}ms, size: ${inputSize} bytes`,
+    `transformRichTextV2Value completed - total: ${endTime - startTime}ms, parsing: ${afterParsingTime - startTime}ms, markdown_conversion: ${afterMarkdownConversionTime - afterParsingTime}ms, blocknote_conversion: ${endTime - afterMarkdownConversionTime}ms, size: ${inputSize} bytes`,
   );
 
   return {
