@@ -9,6 +9,7 @@ import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-typ
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
@@ -22,7 +23,12 @@ import {
   ViewFilterOperand,
   type StepFilter,
 } from 'twenty-shared/types';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseJson,
+  safeParseRelativeDateFilterJSONStringified,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
@@ -85,6 +91,17 @@ export const WorkflowStepFilterValueInput = ({
     });
   };
 
+  const handleRelativeDateFilterChange = (
+    newRelativeDateFilter: RelativeDateFilter,
+  ) => {
+    upsertStepFilterSettings({
+      stepFilterToUpsert: {
+        ...stepFilter,
+        value: JSON.stringify(newRelativeDateFilter),
+      },
+    });
+  };
+
   const isDisabled = !stepFilter.operand;
 
   const operandHasNoInput =
@@ -116,6 +133,18 @@ export const WorkflowStepFilterValueInput = ({
   const isDateField =
     variableType === FieldMetadataType.DATE_TIME ||
     variableType === FieldMetadataType.DATE;
+
+  const isRelativeDateFilter =
+    isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE;
+
+  const relativeDateFilter = safeParseRelativeDateFilterJSONStringified(
+    stepFilter.value,
+  );
+
+  const relativeDateFilterValue =
+    isRelativeDateFilter && isDefined(relativeDateFilter)
+      ? stringifyRelativeDateFilter(relativeDateFilter)
+      : '';
 
   if (isFullRecord) {
     return (
@@ -166,11 +195,11 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
-  if (isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE) {
+  if (isRelativeDateFilter) {
     return (
       <FormRelativeDatePicker
-        defaultValue={stepFilter.value}
-        onChange={handleValueChange}
+        defaultValue={relativeDateFilterValue}
+        onChange={handleRelativeDateFilterChange}
         readonly={readonly}
       />
     );

@@ -6,16 +6,16 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
+import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 
-import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
@@ -42,7 +42,8 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
   const { getInitialFilterValue } = useGetInitialFilterValue();
 
-  const { userTimezone } = useUserTimezone();
+  const { getRelativeDateFilterWithUserTimezone } =
+    useGetRelativeDateFilterWithUserTimezone();
 
   const applyObjectFilterDropdownOperand = (
     newOperand: RecordFilterOperand,
@@ -103,16 +104,17 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
-        const defaultRelativeDate: RelativeDateFilter = {
-          ...DEFAULT_RELATIVE_DATE_FILTER_VALUE,
-          timezone: userTimezone,
-        };
+        const newRelativeDateFilter = getRelativeDateFilterWithUserTimezone(
+          DEFAULT_RELATIVE_DATE_FILTER_VALUE,
+        );
 
-        recordFilterToUpsert.value =
-          stringifyRelativeDateFilter(defaultRelativeDate);
+        recordFilterToUpsert.value = stringifyRelativeDateFilter(
+          newRelativeDateFilter,
+        );
 
-        recordFilterToUpsert.displayValue =
-          getRelativeDateDisplayValue(defaultRelativeDate);
+        recordFilterToUpsert.displayValue = getRelativeDateDisplayValue(
+          newRelativeDateFilter,
+        );
       } else {
         recordFilterToUpsert.value = '';
         recordFilterToUpsert.displayValue = '';

@@ -9,7 +9,7 @@ export type RecordFilter = {
   id: string;
   fieldMetadataId: string;
   value: string;
-  /** @deprecated We shouldn't implement new features with this field and instead try to create utils to obtain the displayValue of a filter type at runtime */
+  /** @deprecated We shouldn't implement new features with this field and instead try to create utils to obtain the displayValue at runtime */
   displayValue: string;
   type: FilterableAndTSVectorFieldType;
   recordFilterGroupId?: string;

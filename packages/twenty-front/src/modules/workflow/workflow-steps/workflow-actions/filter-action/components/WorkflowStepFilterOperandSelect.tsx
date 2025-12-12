@@ -1,12 +1,14 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
+import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useContext } from 'react';
-import { type StepFilter, type ViewFilterOperand } from 'twenty-shared/types';
+import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
+import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 
 type WorkflowStepFilterOperandSelectProps = {
   stepFilter: StepFilter;
@@ -28,7 +30,25 @@ export const WorkflowStepFilterOperandSelect = ({
     label: getOperandLabel(operand),
   }));
 
+  const { getRelativeDateFilterWithUserTimezone } =
+    useGetRelativeDateFilterWithUserTimezone();
+
   const handleChange = (operand: ViewFilterOperand) => {
+    if (operand === ViewFilterOperand.IS_RELATIVE) {
+      const newRelativeDateFilter = getRelativeDateFilterWithUserTimezone(
+        DEFAULT_RELATIVE_DATE_FILTER_VALUE,
+      );
+
+      upsertStepFilterSettings({
+        stepFilterToUpsert: {
+          ...stepFilter,
+          operand,
+          value: JSON.stringify(newRelativeDateFilter),
+        },
+      });
+      return;
+    }
+
     upsertStepFilterSettings({
       stepFilterToUpsert: {
         ...stepFilter,
