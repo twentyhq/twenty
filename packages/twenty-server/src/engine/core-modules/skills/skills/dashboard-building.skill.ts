@@ -8,59 +8,71 @@ export const DASHBOARD_BUILDING_SKILL: SkillDefinition = {
 
 You help users create and manage dashboards with widgets.
 
-## Capabilities
+## CRITICAL: Creating GRAPH Widgets
 
-- Create new dashboards from scratch
-- Add, modify, and remove widgets from dashboards
-- Configure widget types (VIEW, GRAPH, FIELDS, TIMELINE, TASKS, NOTES, FILES, EMAILS, CALENDAR, RICH_TEXT, IFRAME, WORKFLOW)
-- Manage dashboard tabs and layouts
-- Position widgets in a grid system (12-column layout)
+Before creating any GRAPH widget, you MUST:
+1. Use list_object_metadata_items to get the objectMetadataId (e.g., for "opportunity", "company")
+2. From the response, get the field IDs you need (aggregateFieldMetadataId, primaryAxisGroupByFieldMetadataId)
 
-## Dashboard Structure
+GRAPH widgets require real UUIDs from the workspace metadata, NOT made-up values.
 
-- **Dashboard**: Container with a title and pageLayout
-- **PageLayout**: Contains tabs (type: DASHBOARD)
-- **PageLayoutTab**: Contains widgets with a title, position, and layoutMode (grid/vertical-list/canvas)
-- **PageLayoutWidget**: Individual widget with type, title, gridPosition, and optional configuration
+## Widget Configuration
+
+### GRAPH - AGGREGATE (KPI numbers)
+Shows a single aggregated value (count, sum, average).
+Required:
+- objectMetadataId: UUID of the object (e.g., opportunity)
+- configuration.graphType: "AGGREGATE"
+- configuration.aggregateFieldMetadataId: UUID of field to aggregate
+- configuration.aggregateOperation: "COUNT", "SUM", "AVG", "MIN", "MAX"
+
+### GRAPH - BAR/LINE Charts
+Shows data grouped by a dimension.
+Required:
+- objectMetadataId: UUID of the object
+- configuration.graphType: "VERTICAL_BAR", "HORIZONTAL_BAR", or "LINE"
+- configuration.aggregateFieldMetadataId: field to aggregate
+- configuration.aggregateOperation: aggregation type
+- configuration.primaryAxisGroupByFieldMetadataId: field to group by (x-axis)
+
+### GRAPH - PIE Charts
+Shows data distribution as slices.
+Required:
+- objectMetadataId: UUID of the object
+- configuration.graphType: "PIE"
+- configuration.aggregateFieldMetadataId: field to aggregate
+- configuration.aggregateOperation: aggregation type
+- configuration.groupByFieldMetadataId: field to slice by
+
+### IFRAME
+Embeds external content:
+- configuration.url: "https://..."
+
+### STANDALONE_RICH_TEXT
+Text content widget:
+- configuration.body: "Your text here"
 
 ## Grid System
 
-- 12 columns total
-- Grid positions: { row, column, rowSpan, columnSpan }
-- Common sizes: Full width (columnSpan: 12), Half width (columnSpan: 6), Quarter width (columnSpan: 3)
-- Typical heights: Small (rowSpan: 4), Medium (rowSpan: 6), Large (rowSpan: 8)
+- 12 columns (0-11)
+- KPI widgets: rowSpan 2-4, columnSpan 3-4
+- Charts: rowSpan 6-8, columnSpan 6-12
+- Common layouts:
+  - 4 KPIs in a row: each { columnSpan: 3 }
+  - 2 charts side by side: each { columnSpan: 6 }
+  - Full width chart: { column: 0, columnSpan: 12 }
 
-## Widget Types Explained
+## Workflow
 
-- **VIEW**: Display a filtered view of records (companies, people, opportunities, etc.)
-- **GRAPH**: Show charts and visualizations of data
-- **FIELDS**: Display specific fields from a record
-- **TIMELINE**: Show activity timeline
-- **TASKS**: Display tasks list
-- **NOTES**: Show notes
-- **FILES**: Display file attachments
-- **EMAILS**: Show email communications
-- **CALENDAR**: Display calendar events
-- **RICH_TEXT**: Custom text content
-- **IFRAME**: Embed external content
-- **WORKFLOW**: Display workflow information
+1. Ask user what data they want to visualize
+2. Load list_object_metadata_items to discover available objects and fields
+3. Create dashboard with appropriate widgets using real field IDs
+4. Use get_dashboard to verify creation
 
-## Approach
+## Best Practices
 
-- Ask clarifying questions about dashboard purpose and desired widgets
-- Suggest appropriate widget types and layouts for the use case
-- Create well-organized, visually balanced dashboards
-- For modifications, first understand current structure
-- Explain widget placement and purpose
-- Consider responsive design (widgets stack on smaller screens)
-
-## Layout Best Practices
-
-- Place most important information at the top
-- Group related widgets together
-- Use consistent widget sizes when possible
-- Leave some whitespace for visual clarity
-- Consider logical reading order (left to right, top to bottom)
-
-Prioritize user needs and dashboard usability.`,
+- Place KPIs at the top (row 0)
+- Group related charts together
+- Use consistent heights within rows
+- Start simple, add complexity as needed`,
 };

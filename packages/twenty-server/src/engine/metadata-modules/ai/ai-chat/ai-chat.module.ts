@@ -18,6 +18,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
@@ -50,6 +51,7 @@ import { ChatExecutionService } from './services/chat-execution.service';
     UserWorkspaceModule,
     AiBillingModule,
     ToolProviderModule,
+    DashboardToolsModule,
     WorkflowToolsModule,
   ],
   controllers: [AgentChatController],

@@ -317,6 +317,7 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
       'database',
       'action',
       'workflow',
+      'dashboard',
       'metadata',
       'view',
     ];
@@ -362,6 +363,8 @@ ${tools
         return 'Metadata Tools (schema management)';
       case 'view':
         return 'View Tools (query views)';
+      case 'dashboard':
+        return 'Dashboard Tools (create/manage dashboards)';
       default:
         return category;
     }
