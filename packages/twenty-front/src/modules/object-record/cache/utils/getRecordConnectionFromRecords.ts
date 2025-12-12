@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -40,5 +40,5 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     }),
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
     ...(withPageInfo && { totalCount: records.length }),
-  } as RecordGqlConnection;
+  } as RecordGqlConnectionEdgesRequired;
 };

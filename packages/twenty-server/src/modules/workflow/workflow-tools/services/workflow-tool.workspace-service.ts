@@ -4,8 +4,7 @@ import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
-import { type ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
@@ -40,7 +39,7 @@ export class WorkflowToolWorkspaceService {
     workflowVersionService: WorkflowVersionWorkspaceService,
     workflowTriggerService: WorkflowTriggerWorkspaceService,
     workflowSchemaService: WorkflowSchemaWorkspaceService,
-    twentyORMGlobalManager: TwentyORMGlobalManager,
+    globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
     private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
   ) {
@@ -50,7 +49,7 @@ export class WorkflowToolWorkspaceService {
       workflowVersionService,
       workflowTriggerService,
       workflowSchemaService,
-      twentyORMGlobalManager,
+      globalWorkspaceOrmManager,
       recordPositionService,
     };
 
@@ -97,9 +96,11 @@ export class WorkflowToolWorkspaceService {
       createUpdateWorkflowVersionPositionsTool(this.deps, context);
     const activateWorkflowVersion = createActivateWorkflowVersionTool(
       this.deps,
+      context,
     );
     const deactivateWorkflowVersion = createDeactivateWorkflowVersionTool(
       this.deps,
+      context,
     );
     const computeStepOutputSchema = createComputeStepOutputSchemaTool(
       this.deps,
@@ -125,7 +126,6 @@ export class WorkflowToolWorkspaceService {
   async generateRecordStepConfiguratorTools(
     workspaceId: string,
     rolePermissionConfig: RolePermissionConfig,
-    toolHints?: ToolHints,
   ): Promise<ToolSet> {
     const workflowStepToolsFactory = createWorkflowStepToolsFactory(
       this.workflowStepToolsDeps,
@@ -137,7 +137,6 @@ export class WorkflowToolWorkspaceService {
         rolePermissionConfig,
       },
       [workflowStepToolsFactory],
-      toolHints,
     );
   }
 }

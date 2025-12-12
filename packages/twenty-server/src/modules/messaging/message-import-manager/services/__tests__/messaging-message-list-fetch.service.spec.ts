@@ -4,7 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -24,7 +24,7 @@ describe('MessagingMessageListFetchService', () => {
   let messagingGetMessageListService: MessagingGetMessageListService;
   let messagingAccountAuthenticationService: MessagingAccountAuthenticationService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
-  let twentyORMManager: TwentyORMManager;
+  let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   let messagingCursorService: MessagingCursorService;
 
   let mockMicrosoftMessageChannel: MessageChannelWorkspaceEntity;
@@ -196,12 +196,21 @@ describe('MessagingMessageListFetchService', () => {
           },
         },
         {
-          provide: TwentyORMManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getDatasource: jest.fn().mockResolvedValue({
+            getGlobalWorkspaceDataSource: jest.fn().mockResolvedValue({
               manager: {},
             }),
-            getRepository: jest.fn().mockImplementation((name) => {
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+            getRepository: jest.fn().mockImplementation((workspaceId, name) => {
+              if (name === 'messageChannel') {
+                return {
+                  findOne: jest.fn().mockResolvedValue(undefined),
+                };
+              }
               if (name === 'messageChannelMessageAssociation') {
                 return mockMessageChannelMessageAssociationRepository;
               }
@@ -273,7 +282,9 @@ describe('MessagingMessageListFetchService', () => {
       module.get<MessageChannelSyncStatusService>(
         MessageChannelSyncStatusService,
       );
-    twentyORMManager = module.get<TwentyORMManager>(TwentyORMManager);
+    globalWorkspaceOrmManager = module.get<GlobalWorkspaceOrmManager>(
+      GlobalWorkspaceOrmManager,
+    );
     messagingCursorService = module.get<MessagingCursorService>(
       MessagingCursorService,
     );
@@ -316,7 +327,8 @@ describe('MessagingMessageListFetchService', () => {
       ],
     );
 
-    expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
+    expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+      workspaceId,
       'messageChannelMessageAssociation',
     );
 
@@ -330,6 +342,7 @@ describe('MessagingMessageListFetchService', () => {
         },
       },
       'new-sync-cursor',
+      workspaceId,
       'inbox-folder-id',
     );
 
@@ -375,7 +388,8 @@ describe('MessagingMessageListFetchService', () => {
       ],
     );
 
-    expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
+    expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+      workspaceId,
       'messageChannelMessageAssociation',
     );
 
@@ -389,6 +403,7 @@ describe('MessagingMessageListFetchService', () => {
         },
       },
       'new-google-history-id',
+      workspaceId,
       undefined,
     );
 

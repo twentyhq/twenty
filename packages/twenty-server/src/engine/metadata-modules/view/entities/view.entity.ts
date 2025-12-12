@@ -152,6 +152,9 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @JoinColumn({ name: 'mainGroupByFieldMetadataId' })
   mainGroupByFieldMetadata: Relation<FieldMetadataEntity>;
 
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  shouldHideEmptyGroups: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

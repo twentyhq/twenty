@@ -17,6 +17,7 @@ import {
   AppTooltip,
   type IconComponent,
   Label,
+  OverflowingTextWithTooltip,
   type TablerIconsProps,
   TooltipDelay,
   TooltipPosition,
@@ -142,11 +143,6 @@ const StyledLabelParent = styled.div`
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
-`;
-const StyledEllipsisContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
@@ -344,15 +340,22 @@ export const NavigationDrawerItem = ({
           )}
 
           <StyledLabelParent>
-            <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
-              {secondaryLabel && (
-                <StyledItemSecondaryLabel>
-                  {' · '}
-                  {secondaryLabel}
-                </StyledItemSecondaryLabel>
-              )}
-            </StyledEllipsisContainer>
+            <OverflowingTextWithTooltip
+              text={
+                <>
+                  <StyledItemLabel>{label}</StyledItemLabel>
+                  {secondaryLabel && (
+                    <StyledItemSecondaryLabel>
+                      {' · '}
+                      {secondaryLabel}
+                    </StyledItemSecondaryLabel>
+                  )}
+                </>
+              }
+              tooltipContent={
+                secondaryLabel ? `${label} · ${secondaryLabel}` : label
+              }
+            />
           </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}

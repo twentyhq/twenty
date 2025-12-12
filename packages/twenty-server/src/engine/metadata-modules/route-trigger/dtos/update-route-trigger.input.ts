@@ -9,8 +9,7 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-
-import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { HTTPMethod } from 'twenty-shared/types';
 
 @InputType()
 class UpdateRouteTriggerInputUpdates {

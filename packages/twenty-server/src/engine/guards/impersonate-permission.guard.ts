@@ -7,8 +7,8 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,

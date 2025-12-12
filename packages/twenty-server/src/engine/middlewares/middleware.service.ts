@@ -106,18 +106,6 @@ export class MiddlewareService {
         )
       : undefined;
 
-    if (metadataVersion === undefined && isDefined(data.workspace)) {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId: data.workspace.id,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-          'flatIndexMaps',
-        ],
-      });
-      throw new Error('Metadata cache version not found');
-    }
-
     const dataSourcesMetadata = data.workspace
       ? await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
           data.workspace.id,

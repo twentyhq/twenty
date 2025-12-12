@@ -2,8 +2,8 @@ import { type ApolloCache, type Modifiers } from '@apollo/client/cache';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const modifyRecordFromCache = <
   CachedObjectRecord extends ObjectRecord = ObjectRecord,

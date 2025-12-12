@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import {
+  type WorkflowToolContext,
+  type WorkflowToolDependencies,
+} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const activateWorkflowVersionSchema = z.object({
   workflowVersionId: z
@@ -14,6 +17,7 @@ type ActivateWorkflowVersionInput = z.infer<
 
 export const createActivateWorkflowVersionTool = (
   deps: Pick<WorkflowToolDependencies, 'workflowTriggerService'>,
+  context: WorkflowToolContext,
 ) => ({
   name: 'activate_workflow_version' as const,
   description:
@@ -23,6 +27,7 @@ export const createActivateWorkflowVersionTool = (
     try {
       return await deps.workflowTriggerService.activateWorkflowVersion(
         parameters.workflowVersionId,
+        context.workspaceId,
       );
     } catch (error) {
       return {

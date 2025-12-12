@@ -7,6 +7,7 @@ import {
   QUERY_DEFAULT_LIMIT_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useEmailThreadInCommandMenu } from '../useEmailThreadInCommandMenu';
@@ -313,7 +314,10 @@ const mocks = [
         }
       `,
       variables: {
-        filter: { messageId: { in: ['1', '2'] }, role: { eq: 'from' } },
+        filter: {
+          messageId: { in: ['1', '2'] },
+          role: { eq: MessageParticipantRole.FROM },
+        },
         orderBy: undefined,
         lastCursor: undefined,
         limit: QUERY_DEFAULT_LIMIT_RECORDS,
@@ -328,7 +332,7 @@ const mocks = [
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-1',
-                  role: 'from',
+                  role: MessageParticipantRole.FROM,
                   messageId: '1',
                 },
               }),
@@ -339,7 +343,7 @@ const mocks = [
                 objectNameSingular: 'messageParticipant',
                 input: {
                   id: 'messageParticipant-2',
-                  role: 'from',
+                  role: MessageParticipantRole.FROM,
                   messageId: '2',
                 },
               }),
@@ -401,7 +405,7 @@ describe('useEmailThreadInCommandMenu', () => {
           id: 'messageParticipant-1',
           messageId: '1',
           person: null,
-          role: 'from',
+          role: MessageParticipantRole.FROM,
           workspaceMember: null,
         },
         subject: '',
@@ -422,7 +426,7 @@ describe('useEmailThreadInCommandMenu', () => {
           id: 'messageParticipant-2',
           messageId: '2',
           person: null,
-          role: 'from',
+          role: MessageParticipantRole.FROM,
           workspaceMember: null,
         },
         subject: '',

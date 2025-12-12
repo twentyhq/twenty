@@ -1,9 +1,11 @@
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/display';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -76,7 +78,34 @@ export const AIChatThreadGroup = ({
   const { t } = useLingui();
   const theme = useTheme();
   const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
+  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+
+  const handleThreadClick = (thread: AgentChatThread) => {
+    setCurrentAIChatThread(thread.id);
+
+    const totalTokens = thread.totalInputTokens + thread.totalOutputTokens;
+    const hasUsageData =
+      totalTokens > 0 && isDefined(thread.contextWindowTokens);
+
+    setAgentChatUsage(
+      hasUsageData
+        ? {
+            inputTokens: thread.totalInputTokens,
+            outputTokens: thread.totalOutputTokens,
+            totalTokens,
+            contextWindowTokens: thread.contextWindowTokens ?? 0,
+            inputCredits: thread.totalInputCredits,
+            outputCredits: thread.totalOutputCredits,
+          }
+        : null,
+    );
+
+    openAskAIPage({
+      pageTitle: thread.title,
+      resetNavigationStack: false,
+    });
+  };
 
   if (threads.length === 0) {
     return null;
@@ -88,13 +117,7 @@ export const AIChatThreadGroup = ({
       <StyledThreadsList>
         {threads.map((thread) => (
           <StyledThreadItem
-            onClick={() => {
-              setCurrentAIChatThread(thread.id);
-              openAskAIPage({
-                pageTitle: thread.title,
-                resetNavigationStack: false,
-              });
-            }}
+            onClick={() => handleThreadClick(thread)}
             key={thread.id}
           >
             <StyledSparkleIcon>

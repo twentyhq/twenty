@@ -1,10 +1,8 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
+import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
 import { lazy, Suspense } from 'react';
-import {
-  type AggregateChartConfiguration,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
 
 const GraphWidgetAggregateChart = lazy(() =>
   import(
@@ -19,11 +17,11 @@ export const GraphWidgetAggregateChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
-  const configuration = widget.configuration as AggregateChartConfiguration;
+  assertAggregateChartWidgetOrThrow(widget);
 
   const { value, loading } = useGraphWidgetAggregateQuery({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration,
+    configuration: widget.configuration,
   });
 
   if (loading) {
@@ -34,8 +32,8 @@ export const GraphWidgetAggregateChartRenderer = ({
     <Suspense fallback={<ChartSkeletonLoader />}>
       <GraphWidgetAggregateChart
         value={value ?? '-'}
-        prefix={configuration.prefix ?? undefined}
-        suffix={configuration.suffix ?? undefined}
+        prefix={widget.configuration.prefix ?? undefined}
+        suffix={widget.configuration.suffix ?? undefined}
       />
     </Suspense>
   );

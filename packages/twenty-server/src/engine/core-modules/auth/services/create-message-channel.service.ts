@@ -4,7 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -27,7 +28,7 @@ export type CreateMessageChannelInput = {
 @Injectable()
 export class CreateMessageChannelService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
@@ -42,49 +43,57 @@ export class CreateMessageChannelService {
       manager,
     } = input;
 
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id: connectedAccountId },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
 
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
+        const connectedAccount = await connectedAccountRepository.findOne({
+          where: { id: connectedAccountId },
+        });
 
-    const newMessageChannel = await messageChannelRepository.save(
-      {
-        id: v4(),
-        connectedAccountId,
-        type: MessageChannelType.EMAIL,
-        handle,
-        visibility:
-          messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
+
+        const newMessageChannel = await messageChannelRepository.save(
+          {
+            id: v4(),
+            connectedAccountId,
+            type: MessageChannelType.EMAIL,
+            handle,
+            visibility:
+              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+            syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+            pendingGroupEmailsAction:
+              MessageChannelPendingGroupEmailsAction.NONE,
+          },
+          {},
+          manager,
+        );
+
+        if (isDefined(connectedAccount)) {
+          await this.syncMessageFoldersService.syncMessageFolders({
+            workspaceId,
+            messageChannel: {
+              ...newMessageChannel,
+              connectedAccount,
+            },
+            manager,
+          });
+        }
+
+        return newMessageChannel.id;
       },
-      {},
-      manager,
     );
-
-    if (isDefined(connectedAccount)) {
-      await this.syncMessageFoldersService.syncMessageFolders({
-        workspaceId,
-        messageChannel: {
-          ...newMessageChannel,
-          connectedAccount,
-        },
-        manager,
-      });
-    }
-
-    return newMessageChannel.id;
   }
 }

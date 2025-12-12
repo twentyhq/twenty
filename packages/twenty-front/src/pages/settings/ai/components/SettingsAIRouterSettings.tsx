@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  useAiModelLabel,
+  useAiModelOptions,
+} from '@/ai/hooks/useAiModelOptions';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import {
   StyledSettingsOptionCardContent,
   StyledSettingsOptionCardDescription,
@@ -38,8 +42,41 @@ export const SettingsAIRouterSettings = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const modelOptions = useAiModelOptions();
-  const noModelsAvailable = modelOptions.length === 0;
+  const aiModels = useRecoilValue(aiModelsState);
+  const activeModelOptions = useAiModelOptions();
+  const fastModelLabel = useAiModelLabel(currentWorkspace?.fastModel);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);
+
+  const currentFastModel = aiModels.find(
+    (m) => m.modelId === currentWorkspace?.fastModel,
+  );
+  const currentSmartModel = aiModels.find(
+    (m) => m.modelId === currentWorkspace?.smartModel,
+  );
+
+  const fastModelOptions =
+    currentFastModel?.deprecated === true
+      ? [
+          {
+            value: currentWorkspace?.fastModel ?? '',
+            label: `${fastModelLabel} (deprecated)`,
+          },
+          ...activeModelOptions,
+        ]
+      : activeModelOptions;
+
+  const smartModelOptions =
+    currentSmartModel?.deprecated === true
+      ? [
+          {
+            value: currentWorkspace?.smartModel ?? '',
+            label: `${smartModelLabel} (deprecated)`,
+          },
+          ...activeModelOptions,
+        ]
+      : activeModelOptions;
+
+  const noModelsAvailable = activeModelOptions.length === 0;
 
   const handleFastModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
@@ -149,7 +186,7 @@ export const SettingsAIRouterSettings = () => {
                 dropdownId="fast-model-select"
                 value={currentWorkspace?.fastModel || DEFAULT_FAST_MODEL}
                 onChange={handleFastModelChange}
-                options={modelOptions}
+                options={fastModelOptions}
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
@@ -172,7 +209,7 @@ export const SettingsAIRouterSettings = () => {
                 dropdownId="smart-model-select"
                 value={currentWorkspace?.smartModel || DEFAULT_SMART_MODEL}
                 onChange={handleSmartModelChange}
-                options={modelOptions}
+                options={smartModelOptions}
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>

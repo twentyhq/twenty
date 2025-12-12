@@ -174,11 +174,12 @@ export const GraphWidgetPieChart = ({
             objectMetadataItemId={objectMetadataItemId}
             configuration={configuration}
             show={showCenterMetric && !hasNoData}
+            hasNoData={hasNoData}
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphPieChartTooltip
-        containerId={id}
+        containerRef={containerRef}
         enrichedData={enrichedData}
         formatOptions={formatOptions}
         displayType={displayType}

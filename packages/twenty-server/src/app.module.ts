@@ -27,6 +27,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
+import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
@@ -57,6 +58,7 @@ const MIGRATED_REST_METHODS = [
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,
+    GlobalWorkspaceDataSourceModule,
     ClickHouseModule,
     // Core engine module, contains all the core modules
     CoreEngineModule,
@@ -122,7 +124,9 @@ export class AppModule {
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
-      consumer.apply(RestCoreMiddleware).forRoutes({ path: 'rest/*', method });
+      consumer
+        .apply(RestCoreMiddleware)
+        .forRoutes({ path: 'rest/*path', method });
     }
   }
 }

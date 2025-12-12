@@ -34,10 +34,11 @@ type TransformGroupByDataToLineChartDataResult = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
-const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
+const EMPTY_LINE_CHART_RESULT: Omit<
+  TransformGroupByDataToLineChartDataResult,
+  'xAxisLabel' | 'yAxisLabel'
+> = {
   series: [],
-  xAxisLabel: undefined,
-  yAxisLabel: undefined,
   showDataLabels: false,
   showLegend: true,
   hasTooManyGroups: false,
@@ -51,10 +52,6 @@ export const transformGroupByDataToLineChartData = ({
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToLineChartDataParams): TransformGroupByDataToLineChartDataResult => {
-  if (!isDefined(groupByData)) {
-    return EMPTY_LINE_CHART_RESULT;
-  }
-
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
       field.id === configuration.primaryAxisGroupByFieldMetadataId,
@@ -74,8 +71,47 @@ export const transformGroupByDataToLineChartData = ({
       field.id === configuration.aggregateFieldMetadataId,
   );
 
+  const queryResultGqlFieldName =
+    getGroupByQueryResultGqlFieldName(objectMetadataItem);
+  const rawResults = groupByData?.[queryResultGqlFieldName];
+  const hasNoData =
+    !isDefined(groupByData) ||
+    !isDefined(rawResults) ||
+    !Array.isArray(rawResults) ||
+    rawResults.length === 0;
+
+  const showXAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.X ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.Y ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
+
+  const yAxisLabel =
+    showYAxis && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
+
+  if (!isDefined(groupByData)) {
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
+  }
+
   if (!isDefined(groupByFieldX) || !isDefined(aggregateField)) {
-    return EMPTY_LINE_CHART_RESULT;
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
   }
 
   const primaryAxisSubFieldName =
@@ -83,12 +119,12 @@ export const transformGroupByDataToLineChartData = ({
   const secondaryAxisSubFieldName =
     configuration.secondaryAxisGroupBySubFieldName ?? undefined;
 
-  const queryResultGqlFieldName =
-    getGroupByQueryResultGqlFieldName(objectMetadataItem);
-  const rawResults = groupByData[queryResultGqlFieldName];
-
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
-    return EMPTY_LINE_CHART_RESULT;
+    return {
+      ...EMPTY_LINE_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+    };
   }
 
   const filteredResults = filterGroupByResults({
@@ -108,20 +144,6 @@ export const transformGroupByDataToLineChartData = ({
     aggregateOperationFromRawResult: aggregateOperation,
     objectMetadataItem,
   });
-
-  const showXAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
-
-  const yAxisLabel = showYAxis
-    ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-    : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;

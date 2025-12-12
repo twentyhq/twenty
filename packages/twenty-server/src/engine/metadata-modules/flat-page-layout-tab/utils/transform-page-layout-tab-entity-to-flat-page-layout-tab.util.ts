@@ -5,15 +5,17 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
   pageLayoutTabEntity: PageLayoutTabEntity,
 ): FlatPageLayoutTab => {
   return {
-    createdAt: pageLayoutTabEntity.createdAt,
-    deletedAt: pageLayoutTabEntity.deletedAt,
-    updatedAt: pageLayoutTabEntity.updatedAt,
+    createdAt: pageLayoutTabEntity.createdAt.toISOString(),
+    deletedAt: pageLayoutTabEntity.deletedAt?.toISOString() ?? null,
+    updatedAt: pageLayoutTabEntity.updatedAt.toISOString(),
     id: pageLayoutTabEntity.id,
     title: pageLayoutTabEntity.title,
     position: pageLayoutTabEntity.position,
     pageLayoutId: pageLayoutTabEntity.pageLayoutId,
     workspaceId: pageLayoutTabEntity.workspaceId,
-    universalIdentifier: pageLayoutTabEntity.universalIdentifier,
+    universalIdentifier:
+      pageLayoutTabEntity.universalIdentifier ?? pageLayoutTabEntity.id,
     applicationId: pageLayoutTabEntity.applicationId,
+    widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
   };
 };
