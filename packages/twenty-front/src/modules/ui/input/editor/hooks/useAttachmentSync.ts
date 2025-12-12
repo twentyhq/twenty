@@ -37,11 +37,12 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
   const syncAttachments = useCallback(
     async (newBody: string, previousBody?: string | null) => {
       if (!newBody) return;
+      if (!previousBody) return;
 
       const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
         newBody,
         attachments,
-        previousBody ?? '',
+        previousBody,
       );
 
       if (attachmentIdsToDelete.length > 0) {
