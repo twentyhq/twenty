@@ -47,7 +47,11 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
+  verifyJwtToken(
+    token: string,
+    options?: JwtVerifyOptions,
+    isLegacyApiKey = false,
+  ) {
     const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
@@ -56,29 +60,28 @@ export class JwtWrapperService {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
 
-    // This is due to an unfortunate mistake in the secret generation of api_key
-    // tokens. Changing that would break the existing api_key, so we leave it
-    // like this for now
-    // (see api-key.service.ts generateApiKeyToken method)
-    const type =
-      payload.type === JwtTokenTypeEnum.API_KEY
-        ? JwtTokenTypeEnum.ACCESS
-        : payload.type;
+    const type = payload.type;
 
-    // TODO: check if this is really needed
-    if (type !== JwtTokenTypeEnum.FILE && !payload.sub) {
+    const appSecretBody =
+      'workspaceId' in payload
+        ? payload.workspaceId
+        : 'userId' in payload
+          ? payload.userId
+          : undefined;
+
+    if (!isDefined(appSecretBody)) {
       throw new AuthException(
-        'No payload sub',
-        AuthExceptionCode.UNAUTHENTICATED,
+        'Invalid token type',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
       );
     }
 
     try {
-      // TODO: Deprecate this once old API KEY tokens are no longer in use
+      // Supporting old API KEY tokens
       if (
         !payload.type &&
         !('workspaceId' in payload) &&
-        type === JwtTokenTypeEnum.ACCESS
+        type === JwtTokenTypeEnum.API_KEY
       ) {
         return this.jwtService.verify(token, {
           ...options,
@@ -86,18 +89,27 @@ export class JwtWrapperService {
         });
       }
 
-      const appSecretBody =
-        'workspaceId' in payload
-          ? payload.workspaceId
-          : 'userId' in payload
-            ? payload.userId
-            : undefined;
-
-      if (!isDefined(appSecretBody)) {
-        throw new AuthException(
-          'Invalid token type',
-          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-        );
+      // This is due to an unfortunate mistake in the secret generation of API_KEY
+      // tokens. We used to sign with ACCESS Jwt Token Type instead of API_KEY.
+      // Now we need to check both cases not to break the existing api keys
+      // See this PR for context -> https://github.com/twentyhq/twenty/pull/16504
+      // This code block can be deleted, but all api keys created before
+      // 12/12/2025 will be broken
+      if (type === JwtTokenTypeEnum.API_KEY && !isLegacyApiKey) {
+        try {
+          return this.jwtService.verify(token, {
+            ...options,
+            secret: this.generateAppSecret(type, appSecretBody),
+          });
+        } catch {
+          return this.jwtService.verify(token, {
+            ...options,
+            secret: this.generateAppSecret(
+              JwtTokenTypeEnum.ACCESS,
+              appSecretBody,
+            ),
+          });
+        }
       }
 
       return this.jwtService.verify(token, {
@@ -110,17 +122,17 @@ export class JwtWrapperService {
           'Token has expired.',
           AuthExceptionCode.UNAUTHENTICATED,
         );
-      } else if (error instanceof jwt.JsonWebTokenError) {
+      }
+      if (error instanceof jwt.JsonWebTokenError) {
         throw new AuthException(
           'Token invalid.',
           AuthExceptionCode.UNAUTHENTICATED,
         );
-      } else {
-        throw new AuthException(
-          'Unknown token error.',
-          AuthExceptionCode.INVALID_INPUT,
-        );
       }
+      throw new AuthException(
+        'Unknown token error.',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
   }
 
