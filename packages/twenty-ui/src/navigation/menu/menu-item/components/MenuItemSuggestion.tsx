@@ -10,6 +10,8 @@ export type MenuItemSuggestionProps = {
   LeftIcon?: IconComponent | null;
   withIconContainer?: boolean;
   text: string;
+  contextualText?: string;
+  contextualTextPosition?: 'left' | 'right';
   selected?: boolean;
   className?: string;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
@@ -55,6 +57,8 @@ export const MenuItemSuggestion = ({
   LeftIcon,
   withIconContainer = false,
   text,
+  contextualText = undefined,
+  contextualTextPosition = 'left',
   className,
   selected,
   onClick,
@@ -77,6 +81,8 @@ export const MenuItemSuggestion = ({
         <MenuItemLeftContent
           LeftIcon={LeftIcon ?? undefined}
           text={text}
+          contextualText={contextualText}
+          contextualTextPosition={contextualTextPosition}
           withIconContainer={withIconContainer}
         />
       </StyledMenuItemLeftContent>
