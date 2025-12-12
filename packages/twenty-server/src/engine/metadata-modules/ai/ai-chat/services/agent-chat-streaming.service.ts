@@ -63,12 +63,13 @@ export class AgentChatStreamingService {
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
-          const { stream } = await this.chatExecutionService.streamChat({
-            workspace,
-            userWorkspaceId,
-            messages,
-            browsingContext,
-          });
+          const { stream, modelConfig } =
+            await this.chatExecutionService.streamChat({
+              workspace,
+              userWorkspaceId,
+              messages,
+              browsingContext,
+            });
 
           // Write initial status
           writer.write({
@@ -89,6 +90,27 @@ export class AgentChatStreamingService {
                 return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
+              messageMetadata: ({ part }) => {
+                if (part.type === 'finish') {
+                  return {
+                    createdAt: new Date().toISOString(),
+                    usage: {
+                      inputTokens: part.totalUsage?.inputTokens ?? 0,
+                      outputTokens: part.totalUsage?.outputTokens ?? 0,
+                      totalTokens: part.totalUsage?.totalTokens ?? 0,
+                    },
+                    model: {
+                      modelId: modelConfig.modelId,
+                      contextWindowTokens: modelConfig.contextWindowTokens,
+                      inputCostPer1kTokens: modelConfig.inputCostPer1kTokensInCents,
+                      outputCostPer1kTokens:
+                        modelConfig.outputCostPer1kTokensInCents,
+                    },
+                  };
+                }
+
+                return undefined;
+              },
               onFinish: async ({ responseMessage }) => {
                 if (responseMessage.parts.length === 0) {
                   return;
