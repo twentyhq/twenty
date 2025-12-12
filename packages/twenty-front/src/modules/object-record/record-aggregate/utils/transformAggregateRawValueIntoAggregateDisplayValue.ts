@@ -49,7 +49,11 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   } else {
     switch (aggregateFieldMetadataItem.type) {
       case FieldMetadataType.CURRENCY: {
-        return formatToShortNumber(Number(aggregateRawValue) / 1_000_000);
+        const currencyAmount = Number(aggregateRawValue) / 1_000_000;
+        const { format, decimals } = aggregateFieldMetadataItem.settings ?? {};
+        return !isDefined(format) || format === 'short'
+          ? formatToShortNumber(currencyAmount)
+          : formatNumber(currencyAmount, { decimals });
       }
 
       case FieldMetadataType.NUMBER: {

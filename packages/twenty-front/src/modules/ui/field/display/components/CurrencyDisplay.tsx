@@ -32,6 +32,7 @@ export const CurrencyDisplay = ({
     : currencyValue?.amountMicros / 1000000;
 
   const format = fieldDefinition.metadata.settings?.format;
+  const decimals = fieldDefinition.metadata.settings?.decimals;
   const { formatNumber } = useNumberFormat();
 
   return (
@@ -48,7 +49,7 @@ export const CurrencyDisplay = ({
       {amountToDisplay !== null
         ? !isDefined(format) || format === 'short'
           ? formatToShortNumber(amountToDisplay)
-          : formatNumber(amountToDisplay)
+          : formatNumber(amountToDisplay, { decimals })
         : null}
     </EllipsisDisplay>
   );
