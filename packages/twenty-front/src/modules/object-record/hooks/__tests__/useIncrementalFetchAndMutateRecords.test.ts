@@ -75,6 +75,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       recordIds: ['1', '2'],
       totalFetchedCount: 2,
       totalCount: 3,
+      abortSignal: expect.any(Object),
     });
 
     expect(mockFetchMoreRecordsLazy).toHaveBeenCalledWith(2);
@@ -83,6 +84,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       recordIds: ['3'],
       totalFetchedCount: 3,
       totalCount: 3,
+      abortSignal: expect.any(Object),
     });
   });
 

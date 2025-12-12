@@ -63,12 +63,18 @@ export const useIncrementalUpdateManyRecords = <
   const updateManyRecordsBatch = async (
     recordIdsToUpdate: string[],
     fieldsToUpdate: Partial<UpdatedObjectRecord>,
+    abortSignal: AbortSignal,
   ) => {
     await apolloCoreClient.mutate<Record<string, UpdatedObjectRecord[]>>({
       mutation: updateManyRecordsMutation,
       variables: {
         filter: { id: { in: recordIdsToUpdate } },
         data: fieldsToUpdate,
+      },
+      context: {
+        fetchOptions: {
+          signal: abortSignal,
+        },
       },
     });
 
@@ -82,13 +88,15 @@ export const useIncrementalUpdateManyRecords = <
   ) => {
     let totalUpdatedCount = 0;
 
-    await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
-      await updateManyRecordsBatch(recordIds, fieldsToUpdate);
+    await incrementalFetchAndMutate(
+      async ({ recordIds, totalCount, abortSignal }) => {
+        await updateManyRecordsBatch(recordIds, fieldsToUpdate, abortSignal);
 
-      totalUpdatedCount += recordIds.length;
+        totalUpdatedCount += recordIds.length;
 
-      updateProgress(totalUpdatedCount, totalCount);
-    });
+        updateProgress(totalUpdatedCount, totalCount);
+      },
+    );
 
     await refetchAggregateQueries();
 

@@ -15,6 +15,7 @@ type MutateRecordsBatchParams = {
   recordIds: string[];
   totalFetchedCount: number;
   totalCount: number;
+  abortSignal: AbortSignal;
 };
 
 export const useIncrementalFetchAndMutateRecords = <T>({
@@ -78,6 +79,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
           recordIds: firstPageRecordIds,
           totalFetchedCount,
           totalCount,
+          abortSignal: controller.signal,
         });
       }
 
@@ -107,6 +109,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
             recordIds: currentPageRecordIds,
             totalFetchedCount,
             totalCount,
+            abortSignal: controller.signal,
           });
         }
 
