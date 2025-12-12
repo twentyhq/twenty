@@ -8,15 +8,11 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-agent-flat-metadata.util';
 
 export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
-  dashboardBuilder: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  dashboardBuilder: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'dashboardBuilder',
+      ...args,
       context: {
+        agentName: 'dashboardBuilder',
         universalIdentifier:
           STANDARD_AGENT.dashboardBuilder.universalIdentifier,
         standardId: STANDARD_AGENT.dashboardBuilder.universalIdentifier,
@@ -82,20 +78,12 @@ Prioritize user needs and dashboard usability.`,
         modelConfiguration: {},
         evaluationInputs: [],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
-  dataManipulator: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  dataManipulator: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'dataManipulator',
+      ...args,
       context: {
+        agentName: 'dataManipulator',
         universalIdentifier: STANDARD_AGENT.dataManipulator.universalIdentifier,
         standardId: STANDARD_AGENT.dataManipulator.universalIdentifier,
         name: 'data-manipulator',
@@ -138,20 +126,12 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
         modelConfiguration: {},
         evaluationInputs: [],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
-  helper: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  helper: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'helper',
+      ...args,
       context: {
+        agentName: 'helper',
         universalIdentifier: STANDARD_AGENT.helper.universalIdentifier,
         standardId: STANDARD_AGENT.helper.universalIdentifier,
         name: 'helper',
@@ -188,20 +168,12 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
         modelConfiguration: {},
         evaluationInputs: [],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
-  metadataBuilder: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  metadataBuilder: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'metadataBuilder',
+      ...args,
       context: {
+        agentName: 'metadataBuilder',
         universalIdentifier:
           STANDARD_AGENT.metadataBuilder.universalIdentifier,
         standardId: STANDARD_AGENT.metadataBuilder.universalIdentifier,
@@ -276,20 +248,12 @@ Prioritize data model integrity and user understanding.`,
           'Create a relation between Person and Company for the account manager',
         ],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
-  researcher: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  researcher: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'researcher',
+      ...args,
       context: {
+        agentName: 'researcher',
         universalIdentifier: STANDARD_AGENT.researcher.universalIdentifier,
         standardId: STANDARD_AGENT.researcher.universalIdentifier,
         name: 'researcher',
@@ -329,20 +293,12 @@ Be persistent in finding accurate information.`,
         },
         evaluationInputs: [],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
-  workflowBuilder: ({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardAgentRelatedEntityIds,
-  }: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>) =>
+  workflowBuilder: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
     createStandardAgentFlatMetadata({
-      agentName: 'workflowBuilder',
+      ...args,
       context: {
+        agentName: 'workflowBuilder',
         universalIdentifier:
           STANDARD_AGENT.workflowBuilder.universalIdentifier,
         standardId: STANDARD_AGENT.workflowBuilder.universalIdentifier,
@@ -427,14 +383,9 @@ Prioritize user understanding and workflow effectiveness.`,
           'workflow to automatically generate quote pdf when opportunity moves to proposal stage',
         ],
       },
-      workspaceId,
-      twentyStandardApplicationId,
-      standardAgentRelatedEntityIds,
-      now,
     }),
 } satisfies {
   [P in AllStandardAgentName]: (
-    args: Omit<CreateStandardAgentArgs, 'context' | 'agentName'>,
+    args: Omit<CreateStandardAgentArgs, 'context'>,
   ) => FlatAgent;
 };
-

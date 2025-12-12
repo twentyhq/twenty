@@ -9,4 +9,7 @@ export type TwentyStandardAllFlatEntityMaps = Pick<
   | 'flatViewFilterMaps'
   | 'flatViewGroupMaps'
   | 'flatViewMaps'
+  | 'flatRoleMaps'
+  | 'flatAgentMaps'
+  | 'flatRoleTargetMaps'
 >;
