@@ -56,7 +56,11 @@ export const ExpandedFieldDisplay = ({
 
   return (
     <FloatingPortal>
-      <StyledContainer ref={refs.setFloating} style={floatingStyles}>
+      <StyledContainer
+        ref={refs.setFloating}
+        style={floatingStyles}
+        data-globally-prevent-click-outside="true"
+      >
         <OverlayContainer>
           <StyledExpandedFieldContainer>
             {children}
