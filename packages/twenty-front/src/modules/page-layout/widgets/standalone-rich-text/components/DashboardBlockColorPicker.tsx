@@ -60,7 +60,7 @@ export const DashboardBlockColorPicker = ({
     refs: [menuRef],
     excludedClickOutsideIds: [COLOR_PICKER_CLICK_OUTSIDE_ID],
     callback: onClose,
-    listenerId: 'portaled-block-color-picker',
+    listenerId: 'dashboard-block-color-picker',
   });
 
   const handleTextColorSelect = (color: BlockNoteColor) => {

@@ -61,7 +61,6 @@ export const DashboardBlockDragHandleMenu = ({
       }),
       shift({
         boundary: boundaryElement ?? undefined,
-        padding: 8,
       }),
     ],
   });
@@ -161,7 +160,7 @@ export const DashboardBlockDragHandleMenu = ({
         document.body,
       )}
 
-      {showColorPicker && colorMenuItemElement && (
+      {showColorPicker && isDefined(colorMenuItemElement) && (
         <DashboardBlockColorPicker
           anchorElement={colorMenuItemElement}
           block={block}

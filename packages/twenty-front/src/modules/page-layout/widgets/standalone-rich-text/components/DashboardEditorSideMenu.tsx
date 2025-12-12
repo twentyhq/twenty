@@ -19,20 +19,31 @@ const StyledSideMenuContainer = styled.div`
   display: flex;
 `;
 
+const StyledDragHandleContainerWrapper = styled.div`
+  width: 20px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const StyledDragHandleContainer = styled.div`
   align-items: center;
   cursor: grab;
   display: flex;
-  height: 20px;
+  height: 24px;
   justify-content: center;
-  width: 20px;
+  width: 18px;
 
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
     color: ${({ theme }) => theme.font.color.primary};
+    box-shadow: ${({ theme }) => theme.boxShadow.light},
+      ${({ theme }) => theme.boxShadow.strong};
   }
 
   &:active {
@@ -109,19 +120,21 @@ export const DashboardEditorSideMenu = ({
           style={floatingStyles}
           className="bn-ui-container"
         >
-          <StyledDragHandleContainer
-            ref={setDragHandleElement}
-            draggable
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onClick={handleClick}
-          >
-            <IconGripVertical
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-              color={theme.font.color.light}
-            />
-          </StyledDragHandleContainer>
+          <StyledDragHandleContainerWrapper>
+            <StyledDragHandleContainer
+              ref={setDragHandleElement}
+              draggable
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onClick={handleClick}
+            >
+              <IconGripVertical
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+                color={theme.font.color.light}
+              />
+            </StyledDragHandleContainer>
+          </StyledDragHandleContainerWrapper>
           <StyledDivToCreateGap />
         </StyledSideMenuContainer>,
         document.body,
