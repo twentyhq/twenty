@@ -61,33 +61,4 @@ describe('useUpdateWorkflowVersionTrigger', () => {
       },
     });
   });
-
-  it('does not mark for recomputation for backend-computed trigger types', async () => {
-    mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
-
-    const webhookTrigger: WorkflowTrigger = {
-      name: 'Webhook',
-      type: 'WEBHOOK',
-      settings: {
-        outputSchema: {},
-        httpMethod: 'GET',
-        authentication: null,
-      },
-      nextStepIds: ['step1'],
-    };
-
-    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
-
-    await act(async () => {
-      await result.current.updateTrigger(webhookTrigger);
-    });
-
-    expect(mockMarkStepForRecomputation).not.toHaveBeenCalled();
-    expect(mockUpdateOneRecord).toHaveBeenCalledWith({
-      idToUpdate: 'version-id',
-      updateOneRecordInput: {
-        trigger: webhookTrigger,
-      },
-    });
-  });
 });

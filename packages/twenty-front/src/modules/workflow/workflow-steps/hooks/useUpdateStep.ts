@@ -2,7 +2,6 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
-import { shouldComputeOutputSchemaOnFrontend } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 
 export const useUpdateStep = () => {
   const { getUpdatableWorkflowVersion } =
@@ -18,12 +17,10 @@ export const useUpdateStep = () => {
       step: updatedStep,
     });
 
-    if (shouldComputeOutputSchemaOnFrontend(updatedStep.type)) {
-      markStepForRecomputation({
-        stepId: updatedStep.id,
-        workflowVersionId,
-      });
-    }
+    markStepForRecomputation({
+      stepId: updatedStep.id,
+      workflowVersionId,
+    });
 
     return {
       updatedStep: result?.data?.updateWorkflowVersionStep,

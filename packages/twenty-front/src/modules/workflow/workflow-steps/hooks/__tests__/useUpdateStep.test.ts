@@ -1,8 +1,9 @@
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 const mockUpdateWorkflowVersionStep = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
+const mockMarkStepForRecomputation = jest.fn();
 
 jest.mock(
   '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep',
@@ -17,6 +18,12 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
+}));
+
+jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
+  useStepsOutputSchema: jest.fn(() => ({
+    markStepForRecomputation: mockMarkStepForRecomputation,
+  })),
 }));
 
 describe('useUpdateStep', () => {
@@ -52,7 +59,9 @@ describe('useUpdateStep', () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
 
     const { result } = renderHook(() => useUpdateStep());
-    await result.current.updateStep(mockStep);
+    await act(async () => {
+      await result.current.updateStep(mockStep);
+    });
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
     expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledWith({

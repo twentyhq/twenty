@@ -2,11 +2,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import {
-  type WorkflowTrigger,
-  type WorkflowVersion,
+    type WorkflowTrigger,
+    type WorkflowVersion,
 } from '@/workflow/types/Workflow';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
-import { shouldComputeOutputSchemaOnFrontend } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useUpdateWorkflowVersionTrigger = () => {
@@ -30,12 +29,10 @@ export const useUpdateWorkflowVersionTrigger = () => {
       },
     });
 
-    if (shouldComputeOutputSchemaOnFrontend(updatedTrigger.type)) {
-      markStepForRecomputation({
-        stepId: TRIGGER_STEP_ID,
-        workflowVersionId,
-      });
-    }
+    markStepForRecomputation({
+      stepId: TRIGGER_STEP_ID,
+      workflowVersionId,
+    });
   };
 
   return {

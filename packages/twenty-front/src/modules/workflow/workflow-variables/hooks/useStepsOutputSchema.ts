@@ -40,14 +40,16 @@ export const useStepsOutputSchema = () => {
             step.type,
           );
 
-          if (!shouldRecompute && shouldComputeOnFrontend) {
+          if (!shouldRecompute) {
             return;
           }
 
-          const outputSchema = computeStepOutputSchema({
-            step,
-            objectMetadataItems,
-          });
+          const outputSchema = shouldComputeOnFrontend
+            ? computeStepOutputSchema({
+                step,
+                objectMetadataItems,
+              })
+            : step.settings?.outputSchema;
 
           const stepOutputSchema: StepOutputSchemaV2 = {
             id: step.id,
@@ -77,14 +79,17 @@ export const useStepsOutputSchema = () => {
             trigger.type,
           );
 
-          if (!shouldRecompute && shouldComputeOnFrontend) {
+          if (!shouldRecompute) {
             return;
           }
 
           const triggerIconKey = getTriggerIcon(trigger);
 
           const outputSchema = shouldComputeOnFrontend
-            ? computeStepOutputSchema({ step: trigger, objectMetadataItems })
+            ? computeStepOutputSchema({
+                step: trigger,
+                objectMetadataItems,
+              })
             : trigger.settings?.outputSchema;
 
           const triggerOutputSchema: StepOutputSchemaV2 = {
