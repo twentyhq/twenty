@@ -5,21 +5,20 @@ export const computeChartCategoryTickValues = ({
   availableSize,
   minimumSizePerTick,
   values,
-  widthPerDataPoint,
+  widthPerTick,
 }: {
   availableSize: number;
   minimumSizePerTick: number;
   values: (string | number)[];
-  widthPerDataPoint?: number;
+  widthPerTick?: number;
 }): (string | number)[] => {
   if (availableSize <= 0 || values.length === 0) {
     return [];
   }
 
-  if (widthPerDataPoint !== undefined) {
-    const willRotate = widthPerDataPoint < ROTATION_THRESHOLD_WIDTH;
-    const shouldOmitTicks =
-      willRotate && widthPerDataPoint < minimumSizePerTick;
+  if (widthPerTick !== undefined) {
+    const willRotate = widthPerTick < ROTATION_THRESHOLD_WIDTH;
+    const shouldOmitTicks = willRotate && widthPerTick < minimumSizePerTick;
 
     if (!shouldOmitTicks) {
       return values;

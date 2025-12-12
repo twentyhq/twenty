@@ -27,13 +27,12 @@ export const computeLineChartCategoryTickValues = ({
   const availableWidth = width - (marginLeft + marginRight);
 
   const dataPointCount = data[0].data.length;
-  const widthPerDataPoint =
-    dataPointCount > 0 ? availableWidth / dataPointCount : 0;
+  const widthPerTick = dataPointCount > 0 ? availableWidth / dataPointCount : 0;
 
   return computeChartCategoryTickValues({
     availableSize: availableWidth,
     minimumSizePerTick: LINE_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
-    widthPerDataPoint,
+    widthPerTick,
   });
 };

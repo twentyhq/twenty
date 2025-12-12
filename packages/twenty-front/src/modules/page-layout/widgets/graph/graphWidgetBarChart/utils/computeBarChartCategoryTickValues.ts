@@ -45,13 +45,12 @@ export const computeBarChartCategoryTickValues = ({
     });
   }
 
-  const widthPerDataPoint =
-    data.length > 0 ? availableAxisSize / data.length : 0;
+  const widthPerTick = data.length > 0 ? availableAxisSize / data.length : 0;
 
   return computeChartCategoryTickValues({
     availableSize: availableAxisSize,
     minimumSizePerTick: BAR_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
-    widthPerDataPoint,
+    widthPerTick,
   });
 };
