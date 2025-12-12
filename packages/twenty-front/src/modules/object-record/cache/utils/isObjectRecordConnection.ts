@@ -18,9 +18,7 @@ export const isObjectRecordConnection = (
       .array(
         z.object({
           __typename: z.literal(objectEdgeTypeName),
-          node: z.object({
-            __ref: z.string().startsWith(`${capitalize(objectNameSingular)}:`),
-          }),
+          node: z.object(),
         }),
       )
       .optional(),
