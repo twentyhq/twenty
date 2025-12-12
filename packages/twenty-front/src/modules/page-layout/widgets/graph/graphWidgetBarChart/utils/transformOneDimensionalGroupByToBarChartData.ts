@@ -13,6 +13,7 @@ import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/gr
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -68,7 +69,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
-  const data: BarDatum[] = limitedResults.map((result) => {
+  const unsortedData: BarDatum[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
     const xValue = isDefined(dimensionValues?.[0])
@@ -97,6 +98,15 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     };
   });
 
+  const sortedData = sortChartData({
+    data: unsortedData,
+    orderBy: configuration.primaryAxisOrderBy,
+    manualSortOrder: configuration.primaryAxisManualSortOrder,
+    formattedToRawLookup,
+    getFieldValue: (datum) => datum[indexByKey] as string,
+    getNumericValue: (datum) => datum[aggregateValueKey] as number,
+  });
+
   const series: BarChartSeries[] = [
     {
       key: aggregateValueKey,
@@ -107,12 +117,12 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
   const finalData = configuration.isCumulative
     ? applyCumulativeTransformToBarChartData({
-        data,
+        data: sortedData,
         aggregateKey: aggregateValueKey,
         rangeMin: configuration.rangeMin ?? undefined,
         rangeMax: configuration.rangeMax ?? undefined,
       })
-    : data;
+    : sortedData;
 
   return {
     data: finalData,

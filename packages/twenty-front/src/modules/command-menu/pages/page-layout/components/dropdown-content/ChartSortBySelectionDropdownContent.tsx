@@ -1,3 +1,4 @@
+import { ChartManualSortContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartManualSortContent';
 import { X_SORT_BY_OPTIONS } from '@/command-menu/pages/page-layout/constants/XSortByOptions';
 import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -13,7 +14,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import {
+  type CompositeFieldSubFieldName,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
@@ -99,6 +103,10 @@ export const ChartSortBySelectionDropdownContent = () => {
         objectMetadataItems,
       }));
 
+  const isPrimaryAxisSelectField =
+    primaryAxisField?.type === FieldMetadataType.SELECT ||
+    primaryAxisField?.type === FieldMetadataType.MULTI_SELECT;
+
   const handleSelect = (orderBy: GraphOrderBy) => {
     if (isPieChart) {
       updateCurrentWidgetConfig({
@@ -117,6 +125,12 @@ export const ChartSortBySelectionDropdownContent = () => {
       option.value === GraphOrderBy.VALUE_ASC ||
       option.value === GraphOrderBy.VALUE_DESC;
 
+    const isManualSort = option.value === GraphOrderBy.MANUAL;
+
+    if (isManualSort && !isPrimaryAxisSelectField) {
+      return false;
+    }
+
     if (isLineChart) {
       return !isValueSort;
     }
@@ -127,6 +141,8 @@ export const ChartSortBySelectionDropdownContent = () => {
 
     return true;
   });
+
+  const isManualSortSelected = currentOrderBy === GraphOrderBy.MANUAL;
 
   return (
     <DropdownMenuItemsContainer>
@@ -165,6 +181,12 @@ export const ChartSortBySelectionDropdownContent = () => {
           </SelectableListItem>
         ))}
       </SelectableList>
+      {isManualSortSelected && isDefined(primaryAxisField) && (
+        <ChartManualSortContent
+          fieldMetadataItem={primaryAxisField}
+          axis={isPieChart ? 'pie' : 'primary'}
+        />
+      )}
     </DropdownMenuItemsContainer>
   );
 };

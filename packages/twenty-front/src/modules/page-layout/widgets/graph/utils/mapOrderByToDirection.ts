@@ -7,6 +7,7 @@ export const mapOrderByToDirection = (
 ): OrderByDirection => {
   switch (orderByEnum) {
     case GraphOrderBy.FIELD_ASC:
+    case GraphOrderBy.MANUAL:
       return OrderByDirection.AscNullsLast;
     case GraphOrderBy.FIELD_DESC:
       return OrderByDirection.DescNullsLast;

@@ -62,6 +62,8 @@ export const useGraphXSortOptionLabels = ({
         return `${valueLabel} ${t`Ascending`}`;
       case GraphOrderBy.VALUE_DESC:
         return `${valueLabel} ${t`Descending`}`;
+      case GraphOrderBy.MANUAL:
+        return t`Manual`;
       default:
         assertUnreachable(graphOrderBy);
     }

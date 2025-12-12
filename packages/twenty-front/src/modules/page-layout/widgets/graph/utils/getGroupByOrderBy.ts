@@ -33,6 +33,7 @@ export const getGroupByOrderBy = ({
   switch (graphOrderBy) {
     case GraphOrderBy.FIELD_ASC:
     case GraphOrderBy.FIELD_DESC:
+    case GraphOrderBy.MANUAL:
       return getFieldOrderBy(
         groupByField,
         groupBySubFieldName,
@@ -53,6 +54,7 @@ export const getGroupByOrderBy = ({
         },
       };
     }
+
     default:
       assertUnreachable(graphOrderBy);
   }

@@ -5,6 +5,7 @@ export enum GraphOrderBy {
   FIELD_DESC = 'FIELD_DESC',
   VALUE_ASC = 'VALUE_ASC',
   VALUE_DESC = 'VALUE_DESC',
+  MANUAL = 'MANUAL',
 }
 
 registerEnumType(GraphOrderBy, {

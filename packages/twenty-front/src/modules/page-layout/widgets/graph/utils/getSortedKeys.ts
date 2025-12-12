@@ -1,18 +1,42 @@
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
 export const getSortedKeys = ({
   orderByY,
   yValues,
+  manualSortOrder,
+  formattedToRawLookup,
 }: {
   orderByY?: GraphOrderBy | null;
   yValues: string[];
+  manualSortOrder?: string[] | null;
+  formattedToRawLookup?: Map<string, RawDimensionValue>;
 }) => {
   switch (orderByY) {
     case GraphOrderBy.FIELD_ASC:
       return Array.from(yValues).sort((a, b) => a.localeCompare(b));
     case GraphOrderBy.FIELD_DESC:
       return Array.from(yValues).sort((a, b) => b.localeCompare(a));
+    case GraphOrderBy.MANUAL: {
+      if (!isDefined(manualSortOrder)) {
+        return yValues;
+      }
+
+      const sortedKeys = sortByManualOrder({
+        items: yValues,
+        manualSortOrder,
+        getRawValue: (formattedValue) => {
+          const rawValue = formattedToRawLookup?.get(formattedValue);
+
+          return isDefined(rawValue) ? String(rawValue) : formattedValue;
+        },
+      });
+
+      return sortedKeys;
+    }
     default:
-      return Array.from(yValues);
+      return yValues;
   }
 };

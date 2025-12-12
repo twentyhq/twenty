@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -65,6 +66,11 @@ export class PieChartConfigurationDTO {
   @IsEnum(GraphOrderBy)
   @IsOptional()
   orderBy?: GraphOrderBy;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  manualSortOrder?: string[];
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()

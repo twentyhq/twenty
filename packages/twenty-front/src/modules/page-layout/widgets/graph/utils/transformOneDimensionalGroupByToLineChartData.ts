@@ -13,6 +13,7 @@ import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/bui
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
+import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -57,8 +58,8 @@ export const transformOneDimensionalGroupByToLineChartData = ({
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
-  const data: LineChartDataPoint[] = limitedResults
-    .map((result) => {
+  const unsortedData: LineChartDataPoint[] = limitedResults
+    .map((result): LineChartDataPoint | null => {
       const dimensionValues = result.groupByDimensionValues;
 
       const rawAggregateValue = result[aggregateOperation];
@@ -90,15 +91,24 @@ export const transformOneDimensionalGroupByToLineChartData = ({
         y: aggregateValue,
       };
     })
-    .filter((point) => isDefined(point));
+    .filter((point): point is LineChartDataPoint => isDefined(point));
+
+  const sortedData = sortChartData({
+    data: unsortedData,
+    orderBy: configuration.primaryAxisOrderBy,
+    manualSortOrder: configuration.primaryAxisManualSortOrder,
+    formattedToRawLookup,
+    getFieldValue: (point) => String(point.x),
+    getNumericValue: (point) => point.y ?? 0,
+  });
 
   const transformedData = configuration.isCumulative
     ? applyCumulativeTransformToLineChartData({
-        data,
+        data: sortedData,
         rangeMin: configuration.rangeMin ?? undefined,
         rangeMax: configuration.rangeMax ?? undefined,
       })
-    : data;
+    : sortedData;
 
   const series: LineChartSeries[] = [
     {

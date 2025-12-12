@@ -40,6 +40,8 @@ export const useGraphGroupBySortOptionLabels = ({
         return `${fieldLabel} ${t`Ascending`}`;
       case GraphOrderBy.FIELD_DESC:
         return `${fieldLabel} ${t`Descending`}`;
+      case GraphOrderBy.MANUAL:
+        return t`Manual`;
       default:
         return '';
     }

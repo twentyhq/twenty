@@ -12,9 +12,10 @@ import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/bui
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
+import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { GraphOrderBy, type PieChartConfiguration } from '~/generated/graphql';
 
 type TransformGroupByDataToPieChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
@@ -98,24 +99,46 @@ export const transformGroupByDataToPieChartData = ({
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
-  const data: PieChartDataItem[] = limitedResults.map((result, index) => {
-    const id = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
+  type PieChartDataItemWithRawValue = PieChartDataItem & {
+    rawValue: string | null | undefined;
+  };
 
-    const value = computeAggregateValueFromGroupByResult({
-      rawResult: result,
-      aggregateField,
-      aggregateOperation:
-        configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
-      aggregateOperationFromRawResult: aggregateOperation,
-      objectMetadataItem,
+  const unsortedDataWithRawValues: PieChartDataItemWithRawValue[] =
+    limitedResults.map((result, index) => {
+      const id = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
+      const rawValue = formattedValues[index]?.rawPrimaryDimensionValue;
+
+      const value = computeAggregateValueFromGroupByResult({
+        rawResult: result,
+        aggregateField,
+        aggregateOperation:
+          configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
+        aggregateOperationFromRawResult: aggregateOperation,
+        objectMetadataItem,
+      });
+
+      return {
+        id,
+        value,
+        color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
+        rawValue: isDefined(rawValue) ? String(rawValue) : null,
+      };
     });
 
-    return {
-      id,
-      value,
-      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
-    };
-  });
+  const sortedDataWithRawValues =
+    configuration.orderBy === GraphOrderBy.MANUAL &&
+    isDefined(configuration.manualSortOrder) &&
+    configuration.manualSortOrder.length > 0
+      ? sortByManualOrder({
+          items: unsortedDataWithRawValues,
+          manualSortOrder: configuration.manualSortOrder,
+          getRawValue: (item) => item.rawValue,
+        })
+      : unsortedDataWithRawValues;
+
+  const data: PieChartDataItem[] = sortedDataWithRawValues.map(
+    ({ rawValue: _rawValue, ...item }) => item,
+  );
 
   const showLegend = configuration.displayLegend ?? true;
 

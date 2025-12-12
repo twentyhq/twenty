@@ -59,8 +59,10 @@ const barChartConfigSchema = z.object({
     .describe('Field UUID to group by on primary axis'),
   secondaryAxisGroupByFieldMetadataId: z.string().uuid().optional(),
   primaryAxisOrderBy: z
-    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC'])
+    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC', 'MANUAL'])
     .optional(),
+  primaryAxisManualSortOrder: z.array(z.string()).optional(),
+  secondaryAxisManualSortOrder: z.array(z.string()).optional(),
   displayDataLabel: z.boolean().optional().default(false),
   displayLegend: z.boolean().optional().default(true),
   filter: z.record(z.string(), z.unknown()).optional(),
@@ -74,8 +76,10 @@ const lineChartConfigSchema = z.object({
   primaryAxisGroupByFieldMetadataId: z.string().uuid(),
   secondaryAxisGroupByFieldMetadataId: z.string().uuid().optional(),
   primaryAxisOrderBy: z
-    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC'])
+    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC', 'MANUAL'])
     .optional(),
+  primaryAxisManualSortOrder: z.array(z.string()).optional(),
+  secondaryAxisManualSortOrder: z.array(z.string()).optional(),
   displayDataLabel: z.boolean().optional().default(false),
   filter: z.record(z.string(), z.unknown()).optional(),
 });
@@ -87,8 +91,9 @@ const pieChartConfigSchema = z.object({
   aggregateOperation: z.nativeEnum(AggregateOperations),
   groupByFieldMetadataId: z.string().uuid().describe('Field UUID to slice by'),
   orderBy: z
-    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC'])
+    .enum(['FIELD_ASC', 'FIELD_DESC', 'VALUE_ASC', 'VALUE_DESC', 'MANUAL'])
     .optional(),
+  manualSortOrder: z.array(z.string()).optional(),
   displayDataLabel: z.boolean().optional().default(true),
   filter: z.record(z.string(), z.unknown()).optional(),
 });
