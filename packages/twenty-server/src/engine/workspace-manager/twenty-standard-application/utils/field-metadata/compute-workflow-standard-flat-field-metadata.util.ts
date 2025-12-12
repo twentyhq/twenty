@@ -210,6 +210,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'versions',
       label: 'Versions',
       description: 'Workflow versions linked to the workflow.',
@@ -231,6 +233,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'runs',
       label: 'Runs',
       description: 'Workflow runs linked to the workflow.',
@@ -252,6 +256,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'eventListeners',
       label: 'Event Listeners',
       description: 'Workflow event listeners linked to the workflow.',
@@ -274,6 +280,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'automatedTriggers',
       label: 'Automated Triggers',
       description: 'Workflow automated triggers linked to the workflow.',
@@ -296,6 +304,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workflow',
@@ -317,6 +327,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline activities linked to the workflow',
@@ -338,6 +350,8 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the workflow',

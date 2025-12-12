@@ -111,6 +111,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'task',
       label: 'Task',
       description: 'TaskTarget task',
@@ -133,6 +135,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'TaskTarget person',
@@ -155,6 +159,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'TaskTarget company',
@@ -177,6 +183,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'TaskTarget opportunity',
@@ -199,6 +207,8 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'custom',
       label: 'Custom',
       description: 'TaskTarget custom object',

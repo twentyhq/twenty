@@ -141,6 +141,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'forWorkspaceMember',
       label: 'Workspace Member',
       description: 'Favorite workspace member',
@@ -163,6 +165,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'Favorite person',
@@ -185,6 +189,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'Favorite company',
@@ -207,6 +213,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Favorite opportunity',
@@ -229,6 +237,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Favorite workflow',
@@ -251,6 +261,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflowVersion',
       label: 'Workflow',
       description: 'Favorite workflow version',
@@ -273,6 +285,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflowRun',
       label: 'Workflow',
       description: 'Favorite workflow run',
@@ -295,6 +309,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'task',
       label: 'Task',
       description: 'Favorite task',
@@ -317,6 +333,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'note',
       label: 'Note',
       description: 'Favorite note',
@@ -339,6 +357,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Favorite dashboard',
@@ -361,6 +381,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favoriteFolder',
       label: 'Favorite Folder',
       description: 'The folder this favorite belongs to',
@@ -383,6 +405,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'custom',
       label: 'Custom',
       description: 'Favorite custom object',

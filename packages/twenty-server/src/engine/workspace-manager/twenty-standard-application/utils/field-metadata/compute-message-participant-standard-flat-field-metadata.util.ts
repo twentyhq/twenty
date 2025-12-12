@@ -178,6 +178,8 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'message',
       label: 'Message',
       description: 'Message',
@@ -200,6 +202,8 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'Person',
@@ -222,6 +226,8 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workspaceMember',
       label: 'Workspace Member',
       description: 'Workspace member',

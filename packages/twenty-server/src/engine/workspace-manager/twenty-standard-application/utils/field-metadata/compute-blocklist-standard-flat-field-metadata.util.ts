@@ -129,6 +129,8 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workspaceMember',
       label: 'WorkspaceMember',
       description: 'WorkspaceMember',
