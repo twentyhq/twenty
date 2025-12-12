@@ -572,6 +572,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatRoleTargetMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
+              flatAgentMaps: optimisticAllFlatEntityMaps.flatAgentMaps,
               flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
             },
             workspaceId,
@@ -601,7 +602,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           from: fromFlatAgentMaps,
           to: toFlatAgentMaps,
           buildOptions,
-          dependencyOptimisticFlatEntityMaps: undefined,
+          dependencyOptimisticFlatEntityMaps: {
+            flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+          },
           workspaceId,
         });
 
