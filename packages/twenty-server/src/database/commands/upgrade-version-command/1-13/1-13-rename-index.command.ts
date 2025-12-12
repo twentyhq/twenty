@@ -93,21 +93,25 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
         continue;
       }
 
+      const queryRunner = this.coreDataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       try {
-        await this.coreDataSource.query(
+        await queryRunner.query(
           `ALTER INDEX "${schemaName}"."${index.name}" RENAME TO "${indexNameV2}"`,
         );
 
-        await this.coreDataSource.manager.update(
-          IndexMetadataEntity,
-          index.id,
-          {
-            name: indexNameV2,
-          },
-        );
+        await queryRunner.manager.update(IndexMetadataEntity, index.id, {
+          name: indexNameV2,
+        });
 
+        await queryRunner.commitTransaction();
         hasIndexNameChanges = true;
       } catch (error) {
+        await queryRunner.rollbackTransaction();
+
         // PostgreSQL error code 42704: undefined_object (index does not exist)
         if (error.code === '42704') {
           this.logger.log(
@@ -122,6 +126,8 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
         } else {
           throw error;
         }
+      } finally {
+        await queryRunner.release();
       }
     }
 
