@@ -989,10 +989,26 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Maximum complexity allowed for GQL queries',
+    description: 'Maximum fields allowed for GQL queries',
     type: ConfigVariableType.NUMBER,
   })
-  GRAPHQL_MAX_COMPLEXITY = 2000;
+  GRAPHQL_MAX_FIELDS = 2000;
+
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum root resolvers allowed for GQL queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  GRAPHQL_MAX_ROOT_RESOLVERS = 20;
+
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum complexity allowed for Common API queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  COMMON_QUERY_COMPLEXITY_LIMIT = 2000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1095,20 +1111,21 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for speed-optimized operations (lightweight tasks, high throughput)',
+      'Comma-separated list of AI model IDs for speed-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_SPEED_MODEL_ID = 'gpt-4o-mini';
+  DEFAULT_AI_SPEED_MODEL_ID =
+    'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for performance-optimized operations (complex reasoning, quality focus)',
+      'Comma-separated list of AI model IDs for performance-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4o';
+  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4.1,claude-sonnet-4-5-20250929,grok-4';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -1219,19 +1236,39 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Throttle limit for workflow execution',
+    description:
+      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
+  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Time-to-live for workflow execution throttle in milliseconds',
+    description:
+      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_TTL = 60_000;
+  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Throttle limit for workflow execution. Remaining will be marked as failed.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000; // 1 hour;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

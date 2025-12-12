@@ -100,7 +100,7 @@ export const useBatchCreateManyRecords = <
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectNameSingular, { type: 'create-many' });
+    registerObjectOperation(objectMetadataItem, { type: 'create-many' });
 
     return allCreatedRecords;
   };

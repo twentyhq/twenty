@@ -8,17 +8,16 @@ import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-
 import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
-import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
   height: 100%;
@@ -47,7 +46,9 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
-  const isMobile = useIsMobile();
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+    shouldCompactRecordTableFirstColumnComponentState,
+  );
 
   const resizeOffsetToAddOnlyIfItMakesTableContainerGrow = isResizing
     ? resizeFieldOffset > 0
@@ -58,11 +59,9 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const totalColumnsBorderWidth = visibleRecordFields.length;
 
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
-    isMobile,
+    shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
     visibleRecordFields,
   });
-
-  const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
   const emptyTableContainerComputedWidth =
     visibleRecordFieldsWidth +
@@ -86,7 +85,6 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
       <RecordTableStyleWrapper
         ref={tableBodyRef}
         visibleRecordFields={visibleRecordFields}
-        lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
         hasRecordGroups={hasRecordGroups}
       >

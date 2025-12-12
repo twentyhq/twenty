@@ -63,6 +63,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
+  const shouldHideEmptyGroups =
+    hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
+
   const recordGroupSort = useRecoilComponentValue(
     recordIndexRecordGroupSortComponentState,
   );
@@ -113,13 +116,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         >
           {currentView?.key !== 'INDEX' && (
             <>
-              <SelectableListItem
-                itemId="GroupBy"
-                onEnter={() => onContentChange('recordGroupFields')}
-              >
+              <SelectableListItem itemId="GroupBy">
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  onClick={() => onContentChange('recordGroupFields')}
+                  disabled
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}
@@ -151,7 +151,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
               onToggleChange={handleHideEmptyRecordGroupChange}
-              toggled={hideEmptyRecordGroup}
+              toggled={shouldHideEmptyGroups}
               text={t`Hide empty groups`}
               toggleSize="small"
             />

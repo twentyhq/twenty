@@ -9,6 +9,7 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
   "id": Any<String>,
   "isCompact": false,
   "key": "INDEX",
+  "mainGroupByFieldMetadataId": null,
   "name": "All Companies",
   "objectMetadataId": Any<String>,
   "openRecordIn": "SIDE_PANEL",

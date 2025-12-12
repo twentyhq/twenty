@@ -1,6 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
@@ -49,18 +50,18 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           )
           .getValue();
 
-        if (
-          isDeeplyEqual(coreViewsForObjectMetadataId, result.data.getCoreViews)
-        ) {
+        const coreViewsFromResult = result.data.getCoreViews;
+
+        if (isDeeplyEqual(coreViewsForObjectMetadataId, coreViewsFromResult)) {
           return;
         }
 
         set(
           coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
-          result.data.getCoreViews,
+          coreViewsFromResult,
         );
 
-        for (const coreView of result.data.getCoreViews) {
+        for (const coreView of coreViewsFromResult) {
           const existingView = coreViewsForObjectMetadataId.find(
             (coreViewForObjectMetadata) =>
               coreViewForObjectMetadata.id === coreView.id,
@@ -131,6 +132,22 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                 ),
               }),
               view.viewSorts,
+            );
+          }
+
+          if (
+            coreView.shouldHideEmptyGroups !==
+            existingView.shouldHideEmptyGroups
+          ) {
+            const view = convertCoreViewToView(coreView);
+            set(
+              recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
+                instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
+                  objectMetadataItem.namePlural,
+                  view.id,
+                ),
+              }),
+              view.shouldHideEmptyGroups,
             );
           }
         }

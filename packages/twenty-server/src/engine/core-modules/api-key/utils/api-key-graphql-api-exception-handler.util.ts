@@ -3,7 +3,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/api-key.exception';
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import {
   ForbiddenError,
   NotFoundError,

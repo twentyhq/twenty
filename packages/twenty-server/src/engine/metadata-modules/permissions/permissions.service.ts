@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,

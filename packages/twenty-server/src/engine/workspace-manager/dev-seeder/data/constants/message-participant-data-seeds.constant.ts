@@ -1,3 +1,5 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import {
@@ -14,7 +16,7 @@ export type MessageParticipantDataSeed = {
   personId: string;
   displayName: string;
   handle: string;
-  role: string;
+  role: MessageParticipantRole;
   messageId: string;
 };
 
@@ -226,7 +228,9 @@ const CREATE_MESSAGE_PARTICIPANTS = (
 
   for (let I = 0; I < TOTAL_PARTICIPANTS; I++) {
     const IS_SENDER = I === 0;
-    const ROLE = IS_SENDER ? 'from' : 'to';
+    const ROLE = IS_SENDER
+      ? MessageParticipantRole.FROM
+      : MessageParticipantRole.TO;
     const HANDLE = IS_SENDER ? 'outgoing' : 'incoming';
 
     // Random date within the last 3 months

@@ -7,7 +7,7 @@ import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGet
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
-import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
@@ -24,8 +24,8 @@ export const ViewPickerCreateButton = () => {
   const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingComponentState,
   );
-  const viewPickerKanbanFieldMetadataId = useRecoilComponentValue(
-    viewPickerKanbanFieldMetadataIdComponentState,
+  const viewPickerMainGroupByFieldMetadataId = useRecoilComponentValue(
+    viewPickerMainGroupByFieldMetadataIdComponentState,
   );
   const viewPickerCalendarFieldMetadataId = useRecoilComponentValue(
     viewPickerCalendarFieldMetadataIdComponentState,
@@ -88,7 +88,7 @@ export const ViewPickerCreateButton = () => {
 
   if (
     viewPickerType !== ViewType.Kanban ||
-    viewPickerKanbanFieldMetadataId !== ''
+    viewPickerMainGroupByFieldMetadataId !== ''
   ) {
     return (
       <Button
@@ -101,7 +101,7 @@ export const ViewPickerCreateButton = () => {
         disabled={
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.Kanban &&
-            viewPickerKanbanFieldMetadataId === '') ||
+            viewPickerMainGroupByFieldMetadataId === '') ||
           (viewPickerType === ViewType.Calendar &&
             viewPickerCalendarFieldMetadataId === '')
         }

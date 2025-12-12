@@ -30,8 +30,8 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       viewIds: [],
       applicationId: null,
       isLabelSyncedWithName: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       shortcut: null,
       description: null,
       standardOverrides: null,
@@ -63,6 +63,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
+      mainGroupByFieldMetadataViewIds: [],
       applicationId: null,
     }) as unknown as FlatFieldMetadata;
 

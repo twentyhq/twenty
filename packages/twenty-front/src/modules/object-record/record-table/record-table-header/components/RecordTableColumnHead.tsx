@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -69,10 +71,15 @@ export const RecordTableColumnHead = ({
     }),
   );
 
-  // TODO: fix previous behavior with isRecordTableScrolledHorizontally
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+    shouldCompactRecordTableFirstColumnComponentState,
+  );
+
+  const shouldHideTitle =
+    shouldCompactRecordTableFirstColumn && isLabelIdentifier;
 
   return (
-    <StyledTitle hideTitle={isLabelIdentifier}>
+    <StyledTitle hideTitle={shouldHideTitle}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

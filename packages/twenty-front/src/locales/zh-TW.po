@@ -87,6 +87,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -181,7 +182,7 @@ msgstr "{failedCount} 個檔案上傳失敗"
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr ""
+msgstr "{filterRulesCount, plural, other {{filterRulesCount} 規則}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -848,6 +849,11 @@ msgstr "南非荷蘭語"
 msgid "After a set amount of time"
 msgstr "在設定的時間後"
 
+#. js-lingui-id: fcYF58
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "agent"
+msgstr "代理"
+
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1058,6 +1064,11 @@ msgstr "允許上傳文件和附件"
 msgid "Allow users to sign in with an email and password."
 msgstr "允許用戶使用電子郵件和密碼登錄。"
 
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr "發生錯誤"
+
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
@@ -1070,9 +1081,6 @@ msgstr "處理您的消息時發生錯誤"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
@@ -1111,7 +1119,7 @@ msgstr "驗證更改時發生了內部錯誤。請聯繫支持。"
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
-msgstr ""
+msgstr "此名稱的物件已存在"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1287,6 +1295,11 @@ msgstr "已批准的網域"
 msgid "Arabic"
 msgstr "阿拉伯語"
 
+#. js-lingui-id: i19Zro
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Archive files cannot be previewed. Please download the file to access its contents."
+msgstr "壓縮檔無法預覽。請下載該檔案以存取其內容。"
+
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
@@ -1311,6 +1324,11 @@ msgstr "您確定要恢復這些記錄嗎？"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "您確定要恢復此記錄嗎？"
+
+#. js-lingui-id: 9JFf0y
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
+msgstr "您確定要將此使用者的角色從「{oldRoleLabel}」更新為「{newRoleLabel}」嗎？"
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -2042,6 +2060,7 @@ msgstr "編寫您的功能代碼"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2187,6 +2206,11 @@ msgstr "配置 SMTP 設定以從您的帳戶發送電子郵件。"
 msgid "Configure these DNS records with your domain provider"
 msgstr "在您的域名提供商處配置這些 DNS 記錄"
 
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr "設定此小工具以顯示欄位"
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -2221,6 +2245,11 @@ msgstr "確認刪除 {roleName} 角色？此操作無法撤銷。所有成員將
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "確認降級"
+
+#. js-lingui-id: 28b8wO
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Confirm role update"
+msgstr "確認角色更新"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2290,7 +2319,6 @@ msgstr "包含"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
-#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "上下文"
 
@@ -2640,6 +2668,11 @@ msgstr ""
 msgid "CRUD"
 msgstr ""
 
+#. js-lingui-id: J1QT+3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Cumulative"
+msgstr "累計"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2718,6 +2751,11 @@ msgstr "自定義字段"
 msgid "Customize page layouts and UI structure"
 msgstr "自定義頁面佈局和 UI 結構"
 
+#. js-lingui-id: ZBgSzH
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Customize what this user can view and perform"
+msgstr "自訂此使用者可檢視與執行的操作"
+
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -2751,6 +2789,11 @@ msgstr "丹麥語"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "深色模式"
+
+#. js-lingui-id: ogQzcZ
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Dashboard duplicated successfully"
+msgstr "儀表板複製成功"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3052,12 +3095,12 @@ msgstr "刪除"
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
-msgstr ""
+msgstr "刪除 {fieldLabel} 欄位？"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
-msgstr ""
+msgstr "刪除 {objectLabel} 物件？"
 
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -3097,6 +3140,11 @@ msgstr "刪除 API 密鑰"
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
+msgstr "刪除儀表板"
+
+#. js-lingui-id: qnWLDf
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboards"
 msgstr "刪除儀表板"
 
 #. js-lingui-id: gf2eXy
@@ -3384,7 +3432,7 @@ msgstr "下載文件"
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Download sample"
-msgstr ""
+msgstr "下載範例檔案"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3394,8 +3442,14 @@ msgstr "將文件拖到這裡……"
 #. js-lingui-id: euc6Ns
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate"
 msgstr ""
+
+#. js-lingui-id: MR2sZ1
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Duplicate Dashboard"
+msgstr "複製儀表板"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -3675,6 +3729,7 @@ msgstr "空"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3693,6 +3748,7 @@ msgstr "清空收件箱"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3786,8 +3842,12 @@ msgstr "輸入位於 0 和 23 之間的數字"
 msgid "Enter number between 0 and 59"
 msgstr "輸入位於 0 和 59 之間的數字"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr "輸入 1 至 60 之間的數字"
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -3961,10 +4021,10 @@ msgstr ""
 msgid "Evaluate"
 msgstr ""
 
-#. js-lingui-id: 9uDn0Y
-#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-msgid "Evaluation input executed successfully"
-msgstr ""
+#. js-lingui-id: FDRUdE
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluating"
+msgstr "評估中"
 
 #. js-lingui-id: Y3MReI
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -4107,6 +4167,7 @@ msgstr "退出設置"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4280,6 +4341,11 @@ msgstr "無法創建{translatedMetadataName}。相關{relatedEntityNames}驗證�
 msgid "Failed to delete jobs. Please try again later."
 msgstr "無法刪除工作。請稍後重試。"
 
+#. js-lingui-id: NUmmdc
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Failed to duplicate dashboard"
+msgstr "複製儀表板失敗"
+
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Failed to duplicate workflow"
@@ -4331,6 +4397,11 @@ msgstr ""
 msgid "Failed to update price."
 msgstr "更新價格失敗。"
 
+#. js-lingui-id: QGaQRo
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Failed to update role"
+msgstr "更新角色失敗。"
+
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Failed to update smart model"
@@ -4354,6 +4425,8 @@ msgstr "上傳圖像失敗："
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "假"
 
@@ -4395,7 +4468,7 @@ msgstr "字段"
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
-msgstr ""
+msgstr "欄位已刪除"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -4597,7 +4670,7 @@ msgstr "功能 - 設定"
 #. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
-msgstr ""
+msgstr "儀表圖"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4885,7 +4958,7 @@ msgstr "Http"
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
-msgstr ""
+msgstr "HTTP請求"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -4959,11 +5032,6 @@ msgstr "iFrame 設定"
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr ""
-
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "Iframe配置不支持"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5084,6 +5152,11 @@ msgstr "索引"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Indexes"
 msgstr "索引"
+
+#. js-lingui-id: 623chP
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Infos"
+msgstr "資訊"
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5388,7 +5461,7 @@ msgstr "意大利語"
 #. js-lingui-id: hgr8eo
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "items"
-msgstr ""
+msgstr "項目"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -5628,7 +5701,7 @@ msgstr ""
 #. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
-msgstr ""
+msgstr "折線圖"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5937,7 +6010,7 @@ msgstr "消息同步不可用，因為服務已關閉"
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Messages"
-msgstr ""
+msgstr "訊息"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -5979,6 +6052,11 @@ msgstr "最小"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "最小範圍"
+
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr "分鐘的值不能超過 60。若間隔大於 60 分鐘，請使用 \"Hours\" 觸發器類型或自訂 cron 表達式"
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -6393,6 +6471,12 @@ msgstr "沒有配置變量符合您當前的篩選條件。嘗試調整您的篩
 msgid "No country"
 msgstr "無國家"
 
+#. js-lingui-id: plhHQt
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+msgid "No data"
+msgstr "無數據"
+
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No Data"
@@ -6462,6 +6546,11 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
 msgstr ""
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
+msgstr "沒有可顯示的欄位"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6588,6 +6677,11 @@ msgstr "沒有結果"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "沒有結果"
+
+#. js-lingui-id: FVzmGK
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "No role assigned to this member"
+msgstr "未為此成員指派任何角色"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -6750,7 +6844,7 @@ msgstr "對象"
 #. js-lingui-id: 5Dll32
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Object deleted"
-msgstr ""
+msgstr "物件已刪除"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -6758,7 +6852,7 @@ msgid "Object destination"
 msgstr "對象目標"
 
 #. js-lingui-id: rDycBw
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "物件唯一欄位"
 
@@ -6924,6 +7018,11 @@ msgstr "打開Gmail"
 msgid "Open in"
 msgstr "打開"
 
+#. js-lingui-id: DP5C7w
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Open in Roles"
+msgstr "在角色中開啟"
+
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
@@ -7026,6 +7125,21 @@ msgstr ""
 msgid "Page"
 msgstr "頁"
 
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr "頁面佈局"
+
+#. js-lingui-id: HFlGEK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout tab"
+msgstr "頁面佈局索引標籤"
+
+#. js-lingui-id: sVcqjZ
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout widget"
+msgstr "頁面佈局小工具"
+
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -7127,6 +7241,11 @@ msgstr "永久刪除。輸入天數。"
 msgid "Permanently destroy dashboard"
 msgstr "永久銷毀儀表板"
 
+#. js-lingui-id: n7S2Oo
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboards"
+msgstr "永久銷毀儀表板"
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -7159,6 +7278,7 @@ msgid "Permanently destroy workflows"
 msgstr "永久銷毀工作流程"
 
 #. js-lingui-id: 9cDpsw
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -7192,7 +7312,7 @@ msgstr "圖片"
 #. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
-msgstr ""
+msgstr "餅圖"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7299,7 +7419,7 @@ msgstr "正在填寫您的工作區數據..."
 #. js-lingui-id: rNqTKZ
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
-msgstr ""
+msgstr "前綴"
 
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
@@ -7311,6 +7431,11 @@ msgstr "防止用戶將相同的數值指定給不同的記錄"
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
 msgstr "預覽"
+
+#. js-lingui-id: Fe5cbB
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Preview Not Available"
+msgstr "無法預覽"
 
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7461,6 +7586,14 @@ msgstr "隊列：{queueName}"
 msgid "Quick model for routing decisions"
 msgstr ""
 
+#. js-lingui-id: iaocTt
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "Ratio"
+msgstr "比率"
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -7485,6 +7618,11 @@ msgstr "重新連接"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Record"
 msgstr "紀錄"
+
+#. js-lingui-id: aGGOPJ
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+msgid "Record (ID)"
+msgstr "記錄（ID）"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -7777,13 +7915,14 @@ msgstr "針對此物件已撤銷"
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role"
-msgstr ""
+msgstr "角色"
 
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "角色"
@@ -7811,6 +7950,7 @@ msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Role updated successfully"
 msgstr "角色更新成功"
 
@@ -8040,6 +8180,11 @@ msgstr "搜索對象"
 msgid "Search operations"
 msgstr "搜索操作"
 
+#. js-lingui-id: 996xRf
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Search options"
+msgstr "搜尋選項"
+
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8268,6 +8413,11 @@ msgstr "選擇要發送到此端點的事件"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "選擇要使用的工作表"
+
+#. js-lingui-id: iWf0Zj
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Select value"
+msgstr "選擇一個值"
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8835,7 +8985,7 @@ msgstr "成功合併了 {recordCount} 條記錄"
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
-msgstr ""
+msgstr "後綴"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -9227,6 +9377,11 @@ msgstr "此操作無法撤銷。這將永久將您從此工作區中移除。"
 msgid "This database value overrides environment settings. "
 msgstr "此資料庫值覆蓋環境設置。"
 
+#. js-lingui-id: hMvPrD
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file type cannot be previewed. Please download the file to view it."
+msgstr "此檔案類型無法預覽。請下載該檔案以檢視。"
+
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "This is required to enable manual row reordering."
@@ -9280,12 +9435,12 @@ msgstr "這將取消預定的計劃變更並保持您目前的計劃 ({planKeyWo
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
-msgstr ""
+msgstr "這將從 {objectLabel} 中永久刪除該欄位及其所有資料。輸入 \"yes\" 以確認。"
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
-msgstr ""
+msgstr "這將永久刪除該物件及其所有記錄。輸入 \"yes\" 以確認。"
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -9430,6 +9585,8 @@ msgstr "使用Http請求觸發功能"
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "真"
 
@@ -9589,7 +9746,7 @@ msgid "Unique"
 msgstr "唯一"
 
 #. js-lingui-id: +WHV0k
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Unique fields"
 msgstr "唯一欄位"
 
@@ -9597,7 +9754,7 @@ msgstr "唯一欄位"
 #: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
-msgstr ""
+msgstr "單位"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9666,6 +9823,11 @@ msgstr "更新"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "更新"
+
+#. js-lingui-id: 5bRMKt
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Update role"
+msgstr "更新角色"
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10006,7 +10168,7 @@ msgid "We encountered an issue verifying"
 msgstr "我們在驗證時遇到了一個問題"
 
 #. js-lingui-id: 6d9mjh
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
 msgstr "我們根據這些欄位匹配。如果 {objectLabelSingular} 已經存在，我們會進行更新。否則，我們會創建一個新的。"
 

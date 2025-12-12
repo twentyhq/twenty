@@ -20,12 +20,14 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -42,17 +44,21 @@ const ContextStoreDecorator: Decorator = (Story) => {
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ViewComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <JestContextStoreSetter
-            contextStoreCurrentObjectMetadataNameSingular="company"
-            contextStoreCurrentViewId="1"
-            contextStoreCurrentViewType={ContextStoreViewType.Table}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
-            <Story />
-          </JestContextStoreSetter>
-        </ActionMenuComponentInstanceContext.Provider>
+            <JestContextStoreSetter
+              contextStoreCurrentObjectMetadataNameSingular="company"
+              contextStoreCurrentViewId="1"
+              contextStoreCurrentViewType={ContextStoreViewType.Table}
+            >
+              <Story />
+            </JestContextStoreSetter>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ViewComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );
@@ -146,7 +152,9 @@ export const LimitedPermissions: Story = {
 export const MatchingNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId('command-menu-search-input');
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
@@ -156,7 +164,9 @@ export const MatchingNavigate: Story = {
 export const MatchingNavigateShortcuts: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId('command-menu-search-input');
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'gp');
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -181,7 +191,9 @@ export const MatchingNavigateShortcuts: Story = {
 export const NoResultsSearchFallback: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId('command-menu-search-input');
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'input without results');
     expect(await canvas.findByText('No results found')).toBeVisible();

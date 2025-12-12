@@ -15,8 +15,8 @@ export type Company = {
       };
   address: {
     __typename?: 'Address';
-    addressLine1: string;
-    addressLine2: string;
+    addressStreet1: string;
+    addressStreet2: string;
     addressCity: string;
     addressState: string;
     addressPostcode: string;

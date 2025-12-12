@@ -1,13 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { FieldActorSource } from 'twenty-shared/types';
+import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -56,8 +56,16 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.OUTGOING,
       participants: [
-        { role: 'from', handle: 'test@example.com', displayName: 'Test User' },
-        { role: 'to', handle: 'contact@company.com', displayName: 'Contact' },
+        {
+          role: MessageParticipantRole.FROM,
+          handle: 'test@example.com',
+          displayName: 'Test User',
+        },
+        {
+          role: MessageParticipantRole.TO,
+          handle: 'contact@company.com',
+          displayName: 'Contact',
+        },
       ],
     },
     {
@@ -70,11 +78,23 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.INCOMING,
       participants: [
-        { role: 'from', handle: 'contact@company.com', displayName: 'Contact' },
-        { role: 'to', handle: 'test@example.com', displayName: 'Test User' },
-        { role: 'to', handle: 'personal@gmail.com', displayName: 'Personal' },
         {
-          role: 'to',
+          role: MessageParticipantRole.FROM,
+          handle: 'contact@company.com',
+          displayName: 'Contact',
+        },
+        {
+          role: MessageParticipantRole.TO,
+          handle: 'test@example.com',
+          displayName: 'Test User',
+        },
+        {
+          role: MessageParticipantRole.TO,
+          handle: 'personal@gmail.com',
+          displayName: 'Personal',
+        },
+        {
+          role: MessageParticipantRole.TO,
           handle: 'team@lists.company.com',
           displayName: 'Group email',
         },
@@ -132,9 +152,14 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           },
         },
         {
-          provide: TwentyORMManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getDatasource: jest.fn().mockResolvedValue(datasourceInstance),
+            getGlobalWorkspaceDataSource: jest
+              .fn()
+              .mockResolvedValue(datasourceInstance),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
       ],
@@ -197,7 +222,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           ...mockMessages[1],
           participants: [
             {
-              role: 'from',
+              role: MessageParticipantRole.FROM,
               handle: 'tim@apple.com',
               displayName: 'participant email',
             },
@@ -219,7 +244,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           {
             handle: 'tim@apple.com',
             displayName: 'participant email',
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             shouldCreateContact: true,
             messageId: 'db-message-id-2',
           },
@@ -235,7 +260,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           ...mockMessages[0],
           participants: [
             {
-              role: 'from',
+              role: MessageParticipantRole.FROM,
               handle: 'test@gmail.com',
               displayName: 'participant personal email',
             },
@@ -263,7 +288,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         ...mockMessages[0],
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'connected@account.com',
             displayName: 'participant that is the Connected Account',
           },

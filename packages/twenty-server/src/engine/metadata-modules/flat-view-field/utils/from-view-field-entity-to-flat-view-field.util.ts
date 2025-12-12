@@ -14,6 +14,9 @@ export const fromViewFieldEntityToFlatViewField = (
 
   return {
     ...viewFieldEntityWithoutRelations,
+    createdAt: viewFieldEntity.createdAt.toISOString(),
+    updatedAt: viewFieldEntity.updatedAt.toISOString(),
+    deletedAt: viewFieldEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       viewFieldEntityWithoutRelations.universalIdentifier ??
       viewFieldEntityWithoutRelations.id,

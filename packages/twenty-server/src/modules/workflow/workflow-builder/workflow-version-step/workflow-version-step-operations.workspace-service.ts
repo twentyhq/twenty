@@ -13,9 +13,11 @@ import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -51,16 +53,17 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -95,7 +98,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         if (isDefined(agent)) {
-          const roleTarget = await this.roleTargetsRepository.findOne({
+          const roleTarget = await this.roleTargetRepository.findOne({
             where: {
               agentId: agent.id,
               workspaceId,
@@ -357,7 +360,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        // Get workflow version to use workflow ID and name in agent name
         const workflowVersion =
           await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
             workflowVersionId,
@@ -369,7 +371,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           label: 'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
           icon: 'IconRobot',
           description: '',
-          prompt: '',
+          prompt:
+            'You are a helpful AI assistant. Complete the task based on the workflow context.',
           modelId: DEFAULT_SMART_MODEL,
           responseFormat: { type: 'text' },
           workspaceId,
@@ -382,6 +385,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
           );
         }
+
+        await this.workspaceCacheService.flush(workspaceId, ['flatAgentMaps']);
 
         return {
           builtStep: {
@@ -460,66 +465,75 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     step: WorkflowFormAction;
     response: object;
   }) {
-    const responseKeys = Object.keys(response);
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const enrichedResponses = await Promise.all(
-      responseKeys.map(async (key) => {
-        // @ts-expect-error legacy noImplicitAny
-        if (!isDefined(response[key])) {
-          // @ts-expect-error legacy noImplicitAny
-          return { key, value: response[key] };
-        }
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const responseKeys = Object.keys(response);
 
-        const field = step.settings.input.find((field) => field.name === key);
-
-        if (
-          field?.type === 'RECORD' &&
-          field?.settings?.objectName &&
-          // @ts-expect-error legacy noImplicitAny
-          isDefined(response[key].id) &&
-          // @ts-expect-error legacy noImplicitAny
-          isValidUuid(response[key].id)
-        ) {
-          const { flatObjectMetadata, flatFieldMetadataMaps } =
-            await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
-              field.settings.objectName,
-              workspaceId,
-            );
-
-          const relationFieldsNames = getFlatFieldsFromFlatObjectMetadata(
-            flatObjectMetadata,
-            flatFieldMetadataMaps,
-          )
-            .filter((field) => field.type === FieldMetadataType.RELATION)
-            .map((field) => field.name);
-
-          const repository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-              workspaceId,
-              field.settings.objectName,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const record = await repository.findOne({
+        const enrichedResponses = await Promise.all(
+          responseKeys.map(async (key) => {
             // @ts-expect-error legacy noImplicitAny
-            where: { id: response[key].id },
-            relations: relationFieldsNames,
-          });
+            if (!isDefined(response[key])) {
+              // @ts-expect-error legacy noImplicitAny
+              return { key, value: response[key] };
+            }
 
-          return { key, value: record };
-        } else {
+            const field = step.settings.input.find(
+              (field) => field.name === key,
+            );
+
+            if (
+              field?.type === 'RECORD' &&
+              field?.settings?.objectName &&
+              // @ts-expect-error legacy noImplicitAny
+              isDefined(response[key].id) &&
+              // @ts-expect-error legacy noImplicitAny
+              isValidUuid(response[key].id)
+            ) {
+              const { flatObjectMetadata, flatFieldMetadataMaps } =
+                await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+                  field.settings.objectName,
+                  workspaceId,
+                );
+
+              const relationFieldsNames = getFlatFieldsFromFlatObjectMetadata(
+                flatObjectMetadata,
+                flatFieldMetadataMaps,
+              )
+                .filter((field) => field.type === FieldMetadataType.RELATION)
+                .map((field) => field.name);
+
+              const repository =
+                await this.globalWorkspaceOrmManager.getRepository(
+                  workspaceId,
+                  field.settings.objectName,
+                  { shouldBypassPermissionChecks: true },
+                );
+
+              const record = await repository.findOne({
+                // @ts-expect-error legacy noImplicitAny
+                where: { id: response[key].id },
+                relations: relationFieldsNames,
+              });
+
+              return { key, value: record };
+            } else {
+              // @ts-expect-error legacy noImplicitAny
+              return { key, value: response[key] };
+            }
+          }),
+        );
+
+        return enrichedResponses.reduce((acc, { key, value }) => {
           // @ts-expect-error legacy noImplicitAny
-          return { key, value: response[key] };
-        }
-      }),
+          acc[key] = value;
+
+          return acc;
+        }, {});
+      },
     );
-
-    return enrichedResponses.reduce((acc, { key, value }) => {
-      // @ts-expect-error legacy noImplicitAny
-      acc[key] = value;
-
-      return acc;
-    }, {});
   }
 
   async cloneStep({
@@ -645,49 +659,60 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
     iteratorPosition?: WorkflowStepPositionInput;
   }): Promise<WorkflowAction> {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workflowVersion = await workflowVersionRepository.findOne({
+          where: {
+            id: workflowVersionId,
+          },
+        });
+
+        if (!isDefined(workflowVersion)) {
+          throw new WorkflowVersionStepException(
+            'WorkflowVersion not found',
+            WorkflowVersionStepExceptionCode.NOT_FOUND,
+          );
+        }
+
+        const existingSteps = workflowVersion.steps ?? [];
+
+        const emptyNodeStep: WorkflowEmptyAction = {
+          id: v4(),
+          name: 'Add an Action',
+          type: WorkflowActionType.EMPTY,
+          valid: true,
+          nextStepIds: [iteratorStepId],
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {},
+          },
+          position: {
+            x:
+              (iteratorPosition?.x ?? 0) +
+              ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
+            y:
+              (iteratorPosition?.y ?? 0) +
+              ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
+          },
+        };
+
+        await workflowVersionRepository.update(workflowVersion.id, {
+          steps: [...existingSteps, emptyNodeStep],
+        });
+
+        return emptyNodeStep;
       },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    const existingSteps = workflowVersion.steps ?? [];
-
-    const emptyNodeStep: WorkflowEmptyAction = {
-      id: v4(),
-      name: 'Add an Action',
-      type: WorkflowActionType.EMPTY,
-      valid: true,
-      nextStepIds: [iteratorStepId],
-      settings: {
-        ...BASE_STEP_DEFINITION,
-        input: {},
-      },
-      position: {
-        x: (iteratorPosition?.x ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
-        y: (iteratorPosition?.y ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
-      },
-    };
-
-    await workflowVersionRepository.update(workflowVersion.id, {
-      steps: [...existingSteps, emptyNodeStep],
-    });
-
-    return emptyNodeStep;
+    );
   }
 
   async createDraftStep({

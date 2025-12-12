@@ -114,6 +114,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       {!data.hasNextStepIds && !isConnectionInProgress && (
         <StyledAddStepButtonContainer
           shouldDisplay={
+            data.nodeType === 'trigger' ||
             isHovered ||
             selected ||
             isNodeCreationStarted({ parentStepId: data.stepId })

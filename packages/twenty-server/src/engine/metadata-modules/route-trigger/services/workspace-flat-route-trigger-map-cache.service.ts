@@ -44,6 +44,8 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceCacheProv
         ...removePropertiesFromRecord(routeTriggerEntity, [
           ...ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
         ]),
+        createdAt: routeTriggerEntity.createdAt.toISOString(),
+        updatedAt: routeTriggerEntity.updatedAt.toISOString(),
         universalIdentifier:
           routeTriggerEntity.universalIdentifier ?? routeTriggerEntity.id,
       } satisfies FlatRouteTrigger;

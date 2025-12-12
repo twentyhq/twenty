@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -44,12 +44,14 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   ) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Relation creation payload is required`,
-        userFriendlyMessage: msg`Relation creation payload is required`,
-        value: rawMorphCreationPayload,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Relation creation payload is required`,
+          userFriendlyMessage: msg`Relation creation payload is required`,
+          value: rawMorphCreationPayload,
+        },
+      ],
     };
   }
 
@@ -90,6 +92,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           sourceFlatObjectMetadataJoinColumnName,
           sourceFlatObjectMetadata,
           targetFlatObjectMetadata,
+          targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           workspaceId,
           morphId,
           workspaceCustomApplicationId,

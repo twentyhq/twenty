@@ -29,6 +29,8 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };
+            case FieldMetadataType.MULTI_SELECT:
+            case FieldMetadataType.ARRAY:
             case FieldMetadataType.RAW_JSON:
               return {
                 ...processedRecord,

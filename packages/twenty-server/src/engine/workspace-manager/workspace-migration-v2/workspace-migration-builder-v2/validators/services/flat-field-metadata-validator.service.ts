@@ -131,23 +131,41 @@ export class FlatFieldMetadataValidatorService {
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
-        ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+        ...validateFlatFieldMetadataName({
+          name: flatFieldMetadataToValidate.name,
+          buildOptions,
+        }),
         ...validateFlatFieldMetadataNameAvailability({
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata,
+          buildOptions,
         }),
       );
     }
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: `Name is not synced with label.`,
         userFriendlyMessage: msg`Updated field name is not synced with label`,
+      });
+    }
+
+    if (
+      flatFieldMetadataToValidate.isNullable === false &&
+      flatFieldMetadataToValidate.defaultValue === null
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Default value cannot be null for non-nullable fields',
+        userFriendlyMessage: msg`Default value cannot be null.`,
       });
     }
 
@@ -307,13 +325,17 @@ export class FlatFieldMetadataValidatorService {
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata: parentFlatObjectMetadata,
+          buildOptions,
         }),
       );
     }
 
     if (
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
-      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+      !isFlatFieldMetadataNameSyncedWithLabel({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        isSystemBuild: buildOptions.isSystemBuild,
+      })
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
@@ -324,7 +346,10 @@ export class FlatFieldMetadataValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+      ...validateFlatFieldMetadataName({
+        name: flatFieldMetadataToValidate.name,
+        buildOptions,
+      }),
     );
 
     validationResult.errors.push(

@@ -87,6 +87,7 @@ msgstr "· {oggettoFiltroDropdownInputCerca}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -181,7 +182,7 @@ msgstr "{failedCount} file(s) non sono stati caricati"
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr ""
+msgstr "{filterRulesCount, plural, one {{filterRulesCount} regola} other {{filterRulesCount} regole}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -848,6 +849,11 @@ msgstr "Afrikaans"
 msgid "After a set amount of time"
 msgstr "Dopo un determinato periodo di tempo"
 
+#. js-lingui-id: fcYF58
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "agent"
+msgstr "agente"
+
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1058,6 +1064,11 @@ msgstr "Consenti il caricamento di file e allegati"
 msgid "Allow users to sign in with an email and password."
 msgstr "Consenti agli utenti di accedere con e-mail e password."
 
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr "Si è verificato un errore"
+
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
@@ -1070,9 +1081,6 @@ msgstr "Si è verificato un errore durante l'elaborazione del messaggio"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
@@ -1111,7 +1119,7 @@ msgstr "Si è verificato un errore interno durante la convalida delle modifiche.
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
-msgstr ""
+msgstr "Esiste già un oggetto con questo nome"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1287,6 +1295,11 @@ msgstr "Domini approvati"
 msgid "Arabic"
 msgstr "Arabo"
 
+#. js-lingui-id: i19Zro
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Archive files cannot be previewed. Please download the file to access its contents."
+msgstr "I file archivio non possono essere visualizzati in anteprima. Scarica il file per accedere al contenuto."
+
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
@@ -1311,6 +1324,11 @@ msgstr "Sei sicuro di voler ripristinare questi record?"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Sei sicuro di voler ripristinare questo record?"
+
+#. js-lingui-id: 9JFf0y
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
+msgstr "Sei sicuro di voler aggiornare il ruolo di questo utente da \"{oldRoleLabel}\" a \"{newRoleLabel}\"?"
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -2042,6 +2060,7 @@ msgstr "Codifica la tua funzione"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2187,6 +2206,11 @@ msgstr "Configura le impostazioni SMTP per inviare email dal tuo account."
 msgid "Configure these DNS records with your domain provider"
 msgstr "Configura questi record DNS con il tuo fornitore di dominio"
 
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr "Configura questo widget per visualizzare i campi"
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -2221,6 +2245,11 @@ msgstr "Conferma l'eliminazione del ruolo {roleName}? Questo non può essere ann
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Conferma il downgrade"
+
+#. js-lingui-id: 28b8wO
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Confirm role update"
+msgstr "Conferma aggiornamento del ruolo"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2290,7 +2319,6 @@ msgstr "Contiene"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
-#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "Contesto"
 
@@ -2640,6 +2668,11 @@ msgstr ""
 msgid "CRUD"
 msgstr ""
 
+#. js-lingui-id: J1QT+3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Cumulative"
+msgstr "Cumulativo"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2718,6 +2751,11 @@ msgstr "Personalizza campi"
 msgid "Customize page layouts and UI structure"
 msgstr "Personalizza layout di pagina e struttura UI"
 
+#. js-lingui-id: ZBgSzH
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Customize what this user can view and perform"
+msgstr "Personalizza ciò che questo utente può visualizzare ed eseguire"
+
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Customize your workspace security"
@@ -2751,6 +2789,11 @@ msgstr "Danese"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "Scuro"
+
+#. js-lingui-id: ogQzcZ
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Dashboard duplicated successfully"
+msgstr "Cruscotto duplicato con successo"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3052,12 +3095,12 @@ msgstr "Elimina"
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
-msgstr ""
+msgstr "Elimina il campo {fieldLabel}?"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
-msgstr ""
+msgstr "Elimina l'oggetto {objectLabel}?"
 
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -3098,6 +3141,11 @@ msgstr "Elimina chiave API"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
 msgstr "Elimina cruscotto"
+
+#. js-lingui-id: qnWLDf
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboards"
+msgstr "Elimina cruscotti"
 
 #. js-lingui-id: gf2eXy
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -3384,7 +3432,7 @@ msgstr "Scarica file"
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Download sample"
-msgstr ""
+msgstr "Scarica file di esempio"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3394,8 +3442,14 @@ msgstr "Trascina il file qui..."
 #. js-lingui-id: euc6Ns
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate"
 msgstr ""
+
+#. js-lingui-id: MR2sZ1
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Duplicate Dashboard"
+msgstr "Duplica cruscotto"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -3675,6 +3729,7 @@ msgstr "Vuoto"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3693,6 +3748,7 @@ msgstr "Posta in arrivo vuota"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3786,8 +3842,12 @@ msgstr "Immettere un numero tra 0 e 23"
 msgid "Enter number between 0 and 59"
 msgstr "Immettere un numero tra 0 e 59"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr "Immettere un numero tra 1 e 60"
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -3961,10 +4021,10 @@ msgstr ""
 msgid "Evaluate"
 msgstr ""
 
-#. js-lingui-id: 9uDn0Y
-#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
-msgid "Evaluation input executed successfully"
-msgstr ""
+#. js-lingui-id: FDRUdE
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluating"
+msgstr "Valutazione in corso"
 
 #. js-lingui-id: Y3MReI
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -4107,6 +4167,7 @@ msgstr "Esci dalle impostazioni"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4280,6 +4341,11 @@ msgstr "Mancato tentativo di creare {translatedMetadataName}. Validazione di {re
 msgid "Failed to delete jobs. Please try again later."
 msgstr "Impossibile eliminare i lavori. Per favore riprova più tardi."
 
+#. js-lingui-id: NUmmdc
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Failed to duplicate dashboard"
+msgstr "Impossibile duplicare il cruscotto"
+
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Failed to duplicate workflow"
@@ -4331,6 +4397,11 @@ msgstr ""
 msgid "Failed to update price."
 msgstr "Impossibile aggiornare il prezzo."
 
+#. js-lingui-id: QGaQRo
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Failed to update role"
+msgstr "Impossibile aggiornare il ruolo"
+
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Failed to update smart model"
@@ -4354,6 +4425,8 @@ msgstr "Caricamento dell'immagine fallito: "
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "Falso"
 
@@ -4395,7 +4468,7 @@ msgstr "Campo"
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
-msgstr ""
+msgstr "Campo eliminato"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -4597,7 +4670,7 @@ msgstr "Funzioni - Impostazioni"
 #. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
-msgstr ""
+msgstr "Grafico a Indicatore"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4885,7 +4958,7 @@ msgstr "Http"
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
-msgstr ""
+msgstr "Richiesta HTTP"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -4959,11 +5032,6 @@ msgstr "Impostazioni iFrame"
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "Widget iFrame"
-
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "La configurazione di iFrame non è supportata"
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5084,6 +5152,11 @@ msgstr "indici"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Indexes"
 msgstr "Indici"
+
+#. js-lingui-id: 623chP
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Infos"
+msgstr "Informazioni"
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5388,7 +5461,7 @@ msgstr "Italiano"
 #. js-lingui-id: hgr8eo
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "items"
-msgstr ""
+msgstr "elementi"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -5628,7 +5701,7 @@ msgstr ""
 #. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
-msgstr ""
+msgstr "Grafico a Linea"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5937,7 +6010,7 @@ msgstr "La sincronizzazione dei messaggi non è disponibile perché il servizio 
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Messages"
-msgstr ""
+msgstr "Messaggi"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -5979,6 +6052,11 @@ msgstr "Minimo"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Intervallo minimo"
+
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -6393,6 +6471,12 @@ msgstr "Nessuna variabile di configurazione corrisponde ai filtri attuali. Prova
 msgid "No country"
 msgstr "Nessun paese"
 
+#. js-lingui-id: plhHQt
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+msgid "No data"
+msgstr "Nessun dato"
+
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No Data"
@@ -6462,6 +6546,11 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
 msgstr ""
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
+msgstr "Nessun campo da visualizzare"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6588,6 +6677,11 @@ msgstr "Nessun risultato"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Nessun risultato"
+
+#. js-lingui-id: FVzmGK
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "No role assigned to this member"
+msgstr "Nessun ruolo assegnato a questo membro"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -6750,7 +6844,7 @@ msgstr "Oggetto"
 #. js-lingui-id: 5Dll32
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Object deleted"
-msgstr ""
+msgstr "Oggetto eliminato"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -6758,7 +6852,7 @@ msgid "Object destination"
 msgstr "Destinazione oggetto"
 
 #. js-lingui-id: rDycBw
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "Campi unici dell'oggetto"
 
@@ -6924,6 +7018,11 @@ msgstr "Aprire Gmail"
 msgid "Open in"
 msgstr "Aprire in"
 
+#. js-lingui-id: DP5C7w
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Open in Roles"
+msgstr "Apri in Ruoli"
+
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
@@ -7026,6 +7125,21 @@ msgstr ""
 msgid "Page"
 msgstr "Pagina"
 
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr ""
+
+#. js-lingui-id: HFlGEK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout tab"
+msgstr "scheda layout di pagina"
+
+#. js-lingui-id: sVcqjZ
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout widget"
+msgstr "widget layout di pagina"
+
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
@@ -7127,6 +7241,11 @@ msgstr "Cancellazione permanente. Inserisci il numero di giorni."
 msgid "Permanently destroy dashboard"
 msgstr "Distruggi definitivamente il cruscotto"
 
+#. js-lingui-id: n7S2Oo
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboards"
+msgstr "Distruggi definitivamente i cruscotti"
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -7159,6 +7278,7 @@ msgid "Permanently destroy workflows"
 msgstr "Distruggi definitivamente i workflow"
 
 #. js-lingui-id: 9cDpsw
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -7192,7 +7312,7 @@ msgstr "Immagine"
 #. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
-msgstr ""
+msgstr "Grafico a Torta"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7299,7 +7419,7 @@ msgstr "Precompilazione dei dati del tuo spazio di lavoro..."
 #. js-lingui-id: rNqTKZ
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
-msgstr ""
+msgstr "Prefisso"
 
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
@@ -7311,6 +7431,11 @@ msgstr "Impedisci di assegnare lo stesso valore a record diversi"
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
 msgstr "Anteprima"
+
+#. js-lingui-id: Fe5cbB
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Preview Not Available"
+msgstr "Anteprima non disponibile"
 
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7461,6 +7586,14 @@ msgstr "Coda: {queueName}"
 msgid "Quick model for routing decisions"
 msgstr ""
 
+#. js-lingui-id: iaocTt
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "Ratio"
+msgstr "Rapporto"
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -7485,6 +7618,11 @@ msgstr "Riconnessione"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Record"
 msgstr "Registro"
+
+#. js-lingui-id: aGGOPJ
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+msgid "Record (ID)"
+msgstr "Record (ID)"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -7777,13 +7915,14 @@ msgstr "Revocato per questo oggetto"
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role"
-msgstr ""
+msgstr "ruolo"
 
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "Ruolo"
@@ -7811,6 +7950,7 @@ msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Role updated successfully"
 msgstr "Ruolo aggiornato con successo"
 
@@ -8040,6 +8180,11 @@ msgstr "Cerca oggetti"
 msgid "Search operations"
 msgstr "Cerca operazioni"
 
+#. js-lingui-id: 996xRf
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Search options"
+msgstr "Cerca opzioni"
+
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8268,6 +8413,11 @@ msgstr "Seleziona gli eventi da inviare a questo endpoint"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Seleziona il foglio da utilizzare"
+
+#. js-lingui-id: iWf0Zj
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Select value"
+msgstr "Seleziona un valore"
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8835,7 +8985,7 @@ msgstr "Unione completata di {recordCount} record"
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
-msgstr ""
+msgstr "Suffisso"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -9229,6 +9379,11 @@ msgstr "Questa azione non può essere annullata. Questo rimuoverà definitivamen
 msgid "This database value overrides environment settings. "
 msgstr "Questo valore del database sovrascrive le impostazioni dell'ambiente."
 
+#. js-lingui-id: hMvPrD
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file type cannot be previewed. Please download the file to view it."
+msgstr "Questo tipo di file non può essere visualizzato in anteprima. Scarica il file per visualizzarlo."
+
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "This is required to enable manual row reordering."
@@ -9282,12 +9437,12 @@ msgstr "Questo annullerà il cambio di piano programmato e manterrà il tuo pian
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
-msgstr ""
+msgstr "Questo eliminerà definitivamente il campo e tutti i suoi dati dall'oggetto {objectLabel}. Digita \"yes\" per confermare."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
-msgstr ""
+msgstr "Questo eliminerà definitivamente l'oggetto e tutti i suoi record. Digita \"yes\" per confermare."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -9432,6 +9587,8 @@ msgstr "Attiva la funzione con richiesta Http"
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "Vero"
 
@@ -9591,7 +9748,7 @@ msgid "Unique"
 msgstr "Unico"
 
 #. js-lingui-id: +WHV0k
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Unique fields"
 msgstr "Campi unici"
 
@@ -9599,7 +9756,7 @@ msgstr "Campi unici"
 #: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
-msgstr ""
+msgstr "unità"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9668,6 +9825,11 @@ msgstr "aggiorna"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "Aggiorna"
+
+#. js-lingui-id: 5bRMKt
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Update role"
+msgstr "Aggiorna ruolo"
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10008,7 +10170,7 @@ msgid "We encountered an issue verifying"
 msgstr "Abbiamo riscontrato un problema nella verifica"
 
 #. js-lingui-id: 6d9mjh
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
 msgstr "Abbiniamo questi campi. Se un {objectLabelSingular} esiste già, lo aggiorniamo. Altrimenti, ne creiamo uno nuovo."
 

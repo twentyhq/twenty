@@ -37,7 +37,6 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
-import { PageLayoutModule } from 'src/engine/core-modules/page-layout/page-layout.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
@@ -56,12 +55,14 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
+import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
+import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
+import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -130,7 +131,6 @@ import { FileModule } from './file/file.module';
     }),
     CacheStorageModule,
     AiModelsModule,
-    AiToolsModule,
     AiBillingModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
@@ -140,8 +140,10 @@ import { FileModule } from './file/file.module';
     ApiKeyModule,
     WebhookModule,
     PageLayoutModule,
+    FlatPageLayoutTabModule,
     ImpersonationModule,
     TrashCleanupModule,
+    DashboardModule,
   ],
   exports: [
     AuditModule,

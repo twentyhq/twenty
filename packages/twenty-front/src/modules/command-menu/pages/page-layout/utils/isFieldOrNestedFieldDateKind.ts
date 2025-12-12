@@ -1,9 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-export const isFieldOrNestedFieldDateKind = ({
+export const isFieldOrRelationNestedFieldDateKind = ({
   fieldId,
   subFieldName,
   objectMetadataItem,
@@ -27,11 +27,11 @@ export const isFieldOrNestedFieldDateKind = ({
   }
 
   if (isFieldRelation(field) && isDefined(subFieldName)) {
-    return isNestedFieldDateType(
-      field,
-      subFieldName,
-      objectMetadataItems ?? [],
-    );
+    return isRelationNestedFieldDateKind({
+      relationField: field,
+      relationNestedFieldName: subFieldName,
+      objectMetadataItems: objectMetadataItems ?? [],
+    });
   }
 
   return isFieldMetadataDateKind(field.type);

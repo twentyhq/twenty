@@ -9,7 +9,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   WorkflowRunStatus,
@@ -27,7 +28,7 @@ export class WorkflowCleanWorkflowRunsJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -47,37 +48,44 @@ export class WorkflowCleanWorkflowRunsJob {
     for (const activeWorkspace of activeWorkspaces) {
       const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-      const workflowRunsToDelete = await this.coreDataSource.query(
-        `
-          WITH ranked_runs AS (
-            SELECT id,
-                   ROW_NUMBER() OVER (
-                      PARTITION BY "workflowId"
-                      ORDER BY "createdAt" DESC
-                   ) AS rn,
-                   "createdAt"
-            FROM ${schemaName}."workflowRun"
-            WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
-          )
-          SELECT id, rn FROM ranked_runs
-          WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
-             OR "createdAt" < NOW() - INTERVAL '14 days';
-        `,
-      );
+      const authContext = buildSystemAuthContext(activeWorkspace.id);
 
-      const workflowRunRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          activeWorkspace.id,
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workflowRunsToDelete = await this.coreDataSource.query(
+            `
+            WITH ranked_runs AS (
+              SELECT id,
+                     ROW_NUMBER() OVER (
+                        PARTITION BY "workflowId"
+                        ORDER BY "createdAt" DESC
+                     ) AS rn,
+                     "createdAt"
+              FROM ${schemaName}."workflowRun"
+              WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
+            )
+            SELECT id, rn FROM ranked_runs
+            WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
+               OR "createdAt" < NOW() - INTERVAL '14 days';
+          `,
+          );
 
-      for (const workflowRunToDelete of workflowRunsToDelete) {
-        await workflowRunRepository.delete(workflowRunToDelete.id);
-      }
+          const workflowRunRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              activeWorkspace.id,
+              WorkflowRunWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
 
-      this.logger.log(
-        `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${activeWorkspace.id} (schema ${schemaName})`,
+          for (const workflowRunToDelete of workflowRunsToDelete) {
+            await workflowRunRepository.delete(workflowRunToDelete.id);
+          }
+
+          this.logger.log(
+            `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${activeWorkspace.id} (schema ${schemaName})`,
+          );
+        },
       );
     }
   }

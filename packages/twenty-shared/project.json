@@ -16,6 +16,8 @@
         "{projectRoot}/dist",
         "{projectRoot}/ai/package.json",
         "{projectRoot}/ai/dist",
+        "{projectRoot}/application/package.json",
+        "{projectRoot}/application/dist",
         "{projectRoot}/constants/package.json",
         "{projectRoot}/constants/dist",
         "{projectRoot}/metadata/package.json",

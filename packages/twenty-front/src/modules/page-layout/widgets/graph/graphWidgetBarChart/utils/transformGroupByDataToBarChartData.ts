@@ -13,6 +13,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -24,6 +25,7 @@ import {
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   configuration: BarChartConfiguration;
   aggregateOperation: string;
 };
@@ -42,13 +44,14 @@ type TransformGroupByDataToBarChartDataResult = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
-const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
+const EMPTY_BAR_CHART_RESULT: Omit<
+  TransformGroupByDataToBarChartDataResult,
+  'xAxisLabel' | 'yAxisLabel'
+> = {
   data: [],
   indexBy: '',
   keys: [],
   series: [],
-  xAxisLabel: undefined,
-  yAxisLabel: undefined,
   showDataLabels: false,
   showLegend: true,
   layout: BarChartLayout.VERTICAL,
@@ -59,13 +62,10 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
 export const transformGroupByDataToBarChartData = ({
   groupByData,
   objectMetadataItem,
+  objectMetadataItems,
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToBarChartDataParams): TransformGroupByDataToBarChartDataResult => {
-  if (!isDefined(groupByData)) {
-    return EMPTY_BAR_CHART_RESULT;
-  }
-
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
       field.id === configuration.primaryAxisGroupByFieldMetadataId,
@@ -85,36 +85,73 @@ export const transformGroupByDataToBarChartData = ({
       field.id === configuration.aggregateFieldMetadataId,
   );
 
+  const queryResultGqlFieldName =
+    getGroupByQueryResultGqlFieldName(objectMetadataItem);
+  const rawResults = groupByData?.[queryResultGqlFieldName];
+  const hasNoData =
+    !isDefined(groupByData) ||
+    !isDefined(rawResults) ||
+    !Array.isArray(rawResults) ||
+    rawResults.length === 0;
+
+  const showXAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.X ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.Y ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
+
+  const yAxisLabel =
+    showYAxis && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
+
+  const layout =
+    configuration.graphType === GraphType.HORIZONTAL_BAR
+      ? BarChartLayout.HORIZONTAL
+      : BarChartLayout.VERTICAL;
+
+  if (!isDefined(groupByData)) {
+    return {
+      ...EMPTY_BAR_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
+    };
+  }
+
   if (!isDefined(groupByFieldX) || !isDefined(aggregateField)) {
     return {
       ...EMPTY_BAR_CHART_RESULT,
-      layout:
-        configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? BarChartLayout.HORIZONTAL
-          : BarChartLayout.VERTICAL,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
     };
   }
 
   const primaryAxisSubFieldName =
     configuration.primaryAxisGroupBySubFieldName ?? undefined;
+  const secondaryAxisSubFieldName =
+    configuration.secondaryAxisGroupBySubFieldName ?? undefined;
 
   const indexByKey = getFieldKey({
     field: groupByFieldX,
     subFieldName: primaryAxisSubFieldName,
   });
 
-  const queryResultGqlFieldName =
-    getGroupByQueryResultGqlFieldName(objectMetadataItem);
-  const rawResults = groupByData[queryResultGqlFieldName];
-
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
     return {
       ...EMPTY_BAR_CHART_RESULT,
       indexBy: indexByKey,
-      layout:
-        configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? BarChartLayout.HORIZONTAL
-          : BarChartLayout.VERTICAL,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
     };
   }
 
@@ -136,27 +173,48 @@ export const transformGroupByDataToBarChartData = ({
     objectMetadataItem,
   });
 
-  const showXAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
-
-  const yAxisLabel = showYAxis
-    ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-    : undefined;
-
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
 
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
-  const isNestedDateField =
-    !isDateField && isDefined(configuration.primaryAxisDateGranularity);
-  const shouldApplyDateGapFill = isDateField || isNestedDateField;
+  const isNestedDateField = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: primaryAxisSubFieldName,
+    objectMetadataItems,
+  });
+
+  const primaryAxisDateGranularity =
+    isDateField || isNestedDateField
+      ? (configuration.primaryAxisDateGranularity ??
+        GRAPH_DEFAULT_DATE_GRANULARITY)
+      : undefined;
+
+  const isSecondaryDateField = isDefined(groupByFieldY)
+    ? isFieldMetadataDateKind(groupByFieldY.type)
+    : false;
+
+  const isSecondaryNestedDateField =
+    isDefined(groupByFieldY) &&
+    isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: secondaryAxisSubFieldName,
+      objectMetadataItems,
+    });
+
+  const secondaryAxisDateGranularity =
+    isSecondaryDateField || isSecondaryNestedDateField
+      ? (configuration.secondaryAxisGroupByDateGranularity ??
+        GRAPH_DEFAULT_DATE_GRANULARITY)
+      : undefined;
+
+  const sanitizedConfiguration: BarChartConfiguration = {
+    ...configuration,
+    primaryAxisDateGranularity: primaryAxisDateGranularity ?? undefined,
+    secondaryAxisGroupByDateGranularity:
+      secondaryAxisDateGranularity ?? undefined,
+  };
+
+  const shouldApplyDateGapFill = isDefined(primaryAxisDateGranularity);
 
   const omitNullValues = configuration.omitNullValues ?? false;
 
@@ -166,8 +224,7 @@ export const transformGroupByDataToBarChartData = ({
           data: filteredResults,
           keys: [aggregateField.name],
           dateGranularity:
-            configuration.primaryAxisDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY,
+            primaryAxisDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
           hasSecondDimension: isDefined(groupByFieldY),
         })
       : { data: filteredResults, wasTruncated: false };
@@ -181,7 +238,7 @@ export const transformGroupByDataToBarChartData = ({
         groupByFieldX,
         groupByFieldY,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
@@ -190,16 +247,11 @@ export const transformGroupByDataToBarChartData = ({
         rawResults: filteredResultsWithDateGaps,
         groupByFieldX,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
       });
-
-  const layout =
-    configuration.graphType === GraphType.HORIZONTAL_BAR
-      ? BarChartLayout.HORIZONTAL
-      : BarChartLayout.VERTICAL;
 
   return {
     ...baseResult,

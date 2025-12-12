@@ -196,6 +196,19 @@ msgstr "公司地址"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "公司地址 - 已弃用，改用新地址字段"
 
+#. js-lingui-id: mDXkHu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Agent not found"
+msgstr "代理未找到"
+
+#. js-lingui-id: EisfDV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "Agent with name \"{name}\" already exists"
+msgstr "名称为 \"{name}\" 的代理已存在"
+
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -223,6 +236,11 @@ msgstr "全部{objectLabelPlural}"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "金额"
+
+#. js-lingui-id: pZEIPj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "An agent with this name already exists"
+msgstr "带有此名称的代理已存在"
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -611,6 +629,17 @@ msgstr "无法创建除草稿之外状态的工作流程版本"
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
 msgstr "无法删除账户：您是唯一的管理员。请先分配其他管理员或删除工作区。"
 
+#. js-lingui-id: RYRFbW
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot delete standard agent"
+msgstr "无法删除标准代理"
+
+#. js-lingui-id: mWk3X+
+#: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
+msgid "Cannot delete unique index that have not been created by the workspace custom application"
+msgstr "无法删除非由工作区自定义应用创建的唯一索引"
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -632,9 +661,15 @@ msgid "Cannot have more than one active workflow version"
 msgstr "不能有多个活动中的工作流程版本"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "无法在同步进行时更新消息通道。请等待同步完成。"
+
+#. js-lingui-id: fpzw+t
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot update standard agent"
+msgstr "无法更新标准代理"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -924,8 +959,14 @@ msgstr "十二月"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "默认值 \"{defaultValue}\" 必须是选项值之一"
+
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr "默认值不能为 null。"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -934,10 +975,12 @@ msgstr "默认值必须为字符串"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "默认值应为带引号的字符串"
 
 #. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "默认值必须是唯一的"
@@ -991,7 +1034,13 @@ msgstr "域名"
 msgid "Due Date"
 msgstr "到期日"
 
+#. js-lingui-id: UrzTjS
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
+msgstr "发现重复的根解析器。每个根解析器在每个文档中只能被调用一次。"
+
 #. js-lingui-id: BXtAxc
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "选项 {field} 重复"
@@ -1173,6 +1222,11 @@ msgstr "预期在所有操作中一致地使用相同的约束字段用于{conne
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "外部 ID"
+
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr "创建评估失败。请再试一次。"
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1359,6 +1413,7 @@ msgstr "字段不能被索引，因为它属于不同的对象"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
 msgstr "字段不能用作标签标识符"
 
@@ -1388,8 +1443,6 @@ msgid "Field label identifier is required"
 msgstr "字段标签标识符是必需的"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1434,6 +1487,11 @@ msgstr "未找到要创建的相关对象字段"
 msgid "Field to update not found"
 msgstr "未找到要更新的字段"
 
+#. js-lingui-id: 5cm5Hn
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field to update object metadata not found"
+msgstr "未找到用于更新对象元数据的字段"
+
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type NUMERIC is not supported. Use Number instead."
@@ -1453,6 +1511,14 @@ msgstr ""
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "用于全文搜索的字段"
+
+#. js-lingui-id: M4sb1B
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "Field value is required"
+msgstr "字段值为必填项"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1578,6 +1644,7 @@ msgstr "理想客户简介：说明该公司是否是最适合和最有价值的
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "如果定义了默认值，则必须包含至少一个值"
 
@@ -1628,6 +1695,11 @@ msgstr "具有相同 ID 的索引已存在"
 msgid "Index with same name already exists"
 msgstr "具有相同名称的索引已存在"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr "CALDAV 凭证无效。请检查您的用户名和密码。"
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1642,11 +1714,6 @@ msgstr "无效验证码，请尝试使用其他设备"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "无效的国家代码 {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "凭证无效。请检查您的用户名和密码。"
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1691,6 +1758,11 @@ msgstr "无效的关系创建请求负载"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
+
+#. js-lingui-id: m4y7mj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Invalid response format type"
+msgstr "无效的响应格式类型"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1788,6 +1860,11 @@ msgstr "提供步骤的 Json 对象"
 msgid "Json object to provide trigger"
 msgstr "提供触发器的 Json 对象"
 
+#. js-lingui-id: eCBMag
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "JSON response format requires a schema"
+msgstr "JSON 响应格式需要一个模式"
+
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
@@ -1802,6 +1879,44 @@ msgstr "七月"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "六月"
+
+#. js-lingui-id: QS/zML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field metadata not found"
+msgstr "未找到看板主分组字段的元数据"
+
+#. js-lingui-id: ZfLcEk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a select field"
+msgstr "看板主分组字段必须为选择字段"
+
+#. js-lingui-id: RoCvZe
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban main group by field must be a SELECT field"
+msgstr "看板主分组字段必须为 SELECT 字段"
+
+#. js-lingui-id: mAbBLH
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Kanban view must have a main group by field"
+msgstr "看板视图必须具有主分组字段"
+
+#. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Label cannot be empty"
+msgstr "标签不能为空"
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1830,10 +1945,12 @@ msgstr "标签标识视图字段必须可见"
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "标签不能为空"
 
 #. js-lingui-id: k731jp
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "标签中不得包含逗号"
@@ -1976,7 +2093,7 @@ msgid "Message Channel Message Associations"
 msgstr "消息通道消息关联"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "消息通道未找到"
 
@@ -2102,10 +2219,21 @@ msgstr "消息提供商访问令牌"
 msgid "Messaging provider refresh token"
 msgstr "消息提供商刷新令牌"
 
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr ""
+
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "缺少必需字段：至少一个唯一约束需要完全填充用于'{connectFieldName}'。"
+
+#. js-lingui-id: AHuHeg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Model ID cannot be empty"
+msgstr "模型 ID 不能为空"
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2126,6 +2254,11 @@ msgstr "形态关系创建的负载只能包含与其他对象元数据的关系
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "形态关系创建的负载只能包含与相同对象元数据的关系"
+
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr "多态关联字段必须具有 morph ID"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2169,17 +2302,23 @@ msgid "Name \"{name}\" is not available as it is already used by join column nam
 msgstr ""
 
 #. js-lingui-id: Ny5wFU
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
 msgstr "名称无效：必须以小写字母开头且仅包含字母数字字符"
 
 #. js-lingui-id: zjh2SJ
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too long"
 msgstr "名称太长"
 
 #. js-lingui-id: go/Vg1
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too short"
 msgstr "名称太短"
 
@@ -2194,7 +2333,9 @@ msgid "Name of the workflow run"
 msgstr "工作流程运行名称"
 
 #. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name should be in camelCase"
 msgstr "名称应为 camelCase 格式"
 
@@ -2495,20 +2636,24 @@ msgstr "机会阶段"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "选项 ID 无效"
 
 #. js-lingui-id: MniXaX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "选项 ID 是必需的"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "选项标签“{sanitizedLabel}\" 少于1个字符"
 
 #. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "选项标签超过 63 个字符"
@@ -2531,10 +2676,12 @@ msgstr "选项标签必须至少为一个字符的字符串"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "选项值“{sanitizedValue}\" 少于1个字符"
 
 #. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "选项值超过 63 个字符"
@@ -2564,6 +2711,115 @@ msgstr "枚举字段需要选项"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "页面布局 ID"
+
+#. js-lingui-id: xCAYz6
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout is not deleted and cannot be restored"
+msgstr "页面布局未删除，无法恢复"
+
+#. js-lingui-id: ZKtamk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout not found"
+msgstr "未找到页面布局"
+
+#. js-lingui-id: tR9faK
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab is not deleted and cannot be restored"
+msgstr "页面布局选项卡未删除，无法恢复"
+
+#. js-lingui-id: qJ9V6q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout tab not found"
+msgstr "未找到页面布局选项卡"
+
+#. js-lingui-id: CWtQfv
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to delete not found"
+msgstr "未找到要删除的页面布局选项卡"
+
+#. js-lingui-id: LTouJ4
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to destroy not found"
+msgstr "未找到要销毁的页面布局选项卡"
+
+#. js-lingui-id: BaYGVl
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to restore not found"
+msgstr "未找到要恢复的页面布局选项卡"
+
+#. js-lingui-id: m8tBqi
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
+msgid "Page layout tab to update not found"
+msgstr "未找到要更新的页面布局选项卡"
+
+#. js-lingui-id: eQHXfb
+#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to delete not found"
+msgstr "未找到要删除的页面布局"
+
+#. js-lingui-id: zrm54u
+#: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to destroy not found"
+msgstr "未找到要销毁的页面布局"
+
+#. js-lingui-id: TsrNXq
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to restore not found"
+msgstr "未找到要恢复的页面布局"
+
+#. js-lingui-id: /5c/t7
+#: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
+msgid "Page layout to update not found"
+msgstr "未找到要更新的页面布局"
+
+#. js-lingui-id: k6Npai
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget already exists"
+msgstr "页面布局小部件已存在"
+
+#. js-lingui-id: A3hsQ6
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget is not deleted and cannot be restored"
+msgstr "页面布局小部件未删除，无法恢复"
+
+#. js-lingui-id: 7QlaTN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to delete not found"
+msgstr "未找到要删除的页面布局小部件"
+
+#. js-lingui-id: v2G/zq
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to destroy not found"
+msgstr "未找到要销毁的页面布局小部件"
+
+#. js-lingui-id: fDTVnj
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to restore not found"
+msgstr "未找到要恢复的页面布局小部件"
+
+#. js-lingui-id: yCsIxc
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
+msgid "Page layout widget to update not found"
+msgstr "未找到要更新的页面布局小部件"
+
+#. js-lingui-id: +4z9mT
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
+msgstr "ID为{flatPageLayoutWidgetId}的页面布局小部件已存在"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2700,6 +2956,12 @@ msgstr "首选语言"
 msgid "Probability"
 msgstr "概率"
 
+#. js-lingui-id: t/0e9D
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Prompt cannot be empty"
+msgstr "提示词不能为空"
+
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Property {property} is required for role"
@@ -2739,6 +3001,16 @@ msgstr "公共域名已注册"
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "未定义公共域名 URL。请设置 PUBLIC_DOMAIN_URL 环境变量。"
+
+#. js-lingui-id: uzWClp
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
+msgstr "查询复杂度过高。一对多关系不能嵌套在另一个一对多关系中。"
+
+#. js-lingui-id: XkHjXW
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
+msgstr "查询复杂度过高。请减少请求的关系字段数量。查询复杂度：{queryComplexity}。最大复杂度：{maximumComplexity}。"
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2795,6 +3067,21 @@ msgstr "不支持远程对象"
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "请求已过期，请重试。"
+
+#. js-lingui-id: KPIUoa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format type must be either \"text\" or \"json\""
+msgstr "响应格式类型必须为 \"text\" 或 \"json\""
+
+#. js-lingui-id: 6Plp3x
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"json\" must include a schema"
+msgstr "类型为 \"json\" 的响应格式必须包含一个模式"
+
+#. js-lingui-id: JCqfz6
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"text\" should not include a schema"
+msgstr "类型为 \"text\" 的响应格式不应包含模式"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2962,6 +3249,11 @@ msgstr "提供的信息中有些无效。请检查您的输入并重试。"
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "您选择的某些权限无效。请尝试使用有效的权限设置。"
+
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr "无法找到某些工作区成员资格。这些成员可能无法再访问此工作区。"
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -3196,6 +3488,11 @@ msgstr "任务目标任务"
 msgid "Text"
 msgstr "文本"
 
+#. js-lingui-id: mQj02P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Text response format should not have a schema"
+msgstr "文本响应格式不应包含模式"
+
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
@@ -3205,6 +3502,11 @@ msgstr "账户名称（电子邮件、用户名、电话号码等）"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "账户提供商"
+
+#. js-lingui-id: GekZDw
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr "找不到您要查找的智能体。它可能已被删除，或者您没有访问权限。"
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3300,10 +3602,15 @@ msgstr "您尝试设置权限的对象未找到。它可能已被删除。"
 msgid "The opportunity name"
 msgstr "机会名称"
 
-#. js-lingui-id: lk5nUN
-#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
-msgid "The request is too complex to process. Please try reducing the amount of data requested."
-msgstr ""
+#. js-lingui-id: pv+BoZ
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested fields."
+msgstr "请求过于复杂，无法处理。请尝试减少请求的字段数量。"
+
+#. js-lingui-id: 4LVaa7
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
+msgstr "请求过于复杂，无法处理。请尝试减少请求的根解析器数量。"
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
@@ -3365,19 +3672,21 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "您的连接设置存在问题。请再试一次。"
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "此 API 密钥已被撤销，无法再使用。"
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "此 API 密钥已过期。请创建新密钥。"
 
 #. js-lingui-id: gPBck6
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr ""
+msgstr "该名称已被保留。请使用其他名称，否则系统将添加\"Custom\"后缀。"
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
@@ -3629,6 +3938,7 @@ msgstr "验证失败，涉及 0 个对象和 0 个字段"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "值必须是 UPPER_CASE 并遵循 snake_case \"{sanitizedValue}\""
 
@@ -3782,12 +4092,6 @@ msgstr "未找到要销毁的视图组"
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
 msgid "View group to update not found"
 msgstr "未找到要更新的视图组"
-
-#. js-lingui-id: XbOhpY
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-msgid "View group to update parent field not found"
-msgstr "未找到用于更新父字段的视图组"
 
 #. js-lingui-id: P0grPG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4265,8 +4569,3 @@ msgstr "负责管理公司账户的团队成员"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "您的工作空间已更新为新的数据模型。请刷新页面。"
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "找不到您的工作区成员资格。您可能无法再访问此工作区。"

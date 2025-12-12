@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { AppCommand } from './commands/app.command';
-import { AuthCommand } from './commands/auth.command';
-import { ConfigService } from './services/config.service';
-
-const packageJson = JSON.parse(
-  readFileSync(join(__dirname, '../../package.json'), 'utf-8'),
-);
+import { AppCommand } from '@/cli/commands/app.command';
+import { AuthCommand } from '@/cli/commands/auth.command';
+import { ConfigService } from '@/cli/services/config.service';
+import packageJson from '../../package.json';
 
 const program = new Command();
 

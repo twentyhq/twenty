@@ -1,5 +1,10 @@
-export type WorkspaceLocalCacheEntry<T> = {
+export type VersionEntry<T> = {
   data: T;
-  hash: string;
-  lastCheckedAt: number;
+  lastReadAt: number;
+};
+
+export type WorkspaceLocalCacheEntry<T> = {
+  versions: Map<string, VersionEntry<T>>;
+  latestHash: string;
+  lastHashCheckedAt: number;
 };

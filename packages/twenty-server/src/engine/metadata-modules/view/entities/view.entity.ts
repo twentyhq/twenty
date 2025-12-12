@@ -138,6 +138,23 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @JoinColumn({ name: 'calendarFieldMetadataId' })
   calendarFieldMetadata: Relation<FieldMetadataEntity>;
 
+  @Column({ nullable: true, type: 'uuid' })
+  mainGroupByFieldMetadataId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.mainGroupByFieldMetadataViews,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'mainGroupByFieldMetadataId' })
+  mainGroupByFieldMetadata: Relation<FieldMetadataEntity>;
+
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  shouldHideEmptyGroups: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

@@ -30,8 +30,10 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -45,7 +47,7 @@ const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 @Injectable()
 export class SearchService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileService: FileService,
   ) {}
 
@@ -58,9 +60,13 @@ export class SearchService {
     limit,
     filter,
     after,
+    workspaceId,
+    rolePermissionConfig,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
+    rolePermissionConfig?: RolePermissionConfig;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -76,27 +82,36 @@ export class SearchService {
       OBJECT_METADATA_ITEMS_CHUNK_SIZE,
     );
 
+    const authContext = buildSystemAuthContext(workspaceId);
+
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
-          const repository =
-            await this.twentyORMManager.getRepository<ObjectRecord>(
-              flatObjectMetadata.nameSingular,
-            );
+          return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+            authContext,
+            async () => {
+              const repository =
+                await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
+                  workspaceId,
+                  flatObjectMetadata.nameSingular,
+                  rolePermissionConfig,
+                );
 
-          return {
-            objectMetadataItem: flatObjectMetadata,
-            records: await this.buildSearchQueryAndGetRecords({
-              entityManager: repository,
-              flatObjectMetadata,
-              flatFieldMetadataMaps,
-              searchTerms: formatSearchTerms(searchInput, 'and'),
-              searchTermsOr: formatSearchTerms(searchInput, 'or'),
-              limit: limit as number,
-              filter: filter ?? ({} as ObjectRecordFilter),
-              after,
-            }),
-          };
+              return {
+                objectMetadataItem: flatObjectMetadata,
+                records: await this.buildSearchQueryAndGetRecords({
+                  entityManager: repository,
+                  flatObjectMetadata,
+                  flatFieldMetadataMaps,
+                  searchTerms: formatSearchTerms(searchInput, 'and'),
+                  searchTermsOr: formatSearchTerms(searchInput, 'or'),
+                  limit: limit as number,
+                  filter: filter ?? ({} as ObjectRecordFilter),
+                  after,
+                }),
+              };
+            },
+          );
         }),
       );
 

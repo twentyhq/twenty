@@ -1,5 +1,76 @@
 # Changelog
 
+## [0.3.1] - 2025-12-08
+
+Import all
+
+### Added
+- Historical import CLI: `yarn meeting:all` to fetch and insert historical Fireflies meetings with filters (date range, organizers, participants, channel, mine) and dry-run support.
+- Fireflies transcripts listing with pagination and date filtering to support bulk imports.
+
+### Changed
+- Deduplication now checks `firefliesMeetingId` before creating meetings (webhook + bulk).
+- Shared historical importer pipeline reusing existing note/meeting formatting.
+
+## [0.3.0] - 2025-12-08
+
+Subscription-based query / Full transcript and AI notes for Pro+ / More
+
+### Added
+- **Full transcript capture**: Meeting object now stores the complete meeting transcript with speaker names and timestamps (`transcript` field)
+- **Rich AI meeting notes**: Captures detailed AI-generated meeting notes from Fireflies (`notes` field with 7,000+ char summaries)
+- **Expanded summary fields**: Now fetches all available Fireflies summary data:
+  - `notes` - Detailed AI-generated meeting notes with timestamps and section headers
+  - `bullet_gist` - Emoji-enhanced bullet point summaries
+  - `outline` / `shorthand_bullet` - Timestamped meeting outline
+  - `gist` - One-sentence meeting summary
+  - `short_summary` - Single paragraph summary
+  - `short_overview` - Brief overview
+- **New Meeting fields**:
+  - `transcript` - Full meeting transcript with speaker attribution
+  - `notes` - AI-generated detailed notes
+  - `audioUrl` - Link to audio recording (Pro+)
+  - `videoUrl` - Link to video recording (Business+)
+  - `meetingLink` - Original meeting link
+  - `neutralPercent` - Neutral sentiment percentage
+- **Meeting delete utility**: New `yarn meeting:delete <meetingId>` script for cleanup and re-import
+- **Debug meeting utility**: New `scripts/debug-meeting.ts` to inspect raw Fireflies API responses
+
+### Changed
+- **Plan-based GraphQL queries**: Completely redesigned query system with three tiers:
+  - **Free**: Basic fields only (title, date, duration, participants, transcript_url, meeting_link)
+  - **Pro**: Adds full transcript (`sentences`), summary fields, speakers, audio_url
+  - **Business+**: Adds analytics, video_url, speaker stats, meeting metrics
+- **Action items parsing**: Fixed parsing of `action_items` which Fireflies returns as newline-separated string, not array
+- **Note body format**: Enhanced with Meeting Notes, Outline, Key Points sections from rich Fireflies data
+- **Import status**: Added `PARTIAL` status for imports missing summary/analytics data
+
+### Fixed
+- Missing `notes` and `bullet_gist` fields in data transform (were fetched but not passed through)
+- Proper fallback: Uses `shorthand_bullet` when `outline` is empty (Fireflies stores outline content there)
+- Summary readiness detection now checks `notes` field in addition to `overview` and `action_items`
+
+### Documentation
+- Updated README with complete API access comparison table by subscription plan
+- Documented all available Fireflies summary fields and their plan requirements
+
+## [0.2.3] - 2025-12-06
+
+### Added
+- **Meeting ingest utility**: New `yarn meeting:ingest <meetingId>` script to manually fetch and import specific Fireflies meetings into Twenty
+- **Plan-based field selection**: Added `FIREFLIES_PLAN` configuration to control which GraphQL fields are requested based on subscription level (free, pro, business, enterprise)
+- **Main entry point**: New `src/index.ts` centralizing all exports for cleaner imports
+
+### Changed
+- **Auth configuration**: Disabled authentication requirement for webhook route (`isAuthRequired: false`) to support serverless deployments
+- **Signature verification fallback**: Webhook handler now supports signature in payload body as fallback when HTTP headers aren't forwarded to serverless functions (production doesn't work for Fireflies webhook)
+- **Improved type safety**: Replaced `any` types with proper TypeScript types throughout codebase
+
+### Enhanced
+- **Webhook debugging**: Added detailed debug output including param keys, header info, and signature comparison details
+- **Test webhook script**: Includes signature in both header and payload, with diagnostic output for header forwarding status
+- **Documentation**: Added README sections on current twenty headers forward limitations and utility scripts
+
 ## [0.2.2] - 2025-11-04
 
 ### Added

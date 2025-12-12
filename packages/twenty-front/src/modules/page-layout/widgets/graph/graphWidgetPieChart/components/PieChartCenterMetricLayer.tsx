@@ -1,6 +1,7 @@
 import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -8,6 +9,7 @@ type PieChartCenterMetricProps = {
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
   show: boolean;
+  hasNoData?: boolean;
 };
 
 const StyledCenterMetricContainer = styled(motion.div)`
@@ -33,22 +35,31 @@ const StyledLabel = styled.span`
   font-size: clamp(10px, 5cqmin, 24px);
 `;
 
+const StyledNoDataText = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
+
 export const PieChartCenterMetric = ({
   objectMetadataItemId,
   configuration,
   show,
+  hasNoData = false,
 }: PieChartCenterMetricProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
 
   const { centerMetricValue, centerMetricLabel } = usePieChartCenterMetricData({
     objectMetadataItemId,
     configuration,
-    skip: !show,
+    skip: !show && !hasNoData,
   });
+
+  const shouldShowContent = show || hasNoData;
 
   return (
     <AnimatePresence>
-      {show && (
+      {shouldShowContent && (
         <StyledCenterMetricContainer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -58,8 +69,14 @@ export const PieChartCenterMetric = ({
             ease: 'easeInOut',
           }}
         >
-          <StyledValue>{centerMetricValue}</StyledValue>
-          <StyledLabel>{centerMetricLabel}</StyledLabel>
+          {hasNoData ? (
+            <StyledNoDataText>{t`No data`}</StyledNoDataText>
+          ) : (
+            <>
+              <StyledValue>{centerMetricValue}</StyledValue>
+              <StyledLabel>{centerMetricLabel}</StyledLabel>
+            </>
+          )}
         </StyledCenterMetricContainer>
       )}
     </AnimatePresence>

@@ -120,6 +120,6 @@ describe('formatGoogleCalendarEvents', () => {
       mockGoogleEventWithImproperUcalid,
     ]);
 
-    expect(result[0].iCalUID).toBe(context.expected);
+    expect(result[0].iCalUid).toBe(context.expected);
   });
 });

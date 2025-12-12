@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - MORPH_RELATION Gql create input - failure MORPH_RELATION - should fail with : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":"not-a-morph-relation"} 1`] = `"Invalid UUID value 'not-a-morph-relation' for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id""`;
+
+exports[`Create input validation - MORPH_RELATION Gql create input - failure MORPH_RELATION - should fail with : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":[]} 1`] = `"ID cannot represent value: []"`;
+
+exports[`Create input validation - MORPH_RELATION Gql create input - failure MORPH_RELATION - should fail with : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":{}} 1`] = `"ID cannot represent value: {}"`;
+
+exports[`Create input validation - MORPH_RELATION Gql create input - failure MORPH_RELATION - should fail with : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":1} 1`] = `"Invalid UUID value '1' for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id""`;
+
+exports[`Create input validation - MORPH_RELATION Gql create input - failure MORPH_RELATION - should fail with : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":true} 1`] = `"ID cannot represent value: true"`;
