@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -14,6 +14,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -59,6 +60,12 @@ export class ApplicationEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   serverlessFunctionLayerId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  defaultServerlessFunctionRoleId: string | null;
+
+  @Field(() => RoleDTO, { nullable: true })
+  defaultServerlessFunctionRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;

@@ -100,10 +100,7 @@ describe('RefreshTokenService', () => {
       const result = await service.verifyRefreshToken(mockToken);
 
       expect(result).toEqual({ user: mockUser, token: mockAppToken });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'REFRESH',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
     });
 
     it('should throw an error if the token is malformed', async () => {
@@ -154,9 +151,9 @@ describe('RefreshTokenService', () => {
         {
           sub: userId,
           workspaceId,
-          type: 'REFRESH',
+          type: JwtTokenTypeEnum.REFRESH,
           userId: 'user-id',
-          targetedTokenType: 'ACCESS',
+          targetedTokenType: JwtTokenTypeEnum.ACCESS,
         },
         expect.objectContaining({
           secret: 'mock-secret',
@@ -190,8 +187,8 @@ describe('RefreshTokenService', () => {
     (jwtWrapperService.decode as jest.Mock).mockReturnValue({
       sub: userId,
       jti: tokenId,
-      type: 'REFRESH',
-      targetedTokenType: 'ACCESS',
+      type: JwtTokenTypeEnum.REFRESH,
+      targetedTokenType: JwtTokenTypeEnum.ACCESS,
       isImpersonating: true,
       impersonatorUserWorkspaceId: 'uw-imp',
       impersonatedUserWorkspaceId: 'uw-orig',

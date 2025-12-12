@@ -13,6 +13,7 @@ export type { ApplicationVariables } from './applicationVariablesType';
 export type { FieldManifest } from './fieldManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
+export type { Role } from './roleType';
 export type {
   ServerlessFunctionManifest,
   DatabaseEventTrigger,
@@ -20,3 +21,4 @@ export type {
   RouteTrigger,
   ServerlessFunctionTriggerManifest,
 } from './serverlessFunctionManifestType';
+export type { SyncableEntityOptions } from './syncableEntityOptionsType';

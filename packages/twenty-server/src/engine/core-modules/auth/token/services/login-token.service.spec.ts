@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { LoginTokenService } from './login-token.service';
 
@@ -67,7 +68,7 @@ describe('LoginTokenService', () => {
         expiresAt: expect.any(Date),
       });
       expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
-        'LOGIN',
+        JwtTokenTypeEnum.LOGIN,
         workspaceId,
       );
       expect(twentyConfigService.get).toHaveBeenCalledWith(
@@ -77,7 +78,7 @@ describe('LoginTokenService', () => {
         {
           sub: email,
           workspaceId,
-          type: 'LOGIN',
+          type: JwtTokenTypeEnum.LOGIN,
           authProvider: AuthProviderEnum.Password,
           impersonatorUserId: undefined,
         },
@@ -112,14 +113,14 @@ describe('LoginTokenService', () => {
         expiresAt: expect.any(Date),
       });
       expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
-        'LOGIN',
+        JwtTokenTypeEnum.LOGIN,
         workspaceId,
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
           sub: email,
           workspaceId,
-          type: 'LOGIN',
+          type: JwtTokenTypeEnum.LOGIN,
           authProvider: AuthProviderEnum.Impersonation,
           impersonatorUserWorkspaceId,
         },
@@ -143,10 +144,7 @@ describe('LoginTokenService', () => {
       const result = await service.verifyLoginToken(mockToken);
 
       expect(result).toEqual({ sub: mockEmail });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'LOGIN',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken, {
         json: true,
       });

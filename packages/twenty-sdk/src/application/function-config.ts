@@ -1,28 +1,14 @@
-import { type SyncableEntityOptions } from '@/application/syncable-entity-options.type';
+import {
+  type ServerlessFunctionManifest,
+  type ServerlessFunctionTriggerManifest,
+} from 'twenty-shared/application';
 
-type RouteTrigger = {
-  type: 'route';
-  path: string;
-  httpMethod: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  isAuthRequired: boolean;
-};
-
-type CronTrigger = {
-  type: 'cron';
-  pattern: string;
-};
-
-type DatabaseEventTrigger = {
-  type: 'databaseEvent';
-  eventName: string;
-};
-
-type FunctionTrigger = SyncableEntityOptions &
-  (RouteTrigger | CronTrigger | DatabaseEventTrigger);
-
-export type FunctionConfig = SyncableEntityOptions & {
+export type FunctionConfig = Omit<
+  ServerlessFunctionManifest,
+  'handlerPath' | 'handlerName'
+> & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  triggers?: FunctionTrigger[];
+  triggers?: ServerlessFunctionTriggerManifest[];
 };

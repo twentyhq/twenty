@@ -76,10 +76,10 @@ export class RestApiMetadataService {
   }
 
   private getRequestContext(request: Request): RequestContext {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     return {
       body: request.body,

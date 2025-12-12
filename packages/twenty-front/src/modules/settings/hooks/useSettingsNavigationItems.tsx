@@ -25,10 +25,10 @@ import {
   IconServer,
   IconSettings,
   IconSparkles,
-  IconPuzzle2,
   IconUserCircle,
   IconUsers,
   IconWorld,
+  IconPlug,
 } from 'twenty-ui/display';
 import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
@@ -157,7 +157,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Applications`,
           path: SettingsPath.Applications,
-          Icon: IconPuzzle2,
+          Icon: IconPlug,
           isHidden:
             !isApplicationEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],

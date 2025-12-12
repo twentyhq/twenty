@@ -389,7 +389,7 @@ describe('ApiKeyService', () => {
       );
 
       expect(mockJwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
-        JwtTokenTypeEnum.ACCESS,
+        JwtTokenTypeEnum.API_KEY,
         mockWorkspaceId,
       );
       expect(mockJwtWrapperService.sign).toHaveBeenCalledWith(

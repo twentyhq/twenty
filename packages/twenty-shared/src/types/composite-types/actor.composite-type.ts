@@ -15,6 +15,7 @@ export enum FieldActorSource {
   MANUAL = 'MANUAL',
   SYSTEM = 'SYSTEM',
   WEBHOOK = 'WEBHOOK',
+  APPLICATION = 'APPLICATION',
 }
 
 export const actorCompositeType: CompositeType = {

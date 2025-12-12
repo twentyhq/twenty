@@ -30,6 +30,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.UNAUTHENTICATED:
     case AuthExceptionCode.USER_NOT_FOUND:
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:
+    case AuthExceptionCode.APPLICATION_NOT_FOUND:
       return 401;
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:
     case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:

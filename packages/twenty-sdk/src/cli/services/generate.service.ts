@@ -39,20 +39,23 @@ export class GenerateService {
     console.log(chalk.gray(`Output: ${outputPath}`));
 
     const getSchemaResponse = await this.apiService.getSchema();
+
     if (!getSchemaResponse.success) {
       return;
     }
+
     const { data: schema } = getSchemaResponse;
+
+    const output = resolve(outputPath);
 
     await generate({
       schema,
-      output: resolve(outputPath),
+      output,
       scalarTypes: {
         DateTime: 'string',
         JSON: 'Record<string, unknown>',
         UUID: 'string',
       },
-      verbose: true,
     });
 
     console.log(chalk.green('✓ Client generated successfully!'));

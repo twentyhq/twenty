@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { TransientTokenService } from './transient-token.service';
 
@@ -72,7 +73,7 @@ describe('TransientTokenService', () => {
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
           sub: workspaceMemberId,
-          type: 'LOGIN',
+          type: JwtTokenTypeEnum.LOGIN,
           userId,
           workspaceId,
           workspaceMemberId,
@@ -108,10 +109,7 @@ describe('TransientTokenService', () => {
         userId: mockPayload.userId,
         workspaceId: mockPayload.workspaceId,
       });
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'LOGIN',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken);
     });
 
