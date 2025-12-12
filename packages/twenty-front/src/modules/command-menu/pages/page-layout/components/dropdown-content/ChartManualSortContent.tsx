@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { type DropResult } from '@hello-pangea/dnd';
 
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -22,10 +21,6 @@ type ChartManualSortContentProps = {
   fieldMetadataItem: FieldMetadataItem;
   axis: ChartManualSortAxis;
 };
-
-const StyledIconGripVertical = styled(IconGripVertical)`
-  margin-right: ${({ theme }) => theme.spacing(0.75)};
-`;
 
 const getManualSortConfigKey = (axis: ChartManualSortAxis) => {
   switch (axis) {
