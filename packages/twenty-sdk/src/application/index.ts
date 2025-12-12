@@ -26,4 +26,5 @@ export { Relation } from './fields/relation.decorator';
 export type { FunctionConfig } from './function-config';
 export { Object } from './objects/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
+export { PermissionFlag } from './permissions/permission-flag-type';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

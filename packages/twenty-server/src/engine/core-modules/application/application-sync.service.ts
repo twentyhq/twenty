@@ -43,6 +43,7 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -63,6 +64,7 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
+    private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
   ) {}
 
@@ -241,14 +243,16 @@ export class ApplicationSyncService {
     const applicationRole = manifest.application.applicationRole;
 
     if (
-      isDefined(applicationRole?.objectPermissions) &&
-      applicationRole.objectPermissions.length > 0
+      (isDefined(applicationRole?.objectPermissions) &&
+        applicationRole.objectPermissions.length > 0) ||
+      (isDefined(applicationRole?.fieldPermissions) &&
+        applicationRole.fieldPermissions.length > 0)
     ) {
-      const { flatObjectMetadataMaps } =
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps'],
+            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
           },
         );
 
@@ -256,7 +260,7 @@ export class ApplicationSyncService {
         buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const formattedObjectPermissions = applicationRole.objectPermissions
-        .map((perm) => ({
+        ?.map((perm) => ({
           ...perm,
           objectMetadataId: isDefined(perm.objectNameSingular)
             ? objectIdByNameSingular[perm.objectNameSingular]
@@ -270,13 +274,70 @@ export class ApplicationSyncService {
           isDefined(perm.objectMetadataId),
         );
 
-      await this.objectPermissionService.upsertObjectPermissions({
-        workspaceId,
-        input: {
-          roleId,
-          objectPermissions: formattedObjectPermissions,
-        },
-      });
+      if (isDefined(formattedObjectPermissions)) {
+        await this.objectPermissionService.upsertObjectPermissions({
+          workspaceId,
+          input: {
+            roleId,
+            objectPermissions: formattedObjectPermissions,
+          },
+        });
+      }
+
+      const formattedFieldPermissions = applicationRole?.fieldPermissions
+        ?.map((perm) => {
+          const objectMetadataId = isDefined(perm.objectNameSingular)
+            ? objectIdByNameSingular[perm.objectNameSingular]
+            : isDefined(perm.objectUniversalIdentifier)
+              ? flatObjectMetadataMaps.idByUniversalIdentifier[
+                  perm.objectUniversalIdentifier
+                ]
+              : undefined;
+
+          const fieldMetadataId = isDefined(objectMetadataId)
+            ? isDefined(perm.fieldName)
+              ? Object.values(flatFieldMetadataMaps.byId).find(
+                  (flatField) =>
+                    isDefined(flatField) &&
+                    flatField.objectMetadataId === objectMetadataId &&
+                    flatField.name === perm.fieldName,
+                )?.id
+              : isDefined(perm.fieldUniversalIdentifier)
+                ? Object.values(flatFieldMetadataMaps.byId).find(
+                    (flatField) =>
+                      isDefined(flatField) &&
+                      flatField.objectMetadataId === objectMetadataId &&
+                      flatField.universalIdentifier ===
+                        perm.fieldUniversalIdentifier,
+                  )?.id
+                : undefined
+            : undefined;
+
+          return {
+            ...perm,
+            objectMetadataId,
+            fieldMetadataId,
+          };
+        })
+        .filter(
+          (
+            perm,
+          ): perm is typeof perm & {
+            objectMetadataId: string;
+            fieldMetadataId: string;
+          } =>
+            isDefined(perm.objectMetadataId) && isDefined(perm.fieldMetadataId),
+        );
+
+      if (isDefined(formattedFieldPermissions)) {
+        await this.fieldPermissionService.upsertFieldPermissions({
+          workspaceId,
+          input: {
+            roleId,
+            fieldPermissions: formattedFieldPermissions,
+          },
+        });
+      }
     }
 
     if (
