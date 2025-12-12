@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { writeFileSync } from 'fs';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { writeFileSync } from 'fs';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -102,8 +103,8 @@ export class DevSeederService {
     );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService
-        .validateBuildAndRunWorkspaceMigrationFromTo({
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+        {
           buildOptions: {
             isSystemBuild: true,
           },
@@ -150,7 +151,8 @@ export class DevSeederService {
             },
           },
           workspaceId,
-        })
+        },
+      );
 
     if (validateAndBuildResult?.status === 'fail') {
       throw new Error(
