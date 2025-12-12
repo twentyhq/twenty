@@ -1,5 +1,4 @@
 import { type Block } from '@blocknote/core';
-import { useBlockNoteEditor } from '@blocknote/react';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -44,7 +43,6 @@ export const DashboardBlockDragHandleMenu = ({
   onClose,
 }: DashboardBlockDragHandleMenuProps) => {
   const { t } = useLingui();
-  const blockNoteEditor = useBlockNoteEditor();
   const menuRef = useRef<HTMLDivElement>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [colorMenuItemElement, setColorMenuItemElement] =
@@ -80,12 +78,15 @@ export const DashboardBlockDragHandleMenu = ({
   });
 
   const handleAddBlock = () => {
-    const currentBlock = blockNoteEditor.getTextCursorPosition().block;
-    editor.insertBlocks([{ type: 'paragraph' }], currentBlock, 'after');
+    const insertedBlocks = editor.insertBlocks(
+      [{ type: 'paragraph' }],
+      block,
+      'after',
+    );
 
-    const nextBlock = blockNoteEditor.getTextCursorPosition().nextBlock;
-    if (isDefined(nextBlock)) {
-      editor.setTextCursorPosition(nextBlock);
+    const insertedBlock = insertedBlocks[0];
+    if (isDefined(insertedBlock)) {
+      editor.setTextCursorPosition(insertedBlock);
     }
 
     editor.openSuggestionMenu('/');
