@@ -40,6 +40,27 @@ export const generateFindToolInputSchema = (
       filterSchema;
   });
 
+  // Create the base filter schema with field-level filters + logical operators
+  // This matches the RecordGqlOperationFilter format used by the frontend
+  const filterSchema: z.ZodTypeAny = z.lazy(() =>
+    z
+      .object({
+        ...filterShape,
+        or: z
+          .array(filterSchema)
+          .optional()
+          .describe('OR condition - matches if ANY of the filters match'),
+        and: z
+          .array(filterSchema)
+          .optional()
+          .describe('AND condition - matches if ALL filters match'),
+        not: filterSchema
+          .optional()
+          .describe('NOT condition - matches if the filter does NOT match'),
+      })
+      .partial(),
+  );
+
   return z.object({
     loadingMessage: z
       .string()
@@ -65,6 +86,17 @@ export const generateFindToolInputSchema = (
         'Sort records by field(s). CRITICAL for "top N", "largest", "smallest" queries. Each item is an object with exactly ONE property: field name as key, sort direction as value. Example: [{"employees": "DescNullsLast"}] sorts employees descending. Use "DescNullsLast" for top/largest, "AscNullsFirst" for bottom/smallest.',
       ),
       ...filterShape,
+      or: z
+        .array(filterSchema)
+        .optional()
+        .describe('OR condition - matches if ANY of the filters match'),
+      and: z
+        .array(filterSchema)
+        .optional()
+        .describe('AND condition - matches if ALL filters match'),
+      not: filterSchema
+        .optional()
+        .describe('NOT condition - matches if the filter does NOT match'),
     }),
   });
 };

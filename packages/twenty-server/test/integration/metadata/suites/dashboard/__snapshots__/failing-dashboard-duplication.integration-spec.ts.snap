@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard duplication should fail when dashboard does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Dashboard with ID "7f7b4ae6-ebe4-4d7b-91a9-0043dffd5837" not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Dashboard duplication should fail when dashboard page layout was deleted 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Dashboard with ID "8cbbc499-5a23-473d-ad0b-eaa92d4c9831" not found",
+  "name": "NotFoundError",
+}
+`;

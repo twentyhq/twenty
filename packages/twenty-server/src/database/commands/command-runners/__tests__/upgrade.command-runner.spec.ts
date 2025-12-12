@@ -13,31 +13,18 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
-    '1.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-    '2.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
+    '1.0.0': [],
+    '2.0.0': [],
   };
 }
 
 class InvalidUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = {
-    invalid: {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
-    '2.0.0': {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [],
-    },
+    invalid: [],
+    '2.0.0': [],
   };
 }
 
@@ -86,14 +73,12 @@ const buildUpgradeCommandModule = async ({
           twentyConfigService: TwentyConfigService,
           globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
           dataSourceService: DataSourceService,
-          syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
         ) => {
           return new commandRunner(
             workspaceRepository,
             twentyConfigService,
             globalWorkspaceOrmManager,
             dataSourceService,
-            syncWorkspaceMetadataCommand,
           );
         },
         inject: [
@@ -101,7 +86,6 @@ const buildUpgradeCommandModule = async ({
           TwentyConfigService,
           GlobalWorkspaceOrmManager,
           DataSourceService,
-          SyncWorkspaceMetadataCommand,
         ],
       },
       {
@@ -146,12 +130,6 @@ const buildUpgradeCommandModule = async ({
         provide: DataSourceService,
         useValue: mockDataSourceService,
       },
-      {
-        provide: SyncWorkspaceMetadataCommand,
-        useValue: {
-          runOnWorkspace: jest.fn(),
-        },
-      },
     ],
   }).compile();
 
@@ -161,11 +139,7 @@ const buildUpgradeCommandModule = async ({
 describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
   let workspaceRepository: Repository<WorkspaceEntity>;
-  let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
-  let runAfterSyncMetadataSpy: jest.SpyInstance;
-  let runBeforeSyncMetadataSpy: jest.SpyInstance;
   let runCoreMigrationsSpy: jest.SpyInstance;
-  let globalWorkspaceOrmManagerSpy: GlobalWorkspaceOrmManager;
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
@@ -201,14 +175,6 @@ describe('UpgradeCommandRunner', () => {
     jest.spyOn(upgradeCommandRunner['logger'], 'error').mockImplementation();
     jest.spyOn(upgradeCommandRunner['logger'], 'warn').mockImplementation();
 
-    runBeforeSyncMetadataSpy = jest.spyOn(
-      upgradeCommandRunner,
-      'runBeforeSyncMetadata',
-    );
-    runAfterSyncMetadataSpy = jest.spyOn(
-      upgradeCommandRunner,
-      'runAfterSyncMetadata',
-    );
     jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
     runCoreMigrationsSpy = jest
       .spyOn(upgradeCommandRunner, 'runCoreMigrations')
@@ -216,10 +182,6 @@ describe('UpgradeCommandRunner', () => {
 
     workspaceRepository = module.get<Repository<WorkspaceEntity>>(
       getRepositoryToken(WorkspaceEntity),
-    );
-    syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
-    globalWorkspaceOrmManagerSpy = module.get<GlobalWorkspaceOrmManager>(
-      GlobalWorkspaceOrmManager,
     );
   };
 
@@ -248,17 +210,13 @@ describe('UpgradeCommandRunner', () => {
     expect(successReport.length).toBe(1);
     expect(failReport.length).toBe(0);
 
-    [
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-      upgradeCommandRunner.runOnWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
+    [upgradeCommandRunner.runOnWorkspace].forEach((fn) =>
+      expect(fn).toHaveBeenCalledTimes(1),
+    );
 
-    [
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      upgradeCommandRunner.runAfterSyncMetadata,
-      workspaceRepository.update,
-    ].forEach((fn) => expect(fn).not.toHaveBeenCalled());
+    [workspaceRepository.update].forEach((fn) =>
+      expect(fn).not.toHaveBeenCalled(),
+    );
   });
 
   it('should run upgrade over several workspaces', async () => {
@@ -276,48 +234,15 @@ describe('UpgradeCommandRunner', () => {
     // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
-    [
-      upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      upgradeCommandRunner.runAfterSyncMetadata,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
+    [upgradeCommandRunner.runOnWorkspace].forEach((fn) =>
+      expect(fn).toHaveBeenCalledTimes(numberOfWorkspace),
+    );
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
       numberOfWorkspace,
       { id: expect.any(String) },
       { version: appVersion },
     );
     expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
-    expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
-  });
-
-  it('should run syncMetadataCommand betweensuccessful beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
-    await buildModuleAndSetupSpies({});
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
-
-    // @ts-expect-error legacy noImplicitAny
-    await upgradeCommandRunner.run(passedParams, options);
-
-    [
-      upgradeCommandRunner.runOnWorkspace,
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      upgradeCommandRunner.runAfterSyncMetadata,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
-
-    // Verify order of execution
-    const beforeSyncCall = runBeforeSyncMetadataSpy.mock.invocationCallOrder[0];
-    const afterSyncCall = runAfterSyncMetadataSpy.mock.invocationCallOrder[0];
-    const syncMetadataCall =
-      syncWorkspaceMetadataCommand.runOnWorkspace.mock.invocationCallOrder[0];
-
-    expect(beforeSyncCall).toBeLessThan(syncMetadataCall);
-    expect(syncMetadataCall).toBeLessThan(afterSyncCall);
-    expect(upgradeCommandRunner.migrationReport.success.length).toBe(1);
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
   });
 
@@ -379,8 +304,6 @@ describe('UpgradeCommandRunner', () => {
         expect(failReport.length).toBe(0);
         expect(successReport.length).toBe(1);
         expect(runCoreMigrationsSpy).toHaveBeenCalledTimes(1);
-        expect(runAfterSyncMetadataSpy).toHaveBeenCalledTimes(1);
-        expect(runBeforeSyncMetadataSpy).toHaveBeenCalledTimes(1);
         const { workspaceId } = successReport[0];
 
         expect(workspaceId).toBe('workspace_0');

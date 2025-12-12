@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  type FieldMetadataType,
   type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -210,7 +210,7 @@ export class RemoteTableRelationsService {
       {
         standardId: createForeignKeyDeterministicUuid({
           objectId: createdObjectMetadata.id,
-          standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
+          standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCustom,
         }),
         objectMetadataId: timelineActivityObjectMetadata.id,
         workspaceId: workspaceId,

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -9,6 +9,21 @@ export class AgentChatThreadDTO {
 
   @Field({ nullable: true })
   title: string;
+
+  @Field(() => Int)
+  totalInputTokens: number;
+
+  @Field(() => Int)
+  totalOutputTokens: number;
+
+  @Field(() => Int, { nullable: true })
+  contextWindowTokens: number | null;
+
+  @Field(() => Int)
+  totalInputCredits: number;
+
+  @Field(() => Int)
+  totalOutputCredits: number;
 
   @Field()
   createdAt: Date;

@@ -1,5 +1,8 @@
 import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
-import { TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
+import {
+  joinColumnNameForManyToOneMorphRelationField1,
+  TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE,
+} from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const successfulCreateInputByFieldMetadataType: {
@@ -117,6 +120,28 @@ export const successfulCreateInputByFieldMetadataType: {
       },
       validateInput: (record: Record<string, any>) => {
         return record.manyToOneRelationFieldId === null;
+      },
+    },
+  ],
+  [FieldMetadataType.MORPH_RELATION]: [
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]:
+          TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] ===
+          TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE
+        );
+      },
+    },
+    {
+      input: {
+        [joinColumnNameForManyToOneMorphRelationField1]: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record[joinColumnNameForManyToOneMorphRelationField1] === null;
       },
     },
   ],

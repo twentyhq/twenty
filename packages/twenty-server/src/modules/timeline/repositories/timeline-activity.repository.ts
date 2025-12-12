@@ -8,6 +8,7 @@ import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/uti
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
@@ -15,6 +16,7 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   })[];
   workspaceId: string;
   objectSingularName: string;
+  isFeatureFlagTimelineActivityMigrated: boolean;
 };
 
 @Injectable()
@@ -27,6 +29,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -38,6 +41,7 @@ export class TimelineActivityRepository {
             objectSingularName,
             workspaceId,
             payloads,
+            isFeatureFlagTimelineActivityMigrated,
           });
 
         const payloadsWithDiff = payloads
@@ -59,10 +63,16 @@ export class TimelineActivityRepository {
         const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
           [];
 
+        const timelineActivityPropertyName =
+          await this.getTimelineActivityPropertyName(
+            objectSingularName,
+            isFeatureFlagTimelineActivityMigrated,
+          );
+
         for (const payload of payloadsWithDiff) {
           const recentTimelineActivity = recentTimelineActivities.find(
             (timelineActivity) =>
-              timelineActivity[`${objectSingularName}Id`] ===
+              timelineActivity[timelineActivityPropertyName] ===
                 payload.recordId &&
               timelineActivity.workspaceMemberId ===
                 payload.workspaceMemberId &&
@@ -92,6 +102,7 @@ export class TimelineActivityRepository {
           objectSingularName,
           payloads: payloadsToInsert,
           workspaceId,
+          isFeatureFlagTimelineActivityMigrated,
         });
       },
     );
@@ -101,6 +112,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const timelineActivityTypeORMRepository =
       await this.globalWorkspaceOrmManager.getRepository(
@@ -113,8 +125,14 @@ export class TimelineActivityRepository {
 
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
+    const timelineActivityPropertyName =
+      await this.getTimelineActivityPropertyName(
+        objectSingularName,
+        isFeatureFlagTimelineActivityMigrated,
+      );
+
     const whereConditions: Record<string, unknown> = {
-      [`${objectSingularName}Id`]: In(
+      [timelineActivityPropertyName]: In(
         payloads.map((payload) => payload.recordId),
       ),
       name: In(payloads.map((payload) => payload.name)),
@@ -135,6 +153,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     if (payloads.length === 0) {
       return;
@@ -149,12 +168,18 @@ export class TimelineActivityRepository {
         },
       );
 
+    const timelineActivityPropertyName =
+      await this.getTimelineActivityPropertyName(
+        objectSingularName,
+        isFeatureFlagTimelineActivityMigrated,
+      );
+
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
         name: payload.name,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
-        [`${objectSingularName}Id`]: payload.recordId,
+        [timelineActivityPropertyName]: payload.recordId,
         linkedRecordCachedName: payload.linkedRecordCachedName ?? '',
         linkedRecordId: payload.linkedRecordId,
         linkedObjectMetadataId: payload.linkedObjectMetadataId,
@@ -186,5 +211,14 @@ export class TimelineActivityRepository {
       properties: properties,
       workspaceMemberId: workspaceMemberId,
     });
+  }
+
+  private async getTimelineActivityPropertyName(
+    objectSingularName: string,
+    isFeatureFlagTimelineActivityMigrated: boolean,
+  ) {
+    return isFeatureFlagTimelineActivityMigrated
+      ? `${buildTimelineActivityRelatedMorphFieldMetadataName(objectSingularName)}Id`
+      : `${objectSingularName}Id`;
   }
 }

@@ -4,10 +4,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class ToolRegistryService {

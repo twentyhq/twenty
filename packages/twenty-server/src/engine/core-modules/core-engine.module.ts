@@ -56,12 +56,13 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
+import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
-import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
+import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -142,6 +143,7 @@ import { FileModule } from './file/file.module';
     FlatPageLayoutTabModule,
     ImpersonationModule,
     TrashCleanupModule,
+    DashboardModule,
   ],
   exports: [
     AuditModule,

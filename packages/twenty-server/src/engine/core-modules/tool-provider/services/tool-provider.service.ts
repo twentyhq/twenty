@@ -14,7 +14,7 @@ import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-c
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
+import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
@@ -41,7 +41,7 @@ export class ToolProviderService {
     // Action tools (individual tools)
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
-    private readonly searchArticlesTool: SearchArticlesTool,
+    private readonly searchHelpCenterTool: SearchHelpCenterTool,
     // Database CRUD tools
     private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
     private readonly createRecordService: CreateRecordService,
@@ -80,9 +80,9 @@ export class ToolProviderService {
         },
       ],
       [
-        ToolType.SEARCH_ARTICLES,
+        ToolType.SEARCH_HELP_CENTER,
         {
-          tool: this.searchArticlesTool,
+          tool: this.searchHelpCenterTool,
           // No permission flag - available to all agents
         },
       ],

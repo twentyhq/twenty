@@ -50,9 +50,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         authContext,
         async () => {
           const workspaceDataSource =
-            await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-              workspaceId,
-            );
+            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
           return workspaceDataSource?.transaction(
             async (transactionManager: WorkspaceEntityManager) => {
