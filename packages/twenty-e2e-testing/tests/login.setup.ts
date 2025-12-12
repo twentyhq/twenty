@@ -29,6 +29,7 @@ test('Login test', async ({ loginPage, page }) => {
       await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
       await page.waitForLoadState('networkidle');
       await loginPage.clickSignInButton();
+      await page.waitForLoadState('networkidle');
       await expect(page.getByText(/Welcome to .+/)).not.toBeVisible();
       await expect(page.getByText('Choose a workspace')).toBeVisible();
       await page.getByText('Apple', {exact: true}).click();
