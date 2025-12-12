@@ -6,6 +6,10 @@ type CustomResolverFetchMoreLoaderProps = {
   onLastRowVisible: (...args: any[]) => any;
 };
 
+const StyledContainer = styled.div`
+  min-height: 1px;
+`;
+
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
@@ -21,12 +25,16 @@ export const CustomResolverFetchMoreLoader = ({
   onLastRowVisible,
 }: CustomResolverFetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
-    onChange: onLastRowVisible,
+    onChange: (inView) => {
+      if (inView) {
+        onLastRowVisible();
+      }
+    },
   });
 
   return (
-    <div ref={tbodyRef}>
+    <StyledContainer ref={tbodyRef}>
       {loading && <StyledText>Loading more...</StyledText>}
-    </div>
+    </StyledContainer>
   );
 };
