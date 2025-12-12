@@ -6501,7 +6501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@genql/cli@npm:^3.0.3":
+"@genql/cli@npm:3.0.5":
   version: 3.0.5
   resolution: "@genql/cli@npm:3.0.5"
   dependencies:
@@ -6522,6 +6522,30 @@ __metadata:
   bin:
     genql: dist/cli.js
   checksum: 10c0/646d4da8986741a8f1b610bd8cfb5bc26cd9a856de671461e4ca87fb05443f37dd0edfb3b30ceaa34cd049077873afa07febfd4714dd2e0681fb07484e19a080
+  languageName: node
+  linkType: hard
+
+"@genql/cli@patch:@genql/cli@npm%3A3.0.5#~/.yarn/patches/@genql-cli-npm-3.0.5-6ca1fa6f53.patch":
+  version: 3.0.5
+  resolution: "@genql/cli@patch:@genql/cli@npm%3A3.0.5#~/.yarn/patches/@genql-cli-npm-3.0.5-6ca1fa6f53.patch::version=3.0.5&hash=00a9c6"
+  dependencies:
+    "@graphql-tools/graphql-file-loader": "npm:^7.5.11"
+    "@graphql-tools/load": "npm:^7.8.6"
+    fs-extra: "npm:^10.1.0"
+    graphql: "npm:^16.6.0"
+    kleur: "npm:^4.1.5"
+    listr: "npm:^0.14.3"
+    lodash: "npm:^4.17.21"
+    mkdirp: "npm:^0.5.1"
+    native-fetch: "npm:^4.0.2"
+    prettier: "npm:^2.8.0"
+    qs: "npm:^6.11.0"
+    rimraf: "npm:^2.6.3"
+    undici: "npm:^5.18.0"
+    yargs: "npm:^15.3.1"
+  bin:
+    genql: dist/cli.js
+  checksum: 10c0/bfcfba15aa0addf5ed430de491dab65ff35ca3fd11d8c07bee1ef4dc24e3ede89a630abc4f77d96d4298d578ff2c5a53dfdab9ff598f6018f870715956e70054
   languageName: node
   linkType: hard
 
@@ -31153,7 +31177,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "create-twenty-app@workspace:packages/create-twenty-app"
   dependencies:
-    "@genql/cli": "npm:^3.0.3"
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
@@ -56095,7 +56118,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
-    "@genql/cli": "npm:^3.0.3"
+    "@genql/cli": "patch:@genql/cli@npm%3A3.0.5#~/.yarn/patches/@genql-cli-npm-3.0.5-6ca1fa6f53.patch"
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/jest": "npm:^29.5.0"

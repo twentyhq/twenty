@@ -1,0 +1,334 @@
+diff --git a/dist/render/client/renderClient.js b/dist/render/client/renderClient.js
+index ac9532b2f6a4ff2cbb443f1d7cba39eee5d803ec..bee7e4d1e8655e3498851c397a9694801d84a9eb 100644
+--- a/dist/render/client/renderClient.js
++++ b/dist/render/client/renderClient.js
+@@ -19,6 +19,46 @@ function(options${url ? '?' : ''}: ClientOptions): Client {
+   }) as any
+ }`;
+ };
++const renderTwentyClient = () => {
++    return `
++// ----------------------------------------------------
++// ✨ Custom Twenty client (auto-injected)
++// ----------------------------------------------------
++
++const defaultOptions: ClientOptions = {
++  url: \`\${process.env.TWENTY_API_URL}/graphql\`,
++  headers: {
++    'Content-Type': 'application/json',
++    Authorization: \`Bearer \${process.env.TWENTY_API_KEY}\`,
++  },
++}
++
++export default class Twenty {
++  private client: Client;
++
++  constructor(options?: ClientOptions) {
++    const merged: ClientOptions = {
++      ...defaultOptions,
++      ...options,
++      headers: {
++        ...defaultOptions.headers,
++        ...(options?.headers ?? {}),
++      },
++    };
++    
++    this.client = createClient(merged);
++  }
++
++  query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
++    return this.client.query(request);
++  }
++
++  mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
++    return this.client.mutation(request);
++  }  
++}
++`;
++};
+ const renderClientEsm = (schema, ctx) => {
+     var _a;
+     const queryType = schema.getQueryType();
+@@ -43,7 +83,9 @@ ${renderClientTypesImports({ mutationType, queryType, subscriptionType })}
+ 
+   ${renderClientType({ mutationType, queryType, subscriptionType })}
+ 
+-  export const createClient = ${renderClientCode(ctx)}
++  const createClient = ${renderClientCode(ctx)}
++
++  ${renderTwentyClient()}
+ 
+   export const everything = {
+     __scalar: true
+diff --git a/src/render/client/renderClient.ts b/src/render/client/renderClient.ts
+index 6af73b9e99be213ec4a6f669c769c3f2a4601a98..6205ab56dfec1b0d5539d7d4c1be4cd6dcdaf0e4 100644
+--- a/src/render/client/renderClient.ts
++++ b/src/render/client/renderClient.ts
+@@ -1,15 +1,14 @@
+-import { GraphQLEnumType, GraphQLSchema, isEnumType } from 'graphql'
++import {  GraphQLSchema } from 'graphql'
+ import { RenderContext } from '../common/RenderContext'
+ import { RUNTIME_LIB_NAME } from '../../config'
+-import { excludedTypes } from '../common/excludedTypes'
+ 
+-import camelCase from 'lodash/camelCase'
++
+ import { requestTypeName } from '../requestTypes/requestTypeName'
+ 
+ const renderClientCode = (ctx: RenderContext) => {
+-    const url = ctx.config?.endpoint ? `"${ctx.config.endpoint}"` : 'undefined'
+-    const fetchImport = ctx.config?.fetchImport
+-    return `
++  const url = ctx.config?.endpoint ? `"${ctx.config.endpoint}"` : 'undefined'
++  const fetchImport = ctx.config?.fetchImport
++  return `
+ function(options${url ? '?' : ''}: ClientOptions): Client {
+   return createClientOriginal({
+       url: ${url},
+@@ -22,12 +21,53 @@ function(options${url ? '?' : ''}: ClientOptions): Client {
+ }`
+ }
+ 
++const renderTwentyClient = () => {
++  return `
++// ----------------------------------------------------
++// ✨ Custom Twenty client (auto-injected)
++// ----------------------------------------------------
++
++const defaultOptions: ClientOptions = {
++  url: \`\${process.env.TWENTY_API_URL}/graphql\`,
++  headers: {
++    'Content-Type': 'application/json',
++    Authorization: \`Bearer \${process.env.TWENTY_API_KEY}\`,
++  },
++}
++
++export default class Twenty {
++  private client: Client;
++
++  constructor(options?: ClientOptions) {
++    const merged: ClientOptions = {
++      ...defaultOptions,
++      ...options,
++      headers: {
++        ...defaultOptions.headers,
++        ...(options?.headers ?? {}),
++      },
++    };
++    
++    this.client = createClient(merged);
++  }
++
++  query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
++    return this.client.query(request);
++  }
++
++  mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
++    return this.client.mutation(request);
++  }  
++}
++`
++}
++
+ export const renderClientEsm = (schema: GraphQLSchema, ctx: RenderContext) => {
+-    const queryType = schema.getQueryType()
+-    const mutationType = schema.getMutationType()
+-    const subscriptionType = schema.getSubscriptionType()
+-    const fetchImport = ctx.config?.fetchImport || ''
+-    ctx.addCodeBlock(`
++  const queryType = schema.getQueryType()
++  const mutationType = schema.getMutationType()
++  const subscriptionType = schema.getSubscriptionType()
++  const fetchImport = ctx.config?.fetchImport || ''
++  ctx.addCodeBlock(`
+ ${fetchImport}
+ ${renderClientTypesImports({ mutationType, queryType, subscriptionType })}
+   import { 
+@@ -45,114 +85,116 @@ ${renderClientTypesImports({ mutationType, queryType, subscriptionType })}
+ 
+   ${renderClientType({ mutationType, queryType, subscriptionType })}
+ 
+-  export const createClient = ${renderClientCode(ctx)}
++  const createClient = ${renderClientCode(ctx)}
++
++  ${renderTwentyClient()}
+ 
+   export const everything = {
+     __scalar: true
+   }
+   `)
+ 
+-    if (queryType) {
+-        ctx.addCodeBlock(`
++  if (queryType) {
++    ctx.addCodeBlock(`
+         export type QueryResult<fields extends ${requestTypeName(
+-            queryType,
+-        )}> = FieldsSelection<${queryType.name}, fields>
++      queryType,
++    )}> = FieldsSelection<${queryType.name}, fields>
+         export const generateQueryOp: (fields: ${requestTypeName(
+-            queryType,
+-        )} & { __name?: string }) => GraphqlOperation = function(fields) {
++      queryType,
++    )} & { __name?: string }) => GraphqlOperation = function(fields) {
+         return generateGraphqlOperation('query', typeMap.Query!, fields as any)
+       }
+     `)
+-    }
+-    if (mutationType) {
+-        ctx.addCodeBlock(`
++  }
++  if (mutationType) {
++    ctx.addCodeBlock(`
+         export type MutationResult<fields extends ${requestTypeName(
+-            mutationType,
+-        )}> = FieldsSelection<${mutationType.name}, fields>
++      mutationType,
++    )}> = FieldsSelection<${mutationType.name}, fields>
+         export const generateMutationOp: (fields: ${requestTypeName(
+-            mutationType,
+-        )} & { __name?: string }) => GraphqlOperation = function(fields) {
++      mutationType,
++    )} & { __name?: string }) => GraphqlOperation = function(fields) {
+         return generateGraphqlOperation('mutation', typeMap.Mutation!, fields as any)
+       }
+     `)
+-    }
+-    if (subscriptionType) {
+-        ctx.addCodeBlock(`
++  }
++  if (subscriptionType) {
++    ctx.addCodeBlock(`
+         export type SubscriptionResult<fields extends ${requestTypeName(
+-            subscriptionType,
+-        )}> = FieldsSelection<${subscriptionType.name}, fields>
++      subscriptionType,
++    )}> = FieldsSelection<${subscriptionType.name}, fields>
+         export const generateSubscriptionOp: (fields: ${requestTypeName(
+-            subscriptionType,
+-        )} & { __name?: string }) => GraphqlOperation = function(fields) {
++      subscriptionType,
++    )} & { __name?: string }) => GraphqlOperation = function(fields) {
+         return generateGraphqlOperation('subscription', typeMap.Subscription!, fields as any)
+       }
+     `)
+-    }
++  }
+ }
+ 
+ function renderClientTypesImports({
+-    queryType,
+-    mutationType,
+-    subscriptionType,
+-}) {
+-    const imports: string[] = []
+-    if (queryType) {
+-        imports.push(
+-            requestTypeName(queryType),
+-
+-            queryType.name,
+-        )
+-    }
+-
+-    if (mutationType) {
+-        imports.push(
+-            requestTypeName(mutationType),
+-
+-            mutationType.name,
+-        )
+-    }
+-    if (subscriptionType) {
+-        imports.push(
+-            requestTypeName(subscriptionType),
+-
+-            subscriptionType.name,
+-        )
+-    }
+-    if (imports.length > 0) {
+-        return `import type {${imports.join(',')}} from './schema'`
+-    }
+-    return ''
++                                    queryType,
++                                    mutationType,
++                                    subscriptionType,
++                                  }) {
++  const imports: string[] = []
++  if (queryType) {
++    imports.push(
++      requestTypeName(queryType),
++
++      queryType.name,
++    )
++  }
++
++  if (mutationType) {
++    imports.push(
++      requestTypeName(mutationType),
++
++      mutationType.name,
++    )
++  }
++  if (subscriptionType) {
++    imports.push(
++      requestTypeName(subscriptionType),
++
++      subscriptionType.name,
++    )
++  }
++  if (imports.length > 0) {
++    return `import type {${imports.join(',')}} from './schema'`
++  }
++  return ''
+ }
+ 
+ function renderClientType({ queryType, mutationType, subscriptionType }) {
+-    let interfaceContent = ''
++  let interfaceContent = ''
+ 
+-    if (queryType) {
+-        interfaceContent += `
++  if (queryType) {
++    interfaceContent += `
+       query<R extends ${requestTypeName(queryType)}>(
+           request: R & { __name?: string },
+       ): Promise<FieldsSelection<${queryType.name}, R>>
+       `
+-    }
++  }
+ 
+-    if (mutationType) {
+-        interfaceContent += `
++  if (mutationType) {
++    interfaceContent += `
+       mutation<R extends ${requestTypeName(mutationType)}>(
+           request: R & { __name?: string },
+       ): Promise<FieldsSelection<${mutationType.name}, R>>
+       `
+-    }
+-
+-    // TODO add subscription client again
+-    // if (subscriptionType) {
+-    //     interfaceContent += `
+-    //   subscription<R extends ${requestTypeName(subscriptionType)}>(
+-    //       request: R & { __name?: string },
+-    //   ): Observable<FieldsSelection<${subscriptionType.name}, R>>
+-    //   `
+-    // }
+-
+-    return `
++  }
++
++  // TODO add subscription client again
++  // if (subscriptionType) {
++  //     interfaceContent += `
++  //   subscription<R extends ${requestTypeName(subscriptionType)}>(
++  //       request: R & { __name?: string },
++  //   ): Observable<FieldsSelection<${subscriptionType.name}, R>>
++  //   `
++  // }
++
++  return `
+   export interface Client {
+       ${interfaceContent}
+   }
