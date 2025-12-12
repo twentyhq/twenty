@@ -36,7 +36,7 @@ declare module 'twenty-sdk' {
     description?: string;
     icon?: string;
     applicationVariables?: Record<string, ApplicationVariable>;
-    applicationRole?: Record<string, any>;
+    role?: Record<string, any>;
   };
 
   type RouteTrigger = {
@@ -291,7 +291,7 @@ const applicationMockConfig: ApplicationConfig = {
       isSecret: false,
     },
   },
-  applicationRole: {
+  role: {
     universalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     label: 'role-label',
     description: 'role-description',
