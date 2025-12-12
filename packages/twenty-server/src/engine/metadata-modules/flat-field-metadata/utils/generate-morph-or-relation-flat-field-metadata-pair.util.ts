@@ -130,6 +130,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
+    isSystem: createFieldInput.isSystem ?? false,
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({

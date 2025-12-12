@@ -4,7 +4,7 @@ import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/work
 
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -16,5 +16,5 @@ export type CommonExtendedQueryRunnerContext = Omit<
   rolePermissionConfig: RolePermissionConfig;
   repository: WorkspaceRepository<ObjectLiteral>;
   commonQueryParser: GraphqlQueryParser;
-  workspaceDataSource: WorkspaceDataSource;
+  workspaceDataSource: GlobalWorkspaceDataSource;
 };

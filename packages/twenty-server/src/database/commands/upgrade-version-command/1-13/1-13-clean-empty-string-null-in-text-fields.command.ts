@@ -6,14 +6,13 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
-
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -114,7 +113,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
-    dataSource: WorkspaceDataSourceInterface,
+    dataSource: GlobalWorkspaceDataSource,
     isDryRun: boolean,
   ): Promise<void> {
     const textFields = objectMetadataItem.fields.filter(
@@ -155,7 +154,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
-    dataSource: WorkspaceDataSourceInterface,
+    dataSource: GlobalWorkspaceDataSource,
     isDryRun: boolean,
   ): Promise<void> {
     const nameField = objectMetadataItem.fields.find(

@@ -198,7 +198,7 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getDataSourceForWorkspace: jest.fn().mockResolvedValue({
+            getGlobalWorkspaceDataSource: jest.fn().mockResolvedValue({
               manager: {},
             }),
             executeInWorkspaceContext: jest
@@ -206,6 +206,11 @@ describe('MessagingMessageListFetchService', () => {
 
               .mockImplementation((_authContext: any, fn: () => any) => fn()),
             getRepository: jest.fn().mockImplementation((workspaceId, name) => {
+              if (name === 'messageChannel') {
+                return {
+                  findOne: jest.fn().mockResolvedValue(undefined),
+                };
+              }
               if (name === 'messageChannelMessageAssociation') {
                 return mockMessageChannelMessageAssociationRepository;
               }

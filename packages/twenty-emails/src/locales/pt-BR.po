@@ -91,7 +91,7 @@ msgstr "Aceitar convite"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
-msgstr ""
+msgstr "Confirme seu novo endereço de e-mail"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -101,7 +101,7 @@ msgstr "Confirme seu endereço de e-mail"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm new email"
-msgstr ""
+msgstr "Confirme o novo email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx

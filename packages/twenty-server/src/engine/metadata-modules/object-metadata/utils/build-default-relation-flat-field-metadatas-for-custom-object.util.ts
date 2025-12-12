@@ -164,6 +164,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               label: capitalize(targetFlatObjectMetadata.labelPlural),
               objectMetadataId: sourceFlatObjectMetadata.id,
               standardId,
+              isSystem: true,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
                 targetObjectMetadataId: targetFlatObjectMetadata.id,

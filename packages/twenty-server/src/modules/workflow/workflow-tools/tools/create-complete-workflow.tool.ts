@@ -177,6 +177,13 @@ This is the most efficient way for AI to create workflows as it handles all the 
           trigger: parameters.trigger,
           steps: parameters.steps,
         },
+        recordReferences: [
+          {
+            objectNameSingular: 'workflow',
+            recordId: workflowId,
+            displayName: parameters.name,
+          },
+        ],
       };
     } catch (error) {
       return {
