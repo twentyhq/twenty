@@ -19,15 +19,15 @@ const StyledColorIcon = styled.div<{
   width: 16px;
 `;
 
-type BlockNoteColorIconProps = {
+type DashboardColorIconProps = {
   textColor?: BlockNoteColor;
   backgroundColor?: BlockNoteColor;
 };
 
-export const BlockNoteColorIcon = ({
+export const DashboardColorIcon = ({
   textColor,
   backgroundColor,
-}: BlockNoteColorIconProps) => {
+}: DashboardColorIconProps) => {
   const theme = useTheme();
 
   const getThemeColorForTextColor = (color: BlockNoteColor): string => {
@@ -41,7 +41,6 @@ export const BlockNoteColorIcon = ({
     if (color === 'default') {
       return 'transparent';
     }
-    // Use lighter variant (level 3) for backgrounds
     const backgroundColorKey = `${color}3` as keyof typeof theme.color;
     const themeBackgroundColor = theme.color[backgroundColorKey];
     return typeof themeBackgroundColor === 'string'

@@ -1,23 +1,25 @@
+import type { PartialBlock } from '@blocknote/core';
+
 export const prepareBodyWithSignedUrls = (
   newStringifiedBody: string,
 ): string => {
   if (!newStringifiedBody) return newStringifiedBody;
 
-  const body = JSON.parse(newStringifiedBody);
+  const body: PartialBlock[] = JSON.parse(newStringifiedBody);
 
-  const bodyWithSignedPayload = body.map((block: any) => {
+  const bodyWithSignedPayload = body.map((block) => {
     if (block.type !== 'image' || !block.props?.url) {
       return block;
     }
 
-    const imageProps = block.props;
-    const imageUrl = new URL(imageProps.url);
+    const imageUrl = block.props.url;
+    const parsedImageUrl = new URL(imageUrl);
 
     return {
       ...block,
       props: {
-        ...imageProps,
-        url: `${imageUrl.toString()}`,
+        ...block.props,
+        url: parsedImageUrl.toString(),
       },
     };
   });

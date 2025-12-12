@@ -7,9 +7,9 @@ import { createPortal } from 'react-dom';
 import { IconGripVertical } from 'twenty-ui/display';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { PortaledDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/PortaledDragHandleMenu';
+import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
 
-type PortaledSideMenuProps = {
+type DashboardEditorSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   boundaryElement?: HTMLElement | null;
 };
@@ -43,10 +43,10 @@ const StyledDivToCreateGap = styled.div`
   width: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const PortaledSideMenu = ({
+export const DashboardEditorSideMenu = ({
   editor,
   boundaryElement,
-}: PortaledSideMenuProps) => {
+}: DashboardEditorSideMenuProps) => {
   const blockNoteEditor = useBlockNoteEditor();
   const theme = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -127,7 +127,7 @@ export const PortaledSideMenu = ({
       )}
 
       {isMenuOpen && (
-        <PortaledDragHandleMenu
+        <DashboardBlockDragHandleMenu
           editor={editor}
           block={state.block}
           anchorElement={dragHandleElement}

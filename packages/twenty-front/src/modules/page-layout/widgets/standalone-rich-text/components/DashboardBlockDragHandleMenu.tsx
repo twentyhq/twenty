@@ -15,13 +15,14 @@ import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { PortaledBlockColorPicker } from '@/page-layout/widgets/standalone-rich-text/components/PortaledBlockColorPicker';
+import { DashboardBlockColorPicker } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockColorPicker';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from 'twenty-shared/utils';
 
-type PortaledDragHandleMenuProps = {
+type DashboardBlockDragHandleMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   block: Block;
   anchorElement: HTMLElement | null;
@@ -35,13 +36,13 @@ const StyledColorMenuItem = styled.div`
   position: relative;
 `;
 
-export const PortaledDragHandleMenu = ({
+export const DashboardBlockDragHandleMenu = ({
   editor,
   block,
   anchorElement,
   boundaryElement,
   onClose,
-}: PortaledDragHandleMenuProps) => {
+}: DashboardBlockDragHandleMenuProps) => {
   const { t } = useLingui();
   const blockNoteEditor = useBlockNoteEditor();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -83,7 +84,7 @@ export const PortaledDragHandleMenu = ({
     editor.insertBlocks([{ type: 'paragraph' }], currentBlock, 'after');
 
     const nextBlock = blockNoteEditor.getTextCursorPosition().nextBlock;
-    if (nextBlock !== undefined) {
+    if (isDefined(nextBlock)) {
       editor.setTextCursorPosition(nextBlock);
     }
 
@@ -110,8 +111,8 @@ export const PortaledDragHandleMenu = ({
   ) => {
     editor.updateBlock(block, {
       props: {
-        ...(textColor !== undefined && { textColor }),
-        ...(backgroundColor !== undefined && { backgroundColor }),
+        ...(isDefined(textColor) && { textColor }),
+        ...(isDefined(backgroundColor) && { backgroundColor }),
       },
     });
     setShowColorPicker(false);
@@ -160,7 +161,7 @@ export const PortaledDragHandleMenu = ({
       )}
 
       {showColorPicker && colorMenuItemElement && (
-        <PortaledBlockColorPicker
+        <DashboardBlockColorPicker
           anchorElement={colorMenuItemElement}
           block={block}
           onClose={handleColorPickerClose}

@@ -7,8 +7,8 @@ import { type ClipboardEvent } from 'react';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
-import { CustomFormattingToolbarController } from '@/page-layout/widgets/standalone-rich-text/components/CustomFormattingToolbarController';
-import { PortaledSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/PortaledSideMenu';
+import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu';
+import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
 import {
   CustomSlashMenu,
   type SuggestionItem,
@@ -24,6 +24,9 @@ interface DashboardsBlockEditorProps {
   boundaryElement?: HTMLElement | null;
 }
 
+// TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
+// (DashboardBlockDragHandleMenu, DashboardEditorSideMenu, DashboardColorSelectionMenu).
+// Test removing each selector and move necessary styles to appropriate components.
 // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
 const StyledEditor = styled.div`
   width: 100%;
@@ -176,8 +179,11 @@ export const DashboardsBlockEditor = ({
         formattingToolbar={false}
         editable={!readonly}
       >
-        <CustomFormattingToolbarController boundaryElement={boundaryElement} />
-        <PortaledSideMenu editor={editor} boundaryElement={boundaryElement} />
+        <DashboardFormattingToolbar boundaryElement={boundaryElement} />
+        <DashboardEditorSideMenu
+          editor={editor}
+          boundaryElement={boundaryElement}
+        />
         <SuggestionMenuController
           triggerCharacter="/"
           getItems={async (query) => {

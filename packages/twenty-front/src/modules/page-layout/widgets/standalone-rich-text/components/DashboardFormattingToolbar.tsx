@@ -17,7 +17,7 @@ import { flip, FloatingPortal, offset, shift } from '@floating-ui/react';
 import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CustomColorStyleButton } from '@/page-layout/widgets/standalone-rich-text/components/CustomColorStyleButton';
+import { DashboardFormattingToolbarColorButton } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton';
 
 const textAlignmentToPlacement = (
   textAlignment: DefaultProps['textAlignment'],
@@ -34,16 +34,16 @@ const textAlignmentToPlacement = (
   }
 };
 
-type CustomFormattingToolbarControllerProps = {
+type DashboardFormattingToolbarProps = {
   boundaryElement?: HTMLElement | null;
 };
 
-// This is a copy of the BlockNote's FormattingToolbarController component with a custom check to prevent toolbar from showing when a block is selected via drag handle (NodeSelection).
-export const CustomFormattingToolbarController = ({
+// This is a copy of the BlockNote's FormattingToolbarController component with customizations.
+export const DashboardFormattingToolbar = ({
   boundaryElement,
-}: CustomFormattingToolbarControllerProps) => {
+}: DashboardFormattingToolbarProps) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
-  const divRef = useRef<HTMLDivElement | null>(null);
+  const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
   const editor = useBlockNoteEditor();
   const theme = useTheme();
   const colorScheme = theme.name === 'light' ? 'light' : 'dark';
@@ -112,7 +112,7 @@ export const CustomFormattingToolbarController = ({
 
   const combinedRef = useMemo(
     () => (node: HTMLDivElement | null) => {
-      divRef.current = node;
+      toolbarContainerRef.current = node;
       if (typeof ref === 'function') {
         ref(node);
       }
@@ -124,7 +124,7 @@ export const CustomFormattingToolbarController = ({
     return null;
   }
 
-  if (!shouldShow && isDefined(divRef.current)) {
+  if (!shouldShow && isDefined(toolbarContainerRef.current)) {
     return (
       <FloatingPortal>
         <div
@@ -133,7 +133,9 @@ export const CustomFormattingToolbarController = ({
           data-mantine-color-scheme={colorScheme}
           ref={combinedRef}
           style={style}
-          dangerouslySetInnerHTML={{ __html: divRef.current.innerHTML }}
+          dangerouslySetInnerHTML={{
+            __html: toolbarContainerRef.current.innerHTML,
+          }}
         />
       </FloatingPortal>
     );
@@ -168,7 +170,7 @@ export const CustomFormattingToolbarController = ({
           <TextAlignButton textAlignment="left" key="textAlignLeftButton" />
           <TextAlignButton textAlignment="center" key="textAlignCenterButton" />
           <TextAlignButton textAlignment="right" key="textAlignRightButton" />
-          <CustomColorStyleButton key="colorStyleButton" />
+          <DashboardFormattingToolbarColorButton key="colorStyleButton" />
           <NestBlockButton key="nestBlockButton" />
           <UnnestBlockButton key="unnestBlockButton" />
           <CreateLinkButton key="createLinkButton" />
