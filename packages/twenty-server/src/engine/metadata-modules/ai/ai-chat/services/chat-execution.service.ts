@@ -34,7 +34,10 @@ import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agen
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import {
+  type AIModelConfig,
+  ModelProvider,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -48,6 +51,7 @@ export type ChatExecutionOptions = {
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   preloadedTools: string[];
+  modelConfig: AIModelConfig;
 };
 
 // Common tools to pre-load for quick access
@@ -108,6 +112,10 @@ export class ChatExecutionService {
 
     const registeredModel =
       this.aiModelRegistryService.getDefaultPerformanceModel();
+
+    const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
+      registeredModel.modelId,
+    );
 
     const activeTools: ToolSet = {
       ...preloadedTools,
@@ -181,6 +189,7 @@ export class ChatExecutionService {
     return {
       stream,
       preloadedTools: preloadedToolNames,
+      modelConfig,
     };
   }
 
