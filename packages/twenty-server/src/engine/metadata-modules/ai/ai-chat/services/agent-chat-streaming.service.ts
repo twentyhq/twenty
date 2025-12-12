@@ -13,6 +13,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -63,12 +64,13 @@ export class AgentChatStreamingService {
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
-          const { stream } = await this.chatExecutionService.streamChat({
-            workspace,
-            userWorkspaceId,
-            messages,
-            browsingContext,
-          });
+          const { stream, modelConfig } =
+            await this.chatExecutionService.streamChat({
+              workspace,
+              userWorkspaceId,
+              messages,
+              browsingContext,
+            });
 
           // Write initial status
           writer.write({
@@ -80,6 +82,14 @@ export class AgentChatStreamingService {
             },
           });
 
+          // Track usage from the stream for persisting to thread
+          let streamUsage = {
+            inputTokens: 0,
+            outputTokens: 0,
+            inputCredits: 0,
+            outputCredits: 0,
+          };
+
           // Merge the AI stream
           writer.merge(
             stream.toUIMessageStream({
@@ -89,6 +99,48 @@ export class AgentChatStreamingService {
                 return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
+              messageMetadata: ({ part }) => {
+                if (part.type === 'finish') {
+                  const inputTokens = part.totalUsage?.inputTokens ?? 0;
+                  const outputTokens = part.totalUsage?.outputTokens ?? 0;
+
+                  const inputCostInCents =
+                    (inputTokens / 1000) *
+                    modelConfig.inputCostPer1kTokensInCents;
+                  const outputCostInCents =
+                    (outputTokens / 1000) *
+                    modelConfig.outputCostPer1kTokensInCents;
+
+                  const inputCredits = Math.round(
+                    convertCentsToBillingCredits(inputCostInCents),
+                  );
+                  const outputCredits = Math.round(
+                    convertCentsToBillingCredits(outputCostInCents),
+                  );
+
+                  streamUsage = {
+                    inputTokens,
+                    outputTokens,
+                    inputCredits,
+                    outputCredits,
+                  };
+
+                  return {
+                    createdAt: new Date().toISOString(),
+                    usage: {
+                      inputTokens,
+                      outputTokens,
+                      inputCredits,
+                      outputCredits,
+                    },
+                    model: {
+                      contextWindowTokens: modelConfig.contextWindowTokens,
+                    },
+                  };
+                }
+
+                return undefined;
+              },
               onFinish: async ({ responseMessage }) => {
                 if (responseMessage.parts.length === 0) {
                   return;
@@ -135,6 +187,19 @@ export class AgentChatStreamingService {
                     threadId: validThreadId,
                     uiMessage: responseMessage,
                     turnId: userMessage.turnId,
+                  });
+
+                  // Update thread usage statistics
+                  await this.threadRepository.update(validThreadId, {
+                    totalInputTokens: () =>
+                      `"totalInputTokens" + ${streamUsage.inputTokens}`,
+                    totalOutputTokens: () =>
+                      `"totalOutputTokens" + ${streamUsage.outputTokens}`,
+                    totalInputCredits: () =>
+                      `"totalInputCredits" + ${streamUsage.inputCredits}`,
+                    totalOutputCredits: () =>
+                      `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+                    contextWindowTokens: modelConfig.contextWindowTokens,
                   });
                 } catch (saveError) {
                   this.logger.error(

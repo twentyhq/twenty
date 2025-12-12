@@ -11,6 +11,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
@@ -138,6 +139,7 @@ export const AIChatTab = () => {
                 onClick={() => createChatThread()}
               />
               <AgentChatFileUploadButton />
+              <AIChatContextUsageButton />
               <SendMessageButton />
             </StyledButtonsContainer>
           </StyledInputArea>
