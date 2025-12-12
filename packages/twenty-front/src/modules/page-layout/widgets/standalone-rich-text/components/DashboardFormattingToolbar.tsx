@@ -18,6 +18,14 @@ import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DashboardFormattingToolbarColorButton } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton';
+import styled from '@emotion/styled';
+
+const StyledToolbarContainer = styled.div`
+  & .bn-formatting-toolbar .mantine-Button-root {
+    height: 24px;
+    min-height: 24px;
+  }
+`;
 
 const textAlignmentToPlacement = (
   textAlignment: DefaultProps['textAlignment'],
@@ -120,14 +128,14 @@ export const DashboardFormattingToolbar = ({
     [ref],
   );
 
-  if (!isMounted || !state) {
+  if (!isMounted || !isDefined(state)) {
     return null;
   }
 
   if (!shouldShow && isDefined(toolbarContainerRef.current)) {
     return (
       <FloatingPortal>
-        <div
+        <StyledToolbarContainer
           className="bn-container bn-mantine bn-ui-container"
           data-color-scheme={colorScheme}
           data-mantine-color-scheme={colorScheme}
@@ -143,7 +151,7 @@ export const DashboardFormattingToolbar = ({
 
   return (
     <FloatingPortal>
-      <div
+      <StyledToolbarContainer
         className="bn-container bn-mantine bn-ui-container"
         data-color-scheme={colorScheme}
         data-mantine-color-scheme={colorScheme}
@@ -175,7 +183,7 @@ export const DashboardFormattingToolbar = ({
           <UnnestBlockButton key="unnestBlockButton" />
           <CreateLinkButton key="createLinkButton" />
         </FormattingToolbar>
-      </div>
+      </StyledToolbarContainer>
     </FloatingPortal>
   );
 };

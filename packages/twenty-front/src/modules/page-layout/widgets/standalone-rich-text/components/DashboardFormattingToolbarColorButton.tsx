@@ -62,7 +62,7 @@ export const DashboardFormattingToolbarColorButton = () => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
-    middleware: [offset(12), flip(), shift({ padding: 8 })],
+    middleware: [offset(8), flip(), shift({ padding: 8 })],
   });
 
   useListenClickOutside({
