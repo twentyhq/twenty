@@ -8,10 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Sources } from 'twenty-shared/types';
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_API_KEY_NAME,
-} from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -139,12 +135,12 @@ export class ServerlessFunctionService {
     const envVariables = {
       ...(isDefined(baseUrl)
         ? {
-            [DEFAULT_API_URL_NAME]: baseUrl,
+            TWENTY_API_URL: baseUrl,
           }
         : {}),
       ...(isDefined(applicationAccessToken)
         ? {
-            [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
+            TWENTY_API_KEY: applicationAccessToken.token,
           }
         : {}),
       ...buildEnvVar(functionToExecute),
