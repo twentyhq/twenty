@@ -1,6 +1,6 @@
-import { isObjectRecordConnection } from '../isObjectRecordConnection';
+import { isObjectRecordConnectionWithRefs } from '../isObjectRecordConnectionWithRefs';
 
-describe('isObjectRecordConnection', () => {
+describe('isObjectRecordConnectionWithRefs', () => {
   it('should return true for valid connection with edges', () => {
     const storeValue = {
       __typename: 'PersonConnection',
@@ -8,19 +8,19 @@ describe('isObjectRecordConnection', () => {
         {
           __typename: 'PersonEdge',
           node: {
-            id: '123',
+            __ref: 'Person:123',
           },
         },
         {
           __typename: 'PersonEdge',
           node: {
-            id: '456',
+            __ref: 'Person:456',
           },
         },
       ],
     };
 
-    const result = isObjectRecordConnection('person', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
     expect(result).toBe(true);
   });
@@ -31,19 +31,19 @@ describe('isObjectRecordConnection', () => {
       edges: [],
     };
 
-    const result = isObjectRecordConnection('company', storeValue);
+    const result = isObjectRecordConnectionWithRefs('company', storeValue);
 
     expect(result).toBe(true);
   });
 
-  it('should return true for valid connection without edges (optional)', () => {
+  it('should return false for connection without edges (required)', () => {
     const storeValue = {
       __typename: 'PersonConnection',
     };
 
-    const result = isObjectRecordConnection('person', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('should return false for incorrect __typename', () => {
@@ -52,7 +52,7 @@ describe('isObjectRecordConnection', () => {
       edges: [],
     };
 
-    const result = isObjectRecordConnection('person', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
     expect(result).toBe(false);
   });
@@ -64,50 +64,49 @@ describe('isObjectRecordConnection', () => {
         {
           __typename: 'WrongEdge',
           node: {
-            id: '123',
+            __ref: 'Person:123',
           },
         },
       ],
     };
 
-    const result = isObjectRecordConnection('person', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
     expect(result).toBe(false);
   });
 
-  it('should return true regardless of node content', () => {
+  it('should return false for incorrect __ref prefix', () => {
     const storeValue = {
       __typename: 'PersonConnection',
       edges: [
         {
           __typename: 'PersonEdge',
           node: {
-            id: '123',
-            name: 'John Doe',
+            __ref: 'Company:123',
           },
         },
       ],
     };
 
-    const result = isObjectRecordConnection('person', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('should return false for null value', () => {
-    const result = isObjectRecordConnection('person', null);
+    const result = isObjectRecordConnectionWithRefs('person', null);
 
     expect(result).toBe(false);
   });
 
   it('should return false for undefined value', () => {
-    const result = isObjectRecordConnection('person', undefined);
+    const result = isObjectRecordConnectionWithRefs('person', undefined);
 
     expect(result).toBe(false);
   });
 
   it('should return false for primitive value', () => {
-    const result = isObjectRecordConnection('person', 'not an object');
+    const result = isObjectRecordConnectionWithRefs('person', 'not an object');
 
     expect(result).toBe(false);
   });
@@ -119,14 +118,35 @@ describe('isObjectRecordConnection', () => {
         {
           __typename: 'CalendarEventEdge',
           node: {
+            __ref: 'CalendarEvent:123',
+          },
+        },
+      ],
+    };
+
+    const result = isObjectRecordConnectionWithRefs(
+      'calendarEvent',
+      storeValue,
+    );
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when node is missing __ref', () => {
+    const storeValue = {
+      __typename: 'PersonConnection',
+      edges: [
+        {
+          __typename: 'PersonEdge',
+          node: {
             id: '123',
           },
         },
       ],
     };
 
-    const result = isObjectRecordConnection('calendarEvent', storeValue);
+    const result = isObjectRecordConnectionWithRefs('person', storeValue);
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 });
