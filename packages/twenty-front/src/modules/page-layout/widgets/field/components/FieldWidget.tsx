@@ -9,14 +9,15 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useTemporaryFieldConfiguration';
-import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -27,10 +28,8 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledRelationChipsContainer = styled.div`
@@ -44,10 +43,10 @@ type FieldWidgetProps = {
 };
 
 export const FieldWidget = ({ widget }: FieldWidgetProps) => {
+  assertFieldWidgetOrThrow(widget);
+
   const targetRecord = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
-
-  const configuration = widget.configuration as FieldConfiguration | null;
 
   const { isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,
@@ -57,12 +56,10 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  console.log(objectMetadataItem.fields);
+  const fieldMetadataId = widget.configuration.fieldMetadataId;
 
-  // Resolve field ID from name or ID
-  const resolvedFieldMetadataId = useResolveFieldMetadataIdFromNameOrId(
-    configuration?.fieldMetadataId ?? '',
-  );
+  const resolvedFieldMetadataId =
+    useResolveFieldMetadataIdFromNameOrId(fieldMetadataId);
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     resolvedFieldMetadataId ?? '',
@@ -75,7 +72,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     }),
   );
 
-  // Show loading state during prefetch
   if (isPrefetchLoading) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
@@ -86,8 +82,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     );
   }
 
-  // Show empty state if no configuration or field not found
-  if (!configuration || !fieldMetadataItem || !fieldMetadataItem.isActive) {
+  if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -118,14 +113,12 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     labelWidth: 90,
   });
 
-  // Render relation fields with chips
   if (isFieldRelation(fieldDefinition)) {
     const relationValue = record as any;
     const isOneToMany = fieldDefinition.metadata.relationType === 'ONE_TO_MANY';
     const relationObjectNameSingular =
       fieldDefinition.metadata.relationObjectMetadataNameSingular;
 
-    // Handle ONE_TO_MANY (array of records)
     if (isOneToMany && Array.isArray(relationValue)) {
       return (
         <RightDrawerProvider value={{ isInRightDrawer }}>
@@ -144,8 +137,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       );
     }
 
-    // Handle MANY_TO_ONE (single record or null)
-    if (!isOneToMany && relationValue !== null && relationValue !== undefined) {
+    if (!isOneToMany && isDefined(relationValue)) {
       return (
         <RightDrawerProvider value={{ isInRightDrawer }}>
           <StyledContainer>
@@ -158,7 +150,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       );
     }
 
-    // Empty relation
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -178,7 +169,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     );
   }
 
-  // Render standalone fields with FieldDisplay (always readonly)
   return (
     <RightDrawerProvider value={{ isInRightDrawer }}>
       <StyledContainer>

@@ -1,6 +1,6 @@
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -39,6 +39,52 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
             columnSpan: 12,
           },
           configuration: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        },
+        {
+          __typename: 'PageLayoutWidget',
+          id: 'company-widget-afdgadfg',
+          pageLayoutTabId: 'company-tab-fields',
+          title: 'afdgadfg',
+          type: WidgetType.FIELD,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 12,
+          },
+          configuration: {
+            __typename: 'FieldConfiguration',
+            fieldMetadataId: 'afdgadfg',
+            layout: 'FIELD',
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        },
+        {
+          __typename: 'PageLayoutWidget',
+          id: 'company-widget-morph',
+          pageLayoutTabId: 'company-tab-fields',
+          title: 'morph',
+          type: WidgetType.FIELD,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 12,
+          },
+          configuration: {
+            __typename: 'FieldConfiguration',
+            fieldMetadataId: 'morph',
+            layout: 'FIELD',
+          },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
