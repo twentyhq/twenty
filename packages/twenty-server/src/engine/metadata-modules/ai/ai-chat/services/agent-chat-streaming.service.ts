@@ -102,9 +102,9 @@ export class AgentChatStreamingService {
                     model: {
                       modelId: modelConfig.modelId,
                       contextWindowTokens: modelConfig.contextWindowTokens,
-                      inputCostPer1kTokens:
+                      inputCostPer1kTokensInCents:
                         modelConfig.inputCostPer1kTokensInCents,
-                      outputCostPer1kTokens:
+                      outputCostPer1kTokensInCents:
                         modelConfig.outputCostPer1kTokensInCents,
                     },
                   };

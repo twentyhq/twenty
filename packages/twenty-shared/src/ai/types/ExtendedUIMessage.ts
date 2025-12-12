@@ -10,8 +10,8 @@ export type AIChatUsageMetadata = {
 export type AIChatModelMetadata = {
   modelId: string;
   contextWindowTokens: number;
-  inputCostPer1kTokens: number;
-  outputCostPer1kTokens: number;
+  inputCostPer1kTokensInCents: number;
+  outputCostPer1kTokensInCents: number;
 };
 
 type Metadata = {

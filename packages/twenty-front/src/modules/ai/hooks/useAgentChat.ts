@@ -110,8 +110,8 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       type ModelMetadata = {
         modelId: string;
         contextWindowTokens: number;
-        inputCostPer1kTokens: number;
-        outputCostPer1kTokens: number;
+        inputCostPer1kTokensInCents: number;
+        outputCostPer1kTokensInCents: number;
       };
       const metadata = message.metadata as
         | { usage?: UsageMetadata; model?: ModelMetadata }
@@ -125,8 +125,8 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
           totalTokens: (prev?.totalTokens ?? 0) + usage.totalTokens,
           contextWindowTokens: model.contextWindowTokens,
-          inputCostPer1kTokens: model.inputCostPer1kTokens,
-          outputCostPer1kTokens: model.outputCostPer1kTokens,
+          inputCostPer1kTokensInCents: model.inputCostPer1kTokensInCents,
+          outputCostPer1kTokensInCents: model.outputCostPer1kTokensInCents,
         }));
       }
     },

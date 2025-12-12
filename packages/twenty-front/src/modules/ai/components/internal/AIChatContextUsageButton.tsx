@@ -6,6 +6,7 @@ import { ProgressBar } from 'twenty-ui/feedback';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { convertCentsToBillingCredits } from '@/ai/utils/convertCentsToBillingCredits';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -102,19 +103,17 @@ const formatTokenCount = (count: number): string => {
   return count.toString();
 };
 
-// 1 credit = $0.000001, so cents * 10_000 = credits
-const centsToCredits = (cents: number): number =>
-  Math.round(cents * 10_000);
-
-const getCredits = (tokens: number, costPer1kTokensInCents: number): number =>
-  centsToCredits((tokens / 1000) * costPer1kTokensInCents);
+const getCredits = (tokens: number, costPer1kTokensInCents: number): number => {
+  const costInCents = (tokens / 1000) * costPer1kTokensInCents;
+  return convertCentsToBillingCredits(costInCents);
+};
 
 export const AIChatContextUsageButton = () => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const usage = useRecoilValue(agentChatUsageState);
+  const agentChatUsage = useRecoilValue(agentChatUsageState);
 
-  if (!usage) {
+  if (!agentChatUsage) {
     return (
       <StyledContainer>
         <StyledTrigger hasUsage={false}>
@@ -126,15 +125,18 @@ export const AIChatContextUsageButton = () => {
   }
 
   const percentage = Math.min(
-    (usage.totalTokens / usage.contextWindowTokens) * 100,
+    (agentChatUsage.totalTokens / agentChatUsage.contextWindowTokens) * 100,
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
 
-  const inputCredits = getCredits(usage.inputTokens, usage.inputCostPer1kTokens);
+  const inputCredits = getCredits(
+    agentChatUsage.inputTokens,
+    agentChatUsage.inputCostPer1kTokensInCents,
+  );
   const outputCredits = getCredits(
-    usage.outputTokens,
-    usage.outputCostPer1kTokens,
+    agentChatUsage.outputTokens,
+    agentChatUsage.outputCostPer1kTokensInCents,
   );
   const totalCredits = inputCredits + outputCredits;
 
@@ -154,8 +156,8 @@ export const AIChatContextUsageButton = () => {
             <StyledRow>
               <StyledPercentage>{formattedPercentage}%</StyledPercentage>
               <StyledValue>
-                {formatTokenCount(usage.totalTokens)} /{' '}
-                {formatTokenCount(usage.contextWindowTokens)}
+                {formatTokenCount(agentChatUsage.totalTokens)} /{' '}
+                {formatTokenCount(agentChatUsage.contextWindowTokens)}
               </StyledValue>
             </StyledRow>
             <ProgressBar
@@ -176,14 +178,14 @@ export const AIChatContextUsageButton = () => {
             <StyledRow>
               <StyledLabel>Input</StyledLabel>
               <StyledValue>
-                {formatTokenCount(usage.inputTokens)} •{' '}
+                {formatTokenCount(agentChatUsage.inputTokens)} •{' '}
                 {inputCredits.toLocaleString()} credits
               </StyledValue>
             </StyledRow>
             <StyledRow>
               <StyledLabel>Output</StyledLabel>
               <StyledValue>
-                {formatTokenCount(usage.outputTokens)} •{' '}
+                {formatTokenCount(agentChatUsage.outputTokens)} •{' '}
                 {outputCredits.toLocaleString()} credits
               </StyledValue>
             </StyledRow>
