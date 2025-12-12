@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinkDisplayProps = {
   value: { url: string; label?: string | null };
@@ -22,13 +23,7 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     ? value.label
     : url?.replace(/^http[s]?:\/\/(?:[w]+\.)?/gm, '').replace(/^[w]+\./gm, '');
 
-  const type = displayedValue.startsWith('linkedin.')
-    ? LinkType.LinkedIn
-    : displayedValue.startsWith('twitter.')
-      ? LinkType.Twitter
-      : displayedValue.startsWith('facebook.')
-        ? LinkType.Facebook
-        : LinkType.Url;
+  const type = checkUrlType(absoluteUrl);
 
   if (
     type === LinkType.LinkedIn ||
