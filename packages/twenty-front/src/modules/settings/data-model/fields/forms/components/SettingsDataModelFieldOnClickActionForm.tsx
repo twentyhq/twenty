@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { getSettingsDataModelFieldOnClickActionDescription } from '@/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util';
-import { type SettingsDataModelFieldClickBehaviorFormValues } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
+import { type SettingsDataModelFieldOnClickActionFormValues } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -29,7 +29,7 @@ export const SettingsDataModelFieldOnClickActionForm = ({
 }: SettingsDataModelFieldOnClickActionFormProps) => {
   const { t } = useLingui();
   const { control } =
-    useFormContext<SettingsDataModelFieldClickBehaviorFormValues>();
+    useFormContext<SettingsDataModelFieldOnClickActionFormValues>();
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     existingFieldMetadataId,

@@ -11,7 +11,6 @@ type EmailsDisplayProps = {
   value?: FieldEmailsValue;
   isFocused?: boolean;
   onEmailClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
-  clickAction?: FieldClickAction;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
