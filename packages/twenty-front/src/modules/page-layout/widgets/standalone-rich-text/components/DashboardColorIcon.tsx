@@ -41,11 +41,23 @@ export const DashboardColorIcon = ({
     if (color === 'default') {
       return 'transparent';
     }
-    const backgroundColorKey = `${color}3` as keyof typeof theme.color;
-    const themeBackgroundColor = theme.color[backgroundColorKey];
-    return typeof themeBackgroundColor === 'string'
-      ? themeBackgroundColor
-      : 'transparent';
+
+    const backgroundColorMap: Record<
+      Exclude<BlockNoteColor, 'default'>,
+      string
+    > = {
+      gray: theme.color.gray3,
+      brown: theme.color.brown3,
+      red: theme.color.red3,
+      orange: theme.color.orange3,
+      yellow: theme.color.yellow3,
+      green: theme.color.green3,
+      blue: theme.color.blue3,
+      purple: theme.color.purple3,
+      pink: theme.color.pink3,
+    };
+
+    return backgroundColorMap[color];
   };
 
   return (
