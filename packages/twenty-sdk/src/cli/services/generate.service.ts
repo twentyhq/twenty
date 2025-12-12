@@ -4,7 +4,10 @@ import { join, resolve } from 'path';
 import { ApiService } from '@/cli/services/api.service';
 import { ConfigService } from '@/cli/services/config.service';
 import * as fs from 'fs-extra';
-import { DEFAULT_APPLICATION_ACCESS_TOKEN_NAME } from 'twenty-shared/application';
+import {
+  DEFAULT_API_URL_NAME,
+  DEFAULT_API_KEY_NAME,
+} from 'twenty-shared/application';
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
@@ -74,9 +77,10 @@ export class GenerateService {
 // ----------------------------------------------------
 
 const defaultOptions: ClientOptions = {
+  url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: \`Bearer \${process.env.${DEFAULT_APPLICATION_ACCESS_TOKEN_NAME}}\`,
+    Authorization: \`Bearer \${process.env.${DEFAULT_API_KEY_NAME}}\`,
   },
 }
 

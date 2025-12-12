@@ -6,9 +6,10 @@ const config: ApplicationConfig = {
   description: 'A simple hello world app',
   icon: 'IconWorld',
   applicationVariables: {
-    TWENTY_API_URL: {
-      universalIdentifier: 'ef8ab489-e68a-4841-b402-261f440e6185',
-      description: 'Twenty API Url',
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Alex Karp',
       isSecret: false,
     },
   },
