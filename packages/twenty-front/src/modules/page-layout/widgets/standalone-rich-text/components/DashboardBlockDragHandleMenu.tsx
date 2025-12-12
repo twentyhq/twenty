@@ -15,6 +15,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { DashboardBlockColorPicker } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockColorPicker';
+import { DRAG_HANDLE_MENU_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/DragHandleMenuFloatingConfig';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -55,7 +56,7 @@ export const DashboardBlockDragHandleMenu = ({
       reference: anchorElement,
     },
     middleware: [
-      offset(4),
+      offset(DRAG_HANDLE_MENU_FLOATING_CONFIG.offsetFromAnchor),
       flip({
         boundary: boundaryElement ?? undefined,
       }),

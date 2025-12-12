@@ -15,6 +15,7 @@ import { createPortal } from 'react-dom';
 
 import { DashboardColorIcon } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorIcon';
 import { DashboardColorSelectionMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu';
+import { COLOR_DROPDOWN_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/ColorDropdownFloatingConfig';
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import { extractColorFromProps } from '@/page-layout/widgets/standalone-rich-text/utils/extractColorFromProps';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -62,7 +63,11 @@ export const DashboardFormattingToolbarColorButton = () => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
+    middleware: [
+      offset(COLOR_DROPDOWN_FLOATING_CONFIG.offsetFromButton),
+      flip(),
+      shift({ padding: COLOR_DROPDOWN_FLOATING_CONFIG.boundaryPadding }),
+    ],
   });
 
   useListenClickOutside({

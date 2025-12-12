@@ -10,6 +10,7 @@ import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { DashboardColorSelectionMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu';
+import { COLOR_PICKER_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/ColorPickerFloatingConfig';
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import { extractColorFromProps } from '@/page-layout/widgets/standalone-rich-text/utils/extractColorFromProps';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -48,10 +49,10 @@ export const DashboardBlockColorPicker = ({
       reference: anchorElement,
     },
     middleware: [
-      offset(4),
+      offset(COLOR_PICKER_FLOATING_CONFIG.offsetFromMenuItem),
       flip(),
       shift({
-        padding: 8,
+        padding: COLOR_PICKER_FLOATING_CONFIG.boundaryPadding,
       }),
     ],
   });

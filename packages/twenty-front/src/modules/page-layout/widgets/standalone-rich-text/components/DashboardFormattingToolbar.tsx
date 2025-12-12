@@ -18,6 +18,7 @@ import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DashboardFormattingToolbarColorButton } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton';
+import { FORMATTING_TOOLBAR_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/FormattingToolbarFloatingConfig';
 import styled from '@emotion/styled';
 
 const StyledToolbarContainer = styled.div`
@@ -100,10 +101,10 @@ export const DashboardFormattingToolbar = ({
     {
       placement,
       middleware: [
-        offset(10),
+        offset(FORMATTING_TOOLBAR_FLOATING_CONFIG.offsetFromSelection),
         shift({
           boundary: boundaryElement ?? undefined,
-          padding: 8,
+          padding: FORMATTING_TOOLBAR_FLOATING_CONFIG.boundaryPadding,
         }),
         flip({
           boundary: boundaryElement ?? undefined,
