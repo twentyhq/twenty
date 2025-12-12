@@ -4,13 +4,12 @@ import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agen
 import { type ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.contant';
 import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardAgentContext = {
   agentName: AllStandardAgentName;
-  universalIdentifier: string;
-  standardId: string;
   name: string;
   label: string;
   icon: string | null;
@@ -29,8 +28,7 @@ export type CreateStandardAgentArgs = StandardBuilderArgs<'agent'> & {
 
 export const createStandardAgentFlatMetadata = ({
   context: {
-    universalIdentifier,
-    standardId,
+    agentName,
     name,
     label,
     icon,
@@ -45,23 +43,27 @@ export const createStandardAgentFlatMetadata = ({
   workspaceId,
   twentyStandardApplicationId,
   now,
-}: CreateStandardAgentArgs): FlatAgent => ({
-  id: v4(),
-  universalIdentifier,
-  standardId,
-  name,
-  label,
-  icon,
-  description,
-  prompt,
-  modelId,
-  responseFormat,
-  isCustom,
-  modelConfiguration,
-  evaluationInputs,
-  workspaceId,
-  applicationId: twentyStandardApplicationId,
-  createdAt: now,
-  updatedAt: now,
-  deletedAt: null,
-});
+}: CreateStandardAgentArgs): FlatAgent => {
+  const universalIdentifier = STANDARD_AGENT[agentName].universalIdentifier;
+
+  return {
+    id: v4(),
+    universalIdentifier,
+    standardId: universalIdentifier,
+    name,
+    label,
+    icon,
+    description,
+    prompt,
+    modelId,
+    responseFormat,
+    isCustom,
+    modelConfiguration,
+    evaluationInputs,
+    workspaceId,
+    applicationId: twentyStandardApplicationId,
+    createdAt: now,
+    updatedAt: now,
+    deletedAt: null,
+  };
+};

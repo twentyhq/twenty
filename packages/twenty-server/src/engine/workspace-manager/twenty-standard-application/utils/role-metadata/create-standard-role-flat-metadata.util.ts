@@ -1,13 +1,12 @@
 import { v4 } from 'uuid';
 
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type AllStandardRoleName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-role-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardRoleContext = {
   roleName: AllStandardRoleName;
-  universalIdentifier: string;
-  standardId: string;
   label: string;
   description: string | null;
   icon: string | null;
@@ -30,8 +29,7 @@ export type CreateStandardRoleArgs = StandardBuilderArgs<'role'> & {
 
 export const createStandardRoleFlatMetadata = ({
   context: {
-    universalIdentifier,
-    standardId,
+    roleName,
     label,
     description,
     icon,
@@ -50,30 +48,34 @@ export const createStandardRoleFlatMetadata = ({
   workspaceId,
   twentyStandardApplicationId,
   now,
-}: CreateStandardRoleArgs): FlatRole => ({
-  id: v4(),
-  universalIdentifier,
-  standardId,
-  label,
-  description,
-  icon,
-  isEditable,
-  canUpdateAllSettings,
-  canAccessAllTools,
-  canReadAllObjectRecords,
-  canUpdateAllObjectRecords,
-  canSoftDeleteAllObjectRecords,
-  canDestroyAllObjectRecords,
-  canBeAssignedToUsers,
-  canBeAssignedToAgents,
-  canBeAssignedToApiKeys,
-  canBeAssignedToApplications,
-  workspaceId,
-  applicationId: twentyStandardApplicationId,
-  createdAt: now,
-  updatedAt: now,
-  permissionFlagIds: [],
-  fieldPermissionIds: [],
-  objectPermissionIds: [],
-  roleTargetIds: [],
-});
+}: CreateStandardRoleArgs): FlatRole => {
+  const universalIdentifier = STANDARD_ROLE[roleName].universalIdentifier;
+
+  return {
+    id: v4(),
+    universalIdentifier,
+    standardId: universalIdentifier,
+    label,
+    description,
+    icon,
+    isEditable,
+    canUpdateAllSettings,
+    canAccessAllTools,
+    canReadAllObjectRecords,
+    canUpdateAllObjectRecords,
+    canSoftDeleteAllObjectRecords,
+    canDestroyAllObjectRecords,
+    canBeAssignedToUsers,
+    canBeAssignedToAgents,
+    canBeAssignedToApiKeys,
+    canBeAssignedToApplications,
+    workspaceId,
+    applicationId: twentyStandardApplicationId,
+    createdAt: now,
+    updatedAt: now,
+    permissionFlagIds: [],
+    fieldPermissionIds: [],
+    objectPermissionIds: [],
+    roleTargetIds: [],
+  };
+};

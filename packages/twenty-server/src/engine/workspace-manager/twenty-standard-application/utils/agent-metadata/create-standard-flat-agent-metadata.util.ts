@@ -1,6 +1,5 @@
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.contant';
 import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
 import {
   type CreateStandardAgentArgs,
@@ -13,9 +12,6 @@ export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
       ...args,
       context: {
         agentName: 'dashboardBuilder',
-        universalIdentifier:
-          STANDARD_AGENT.dashboardBuilder.universalIdentifier,
-        standardId: STANDARD_AGENT.dashboardBuilder.universalIdentifier,
         name: 'dashboard-builder',
         label: 'Dashboard Builder',
         description: 'AI agent specialized in creating and managing dashboards',
@@ -83,8 +79,6 @@ Prioritize user needs and dashboard usability.`,
       ...args,
       context: {
         agentName: 'dataManipulator',
-        universalIdentifier: STANDARD_AGENT.dataManipulator.universalIdentifier,
-        standardId: STANDARD_AGENT.dataManipulator.universalIdentifier,
         name: 'data-manipulator',
         label: 'Data Manipulator',
         description:
@@ -131,8 +125,6 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
       ...args,
       context: {
         agentName: 'helper',
-        universalIdentifier: STANDARD_AGENT.helper.universalIdentifier,
-        standardId: STANDARD_AGENT.helper.universalIdentifier,
         name: 'helper',
         label: 'Helper',
         description:
@@ -173,8 +165,6 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
       ...args,
       context: {
         agentName: 'metadataBuilder',
-        universalIdentifier: STANDARD_AGENT.metadataBuilder.universalIdentifier,
-        standardId: STANDARD_AGENT.metadataBuilder.universalIdentifier,
         name: 'metadata-builder',
         label: 'Metadata Builder',
         description:
@@ -252,8 +242,6 @@ Prioritize data model integrity and user understanding.`,
       ...args,
       context: {
         agentName: 'researcher',
-        universalIdentifier: STANDARD_AGENT.researcher.universalIdentifier,
-        standardId: STANDARD_AGENT.researcher.universalIdentifier,
         name: 'researcher',
         label: 'Researcher',
         description:
@@ -297,8 +285,6 @@ Be persistent in finding accurate information.`,
       ...args,
       context: {
         agentName: 'workflowBuilder',
-        universalIdentifier: STANDARD_AGENT.workflowBuilder.universalIdentifier,
-        standardId: STANDARD_AGENT.workflowBuilder.universalIdentifier,
         name: 'workflow-builder',
         label: 'Workflow Builder',
         description: 'AI agent specialized in creating and managing workflows',

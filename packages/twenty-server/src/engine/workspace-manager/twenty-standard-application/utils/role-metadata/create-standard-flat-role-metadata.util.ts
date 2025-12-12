@@ -1,5 +1,4 @@
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type AllStandardRoleName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-role-name.type';
 import {
   type CreateStandardRoleArgs,
@@ -12,8 +11,6 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
       ...args,
       context: {
         roleName: 'admin',
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-        standardId: STANDARD_ROLE.admin.universalIdentifier,
         label: 'Admin',
         description: 'Admin role',
         icon: 'IconUserCog',
@@ -35,8 +32,6 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
       ...args,
       context: {
         roleName: 'dashboardManager',
-        universalIdentifier: STANDARD_ROLE.dashboardManager.universalIdentifier,
-        standardId: STANDARD_ROLE.dashboardManager.universalIdentifier,
         label: 'Dashboard Manager',
         description: 'Role for creating and managing dashboards',
         icon: 'IconLayoutDashboard',
@@ -58,8 +53,6 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
       ...args,
       context: {
         roleName: 'dataManipulator',
-        universalIdentifier: STANDARD_ROLE.dataManipulator.universalIdentifier,
-        standardId: STANDARD_ROLE.dataManipulator.universalIdentifier,
         label: 'Data Manipulator',
         description: 'Read and write access to all object records',
         icon: 'IconEdit',
@@ -81,8 +74,6 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
       ...args,
       context: {
         roleName: 'dataModelManager',
-        universalIdentifier: STANDARD_ROLE.dataModelManager.universalIdentifier,
-        standardId: STANDARD_ROLE.dataModelManager.universalIdentifier,
         label: 'Data Model Manager',
         description: 'Role for managing the workspace data model',
         icon: 'IconDatabaseEdit',
@@ -104,8 +95,6 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
       ...args,
       context: {
         roleName: 'workflowManager',
-        universalIdentifier: STANDARD_ROLE.workflowManager.universalIdentifier,
-        standardId: STANDARD_ROLE.workflowManager.universalIdentifier,
         label: 'Workflow Manager',
         description: 'Role for managing workflows',
         icon: 'IconSettingsAutomation',
