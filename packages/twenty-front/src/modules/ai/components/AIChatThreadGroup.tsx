@@ -84,20 +84,18 @@ export const AIChatThreadGroup = ({
   const handleThreadClick = (thread: AgentChatThread) => {
     setCurrentAIChatThread(thread.id);
 
-    const hasUsageData =
-      thread.totalTokens > 0 && isDefined(thread.contextWindowTokens);
+    const totalTokens = thread.totalInputTokens + thread.totalOutputTokens;
+    const hasUsageData = totalTokens > 0 && isDefined(thread.contextWindowTokens);
 
     setAgentChatUsage(
       hasUsageData
         ? {
             inputTokens: thread.totalInputTokens,
             outputTokens: thread.totalOutputTokens,
-            totalTokens: thread.totalTokens,
+            totalTokens,
             contextWindowTokens: thread.contextWindowTokens ?? 0,
-            inputCostPer1kTokensInCents:
-              thread.inputCostPer1kTokensInCents ?? 0,
-            outputCostPer1kTokensInCents:
-              thread.outputCostPer1kTokensInCents ?? 0,
+            inputCredits: thread.totalInputCredits,
+            outputCredits: thread.totalOutputCredits,
           }
         : null,
     );

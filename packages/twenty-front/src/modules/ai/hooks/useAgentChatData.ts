@@ -1,39 +1,38 @@
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import {
-  agentChatUsageState,
-  type AgentChatUsageState,
+    agentChatUsageState,
+    type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import {
-  type SetterOrUpdater,
-  useRecoilState,
-  useSetRecoilState,
+    type SetterOrUpdater,
+    useRecoilState,
+    useSetRecoilState,
 } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type AgentChatThread,
-  useGetChatMessagesQuery,
-  useGetChatThreadsQuery,
+    type AgentChatThread,
+    useGetChatMessagesQuery,
+    useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
 
 const setUsageFromThread = (
   thread: AgentChatThread,
   setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
 ) => {
-  const hasUsageData =
-    thread.totalTokens > 0 && isDefined(thread.contextWindowTokens);
+  const totalTokens = thread.totalInputTokens + thread.totalOutputTokens;
+  const hasUsageData = totalTokens > 0 && isDefined(thread.contextWindowTokens);
 
   setAgentChatUsage(
     hasUsageData
       ? {
           inputTokens: thread.totalInputTokens,
           outputTokens: thread.totalOutputTokens,
-          totalTokens: thread.totalTokens,
+          totalTokens,
           contextWindowTokens: thread.contextWindowTokens ?? 0,
-          inputCostPer1kTokensInCents: thread.inputCostPer1kTokensInCents ?? 0,
-          outputCostPer1kTokensInCents:
-            thread.outputCostPer1kTokensInCents ?? 0,
+          inputCredits: thread.totalInputCredits,
+          outputCredits: thread.totalOutputCredits,
         }
       : null,
   );

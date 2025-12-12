@@ -105,13 +105,11 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       type UsageMetadata = {
         inputTokens: number;
         outputTokens: number;
-        totalTokens: number;
+        inputCredits: number;
+        outputCredits: number;
       };
       type ModelMetadata = {
-        modelId: string;
         contextWindowTokens: number;
-        inputCostPer1kTokensInCents: number;
-        outputCostPer1kTokensInCents: number;
       };
       const metadata = message.metadata as
         | { usage?: UsageMetadata; model?: ModelMetadata }
@@ -123,10 +121,11 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         setAgentChatUsage((prev) => ({
           inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
           outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
-          totalTokens: (prev?.totalTokens ?? 0) + usage.totalTokens,
+          totalTokens:
+            (prev?.totalTokens ?? 0) + usage.inputTokens + usage.outputTokens,
           contextWindowTokens: model.contextWindowTokens,
-          inputCostPer1kTokensInCents: model.inputCostPer1kTokensInCents,
-          outputCostPer1kTokensInCents: model.outputCostPer1kTokensInCents,
+          inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
+          outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
       }
     },

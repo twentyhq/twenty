@@ -13,6 +13,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -82,7 +83,12 @@ export class AgentChatStreamingService {
           });
 
           // Track usage from the stream for persisting to thread
-          let streamUsage = { inputTokens: 0, outputTokens: 0 };
+          let streamUsage = {
+            inputTokens: 0,
+            outputTokens: 0,
+            inputCredits: 0,
+            outputCredits: 0,
+          };
 
           // Merge the AI stream
           writer.merge(
@@ -95,25 +101,40 @@ export class AgentChatStreamingService {
               sendStart: false,
               messageMetadata: ({ part }) => {
                 if (part.type === 'finish') {
+                  const inputTokens = part.totalUsage?.inputTokens ?? 0;
+                  const outputTokens = part.totalUsage?.outputTokens ?? 0;
+
+                  const inputCostInCents =
+                    (inputTokens / 1000) *
+                    modelConfig.inputCostPer1kTokensInCents;
+                  const outputCostInCents =
+                    (outputTokens / 1000) *
+                    modelConfig.outputCostPer1kTokensInCents;
+
+                  const inputCredits = Math.round(
+                    convertCentsToBillingCredits(inputCostInCents),
+                  );
+                  const outputCredits = Math.round(
+                    convertCentsToBillingCredits(outputCostInCents),
+                  );
+
                   streamUsage = {
-                    inputTokens: part.totalUsage?.inputTokens ?? 0,
-                    outputTokens: part.totalUsage?.outputTokens ?? 0,
+                    inputTokens,
+                    outputTokens,
+                    inputCredits,
+                    outputCredits,
                   };
 
                   return {
                     createdAt: new Date().toISOString(),
                     usage: {
-                      inputTokens: streamUsage.inputTokens,
-                      outputTokens: streamUsage.outputTokens,
-                      totalTokens: part.totalUsage?.totalTokens ?? 0,
+                      inputTokens,
+                      outputTokens,
+                      inputCredits,
+                      outputCredits,
                     },
                     model: {
-                      modelId: modelConfig.modelId,
                       contextWindowTokens: modelConfig.contextWindowTokens,
-                      inputCostPer1kTokensInCents:
-                        modelConfig.inputCostPer1kTokensInCents,
-                      outputCostPer1kTokensInCents:
-                        modelConfig.outputCostPer1kTokensInCents,
                     },
                   };
                 }
@@ -174,13 +195,11 @@ export class AgentChatStreamingService {
                       `"totalInputTokens" + ${streamUsage.inputTokens}`,
                     totalOutputTokens: () =>
                       `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-                    totalTokens: () =>
-                      `"totalTokens" + ${streamUsage.inputTokens + streamUsage.outputTokens}`,
+                    totalInputCredits: () =>
+                      `"totalInputCredits" + ${streamUsage.inputCredits}`,
+                    totalOutputCredits: () =>
+                      `"totalOutputCredits" + ${streamUsage.outputCredits}`,
                     contextWindowTokens: modelConfig.contextWindowTokens,
-                    inputCostPer1kTokensInCents:
-                      modelConfig.inputCostPer1kTokensInCents,
-                    outputCostPer1kTokensInCents:
-                      modelConfig.outputCostPer1kTokensInCents,
                   });
                 } catch (saveError) {
                   this.logger.error(

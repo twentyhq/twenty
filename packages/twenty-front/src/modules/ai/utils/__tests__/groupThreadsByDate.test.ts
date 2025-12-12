@@ -7,10 +7,9 @@ describe('groupThreadsByDate', () => {
     updatedAt: new Date().toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,
-    totalTokens: 0,
     contextWindowTokens: null,
-    inputCostPer1kTokensInCents: null,
-    outputCostPer1kTokensInCents: null,
+    totalInputCredits: 0,
+    totalOutputCredits: 0,
   };
 
   const today = new Date();

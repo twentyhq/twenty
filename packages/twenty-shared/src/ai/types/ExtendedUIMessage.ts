@@ -4,14 +4,12 @@ import { type UIMessage } from 'ai';
 export type AIChatUsageMetadata = {
   inputTokens: number;
   outputTokens: number;
-  totalTokens: number;
+  inputCredits: number;
+  outputCredits: number;
 };
 
 export type AIChatModelMetadata = {
-  modelId: string;
   contextWindowTokens: number;
-  inputCostPer1kTokensInCents: number;
-  outputCostPer1kTokensInCents: number;
 };
 
 type Metadata = {

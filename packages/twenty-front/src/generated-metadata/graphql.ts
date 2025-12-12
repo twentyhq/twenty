@@ -73,12 +73,11 @@ export type AgentChatThread = {
   contextWindowTokens?: Maybe<Scalars['Int']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
-  inputCostPer1kTokensInCents?: Maybe<Scalars['Float']>;
-  outputCostPer1kTokensInCents?: Maybe<Scalars['Float']>;
   title?: Maybe<Scalars['String']>;
+  totalInputCredits: Scalars['Int'];
   totalInputTokens: Scalars['Int'];
+  totalOutputCredits: Scalars['Int'];
   totalOutputTokens: Scalars['Int'];
-  totalTokens: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -5120,7 +5119,7 @@ export type GetChatMessagesQuery = { __typename?: 'Query', chatMessages: Array<{
 export type GetChatThreadsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, totalTokens: number, contextWindowTokens?: number | null, inputCostPer1kTokensInCents?: number | null, outputCostPer1kTokensInCents?: number | null, createdAt: string, updatedAt: string }> };
+export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ __typename?: 'AgentChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, totalInputCredits: number, totalOutputCredits: number, createdAt: string, updatedAt: string }> };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
@@ -7730,10 +7729,9 @@ export const GetChatThreadsDocument = gql`
     title
     totalInputTokens
     totalOutputTokens
-    totalTokens
     contextWindowTokens
-    inputCostPer1kTokensInCents
-    outputCostPer1kTokensInCents
+    totalInputCredits
+    totalOutputCredits
     createdAt
     updatedAt
   }

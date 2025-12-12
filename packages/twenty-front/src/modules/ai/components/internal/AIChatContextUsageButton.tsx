@@ -6,7 +6,6 @@ import { ProgressBar } from 'twenty-ui/feedback';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
-import { convertCentsToBillingCredits } from '@/ai/utils/convertCentsToBillingCredits';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -103,11 +102,6 @@ const formatTokenCount = (count: number): string => {
   return count.toString();
 };
 
-const getCredits = (tokens: number, costPer1kTokensInCents: number): number => {
-  const costInCents = (tokens / 1000) * costPer1kTokensInCents;
-  return convertCentsToBillingCredits(costInCents);
-};
-
 export const AIChatContextUsageButton = () => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
@@ -129,16 +123,7 @@ export const AIChatContextUsageButton = () => {
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
-
-  const inputCredits = getCredits(
-    agentChatUsage.inputTokens,
-    agentChatUsage.inputCostPer1kTokensInCents,
-  );
-  const outputCredits = getCredits(
-    agentChatUsage.outputTokens,
-    agentChatUsage.outputCostPer1kTokensInCents,
-  );
-  const totalCredits = inputCredits + outputCredits;
+  const totalCredits = agentChatUsage.inputCredits + agentChatUsage.outputCredits;
 
   return (
     <StyledContainer
@@ -179,14 +164,14 @@ export const AIChatContextUsageButton = () => {
               <StyledLabel>Input</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.inputTokens)} •{' '}
-                {inputCredits.toLocaleString()} credits
+                {agentChatUsage.inputCredits.toLocaleString()} credits
               </StyledValue>
             </StyledRow>
             <StyledRow>
               <StyledLabel>Output</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.outputTokens)} •{' '}
-                {outputCredits.toLocaleString()} credits
+                {agentChatUsage.outputCredits.toLocaleString()} credits
               </StyledValue>
             </StyledRow>
           </StyledBody>

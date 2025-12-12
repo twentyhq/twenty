@@ -5,8 +5,8 @@ export type AgentChatUsageState = {
   outputTokens: number;
   totalTokens: number;
   contextWindowTokens: number;
-  inputCostPer1kTokensInCents: number;
-  outputCostPer1kTokensInCents: number;
+  inputCredits: number;
+  outputCredits: number;
 };
 
 export const agentChatUsageState = atom<AgentChatUsageState | null>({

@@ -1,13 +1,13 @@
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -40,17 +40,14 @@ export class AgentChatThreadEntity {
   @Column({ type: 'int', default: 0 })
   totalOutputTokens: number;
 
-  @Column({ type: 'int', default: 0 })
-  totalTokens: number;
-
   @Column({ type: 'int', nullable: true })
   contextWindowTokens: number | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
-  inputCostPer1kTokensInCents: number | null;
+  @Column({ type: 'bigint', default: 0 })
+  totalInputCredits: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 6, nullable: true })
-  outputCostPer1kTokensInCents: number | null;
+  @Column({ type: 'bigint', default: 0 })
+  totalOutputCredits: number;
 
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: Relation<AgentTurnEntity[]>;
