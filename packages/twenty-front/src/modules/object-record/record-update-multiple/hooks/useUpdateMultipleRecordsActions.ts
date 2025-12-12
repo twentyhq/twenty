@@ -67,9 +67,7 @@ export const useUpdateMultipleRecordsActions = ({
 
   const updateRecords = async (fieldsToUpdate: Record<string, any>) => {
     try {
-      await incrementalUpdateManyRecords(fieldsToUpdate);
-
-      const count = progress.processedRecordCount;
+      const count = await incrementalUpdateManyRecords(fieldsToUpdate);
 
       enqueueSuccessSnackBar({
         message: t`Successfully updated ${count} records`,

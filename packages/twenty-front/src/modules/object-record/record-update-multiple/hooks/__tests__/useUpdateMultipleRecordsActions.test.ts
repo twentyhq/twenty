@@ -46,6 +46,7 @@ describe('useUpdateMultipleRecordsActions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIncrementalUpdateManyRecords.mockResolvedValue(5);
 
     mockUseIncrementalUpdateManyRecords.mockReturnValue({
       incrementalUpdateManyRecords: mockIncrementalUpdateManyRecords,
