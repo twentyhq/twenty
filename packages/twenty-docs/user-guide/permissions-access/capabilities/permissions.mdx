@@ -4,9 +4,6 @@ description: Control access to objects, fields, and settings with role-based per
 image: /images/user-guide/permissions/permissions.png
 ---
 
-<Frame>
-  <img src="/images/user-guide/permissions/permissions.png" alt="Permissions" />
-</Frame>
 
 Twenty's permission system allows you to control access to three main areas:
 - **Objects and Fields**: Control who can view, edit, or delete records and individual fields
@@ -20,7 +17,7 @@ To create a new role:
 1. Go to **Settings → Roles**
 2. Under **All Roles**, click on **+ Create Role**
 3. Enter a role name
-4. In the default **Permissions** tab, configure permissions
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
 5. Click **Save** to finish
 
 ## Delete a Role
@@ -32,7 +29,9 @@ To delete a role:
 3. Open the **Settings** tab, then click **Delete Role**
 4. Click **Confirm** in the modal
 
-Note: If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+<Note>
+If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+</Note>
 
 ## Assign Roles to Members
 
@@ -55,31 +54,83 @@ Note: If a role is deleted, any workspace member assigned to it will be automati
 3. Select which role new members should automatically receive
 4. New workspace members will be assigned this role when they join
 
-**Note**: You can only assign roles to existing workspace members. To invite new members, use [Member Management](/user-guide/permissions-access/getting-started/member-management).
+<Note>
+You can only assign roles to existing workspace members. To invite new members, use [Member Management](/user-guide/settings/capabilities/member-management).
+</Note>
 
 ## Customize Permissions
 
 Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
 
-### Object and Field Permissions
+### Object Permissions
 
-Control access to records and individual fields:
+The **Objects** section controls what this role can do with records across your workspace.
 
-#### Object-Level Permissions
-- Under **All Objects**, apply permissions like **See Record**, **Edit Records**, **Delete Records**, or **Destroy Records** to all objects
-- Under **Object-Level Permissions**, configure exceptions for individual objects. These override the settings from **All Objects**
+#### Set Default Permissions (All Objects)
 
-#### Field-Level Permissions
-- Configure permissions for individual fields within each object
-- Control who can **See Field**, **Edit Field**, or have **No Access** to specific fields
-- Field permissions work the same way as object permissions with inheritance and overrides
+First, configure the baseline permissions that apply to **all objects** by default:
 
-#### Managing Permission Overrides
-To override parent permissions and apply stricter rules:
+| Permission | Description |
+|------------|-------------|
+| **See Records on All Objects** | View records in lists and detail pages |
+| **Edit Records on All Objects** | Modify existing records |
+| **Delete Records on All Objects** | Soft-delete records (can be restored) |
+| **Destroy Records on All Objects** | Permanently delete records |
 
-- Click **X** to remove the inherited rule
-- Select the specific permissions for the selected object or field
-- Click the orange **Undo** icon (circular arrow) to revert changes
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+**Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule | Effect |
+|------|--------|
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all |
+| People → enable "Edit Records" | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission | Description |
+|------------|-------------|
+| **See Field** | View the field value |
+| **Edit Field** | Modify the field value |
+| **No Access** | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+- People → Email → **See Field** only (cannot edit)
+- People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### Managing Permission Overrides
+
+To override inherited permissions:
+
+1. Click **X** to remove the inherited rule
+2. Select the specific permissions you want
+3. Click the orange **Undo** icon (circular arrow) to revert changes
 
 When done, click **Finish**, then **Save** once redirected to the role page.
 
@@ -90,9 +141,22 @@ Control access to workspace settings in two ways:
 - Toggle **Settings All Access** to grant full access
 - Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
 
+<Note>
+**Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
 ### Workspace Action Permissions
 
 Control access to general workspace actions:
 
 - Toggle **Application All Access** to grant full permissions
 - Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+
+## Assigning Roles to API Keys and AI Agents
+
+Roles can also be assigned to:
+- **API Keys**: Control what actions API integrations can perform
+- **AI Agents**: Define permissions for AI-powered automations
+
+{/* TODO: Detail how to assign roles to API keys under Settings → API and Webhooks */}
+{/* TODO: Detail how to assign roles to AI agents once AI features are released */}

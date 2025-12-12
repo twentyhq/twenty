@@ -258,12 +258,6 @@
                 "pages": [
                   "user-guide/permissions-access/overview",
                   {
-                    "group": "Getting Started",
-                    "pages": [
-                      "user-guide/permissions-access/getting-started/member-management"
-                    ]
-                  },
-                  {
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/permissions-access/capabilities/permissions",
@@ -271,9 +265,9 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "FAQ",
                     "pages": [
-                      "user-guide/permissions-access/how-tos/configure-roles"
+                      "user-guide/permissions-access/how-tos/permissions-faq"
                     ]
                   }
                 ]
