@@ -1,4 +1,3 @@
-
 describe('useUpdateManyRecordsMutation', () => {
   it('should work', () => {
     // const { result } = renderHook(() => useUpdateManyRecordsMutation({ objectNameSingular: 'test' }));

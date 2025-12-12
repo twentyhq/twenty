@@ -2,6 +2,8 @@ import { getUpdateManyRecordsMutationResponseField } from '../getUpdateManyRecor
 
 describe('getUpdateManyRecordsMutationResponseField', () => {
   it('should work', () => {
-    expect(getUpdateManyRecordsMutationResponseField('companies')).toBe('updateCompanies');
+    expect(getUpdateManyRecordsMutationResponseField('companies')).toBe(
+      'updateCompanies',
+    );
   });
 });

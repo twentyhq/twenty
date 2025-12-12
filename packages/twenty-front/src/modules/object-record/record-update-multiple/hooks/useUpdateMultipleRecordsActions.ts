@@ -22,7 +22,9 @@ export const useUpdateMultipleRecordsActions = ({
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
+    contextStoreInstanceId,
+  );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,

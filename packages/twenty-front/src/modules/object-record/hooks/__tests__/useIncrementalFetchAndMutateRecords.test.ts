@@ -87,7 +87,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
   });
 
   it('should update progress during processing', async () => {
-     mockFindManyRecordsLazy.mockResolvedValue({
+    mockFindManyRecordsLazy.mockResolvedValue({
       data: {
         companies: {
           totalCount: 1,
@@ -151,11 +151,14 @@ describe('useIncrementalFetchAndMutateRecords', () => {
     );
 
     const abortMock = jest.fn();
-    // @ts-ignore
-    jest.spyOn(global, 'AbortController').mockImplementation(() => ({
-      signal: { aborted: true },
-      abort: abortMock,
-    }));
+
+    jest.spyOn(global, 'AbortController').mockImplementation(
+      () =>
+        ({
+          signal: { aborted: true } as unknown as AbortSignal,
+          abort: abortMock,
+        }) as unknown as AbortController,
+    );
 
     await result.current.incrementalFetchAndMutate(jest.fn());
 
@@ -164,12 +167,12 @@ describe('useIncrementalFetchAndMutateRecords', () => {
   });
 
   it('should call abort on current controller when cancel is invoked', () => {
-     const { result } = renderHook(() =>
-        useIncrementalFetchAndMutateRecords({ objectNameSingular: 'c' } as any)
-      );
+    const { result } = renderHook(() =>
+      useIncrementalFetchAndMutateRecords({ objectNameSingular: 'c' } as any),
+    );
 
-      // calling it when null shouldn't explode
-      result.current.cancel();
-      expect(true).toBe(true);
+    // calling it when null shouldn't explode
+    result.current.cancel();
+    expect(true).toBe(true);
   });
 });

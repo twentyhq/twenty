@@ -1,4 +1,3 @@
-
 describe('shouldDisplayFormMultiEditField', () => {
   it('should work', () => {
     // expect(shouldDisplayFormMultiEditField(mockFieldMetadataItem)).toBe(true);
