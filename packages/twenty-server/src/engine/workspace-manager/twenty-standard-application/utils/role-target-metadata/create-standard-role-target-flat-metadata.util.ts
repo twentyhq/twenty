@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
@@ -53,9 +53,10 @@ export const createStandardRoleTargetFlatMetadata = <
   now,
   dependencyFlatEntityMaps: { flatRoleMaps, flatAgentMaps },
 }: CreateStandardRoleTargetArgs<T>): FlatRoleTarget => {
+  const roleDefinition = STANDARD_ROLE_TARGET[roleTargetTypeName];
   const roleTargetUniversalIdentifier =
-    STANDARD_ROLE_TARGET[roleTargetTypeName][roleTargetName]
-      .universalIdentifier;
+    //@ts-expect-error ignore
+    roleDefinition[roleTargetName].universalIdentifier;
 
   const roleUniversalIdentifier = STANDARD_ROLE[roleName].universalIdentifier;
   const roleId = findIdByUniversalIdentifier(
