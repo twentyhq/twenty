@@ -1,70 +1,44 @@
 ---
 title: Domain Settings
-description: Configure custom domains for your Twenty workspace.
-image: /images/user-guide/setup/settings.png
+description: Configure workspace domain, approved access domains, and public domains.
 ---
 
-<Frame>
-  <img src="/images/user-guide/setup/settings.png" alt="Domain Settings" />
-</Frame>
+Configure domain settings under **Settings → Domains**.
 
-## About Custom Domains
+## Workspace Domain
 
-Custom domains allow you to access your Twenty workspace through your own domain name, providing a more professional and branded experience.
+Edit your subdomain name or set a custom domain for your workspace.
 
-## Setting Up a Custom Domain
+### Customize Domain
+1. Click **Customize Domain**
+2. Edit your subdomain (e.g., `yourcompany.twenty.com`)
+3. Or set up a custom domain (e.g., `crm.yourcompany.com`)
 
-### Prerequisites
-- Organization plan or higher
-- Access to your domain's DNS settings
-- Admin access to your Twenty workspace
+For custom domains, you'll need to configure DNS settings with your domain provider.
 
-### Configuration Steps
+## Approved Domains
 
-1. **Access Domain Settings**
-   - Go to **Settings → Domains**
-   - Click **Add Custom Domain**
+Anyone with an email address at these domains is allowed to sign up for this workspace automatically.
 
-2. **Enter Your Domain**
-   - Enter the domain you want to use (e.g., `crm.yourcompany.com`)
-   - Click **Verify**
+### Add Approved Access Domain
+1. Click **Add Approved Access Domain**
+2. Enter your company domain (e.g., `yourcompany.com`)
+3. Save
 
-3. **Configure DNS**
-   - Add the provided CNAME record to your DNS settings
-   - Wait for DNS propagation (can take up to 48 hours)
+Once configured, anyone with an email address at that domain can join your workspace without needing a direct invitation.
 
-4. **Verify and Activate**
-   - Return to Domain Settings
-   - Click **Verify** to confirm DNS configuration
-   - Enable the custom domain
+<Note>
+This is useful for allowing your entire team to self-register while keeping the workspace restricted to your organization.
+</Note>
 
-## SSL Certificates
+## Public Domains
 
-Twenty automatically provisions SSL certificates for custom domains:
-- Certificates are issued automatically after DNS verification
-- Renewal is handled automatically
-- HTTPS is enforced for all connections
+Provision a complete and secure hosting environment on these domains.
 
-## Best Practices
+### Add Public Domain
+1. Click **Add Public Domain**
+2. Enter the domain you want to use
+3. Configure DNS settings as instructed
+4. Verify the domain
 
-### Choosing a Domain
-- Use a subdomain (e.g., `crm.company.com`) rather than your root domain
-- Choose a memorable, clear name
-- Consider your team's needs (internal vs. external access)
-
-### DNS Management
-- Keep DNS records documented
-- Allow time for propagation before troubleshooting
-- Contact your DNS provider if you encounter issues
-
-## Troubleshooting
-
-### Domain Not Verifying
-- Ensure CNAME record is correctly configured
-- Wait for DNS propagation (up to 48 hours)
-- Verify there are no conflicting records
-
-### SSL Certificate Issues
-- Certificate provisioning can take up to 24 hours
-- Ensure no CAA records are blocking certificate issuance
-- Contact support if issues persist
+SSL certificates are automatically provisioned for public domains.

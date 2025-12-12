@@ -312,6 +312,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/settings/capabilities/workspace-settings",
+                      "user-guide/settings/capabilities/member-management",
                       "user-guide/settings/capabilities/profile-settings",
                       "user-guide/settings/capabilities/experience-settings",
                       "user-guide/settings/capabilities/domains-settings",
