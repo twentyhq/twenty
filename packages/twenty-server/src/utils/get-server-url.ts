@@ -1,9 +1,11 @@
-export const getServerUrl = (
-  serverUrlEnv: string,
-  serverUrlFallback: string,
-): string => {
-  if (serverUrlEnv?.endsWith('/'))
-    return serverUrlEnv.substring(0, serverUrlEnv.length - 1);
+import { cleanServerUrl } from 'src/utils/clean-server-url';
 
-  return serverUrlEnv || serverUrlFallback;
+export const getServerUrl = ({
+  serverUrlEnv,
+  serverUrlFallback,
+}: {
+  serverUrlEnv?: string;
+  serverUrlFallback: string;
+}): string => {
+  return cleanServerUrl(serverUrlEnv) || serverUrlFallback;
 };
