@@ -4,9 +4,8 @@ import DOMPurify from 'dompurify';
 import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import * as planer from 'planer';
+import { safeDecodeURIComponent } from 'twenty-shared/utils';
 import { type Email as ParsedEmail } from 'postal-mime';
-
-import { safeDecodeURIComponent } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/safe-decode-uri-component.util';
 
 @Injectable()
 export class ImapMessageTextExtractorService {
