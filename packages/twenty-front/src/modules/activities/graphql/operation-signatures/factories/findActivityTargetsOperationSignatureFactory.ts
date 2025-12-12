@@ -1,4 +1,3 @@
-import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -20,10 +19,10 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   const targetObjectNameSingular =
     getJoinObjectNameSingular(objectNameSingular);
 
-  const targetObjectNamePlural = objectMetadataItems.find(
+  const targetObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === targetObjectNameSingular,
-  )?.namePlural;
+  );
 
   const activityObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -31,14 +30,11 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   );
 
   if (
-    !isDefined(targetObjectNamePlural) ||
+    !isDefined(targetObjectMetadataItem) ||
     !isDefined(activityObjectMetadataItem)
   ) {
     throw new Error(`Cannot find target or targetable object metadata item`);
   }
-
-  const activityTargetMorphFieldKeys =
-    generateActivityTargetMorphFieldKeys(objectMetadataItems);
 
   const activityFieldKeys = generateDepthRecordGqlFieldsFromObject({
     objectMetadataItems,
@@ -56,13 +52,12 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
       updatedAt: true,
       [objectNameSingular]: {
         ...activityFieldKeys,
-        [targetObjectNamePlural]: {
-          id: true,
-          __typename: true,
-          createdAt: true,
-          updatedAt: true,
-          ...activityTargetMorphFieldKeys,
-        },
+        [targetObjectMetadataItem.namePlural]:
+          generateDepthRecordGqlFieldsFromObject({
+            objectMetadataItems,
+            objectMetadataItem: targetObjectMetadataItem,
+            depth: 1,
+          }),
       },
     },
   };
