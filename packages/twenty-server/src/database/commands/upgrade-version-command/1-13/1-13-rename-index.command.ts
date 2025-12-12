@@ -98,9 +98,13 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
           `ALTER INDEX "${schemaName}"."${index.name}" RENAME TO "${indexNameV2}"`,
         );
 
-        await this.coreDataSource.manager.update(IndexMetadataEntity, index.id, {
-          name: indexNameV2,
-        });
+        await this.coreDataSource.manager.update(
+          IndexMetadataEntity,
+          index.id,
+          {
+            name: indexNameV2,
+          },
+        );
 
         hasIndexNameChanges = true;
       } catch (error) {
@@ -121,7 +125,8 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
       }
     }
 
-    const shouldInvalidateCache = hasIndexNameChanges || hasRemovedIndexMetadata;
+    const shouldInvalidateCache =
+      hasIndexNameChanges || hasRemovedIndexMetadata;
 
     if (shouldInvalidateCache) {
       this.logger.log('Invalidating workspace cache');
