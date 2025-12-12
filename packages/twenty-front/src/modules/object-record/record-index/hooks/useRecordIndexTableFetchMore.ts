@@ -18,7 +18,6 @@ export const useRecordIndexTableFetchMore = (objectNameSingular: string) => {
     useLazyFindManyRecords({
       ...params,
       recordGqlFields,
-      // fetchPolicy: 'network-only',
     });
 
   return {

@@ -14,16 +14,16 @@ export const isObjectRecordConnection = (
   const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
   const cachedObjectConnectionSchema = z.object({
     __typename: z.literal(objectConnectionTypeName),
-    edges: z.array(
-      z
-        .object({
+    edges: z
+      .array(
+        z.object({
           __typename: z.literal(objectEdgeTypeName),
           node: z.object({
             __ref: z.string().startsWith(`${capitalize(objectNameSingular)}:`),
           }),
-        })
-        .optional(),
-    ),
+        }),
+      )
+      .optional(),
   });
   const cachedConnectionValidation =
     cachedObjectConnectionSchema.safeParse(storeValue);
