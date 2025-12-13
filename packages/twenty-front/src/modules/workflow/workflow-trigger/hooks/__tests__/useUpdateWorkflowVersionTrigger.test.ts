@@ -1,10 +1,11 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { act, renderHook } from '@testing-library/react';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const mockUpdateOneRecord = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockComputeStepOutputSchema = jest.fn();
+const mockMarkStepForRecomputation = jest.fn();
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: jest.fn(() => ({
@@ -18,9 +19,9 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   })),
 }));
 
-jest.mock('@/workflow/hooks/useComputeStepOutputSchema', () => ({
-  useComputeStepOutputSchema: jest.fn(() => ({
-    computeStepOutputSchema: mockComputeStepOutputSchema,
+jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
+  useStepsOutputSchema: jest.fn(() => ({
+    markStepForRecomputation: mockMarkStepForRecomputation,
   })),
 }));
 
@@ -39,11 +40,8 @@ describe('useUpdateWorkflowVersionTrigger', () => {
     jest.clearAllMocks();
   });
 
-  it('updates the trigger with computed output schema', async () => {
+  it('updates the trigger and marks it for recomputation for frontend-computed types', async () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
-    mockComputeStepOutputSchema.mockResolvedValue({
-      data: { computeStepOutputSchema: { field1: 'string' } },
-    });
 
     const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
 
@@ -52,37 +50,43 @@ describe('useUpdateWorkflowVersionTrigger', () => {
     });
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
-    expect(mockComputeStepOutputSchema).toHaveBeenCalledWith({
-      step: trigger,
+    expect(mockMarkStepForRecomputation).toHaveBeenCalledWith({
+      stepId: TRIGGER_STEP_ID,
       workflowVersionId: 'version-id',
     });
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: 'version-id',
       updateOneRecordInput: {
-        trigger: {
-          ...trigger,
-          settings: { ...trigger.settings, outputSchema: { field1: 'string' } },
-        },
+        trigger,
       },
     });
   });
 
-  it('skips output schema computation when disabled', async () => {
+  it('does not mark for recomputation for backend-computed trigger types', async () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
+
+    const webhookTrigger: WorkflowTrigger = {
+      name: 'Webhook',
+      type: 'WEBHOOK',
+      settings: {
+        outputSchema: {},
+        httpMethod: 'GET',
+        authentication: null,
+      },
+      nextStepIds: ['step1'],
+    };
 
     const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
 
     await act(async () => {
-      await result.current.updateTrigger(trigger, {
-        computeOutputSchema: false,
-      });
+      await result.current.updateTrigger(webhookTrigger);
     });
 
-    expect(mockComputeStepOutputSchema).not.toHaveBeenCalled();
+    expect(mockMarkStepForRecomputation).not.toHaveBeenCalled();
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: 'version-id',
       updateOneRecordInput: {
-        trigger,
+        trigger: webhookTrigger,
       },
     });
   });

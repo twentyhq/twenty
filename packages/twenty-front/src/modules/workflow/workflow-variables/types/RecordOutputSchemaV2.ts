@@ -2,6 +2,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 export type RecordFieldLeaf = {
   isLeaf: true;
+  icon?: string;
   type: FieldMetadataType;
   label: string;
   value: any;
@@ -11,6 +12,7 @@ export type RecordFieldLeaf = {
 
 export type RecordFieldNode = {
   isLeaf: false;
+  icon?: string;
   type: FieldMetadataType;
   label: string;
   value: RecordFieldNodeValue;
@@ -25,6 +27,7 @@ export type FieldOutputSchemaV2 = RecordFieldLeaf | RecordFieldNode;
 
 export type RecordOutputSchemaV2 = {
   object: {
+    icon?: string;
     label: string;
     objectMetadataId: string;
     isRelationField?: boolean;

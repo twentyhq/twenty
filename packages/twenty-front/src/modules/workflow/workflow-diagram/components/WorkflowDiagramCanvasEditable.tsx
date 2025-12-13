@@ -132,13 +132,10 @@ export const WorkflowDiagramCanvasEditable = () => {
     const triggerToUpdate = workflowWithCurrentVersion?.currentVersion?.trigger;
 
     if (isDefined(triggerToUpdate)) {
-      await updateTrigger(
-        {
-          ...triggerToUpdate,
-          position: node.position,
-        },
-        { computeOutputSchema: false },
-      );
+      await updateTrigger({
+        ...triggerToUpdate,
+        position: node.position,
+      });
 
       return;
     }

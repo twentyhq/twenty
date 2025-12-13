@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
-import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { FormAddressFieldInput } from '../FormAddressFieldInput';
 
 const meta: Meta<typeof FormAddressFieldInput> = {
@@ -44,12 +43,12 @@ export const WithVariables: Story = {
   args: {
     label: 'Address',
     defaultValue: {
-      addressStreet1: `{{${MOCKED_STEP_ID}.address.street1}}`,
-      addressStreet2: `{{${MOCKED_STEP_ID}.address.street2}}`,
-      addressCity: `{{${MOCKED_STEP_ID}.address.city}}`,
-      addressState: `{{${MOCKED_STEP_ID}.address.state}}`,
-      addressCountry: `{{${MOCKED_STEP_ID}.address.country}}`,
-      addressPostcode: `{{${MOCKED_STEP_ID}.address.postcode}}`,
+      addressStreet1: `{{trigger.properties.after.address.addressStreet1}}`,
+      addressStreet2: `{{trigger.properties.after.address.addressStreet2}}`,
+      addressCity: `{{trigger.properties.after.address.addressCity}}`,
+      addressState: `{{trigger.properties.after.address.addressState}}`,
+      addressCountry: `{{trigger.properties.after.address.addressCountry}}`,
+      addressPostcode: `{{trigger.properties.after.address.addressPostcode}}`,
       addressLat: 39.781721,
       addressLng: -89.650148,
     },
@@ -58,11 +57,11 @@ export const WithVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const street1Variable = await canvas.findByText('Street 1');
-    const street2Variable = await canvas.findByText('Street 2');
-    const cityVariable = await canvas.findByText('My City');
-    const stateVariable = await canvas.findByText('My State');
-    const postcodeVariable = await canvas.findByText('My Postcode');
+    const street1Variable = await canvas.findByText('Address Street1');
+    const street2Variable = await canvas.findByText('Address Street2');
+    const cityVariable = await canvas.findByText('Address City');
+    const stateVariable = await canvas.findByText('Address State');
+    const postcodeVariable = await canvas.findByText('Address Postcode');
 
     expect(street1Variable).toBeVisible();
     expect(street2Variable).toBeVisible();
