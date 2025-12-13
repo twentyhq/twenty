@@ -13,7 +13,12 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -51,6 +56,11 @@ export const useOpenCreateActivityDrawer = ({
   );
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular: activityObjectNameSingular,
+    });
+  const { openRecordTitleCell } = useRecordTitleCell();
 
   const openCreateActivityDrawer = async ({
     targetableObjects,
@@ -105,6 +115,20 @@ export const useOpenCreateActivityDrawer = ({
       objectNameSingular: activityObjectNameSingular,
       isNewRecord: true,
     });
+
+    if (isDefined(labelIdentifierFieldMetadataItem)) {
+      requestAnimationFrame(() => {
+        openRecordTitleCell({
+          recordId: activity.id,
+          fieldName: labelIdentifierFieldMetadataItem.name,
+          instanceId: getRecordFieldInputInstanceId({
+            recordId: activity.id,
+            fieldName: labelIdentifierFieldMetadataItem.name,
+            prefix: RecordTitleCellContainerType.ShowPage,
+          }),
+        });
+      });
+    }
 
     setViewableRecordId(activity.id);
 
