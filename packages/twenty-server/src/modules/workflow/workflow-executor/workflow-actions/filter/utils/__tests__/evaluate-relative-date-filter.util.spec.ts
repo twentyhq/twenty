@@ -1,10 +1,16 @@
 import {
   addDays,
+  addHours,
+  addMinutes,
   addMonths,
+  addSeconds,
   addWeeks,
   addYears,
   subDays,
+  subHours,
+  subMinutes,
   subMonths,
+  subSeconds,
   subWeeks,
   subYears,
 } from 'date-fns';
@@ -104,6 +110,133 @@ describe('Relative Date Filter Utils', () => {
 
   describe('evaluateRelativeDateFilter', () => {
     describe('NEXT direction', () => {
+      it('should return true for dates within the next N seconds', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'NEXT',
+          amount: 3,
+          unit: 'SECOND',
+        };
+
+        // Dates within the next 3 seconds should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addSeconds(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addSeconds(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addSeconds(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addSeconds(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within the next N minutes', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'NEXT',
+          amount: 3,
+          unit: 'MINUTE',
+        };
+
+        // Dates within the next 3 minutes should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addMinutes(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addMinutes(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addMinutes(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addMinutes(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within the next N hours', () => {
+        ///
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'NEXT',
+          amount: 3,
+          unit: 'HOUR',
+        };
+
+        // Dates within the next 3 hours should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addHours(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addHours(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addHours(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addHours(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
       it('should return true for dates within the next N days', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
@@ -270,6 +403,132 @@ describe('Relative Date Filter Utils', () => {
     });
 
     describe('PAST direction', () => {
+      it('should return true for dates within the past N seconds', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'PAST',
+          amount: 3,
+          unit: 'SECOND',
+        };
+
+        // Dates within the past 3 seconds should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addSeconds(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within the past N minutes', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'PAST',
+          amount: 3,
+          unit: 'MINUTE',
+        };
+
+        // Dates within the past 3 minutes should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addMinutes(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within the past N hours', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'PAST',
+          amount: 3,
+          unit: 'HOUR',
+        };
+
+        // Dates within the past 3 hours should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 2),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 3),
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Dates outside the range should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 4),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: addHours(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
       it('should return true for dates within the past N days', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
@@ -436,6 +695,93 @@ describe('Relative Date Filter Utils', () => {
     });
 
     describe('THIS direction', () => {
+      it('should return true for dates within this second', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'THIS',
+          unit: 'SECOND',
+        };
+
+        // Same second should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: now,
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Different seconds should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-15T08:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subSeconds(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within this minute', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'THIS',
+          unit: 'MINUTE',
+        };
+
+        // Same minute should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: now,
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Different minutes should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-15T08:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subMinutes(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
+      it('should return true for dates within this hour', () => {
+        const relativeDateFilterValue: RelativeDateFilter = {
+          direction: 'THIS',
+          unit: 'HOUR',
+        };
+
+        // Same hour should match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: now,
+            relativeDateFilterValue,
+          }),
+        ).toBe(true);
+
+        // Different hours should not match
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-15T08:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: subHours(now, 1),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+      });
+
       it('should return true for dates within this day', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',

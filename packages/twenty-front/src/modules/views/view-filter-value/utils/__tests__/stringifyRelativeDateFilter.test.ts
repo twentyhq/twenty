@@ -38,6 +38,21 @@ describe('stringifyRelativeDateFilter', () => {
     });
 
     it('should stringify with different units', () => {
+      const secondFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'SECOND',
+      };
+      const minuteFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'MINUTE',
+      };
+      const hourFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'HOUR',
+      };
       const dayFilter: RelativeDateFilter = {
         direction: 'PAST',
         amount: 1,
@@ -59,6 +74,9 @@ describe('stringifyRelativeDateFilter', () => {
         unit: 'YEAR',
       };
 
+      expect(stringifyRelativeDateFilter(secondFilter)).toBe('PAST_1_SECOND');
+      expect(stringifyRelativeDateFilter(minuteFilter)).toBe('PAST_1_MINUTE');
+      expect(stringifyRelativeDateFilter(hourFilter)).toBe('PAST_1_HOUR');
       expect(stringifyRelativeDateFilter(dayFilter)).toBe('PAST_1_DAY');
       expect(stringifyRelativeDateFilter(weekFilter)).toBe('PAST_1_WEEK');
       expect(stringifyRelativeDateFilter(monthFilter)).toBe('PAST_1_MONTH');
