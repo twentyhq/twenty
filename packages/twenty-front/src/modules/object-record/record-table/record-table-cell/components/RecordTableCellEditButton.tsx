@@ -6,7 +6,6 @@ import {
   type FieldLinksValue,
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
@@ -17,9 +16,10 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy, IconPencil } from 'twenty-ui/display';
+import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const RecordTableCellEditButton = () => {
   const { cellPosition } = useContext(RecordTableCellContext);
@@ -30,6 +30,7 @@ export const RecordTableCellEditButton = () => {
   const isFieldInputOnly = useIsFieldInputOnly();
   const isFirstColumn = cellPosition.column === 0;
   const customButtonIcon = useGetButtonIcon();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const buttonIcon = isFirstColumn
     ? IconArrowUpRight
@@ -37,31 +38,14 @@ export const RecordTableCellEditButton = () => {
       ? customButtonIcon
       : IconPencil;
 
-  let actionMode = null;
+  let onClickAction: FieldMetadataSettingsOnClickAction | undefined;
 
-  if (isFieldPhones(fieldDefinition)) {
-    assertFieldMetadata(
-      FieldMetadataType.PHONES,
-      isFieldPhones,
-      fieldDefinition,
-    );
-    actionMode =
-      (fieldDefinition.metadata.settings?.actionMode as 'copy' | 'navigate') ??
-      'copy';
-  } else if (isFieldEmails(fieldDefinition)) {
-    assertFieldMetadata(
-      FieldMetadataType.EMAILS,
-      isFieldEmails,
-      fieldDefinition,
-    );
-    actionMode =
-      (fieldDefinition.metadata.settings?.actionMode as 'copy' | 'navigate') ??
-      'copy';
-  } else if (isFieldLinks(fieldDefinition)) {
-    assertFieldMetadata(FieldMetadataType.LINKS, isFieldLinks, fieldDefinition);
-    actionMode =
-      (fieldDefinition.metadata.settings?.actionMode as 'copy' | 'navigate') ??
-      'copy';
+  if (
+    isFieldPhones(fieldDefinition) ||
+    isFieldLinks(fieldDefinition) ||
+    isFieldEmails(fieldDefinition)
+  ) {
+    onClickAction = fieldDefinition.metadata.settings?.clickAction;
   }
 
   const fieldValue = useRecordFieldValue<
@@ -78,6 +62,7 @@ export const RecordTableCellEditButton = () => {
 
   const getFieldValueText = () => {
     if (!fieldValue) return '';
+
     if (isFieldPhones(fieldDefinition)) {
       const { primaryPhoneCallingCode = '', primaryPhoneNumber = '' } =
         fieldValue as FieldPhonesValue;
@@ -85,10 +70,13 @@ export const RecordTableCellEditButton = () => {
         ? `${primaryPhoneCallingCode}${primaryPhoneNumber}`
         : primaryPhoneNumber;
     }
+
     if (isFieldEmails(fieldDefinition))
-      return (fieldValue as FieldEmailsValue).primaryEmail || '';
+      return (fieldValue as FieldEmailsValue).primaryEmail ?? '';
+
     if (isFieldLinks(fieldDefinition))
-      return (fieldValue as FieldLinksValue).primaryLinkUrl || '';
+      return (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
+
     return '';
   };
 
@@ -106,36 +94,28 @@ export const RecordTableCellEditButton = () => {
   };
 
   const handleCopyClick = async () => {
-    try {
-      const textToCopy = getFieldValueText();
-      const textMessage = isFieldPhones(fieldDefinition)
-        ? t`Phone number copied to clipboard`
-        : isFieldEmails(fieldDefinition)
-          ? t`Email address copied to clipboard`
-          : t`Link copied to clipboard`;
-      if (isDefined(textToCopy)) {
-        await navigator.clipboard.writeText(textToCopy);
-        enqueueSuccessSnackBar({
-          message: textMessage,
-          options: { duration: 2000 },
-        });
-      }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Error copying to clipboard`,
-        options: { duration: 2000 },
-      });
+    const textToCopy = getFieldValueText();
+    const textMessage = isFieldPhones(fieldDefinition)
+      ? t`Phone number copied to clipboard`
+      : isFieldEmails(fieldDefinition)
+        ? t`Email address copied to clipboard`
+        : t`Link copied to clipboard`;
+    if (textToCopy) {
+      await copyToClipboard(textToCopy, textMessage);
     }
   };
 
-  const isNavigatePrimary = actionMode === 'navigate';
-  const secondaryClick = actionMode
-    ? isNavigatePrimary
+  const isNavigatePrimaryForField =
+    onClickAction === FieldMetadataSettingsOnClickAction.OPEN_LINK;
+
+  const secondaryClickForField = onClickAction
+    ? isNavigatePrimaryForField
       ? handleCopyClick
       : handleNavigateClick
     : undefined;
-  const secondaryIcon = actionMode
-    ? isNavigatePrimary
+
+  const secondaryIcon = onClickAction
+    ? isNavigatePrimaryForField
       ? IconCopy
       : IconArrowUpRight
     : undefined;
@@ -144,7 +124,7 @@ export const RecordTableCellEditButton = () => {
     <RecordTableCellButton
       onClick={handleButtonClick}
       Icon={buttonIcon}
-      onSecondaryClick={secondaryClick}
+      onSecondaryClick={secondaryClickForField}
       SecondaryIcon={secondaryIcon}
     />
   );
