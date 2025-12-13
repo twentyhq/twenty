@@ -11,7 +11,7 @@ index 1684394..32602b3 100644
  const common_1 = require("@nestjs/common");
  const graphql_2 = require("@nestjs/graphql");
  class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
-+    
++
 +    schemaCache = new Map();
 +
      async start(options) {
@@ -26,7 +26,7 @@ index 1684394..32602b3 100644
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -42,6 +46,46 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -42,6 +46,47 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          }
          const yoga = (0, graphql_yoga_1.createYoga)({
              ...options,
@@ -34,14 +34,15 @@ index 1684394..32602b3 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
 +                }
-+                
++
 +                const schemas = [];
 +
 +                if (options.schema) {
@@ -67,13 +68,13 @@ index 1684394..32602b3 100644
 +                }
 +
 +                this.schemaCache.set(cacheKey, mergedSchemas)
-+                
++
 +                return mergedSchemas;
 +            },
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -54,11 +98,51 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -54,11 +98,52 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -87,14 +88,15 @@ index 1684394..32602b3 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
 +                }
-+                
++
 +                const schemas = [];
 +
 +                if (options.schema) {
@@ -120,7 +122,7 @@ index 1684394..32602b3 100644
 +                }
 +
 +                this.schemaCache.set(cacheKey, mergedSchemas)
-+                
++
 +                return mergedSchemas;
 +            },
              graphqlEndpoint: options.path,
@@ -141,9 +143,9 @@ index 7068c51..b8cbf9e 100644
 +import { createYoga, filter, pipe } from 'graphql-yoga';
 +import { __decorate } from "tslib";
  export class AbstractYogaDriver extends AbstractGraphQLDriver {
-+    
++
 +    schemaCache = new Map();
-+    
++
      async start(options) {
          const platformName = this.httpAdapterHost.httpAdapter.getType();
          options = {
@@ -156,7 +158,7 @@ index 7068c51..b8cbf9e 100644
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -39,6 +43,46 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -39,6 +43,47 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          }
          const yoga = createYoga({
              ...options,
@@ -164,9 +166,10 @@ index 7068c51..b8cbf9e 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -203,7 +206,7 @@ index 7068c51..b8cbf9e 100644
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -51,11 +95,51 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -51,11 +95,52 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -217,9 +220,10 @@ index 7068c51..b8cbf9e 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
++                const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -353,7 +357,7 @@ index ce142f6..10e17d2 100644
 @@ -11,23 +12,31 @@ import {
    SubscriptionConfig,
  } from '@nestjs/graphql';
- 
+
 +export type YogaSchemaDefinition<TContext> =
 +  | PromiseOrValue<GraphQLSchemaWithContext<TContext>>
 +  | ((
@@ -361,7 +365,7 @@ index ce142f6..10e17d2 100644
 +  ) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
 +
  export type YogaDriverPlatform = 'express' | 'fastify';
- 
+
  export type YogaDriverServerContext<Platform extends YogaDriverPlatform> =
    Platform extends 'fastify'
 -    ? {
@@ -380,7 +384,7 @@ index ce142f6..10e17d2 100644
 +    req: ExpressRequest;
 +    res: ExpressResponse;
 +  };
- 
+
  export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<
    YogaServerOptions<YogaDriverServerContext<Platform>, never>,
    'context' | 'schema'
@@ -388,7 +392,7 @@ index ce142f6..10e17d2 100644
 +> & {
 +  conditionalSchema?: YogaSchemaDefinition<YogaDriverServerContext<Platform>> | undefined;
 +};
- 
+
  export type YogaDriverServerInstance<Platform extends YogaDriverPlatform> = YogaServerInstance<
    YogaDriverServerContext<Platform>,
 @@ -53,6 +62,8 @@ export type YogaDriverSubscriptionConfig = {
@@ -398,28 +402,29 @@ index ce142f6..10e17d2 100644
 +  schemaCache = new Map();
 +
    protected yoga!: YogaDriverServerInstance<Platform>;
- 
+
    public async start(options: YogaDriverConfig<Platform>) {
 @@ -78,7 +89,7 @@ export abstract class AbstractYogaDriver<
    }
- 
+
    protected registerExpress(
 -    options: YogaDriverConfig<'express'>,
 +    { conditionalSchema, ...options }: YogaDriverConfig<'express'>,
      { preStartHook }: { preStartHook?: (app: Express) => void } = {},
    ) {
      const app: Express = this.httpAdapterHost.httpAdapter.getInstance();
-@@ -98,6 +109,40 @@ export abstract class AbstractYogaDriver<
- 
+@@ -98,6 +109,41 @@ export abstract class AbstractYogaDriver<
+
      const yoga = createYoga<YogaDriverServerContext<'express'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
++        const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -459,28 +464,29 @@ index ce142f6..10e17d2 100644
 +            ? new LoggerWithInfo('YogaDriver')
 +            : options.logging,
      });
- 
+
      this.yoga = yoga as YogaDriverServerInstance<Platform>;
 @@ -115,7 +160,7 @@ export abstract class AbstractYogaDriver<
    }
- 
+
    protected registerFastify(
 -    options: YogaDriverConfig<'fastify'>,
 +    { conditionalSchema, ...options }: YogaDriverConfig<'fastify'>,
      { preStartHook }: { preStartHook?: (app: FastifyInstance) => void } = {},
    ) {
      const app: FastifyInstance = this.httpAdapterHost.httpAdapter.getInstance();
-@@ -124,6 +169,40 @@ export abstract class AbstractYogaDriver<
- 
+@@ -124,6 +169,41 @@ export abstract class AbstractYogaDriver<
+
      const yoga = createYoga<YogaDriverServerContext<'fastify'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
++        const apiKeyId = request.req.apiKey?.id ?? 'no-api-key'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceUserId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${workspaceUserId}-${apiKeyId}-${url}-${workspaceCacheVersion}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -520,5 +526,5 @@ index ce142f6..10e17d2 100644
 +            'graphql-ws': true,
 +          }
            : options.subscriptions;
- 
+
        if (config['graphql-ws']) {
