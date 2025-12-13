@@ -56,6 +56,7 @@ export const Default: Story = {
     title: 'Pariatur labore.',
     subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
     confirmButtonText: 'Delete',
+    onConfirmClick: fn(),
   },
 };
 
@@ -75,10 +76,10 @@ export const CloseOnEscape: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const body = within(document.body);
 
-    await canvas.findByText('Escape Key Test');
+    await body.findByText('Escape Key Test');
 
     closeMock.mockClear();
 
@@ -98,12 +99,12 @@ export const CloseOnClickOutside: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const body = within(document.body);
 
-    await canvas.findByText('Click Outside Test');
+    await body.findByText('Click Outside Test');
 
-    const backdrop = await canvas.findByTestId('modal-backdrop');
+    const backdrop = await body.findByTestId('modal-backdrop');
 
     // We need to wait for the outside click listener to be registered
     await sleep(100);
@@ -124,10 +125,10 @@ export const ConfirmWithEnterKey: Story = {
     confirmButtonText: 'Confirm',
     onConfirmClick: confirmMock,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const body = within(document.body);
 
-    await canvas.findByText('Enter Key Test');
+    await body.findByText('Enter Key Test');
 
     await userEvent.keyboard('{Enter}');
 
@@ -145,12 +146,12 @@ export const CancelButtonClick: Story = {
     confirmButtonText: 'Confirm',
     onClose: closeMock,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const body = within(document.body);
 
-    await canvas.findByText('Cancel Button Test');
+    await body.findByText('Cancel Button Test');
 
-    const cancelButton = await canvas.findByRole('button', {
+    const cancelButton = await body.findByRole('button', {
       name: /Cancel/,
     });
     await userEvent.click(cancelButton);
@@ -169,12 +170,12 @@ export const ConfirmButtonClick: Story = {
     confirmButtonText: 'Confirm',
     onConfirmClick: confirmMock,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const body = within(document.body);
 
-    await canvas.findByText('Confirm Button Test');
+    await body.findByText('Confirm Button Test');
 
-    const confirmButton = await canvas.findByRole('button', {
+    const confirmButton = await body.findByRole('button', {
       name: /Confirm/,
     });
 
