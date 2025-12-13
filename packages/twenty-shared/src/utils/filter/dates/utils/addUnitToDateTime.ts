@@ -1,5 +1,5 @@
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
-import { addDays, addMonths, addWeeks, addYears } from 'date-fns';
+import { addDays, addHours, addMinutes, addMonths, addSeconds, addWeeks, addYears } from 'date-fns';
 
 export const addUnitToDateTime = (
   dateTime: Date,
@@ -7,6 +7,12 @@ export const addUnitToDateTime = (
   unit: RelativeDateFilterUnit,
 ) => {
   switch (unit) {
+    case 'SECOND':
+      return addSeconds(dateTime, amount);
+    case 'MINUTE':
+      return addMinutes(dateTime, amount);
+    case 'HOUR':
+      return addHours(dateTime, amount);
     case 'DAY':
       return addDays(dateTime, amount);
     case 'WEEK':

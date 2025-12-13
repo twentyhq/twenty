@@ -6,6 +6,9 @@ type RelativeDateUnitOption = {
 };
 
 export const RELATIVE_DATE_UNITS_SELECT_OPTIONS: RelativeDateUnitOption[] = [
+  { value: 'SECOND', label: 'Second' },
+  { value: 'MINUTE', label: 'Minute' },
+  { value: 'HOUR', label: 'Hour' },
   { value: 'DAY', label: 'Day' },
   { value: 'WEEK', label: 'Week' },
   { value: 'MONTH', label: 'Month' },
