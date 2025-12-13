@@ -4,7 +4,8 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import gql from 'graphql-tag';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -53,13 +54,15 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
   decorators: [
     (Story) => (
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
-        <ActionMenuContext.Provider value={{
-             actions: [],
-             actionMenuType: 'index-page-action-menu-dropdown',
-             displayType: 'dropdownItem',
-             isInRightDrawer: true,
-        }}>
-            <Story />
+        <ActionMenuContext.Provider
+          value={{
+            actions: [],
+            actionMenuType: 'index-page-action-menu-dropdown',
+            displayType: 'dropdownItem',
+            isInRightDrawer: true,
+          }}
+        >
+          <Story />
         </ActionMenuContext.Provider>
       </ApolloCoreClientContext.Provider>
     ),
@@ -70,7 +73,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     RootDecorator,
   ],
   args: {
-    objectNameSingular: 'person',
+    objectNameSingular: 'company',
     contextStoreInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   },
   parameters: {
@@ -85,4 +88,22 @@ export default meta;
 type Story = StoryObj<typeof UpdateMultipleRecordsContainer>;
 
 export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const nameLabel = await canvas.findByText('Name', {}, { timeout: 10000 });
+    const nameInput = within(nameLabel.parentElement!).getByRole('textbox');
+
+    await userEvent.type(nameInput, 'New Name');
+
+    const applyButton = await canvas.findByRole('button', { name: /Apply/i });
+    expect(applyButton).toBeEnabled();
+
+    await userEvent.click(applyButton);
+
+    const cancelButton = await canvas.findByRole('button', { name: /Cancel/i });
+    expect(cancelButton).toBeEnabled();
+
+    await userEvent.click(cancelButton);
+  },
 };
