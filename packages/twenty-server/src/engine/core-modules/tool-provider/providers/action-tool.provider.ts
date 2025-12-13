@@ -9,6 +9,7 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
@@ -24,6 +25,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
+    private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -65,6 +67,20 @@ export class ActionToolProvider implements ToolProvider {
       this.searchHelpCenterTool,
       context.workspaceId,
     );
+
+    const hasCodeInterpreterPermission =
+      await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.CODE_INTERPRETER_TOOL,
+      );
+
+    if (hasCodeInterpreterPermission) {
+      tools['code_interpreter'] = this.createToolEntry(
+        this.codeInterpreterTool,
+        context.workspaceId,
+      );
+    }
 
     return tools;
   }

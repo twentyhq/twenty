@@ -83,7 +83,7 @@ export class ToolProviderService {
         ToolType.SEARCH_HELP_CENTER,
         {
           tool: this.searchHelpCenterTool,
-          // No permission flag - available to all agents
+          // No permission flag - available to all
         },
       ],
     ]);
