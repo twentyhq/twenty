@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { batchFetchImplementation } from '@jrmdayn/googleapis-batcher';
 import { isNonEmptyString } from '@sniptt/guards';
-import { google, type gmail_v1 as gmailV1 } from 'googleapis';
+import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
@@ -165,7 +166,7 @@ export class GmailGetMessageListService {
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
     const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
-      gmailClient,
+      connectedAccount,
       messageChannel.syncCursor,
       messageFolders,
     );
@@ -193,33 +194,52 @@ export class GmailGetMessageListService {
   }
 
   private async getEmailIdsFromExcludedFolders(
-    gmailClient: gmailV1.Gmail,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+    >,
     lastSyncHistoryId: string,
     messageFolders: Pick<
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
   ): Promise<string[]> {
-    const emailIds: string[] = [];
-
     const toBeExcludedFolders = messageFolders.filter(
-      (folder) => !folder.isSynced,
+      (folder) => !folder.isSynced && isDefined(folder.externalId),
     );
 
-    for (const folder of toBeExcludedFolders) {
-      if (!isDefined(folder.externalId)) {
-        continue;
-      }
+    if (toBeExcludedFolders.length === 0) {
+      return [];
+    }
 
-      const { history } = await this.gmailGetHistoryService.getHistory(
-        gmailClient,
-        lastSyncHistoryId,
-        ['messageAdded'],
-        folder.externalId,
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+        connectedAccount,
       );
 
+    const fetchImpl = batchFetchImplementation({ maxBatchSize: 50 });
+    const batchedGmailClient = google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+      fetchImplementation: fetchImpl,
+    });
+
+    const historyPromises = toBeExcludedFolders.map((folder) =>
+      this.gmailGetHistoryService.getHistory(
+        batchedGmailClient,
+        lastSyncHistoryId,
+        ['messageAdded'],
+        folder.externalId!,
+      ),
+    );
+
+    const historyResults = await Promise.all(historyPromises);
+
+    const emailIds: string[] = [];
+
+    for (const { history } of historyResults) {
       const emailIdsFromCategory = history
-        .map((history) => history.messagesAdded)
+        .map((historyItem) => historyItem.messagesAdded)
         .flat()
         .map((message) => message?.message?.id)
         .filter((id) => id)

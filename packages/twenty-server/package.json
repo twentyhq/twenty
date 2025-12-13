@@ -36,6 +36,7 @@
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
+    "@jrmdayn/googleapis-batcher": "^0.10.1",
     "@lingui/conf": "5.1.2",
     "@lingui/core": "^5.1.2",
     "@lingui/format-po": "5.1.2",
