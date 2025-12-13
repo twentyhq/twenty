@@ -129,7 +129,10 @@ export const useIncrementalDeleteManyRecords = <T>({
     ],
   );
 
-  const deleteManyRecordsBatch = async (recordIdsToDelete: string[]) => {
+  const deleteManyRecordsBatch = async (
+    recordIdsToDelete: string[],
+    abortSignal: AbortSignal,
+  ) => {
     const numberOfBatches = Math.ceil(
       recordIdsToDelete.length / mutationPageSize,
     );
@@ -167,6 +170,11 @@ export const useIncrementalDeleteManyRecords = <T>({
           mutation: deleteManyRecordsMutation,
           variables: {
             filter: { id: { in: batchedIdsToDelete } },
+          },
+          context: {
+            fetchOptions: {
+              signal: abortSignal,
+            },
           },
         })
         .catch((error: Error) => {
@@ -215,13 +223,15 @@ export const useIncrementalDeleteManyRecords = <T>({
   const incrementalDeleteManyRecords = async () => {
     let totalDeletedCount = 0;
 
-    await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
-      await deleteManyRecordsBatch(recordIds);
+    await incrementalFetchAndMutate(
+      async ({ recordIds, totalCount, abortSignal }) => {
+        await deleteManyRecordsBatch(recordIds, abortSignal);
 
-      totalDeletedCount += recordIds.length;
+        totalDeletedCount += recordIds.length;
 
-      updateProgress(totalDeletedCount, totalCount);
-    });
+        updateProgress(totalDeletedCount, totalCount);
+      },
+    );
 
     await refetchAggregateQueries();
 
