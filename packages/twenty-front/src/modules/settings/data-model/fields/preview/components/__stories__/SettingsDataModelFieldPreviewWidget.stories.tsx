@@ -30,6 +30,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewWidget> = {
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
+    I18nFrontDecorator,
     SnackBarDecorator,
   ],
   args: {
