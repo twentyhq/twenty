@@ -59,7 +59,7 @@ export class ApiKeyRoleService {
     });
   }
 
-  async getRoleIdForApiKey(
+  async getRoleIdForApiKeyId(
     apiKeyId: string,
     workspaceId: string,
   ): Promise<string> {

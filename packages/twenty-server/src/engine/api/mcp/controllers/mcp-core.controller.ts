@@ -11,6 +11,7 @@ import {
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -36,7 +37,7 @@ export class McpCoreController {
   async handleMcpCore(
     @Body() body: JsonRpc,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthApiKey() apiKey: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
     return await this.mcpProtocolService.handleMCPCoreQuery(body, {

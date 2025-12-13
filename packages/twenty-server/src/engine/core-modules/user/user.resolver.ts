@@ -24,6 +24,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -417,7 +418,7 @@ export class UserResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace()
     workspace: WorkspaceEntity,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -462,7 +463,7 @@ export class UserResolver {
         userWorkspaceId,
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
-        apiKeyId: apiKey ?? undefined,
+        apiKeyId: apiKey?.id,
       }));
 
     if (!canDeleteUserFromWorkspace) {

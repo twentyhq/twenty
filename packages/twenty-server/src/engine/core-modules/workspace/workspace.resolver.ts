@@ -17,13 +17,14 @@ import {
 import assert from 'assert';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
@@ -136,7 +137,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({

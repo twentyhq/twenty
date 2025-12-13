@@ -3,9 +3,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
@@ -87,12 +88,12 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
     }: BillingCheckoutSessionInput,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey?: ApiKeyEntity,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      apiKeyId: apiKey,
+      apiKeyId: apiKey?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 

@@ -5,11 +5,12 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -107,7 +108,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }: {
     payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
-    apiKey?: string;
+    apiKey: ApiKeyEntity | undefined;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -389,7 +390,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
-    apiKey?: string;
+    apiKey: ApiKeyEntity | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -439,7 +440,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           userWorkspaceId,
           workspaceId,
           setting: permission,
-          apiKeyId: apiKey,
+          apiKeyId: apiKey?.id,
         });
 
       if (!hasPermission) {

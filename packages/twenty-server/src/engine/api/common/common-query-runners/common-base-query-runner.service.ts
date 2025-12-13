@@ -298,7 +298,7 @@ export abstract class CommonBaseQueryRunnerService<
     workspaceId: string,
   ): Promise<string> {
     if (isDefined(authContext.apiKey)) {
-      return this.apiKeyRoleService.getRoleIdForApiKey(
+      return this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );

@@ -91,7 +91,7 @@ export abstract class RestApiBaseHandler {
     let roleId: string;
 
     if (isDefined(authContext.apiKey)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );
