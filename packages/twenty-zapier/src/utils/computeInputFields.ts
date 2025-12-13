@@ -266,6 +266,46 @@ export const computeInputFields = (
         result.push(field);
         break;
       }
+      case FieldMetadataType.SELECT: {
+        const choices: Record<string, string> = {};
+        if (nodeField.options) {
+          for (const option of nodeField.options) {
+            choices[option.value] = option.label;
+          }
+        }
+        const field = {
+          key: nodeField.name,
+          label: nodeField.label,
+          type: 'string',
+          helpText: nodeField.description,
+          required: isFieldRequired(nodeField),
+          list: false,
+          placeholder: undefined,
+          choices,
+        } as InputField;
+        result.push(field);
+        break;
+      }
+      case FieldMetadataType.MULTI_SELECT: {
+        const choices: Record<string, string> = {};
+        if (nodeField.options) {
+          for (const option of nodeField.options) {
+            choices[option.value] = option.label;
+          }
+        }
+        const field = {
+          key: nodeField.name,
+          label: nodeField.label,
+          type: 'string',
+          helpText: nodeField.description,
+          required: isFieldRequired(nodeField),
+          list: true,
+          placeholder: undefined,
+          choices,
+        } as InputField;
+        result.push(field);
+        break;
+      }
       default:
         break;
     }

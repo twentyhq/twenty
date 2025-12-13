@@ -1,6 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 export type InputData = { [x: string]: any };
 
+export type FieldOption = {
+  id?: string;
+  position: number;
+  label: string;
+  value: string;
+  color?: string;
+};
+
 export type NodeField = {
   type: FieldMetadataType;
   name: string;
@@ -8,6 +16,7 @@ export type NodeField = {
   description: string | null;
   isNullable: boolean;
   defaultValue: object | null;
+  options?: FieldOption[] | null;
   list?: boolean;
   placeholder?: string;
 };
@@ -31,6 +40,7 @@ export type InputField = {
   required: boolean;
   list?: boolean;
   placeholder?: string;
+  choices?: Record<string, string>;
 };
 
 export type Schema = {
