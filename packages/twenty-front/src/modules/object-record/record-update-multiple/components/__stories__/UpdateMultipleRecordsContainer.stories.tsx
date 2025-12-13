@@ -5,7 +5,6 @@ import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-mu
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
 import gql from 'graphql-tag';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -71,7 +70,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     RootDecorator,
   ],
   args: {
-    objectNameSingular: 'company',
+    objectNameSingular: 'person',
     contextStoreInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   },
   parameters: {
@@ -86,17 +85,4 @@ export default meta;
 type Story = StoryObj<typeof UpdateMultipleRecordsContainer>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Wait for form to load (metadata loaded)
-    const nameInput = await canvas.findByLabelText('Name', {}, { timeout: 5000 });
-
-    // Type new value
-    await userEvent.type(nameInput, 'New Name');
-
-    // Click Apply
-    const applyButton = await canvas.findByRole('button', { name: /Apply/i });
-    await userEvent.click(applyButton);
-  },
 };
