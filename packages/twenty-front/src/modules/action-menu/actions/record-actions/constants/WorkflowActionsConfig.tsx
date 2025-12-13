@@ -205,7 +205,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       key: WorkflowSingleRecordActionKeys.ADD_NODE,
       label: msg`Add a node`,
       shortLabel: msg`Add a node`,
-      isPinned: false,
+      isPinned: true,
       position: 10,
       Icon: IconPlus,
       type: ActionType.Standard,
@@ -319,9 +319,11 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       position: 14,
+      isPinned: false,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 15,
+      isPinned: false,
     },
     [SingleRecordActionKeys.DESTROY]: {
       position: 16,
