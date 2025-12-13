@@ -1,69 +1,85 @@
+import { type GaxiosError } from 'gaxios';
+
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
 
 export const parseGmailApiError = (
-  error: GmailApiError,
+  error: GaxiosError,
 ): MessageImportDriverException => {
-  const { code, message } = error;
+  const gmailApiError = {
+    code: error.response?.status,
+    reason:
+      error.response?.data?.error?.errors?.[0].reason ||
+      error.response?.data?.error ||
+      'Unknown reason',
+    message:
+      error.response?.data?.error?.errors?.[0].message ||
+      error.response?.data?.error_description ||
+      'Unknown error',
+  };
 
-  const codeAsNumber = Number(code);
-
-  switch (codeAsNumber) {
+  switch (gmailApiError.code) {
     case 400:
-      if (message === 'invalid_grant') {
+      if (gmailApiError.reason === 'invalid_grant') {
         return new MessageImportDriverException(
-          message,
+          gmailApiError.message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
-      if (message === 'failedPrecondition') {
-        if (message.includes('Mail service not enabled')) {
+      if (gmailApiError.reason === 'failedPrecondition') {
+        if (gmailApiError.message.includes('Mail service not enabled')) {
           return new MessageImportDriverException(
-            message,
+            gmailApiError.message,
             MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
           );
         }
 
         return new MessageImportDriverException(
-          message,
+          gmailApiError.message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
       return new MessageImportDriverException(
-        message,
+        gmailApiError.message,
         MessageImportDriverExceptionCode.UNKNOWN,
       );
 
     case 404:
       return new MessageImportDriverException(
-        message,
+        gmailApiError.message,
         MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
       );
 
     case 429:
       return new MessageImportDriverException(
-        message,
+        gmailApiError.message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     case 403:
       if (
-        message === 'rateLimitExceeded' ||
-        message === 'userRateLimitExceeded' ||
-        message === 'dailyLimitExceeded'
+        gmailApiError.reason === 'rateLimitExceeded' ||
+        gmailApiError.reason === 'userRateLimitExceeded' ||
+        gmailApiError.reason === 'dailyLimitExceeded'
       ) {
         return new MessageImportDriverException(
-          message,
+          gmailApiError.message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
-      if (message === 'domainPolicy') {
+      if (gmailApiError.reason === 'domainPolicy') {
         return new MessageImportDriverException(
-          message,
+          gmailApiError.message,
+          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
+      }
+
+      if (gmailApiError.reason === 'insufficientPermissions') {
+        return new MessageImportDriverException(
+          gmailApiError.message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
@@ -72,29 +88,31 @@ export const parseGmailApiError = (
 
     case 401:
       return new MessageImportDriverException(
-        message,
+        gmailApiError.message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
     case 503:
       return new MessageImportDriverException(
-        message,
+        gmailApiError.message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     case 500:
     case 502:
     case 504:
-      if (message === 'backendError') {
+      if (gmailApiError.reason === 'backendError') {
         return new MessageImportDriverException(
-          message,
+          gmailApiError.message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
-      if (message.includes(`Authentication backend unavailable`)) {
+      if (
+        gmailApiError.message.includes(`Authentication backend unavailable`)
+      ) {
         return new MessageImportDriverException(
-          `${code} - ${message}`,
+          `${gmailApiError.code} - ${gmailApiError.message}`,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
@@ -105,7 +123,7 @@ export const parseGmailApiError = (
   }
 
   return new MessageImportDriverException(
-    message,
+    gmailApiError.message,
     MessageImportDriverExceptionCode.UNKNOWN,
   );
 };

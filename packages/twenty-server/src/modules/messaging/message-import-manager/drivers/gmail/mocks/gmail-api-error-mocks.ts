@@ -1,173 +1,88 @@
-import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
+import { GaxiosError } from 'gaxios';
 
-const gmailApiErrorMocks = {
-  // 400 Bad Request - Invalid query parameters
-  badRequest: {
-    code: 400,
-    message: 'badRequest',
-  },
-
-  // 400 Invalid Grant
-  invalidGrant: {
-    code: 400,
-    message: 'invalid_grant',
-  },
-
-  // 400 Failed Precondition
-  failedPrecondition: {
-    code: 400,
-    message: 'failedPrecondition',
-  },
-
-  invalidCredentials: {
-    code: 401,
-    message: 'authError',
-  },
-
-  notFound: {
-    code: 404,
-    message: 'notFound',
-  },
-
-  gone: {
-    code: 410,
-    message: 'resourceGone',
-  },
-
-  dailyLimitExceeded: {
-    code: 403,
-    message: 'dailyLimitExceeded',
-  },
-
-  userRateLimitExceeded: {
-    code: 403,
-    message: 'userRateLimitExceeded',
-  },
-
-  rateLimitExceeded: {
-    code: 403,
-    message: 'rateLimitExceeded',
-  },
-
-  domainPolicyError: {
-    code: 403,
-    message: 'domainPolicy',
-  },
-
-  tooManyConcurrentRequests: {
-    code: 429,
-    message: 'tooManyConcurrentRequests',
-  },
-
-  backendError: {
-    code: 500,
-    message: 'backendError',
-  },
+type ErrorConfig = {
+  reason: string;
+  message: string;
 };
 
-const convertToErrorWithErrorCodeStringOrNumber = ({
-  error,
-  errorCodeAsString,
-}: {
-  error: GmailApiError;
-  errorCodeAsString: boolean;
-}): GmailApiError => {
-  return {
-    code: errorCodeAsString ? error.code.toString() : error.code,
-    message: error.message,
-  };
+const ERROR_DEFINITIONS: Record<number, Record<string, ErrorConfig>> = {
+  400: {
+    default: { reason: 'badRequest', message: 'Bad Request' },
+    invalid_grant: { reason: 'invalid_grant', message: 'invalid_grant' },
+    failedPrecondition: {
+      reason: 'failedPrecondition',
+      message: 'Precondition check failed.',
+    },
+  },
+  401: {
+    default: { reason: 'authError', message: 'Invalid Credentials' },
+  },
+  403: {
+    default: { reason: 'rateLimitExceeded', message: 'Rate Limit Exceeded' },
+    dailyLimit: {
+      reason: 'dailyLimitExceeded',
+      message: 'Daily Limit Exceeded',
+    },
+    userRateLimit: {
+      reason: 'userRateLimitExceeded',
+      message: 'User Rate Limit Exceeded',
+    },
+    rateLimit: { reason: 'rateLimitExceeded', message: 'Rate Limit Exceeded' },
+    domainPolicy: { reason: 'domainPolicy', message: 'Domain Policy Error' },
+  },
+  404: {
+    default: { reason: 'notFound', message: 'Not Found' },
+  },
+  410: {
+    default: { reason: 'resourceGone', message: 'Resource Gone' },
+  },
+  429: {
+    default: {
+      reason: 'tooManyConcurrentRequests',
+      message: 'Too Many Concurrent Requests',
+    },
+  },
+  500: {
+    default: { reason: 'backendError', message: 'Backend Error' },
+  },
 };
 
 export const getGmailApiError = ({
   code,
-  type,
-  errorCodeAsString = false,
+  reason,
 }: {
   code: number;
-  type?: string;
-  errorCodeAsString?: boolean;
-}): GmailApiError => {
-  switch (code) {
-    case 400:
-      switch (type) {
-        case 'invalid_grant':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.invalidGrant,
-            errorCodeAsString,
-          });
-        case 'failedPrecondition':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.failedPrecondition,
-            errorCodeAsString,
-          });
-        default:
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.badRequest,
-            errorCodeAsString,
-          });
-      }
-    case 401:
-      return convertToErrorWithErrorCodeStringOrNumber({
-        error: gmailApiErrorMocks.invalidCredentials,
-        errorCodeAsString,
-      });
-    case 403:
-      switch (type) {
-        case 'dailyLimit':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.dailyLimitExceeded,
-            errorCodeAsString,
-          });
-        case 'userRateLimit':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.userRateLimitExceeded,
-            errorCodeAsString,
-          });
-        case 'rateLimit':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.rateLimitExceeded,
-            errorCodeAsString,
-          });
-        case 'domainPolicy':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.domainPolicyError,
-            errorCodeAsString,
-          });
-        default:
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.rateLimitExceeded,
-            errorCodeAsString,
-          });
-      }
-    case 404:
-      return convertToErrorWithErrorCodeStringOrNumber({
-        error: gmailApiErrorMocks.notFound,
-        errorCodeAsString,
-      });
-    case 410:
-      return convertToErrorWithErrorCodeStringOrNumber({
-        error: gmailApiErrorMocks.gone,
-        errorCodeAsString,
-      });
-    case 429:
-      switch (type) {
-        case 'concurrent':
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.tooManyConcurrentRequests,
-            errorCodeAsString,
-          });
-        default:
-          return convertToErrorWithErrorCodeStringOrNumber({
-            error: gmailApiErrorMocks.tooManyConcurrentRequests,
-            errorCodeAsString,
-          });
-      }
-    case 500:
-      return convertToErrorWithErrorCodeStringOrNumber({
-        error: gmailApiErrorMocks.backendError,
-        errorCodeAsString,
-      });
-    default:
-      throw new Error(`Unknown error code: ${code}`);
+  reason?: string;
+}): GaxiosError => {
+  const statusMap = ERROR_DEFINITIONS[code];
+
+  if (!statusMap) {
+    throw new Error(`Unknown error code: ${code}`);
   }
+
+  const config = statusMap[reason || ''] ?? statusMap.default;
+
+  return new GaxiosError(
+    config.message,
+    { url: 'https://gmail.googleapis.com/mocks' },
+    {
+      status: code,
+      statusText: config.message,
+      data: {
+        error: {
+          code,
+          message: config.message,
+          errors: [
+            {
+              message: config.message,
+              reason: config.reason,
+            },
+          ],
+        },
+      },
+      headers: {},
+      config: { url: 'https://gmail.googleapis.com/mocks' },
+      request: { responseURL: 'https://gmail.googleapis.com/mocks' },
+    },
+  );
 };
