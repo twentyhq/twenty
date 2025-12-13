@@ -63,6 +63,7 @@ import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.modul
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
+import { MessageFolderSyncStatusModule } from 'src/modules/messaging/message-folder-manager/message-folder-sync-status.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -108,6 +109,7 @@ import { FileModule } from './file/file.module';
     SubscriptionsModule,
     ImapSmtpCaldavModule,
     ChannelSyncModule,
+    MessageFolderSyncStatusModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
