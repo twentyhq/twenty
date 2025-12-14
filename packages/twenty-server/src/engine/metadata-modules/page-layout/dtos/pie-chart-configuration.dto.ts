@@ -81,6 +81,11 @@ export class PieChartConfigurationDTO {
   @IsOptional()
   displayLegend?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsBoolean()
+  @IsOptional()
+  hideEmptyCategory?: boolean;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

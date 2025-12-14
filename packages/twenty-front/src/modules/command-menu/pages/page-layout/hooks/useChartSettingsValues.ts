@@ -255,6 +255,8 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
+      case CHART_CONFIGURATION_SETTING_IDS.HIDE_EMPTY_CATEGORY:
+        return isPieChart ? (configuration.hideEmptyCategory ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
         return isBarOrLineChart
           ? (configuration.rangeMin?.toString() ?? '')
