@@ -25,7 +25,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 10
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4

@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-depot-ubuntu-24.04-8-runner
-  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v3-storybook-build-depot-ubuntu-24.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
+  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-24.04-runner
+  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v3-storybook-build-ubuntu-24.04-runner-${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   changed-files-check:
@@ -32,7 +32,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -58,7 +58,7 @@ jobs:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -123,7 +123,7 @@ jobs:
     timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}

@@ -33,7 +33,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -145,7 +145,7 @@ jobs:
           key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
   server-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     needs: server-setup
     steps:
       - name: Fetch custom Github Actions and base branch history
@@ -166,7 +166,7 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     needs: server-setup
     strategy:
       fail-fast: false
