@@ -1,6 +1,9 @@
+import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
@@ -17,9 +20,15 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   chartId?: string;
 };
 
-const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
+const StyledBarRect = styled(animated.rect)<{
+  $isInteractive?: boolean;
+  $isDimmed?: boolean;
+}>`
   cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
-  transition: filter 0.15s ease-in-out;
+  transition:
+    filter 0.15s ease-in-out,
+    opacity 0.15s ease-in-out;
+  opacity: ${({ $isDimmed }) => ($isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1)};
 
   &:hover {
     filter: ${({ $isInteractive }) =>
@@ -50,6 +59,13 @@ export const CustomBarItem = <D extends BarDatum>({
   layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
+  const highlightedLegendId = useRecoilComponentValue(
+    graphWidgetHighlightedLegendIdComponentState,
+  );
+
+  const isDimmed =
+    isDefined(highlightedLegendId) && highlightedLegendId !== barData.id;
+
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
       onClick?.({ color: bar.color, ...barData }, event);
@@ -197,6 +213,7 @@ export const CustomBarItem = <D extends BarDatum>({
 
         <StyledBarRect
           $isInteractive={isInteractive}
+          $isDimmed={isDimmed}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
           width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
           height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}

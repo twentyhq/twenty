@@ -2,7 +2,9 @@ import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/Gra
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -117,6 +119,18 @@ export const GraphWidgetLegend = ({
     useState<AnimationDirection>('forward');
 
   const theme = useTheme();
+
+  const setHighlightedLegendId = useSetRecoilComponentState(
+    graphWidgetHighlightedLegendIdComponentState,
+  );
+
+  const handleLegendItemMouseEnter = (itemId: string) => {
+    setHighlightedLegendId(itemId);
+  };
+
+  const handleLegendItemMouseLeave = () => {
+    setHighlightedLegendId(null);
+  };
 
   const shouldShowLegend = show && items.length > 1;
 
@@ -238,6 +252,8 @@ export const GraphWidgetLegend = ({
                     <StyledLegendItem
                       key={item.id}
                       canShrink={!needsPagination}
+                      onMouseEnter={() => handleLegendItemMouseEnter(item.id)}
+                      onMouseLeave={handleLegendItemMouseLeave}
                     >
                       <GraphWidgetLegendDot color={item.color} />
                       <StyledLegendLabel fixedWidth={needsPagination}>
