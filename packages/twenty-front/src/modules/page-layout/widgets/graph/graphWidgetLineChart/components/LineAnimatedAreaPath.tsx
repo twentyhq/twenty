@@ -22,8 +22,7 @@ export const LineAnimatedAreaPath = ({
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const isDimmed =
-    isDefined(highlightedLegendId) && highlightedLegendId !== id;
+  const isDimmed = isDefined(highlightedLegendId) && highlightedLegendId !== id;
 
   return (
     <animated.path
