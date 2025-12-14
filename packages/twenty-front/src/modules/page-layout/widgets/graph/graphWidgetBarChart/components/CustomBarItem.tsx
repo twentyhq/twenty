@@ -28,7 +28,8 @@ const StyledBarRect = styled(animated.rect)<{
   transition:
     filter 0.15s ease-in-out,
     opacity 0.15s ease-in-out;
-  opacity: ${({ $isDimmed }) => ($isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1)};
+  opacity: ${({ $isDimmed }) =>
+    $isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
 
   &:hover {
     filter: ${({ $isInteractive }) =>

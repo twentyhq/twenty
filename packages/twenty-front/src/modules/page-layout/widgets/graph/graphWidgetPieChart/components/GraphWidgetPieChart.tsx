@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
+import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
@@ -13,8 +14,17 @@ import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsivePie, type ComputedDatum } from '@nivo/pie';
-import { useMemo, useRef, type MouseEvent as ReactMouseEvent } from 'react';
+import {
+  ResponsivePie,
+  type ComputedDatum,
+  type PieCustomLayerProps,
+} from '@nivo/pie';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  type MouseEvent as ReactMouseEvent,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -91,29 +101,26 @@ export const GraphWidgetPieChart = ({
     colorRegistry,
   });
 
-  const handleSliceClick = (datum: ComputedDatum<PieChartDataItem>) => {
-    if (isDefined(onSliceClick)) {
-      onSliceClick(datum.data);
-    }
-  };
+  const handleSliceMove = useCallback(
+    (
+      datum: ComputedDatum<PieChartDataItem>,
+      event: ReactMouseEvent<SVGPathElement>,
+    ) => {
+      if (!isDefined(containerRef.current)) return;
 
-  const handleSliceMove = (
-    datum: ComputedDatum<PieChartDataItem>,
-    event: ReactMouseEvent<SVGPathElement>,
-  ) => {
-    if (!isDefined(containerRef.current)) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      setActivePieTooltip({
+        datum,
+        offsetLeft: event.clientX - containerRect.left,
+        offsetTop: event.clientY - containerRect.top,
+      });
+    },
+    [setActivePieTooltip],
+  );
 
-    const containerRect = containerRef.current.getBoundingClientRect();
-    setActivePieTooltip({
-      datum,
-      offsetLeft: event.clientX - containerRect.left,
-      offsetTop: event.clientY - containerRect.top,
-    });
-  };
-
-  const handleSliceLeave = () => {
+  const handleSliceLeave = useCallback(() => {
     setActivePieTooltip(null);
-  };
+  }, [setActivePieTooltip]);
 
   const hasNoData = useMemo(
     () => data.length === 0 || data.every((item) => item.value === 0),
@@ -124,6 +131,29 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
+
+  const ArcsLayer = useCallback(
+    (props: PieCustomLayerProps<PieChartDataItem>) => (
+      <CustomArcsLayer
+        dataWithArc={props.dataWithArc}
+        arcGenerator={props.arcGenerator}
+        centerX={props.centerX}
+        centerY={props.centerY}
+        onMouseMove={hasNoData ? undefined : handleSliceMove}
+        onMouseLeave={hasNoData ? undefined : handleSliceLeave}
+        onClick={
+          hasNoData
+            ? undefined
+            : (datum) => {
+                if (isDefined(onSliceClick)) {
+                  onSliceClick(datum.data);
+                }
+              }
+        }
+      />
+    ),
+    [hasNoData, handleSliceMove, handleSliceLeave, onSliceClick],
+  );
 
   return (
     <StyledContainer id={id}>
@@ -144,10 +174,7 @@ export const GraphWidgetPieChart = ({
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}
-            onClick={hasNoData ? undefined : (datum) => handleSliceClick(datum)}
-            onMouseMove={hasNoData ? undefined : handleSliceMove}
-            onMouseLeave={hasNoData ? undefined : handleSliceLeave}
-            layers={['arcs', 'arcLinkLabels']}
+            layers={[ArcsLayer, 'arcLinkLabels']}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const formattedValue = getPieChartFormattedValue({
                 datum,
