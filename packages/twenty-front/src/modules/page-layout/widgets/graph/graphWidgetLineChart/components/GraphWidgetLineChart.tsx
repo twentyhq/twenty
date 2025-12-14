@@ -5,6 +5,7 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { CustomLinesLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomLinesLayer';
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
@@ -45,6 +46,7 @@ import { useDebouncedCallback } from 'use-debounce';
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type StackedAreasLayerProps = LineCustomSvgLayerProps<LineSeries>;
+type LinesLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type NoDataLayerWrapperProps = LineCustomSvgLayerProps<LineSeries>;
 
 const LINE_CHART_DEFAULT_TICK_COUNT = 5;
@@ -235,6 +237,20 @@ export const GraphWidgetLineChart = ({
     );
   };
 
+  const LinesLayer = (layerProps: LinesLayerProps) => {
+    if (hasNoData) {
+      return null;
+    }
+
+    return (
+      <CustomLinesLayer
+        series={layerProps.series}
+        lineGenerator={layerProps.lineGenerator}
+        lineWidth={layerProps.lineWidth}
+      />
+    );
+  };
+
   const NoDataLayerWrapper = (layerProps: NoDataLayerWrapperProps) => (
     <NoDataLayer
       innerWidth={layerProps.innerWidth}
@@ -319,7 +335,7 @@ export const GraphWidgetLineChart = ({
             'markers',
             'axes',
             StackedAreasLayer,
-            'lines',
+            LinesLayer,
             CrosshairLayer,
             'points',
             PointLabelsLayer,

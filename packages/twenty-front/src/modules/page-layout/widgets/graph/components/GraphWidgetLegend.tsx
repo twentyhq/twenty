@@ -1,9 +1,11 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -61,8 +63,12 @@ const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
   align-items: center;
 `;
 
-const StyledLegendItem = styled.div<{ canShrink?: boolean }>`
+const StyledLegendItem = styled.div<{
+  canShrink?: boolean;
+  isInteractive?: boolean;
+}>`
   align-items: center;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -120,15 +126,23 @@ export const GraphWidgetLegend = ({
 
   const theme = useTheme();
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
+  const isInteractive = !isPageLayoutInEditMode;
+
   const setHighlightedLegendId = useSetRecoilComponentState(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
   const handleLegendItemMouseEnter = (itemId: string) => {
+    if (!isInteractive) return;
     setHighlightedLegendId(itemId);
   };
 
   const handleLegendItemMouseLeave = () => {
+    if (!isInteractive) return;
     setHighlightedLegendId(null);
   };
 
@@ -252,6 +266,7 @@ export const GraphWidgetLegend = ({
                     <StyledLegendItem
                       key={item.id}
                       canShrink={!needsPagination}
+                      isInteractive={isInteractive}
                       onMouseEnter={() => handleLegendItemMouseEnter(item.id)}
                       onMouseLeave={handleLegendItemMouseLeave}
                     >

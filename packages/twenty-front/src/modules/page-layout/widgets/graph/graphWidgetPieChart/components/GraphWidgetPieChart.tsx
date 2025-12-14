@@ -170,7 +170,6 @@ export const GraphWidgetPieChart = ({
             innerRadius={0.8}
             padAngle={hasNoData ? 0 : 0.4}
             colors={chartColors}
-            borderWidth={0}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}
