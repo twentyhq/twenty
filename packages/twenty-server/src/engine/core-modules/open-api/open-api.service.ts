@@ -99,10 +99,10 @@ export class OpenApiService {
   }
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(
@@ -270,10 +270,10 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(

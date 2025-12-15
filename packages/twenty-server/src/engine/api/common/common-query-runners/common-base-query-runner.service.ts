@@ -49,6 +49,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -304,6 +305,10 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
+    if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
+      return authContext.application?.defaultServerlessFunctionRoleId;
+    }
+
     if (!isDefined(authContext.userWorkspaceId)) {
       throw new CommonQueryRunnerException(
         'Invalid auth context',
@@ -325,7 +330,9 @@ export abstract class CommonBaseQueryRunnerService<
 
     const roleId = await this.getRoleIdOrThrow(authContext, workspaceId);
 
-    const rolePermissionConfig = { unionOf: [roleId] };
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: [roleId],
+    };
 
     const repository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,

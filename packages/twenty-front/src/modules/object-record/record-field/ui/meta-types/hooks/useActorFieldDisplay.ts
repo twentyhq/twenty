@@ -36,6 +36,7 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   ].find(
     (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
   );
+
   if (!isDefined(relatedWorkspaceMember)) {
     return {
       fieldValue,
