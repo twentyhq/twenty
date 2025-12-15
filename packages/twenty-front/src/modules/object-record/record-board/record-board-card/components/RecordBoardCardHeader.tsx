@@ -24,29 +24,18 @@ import { ChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
-const StyledCompactIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledCheckboxContainer = styled.div`
-  margin-left: auto;
-`;
-
 const StyledIconsContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing(0.5)};
-  flex-shrink: 1;
 `;
 
 const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
-  width: 100%; 
+  width: 100%;
 `;
 
 export const RecordBoardCardHeader = () => {

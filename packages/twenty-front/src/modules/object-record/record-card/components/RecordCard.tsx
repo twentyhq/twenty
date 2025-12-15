@@ -40,23 +40,24 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
-    display: none; 
-    transition: all ease-in-out 160ms;
+    display: none;
     opacity: 0;
+    transition: all ease-in-out 160ms;
   }
 
   .compact-icon-container {
-    transition: all ease-in-out 160ms;
+    display: none;
     opacity: 0;
+    transition: all ease-in-out 160ms;
+  }
+
+  .icons-container {
     display: none;
   }
-  .icons-container {
-    display: none; 
-  }
-    
+
   &:hover .icons-container {
-    opacity: 1;
     display: flex;
+    opacity: 1;
   }
 
   &:hover .record-chip-container {
