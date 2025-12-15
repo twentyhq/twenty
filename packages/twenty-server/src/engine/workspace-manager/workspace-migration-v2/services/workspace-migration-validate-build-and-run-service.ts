@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { writeFileSync } from 'fs';
-
 import {
   AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
@@ -152,12 +150,33 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     };
   }
 
-  public async validateBuildAndRunWorkspaceMigrationFromTo(
-    args: WorkspaceMigrationOrchestratorBuildArgs,
-  ) {
+  public async validateBuildAndRunWorkspaceMigration({
+    allFlatEntityOperationByMetadataName: allFlatEntities,
+    workspaceId,
+    isSystemBuild = false,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    WorkspaceMigrationOrchestratorFailedResult | undefined
+  > {
+    const {
+      fromToAllFlatEntityMaps,
+      inferDeletionFromMissingEntities,
+      dependencyAllFlatEntityMaps,
+    } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
+      allFlatEntityOperationByMetadataName: allFlatEntities,
+      workspaceId,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
-        .buildWorkspaceMigration(args)
+        .buildWorkspaceMigration({
+          buildOptions: {
+            isSystemBuild,
+            inferDeletionFromMissingEntities,
+          },
+          fromToAllFlatEntityMaps,
+          workspaceId,
+          dependencyAllFlatEntityMaps,
+        })
         .catch((error) => {
           this.logger.error(error);
           throw new WorkspaceMigrationV2Exception(
@@ -165,11 +184,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             error.message,
           );
         });
-
-    writeFileSync(
-      `${Date.now()}-validate-build-and-run.json`,
-      JSON.stringify(validateAndBuildResult, null, 2),
-    );
 
     if (validateAndBuildResult.status === 'fail') {
       return validateAndBuildResult;
@@ -191,32 +205,5 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           error.message,
         );
       });
-  }
-
-  public async validateBuildAndRunWorkspaceMigration({
-    allFlatEntityOperationByMetadataName: allFlatEntities,
-    workspaceId,
-    isSystemBuild = false,
-  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
-    WorkspaceMigrationOrchestratorFailedResult | undefined
-  > {
-    const {
-      fromToAllFlatEntityMaps,
-      inferDeletionFromMissingEntities,
-      dependencyAllFlatEntityMaps,
-    } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
-      allFlatEntityOperationByMetadataName: allFlatEntities,
-      workspaceId,
-    });
-
-    return await this.validateBuildAndRunWorkspaceMigrationFromTo({
-      buildOptions: {
-        isSystemBuild,
-        inferDeletionFromMissingEntities,
-      },
-      fromToAllFlatEntityMaps,
-      workspaceId,
-      dependencyAllFlatEntityMaps,
-    });
   }
 }
