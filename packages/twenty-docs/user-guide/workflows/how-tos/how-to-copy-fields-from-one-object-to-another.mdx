@@ -1,9 +1,152 @@
 ---
 title: How to Copy Fields from One Object to Another
-description: Copy field values between objects using workflows.
+description: Sync field values between related objects using workflows.
+image: /images/user-guide/workflows/workflow.png
 ---
 
-# How to Copy Fields from One Object to Another
+Keep related records in sync by automatically copying field values from one object to another. This is useful until nested fields are natively available.
 
-*Content to be added*
+## Common Use Cases
 
+| Source | Destination | Fields to Copy |
+|--------|-------------|----------------|
+| Company | Opportunity | Industry, Company Size, ARR |
+| Person | Opportunity | Email, Phone, Title |
+| Opportunity | Company | Last Deal Amount, Last Won Date |
+| Person | Task | Contact Email, Contact Phone |
+
+## Basic Field Copy
+
+### Example: Copy Contact Email to Opportunity
+
+**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+
+### Setup
+
+1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
+
+2. **Filter**: Check that Point of Contact is not empty
+
+3. **Search Records**: Find the linked person
+   - Object: People
+   - Filter: ID equals `{{trigger.object.pointOfContact.id}}`
+
+4. **Update Record**:
+   - Object: Opportunities
+   - Record: `{{trigger.object.id}}`
+   - Contact Email: `{{searchRecords[0].email}}`
+   - Contact Phone: `{{searchRecords[0].phone}}`
+
+## Copy Multiple Fields
+
+### Example: Sync Company Info to All Related Opportunities
+
+**Goal**: When company details change, update all related opportunities.
+
+### Setup
+
+1. **Trigger**: Record is Updated (Companies)
+   - Fields: Industry, Company Size, Annual Revenue
+
+2. **Search Records**: Find all opportunities for this company
+   - Object: Opportunities
+   - Filter: Company ID equals `{{trigger.object.id}}`
+
+3. **Iterator**: Loop through each opportunity
+
+4. **Update Record** (inside iterator):
+   - Object: Opportunities
+   - Record: `{{iterator.currentItem.id}}`
+   - Company Industry: `{{trigger.object.industry}}`
+   - Company Size: `{{trigger.object.companySize}}`
+   - Company ARR: `{{trigger.object.annualRevenue}}`
+
+## Copy on Record Creation
+
+### Example: Pre-fill Task with Contact Info
+
+**Goal**: When creating a task linked to a person, copy their contact details.
+
+### Setup
+
+1. **Trigger**: Record is Created (Tasks)
+   - Filter: Related Person is not empty
+
+2. **Search Records**: Get the linked person's details
+   - Object: People
+   - Filter: ID equals `{{trigger.object.relatedPerson.id}}`
+
+3. **Update Record**:
+   - Object: Tasks
+   - Record: `{{trigger.object.id}}`
+   - Contact Email: `{{searchRecords[0].email}}`
+   - Contact Phone: `{{searchRecords[0].phone}}`
+   - Contact Company: `{{searchRecords[0].company.name}}`
+
+## Bidirectional Sync
+
+### Example: Keep Primary Contact in Sync
+
+**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
+
+### Workflow 1: Company → Person
+
+1. **Trigger**: Record is Updated (Companies, Primary Contact field)
+2. **Update Record**: Set person's "Is Primary Contact" to true
+3. **Search Records**: Find previous primary contact
+4. **Update Record**: Set previous contact's "Is Primary Contact" to false
+
+### Workflow 2: Person → Company
+
+1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
+2. **Update Record**: Set company's Primary Contact to this person
+
+<Note>
+Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+</Note>
+
+## Using Code for Complex Mapping
+
+### Example: Transform Data During Copy
+
+**Goal**: Copy and format phone number from person to opportunity.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Best Practices
+
+### Avoid Loops
+- Don't create workflows that trigger each other endlessly
+- Use specific field conditions
+- Add checks to see if value actually changed
+
+### Handle Missing Data
+- Always check if source record exists before copying
+- Provide default values for optional fields
+- Use filters to skip when source field is empty
+
+### Performance
+- Batch updates when copying to many records
+- Use scheduled workflows for bulk sync operations
+- Consider using Iterator for multiple record updates
+
+## Related
+
+- [Internal Automations](/user-guide/workflows/how-tos/internal-automations)
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)

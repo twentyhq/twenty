@@ -39,9 +39,53 @@ This effectively creates conditional logic where only the appropriate branch run
 
 Both branches start, but only the one matching the deal amount will continue past its Filter.
 
+## Creating Branches
+
+<Note>
+To create a new branch from an existing step, click the **+** button on the step and add your action. You can add multiple branches by clicking **+** multiple times.
+</Note>
+
+1. In the workflow editor, select the step you want to branch from
+2. Click the **+** button to add an action
+3. This creates one branch
+4. Click **+** again on the same step to create additional branches
+5. Each branch can have its own sequence of actions
+
+## Merging Branches Back Together
+
+After parallel branches complete their work, you can merge them back into a single path:
+
+1. Complete your branched actions
+2. Add a new step that should run after all branches
+3. Drag a connection from the last step of each branch to this new step
+4. The merged step waits for all connected branches to complete before executing
+
+### Example: Process Then Notify
+
+```
+Trigger
+   │
+   ├── Branch A: Update Customer Record
+   │
+   └── Branch B: Create Support Ticket
+
+       ↘  ↙
+
+   Merged Step: Send Confirmation Email
+```
+
+The confirmation email sends only after both the customer update and ticket creation are done.
+
 ## Best Practices
 
 - Always use **Filter nodes** at the start of branches when you want conditional execution
 - Keep branch conditions **mutually exclusive** to avoid duplicate actions
 - Test your workflows with different data to ensure the correct branches run
+- **Rename branch steps** descriptively so it's clear what each path does
+- **Merge branches** when you need a final action after parallel processing
+
+## Related
+
+- [Workflows FAQ](/user-guide/workflows/how-tos/workflows-faq) — answers about parallel execution
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions) — available actions for branches
 

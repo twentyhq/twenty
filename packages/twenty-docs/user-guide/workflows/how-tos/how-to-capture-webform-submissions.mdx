@@ -1,0 +1,105 @@
+---
+title: How to Capture Webform Submissions
+description: Bring leads from your website forms into Twenty automatically.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Capture leads from your website contact forms, landing pages, or any web form directly into Twenty.
+
+## Does Twenty Have Built-in Forms?
+
+**No**, Twenty doesn't offer a native webform builder. Instead, you connect your existing forms (built with any tool) to Twenty using a **webhook-triggered workflow**.
+
+This approach gives you full flexibility:
+- Use any form builder (Typeform, Google Forms, HubSpot, custom HTML, etc.)
+- Capture exactly the data you need
+- Process submissions with custom logic before creating records
+
+## How It Works
+
+```
+Your Website Form → Webhook URL → Twenty Workflow → Create Records
+```
+
+1. Build your form with any tool
+2. Create a workflow in Twenty with a **Webhook trigger**
+3. Configure your form to POST submissions to the webhook URL
+4. The workflow creates People, Companies, or any records you need
+
+## Step-by-Step Setup
+
+### Step 1: Create the Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Name it (e.g., "Website Contact Form")
+
+### Step 2: Configure the Webhook Trigger
+
+1. Click on the trigger block
+2. Select **Webhook**
+3. Copy the unique webhook URL provided
+4. Define the expected body structure—add the fields your form will send:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "I'm interested in your product"
+}
+```
+
+### Step 3: Add Actions to Create Records
+
+1. Add **Create Record** action
+2. Select **People** (or your target object)
+3. Map the form fields:
+
+| Twenty Field | Form Data |
+|--------------|-----------|
+| First Name | `{{trigger.body.firstName}}` |
+| Last Name | `{{trigger.body.lastName}}` |
+| Email | `{{trigger.body.email}}` |
+| Company | Search or create based on `{{trigger.body.company}}` |
+
+### Step 4: Connect Your Form
+
+Configure your form tool to send a POST request to the webhook URL:
+
+**HTML Form Example**:
+```html
+<form action="YOUR_WEBHOOK_URL" method="POST">
+  <input type="text" name="firstName" placeholder="First Name">
+  <input type="text" name="lastName" placeholder="Last Name">
+  <input type="email" name="email" placeholder="Email">
+  <input type="text" name="company" placeholder="Company">
+  <textarea name="message" placeholder="Message"></textarea>
+  <button type="submit">Submit</button>
+</form>
+```
+
+**Form Builder Tools**: Most form builders (Typeform, JotForm, Google Forms via Zapier) have a "webhook" or "HTTP request" integration. Paste your Twenty webhook URL there.
+
+### Step 5: Test and Activate
+
+1. Submit a test form entry
+2. Check the workflow runs to verify data arrived correctly
+3. Activate the workflow
+
+## Advanced: Handle Existing Contacts
+
+To avoid duplicates, check if the contact exists before creating:
+
+1. **Search Records**: Find People where email = `{{trigger.body.email}}`
+2. **Filter**: Check if results exist
+3. **Branch A** (exists): Update the existing record
+4. **Branch B** (new): Create a new record
+
+## Next Steps
+
+For detailed webhook configuration, see:
+- [How to Set Up a Webhook Trigger](/user-guide/workflows/how-tos/how-to-set-up-a-webhook-trigger)
+- [External Tool Integration](/user-guide/workflows/how-tos/external-tool-integration)
+

@@ -146,6 +146,87 @@ Below are workflow examples you can implement to connect Twenty with the rest of
 - Update Record to store invoice reference
 - Send Email to finance team with invoice details
 
+## Sales Tool Integrations
+
+### Dialer Integration
+
+Connect your dialer or call tracking tool to Twenty.
+
+**Inbound: Log calls from dialer to Twenty**
+
+**Trigger**: Webhook (from your dialer when call ends)
+
+**Actions**:
+- Search Records to find the contact by phone number
+- Create Record for a call activity/note
+- Update Record to set "Last Contacted" date
+- Create Record for follow-up task if call was missed
+
+**Outbound: Trigger calls from Twenty**
+
+**Trigger**: Launch Manually (Single, on People)
+
+**Actions**:
+- Code action to format phone number
+- HTTP Request to initiate call via dialer API
+- Update Record to log call attempt
+
+### Email Sequence Integration
+
+Trigger email sequences in tools like Outreach, Apollo, or Lemlist.
+
+**Enroll contacts in sequences**
+
+**Trigger**: Record is Created (People) or Record is Updated (Stage change)
+
+**Actions**:
+- Filter: Check if contact should be enrolled (e.g., lead source = "Inbound")
+- HTTP Request to add contact to sequence via tool's API
+- Update Record to mark "Sequence Enrolled = true"
+- Update Record to store sequence ID for tracking
+
+**Handle sequence events**
+
+**Trigger**: Webhook (from sequence tool when email opened/replied)
+
+**Actions**:
+- Search Records to find the contact
+- Update Record to log engagement
+- Create Record for sales task if reply detected
+- Update Record to change lead status
+
+### Newsletter & Marketing Integration
+
+Sync subscribers between Twenty and your email marketing tool.
+
+**Add new contacts to newsletter**
+
+**Trigger**: Record is Created (People) or Record is Updated (Subscribed = true)
+
+**Actions**:
+- Filter: Check consent/subscription status
+- HTTP Request to add to Mailchimp, Brevo, ConvertKit, etc.
+- Update Record to store subscriber ID
+
+**Sync unsubscribes back to Twenty**
+
+**Trigger**: Webhook (from email tool when someone unsubscribes)
+
+**Actions**:
+- Search Records to find the contact by email
+- Update Record to set "Subscribed = false"
+- Update Record to add unsubscribe date
+
+**Export segment for campaign**
+
+**Trigger**: Launch Manually (Global)
+
+**Actions**:
+- Search Records with campaign criteria
+- Code action to format contacts for your email tool
+- HTTP Request to create/update list in email platform
+- Send Email to marketing team with export confirmation
+
 ## Implementation Tips
 - Store API keys securely in Settings → API & Webhooks
 - Use HTTPS for all external API calls

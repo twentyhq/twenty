@@ -10,13 +10,18 @@ image: /images/user-guide/workflows/workflow-credits.png
 
 Workflow credits power your automations in Twenty. Understanding how they work helps you optimize costs and manage your automation budget effectively.
 
-## Credit Allocation by Plan
+## Credit Allocation
 
-Workflow credits are allocated per workspace based on your subscription plan:
+Workflow credits are allocated based on your billing cycle, not your plan tier:
 
-- **Trial**: 5 million credits
-- **Pro Plan**: 10 million credits per month
-- **Organization Plan**: 20 million credits per month
+| Billing Cycle | Credits |
+|---------------|---------|
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription** | 50 million credits per year |
+
+<Note>
+5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
 
 ## How Credit Consumption Works
 
@@ -36,8 +41,14 @@ Credits are consumed when workflows execute, not when you create them. Each work
   - HTTP Requests to external services
 
 
-- **AI features**: Significant credit consumption (coming soon)
-  - AI prompts and processing will consume credits based on usage
+- **AI features**: Higher credit consumption
+  - AI Agent actions consume credits based on the AI model used
+  - More complex prompts and longer outputs use more credits
+
+- **Delay actions**: Minimal credit consumption
+  - The Delay node consumes **1 credit** when it executes
+  - **No credits are consumed** during the wait period
+  - A 5-minute delay costs the same as a 5-day delay
 
 ### Real-Time Deduction
 

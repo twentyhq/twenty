@@ -1,18 +1,15 @@
 ---
 title: Workflow Actions
 description: Learn about the actions available in Twenty workflows.
-image: /images/user-guide/workflows/workflow.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/workflows/workflow.png" alt="Workflow Actions" />
-</Frame>
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## About Actions
 
 Actions define what happens after a trigger fires. You can chain multiple actions together to build complex automations.
 
 ## Record Actions
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}}/>
 
 ### Create a Record
 Adds a new record to a selected object.
@@ -53,60 +50,132 @@ Finds records within a selected object using filter conditions.
 
 **Output**: Returns matching records that can be used in subsequent steps.
 
-**Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
+<Note>
+**Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+</Note>
 
-## Loop Actions
+**Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
+### Upsert Record
+Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+
+**Configuration**:
+- Select the target object
+- Define matching criteria (e.g., email for People, domain for Companies)
+- Fill out the field values
+- Use data from previous steps to populate fields
+
+**How it works**:
+1. Searches for a record matching your criteria
+2. If found → updates the existing record
+3. If not found → creates a new record
+
+**Output**: The created or updated record data is available for use in subsequent steps.
+
+## Flow Actions
 
 ### Iterator
 Loops through an array of records returned from a previous step, allowing you to perform actions on each record individually.
 
 **Configuration**:
-- Select the array of records from a previous step (e.g., results from Search Records)
-- Define the actions to perform on each record in the loop
-- Configure the variable name to reference each record in the iteration
+- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
+- Define the actions to perform on each record in the loop.
+<Note>
+- You can add several actions within an iterator.
+- When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+</Note>
 
-**Example**: Search Records returns 5 people, then use Iterator to send an email to each person or update each record individually.
+- Access Current Item Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
 
-**Note**: Iterator is currently in beta. Activate it under Settings > Releases > Lab.
+<VimeoEmbed videoId="1146577247" title="Video demonstration" />
+
 
 ### Filter
-Filters an array of records based on specified conditions, allowing only records that meet the criteria to pass through.
+Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
 
 **Configuration**:
-- Select the array of records to filter
+- Select the record to filter
 - Define filter conditions and criteria
 - Configure which records should pass through to subsequent steps
+<Note>
+**Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+</Note>
 
-**Output**: Returns only the records that match the specified filter conditions.
+### Delay
+Pauses workflow execution for a specified duration or until a specific date/time.
+
+**Delay Types**:
+
+| Type | Description |
+|------|-------------|
+| **Duration** | Wait for a specific amount of time (days, hours, minutes, seconds) |
+| **Scheduled Date** | Wait until a specific date and time |
+
+**Configuration for Duration**:
+- Set days, hours, minutes, and/or seconds
+- Combine multiple units (e.g., 2 days and 4 hours)
+
+**Configuration for Scheduled Date**:
+- Select a date and time
+- Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
+
+**Use cases**:
+- Wait 24 hours before sending a follow-up email
+- Pause until an opportunity's close date
+- Schedule actions for business hours
+
+<Note>
+The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+</Note>
+
+**Limits & Credits**:
+- **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
+- **1 credit consumed** when the Delay node executes, regardless of duration
+- **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
 
 ## Communication Actions
 
 ### Send Email
-Sends an email from your workflow.
+Sends an email from your workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
+Not suited for newsletters (which require richer formatting) or automated email sequences.
 
-**Prerequisites**: Add an email account in Settings > Accounts
+**Prerequisites**: Add an email account in Settings → Accounts
 
 **Configuration**:
-- Enter recipient email address
-- Set subject line
-- Compose message body
-- Reference variables from previous steps for personalization
+- Select the sender email account
+<Note>
+You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+</Note>
 
-**Note**: Email attachments will be available in Q1 2026.
+For all the following steps, you can reference variables from previous steps for personalization.
+
+- Enter recipient email address.
+<Note>
+Only one recipient is possible at the moment.
+</Note>
+- Set subject line.
+- Compose message body. You can format links, create numbered list, bullet point lists, add attachments.
+<Note>
+Adding HTML signatures is not possible at the moment.
+</Note>
 
 ### Form
-Prompts a form during workflow execution to collect user input.
-
+Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+<Warning>
+**Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+</Warning>
 **Configuration**:
-- Define input fields with types, labels, and placeholders
-- Configure validation rules
-- Set form title and description
+- Configure the fields that users will be asked to fill. For each field, choose
+  - a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  - a label
+  - a default value under `Placeholder` (optional)
+- Edit the form title
 
 **Output**: Form responses are available for use in subsequent steps.
 
-<Warning>
-Forms are currently designed for manual triggers only. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
-</Warning>
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+
+**How to fill the form**:
+
 
 ## Integration Actions
 
@@ -130,6 +199,54 @@ Sends a request to an external API as part of your workflow.
 - Add required headers and values
 - Include request body for POST/PUT/PATCH requests
 - Provide sample response for structure preview
+
+## AI Actions
+
+### AI Agent - Coming Soon
+Runs an AI agent within your workflow to perform intelligent tasks.
+
+**Configuration**:
+- **Agent**: Select an existing AI agent or use the default agent
+- **Prompt**: Write the instruction for the AI agent
+- Reference variables from previous steps in the prompt
+
+**What AI Agents can do**:
+- Analyze and summarize data
+- Classify or categorize records
+- Generate text content
+- Make decisions based on data
+- Interact with your CRM data using tools
+
+**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+
+<Note>
+AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/user-guide/workflows/capabilities/workflow-credits) for details.
+</Note>
+
+<Note>
+AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/user-guide/permissions-access/capabilities/permissions) for details.
+</Note>
+
+## Using Outputs from Previous Steps
+
+Every action produces output data that subsequent steps can use. This is how you pass information through your workflow.
+
+### How to Reference Previous Step Data
+
+Use the variable picker or type variables directly:
+
+| Source | Syntax | Example |
+|--------|--------|---------|
+| **Trigger** | `{{trigger.object.field}}` | `{{trigger.object.email}}` |
+| **Search Results** | `{{searchRecords[0].field}}` | `{{searchRecords[0].name}}` |
+| **Created Record** | `{{createRecord.field}}` | `{{createRecord.id}}` |
+| **Code Output** | `{{code.variableName}}` | `{{code.calculatedValue}}` |
+| **Iterator** | `{{iterator.currentItem.field}}` | `{{iterator.currentItem.email}}` |
+
+### Tips for Data Flow
+- Hover over any input field to see available variables from previous steps
+- Use the variable picker (click the `{}` icon) to browse available data
+- Plan your action sequence to ensure data is available when needed
 
 ## Action Best Practices
 

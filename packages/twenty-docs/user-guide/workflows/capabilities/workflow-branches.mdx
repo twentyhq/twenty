@@ -1,0 +1,96 @@
+---
+title: Workflow Branches
+description: Create parallel paths and conditional logic in your workflows.
+---
+
+Branches allow you to split your workflow into multiple paths that can run simultaneously or conditionally based on your data.
+
+## How Branches Work
+
+When you create multiple connections from a single node, each path becomes a **branch**. By default, **all branches execute in parallel**—they don't wait for each other.
+
+```
+          ┌─→ Branch A (runs immediately)
+Trigger ──┼─→ Branch B (runs immediately)
+          └─→ Branch C (runs immediately)
+```
+
+## Creating Branches
+
+### Add a New Branch
+
+1. Hover over a node in your workflow
+2. Click the **+** button on the right side of the node
+3. Select the action for your new branch
+4. Repeat to add more branches from the same node
+
+<Note>
+Each branch is independent. Adding a branch doesn't affect other existing paths from that node.
+</Note>
+
+### Visual Layout
+
+Branches appear as parallel paths in the workflow editor. You can drag nodes to rearrange the visual layout without affecting execution.
+
+## Controlling Branch Execution
+
+Since all branches run by default, use **Filter** nodes to control which paths actually execute:
+
+```
+                ┌─→ Filter (Stage = "Won") → Send congratulations email
+Trigger ────────┼─→ Filter (Stage = "Lost") → Create follow-up task
+(Stage changed) └─→ Filter (Stage = "Negotiation") → Notify manager
+```
+
+### Setting Up Conditional Branches
+
+1. Create branches from your trigger or action
+2. Add a **Filter** node as the first step of each branch
+3. Configure each filter with mutually exclusive conditions
+4. Add your actions after each filter
+
+Only the branch(es) where the filter condition is met will continue executing.
+
+## Merging Branches
+
+**Branches don't automatically merge.** Each branch runs independently until it ends.
+
+If you need actions to run after multiple branches complete:
+- Currently, you'll need to design your workflow so each branch handles its own follow-up actions
+- A "wait for all branches" merge capability is on our roadmap
+
+## Parallel vs Sequential Execution
+
+| Scenario | Behavior |
+|----------|----------|
+| **Multiple branches** | Run in parallel (simultaneously) |
+| **Actions within a branch** | Run sequentially (one after another) |
+| **Branches with filters** | Only matching branches continue |
+
+## Best Practices
+
+1. **Use filters for conditional logic**: Don't rely on branches alone—add filters to control execution
+2. **Keep branches focused**: Each branch should handle one specific scenario
+3. **Name your nodes**: Use descriptive names so it's clear what each branch does
+4. **Test each path**: Verify that each branch works correctly with test data
+5. **Watch for duplicates**: If all branches run, make sure you're not creating duplicate records or sending duplicate emails
+
+## Example: Lead Routing
+
+Route new leads to different teams based on company size:
+
+```
+New Lead Created
+    │
+    ├─→ Filter (Employees > 500) → Assign to Enterprise Team → Send enterprise welcome
+    │
+    ├─→ Filter (Employees 50-500) → Assign to Mid-Market Team → Send standard welcome
+    │
+    └─→ Filter (Employees < 50) → Assign to SMB Team → Send SMB welcome
+```
+
+## Related
+
+- [How to Use Branches in Workflows](/user-guide/workflows/how-tos/how-to-use-branches-in-workflows) - Step-by-step guide
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions) - Available actions including Filter
+
