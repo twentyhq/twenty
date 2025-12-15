@@ -16,6 +16,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
@@ -524,6 +525,39 @@ export class ConfigVariables {
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
+    type: ConfigVariableType.STRING,
+    options: Object.values(CodeInterpreterDriverType),
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @CastToUpperSnakeCase()
+  CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
+    CodeInterpreterDriverType.LOCAL;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description: 'E2B API key for sandboxed code execution',
+    type: ConfigVariableType.STRING,
+    isSensitive: true,
+  })
+  @ValidateIf(
+    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E2B,
+  )
+  E2B_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description: 'Timeout in milliseconds for code execution (default: 300000)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  CODE_INTERPRETER_TIMEOUT_MS = 300_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ANALYTICS_CONFIG,
