@@ -1,3 +1,6 @@
+import { promises as fs } from 'fs';
+import { join } from 'path';
+
 import { Sandbox } from '@e2b/code-interpreter';
 
 import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
@@ -17,6 +20,30 @@ export type E2BDriverOptions = {
   timeoutMs?: number;
 };
 
+const SANDBOX_SCRIPTS_PATH = join(__dirname, '..', 'sandbox-scripts');
+
+async function uploadDirectoryToSandbox(
+  sbx: Sandbox,
+  localPath: string,
+  remotePath: string,
+) {
+  const entries = await fs.readdir(localPath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const localEntryPath = join(localPath, entry.name);
+    const remoteEntryPath = `${remotePath}/${entry.name}`;
+
+    if (entry.isDirectory()) {
+      await uploadDirectoryToSandbox(sbx, localEntryPath, remoteEntryPath);
+    } else {
+      const content = await fs.readFile(localEntryPath);
+      const arrayBuffer = new Uint8Array(content).buffer;
+
+      await sbx.files.write(remoteEntryPath, arrayBuffer);
+    }
+  }
+}
+
 export class E2BDriver implements CodeInterpreterDriver {
   constructor(private options: E2BDriverOptions) {}
 
@@ -32,6 +59,17 @@ export class E2BDriver implements CodeInterpreterDriver {
     });
 
     try {
+      // Upload pre-installed scripts to sandbox
+      try {
+        await uploadDirectoryToSandbox(
+          sbx,
+          SANDBOX_SCRIPTS_PATH,
+          '/home/user/scripts',
+        );
+      } catch {
+        // Scripts directory might not exist
+      }
+
       for (const file of files ?? []) {
         const arrayBuffer = new Uint8Array(file.content).buffer;
 

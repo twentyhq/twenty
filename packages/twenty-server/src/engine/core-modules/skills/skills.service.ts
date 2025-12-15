@@ -4,9 +4,13 @@ import { SkillDefinition } from 'src/engine/core-modules/skills/skill-definition
 import { CODE_INTERPRETER_SKILL } from 'src/engine/core-modules/skills/skills/code-interpreter.skill';
 import { DASHBOARD_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/dashboard-building.skill';
 import { DATA_MANIPULATION_SKILL } from 'src/engine/core-modules/skills/skills/data-manipulation.skill';
+import { DOCX_SKILL } from 'src/engine/core-modules/skills/skills/docx.skill';
 import { METADATA_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/metadata-building.skill';
+import { PDF_SKILL } from 'src/engine/core-modules/skills/skills/pdf.skill';
+import { PPTX_SKILL } from 'src/engine/core-modules/skills/skills/pptx.skill';
 import { RESEARCH_SKILL } from 'src/engine/core-modules/skills/skills/research.skill';
 import { WORKFLOW_BUILDING_SKILL } from 'src/engine/core-modules/skills/skills/workflow-building.skill';
+import { XLSX_SKILL } from 'src/engine/core-modules/skills/skills/xlsx.skill';
 
 const SKILL_DEFINITIONS: SkillDefinition[] = [
   WORKFLOW_BUILDING_SKILL,
@@ -15,6 +19,10 @@ const SKILL_DEFINITIONS: SkillDefinition[] = [
   METADATA_BUILDING_SKILL,
   RESEARCH_SKILL,
   CODE_INTERPRETER_SKILL,
+  XLSX_SKILL,
+  PDF_SKILL,
+  DOCX_SKILL,
+  PPTX_SKILL,
 ];
 
 export type Skill = {

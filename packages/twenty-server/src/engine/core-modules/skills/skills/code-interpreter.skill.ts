@@ -9,8 +9,6 @@ export const CODE_INTERPRETER_SKILL: SkillDefinition = {
 
 You have access to the \`code_interpreter\` tool to execute Python code in a sandboxed environment.
 
-**IMPORTANT**: Always use the \`code_interpreter\` tool to run Python code. Do NOT use http_request or any other tool.
-
 ## How to Use
 Call the \`code_interpreter\` tool with your Python code. The tool will execute the code and return stdout, stderr, and any generated files.
 

@@ -66,6 +66,15 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
+  // Filter out data-code-execution parts when tool-code_interpreter exists
+  // (the tool part contains the final result, data-code-execution is for streaming updates)
+  const hasCodeInterpreterTool = messageParts.some(
+    (part) => part.type === 'tool-code_interpreter',
+  );
+  const filteredParts = hasCodeInterpreterTool
+    ? messageParts.filter((part) => part.type !== 'data-code-execution')
+    : messageParts;
+
   const renderMessagePart = (part: ExtendedUIMessagePart, index: number) => {
     switch (part.type) {
       case 'reasoning':
@@ -104,14 +113,14 @@ export const AIChatAssistantMessageRenderer = ({
     }
   };
 
-  if (!messageParts.length && !hasError) {
+  if (!filteredParts.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {messageParts.map(renderMessagePart)}
+        {filteredParts.map(renderMessagePart)}
       </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>

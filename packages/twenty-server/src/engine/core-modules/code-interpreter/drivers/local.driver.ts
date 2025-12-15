@@ -19,6 +19,25 @@ export type LocalDriverOptions = {
   timeoutMs?: number;
 };
 
+const SANDBOX_SCRIPTS_PATH = join(__dirname, '..', 'sandbox-scripts');
+
+async function copyDirectoryRecursive(src: string, dest: string) {
+  await fs.mkdir(dest, { recursive: true });
+
+  const entries = await fs.readdir(src, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = join(src, entry.name);
+    const destPath = join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyDirectoryRecursive(srcPath, destPath);
+    } else {
+      await fs.copyFile(srcPath, destPath);
+    }
+  }
+}
+
 // WARNING: This driver is UNSAFE and should only be used for development.
 // It executes arbitrary Python code on the server without any sandboxing.
 export class LocalDriver implements CodeInterpreterDriver {
@@ -32,8 +51,16 @@ export class LocalDriver implements CodeInterpreterDriver {
   ): Promise<CodeExecutionResult> {
     const workDir = await fs.mkdtemp(join(tmpdir(), 'code-interpreter-'));
     const outputDir = join(workDir, 'output');
+    const scriptsDir = join(workDir, 'scripts');
 
     await fs.mkdir(outputDir);
+
+    // Copy pre-installed scripts to sandbox
+    try {
+      await copyDirectoryRecursive(SANDBOX_SCRIPTS_PATH, scriptsDir);
+    } catch {
+      // Scripts directory might not exist in dev environment
+    }
 
     try {
       for (const file of files ?? []) {
@@ -44,6 +71,8 @@ export class LocalDriver implements CodeInterpreterDriver {
 
       // Rewrite E2B-style paths to local paths for compatibility
       const rewrittenCode = code
+        .replace(/\/home\/user\/scripts\//g, `${scriptsDir}/`)
+        .replace(/\/home\/user\/scripts/g, scriptsDir)
         .replace(/\/home\/user\/output\//g, `${outputDir}/`)
         .replace(/\/home\/user\/output/g, outputDir)
         .replace(/\/home\/user\//g, `${workDir}/`)
