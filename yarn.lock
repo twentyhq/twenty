@@ -36027,7 +36027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4":
+"form-data@npm:4.0.4":
   version: 4.0.4
   resolution: "form-data@npm:4.0.4"
   dependencies:
@@ -37439,7 +37439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^20.0.0":
+"happy-dom@npm:20.0.11":
   version: 20.0.11
   resolution: "happy-dom@npm:20.0.11"
   dependencies:
