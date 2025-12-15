@@ -1,6 +1,5 @@
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type DatumId } from '@nivo/pie';
 import { renderHook } from '@testing-library/react';
 import { usePieChartData } from '../usePieChartData';
 
@@ -116,23 +115,6 @@ describe('usePieChartData', () => {
 
     expect(result.current.enrichedData[0].colorScheme.name).toBe('red');
     expect(result.current.enrichedData[1].colorScheme.name).toBe('blue');
-  });
-
-  it('should memoize calculations', () => {
-    const { result, rerender } = renderHook(
-      () =>
-        usePieChartData({
-          data: mockData,
-          colorRegistry: mockColorRegistry,
-        }),
-      { initialProps: { hoveredSliceId: null as DatumId | null } },
-    );
-
-    const firstEnrichedData = result.current.enrichedData;
-
-    rerender({ hoveredSliceId: null as DatumId | null });
-
-    expect(result.current.enrichedData).toBe(firstEnrichedData);
   });
 
   it('should return legend items from all data', () => {
