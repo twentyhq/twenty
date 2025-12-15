@@ -67,7 +67,7 @@ export const StderrOnlyAutoSwitch: Story = {
   args: {
     stdout: '',
     stderr:
-      "FileNotFoundError: [Errno 2] No such file or directory: 'data.csv'\nTraceback (most recent call last):\n  File \"script.py\", line 5, in <module>",
+      'FileNotFoundError: [Errno 2] No such file or directory: \'data.csv\'\nTraceback (most recent call last):\n  File "script.py", line 5, in <module>',
     isRunning: false,
   },
   play: async ({ canvasElement }) => {
@@ -117,7 +117,8 @@ export const LongOutput: Story = {
   args: {
     stdout: Array.from(
       { length: 100 },
-      (_, i) => `[${new Date().toISOString()}] Processing batch ${i + 1}/100...`,
+      (_, i) =>
+        `[${new Date().toISOString()}] Processing batch ${i + 1}/100...`,
     ).join('\n'),
     stderr: '',
     isRunning: false,
@@ -143,4 +144,3 @@ YoY Growth: +10.4%`,
     isRunning: false,
   },
 };
-

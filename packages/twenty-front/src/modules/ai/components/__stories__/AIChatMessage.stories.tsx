@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import styled from '@emotion/styled';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -194,10 +194,7 @@ type Story = StoryObj<typeof AIChatMessage>;
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>
-      <AIChatMessage
-        message={mockUserMessage}
-        isLastMessageStreaming={false}
-      />
+      <AIChatMessage message={mockUserMessage} isLastMessageStreaming={false} />
       <AIChatMessage
         message={mockAssistantWithCodeExecution}
         isLastMessageStreaming={false}
