@@ -14,6 +14,8 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
@@ -35,6 +37,10 @@ import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/re
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import {
+  extractCodeInterpreterFiles,
+  type ExtractedFile,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import {
   type AIModelConfig,
   ModelProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
@@ -46,6 +52,7 @@ export type ChatExecutionOptions = {
   userWorkspaceId: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 export type ChatExecutionResult = {
@@ -54,7 +61,6 @@ export type ChatExecutionResult = {
   modelConfig: AIModelConfig;
 };
 
-// Common tools to pre-load for quick access
 const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
 
 @Injectable()
@@ -75,14 +81,22 @@ export class ChatExecutionService {
     userWorkspaceId,
     messages,
     browsingContext,
+    onCodeExecutionUpdate,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId } =
+    const { actorContext, roleId, userId } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
       );
 
-    const toolContext = { workspaceId: workspace.id, roleId, actorContext };
+    const toolContext = {
+      workspaceId: workspace.id,
+      roleId,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
+    };
 
     const contextString = browsingContext
       ? this.buildContextFromBrowsingContext(workspace, browsingContext)
@@ -139,11 +153,28 @@ export class ChatExecutionService {
       ),
     };
 
+    const { processedMessages, extractedFiles } =
+      extractCodeInterpreterFiles(messages);
+
+    let storedFiles: Array<{
+      filename: string;
+      storagePath: string;
+      url: string;
+    }> = [];
+
+    if (extractedFiles.length > 0) {
+      storedFiles = await this.storeExtractedFiles(
+        extractedFiles,
+        workspace.id,
+      );
+    }
+
     const systemPrompt = this.buildSystemPrompt(
       toolCatalog,
       skillCatalog,
       preloadedToolNames,
       contextString,
+      storedFiles,
     );
 
     this.logger.log(
@@ -153,7 +184,7 @@ export class ChatExecutionService {
     const stream = streamText({
       model: registeredModel.model,
       system: systemPrompt,
-      messages: convertToModelMessages(messages),
+      messages: convertToModelMessages(processedMessages),
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
@@ -254,6 +285,7 @@ export class ChatExecutionService {
     skillCatalog: Array<{ name: string; label: string; description: string }>,
     preloadedTools: string[],
     contextString?: string,
+    storedFiles?: Array<{ filename: string; storagePath: string; url: string }>,
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
@@ -263,6 +295,10 @@ export class ChatExecutionService {
     parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
     parts.push(this.buildSkillCatalogSection(skillCatalog));
 
+    if (storedFiles && storedFiles.length > 0) {
+      parts.push(this.buildUploadedFilesSection(storedFiles));
+    }
+
     if (contextString) {
       parts.push(
         `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
@@ -270,6 +306,30 @@ export class ChatExecutionService {
     }
 
     return parts.join('\n');
+  }
+
+  private buildUploadedFilesSection(
+    storedFiles: Array<{ filename: string; storagePath: string; url: string }>,
+  ): string {
+    const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
+
+    const filesJson = JSON.stringify(
+      storedFiles.map((f) => ({ filename: f.filename, url: f.url })),
+    );
+
+    return `
+## Uploaded Files
+
+The user has uploaded the following files:
+${fileList}
+
+**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
+When calling code_interpreter, include the files parameter with these values:
+\`\`\`json
+${filesJson}
+\`\`\`
+
+In your Python code, access files at \`/home/user/{filename}\`.`;
   }
 
   private buildSkillCatalogSection(
@@ -389,5 +449,18 @@ ${tools
         // Other providers don't have native web search
         return {};
     }
+  }
+
+  private async storeExtractedFiles(
+    files: ExtractedFile[],
+    _workspaceId: string,
+  ): Promise<Array<{ filename: string; storagePath: string; url: string }>> {
+    // Files are already uploaded and have URLs, just return them with their info
+    // The code interpreter tool will download them when needed
+    return files.map((file) => ({
+      filename: file.filename,
+      storagePath: file.filename,
+      url: file.url,
+    }));
   }
 }

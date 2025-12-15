@@ -1,3 +1,4 @@
+import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import {
@@ -84,6 +85,56 @@ describe('convertPageLayoutToTabLayouts', () => {
           { i: 'widget-2', x: 0, y: 2, w: 1, h: 2, minW: 3, minH: 4 },
         ],
       },
+    });
+  });
+
+  it('should apply STANDALONE_RICH_TEXT minimum size constraints', () => {
+    const pageLayout: PageLayout = {
+      id: 'page-layout-1',
+      name: 'Page Layout 1',
+      type: PageLayoutType.RECORD_PAGE,
+      objectMetadataId: 'object-metadata-1',
+      tabs: [
+        {
+          id: 'tab-1',
+          title: 'Tab 1',
+          position: 0,
+          pageLayoutId: 'page-layout-1',
+          widgets: [
+            {
+              __typename: 'PageLayoutWidget',
+              id: 'rich-text-widget',
+              pageLayoutTabId: 'tab-1',
+              title: 'Rich Text',
+              type: WidgetType.STANDALONE_RICH_TEXT,
+              configuration: {
+                body: { blocknote: '[]' },
+              },
+              gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+              objectMetadataId: null,
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
+              deletedAt: null,
+            },
+          ],
+          createdAt: '2025-01-01T00:00:00.000Z',
+          updatedAt: '2025-01-01T00:00:00.000Z',
+          deletedAt: null,
+        },
+      ],
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+      deletedAt: null,
+    };
+
+    const result = convertPageLayoutToTabLayouts(pageLayout);
+    const richTextMinSize =
+      WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
+
+    expect(result['tab-1'].desktop[0]).toMatchObject({
+      i: 'rich-text-widget',
+      minW: richTextMinSize.w,
+      minH: richTextMinSize.h,
     });
   });
 });

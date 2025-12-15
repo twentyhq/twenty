@@ -12,6 +12,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -136,6 +137,9 @@ export class McpProtocolService {
         categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
         rolePermissionConfig: { unionOf: [roleId] },
         wrapWithErrorContext: false,
+        // Exclude code_interpreter from MCP to prevent recursive execution attacks
+        // (code running in the sandbox could call code_interpreter via MCP)
+        excludeTools: [ToolType.CODE_INTERPRETER],
       });
 
       if (method === 'tools/call' && params) {
