@@ -159,6 +159,10 @@ export const GraphWidgetLegend = ({
     graphWidgetHiddenLegendIdsComponentState,
   );
 
+  if (isPageLayoutInEditMode && hiddenLegendIds.length > 0) {
+    setHiddenLegendIds([]);
+  }
+
   const handleLegendItemMouseEnter = (itemId: string) => {
     if (!isInteractive) return;
     setHighlightedLegendId(itemId);
@@ -172,18 +176,28 @@ export const GraphWidgetLegend = ({
   const handleLegendItemClick = (itemId: string) => {
     if (!isInteractive) return;
 
-    const isCurrentlyHidden = hiddenLegendIds.includes(itemId);
-    if (isCurrentlyHidden) {
-      setHiddenLegendIds((prev) => prev.filter((id) => id !== itemId));
-      return;
-    }
+    const currentItemIds = items.map((item) => item.id);
 
-    const visibleCount = items.length - hiddenLegendIds.length;
-    if (visibleCount <= 1) {
-      return;
-    }
+    setHiddenLegendIds((previousHiddenIds) => {
+      const hasStaleIds = previousHiddenIds.some(
+        (id) => !currentItemIds.includes(id),
+      );
 
-    setHiddenLegendIds((prev) => [...prev, itemId]);
+      const validHiddenIds = hasStaleIds ? [] : previousHiddenIds;
+
+      const isCurrentlyHidden = validHiddenIds.includes(itemId);
+
+      if (isCurrentlyHidden) {
+        return validHiddenIds.filter((id) => id !== itemId);
+      }
+
+      const visibleCount = items.length - validHiddenIds.length;
+      if (visibleCount <= 1) {
+        return validHiddenIds;
+      }
+
+      return [...validHiddenIds, itemId];
+    });
   };
 
   const shouldShowLegend = show && items.length > 1;
