@@ -4,6 +4,7 @@ import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/con
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
+import { useLegendItemToggle } from '@/page-layout/widgets/graph/hooks/useLegendItemToggle';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
@@ -159,6 +160,13 @@ export const GraphWidgetLegend = ({
     graphWidgetHiddenLegendIdsComponentState,
   );
 
+  const itemIds = items.map((item) => item.id);
+
+  const { toggleLegendItem } = useLegendItemToggle({
+    itemIds,
+    isInteractive,
+  });
+
   if (isPageLayoutInEditMode && hiddenLegendIds.length > 0) {
     setHiddenLegendIds([]);
   }
@@ -171,33 +179,6 @@ export const GraphWidgetLegend = ({
   const handleLegendItemMouseLeave = () => {
     if (!isInteractive) return;
     setHighlightedLegendId(null);
-  };
-
-  const handleLegendItemClick = (itemId: string) => {
-    if (!isInteractive) return;
-
-    const currentItemIds = items.map((item) => item.id);
-
-    setHiddenLegendIds((previousHiddenIds) => {
-      const hasStaleIds = previousHiddenIds.some(
-        (id) => !currentItemIds.includes(id),
-      );
-
-      const validHiddenIds = hasStaleIds ? [] : previousHiddenIds;
-
-      const isCurrentlyHidden = validHiddenIds.includes(itemId);
-
-      if (isCurrentlyHidden) {
-        return validHiddenIds.filter((id) => id !== itemId);
-      }
-
-      const visibleCount = items.length - validHiddenIds.length;
-      if (visibleCount <= 1) {
-        return validHiddenIds;
-      }
-
-      return [...validHiddenIds, itemId];
-    });
   };
 
   const shouldShowLegend = show && items.length > 1;
@@ -324,7 +305,7 @@ export const GraphWidgetLegend = ({
                         canShrink={!needsPagination}
                         isHidden={isHidden}
                         isInteractive={isInteractive}
-                        onClick={() => handleLegendItemClick(item.id)}
+                        onClick={() => toggleLegendItem(item.id)}
                         onMouseEnter={() => handleLegendItemMouseEnter(item.id)}
                         onMouseLeave={handleLegendItemMouseLeave}
                       >
