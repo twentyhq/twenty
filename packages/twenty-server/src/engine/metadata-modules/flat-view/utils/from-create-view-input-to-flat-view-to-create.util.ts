@@ -35,7 +35,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       ['id', 'name', 'objectMetadataId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
 
   const flatViewToCreate = {
@@ -52,6 +52,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
+    shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       createViewInput.kanbanAggregateOperationFieldMetadataId ?? null,

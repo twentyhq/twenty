@@ -13,7 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
@@ -77,9 +77,9 @@ describe('GoogleAPIsService', () => {
       providers: [
         GoogleAPIsService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest
+            getRepository: jest
               .fn()
               .mockImplementation((_workspaceId, entity) => {
                 if (entity === 'connectedAccount')
@@ -93,9 +93,12 @@ describe('GoogleAPIsService', () => {
 
                 return {};
               }),
-            getDataSourceForWorkspace: jest
+            getGlobalWorkspaceDataSource: jest
               .fn()
-              .mockImplementation(() => mockWorkspaceDataSource),
+              .mockResolvedValue(mockWorkspaceDataSource),
+            executeInWorkspaceContext: jest
+              .fn()
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {

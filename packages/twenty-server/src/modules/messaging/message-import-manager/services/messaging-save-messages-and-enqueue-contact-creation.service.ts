@@ -6,7 +6,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
@@ -32,7 +33,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -42,76 +43,86 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     workspaceId: string,
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
+    const participantsWithMessageId =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workspaceDataSource =
+            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const participantsWithMessageId = await workspaceDataSource?.transaction(
-      async (transactionManager: WorkspaceEntityManager) => {
-        const { messageExternalIdsAndIdsMap } =
-          await this.messageService.saveMessagesWithinTransaction(
-            messagesToSave,
-            messageChannel.id,
-            transactionManager,
-            workspaceId,
+          return workspaceDataSource?.transaction(
+            async (transactionManager: WorkspaceEntityManager) => {
+              const { messageExternalIdsAndIdsMap } =
+                await this.messageService.saveMessagesWithinTransaction(
+                  messagesToSave,
+                  messageChannel.id,
+                  transactionManager,
+                  workspaceId,
+                );
+
+              const participantsWithMessageId: (ParticipantWithMessageId & {
+                shouldCreateContact: boolean;
+              })[] = messagesToSave.flatMap((message) => {
+                const messageId = messageExternalIdsAndIdsMap.get(
+                  message.externalId,
+                );
+
+                return messageId
+                  ? message.participants.map((participant: Participant) => {
+                      const fromHandle =
+                        message.participants.find(
+                          (p) => p.role === MessageParticipantRole.FROM,
+                        )?.handle || '';
+
+                      const isMessageSentByConnectedAccount =
+                        handleAliases.includes(fromHandle) ||
+                        fromHandle === connectedAccount.handle;
+
+                      const isParticipantConnectedAccount =
+                        handleAliases.includes(participant.handle) ||
+                        participant.handle === connectedAccount.handle;
+
+                      const isExcludedByNonProfessionalEmails =
+                        messageChannel.excludeNonProfessionalEmails &&
+                        !isWorkEmail(participant.handle);
+
+                      const shouldCreateContact =
+                        !!participant.handle &&
+                        !isParticipantConnectedAccount &&
+                        !isExcludedByNonProfessionalEmails &&
+                        (messageChannel.contactAutoCreationPolicy ===
+                          MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
+                          (messageChannel.contactAutoCreationPolicy ===
+                            MessageChannelContactAutoCreationPolicy.SENT &&
+                            isMessageSentByConnectedAccount));
+
+                      return {
+                        ...participant,
+                        messageId,
+                        shouldCreateContact,
+                      };
+                    })
+                  : [];
+              });
+
+              await this.messageParticipantService.saveMessageParticipants(
+                participantsWithMessageId,
+                workspaceId,
+                transactionManager,
+              );
+
+              return participantsWithMessageId;
+            },
           );
+        },
+      );
 
-        const participantsWithMessageId: (ParticipantWithMessageId & {
-          shouldCreateContact: boolean;
-        })[] = messagesToSave.flatMap((message) => {
-          const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
-
-          return messageId
-            ? message.participants.map((participant: Participant) => {
-                const fromHandle =
-                  message.participants.find(
-                    (p) => p.role === MessageParticipantRole.FROM,
-                  )?.handle || '';
-
-                const isMessageSentByConnectedAccount =
-                  handleAliases.includes(fromHandle) ||
-                  fromHandle === connectedAccount.handle;
-
-                const isParticipantConnectedAccount =
-                  handleAliases.includes(participant.handle) ||
-                  participant.handle === connectedAccount.handle;
-
-                const isExcludedByNonProfessionalEmails =
-                  messageChannel.excludeNonProfessionalEmails &&
-                  !isWorkEmail(participant.handle);
-
-                const shouldCreateContact =
-                  !!participant.handle &&
-                  !isParticipantConnectedAccount &&
-                  !isExcludedByNonProfessionalEmails &&
-                  (messageChannel.contactAutoCreationPolicy ===
-                    MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
-                    (messageChannel.contactAutoCreationPolicy ===
-                      MessageChannelContactAutoCreationPolicy.SENT &&
-                      isMessageSentByConnectedAccount));
-
-                return {
-                  ...participant,
-                  messageId,
-                  shouldCreateContact,
-                };
-              })
-            : [];
-        });
-
-        await this.messageParticipantService.saveMessageParticipants(
-          participantsWithMessageId,
-          workspaceId,
-          transactionManager,
-        );
-
-        return participantsWithMessageId;
-      },
-    );
-
-    if (messageChannel.isContactAutoCreationEnabled) {
+    if (
+      messageChannel.isContactAutoCreationEnabled &&
+      participantsWithMessageId
+    ) {
       const contactsToCreate = participantsWithMessageId.filter(
         (participant) => participant.shouldCreateContact,
       );

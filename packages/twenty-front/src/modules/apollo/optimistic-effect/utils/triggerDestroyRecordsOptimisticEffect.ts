@@ -2,13 +2,17 @@ import { type ApolloCache, type StoreObject } from '@apollo/client';
 
 import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
+import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
@@ -32,16 +36,50 @@ export const triggerDestroyRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         rootQueryCachedResponse,
-        { readField },
+        { readField, storeFieldName },
       ) => {
-        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
+        const { fieldVariables: rootQueryVariables } =
+          parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
+            storeFieldName,
+          );
+
+        if (
+          !isObjectRecordConnection(
+            objectMetadataItem.nameSingular,
+            rootQueryCachedResponse,
+          )
+        ) {
+          return rootQueryCachedResponse;
+        }
+
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryCachedResponse,
+        );
+
+        const recordsMatchingRootQueryFilter = recordsToDestroy.filter(
+          (record) =>
+            isRecordMatchingFilter({
+              record,
+              filter: rootQueryVariables?.filter ?? {},
+              objectMetadataItem,
+            }),
+        );
+
+        const newTotalCount = isDefined(totalCount)
+          ? Math.max(totalCount - recordsMatchingRootQueryFilter.length, 0)
+          : undefined;
+
+        if (
           !isObjectRecordConnectionWithRefs(
             objectMetadataItem.nameSingular,
             rootQueryCachedResponse,
-          );
-
-        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
-          return rootQueryCachedResponse;
+          )
+        ) {
+          return {
+            ...rootQueryCachedResponse,
+            totalCount: newTotalCount,
+          };
         }
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
@@ -49,11 +87,6 @@ export const triggerDestroyRecordsOptimisticEffect = ({
         const recordIdsToDestroy = recordsToDestroy.map(({ id }) => id);
         const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
-          rootQueryCachedObjectRecordConnection,
-        );
-
-        const totalCount = readField<number | undefined>(
-          'totalCount',
           rootQueryCachedObjectRecordConnection,
         );
 
@@ -65,14 +98,15 @@ export const triggerDestroyRecordsOptimisticEffect = ({
           }) || [];
 
         if (nextCachedEdges.length === cachedEdges?.length)
-          return rootQueryCachedObjectRecordConnection;
+          return {
+            ...rootQueryCachedObjectRecordConnection,
+            totalCount: newTotalCount,
+          };
 
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
-          totalCount: isDefined(totalCount)
-            ? totalCount - recordIdsToDestroy.length
-            : undefined,
+          totalCount: newTotalCount,
         };
       },
     },

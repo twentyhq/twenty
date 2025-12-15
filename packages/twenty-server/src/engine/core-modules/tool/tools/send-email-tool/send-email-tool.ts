@@ -5,10 +5,11 @@ import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import {
   SendEmailToolException,
@@ -17,14 +18,17 @@ import {
 import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import {
+  type Tool,
+  type ToolExecutionContext,
+} from 'src/engine/core-modules/tool/types/tool.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -35,7 +39,7 @@ export class SendEmailTool implements Tool {
   inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly sendMessageService: MessagingSendMessageService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
@@ -53,49 +57,63 @@ export class SendEmailTool implements Tool {
       );
     }
 
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id: connectedAccountId },
-      relations: {
-        messageChannels: {
-          messageFolders: true,
-        },
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
+
+        const connectedAccount = await connectedAccountRepository.findOne({
+          where: { id: connectedAccountId },
+          relations: {
+            messageChannels: {
+              messageFolders: true,
+            },
+          },
+        });
+
+        if (!isDefined(connectedAccount)) {
+          throw new SendEmailToolException(
+            `Connected Account '${connectedAccountId}' not found`,
+            SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        return connectedAccount;
       },
-    });
-
-    if (!isDefined(connectedAccount)) {
-      throw new SendEmailToolException(
-        `Connected Account '${connectedAccountId}' not found`,
-        SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
-
-    return connectedAccount;
+    );
   }
 
   private async getOrThrowFirstConnectedAccountId(
     workspaceId: string,
   ): Promise<string> {
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
-    const allAccounts = await connectedAccountRepository.find();
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    if (!allAccounts || allAccounts.length === 0) {
-      throw new SendEmailToolException(
-        'No connected accounts found for this workspace',
-        SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
+        const allAccounts = await connectedAccountRepository.find();
 
-    return allAccounts[0].id;
+        if (!allAccounts || allAccounts.length === 0) {
+          throw new SendEmailToolException(
+            'No connected accounts found for this workspace',
+            SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        return allAccounts[0].id;
+      },
+    );
   }
 
   private async getAttachments(
@@ -160,8 +178,9 @@ export class SendEmailTool implements Tool {
 
   async execute(
     parameters: SendEmailInput,
-    workspaceId: string,
+    context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    const { workspaceId } = context;
     const { email, subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
 

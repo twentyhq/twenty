@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
@@ -27,9 +27,8 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     userWorkspaceId: null,
     agentId: null,
     apiKeyId: null,
-    targetApplicationId: null,
-    createdAt: now,
-    updatedAt: now,
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
     universalIdentifier: universalIdentifier ?? v4(),
     workspaceId,
     applicationId: createRoleTargetInput.applicationId,

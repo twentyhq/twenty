@@ -1,12 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetLegend } from '../GraphWidgetLegend';
 
 const meta: Meta<typeof GraphWidgetLegend> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLegend',
   component: GraphWidgetLegend,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <GraphWidgetTestWrapper>
+        <Story />
+      </GraphWidgetTestWrapper>
+    ),
+    ComponentDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },

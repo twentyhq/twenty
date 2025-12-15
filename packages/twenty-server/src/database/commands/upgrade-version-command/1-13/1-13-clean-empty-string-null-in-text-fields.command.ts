@@ -12,8 +12,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -30,14 +30,14 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ObjectMetadataEntity)
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     protected readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
 
   override async runOnWorkspace({
@@ -62,16 +62,6 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         `Could not find workspace ${workspaceId}, should never occur`,
       );
     }
-    if (
-      !isDefined(workspace.version) ||
-      !['1.12.0', '1.12.1'].includes(workspace.version)
-    ) {
-      this.logger.log(
-        `Workspace ${workspaceId} is not a v1.12.0 or v1.12.1 workspace, skipping`,
-      );
-
-      return;
-    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
@@ -85,26 +75,33 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     });
 
     for (const objectMetadataItem of objectMetadataItems) {
-      const tableName = computeObjectTargetTable(objectMetadataItem);
+      try {
+        const tableName = computeObjectTargetTable(objectMetadataItem);
 
-      if (!objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
-        );
-      }
+        if (!objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
 
-      if (objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
+        if (objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Could not cleanup ${objectMetadataItem.isCustom ? 'custom' : 'standard'} object ${objectMetadataItem.nameSingular} records for workspace ${workspaceId}`,
         );
+        this.logger.error(error);
       }
     }
   }
@@ -113,7 +110,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
-    dataSource: WorkspaceDataSource,
+    dataSource: GlobalWorkspaceDataSource,
     isDryRun: boolean,
   ): Promise<void> {
     const textFields = objectMetadataItem.fields.filter(
@@ -154,7 +151,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
-    dataSource: WorkspaceDataSource,
+    dataSource: GlobalWorkspaceDataSource,
     isDryRun: boolean,
   ): Promise<void> {
     const nameField = objectMetadataItem.fields.find(

@@ -5,7 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -50,9 +50,9 @@ describe('ImapSmtpCalDavAPIService', () => {
       providers: [
         ImapSmtpCalDavAPIService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepositoryForWorkspace: jest
+            getRepository: jest
               .fn()
               .mockImplementation((_workspaceId, entity) => {
                 if (entity === 'connectedAccount')
@@ -64,9 +64,13 @@ describe('ImapSmtpCalDavAPIService', () => {
 
                 return {};
               }),
-            getDataSourceForWorkspace: jest
+            getGlobalWorkspaceDataSource: jest
               .fn()
-              .mockImplementation(() => mockWorkspaceDataSource),
+              .mockResolvedValue(mockWorkspaceDataSource),
+            executeInWorkspaceContext: jest
+              .fn()
+
+              .mockImplementation((_authContext: any, fn: () => any) => fn()),
           },
         },
         {

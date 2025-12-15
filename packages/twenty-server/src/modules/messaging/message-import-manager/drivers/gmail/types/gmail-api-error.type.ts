@@ -1,4 +1,4 @@
 export type GmailApiError = {
-  code: string;
+  code: number | string;
   message: string;
 };

@@ -243,7 +243,7 @@ export const useCreateManyRecords = <
       await refetchAggregateQueries();
     }
 
-    registerObjectOperation(objectNameSingular, { type: 'create-many' });
+    registerObjectOperation(objectMetadataItem, { type: 'create-many' });
 
     return createdObjects.data?.[mutationResponseField] ?? [];
   };

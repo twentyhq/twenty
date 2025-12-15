@@ -9,7 +9,7 @@ export const buildMessageFolderStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'messageFolder'>, 'context'>): Record<
@@ -23,7 +23,7 @@ export const buildMessageFolderStandardFlatIndexMetadatas = ({
       indexName: 'messageChannelIdIndex',
       relatedFieldNames: ['messageChannel'],
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

@@ -5,9 +5,9 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
   pageLayoutTabEntity: PageLayoutTabEntity,
 ): FlatPageLayoutTab => {
   return {
-    createdAt: pageLayoutTabEntity.createdAt,
-    deletedAt: pageLayoutTabEntity.deletedAt,
-    updatedAt: pageLayoutTabEntity.updatedAt,
+    createdAt: pageLayoutTabEntity.createdAt.toISOString(),
+    deletedAt: pageLayoutTabEntity.deletedAt?.toISOString() ?? null,
+    updatedAt: pageLayoutTabEntity.updatedAt.toISOString(),
     id: pageLayoutTabEntity.id,
     title: pageLayoutTabEntity.title,
     position: pageLayoutTabEntity.position,

@@ -25,6 +25,7 @@ export const VIEW_FRAGMENT = gql`
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
     mainGroupByFieldMetadataId
+    shouldHideEmptyGroups
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarLayout
