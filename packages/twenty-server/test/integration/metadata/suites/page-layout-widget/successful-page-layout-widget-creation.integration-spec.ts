@@ -10,6 +10,8 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 
 type TestContext = {
@@ -22,6 +24,7 @@ type TestContext = {
       rowSpan: number;
       columnSpan: number;
     };
+    configuration?: Record<string, unknown>;
   };
 };
 
@@ -51,6 +54,12 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
           column: 0,
           rowSpan: 2,
           columnSpan: 2,
+        },
+        configuration: {
+          graphType: GraphType.AGGREGATE,
+          aggregateFieldMetadataId: '20202020-1111-4111-a111-111111111111',
+          aggregateOperation: AggregateOperations.COUNT,
+          displayDataLabel: false,
         },
       },
     },

@@ -22,7 +22,20 @@ exports[`Page layout widget creation should succeed should create a page layout 
 
 exports[`Page layout widget creation should succeed should create a page layout widget with specific type 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "description": null,
+    "displayDataLabel": false,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "format": null,
+    "graphType": "AGGREGATE",
+    "label": null,
+    "prefix": null,
+    "suffix": null,
+    "timezone": "UTC",
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {

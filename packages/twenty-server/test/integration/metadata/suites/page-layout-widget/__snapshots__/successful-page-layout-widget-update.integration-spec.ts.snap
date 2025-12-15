@@ -42,7 +42,20 @@ exports[`Page layout widget update should succeed should update page layout widg
 
 exports[`Page layout widget update should succeed should update page layout widget type 1`] = `
 {
-  "configuration": null,
+  "configuration": {
+    "aggregateFieldMetadataId": Any<String>,
+    "aggregateOperation": "COUNT",
+    "description": null,
+    "displayDataLabel": false,
+    "filter": null,
+    "firstDayOfTheWeek": 1,
+    "format": null,
+    "graphType": "AGGREGATE",
+    "label": null,
+    "prefix": null,
+    "suffix": null,
+    "timezone": "UTC",
+  },
   "createdAt": Any<String>,
   "deletedAt": null,
   "gridPosition": {
