@@ -172,12 +172,16 @@ export const GraphWidgetLegend = ({
   }
 
   const handleLegendItemMouseEnter = (itemId: string) => {
-    if (!isInteractive) return;
+    if (!isInteractive) {
+      return;
+    }
     setHighlightedLegendId(itemId);
   };
 
   const handleLegendItemMouseLeave = () => {
-    if (!isInteractive) return;
+    if (!isInteractive) {
+      return;
+    }
     setHighlightedLegendId(null);
   };
 
