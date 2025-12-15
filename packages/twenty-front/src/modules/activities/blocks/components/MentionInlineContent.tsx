@@ -23,7 +23,7 @@ const MentionInlineContentRenderer = ({
   });
 
   if (!record || !objectNameSingular) {
-    return null;
+    return <span>@mention</span>;
   }
 
   return (
@@ -51,10 +51,6 @@ export const MentionInlineContent = createReactInlineContentSpec(
   {
     render: (props) => {
       const { recordId, objectNameSingular } = props.inlineContent.props;
-
-      if (!recordId || !objectNameSingular) {
-        return <span>@mention</span>;
-      }
 
       return (
         <MentionInlineContentRenderer
