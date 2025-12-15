@@ -4,6 +4,7 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -94,6 +95,10 @@ export const ChartSortBySelectionDropdownContent = () => {
     (field) => field.id === groupByFieldMetadataId,
   );
 
+  if (!isDefined(primaryAxisField)) {
+    return null;
+  }
+
   const isPrimaryAxisDateField =
     isFieldMetadataDateKind(primaryAxisField?.type) ||
     (isDefined(primaryAxisField) &&
@@ -127,7 +132,15 @@ export const ChartSortBySelectionDropdownContent = () => {
 
     const isManualSort = option.value === GraphOrderBy.MANUAL;
 
+    const isPositionSort =
+      option.value === GraphOrderBy.FIELD_POSITION_ASC ||
+      option.value === GraphOrderBy.FIELD_POSITION_DESC;
+
     if (isManualSort && !isPrimaryAxisSelectField) {
+      return false;
+    }
+
+    if (isPositionSort && !isPrimaryAxisSelectField) {
       return false;
     }
 
@@ -173,7 +186,13 @@ export const ChartSortBySelectionDropdownContent = () => {
               })}
               selected={currentOrderBy === sortOption.value}
               focused={selectedItemId === sortOption.value}
-              LeftIcon={sortOption.icon}
+              LeftIcon={
+                sortOption.icon ??
+                getSortIconForFieldType(
+                  primaryAxisField?.type,
+                  sortOption.value,
+                )
+              }
               onClick={() => {
                 handleSelect(sortOption.value);
               }}

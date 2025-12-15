@@ -77,17 +77,19 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   > = [];
 
   if (isDefined(chartConfiguration.orderBy)) {
-    orderBy.push(
-      getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.orderBy,
-        groupByField,
-        groupBySubFieldName,
-        aggregateOperation,
-        dateGranularity: shouldApplyDateGranularity
-          ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
-          : undefined,
-      }),
-    );
+    const orderByItem = getGroupByOrderBy({
+      graphOrderBy: chartConfiguration.orderBy,
+      groupByField,
+      groupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyDateGranularity
+        ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    });
+
+    if (isDefined(orderByItem)) {
+      orderBy.push(orderByItem);
+    }
   }
 
   return {

@@ -3,11 +3,14 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
 export const mapOrderByToDirection = (
-  orderByEnum: GraphOrderBy,
+  orderByEnum:
+    | GraphOrderBy.FIELD_ASC
+    | GraphOrderBy.FIELD_DESC
+    | GraphOrderBy.VALUE_ASC
+    | GraphOrderBy.VALUE_DESC,
 ): OrderByDirection => {
   switch (orderByEnum) {
     case GraphOrderBy.FIELD_ASC:
-    case GraphOrderBy.MANUAL:
       return OrderByDirection.AscNullsLast;
     case GraphOrderBy.FIELD_DESC:
       return OrderByDirection.DescNullsLast;
@@ -15,6 +18,7 @@ export const mapOrderByToDirection = (
       return OrderByDirection.AscNullsLast;
     case GraphOrderBy.VALUE_DESC:
       return OrderByDirection.DescNullsLast;
+
     default:
       assertUnreachable(orderByEnum);
   }

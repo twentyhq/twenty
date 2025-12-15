@@ -13,6 +13,7 @@ import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/gr
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphOrderBy, type PieChartConfiguration } from '~/generated/graphql';
@@ -125,16 +126,41 @@ export const transformGroupByDataToPieChartData = ({
       };
     });
 
-  const sortedDataWithRawValues =
-    configuration.orderBy === GraphOrderBy.MANUAL &&
-    isDefined(configuration.manualSortOrder) &&
-    configuration.manualSortOrder.length > 0
-      ? sortByManualOrder({
-          items: unsortedDataWithRawValues,
-          manualSortOrder: configuration.manualSortOrder,
-          getRawValue: (item) => item.rawValue,
-        })
-      : unsortedDataWithRawValues;
+  const getSortedDataWithRawValues = (): PieChartDataItemWithRawValue[] => {
+    if (
+      configuration.orderBy === GraphOrderBy.MANUAL &&
+      isDefined(configuration.manualSortOrder) &&
+      configuration.manualSortOrder.length > 0
+    ) {
+      return sortByManualOrder({
+        items: unsortedDataWithRawValues,
+        manualSortOrder: configuration.manualSortOrder,
+        getRawValue: (item) => item.rawValue,
+      });
+    }
+
+    if (
+      (configuration.orderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+        configuration.orderBy === GraphOrderBy.FIELD_POSITION_DESC) &&
+      isDefined(groupByField.options) &&
+      groupByField.options.length > 0
+    ) {
+      return sortBySelectOptionPosition({
+        items: unsortedDataWithRawValues,
+        options: groupByField.options,
+        formattedToRawLookup,
+        getFormattedValue: (item) => item.id,
+        direction:
+          configuration.orderBy === GraphOrderBy.FIELD_POSITION_ASC
+            ? 'ASC'
+            : 'DESC',
+      });
+    }
+
+    return unsortedDataWithRawValues;
+  };
+
+  const sortedDataWithRawValues = getSortedDataWithRawValues();
 
   const data: PieChartDataItem[] = sortedDataWithRawValues.map(
     ({ rawValue: _rawValue, ...item }) => item,

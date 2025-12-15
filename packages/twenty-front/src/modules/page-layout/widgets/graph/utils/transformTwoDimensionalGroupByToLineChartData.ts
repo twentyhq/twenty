@@ -13,7 +13,9 @@ import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/gr
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
@@ -143,6 +145,25 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
           return b.localeCompare(a);
         }
       });
+    } else if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_DESC
+    ) {
+      if (
+        isDefined(groupByFieldX.options) &&
+        groupByFieldX.options.length > 0
+      ) {
+        sortedXValues = sortBySelectOptionPosition({
+          items: allXValues,
+          options: groupByFieldX.options,
+          formattedToRawLookup,
+          getFormattedValue: (item) => item,
+          direction:
+            configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC
+              ? 'ASC'
+              : 'DESC',
+        });
+      }
     }
   }
 
@@ -170,11 +191,18 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     },
   );
 
+  const isSecondaryAxisSelectField =
+    groupByFieldY.type === FieldMetadataType.SELECT ||
+    groupByFieldY.type === FieldMetadataType.MULTI_SELECT;
+
   const series = sortLineChartSeries({
     series: unsortedSeries,
     orderByY: configuration.secondaryAxisOrderBy,
     manualSortOrder: configuration.secondaryAxisManualSortOrder,
     formattedToRawLookup: yFormattedToRawLookup,
+    selectFieldOptions: isSecondaryAxisSelectField
+      ? groupByFieldY.options
+      : undefined,
   });
 
   return {

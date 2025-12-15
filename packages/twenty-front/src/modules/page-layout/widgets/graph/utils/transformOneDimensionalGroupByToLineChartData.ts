@@ -14,6 +14,7 @@ import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/gr
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -93,6 +94,10 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     })
     .filter((point): point is LineChartDataPoint => isDefined(point));
 
+  const isSelectField =
+    groupByFieldX.type === FieldMetadataType.SELECT ||
+    groupByFieldX.type === FieldMetadataType.MULTI_SELECT;
+
   const sortedData = sortChartData({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
@@ -100,6 +105,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     formattedToRawLookup,
     getFieldValue: (point) => String(point.x),
     getNumericValue: (point) => point.y ?? 0,
+    selectFieldOptions: isSelectField ? groupByFieldX.options : undefined,
   });
 
   const transformedData = configuration.isCumulative

@@ -15,7 +15,9 @@ import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { type BarDatum } from '@nivo/bar';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
@@ -151,11 +153,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     dataItem[yValue] = aggregateValue;
   });
 
+  const isSecondaryAxisSelectField =
+    groupByFieldY.type === FieldMetadataType.SELECT ||
+    groupByFieldY.type === FieldMetadataType.MULTI_SELECT;
+
   const keys = getSortedKeys({
     orderByY: configuration.secondaryAxisOrderBy,
     yValues: Array.from(yValues),
     manualSortOrder: configuration.secondaryAxisManualSortOrder,
     formattedToRawLookup: yFormattedToRawLookup,
+    selectFieldOptions: isSecondaryAxisSelectField
+      ? groupByFieldY.options
+      : undefined,
   });
 
   const series: BarChartSeries[] = keys.map((key) => ({
@@ -179,6 +188,37 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
             return isDefined(rawValue) ? String(rawValue) : formattedValue;
           },
+        });
+      }
+    } else if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC
+    ) {
+      sortedData = [...unsortedData].sort((a, b) => {
+        const aValue = a[indexByKey] as string;
+        const bValue = b[indexByKey] as string;
+
+        return configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      });
+    } else if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_DESC
+    ) {
+      if (
+        isDefined(groupByFieldX.options) &&
+        groupByFieldX.options.length > 0
+      ) {
+        sortedData = sortBySelectOptionPosition({
+          items: unsortedData,
+          options: groupByFieldX.options,
+          formattedToRawLookup,
+          getFormattedValue: (datum) => datum[indexByKey] as string,
+          direction:
+            configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC
+              ? 'ASC'
+              : 'DESC',
         });
       }
     } else {

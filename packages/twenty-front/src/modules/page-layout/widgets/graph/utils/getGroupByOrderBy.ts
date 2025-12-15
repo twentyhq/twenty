@@ -29,11 +29,11 @@ export const getGroupByOrderBy = ({
   | ObjectRecordOrderByForScalarField
   | ObjectRecordOrderByWithGroupByDateField
   | ObjectRecordOrderByForCompositeField
-  | ObjectRecordOrderByForRelationField => {
+  | ObjectRecordOrderByForRelationField
+  | undefined => {
   switch (graphOrderBy) {
     case GraphOrderBy.FIELD_ASC:
     case GraphOrderBy.FIELD_DESC:
-    case GraphOrderBy.MANUAL:
       return getFieldOrderBy(
         groupByField,
         groupBySubFieldName,
@@ -54,7 +54,10 @@ export const getGroupByOrderBy = ({
         },
       };
     }
-
+    case GraphOrderBy.FIELD_POSITION_ASC:
+    case GraphOrderBy.FIELD_POSITION_DESC:
+    case GraphOrderBy.MANUAL:
+      return undefined;
     default:
       assertUnreachable(graphOrderBy);
   }

@@ -1,5 +1,7 @@
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
@@ -10,6 +12,7 @@ type SortChartDataParams<T> = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
   getFieldValue: (item: T) => string;
   getNumericValue: (item: T) => number;
+  selectFieldOptions?: FieldMetadataItemOption[] | null;
 };
 
 export const sortChartData = <T>({
@@ -19,6 +22,7 @@ export const sortChartData = <T>({
   formattedToRawLookup,
   getFieldValue,
   getNumericValue,
+  selectFieldOptions,
 }: SortChartDataParams<T>): T[] => {
   if (!isDefined(orderBy)) {
     return data;
@@ -42,17 +46,41 @@ export const sortChartData = <T>({
       });
     }
     case GraphOrderBy.VALUE_ASC:
-      return [...data].sort((a, b) => getNumericValue(a) - getNumericValue(b));
+      return data.toSorted((a, b) => getNumericValue(a) - getNumericValue(b));
     case GraphOrderBy.VALUE_DESC:
-      return [...data].sort((a, b) => getNumericValue(b) - getNumericValue(a));
+      return data.toSorted((a, b) => getNumericValue(b) - getNumericValue(a));
     case GraphOrderBy.FIELD_ASC:
-      return [...data].sort((a, b) =>
+      return data.toSorted((a, b) =>
         getFieldValue(a).localeCompare(getFieldValue(b)),
       );
     case GraphOrderBy.FIELD_DESC:
-      return [...data].sort((a, b) =>
+      return data.toSorted((a, b) =>
         getFieldValue(b).localeCompare(getFieldValue(a)),
       );
+    case GraphOrderBy.FIELD_POSITION_ASC:
+      if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
+        throw new Error('Select field options are required');
+      }
+
+      return sortBySelectOptionPosition<T>({
+        items: data,
+        options: selectFieldOptions,
+        formattedToRawLookup,
+        getFormattedValue: getFieldValue,
+        direction: 'ASC',
+      });
+    case GraphOrderBy.FIELD_POSITION_DESC:
+      if (!isDefined(selectFieldOptions) || selectFieldOptions.length === 0) {
+        throw new Error('Select field options are required');
+      }
+
+      return sortBySelectOptionPosition<T>({
+        items: data,
+        options: selectFieldOptions,
+        formattedToRawLookup,
+        getFormattedValue: getFieldValue,
+        direction: 'DESC',
+      });
     default:
       return data;
   }

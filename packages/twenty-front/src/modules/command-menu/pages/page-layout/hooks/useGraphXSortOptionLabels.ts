@@ -55,9 +55,13 @@ export const useGraphXSortOptionLabels = ({
 
     switch (graphOrderBy) {
       case GraphOrderBy.FIELD_ASC:
-        return `${fieldLabel} ${t`Ascending`}`;
+        return `${fieldLabel} ${t`A → Z`}`;
       case GraphOrderBy.FIELD_DESC:
-        return `${fieldLabel} ${t`Descending`}`;
+        return `${fieldLabel} ${t`Z → A`}`;
+      case GraphOrderBy.FIELD_POSITION_ASC:
+        return `${fieldLabel} ${t`Position Ascending`}`;
+      case GraphOrderBy.FIELD_POSITION_DESC:
+        return `${fieldLabel} ${t`Position Descending`}`;
       case GraphOrderBy.VALUE_ASC:
         return `${valueLabel} ${t`Ascending`}`;
       case GraphOrderBy.VALUE_DESC:

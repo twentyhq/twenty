@@ -15,6 +15,7 @@ import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -98,6 +99,10 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     };
   });
 
+  const isSelectField =
+    groupByFieldX.type === FieldMetadataType.SELECT ||
+    groupByFieldX.type === FieldMetadataType.MULTI_SELECT;
+
   const sortedData = sortChartData({
     data: unsortedData,
     orderBy: configuration.primaryAxisOrderBy,
@@ -105,6 +110,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     formattedToRawLookup,
     getFieldValue: (datum) => datum[indexByKey] as string,
     getNumericValue: (datum) => datum[aggregateValueKey] as number,
+    selectFieldOptions: isSelectField ? groupByFieldX.options : undefined,
   });
 
   const series: BarChartSeries[] = [

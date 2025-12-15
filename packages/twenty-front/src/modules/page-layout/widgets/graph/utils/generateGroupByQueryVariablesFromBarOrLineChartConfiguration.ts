@@ -118,19 +118,21 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     | ObjectRecordOrderByForRelationField
   > = [];
 
-  orderBy.push(
-    getGroupByOrderBy({
-      graphOrderBy:
-        chartConfiguration.primaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
-      groupByField: groupByFieldX,
-      groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
-      aggregateOperation,
-      dateGranularity: shouldApplyDateGranularityX
-        ? (chartConfiguration.primaryAxisDateGranularity ??
-          GRAPH_DEFAULT_DATE_GRANULARITY)
-        : undefined,
-    }),
-  );
+  const primaryAxisOrderBy = getGroupByOrderBy({
+    graphOrderBy:
+      chartConfiguration.primaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
+    groupByField: groupByFieldX,
+    groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
+    aggregateOperation,
+    dateGranularity: shouldApplyDateGranularityX
+      ? (chartConfiguration.primaryAxisDateGranularity ??
+        GRAPH_DEFAULT_DATE_GRANULARITY)
+      : undefined,
+  });
+
+  if (isDefined(primaryAxisOrderBy)) {
+    orderBy.push(primaryAxisOrderBy);
+  }
 
   if (isDefined(groupByFieldY)) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
@@ -144,20 +146,21 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     const shouldApplyDateGranularityYForOrderBy =
       isFieldYDateForOrderBy || isFieldYNestedDateForOrderBy;
 
-    orderBy.push(
-      getGroupByOrderBy({
-        graphOrderBy:
-          chartConfiguration.secondaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
-        groupByField: groupByFieldY,
-        groupBySubFieldName:
-          chartConfiguration.secondaryAxisGroupBySubFieldName,
-        aggregateOperation,
-        dateGranularity: shouldApplyDateGranularityYForOrderBy
-          ? (chartConfiguration.secondaryAxisGroupByDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY)
-          : undefined,
-      }),
-    );
+    const secondaryAxisOrderBy = getGroupByOrderBy({
+      graphOrderBy:
+        chartConfiguration.secondaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
+      groupByField: groupByFieldY,
+      groupBySubFieldName: chartConfiguration.secondaryAxisGroupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyDateGranularityYForOrderBy
+        ? (chartConfiguration.secondaryAxisGroupByDateGranularity ??
+          GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    });
+
+    if (isDefined(secondaryAxisOrderBy)) {
+      orderBy.push(secondaryAxisOrderBy);
+    }
   }
 
   return {
