@@ -411,6 +411,7 @@ export {
   IconTags,
   IconTarget,
   IconTargetArrow,
+  IconTerminal,
   IconTestPipe,
   IconTextSize,
   IconTextWrap,

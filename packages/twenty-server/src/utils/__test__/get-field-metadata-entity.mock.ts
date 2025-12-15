@@ -24,7 +24,6 @@ export const getMockFieldMetadataEntity = <
     mainGroupByFieldMetadataViews: [],
     viewFilters: [],
     viewFields: [],
-    viewGroups: [],
     kanbanAggregateOperationViews: [],
     morphId: null,
     fieldPermissions: [],

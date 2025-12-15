@@ -15,6 +15,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 export type AgentActorContext = {
   actorContext: ActorMetadata;
   roleId: string;
+  userId: string;
+  userWorkspaceId: string;
 };
 
 @Injectable()
@@ -88,6 +90,8 @@ export class AgentActorContextService {
     return {
       actorContext,
       roleId,
+      userId: userWorkspace.userId,
+      userWorkspaceId,
     };
   }
 }

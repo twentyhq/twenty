@@ -60,7 +60,6 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       universalIdentifier: id,
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       mainGroupByFieldMetadataViewIds: [],

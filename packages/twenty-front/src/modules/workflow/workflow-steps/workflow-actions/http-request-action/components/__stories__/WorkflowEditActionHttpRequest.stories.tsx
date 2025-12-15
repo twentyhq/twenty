@@ -218,7 +218,7 @@ export const WithObjectStringBody: Story = {
           body: `{
   "hey": "frontend",
   "oh": "backend",
-  "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
+  "amazing": "database {{${MOCKED_STEP_ID}.name}}"
 }`,
         },
         outputSchema: {},
@@ -253,7 +253,7 @@ export const WithObjectStringBody: Story = {
 
     expect(textboxes[6]).toHaveTextContent('frontend');
     expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Salary');
+    expect(textboxes[10]).toHaveTextContent('database Name');
   },
 };
 
@@ -273,7 +273,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           },
           body: `[
   "frontend",
-  {{${MOCKED_STEP_ID}.salary}},
+  {{${MOCKED_STEP_ID}.name}},
   "database"
 ]`,
         },
@@ -300,9 +300,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
-        '[ "frontend", Salary, "database"]',
-      );
+      expect(textboxes[5]).toHaveTextContent('[ "frontend", Name, "database"]');
     });
   },
 };
@@ -323,7 +321,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           },
           body: `{
   "speciality": "frontend",
-  "salary": {{${MOCKED_STEP_ID}.salary}}
+  "name": {{${MOCKED_STEP_ID}.name}}
 }`,
         },
         outputSchema: {},
@@ -350,7 +348,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
       const textboxes = canvas.getAllByRole('textbox');
 
       expect(textboxes[5]).toHaveTextContent(
-        '{ "speciality": "frontend", "salary": Salary}',
+        '{ "speciality": "frontend", "name": Name}',
       );
     });
   },
