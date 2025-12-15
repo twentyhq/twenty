@@ -192,11 +192,6 @@ export class ClientConfigService {
         : undefined,
     };
 
-    console.log(
-      '**Is multi workspace enabled:**',
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED'),
-    );
-
     return clientConfig;
   }
 }
