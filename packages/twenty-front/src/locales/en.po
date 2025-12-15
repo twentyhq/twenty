@@ -4966,6 +4966,11 @@ msgstr "Hide deleted runs"
 msgid "Hide deleted workflows"
 msgstr "Hide deleted workflows"
 
+#. js-lingui-id: MuEcPp
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Hide empty category"
+msgstr "Hide empty category"
+
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
