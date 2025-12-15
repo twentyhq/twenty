@@ -23,7 +23,6 @@ describe('getAllSelectableFields', () => {
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       applicationId: null,

@@ -10,7 +10,6 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
-import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-view-main-group-by-field-metadata-id.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
@@ -43,7 +42,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
     protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
     protected readonly migrateStandardInvalidEntitiesCommand: MigrateStandardInvalidEntitiesCommand,
-    protected readonly backfillViewMainGroupByFieldMetadataIdCommand: BackfillViewMainGroupByFieldMetadataIdCommand,
     protected readonly cleanEmptyStringNullInTextFieldsCommand: CleanEmptyStringNullInTextFieldsCommand,
     protected readonly renameIndexNameCommand: RenameIndexNameCommand,
 
@@ -66,7 +64,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateRoleTargetsUniqueConstraintMigrationCommand,
       this.backfillPageLayoutUniversalIdentifiersCommand,
       this.migrateStandardInvalidEntitiesCommand,
-      this.backfillViewMainGroupByFieldMetadataIdCommand,
       this.cleanEmptyStringNullInTextFieldsCommand,
       this.renameIndexNameCommand,
     ];
