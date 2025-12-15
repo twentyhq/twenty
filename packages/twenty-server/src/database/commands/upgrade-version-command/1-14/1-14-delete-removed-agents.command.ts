@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { type Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -10,7 +11,6 @@ import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.serv
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isDefined } from 'twenty-shared/utils';
 
 // Standard IDs of agents that were removed from the codebase
 const REMOVED_AGENT_STANDARD_IDS = [
