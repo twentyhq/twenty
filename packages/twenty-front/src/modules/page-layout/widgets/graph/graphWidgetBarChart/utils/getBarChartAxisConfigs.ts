@@ -7,21 +7,15 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
-import { type BarDatum } from '@nivo/bar';
 
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 
 type GetBarChartAxisConfigsProps = {
-  width: number;
-  height: number;
-  data: BarDatum[];
   layout: BarChartLayout;
-  indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
-  axisFontSize?: number;
   valueTickValues?: number[];
   tickConfig: BarChartTickConfig;
 };

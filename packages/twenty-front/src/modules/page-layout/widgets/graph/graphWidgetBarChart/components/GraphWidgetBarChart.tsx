@@ -190,15 +190,10 @@ export const GraphWidgetBarChart = ({
     axisLeft: axisLeftConfig,
     margins,
   } = getBarChartAxisConfigs({
-    width: chartWidth,
-    height: chartHeight,
-    data,
     layout,
-    indexBy,
     xAxisLabel,
     yAxisLabel,
     formatOptions,
-    axisFontSize: chartTheme.axis.ticks.text.fontSize,
     valueTickValues,
     tickConfig,
   });
