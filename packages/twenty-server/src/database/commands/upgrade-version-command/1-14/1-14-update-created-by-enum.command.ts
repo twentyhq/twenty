@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -56,7 +57,7 @@ export class UpdateCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigra
     await queryRunner.startTransaction();
 
     const createdByFields = await this.fieldMetadataRepository.find({
-      where: { workspaceId, name: 'createdBy' },
+      where: { workspaceId, name: 'createdBy', type: FieldMetadataType.ACTOR },
       relations: ['object'],
     });
 
