@@ -3,6 +3,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultIframeWidget } from '@/page-layout/utils/createDefaultIframeWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
@@ -15,7 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,

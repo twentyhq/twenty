@@ -37,8 +37,8 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
     const tools: ToolSet = {};
 
     if (canRead) {
-      tools[`find_${objectMetadata.nameSingular}`] = {
-        description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
+      tools[`find_${objectMetadata.namePlural}`] = {
+        description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
         inputSchema: generateFindToolInputSchema(
           objectMetadata,
           restrictedFields,

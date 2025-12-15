@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -63,7 +64,7 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'workflowVersionService'
   | 'workflowVersionEdgeService'
   | 'workflowTriggerService'
-  | 'twentyORMGlobalManager'
+  | 'globalWorkspaceOrmManager'
   | 'recordPositionService'
 >;
 
@@ -176,6 +177,13 @@ This is the most efficient way for AI to create workflows as it handles all the 
           trigger: parameters.trigger,
           steps: parameters.steps,
         },
+        recordReferences: [
+          {
+            objectNameSingular: 'workflow',
+            recordId: workflowId,
+            displayName: parameters.name,
+          },
+        ],
       };
     } catch (error) {
       return {
@@ -196,34 +204,40 @@ const createWorkflow = async ({
   context: CreateCompleteWorkflowToolContext;
   name: string;
 }): Promise<string> => {
-  const workflowRepository =
-    await deps.twentyORMGlobalManager.getRepositoryForWorkspace(
-      context.workspaceId,
-      'workflow',
-      context.rolePermissionConfig,
-    );
+  const authContext = buildSystemAuthContext(context.workspaceId);
 
-  const workflowPosition = await deps.recordPositionService.buildRecordPosition(
-    {
-      value: 'first',
-      objectMetadata: {
-        isCustom: false,
-        nameSingular: 'workflow',
-      },
-      workspaceId: context.workspaceId,
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    authContext,
+    async () => {
+      const workflowRepository =
+        await deps.globalWorkspaceOrmManager.getRepository(
+          context.workspaceId,
+          'workflow',
+          context.rolePermissionConfig,
+        );
+
+      const workflowPosition =
+        await deps.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflow',
+          },
+          workspaceId: context.workspaceId,
+        });
+
+      const workflow = {
+        id: uuidv4(),
+        name,
+        statuses: [WorkflowStatus.DRAFT],
+        position: workflowPosition,
+      };
+
+      await workflowRepository.insert(workflow);
+
+      return workflow.id;
     },
   );
-
-  const workflow = {
-    id: uuidv4(),
-    name,
-    statuses: [WorkflowStatus.DRAFT],
-    position: workflowPosition,
-  };
-
-  await workflowRepository.insert(workflow);
-
-  return workflow.id;
 };
 
 const createWorkflowVersion = async ({
@@ -239,35 +253,43 @@ const createWorkflowVersion = async ({
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
 }): Promise<string> => {
-  const workflowVersionRepository =
-    await deps.twentyORMGlobalManager.getRepositoryForWorkspace(
-      context.workspaceId,
-      'workflowVersion',
-      context.rolePermissionConfig,
-    );
+  const authContext = buildSystemAuthContext(context.workspaceId);
 
-  const versionPosition = await deps.recordPositionService.buildRecordPosition({
-    value: 'first',
-    objectMetadata: {
-      isCustom: false,
-      nameSingular: 'workflowVersion',
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    authContext,
+    async () => {
+      const workflowVersionRepository =
+        await deps.globalWorkspaceOrmManager.getRepository(
+          context.workspaceId,
+          'workflowVersion',
+          context.rolePermissionConfig,
+        );
+
+      const versionPosition =
+        await deps.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflowVersion',
+          },
+          workspaceId: context.workspaceId,
+        });
+
+      const workflowVersion = {
+        id: uuidv4(),
+        workflowId,
+        name: 'v1',
+        status: WorkflowVersionStatus.DRAFT,
+        trigger,
+        steps,
+        position: versionPosition,
+      };
+
+      await workflowVersionRepository.insert(workflowVersion);
+
+      return workflowVersion.id;
     },
-    workspaceId: context.workspaceId,
-  });
-
-  const workflowVersion = {
-    id: uuidv4(),
-    workflowId,
-    name: 'v1',
-    status: WorkflowVersionStatus.DRAFT,
-    trigger,
-    steps,
-    position: versionPosition,
-  };
-
-  await workflowVersionRepository.insert(workflowVersion);
-
-  return workflowVersion.id;
+  );
 };
 
 const updateWorkflowStatus = async ({
@@ -281,15 +303,22 @@ const updateWorkflowStatus = async ({
   workflowId: string;
   workflowVersionId: string;
 }) => {
-  const workflowRepository =
-    await deps.twentyORMGlobalManager.getRepositoryForWorkspace(
-      context.workspaceId,
-      'workflow',
-      context.rolePermissionConfig,
-    );
+  const authContext = buildSystemAuthContext(context.workspaceId);
 
-  await workflowRepository.update(workflowId, {
-    statuses: [WorkflowStatus.ACTIVE],
-    lastPublishedVersionId: workflowVersionId,
-  });
+  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    authContext,
+    async () => {
+      const workflowRepository =
+        await deps.globalWorkspaceOrmManager.getRepository(
+          context.workspaceId,
+          'workflow',
+          context.rolePermissionConfig,
+        );
+
+      await workflowRepository.update(workflowId, {
+        statuses: [WorkflowStatus.ACTIVE],
+        lastPublishedVersionId: workflowVersionId,
+      });
+    },
+  );
 };

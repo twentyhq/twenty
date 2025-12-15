@@ -99,6 +99,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
         },
         sourceFlatObjectMetadata: sourceObjectMetadata,
         targetFlatObjectMetadata: newTargetObjectMetadata,
+        targetFlatFieldMetadataType: FieldMetadataType.RELATION,
         workspaceId: fieldMetadataToUpdate.workspaceId,
         workspaceCustomApplicationId,
         sourceFlatObjectMetadataJoinColumnName:

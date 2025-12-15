@@ -20,6 +20,8 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...fieldMetadataWithoutRelations,
+    createdAt: fieldMetadataWithoutRelations.createdAt.toISOString(),
+    updatedAt: fieldMetadataWithoutRelations.updatedAt.toISOString(),
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),
     calendarViewIds: fieldMetadataEntity.calendarViews.map(({ id }) => id),

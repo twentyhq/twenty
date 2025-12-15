@@ -7,6 +7,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RESUME_DELAYED_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/contants/resume-delayed-workflow-job-name';
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
@@ -28,6 +30,7 @@ export class ResumeDelayedWorkflowJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   @Process(RESUME_DELAYED_WORKFLOW_JOB_NAME)
@@ -36,67 +39,74 @@ export class ResumeDelayedWorkflowJob {
     workflowRunId,
     stepId,
   }: ResumeDelayedWorkflowJobData): Promise<void> {
-    try {
-      const workflowRun =
-        await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-          workflowRunId,
-          workspaceId,
-        });
+    const authContext = buildSystemAuthContext(workspaceId);
 
-      if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-        return;
-      }
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        try {
+          const workflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
 
-      const step = workflowRun.state?.flow?.steps?.find(
-        (step) => step.id === stepId,
-      );
+          if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+            return;
+          }
 
-      const stepInfo = workflowRun.state?.stepInfos[stepId];
+          const step = workflowRun.state?.flow?.steps?.find(
+            (step) => step.id === stepId,
+          );
 
-      if (!step || !isWorkflowDelayAction(step)) {
-        throw new WorkflowRunException(
-          'Step not found or is not a delay action',
-          WorkflowRunExceptionCode.INVALID_INPUT,
-        );
-      }
+          const stepInfo = workflowRun.state?.stepInfos[stepId];
 
-      if (stepInfo?.status !== StepStatus.PENDING) {
-        throw new WorkflowRunException(
-          'Step is not pending',
-          WorkflowRunExceptionCode.INVALID_INPUT,
-        );
-      }
+          if (!step || !isWorkflowDelayAction(step)) {
+            throw new WorkflowRunException(
+              'Step not found or is not a delay action',
+              WorkflowRunExceptionCode.INVALID_INPUT,
+            );
+          }
 
-      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-        stepId,
-        stepInfo: {
-          status: StepStatus.SUCCESS,
-          result: {
-            success: true,
-          },
-        },
-        workspaceId,
-        workflowRunId,
-      });
+          if (stepInfo?.status !== StepStatus.PENDING) {
+            throw new WorkflowRunException(
+              'Step is not pending',
+              WorkflowRunExceptionCode.INVALID_INPUT,
+            );
+          }
 
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RunWorkflowJob.name,
-        {
-          workspaceId,
-          workflowRunId,
-          lastExecutedStepId: stepId,
-        },
-      );
-    } catch (error) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Unknown error during delay resume',
-      });
-    }
+          await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+            stepId,
+            stepInfo: {
+              status: StepStatus.SUCCESS,
+              result: {
+                success: true,
+              },
+            },
+            workspaceId,
+            workflowRunId,
+          });
+
+          await this.messageQueueService.add<RunWorkflowJobData>(
+            RunWorkflowJob.name,
+            {
+              workspaceId,
+              workflowRunId,
+              lastExecutedStepId: stepId,
+            },
+          );
+        } catch (error) {
+          await this.workflowRunWorkspaceService.endWorkflowRun({
+            workflowRunId,
+            workspaceId,
+            status: WorkflowRunStatus.FAILED,
+            error:
+              error instanceof Error
+                ? error.message
+                : 'Unknown error during delay resume',
+          });
+        }
+      },
+    );
   }
 }

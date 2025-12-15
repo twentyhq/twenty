@@ -8,6 +8,7 @@ import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
@@ -27,7 +28,10 @@ describe('McpProtocolService', () => {
   const mockUserWorkspaceId = 'user-workspace-1';
   const mockRoleId = 'role-1';
   const mockAdminRoleId = 'admin-role-1';
-  const mockApiKey = 'api-key-1';
+  const mockApiKey = {
+    id: 'api-key-1',
+    workspaceId: mockWorkspace.id,
+  } as ApiKeyEntity;
 
   beforeEach(async () => {
     const mockFeatureFlagService = {
@@ -191,6 +195,7 @@ describe('McpProtocolService', () => {
       const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
       });
 
       expect(result).toMatchObject({
@@ -252,6 +257,7 @@ describe('McpProtocolService', () => {
       const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
       });
 
       expect(result).toEqual(mockToolCallResponse);
@@ -356,6 +362,7 @@ describe('McpProtocolService', () => {
       const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
       });
 
       expect(result).toMatchObject(mockToolsListingResponse);
@@ -373,6 +380,7 @@ describe('McpProtocolService', () => {
       const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
       });
 
       expect(result).toEqual({
@@ -408,6 +416,7 @@ describe('McpProtocolService', () => {
       const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
       });
 
       expect(result).toEqual({

@@ -21,6 +21,7 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -104,10 +105,12 @@ export class ViewService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewToCreate.id,
-      flatEntityMaps: recomputedExistingFlatViewMaps,
-    });
+    return fromFlatViewToViewDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatViewToCreate.id,
+        flatEntityMaps: recomputedExistingFlatViewMaps,
+      }),
+    );
   }
 
   async updateOne({
@@ -178,10 +181,12 @@ export class ViewService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: updateViewInput.id,
-      flatEntityMaps: recomputedExistingFlatViewMaps,
-    });
+    return fromFlatViewToViewDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: updateViewInput.id,
+        flatEntityMaps: recomputedExistingFlatViewMaps,
+      }),
+    );
   }
 
   async deleteOne({
@@ -235,10 +240,12 @@ export class ViewService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: deleteViewInput.id,
-      flatEntityMaps: recomputedExistingFlatViewMaps,
-    });
+    return fromFlatViewToViewDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: deleteViewInput.id,
+        flatEntityMaps: recomputedExistingFlatViewMaps,
+      }),
+    );
   }
 
   async destroyOne({
@@ -283,7 +290,7 @@ export class ViewService {
       );
     }
 
-    return flatViewFromDestroyInput;
+    return fromFlatViewToViewDto(flatViewFromDestroyInput);
   }
 
   processViewNameWithTemplate(

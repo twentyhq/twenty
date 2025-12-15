@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard duplication should succeed should duplicate a basic dashboard with page layout 1`] = `
+{
+  "createdAt": Any<String>,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Basic Dashboard (Copy)",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Dashboard duplication should succeed should duplicate a dashboard with page layout and tabs 1`] = `
+{
+  "createdAt": Any<String>,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Dashboard With Tabs (Copy)",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Dashboard duplication should succeed should duplicate a dashboard with page layout, tabs and widgets 1`] = `
+{
+  "createdAt": Any<String>,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Dashboard With Widgets (Copy)",
+  "updatedAt": Any<String>,
+}
+`;
