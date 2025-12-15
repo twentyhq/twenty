@@ -1,21 +1,15 @@
 import { type UIMessage } from 'ai';
 
-// File types that should be routed to code interpreter instead of the model
 const CODE_INTERPRETER_MIME_TYPES = new Set([
-  // Spreadsheets
   'text/csv',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  // Documents
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/msword',
-  // Presentations
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   'application/vnd.ms-powerpoint',
-  // Archives
   'application/zip',
   'application/x-zip-compressed',
-  // Data formats
   'application/json',
   'text/plain',
   'text/xml',
@@ -51,15 +45,12 @@ export const extractCodeInterpreterFiles = (
         const mimeType = part.mediaType ?? '';
 
         if (CODE_INTERPRETER_MIME_TYPES.has(mimeType)) {
-          // Extract this file for code interpreter
           filesForThisMessage.push({
             filename: part.filename ?? 'uploaded_file',
             url: part.url,
             mimeType,
           });
-          // Don't add this part to newParts - we'll replace with text
         } else {
-          // Keep image files and other supported types
           newParts.push(part);
         }
       } else {
@@ -68,10 +59,8 @@ export const extractCodeInterpreterFiles = (
     }
 
     if (filesForThisMessage.length > 0) {
-      // Add extracted files to global list
       extractedFiles.push(...filesForThisMessage);
 
-      // Add a text part describing the available files
       const fileList = filesForThisMessage
         .map((f) => `- ${f.filename} (${f.mimeType})`)
         .join('\n');

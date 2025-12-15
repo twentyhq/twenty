@@ -160,7 +160,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       <CodeExecutionDisplay
         code={codeInput?.code ?? ''}
         stdout={codeOutput?.result?.stdout ?? ''}
-        stderr={codeOutput?.result?.stderr ?? ''}
+        stderr={codeOutput?.result?.stderr || errorText || ''}
         exitCode={codeOutput?.result?.exitCode}
         files={codeOutput?.result?.files}
         isRunning={isRunning}

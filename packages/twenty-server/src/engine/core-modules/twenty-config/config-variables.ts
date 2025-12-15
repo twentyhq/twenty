@@ -548,7 +548,6 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E2B,
   )
-  @IsOptional()
   E2B_API_KEY?: string;
 
   @ConfigVariablesMetadata({

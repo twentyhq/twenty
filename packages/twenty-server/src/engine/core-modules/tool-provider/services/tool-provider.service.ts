@@ -27,7 +27,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 // Type-only import to avoid circular dependency at file level
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
-// Tool definition with optional permission flag
 type ActionTool = {
   tool: Tool;
   flag?: PermissionFlagType;
@@ -39,31 +38,23 @@ export class ToolProviderService {
   private readonly actionTools: Map<ToolType, ActionTool>;
 
   constructor(
-    // Action tools (individual tools)
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
-    // Database CRUD tools
     private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
     private readonly createRecordService: CreateRecordService,
     private readonly updateRecordService: UpdateRecordService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly findRecordsService: FindRecordsService,
-    // Workflow tools - optional to avoid circular dependency with WorkflowExecutorModule.
-    // When used from workflow context, this will be null (and workflow tools aren't
-    // needed anyway since agents in workflows shouldn't create other workflows).
-    // When used from chat context, WorkflowToolsModule provides this service.
+    // Optional to avoid circular dependency with WorkflowExecutorModule (null when called from workflow context)
     @Optional()
     @Inject(WORKFLOW_TOOL_SERVICE_TOKEN)
     private readonly workflowToolService: WorkflowToolWorkspaceService | null,
-    // Metadata tools
     private readonly objectMetadataToolsFactory: ObjectMetadataToolsFactory,
     private readonly fieldMetadataToolsFactory: FieldMetadataToolsFactory,
-    // Native model tools
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    // Permissions
     private readonly permissionsService: PermissionsService,
   ) {
     this.actionTools = new Map([
@@ -85,7 +76,6 @@ export class ToolProviderService {
         ToolType.SEARCH_HELP_CENTER,
         {
           tool: this.searchHelpCenterTool,
-          // No permission flag - available to all
         },
       ],
       [
@@ -98,7 +88,6 @@ export class ToolProviderService {
     ]);
   }
 
-  // Get a specific tool by type (used by workflow executor)
   getToolByType(toolType: ToolType): Tool {
     const actionTool = this.actionTools.get(toolType);
 
@@ -174,10 +163,14 @@ export class ToolProviderService {
   private async getActionTools(spec: ToolSpecification): Promise<ToolSet> {
     const tools: ToolSet = {};
     const executionContext = { workspaceId: spec.workspaceId };
+    const excludedTools = new Set(spec.excludeTools ?? []);
 
     for (const [toolType, { tool, flag }] of this.actionTools) {
+      if (excludedTools.has(toolType)) {
+        continue;
+      }
+
       if (!flag) {
-        // No permission flag - available to all
         tools[toolType.toLowerCase()] = {
           description: tool.description,
           inputSchema: tool.inputSchema,
@@ -206,8 +199,6 @@ export class ToolProviderService {
   }
 
   private async getWorkflowTools(spec: ToolSpecification): Promise<ToolSet> {
-    // Workflow tools are optional - not available when called from workflow context
-    // to avoid circular dependencies (agents in workflows shouldn't create workflows)
     if (!this.workflowToolService) {
       return {};
     }

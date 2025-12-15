@@ -338,7 +338,7 @@ export const CodeExecutionDisplay = ({
                 const filename = file.filename;
 
                 return (
-                  <StyledFileCard key={filename}>
+                  <StyledFileCard key={file.url}>
                     <StyledFilePreview>
                       {isPreviewableMimeType(file.mimeType) ? (
                         <StyledPreviewImage

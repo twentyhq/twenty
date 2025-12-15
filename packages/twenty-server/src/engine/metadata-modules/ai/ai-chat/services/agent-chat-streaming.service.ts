@@ -67,7 +67,6 @@ export class AgentChatStreamingService {
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
-          // Create callback to stream code execution updates
           const onCodeExecutionUpdate = (data: CodeExecutionData) => {
             writer.write({
               type: 'data-code-execution' as const,
@@ -85,7 +84,6 @@ export class AgentChatStreamingService {
               onCodeExecutionUpdate,
             });
 
-          // Write initial status
           writer.write({
             type: 'data-routing-status' as const,
             id: 'execution-status',
@@ -95,7 +93,6 @@ export class AgentChatStreamingService {
             },
           });
 
-          // Track usage from the stream for persisting to thread
           let streamUsage = {
             inputTokens: 0,
             outputTokens: 0,
@@ -103,7 +100,6 @@ export class AgentChatStreamingService {
             outputCredits: 0,
           };
 
-          // Merge the AI stream
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
@@ -159,7 +155,6 @@ export class AgentChatStreamingService {
                   return;
                 }
 
-                // Update status to completed
                 writer.write({
                   type: 'data-routing-status' as const,
                   id: 'execution-status',
@@ -169,8 +164,6 @@ export class AgentChatStreamingService {
                   },
                 });
 
-                // Save messages to database
-                // Use thread.id from the validated thread object to ensure it's not null
                 const validThreadId = thread.id;
 
                 if (!validThreadId) {
@@ -202,7 +195,6 @@ export class AgentChatStreamingService {
                     turnId: userMessage.turnId,
                   });
 
-                  // Update thread usage statistics
                   await this.threadRepository.update(validThreadId, {
                     totalInputTokens: () =>
                       `"totalInputTokens" + ${streamUsage.inputTokens}`,

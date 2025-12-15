@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { basename, join } from 'path';
 
 import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
@@ -36,13 +36,13 @@ export class LocalDriver implements CodeInterpreterDriver {
     await fs.mkdir(outputDir);
 
     try {
-      // Write input files to working directory
       for (const file of files ?? []) {
-        await fs.writeFile(join(workDir, file.filename), file.content);
+        const safeFilename = basename(file.filename);
+
+        await fs.writeFile(join(workDir, safeFilename), file.content);
       }
 
-      // Rewrite E2B-style paths to local paths
-      // This allows code written for E2B to work locally
+      // Rewrite E2B-style paths to local paths for compatibility
       const rewrittenCode = code
         .replace(/\/home\/user\/output\//g, `${outputDir}/`)
         .replace(/\/home\/user\/output/g, outputDir)
@@ -137,7 +137,6 @@ export class LocalDriver implements CodeInterpreterDriver {
         const text = data.toString();
 
         stdout += text;
-        // Stream line by line
         const lines = text.split('\n');
 
         for (const line of lines) {
@@ -151,7 +150,6 @@ export class LocalDriver implements CodeInterpreterDriver {
         const text = data.toString();
 
         stderr += text;
-        // Stream line by line
         const lines = text.split('\n');
 
         for (const line of lines) {

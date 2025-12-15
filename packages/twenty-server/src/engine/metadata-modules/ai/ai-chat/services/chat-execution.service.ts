@@ -61,7 +61,6 @@ export type ChatExecutionResult = {
   modelConfig: AIModelConfig;
 };
 
-// Common tools to pre-load for quick access
 const COMMON_PRELOAD_TOOLS = [
   'http_request',
   'search_help_center',
@@ -158,11 +157,9 @@ export class ChatExecutionService {
       ),
     };
 
-    // Extract files that need to go to code interpreter (CSV, XLSX, etc.)
     const { processedMessages, extractedFiles } =
       extractCodeInterpreterFiles(messages);
 
-    // If there are extracted files, store them and auto-load code_interpreter
     let storedFiles: Array<{
       filename: string;
       storagePath: string;

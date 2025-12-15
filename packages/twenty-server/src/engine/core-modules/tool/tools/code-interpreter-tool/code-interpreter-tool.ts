@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
+import path from 'path';
+
 import {
   type CodeExecutionData,
   type CodeExecutionFile,
@@ -31,6 +33,7 @@ import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
+import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -83,12 +86,10 @@ export class CodeInterpreterTool implements Tool {
     const executionId = v4();
     const startTime = Date.now();
 
-    // Streaming state
     let accumulatedStdout = '';
     let accumulatedStderr = '';
     const streamedFiles: CodeExecutionFile[] = [];
 
-    // Emit initial pending state
     onCodeExecutionUpdate?.(
       this.buildExecutionState(executionId, 'pending', code, '', '', []),
     );
@@ -100,12 +101,10 @@ export class CodeInterpreterTool implements Tool {
         `Executing code interpreter with ${inputFiles.length} input files`,
       );
 
-      // Emit running state
       onCodeExecutionUpdate?.(
         this.buildExecutionState(executionId, 'running', code, '', '', []),
       );
 
-      // Generate short-lived session token for MCP access
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
       const sessionToken = this.generateSessionToken(
         workspaceId,
@@ -117,7 +116,6 @@ export class CodeInterpreterTool implements Tool {
         `MCP session: workspaceId=${workspaceId}, userId=${userId}, userWorkspaceId=${userWorkspaceId}, serverUrl=${serverUrl}`,
       );
 
-      // Prepend the Twenty MCP helper to the user code
       const codeWithHelper = TWENTY_MCP_HELPER + '\n\n' + code;
 
       const result = await this.codeInterpreterService.execute(
@@ -157,7 +155,6 @@ export class CodeInterpreterTool implements Tool {
             );
           },
           onResult: async (outputFile: OutputFile) => {
-            // Upload file immediately and add to streamed files
             const uploadedFile = await this.uploadSingleFile(
               outputFile,
               workspaceId,
@@ -185,7 +182,6 @@ export class CodeInterpreterTool implements Tool {
         `Execution result: exitCode=${result.exitCode}, stdout length=${result.stdout.length}, stderr length=${result.stderr.length}`,
       );
 
-      // Upload any remaining files that weren't streamed
       const allOutputFileUrls = await this.uploadOutputFiles(
         result.files,
         workspaceId,
@@ -194,8 +190,6 @@ export class CodeInterpreterTool implements Tool {
       );
 
       const executionTimeMs = Date.now() - startTime;
-
-      // Emit final state
       const finalState = result.exitCode === 0 ? 'completed' : 'error';
 
       onCodeExecutionUpdate?.(
@@ -235,7 +229,6 @@ export class CodeInterpreterTool implements Tool {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
 
-      // Emit error state
       onCodeExecutionUpdate?.(
         this.buildExecutionState(
           executionId,
@@ -264,10 +257,10 @@ export class CodeInterpreterTool implements Tool {
     }
 
     const inputFiles: InputFile[] = [];
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     for (const file of files) {
       try {
-        // Handle data URLs (base64 encoded)
         if (file.url.startsWith('data:')) {
           const parsed = this.parseDataUrl(file.url);
 
@@ -281,9 +274,15 @@ export class CodeInterpreterTool implements Tool {
           continue;
         }
 
-        // Handle HTTP URLs
+        // Allow requests to the server's own URL (for internal file downloads)
+        // but block all other private/internal IPs to prevent SSRF attacks
+        const isInternalFileUrl = file.url.startsWith(serverUrl);
+        const adapter = isInternalFileUrl ? undefined : getSecureAdapter();
+
         const response = await this.httpService.axiosRef.get(file.url, {
           responseType: 'arraybuffer',
+          timeout: 30_000,
+          adapter,
         });
 
         inputFiles.push({
@@ -323,7 +322,6 @@ export class CodeInterpreterTool implements Tool {
     userId?: string,
     userWorkspaceId?: string,
   ): string {
-    // Generate ACCESS token for MCP endpoint authentication
     const secret = this.jwtWrapperService.generateAppSecret(
       JwtTokenTypeEnum.ACCESS,
       workspaceId,
@@ -352,15 +350,17 @@ export class CodeInterpreterTool implements Tool {
     const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
     const folder = `workspace-${workspaceId}/${subFolder}`;
 
+    const sanitizedFilename = path.basename(file.filename);
+
     try {
       await this.fileStorageService.write({
         file: file.content,
-        name: file.filename,
+        name: sanitizedFilename,
         mimeType: file.mimeType,
         folder,
       });
 
-      const filePath = `${subFolder}/${file.filename}`;
+      const filePath = `${subFolder}/${sanitizedFilename}`;
       const signedPath = this.fileService.signFileUrl({
         url: filePath,
         workspaceId,
@@ -369,7 +369,7 @@ export class CodeInterpreterTool implements Tool {
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
       return {
-        filename: file.filename,
+        filename: sanitizedFilename,
         url: `${serverUrl}/files/${signedPath}`,
         mimeType: file.mimeType,
       };
@@ -389,27 +389,27 @@ export class CodeInterpreterTool implements Tool {
     const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
     const folder = `workspace-${workspaceId}/${subFolder}`;
 
-    // Start with already uploaded files
     const outputFileUrls: CodeExecutionFile[] = [...alreadyUploadedFiles];
     const uploadedFilenames = new Set(
       alreadyUploadedFiles.map((f) => f.filename),
     );
 
     for (const file of files) {
-      // Skip files that were already uploaded during streaming
-      if (uploadedFilenames.has(file.filename)) {
+      const sanitizedFilename = path.basename(file.filename);
+
+      if (uploadedFilenames.has(sanitizedFilename)) {
         continue;
       }
 
       try {
         await this.fileStorageService.write({
           file: file.content,
-          name: file.filename,
+          name: sanitizedFilename,
           mimeType: file.mimeType,
           folder,
         });
 
-        const filePath = `${subFolder}/${file.filename}`;
+        const filePath = `${subFolder}/${sanitizedFilename}`;
         const signedPath = this.fileService.signFileUrl({
           url: filePath,
           workspaceId,
@@ -418,7 +418,7 @@ export class CodeInterpreterTool implements Tool {
         const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
         outputFileUrls.push({
-          filename: file.filename,
+          filename: sanitizedFilename,
           url: `${serverUrl}/files/${signedPath}`,
           mimeType: file.mimeType,
         });

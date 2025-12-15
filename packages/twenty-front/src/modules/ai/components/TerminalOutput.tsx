@@ -119,13 +119,8 @@ export const TerminalOutput = ({
   const hasStderr = stderr.length > 0;
   const hasStdout = stdout.length > 0;
 
-  // Compute default tab based on content - prefer stderr if stdout is empty
   const defaultTab: TabType = hasStderr && !hasStdout ? 'stderr' : 'stdout';
-
-  // Track user's explicit tab selection (null = use default)
   const [userSelectedTab, setUserSelectedTab] = useState<TabType | null>(null);
-
-  // Use user selection if set, otherwise use computed default
   const activeTab = userSelectedTab ?? defaultTab;
 
   const currentOutput = activeTab === 'stdout' ? stdout : stderr;

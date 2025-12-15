@@ -38,13 +38,14 @@ export class E2BDriver implements CodeInterpreterDriver {
         await sbx.files.write(`/home/user/${file.filename}`, arrayBuffer);
       }
 
-      // Set environment variables by prepending os.environ assignments
       const envSetup = context?.env
         ? `import os\n${Object.entries(context.env)
             .map(([key, value]) => {
               const escapedValue = value
                 .replace(/\\/g, '\\\\')
-                .replace(/'/g, "\\'");
+                .replace(/'/g, "\\'")
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r');
 
               return `os.environ['${key}'] = '${escapedValue}'`;
             })
@@ -71,7 +72,6 @@ export class E2BDriver implements CodeInterpreterDriver {
         },
       });
 
-      // Also collect any files written to the output directory
       try {
         const outputDir = await sbx.files.list('/home/user/output');
 
