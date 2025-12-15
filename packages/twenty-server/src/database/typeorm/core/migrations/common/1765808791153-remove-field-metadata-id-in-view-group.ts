@@ -16,7 +16,7 @@ export class RemoveFieldMetadataIdInViewGroup1765808791153
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."viewGroup" ADD "fieldMetadataId" uuid NOT NULL`,
+      `ALTER TABLE "core"."viewGroup" ADD "fieldMetadataId" uuid`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."viewGroup" ADD CONSTRAINT "FK_b3aa7ec58cdd9e83729f2232591" FOREIGN KEY ("fieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,

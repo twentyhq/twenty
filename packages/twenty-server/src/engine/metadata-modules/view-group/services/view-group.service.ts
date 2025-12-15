@@ -76,34 +76,13 @@ export class ViewGroupService {
         },
       );
 
-    const { flatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
-
     const flatViewGroupsToCreate = createViewGroupInputs.map(
-      (createViewGroupInput) => {
-        const mainGroupByFieldMetadataId =
-          flatViewMaps.byId[createViewGroupInput.viewId]
-            ?.mainGroupByFieldMetadataId;
-
-        if (!isDefined(mainGroupByFieldMetadataId)) {
-          throw new ViewGroupException(
-            'The associated view is not a grouped view: mainGroupByFieldMetadataId is missing.',
-            ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID,
-          );
-        }
-
-        return fromCreateViewGroupInputToFlatViewGroupToCreate({
+      (createViewGroupInput) =>
+        fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-          mainGroupByFieldMetadataId,
-        });
-      },
+        }),
     );
 
     const validateAndBuildResult =
