@@ -99,6 +99,7 @@ export class PageLayoutUpdateService {
     const validatedConfigs = await this.validateAllWidgetConfigurations({
       tabs,
       workspaceId,
+      flatPageLayoutWidgetMaps,
     });
 
     const flatPageLayoutToUpdate: FlatPageLayout = {
@@ -532,13 +533,14 @@ export class PageLayoutUpdateService {
   private async getValidatedConfigurationForWidget(
     widget: UpdatePageLayoutWidgetWithIdInput,
     workspaceId: string,
+    existingWidget: FlatPageLayoutWidget | undefined,
   ): Promise<WidgetConfigurationInterface | null> {
     const requiresConfiguration = WIDGET_TYPES_REQUIRING_CONFIGURATION.includes(
       widget.type,
     );
 
     if (!isDefined(widget.configuration)) {
-      if (requiresConfiguration) {
+      if (requiresConfiguration && !isDefined(existingWidget?.configuration)) {
         throw new PageLayoutWidgetException(
           generatePageLayoutWidgetExceptionMessage(
             PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
@@ -564,9 +566,11 @@ export class PageLayoutUpdateService {
   private async validateAllWidgetConfigurations({
     tabs,
     workspaceId,
+    flatPageLayoutWidgetMaps,
   }: {
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
     workspaceId: string;
+    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
   }): Promise<Map<string, WidgetConfigurationInterface | null>> {
     const validatedConfigs = new Map<
       string,
@@ -575,9 +579,12 @@ export class PageLayoutUpdateService {
 
     for (const tab of tabs) {
       for (const widget of tab.widgets) {
+        const existingWidget = flatPageLayoutWidgetMaps.byId[widget.id];
+
         const validatedConfig = await this.getValidatedConfigurationForWidget(
           widget,
           workspaceId,
+          existingWidget,
         );
 
         validatedConfigs.set(widget.id, validatedConfig);
