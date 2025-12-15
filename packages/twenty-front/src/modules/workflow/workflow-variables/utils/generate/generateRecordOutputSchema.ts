@@ -11,7 +11,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const camelToTitleCase = (camelCaseText: string): string =>
   capitalize(
@@ -29,14 +29,15 @@ const shouldGenerateFieldOutput = (
     return false;
   }
 
-  if (
-    fieldMetadataItem.isSystem &&
-    EXCLUDED_SYSTEM_FIELDS.includes(fieldMetadataItem.name)
-  ) {
+  const isExcludedSystemField =
+    (fieldMetadataItem.isSystem &&
+      EXCLUDED_SYSTEM_FIELDS.includes(fieldMetadataItem.name)) ??
+    false;
+
+  if (isExcludedSystemField) {
     return false;
   }
 
-  // Exclude one-to-many relations (only include many-to-one)
   if (
     fieldMetadataItem.type === FieldMetadataType.RELATION &&
     fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE
@@ -60,7 +61,7 @@ const generateRecordField = (
   const compositeType = compositeTypeDefinitions.get(fieldMetadataItem.type);
   const icon = fieldMetadataItem.icon ?? undefined;
 
-  if (compositeType) {
+  if (isDefined(compositeType)) {
     return {
       isLeaf: false,
       icon,

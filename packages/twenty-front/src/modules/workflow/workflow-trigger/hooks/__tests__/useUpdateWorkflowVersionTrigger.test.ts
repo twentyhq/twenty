@@ -61,4 +61,33 @@ describe('useUpdateWorkflowVersionTrigger', () => {
       },
     });
   });
+
+  it('marks for recomputation for all trigger types', async () => {
+    const triggerTypes = ['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'];
+
+    for (const triggerType of triggerTypes) {
+      mockMarkStepForRecomputation.mockClear();
+      mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
+
+      const testTrigger: WorkflowTrigger = {
+        name: `${triggerType} Trigger`,
+        type: triggerType as any,
+        settings: {
+          outputSchema: {},
+        },
+        nextStepIds: [],
+      };
+
+      const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
+
+      await act(async () => {
+        await result.current.updateTrigger(testTrigger);
+      });
+
+      expect(mockMarkStepForRecomputation).toHaveBeenCalledWith({
+        stepId: TRIGGER_STEP_ID,
+        workflowVersionId: 'version-id',
+      });
+    }
+  });
 });

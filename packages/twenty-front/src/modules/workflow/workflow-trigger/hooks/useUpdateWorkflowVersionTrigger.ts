@@ -2,9 +2,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import {
-    type WorkflowTrigger,
-    type WorkflowVersion,
+  type WorkflowTrigger,
+  type WorkflowVersion,
 } from '@/workflow/types/Workflow';
+
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 

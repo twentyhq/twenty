@@ -11,7 +11,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from '~/generated/graphql';
 
 const camelToTitleCase = (camelCaseText: string): string =>
@@ -30,10 +30,12 @@ const shouldGenerateFieldOutput = (
     return false;
   }
 
-  if (
-    fieldMetadataItem.isSystem &&
-    EXCLUDED_SYSTEM_FIELDS.includes(fieldMetadataItem.name)
-  ) {
+  const isExcludedSystemField =
+    (fieldMetadataItem.isSystem &&
+      EXCLUDED_SYSTEM_FIELDS.includes(fieldMetadataItem.name)) ??
+    false;
+
+  if (isExcludedSystemField) {
     return false;
   }
 
@@ -61,7 +63,7 @@ const generatePrefixedRecordField = (
   const compositeType = compositeTypeDefinitions.get(fieldMetadataItem.type);
   const icon = fieldMetadataItem.icon ?? undefined;
 
-  if (compositeType) {
+  if (isDefined(compositeType)) {
     const prefixedValue = compositeType.properties.reduce(
       (acc, property) => {
         acc[property.name] = {
