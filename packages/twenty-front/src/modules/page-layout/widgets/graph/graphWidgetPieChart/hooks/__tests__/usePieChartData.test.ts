@@ -194,4 +194,32 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData).toHaveLength(1);
     expect(result.current.legendItems).toHaveLength(3);
   });
+
+  it('should preserve original percentages after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item2']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(2);
+    expect(result.current.enrichedData[0].percentage).toBe(30);
+    expect(result.current.enrichedData[1].percentage).toBe(20);
+  });
+
+  it('should handle hidden ids that do not exist in data', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(3);
+  });
 });

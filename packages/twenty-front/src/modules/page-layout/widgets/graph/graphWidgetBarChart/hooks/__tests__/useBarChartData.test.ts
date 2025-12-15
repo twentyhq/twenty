@@ -271,4 +271,40 @@ describe('useBarChartData', () => {
     expect(result.current.visibleKeys).toHaveLength(1);
     expect(result.current.legendItems).toHaveLength(2);
   });
+
+  it('should filter barConfigs to only include visible keys', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['costs']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.barConfigs).toHaveLength(3);
+    result.current.barConfigs.forEach((config) => {
+      expect(config.key).toBe('sales');
+    });
+  });
+
+  it('should handle hidden ids that do not exist in keys', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      useBarChartData({
+        data: mockData,
+        indexBy: 'month',
+        keys: ['sales', 'costs'],
+        series: mockSeries,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.visibleKeys).toEqual(['sales', 'costs']);
+    expect(result.current.enrichedKeys).toHaveLength(2);
+  });
 });

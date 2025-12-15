@@ -230,4 +230,35 @@ describe('useLineChartData', () => {
     expect(result.current.visibleData).toHaveLength(1);
     expect(result.current.legendItems).toHaveLength(2);
   });
+
+  it('should maintain alignment between nivoData and colors when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.nivoData.length).toBe(result.current.colors.length);
+    expect(result.current.nivoData.length).toBe(1);
+    expect(result.current.nivoData[0].id).toBe('series2');
+  });
+
+  it('should handle hidden ids that do not exist in data', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.visibleData).toHaveLength(2);
+    expect(result.current.enrichedSeries).toHaveLength(2);
+  });
 });

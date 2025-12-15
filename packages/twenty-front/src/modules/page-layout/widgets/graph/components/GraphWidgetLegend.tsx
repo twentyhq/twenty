@@ -171,11 +171,19 @@ export const GraphWidgetLegend = ({
 
   const handleLegendItemClick = (itemId: string) => {
     if (!isInteractive) return;
-    setHiddenLegendIds((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId],
-    );
+
+    const isCurrentlyHidden = hiddenLegendIds.includes(itemId);
+    if (isCurrentlyHidden) {
+      setHiddenLegendIds((prev) => prev.filter((id) => id !== itemId));
+      return;
+    }
+
+    const visibleCount = items.length - hiddenLegendIds.length;
+    if (visibleCount <= 1) {
+      return;
+    }
+
+    setHiddenLegendIds((prev) => [...prev, itemId]);
   };
 
   const shouldShowLegend = show && items.length > 1;

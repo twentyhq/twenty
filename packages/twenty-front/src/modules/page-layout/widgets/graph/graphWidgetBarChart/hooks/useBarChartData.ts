@@ -76,19 +76,29 @@ export const useBarChartData = ({
     [allEnrichedKeys, hiddenLegendIds],
   );
 
+  const enrichedKeyMap = useMemo(
+    () => new Map(allEnrichedKeys.map((ek) => [ek.key, ek])),
+    [allEnrichedKeys],
+  );
+
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
-      return visibleKeys.map((key): BarChartConfig => {
-        const enrichedKey = allEnrichedKeys.find((ek) => ek.key === key);
-        return {
-          key,
-          indexValue,
-          colorScheme: enrichedKey!.colorScheme,
-        };
+      return visibleKeys.flatMap((key): BarChartConfig[] => {
+        const enrichedKey = enrichedKeyMap.get(key);
+        if (enrichedKey === undefined) {
+          return [];
+        }
+        return [
+          {
+            key,
+            indexValue,
+            colorScheme: enrichedKey.colorScheme,
+          },
+        ];
       });
     });
-  }, [data, indexBy, visibleKeys, allEnrichedKeys]);
+  }, [data, indexBy, visibleKeys, enrichedKeyMap]);
 
   return {
     seriesConfigMap,
