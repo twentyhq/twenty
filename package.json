@@ -206,7 +206,7 @@
     "prosemirror-transform": "1.10.4",
     "form-data": "^4.0.4",
     "happy-dom": "^20.0.0",
-    "next": "^15.2.6"
+    "next": "15.2.6"
   },
   "version": "0.2.1",
   "nx": {},
@@ -235,4 +235,3 @@
     ]
   }
 }
-
