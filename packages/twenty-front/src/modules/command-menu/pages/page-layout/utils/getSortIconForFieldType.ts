@@ -24,10 +24,13 @@ const NUMBER_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.POSITION,
 ];
 
-export const getSortIconForFieldType = (
-  fieldType: FieldMetadataType,
-  orderBy: GraphOrderBy,
-): IconComponent => {
+export const getSortIconForFieldType = ({
+  fieldType,
+  orderBy,
+}: {
+  fieldType: FieldMetadataType;
+  orderBy: GraphOrderBy;
+}): IconComponent => {
   const isAscending = orderBy === GraphOrderBy.FIELD_ASC;
 
   if (TEXT_FIELD_TYPES.includes(fieldType)) {

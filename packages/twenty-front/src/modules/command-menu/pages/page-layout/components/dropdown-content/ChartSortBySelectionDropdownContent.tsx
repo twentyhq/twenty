@@ -188,10 +188,10 @@ export const ChartSortBySelectionDropdownContent = () => {
               focused={selectedItemId === sortOption.value}
               LeftIcon={
                 sortOption.icon ??
-                getSortIconForFieldType(
-                  primaryAxisField?.type,
-                  sortOption.value,
-                )
+                getSortIconForFieldType({
+                  fieldType: primaryAxisField?.type,
+                  orderBy: sortOption.value,
+                })
               }
               onClick={() => {
                 handleSelect(sortOption.value);
