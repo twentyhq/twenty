@@ -132,6 +132,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      orderBy: args.orderBy,
     });
 
     if (isDefined(args.offset)) {
