@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { type Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -12,7 +12,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Standard IDs of agents that were removed from the codebase
 const REMOVED_AGENT_STANDARD_IDS = [
   '20202020-0002-0001-0001-000000000006', // dashboard-builder
   '20202020-0002-0001-0001-000000000003', // data-manipulator
@@ -21,10 +20,8 @@ const REMOVED_AGENT_STANDARD_IDS = [
   '20202020-0002-0001-0001-000000000001', // workflow-builder
 ];
 
-// Helper agent standard ID
 const HELPER_AGENT_STANDARD_ID = '20202020-0002-0001-0001-000000000004';
 
-// Data manipulator role standard ID
 const DATA_MANIPULATOR_ROLE_STANDARD_ID =
   '20202020-0001-0001-0001-000000000004';
 
