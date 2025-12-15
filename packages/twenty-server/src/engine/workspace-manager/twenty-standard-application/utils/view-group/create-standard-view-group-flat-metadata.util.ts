@@ -66,8 +66,6 @@ export const createStandardViewGroupFlatMetadata = <
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
-    fieldMetadataId:
-      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     isVisible,
     fieldValue,
     position,

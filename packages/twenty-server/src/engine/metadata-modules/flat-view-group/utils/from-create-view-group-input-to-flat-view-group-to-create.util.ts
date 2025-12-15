@@ -26,7 +26,6 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
 
   return {
     id: viewGroupId,
-    fieldMetadataId: mainGroupByFieldMetadataId, // Mandatory because non-nullable until we completely remove it
     viewId,
     workspaceId,
     createdAt: createdAt,
