@@ -43,7 +43,9 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   return (
     <ExpandableList>
       {links.map(({ url, label, type }, index) =>
-        type === LinkType.LinkedIn || type === LinkType.Twitter ? (
+        type === LinkType.LinkedIn ||
+        type === LinkType.Twitter ||
+        type === LinkType.Facebook ? (
           <SocialLink
             key={index}
             href={url}

@@ -25045,11 +25045,11 @@ __metadata:
   linkType: hard
 
 "@types/unzipper@npm:^0":
-  version: 0.10.10
-  resolution: "@types/unzipper@npm:0.10.10"
+  version: 0.10.11
+  resolution: "@types/unzipper@npm:0.10.11"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/10e9da33791be1087adb25adc2fe4d5ab267dae51fbcf7b1f10d0aca3130a13ef5fed994d7be45af8c465ff3946bc360a53eff6e5aab4eb9ac9489477535342f
+  checksum: 10c0/2ed949c2e6f7b22b2a91bde8a127265d1e3201baf1e8603e22836db58295170bdd1e25f4a4487c2daedab4a0340458f6adc0fa27f95429211f4dee261383a3b0
   languageName: node
   linkType: hard
 
