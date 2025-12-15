@@ -537,7 +537,7 @@ export class PageLayoutUpdateService {
       widget.type,
     );
 
-    if (!widget.configuration) {
+    if (!isDefined(widget.configuration)) {
       if (requiresConfiguration) {
         throw new PageLayoutWidgetException(
           generatePageLayoutWidgetExceptionMessage(

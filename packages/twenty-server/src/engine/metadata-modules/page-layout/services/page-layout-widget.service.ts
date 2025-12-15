@@ -273,7 +273,7 @@ export class PageLayoutWidgetService {
     input: CreatePageLayoutWidgetInput,
     workspaceId: string,
   ): Promise<WidgetConfigurationInterface | null> {
-    if (!input.type) {
+    if (!isDefined(input.type)) {
       return null;
     }
 
@@ -281,7 +281,7 @@ export class PageLayoutWidgetService {
       input.type,
     );
 
-    if (!input.configuration) {
+    if (!isDefined(input.configuration)) {
       if (requiresConfiguration) {
         throw new PageLayoutWidgetException(
           generatePageLayoutWidgetExceptionMessage(
@@ -393,7 +393,7 @@ export class PageLayoutWidgetService {
   ): Promise<WidgetConfigurationInterface | null> {
     const typeForValidation = updateData.type ?? existingWidget.type;
 
-    if (!typeForValidation) {
+    if (!isDefined(typeForValidation)) {
       return null;
     }
 
@@ -402,8 +402,8 @@ export class PageLayoutWidgetService {
 
     const titleForError = updateData.title ?? existingWidget.title;
 
-    if (!updateData.configuration) {
-      if (requiresConfiguration) {
+    if (!isDefined(updateData.configuration)) {
+      if (requiresConfiguration && !isDefined(existingWidget.configuration)) {
         throw new PageLayoutWidgetException(
           generatePageLayoutWidgetExceptionMessage(
             PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
