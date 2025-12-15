@@ -9,7 +9,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 const meta: Meta<typeof TerminalOutput> = {
   title: 'Modules/AI/TerminalOutput',
   component: TerminalOutput,
-  decorators: [ComponentDecorator, I18nFrontDecorator, SnackBarDecorator],
+  decorators: [I18nFrontDecorator, SnackBarDecorator, ComponentDecorator],
   parameters: {
     container: { width: 500 },
   },

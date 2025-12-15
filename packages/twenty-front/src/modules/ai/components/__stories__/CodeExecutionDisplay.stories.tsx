@@ -31,7 +31,7 @@ plt.savefig('revenue_chart.png')`;
 const meta: Meta<typeof CodeExecutionDisplay> = {
   title: 'Modules/AI/CodeExecutionDisplay',
   component: CodeExecutionDisplay,
-  decorators: [ComponentDecorator, I18nFrontDecorator, SnackBarDecorator],
+  decorators: [I18nFrontDecorator, SnackBarDecorator, ComponentDecorator],
   parameters: {
     container: { width: 600 },
   },
