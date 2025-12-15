@@ -14,26 +14,27 @@ import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
+import { WIDGET_TYPES_REQUIRING_CONFIGURATION } from 'src/engine/metadata-modules/page-layout/constants/widget-types-requiring-configuration.constant';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
-import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
-  PageLayoutExceptionMessageKey,
-  generatePageLayoutExceptionMessage,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { type WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+  PageLayoutExceptionMessageKey,
+  generatePageLayoutExceptionMessage,
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
-import { type WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -532,7 +533,23 @@ export class PageLayoutUpdateService {
     widget: UpdatePageLayoutWidgetWithIdInput,
     workspaceId: string,
   ): Promise<WidgetConfigurationInterface | null> {
+    const requiresConfiguration = WIDGET_TYPES_REQUIRING_CONFIGURATION.includes(
+      widget.type,
+    );
+
     if (!widget.configuration) {
+      if (requiresConfiguration) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+            widget.title,
+            widget.type,
+            'Configuration is required for this widget type',
+          ),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+
       return null;
     }
 

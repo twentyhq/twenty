@@ -10,3 +10,58 @@ exports[`Page layout with tabs update should fail when updating a non-existent p
   "name": "NotFoundError",
 }
 `;
+
+exports[`Page layout with tabs update should fail with invalid widget configuration when GRAPH widget has invalid UUID format 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Invalid configuration for widget "Graph Widget" of type GRAPH: aggregateFieldMetadataId: aggregateFieldMetadataId must be a UUID",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout with tabs update should fail with invalid widget configuration when GRAPH widget has missing required fields 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Invalid configuration for widget "Graph Widget" of type GRAPH: aggregateFieldMetadataId: aggregateFieldMetadataId should not be empty, aggregateFieldMetadataId must be a UUID; aggregateOperation: aggregateOperation should not be empty, aggregateOperation must be one of the following values: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout with tabs update should fail with invalid widget configuration when GRAPH widget has null aggregateFieldMetadataId 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Invalid configuration for widget "Graph Widget" of type GRAPH: aggregateFieldMetadataId: aggregateFieldMetadataId should not be empty, aggregateFieldMetadataId must be a UUID",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout with tabs update should fail with invalid widget configuration when GRAPH widget has null configuration 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Invalid configuration for widget "Graph Widget" of type GRAPH: Configuration is required for this widget type",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout with tabs update should fail with invalid widget configuration when IFRAME widget has invalid URL 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Invalid configuration for widget "Iframe Widget" of type IFRAME: url: url must be a URL address",
+  "name": "UserInputError",
+}
+`;

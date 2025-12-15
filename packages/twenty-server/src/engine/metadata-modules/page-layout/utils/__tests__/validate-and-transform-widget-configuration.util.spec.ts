@@ -4,6 +4,7 @@ import {
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+  INVALID_NUMBER_CHART_CONFIG_NULL_AGGREGATE_FIELD,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
@@ -165,6 +166,16 @@ describe('validateAndTransformWidgetConfiguration', () => {
             isDashboardV2Enabled: false,
           }),
         ).rejects.toThrow(/aggregateFieldMetadataId must be a UUID/);
+      });
+
+      it('should throw error for null aggregateFieldMetadataId', async () => {
+        await expect(
+          validateAndTransformWidgetConfiguration({
+            type: WidgetType.GRAPH,
+            configuration: INVALID_NUMBER_CHART_CONFIG_NULL_AGGREGATE_FIELD,
+            isDashboardV2Enabled: false,
+          }),
+        ).rejects.toThrow(/aggregateFieldMetadataId/);
       });
     });
 

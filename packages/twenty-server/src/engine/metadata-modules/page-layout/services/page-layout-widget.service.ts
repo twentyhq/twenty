@@ -17,6 +17,7 @@ import {
   fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow,
   type UpdatePageLayoutWidgetInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util';
+import { WIDGET_TYPES_REQUIRING_CONFIGURATION } from 'src/engine/metadata-modules/page-layout/constants/widget-types-requiring-configuration.constant';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-widget.dto';
@@ -272,7 +273,27 @@ export class PageLayoutWidgetService {
     input: CreatePageLayoutWidgetInput,
     workspaceId: string,
   ): Promise<WidgetConfigurationInterface | null> {
-    if (!input.configuration || !input.type) {
+    if (!input.type) {
+      return null;
+    }
+
+    const requiresConfiguration = WIDGET_TYPES_REQUIRING_CONFIGURATION.includes(
+      input.type,
+    );
+
+    if (!input.configuration) {
+      if (requiresConfiguration) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+            input.title,
+            input.type,
+            'Configuration is required for this widget type',
+          ),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+
       return null;
     }
 
@@ -370,17 +391,32 @@ export class PageLayoutWidgetService {
     existingWidget: FlatPageLayoutWidget,
     workspaceId: string,
   ): Promise<WidgetConfigurationInterface | null> {
-    if (!updateData.configuration) {
-      return null;
-    }
-
     const typeForValidation = updateData.type ?? existingWidget.type;
 
     if (!typeForValidation) {
       return null;
     }
 
+    const requiresConfiguration =
+      WIDGET_TYPES_REQUIRING_CONFIGURATION.includes(typeForValidation);
+
     const titleForError = updateData.title ?? existingWidget.title;
+
+    if (!updateData.configuration) {
+      if (requiresConfiguration) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+            titleForError,
+            typeForValidation,
+            'Configuration is required for this widget type',
+          ),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+
+      return null;
+    }
 
     return this.validateWidgetConfigurationOrThrow({
       type: typeForValidation,
