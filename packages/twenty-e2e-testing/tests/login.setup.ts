@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import fs from 'fs';
 import path from 'path';
 import { LoginPage } from '../lib/pom/loginPage';
 
@@ -11,6 +12,15 @@ const test = base.extend<{ loginPage: LoginPage }>({
 });
 
 test('Login test', async ({ loginPage, page }) => {
+  const authStatePath = path.resolve(__dirname, '..', '.auth', 'user.json');
+
+  // Remove any previous auth state so we always start clean
+  if (fs.existsSync(authStatePath)) {
+    fs.unlinkSync(authStatePath);
+  }
+
+  await page.context().storageState({ path: authStatePath });
+
   await test.step('Navigated to login page', async () => {
     await page.goto('/');
   });
