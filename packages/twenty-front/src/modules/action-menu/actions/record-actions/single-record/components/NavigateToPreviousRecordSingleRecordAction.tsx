@@ -8,10 +8,13 @@ export const NavigateToPreviousRecordSingleRecordAction = () => {
 
   const recordId = useSelectedRecordIdOrThrow();
 
-  const { navigateToPreviousRecord } = useRecordShowPagePagination(
-    objectMetadataItem.nameSingular,
-    recordId,
-  );
+  const { navigateToPreviousRecord, canNavigateToPreviousRecord } =
+    useRecordShowPagePagination(objectMetadataItem.nameSingular, recordId);
 
-  return <Action onClick={navigateToPreviousRecord} />;
+  return (
+    <Action
+      onClick={navigateToPreviousRecord}
+      disabled={!canNavigateToPreviousRecord}
+    />
+  );
 };

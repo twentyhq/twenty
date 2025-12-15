@@ -13,14 +13,20 @@ export const ActionDropdownItem = ({
   action,
   onClick,
   to,
+  disabled = false,
 }: {
   action: ActionDisplayProps;
   onClick?: () => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     onClick?.();
     if (isDefined(to)) {
       navigate(to);
@@ -45,6 +51,7 @@ export const ActionDropdownItem = ({
         LeftIcon={action.Icon}
         onClick={handleClick}
         text={getActionLabel(action.label)}
+        disabled={disabled}
       />
     </SelectableListItem>
   );

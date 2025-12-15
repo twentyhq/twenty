@@ -5,10 +5,12 @@ import { useContext } from 'react';
 
 export const Action = ({
   onClick,
+  disabled = false,
   closeSidePanelOnShowPageOptionsActionExecution = false,
   closeSidePanelOnCommandMenuListActionExecution = true,
 }: {
   onClick: () => void;
+  disabled?: boolean;
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
   closeSidePanelOnCommandMenuListActionExecution?: boolean;
 }) => {
@@ -24,9 +26,13 @@ export const Action = ({
   }
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     closeActionMenu();
     onClick();
   };
 
-  return <ActionDisplay onClick={handleClick} />;
+  return <ActionDisplay onClick={handleClick} disabled={disabled} />;
 };

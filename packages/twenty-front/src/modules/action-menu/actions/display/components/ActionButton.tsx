@@ -13,10 +13,12 @@ export const ActionButton = ({
   action,
   onClick,
   to,
+  disabled = false,
 }: {
   action: ActionDisplayProps;
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const label = getActionLabel(action.label);
 
@@ -38,6 +40,7 @@ export const ActionButton = ({
           onClick={onClick}
           title={shortLabel}
           ariaLabel={label}
+          disabled={disabled}
         />
       ) : (
         <div id={`action-menu-entry-${action.key}`} key={action.key}>
@@ -49,6 +52,7 @@ export const ActionButton = ({
             to={to}
             onClick={onClick}
             ariaLabel={label}
+            disabled={disabled}
           />
           <StyledWrapper>
             <AppTooltip

@@ -23,9 +23,11 @@ export type ActionDisplayProps = {
 export const ActionDisplay = ({
   onClick,
   to,
+  disabled = false,
 }: {
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const action = useContext(ActionConfigContext);
   const { displayType } = useContext(ActionMenuContext);
@@ -35,15 +37,26 @@ export const ActionDisplay = ({
   }
 
   if (displayType === 'button') {
-    return <ActionButton action={action} onClick={onClick} to={to} />;
+    return (
+      <ActionButton action={action} onClick={onClick} to={to} disabled={disabled} />
+    );
   }
 
   if (displayType === 'listItem') {
-    return <ActionListItem action={action} onClick={onClick} to={to} />;
+    return (
+      <ActionListItem action={action} onClick={onClick} to={to} disabled={disabled} />
+    );
   }
 
   if (displayType === 'dropdownItem') {
-    return <ActionDropdownItem action={action} onClick={onClick} to={to} />;
+    return (
+      <ActionDropdownItem
+        action={action}
+        onClick={onClick}
+        to={to}
+        disabled={disabled}
+      />
+    );
   }
 
   return assertUnreachable(
