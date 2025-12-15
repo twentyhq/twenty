@@ -4971,6 +4971,11 @@ msgstr "삭제된 실행 숨기기"
 msgid "Hide deleted workflows"
 msgstr "삭제된 워크플로 숨기기"
 
+#. js-lingui-id: MuEcPp
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Hide empty category"
+msgstr ""
+
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
