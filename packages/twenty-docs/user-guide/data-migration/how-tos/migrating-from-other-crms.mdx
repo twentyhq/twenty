@@ -117,7 +117,7 @@ Open each exported CSV in a spreadsheet application and prepare it for Twenty.
 Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
 </Warning>
 
-See [How to Prepare Your CSV Files](/user-guide/data-migration/how-tos/how-to-prepare-your-csv-files) for complete formatting requirements for all field types.
+See [How to Prepare Your CSV Files](/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
 
 ### Add Relation Columns
 
@@ -130,7 +130,7 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-See [How to Import Relations](/user-guide/data-migration/how-tos/how-to-import-relations-between-objects-via-csv) for detailed instructions on linking records.
+See [How to Import Relations](/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions on linking records.
 
 ### Update User References
 
@@ -139,7 +139,7 @@ If your data includes user assignments (Owner, Assignee):
 1. Add a column with the **user's email** (not just their ID from the old system)
 2. Use the same email addresses that users used to join your Twenty workspace
 
-See [How to Prepare Your CSV Files](/user-guide/data-migration/how-tos/how-to-prepare-your-csv-files) for complete formatting guide.
+See [How to Prepare Your CSV Files](/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting guide.
 
 ## Step 6: Import to Twenty
 
@@ -171,9 +171,9 @@ For each CSV file, in order:
 7. Verify a few records before proceeding to the next file
 
 **Detailed guides:**
-- [How to Import Companies](/user-guide/data-migration/how-tos/how-to-import-companies-via-csv)
-- [How to Import Contacts](/user-guide/data-migration/how-tos/how-to-import-contacts-via-csv)
-- [How to Import Relations](/user-guide/data-migration/how-tos/how-to-import-relations-between-objects-via-csv)
+- [How to Import Companies](/user-guide/data-migration/how-tos/import-companies-via-csv)
+- [How to Import Contacts](/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [How to Import Relations](/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
 ## Step 7: Large Migrations (50,000+ Records)
 
@@ -188,7 +188,7 @@ For large migrations:
 **For API imports:**
 - Faster and more reliable for large datasets
 - Supports batch operations (up to 60 records per call)
-- See [How to Import Data via API](/user-guide/data-migration/how-tos/how-to-import-data-via-api)
+- See [How to Import Data via API](/user-guide/data-migration/how-tos/import-data-via-api)
 
 ## Step 8: Post-Migration Setup
 
@@ -226,7 +226,7 @@ After importing data, complete your workspace configuration:
 | **Select field errors** | Using display labels | Use API names (enable Advanced mode in Settings to find them) |
 | **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing |
 
-See [How to Fix Import Errors](/user-guide/data-migration/how-tos/how-to-fix-import-errors) for detailed troubleshooting steps.
+See [How to Fix Import Errors](/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
 
 ## Post-Migration Checklist
 

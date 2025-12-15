@@ -1,0 +1,155 @@
+---
+title: Create a Trigger-Based Workflow
+description: Build workflows that run automatically when records change.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Trigger-based workflows run automatically when specific events occur in your CRM. This guide walks you through creating your first automated workflow.
+
+## Choosing the Right Trigger
+
+| Trigger | When to Use |
+|---------|-------------|
+| **Record is Created** | Process new leads, welcome new contacts |
+| **Record is Updated** | React to status changes, field updates |
+| **Record is Updated or Created** | Handle both new records and imports |
+| **Record is Deleted** | Cleanup tasks, notifications |
+
+## Step-by-Step: Record Created Workflow
+
+### Example: Create Task When New Opportunity Added
+
+**Goal**: Automatically create a follow-up task when a new opportunity is added.
+
+### Step 1: Create the Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Name it "New Opportunity - Create Follow-up Task"
+
+### Step 2: Configure the Trigger
+
+1. Click on the trigger block
+2. Select **Record is Created**
+3. Choose **Opportunities** as the object
+
+### Step 3: Add the Create Record Action
+
+1. Click **+** below the trigger
+2. Select **Create Record**
+3. Configure:
+
+| Field | Value |
+|-------|-------|
+| **Object** | Tasks |
+| **Title** | Follow up on {{trigger.object.name}} |
+| **Assignee** | `{{trigger.object.owner}}` |
+| **Due Date** | 3 days from now (use Code action to calculate) |
+| **Related Opportunity** | `{{trigger.object.id}}` |
+
+### Step 4: Test and Activate
+
+1. Click **Test** to run with sample data
+2. Review the created task
+3. Click **Activate** when ready
+
+## Step-by-Step: Record Updated Workflow
+
+### Example: Update Company When Opportunity Stage Changes
+
+**Goal**: When an opportunity moves to "Closed Won", update the company type to "Customer".
+
+### Step 1: Create the Workflow
+
+1. Create a new workflow
+2. Name it "Opportunity Won - Update Company Type"
+
+### Step 2: Configure the Trigger
+
+1. Select **Record is Updated**
+2. Choose **Opportunities**
+3. Under "Fields to monitor", select **Stage**
+
+### Step 3: Add a Filter
+
+1. Click **+** to add a Filter action
+2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+
+### Step 4: Add Update Record Action
+
+1. Add **Update Record** action
+2. Configure:
+
+| Field | Value |
+|-------|-------|
+| **Object** | Companies |
+| **Record** | `{{trigger.object.company.id}}` |
+| **Type** | Customer |
+
+### Step 5: Test and Activate
+
+1. Test by updating an opportunity to "Closed Won"
+2. Verify the company type changed
+3. Activate the workflow
+
+## Working with Multiple Actions
+
+### Example: Complete Onboarding Process
+
+**Goal**: When opportunity closes, update company AND create onboarding task AND send email.
+
+```
+Trigger: Record Updated (Opportunity, Stage = Closed Won)
+    │
+    ├── Action 1: Update Company type to "Customer"
+    │
+    ├── Action 2: Create onboarding task
+    │
+    └── Action 3: Send welcome email to contact
+```
+
+Each action runs in sequence, and data from previous steps is available to later steps.
+
+## Using Branches for Conditional Logic
+
+### Example: Different Actions for Win vs. Loss
+
+```
+Trigger: Record Updated (Opportunity, Stage field)
+    │
+    ├── Branch 1: Filter (Stage = Closed Won)
+    │   └── Update Company to "Customer"
+    │
+    └── Branch 2: Filter (Stage = Closed Lost)
+        └── Create "Lost Deal Analysis" task
+```
+
+<Note>
+Branches run in parallel by default. Use Filter actions at the start of each branch to control which path executes.
+</Note>
+
+## Tips for Trigger-Based Workflows
+
+### Avoid Infinite Loops
+If your workflow updates a record that could trigger another workflow, be careful:
+- Use specific field conditions
+- Add filters to prevent re-triggering
+- Test thoroughly in draft mode
+
+### Handle Missing Data
+Records might be missing expected data:
+- Add filters to check for required fields
+- Use branches for "found" vs "not found" scenarios
+- Provide default values where appropriate
+
+### Test Before Activating
+1. Create test records to trigger the workflow
+2. Review workflow runs for errors
+3. Verify all actions completed correctly
+4. Check that data looks as expected
+
+## Related
+
+- [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
+- [How to Use Branches](/user-guide/workflows/how-tos/how-to-use-branches-in-workflows)
+- [Workflow Troubleshooting](/user-guide/workflows/how-tos/workflow-troubleshooting)
