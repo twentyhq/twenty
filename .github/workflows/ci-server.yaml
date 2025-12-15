@@ -73,7 +73,7 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
       - name: Server / Write .env
-        run: npx nx reset:env:e2e-testing-server twenty-server
+        run: npx nx reset:env twenty-server
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Create DB

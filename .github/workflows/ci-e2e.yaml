@@ -78,7 +78,7 @@ jobs:
     - name: Setup environment files
       run: |
         cp packages/twenty-front/.env.example packages/twenty-front/.env
-        cp packages/twenty-server/.env.test packages/twenty-front/.env
+        npx nx reset:env:e2e-testing-server twenty-server
 
     - name: Build frontend
       run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
