@@ -11,6 +11,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 
 @Command({
   name: 'upgrade:1-14:udpate-created-by-enum',
@@ -24,6 +27,8 @@ export class UpdateCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigra
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    @InjectRepository(FieldMetadataEntity)
+    protected readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -50,33 +55,32 @@ export class UpdateCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigra
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const createdByEnums = await queryRunner.query(
-      `SELECT t.typname
-       FROM pg_type t
-       JOIN pg_namespace n ON n.oid = t.typnamespace
-       WHERE t.typtype = 'e'
-         AND n.nspname = '${schemaName}'
-         AND t.typname LIKE '%\\_createdBySource\\_enum' ESCAPE '\\'
-         AND NOT EXISTS (
-           SELECT 1
-           FROM pg_enum e
-           WHERE e.enumtypid = t.oid
-             AND e.enumlabel = 'APPLICATION'
-         );`,
-    );
+    const createdByFields = await this.fieldMetadataRepository.find({
+      where: { workspaceId, name: 'createdBy' },
+      relations: ['object'],
+    });
 
     if (isDryRun) {
       this.logger.log(
-        `Dry run mode: found ${createdByEnums.length} createdBy enums to update`,
+        `Dry run mode: found ${createdByFields.length} createdBy enums to update`,
       );
     }
 
     if (!options.dryRun) {
-      this.logger.log(`Updating ${createdByEnums.length} createdBy enums`);
+      this.logger.log(`Updating ${createdByFields.length} createdBy enums`);
       try {
-        for (const createdByEnum of createdByEnums) {
+        for (const createdByField of createdByFields) {
+          const tableName = computeTableName(
+            createdByField.object.nameSingular,
+            createdByField.object.isCustom,
+          );
+          const createdByEnumName = computePostgresEnumName({
+            tableName,
+            columnName: 'createdBySource',
+          });
+
           await queryRunner.query(
-            `ALTER TYPE "${schemaName}"."${createdByEnum.typname}" ADD VALUE 'APPLICATION'`,
+            `ALTER TYPE "${schemaName}"."${createdByEnumName}" ADD VALUE IF NOT EXISTS 'APPLICATION'`,
           );
         }
         await queryRunner.commitTransaction();
