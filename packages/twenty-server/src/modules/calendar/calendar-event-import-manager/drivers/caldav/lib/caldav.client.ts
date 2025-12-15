@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import * as ical from 'node-ical';
 import {
   calendarMultiGet,
@@ -12,6 +13,7 @@ import {
   getBasicAuthHeaders,
   syncCollection,
 } from 'tsdav';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -186,21 +188,17 @@ export class CalDAVClient {
       | undefined,
     defaultValue = '',
   ): string {
-    if (property === undefined || property === null) {
+    if (!isDefined(property)) {
       return defaultValue;
     }
 
-    if (typeof property === 'string') {
+    if (isNonEmptyString(property)) {
       return property;
     }
 
-    if (typeof property === 'object' && property !== null) {
-      if (
-        'val' in property &&
-        property.val !== undefined &&
-        property.val !== null
-      ) {
-        return typeof property.val === 'string'
+    if (isDefined(property) && typeof property === 'object') {
+      if ('val' in property && isDefined(property.val)) {
+        return isNonEmptyString(property.val)
           ? property.val
           : String(property.val);
       }
@@ -208,8 +206,9 @@ export class CalDAVClient {
       if (Array.isArray(property)) {
         const values = property
           .map((item) => {
-            if (typeof item === 'string') return item;
-            if (typeof item === 'object' && item?.val) return String(item.val);
+            if (isNonEmptyString(item)) return item;
+            if (isDefined(item) && typeof item === 'object' && item?.val)
+              return String(item.val);
 
             return '';
           })
