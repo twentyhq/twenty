@@ -6,6 +6,7 @@ import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
 import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
+import { buildStandardFlatRoleTargetMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-target-metadata/build-standard-flat-role-target-metadata-maps.util';
 import { buildStandardFlatViewFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util';
 import { buildStandardFlatViewFilterMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-filter/build-standard-flat-view-filter-metadata-maps.util';
 import { buildStandardFlatViewGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/build-standard-flat-view-group-metadata-maps.util';
@@ -119,6 +120,17 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
   });
 
+  const flatRoleTargetMaps = buildStandardFlatRoleTargetMetadataMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps: {
+      flatRoleMaps,
+      flatAgentMaps,
+    },
+  });
+
   return {
     flatViewFieldMaps,
     flatViewFilterMaps,
@@ -129,5 +141,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatObjectMetadataMaps,
     flatRoleMaps,
     flatAgentMaps,
+    flatRoleTargetMaps,
   };
 };

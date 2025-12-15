@@ -145,6 +145,10 @@ export class DevSeederService {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatRoleMaps,
             },
+            flatRoleTargetMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatRoleTargetMaps,
+            },
           },
           workspaceId,
         },
