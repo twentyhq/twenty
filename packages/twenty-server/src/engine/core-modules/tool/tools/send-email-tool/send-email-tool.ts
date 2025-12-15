@@ -18,7 +18,10 @@ import {
 import { SendEmailToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  type Tool,
+  type ToolExecutionContext,
+} from 'src/engine/core-modules/tool/types/tool.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -175,8 +178,9 @@ export class SendEmailTool implements Tool {
 
   async execute(
     parameters: SendEmailInput,
-    workspaceId: string,
+    context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    const { workspaceId } = context;
     const { email, subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
 

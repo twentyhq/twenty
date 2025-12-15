@@ -2,6 +2,7 @@ import {
   type CanActivate,
   type ExecutionContext,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -11,6 +12,8 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  private readonly logger = new Logger(JwtAuthGuard.name);
+
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
@@ -29,6 +32,10 @@ export class JwtAuthGuard implements CanActivate {
         : undefined;
 
       if (!isDefined(data.apiKey) && !isDefined(data.userWorkspaceId)) {
+        this.logger.warn(
+          `Auth failed: no apiKey or userWorkspaceId in context`,
+        );
+
         return false;
       }
 
@@ -41,7 +48,9 @@ export class JwtAuthGuard implements CanActivate {
       request.userWorkspaceId = data.userWorkspaceId;
 
       return true;
-    } catch {
+    } catch (error) {
+      this.logger.warn(`Auth failed with error: ${error}`);
+
       return false;
     }
   }
