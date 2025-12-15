@@ -21,12 +21,17 @@ export class ServerlessFunctionTriggerJob {
   ) {}
 
   @Process(ServerlessFunctionTriggerJob.name)
-  async handle(data: ServerlessFunctionTriggerJobData) {
-    await this.serverlessFunctionService.executeOneServerlessFunction({
-      id: data.serverlessFunctionId,
-      workspaceId: data.workspaceId,
-      payload: data.payload || {},
-      version: 'draft',
-    });
+  async handle(serverlessFunctionPayloads: ServerlessFunctionTriggerJobData[]) {
+    await Promise.all(
+      serverlessFunctionPayloads.map(
+        async (serverlessFunctionPayload) =>
+          await this.serverlessFunctionService.executeOneServerlessFunction({
+            id: serverlessFunctionPayload.serverlessFunctionId,
+            workspaceId: serverlessFunctionPayload.workspaceId,
+            payload: serverlessFunctionPayload.payload || {},
+            version: 'draft',
+          }),
+      ),
+    );
   }
 }
