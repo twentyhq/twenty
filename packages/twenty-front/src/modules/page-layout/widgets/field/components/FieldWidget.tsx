@@ -131,6 +131,8 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   return (
     <FieldWidgetDisplay
       fieldDefinition={fieldDefinition}
+      fieldMetadataItem={fieldMetadataItem}
+      objectMetadataItem={objectMetadataItem}
       recordId={targetRecord.id}
       isInRightDrawer={isInRightDrawer}
     />
