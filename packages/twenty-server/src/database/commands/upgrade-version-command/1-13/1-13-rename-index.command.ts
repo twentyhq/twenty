@@ -112,8 +112,10 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
       } catch (error) {
         await queryRunner.rollbackTransaction();
 
-        // PostgreSQL error code 42704: undefined_object (index does not exist)
-        if (error.code === '42704') {
+        // PostgreSQL error codes for non-existent index:
+        // - 42704: undefined_object
+        // - 42P01: undefined_table (index treated as relation)
+        if (error.code === '42704' || error.code === '42P01') {
           this.logger.log(
             `Index ${index.name} does not exist in schema ${schemaName}, removing metadata`,
           );
@@ -124,6 +126,9 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
           );
           hasRemovedIndexMetadata = true;
         } else {
+          this.logger.error(
+            `Failed to rename index ${index.name}, error code: ${error.code}`,
+          );
           throw error;
         }
       } finally {
