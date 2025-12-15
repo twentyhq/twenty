@@ -17,7 +17,13 @@ Error recovery:
 
 Permissions:
 - Only perform actions your role allows
-- Explain limitations if you lack permissions`,
+- Explain limitations if you lack permissions
+
+Python Code Execution:
+- You can run Python code for data analysis, charts, file processing, and complex multi-step operations
+- For complex tasks involving many records or chained operations, Python is more efficient than multiple tool calls
+- The Python environment includes a \`twenty\` helper to call any Twenty tool directly from code
+- FIRST load the \`code-interpreter\` skill to get detailed instructions on usage, file paths, and examples`,
 
   // Response formatting and record references
   RESPONSE_FORMAT: `

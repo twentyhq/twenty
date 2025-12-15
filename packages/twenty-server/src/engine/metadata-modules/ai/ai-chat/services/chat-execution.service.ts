@@ -61,11 +61,7 @@ export type ChatExecutionResult = {
   modelConfig: AIModelConfig;
 };
 
-const COMMON_PRELOAD_TOOLS = [
-  'http_request',
-  'search_help_center',
-  'code_interpreter',
-];
+const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
 
 @Injectable()
 export class ChatExecutionService {

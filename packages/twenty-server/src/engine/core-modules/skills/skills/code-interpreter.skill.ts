@@ -4,7 +4,7 @@ export const CODE_INTERPRETER_SKILL: SkillDefinition = {
   name: 'code-interpreter',
   label: 'Code Interpreter',
   description:
-    'Data analysis, CSV processing, and chart generation using Python',
+    'Python code execution for data analysis, complex multi-step operations, and efficient bulk processing via MCP bridge',
   content: `# Code Interpreter Skill
 
 You have access to the \`code_interpreter\` tool to execute Python code in a sandboxed environment.
