@@ -28,7 +28,7 @@ export const codeInterpreterModuleFactory = async (
         options: { timeoutMs },
       };
     }
-    case CodeInterpreterDriverType.E2B: {
+    case CodeInterpreterDriverType.E_2_B: {
       const apiKey = twentyConfigService.get('E2B_API_KEY');
 
       if (!apiKey) {
@@ -38,7 +38,7 @@ export const codeInterpreterModuleFactory = async (
       }
 
       return {
-        type: CodeInterpreterDriverType.E2B,
+        type: CodeInterpreterDriverType.E_2_B,
         options: {
           apiKey,
           timeoutMs,

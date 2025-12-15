@@ -5,7 +5,7 @@ import { type LocalDriverOptions } from './drivers/local.driver';
 
 export enum CodeInterpreterDriverType {
   LOCAL = 'LOCAL',
-  E2B = 'E2B',
+  E_2_B = 'E_2_B',
 }
 
 export type LocalDriverFactoryOptions = {
@@ -14,7 +14,7 @@ export type LocalDriverFactoryOptions = {
 };
 
 export type E2BDriverFactoryOptions = {
-  type: CodeInterpreterDriverType.E2B;
+  type: CodeInterpreterDriverType.E_2_B;
   options: E2BDriverOptions;
 };
 
