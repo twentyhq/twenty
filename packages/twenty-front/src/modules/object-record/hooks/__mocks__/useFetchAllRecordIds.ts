@@ -1,4 +1,4 @@
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { gql } from '@apollo/client';
 
 import { peopleQueryResult } from '~/testing/mock-data/people';
@@ -36,7 +36,7 @@ export const query = gql`
 
 export const mockPageSize = 2;
 
-export const peopleMockWithIdsOnly: RecordGqlConnection = {
+export const peopleMockWithIdsOnly: RecordGqlConnectionEdgesRequired = {
   ...peopleQueryResult.people,
   edges: peopleQueryResult.people.edges.map((edge) => ({
     ...edge,
@@ -72,7 +72,7 @@ export const variablesThirdRequest = {
 };
 
 const paginateRequestResponse = (
-  response: RecordGqlConnection,
+  response: RecordGqlConnectionEdgesRequired,
   start: number,
   end: number,
   hasNextPage: boolean,
@@ -86,7 +86,7 @@ const paginateRequestResponse = (
       startCursor: response.edges[start].cursor,
       endCursor: response.edges[end].cursor,
       hasNextPage,
-    } satisfies RecordGqlConnection['pageInfo'],
+    } satisfies RecordGqlConnectionEdgesRequired['pageInfo'],
     totalCount,
   };
 };

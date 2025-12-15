@@ -63,6 +63,7 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
       ]);
 
     let hasIndexNameChanges = false;
+    let hasRemovedIndexMetadata = false;
 
     for (const index of Object.values(flatIndexMaps.byId).filter(isDefined)) {
       const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -84,43 +85,67 @@ export class RenameIndexNameCommand extends ActiveOrSuspendedWorkspacesMigration
       if (indexNameV2 === index.name) {
         this.logger.log(`Index ${index.name} is V2`);
         continue;
-      } else {
-        this.logger.log(`Renaming index ${index.name} to ${indexNameV2}`);
+      }
+
+      this.logger.log(`Renaming index ${index.name} to ${indexNameV2}`);
+
+      if (isDryRun) {
+        continue;
+      }
+
+      const queryRunner = this.coreDataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        await queryRunner.query(
+          `ALTER INDEX "${schemaName}"."${index.name}" RENAME TO "${indexNameV2}"`,
+        );
+
+        await queryRunner.manager.update(IndexMetadataEntity, index.id, {
+          name: indexNameV2,
+        });
+
+        await queryRunner.commitTransaction();
         hasIndexNameChanges = true;
-        if (!isDryRun) {
-          const queryRunner = this.coreDataSource.createQueryRunner();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
 
-          await queryRunner.connect();
-          await queryRunner.startTransaction();
+        // PostgreSQL error codes for non-existent index:
+        // - 42704: undefined_object
+        // - 42P01: undefined_table (index treated as relation)
+        if (error.code === '42704' || error.code === '42P01') {
+          this.logger.log(
+            `Index ${index.name} does not exist in schema ${schemaName}, removing metadata`,
+          );
 
-          try {
-            await queryRunner.query(
-              `ALTER INDEX "${schemaName}"."${index.name}" RENAME TO "${indexNameV2}"`,
-            );
-
-            await queryRunner.manager.update(IndexMetadataEntity, index.id, {
-              name: indexNameV2,
-            });
-
-            await queryRunner.commitTransaction();
-          } catch (error) {
-            await queryRunner.rollbackTransaction();
-            throw error;
-          } finally {
-            await queryRunner.release();
-          }
+          await this.coreDataSource.manager.delete(
+            IndexMetadataEntity,
+            index.id,
+          );
+          hasRemovedIndexMetadata = true;
+        } else {
+          this.logger.error(
+            `Failed to rename index ${index.name}, error code: ${error.code}`,
+          );
+          throw error;
         }
+      } finally {
+        await queryRunner.release();
       }
     }
-    if (hasIndexNameChanges) {
+
+    const shouldInvalidateCache =
+      hasIndexNameChanges || hasRemovedIndexMetadata;
+
+    if (shouldInvalidateCache) {
       this.logger.log('Invalidating workspace cache');
 
-      if (!isDryRun) {
-        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'flatFieldMetadataMaps',
-          'flatIndexMaps',
-        ]);
-      }
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+      ]);
     }
   }
 }

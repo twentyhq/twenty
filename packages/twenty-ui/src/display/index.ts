@@ -68,6 +68,7 @@ export {
   Icon123,
   IconAlertCircle,
   IconAlertTriangle,
+  IconAlignBoxLeftTop,
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
