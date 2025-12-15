@@ -1,8 +1,8 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
-import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
@@ -96,7 +96,7 @@ export const GraphWidgetPieChart = ({
     customFormatter,
   };
 
-  const { enrichedData } = usePieChartData({
+  const { enrichedData, legendItems } = usePieChartData({
     data,
     colorRegistry,
   });
@@ -123,11 +123,13 @@ export const GraphWidgetPieChart = ({
   }, [setActivePieTooltip]);
 
   const hasNoData = useMemo(
-    () => data.length === 0 || data.every((item) => item.value === 0),
-    [data],
+    () =>
+      enrichedData.length === 0 ||
+      enrichedData.every((item) => item.value === 0),
+    [enrichedData],
   );
 
-  const chartData = hasNoData ? emptyStateData : data;
+  const chartData = hasNoData ? emptyStateData : enrichedData;
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
@@ -212,12 +214,8 @@ export const GraphWidgetPieChart = ({
         onSliceClick={onSliceClick}
       />
       <GraphWidgetLegend
-        show={showLegend && !hasNoData}
-        items={enrichedData.map((item) => ({
-          id: item.id,
-          label: item.id,
-          color: item.colorScheme.solid,
-        }))}
+        show={showLegend && data.length > 0}
+        items={legendItems}
       />
     </StyledContainer>
   );

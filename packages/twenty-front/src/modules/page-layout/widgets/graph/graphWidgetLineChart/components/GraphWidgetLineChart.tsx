@@ -110,10 +110,19 @@ export const GraphWidgetLineChart = ({
     customFormatter,
   };
 
-  const calculatedValueRange = calculateValueRangeFromLineChartSeries(data);
+  const { enrichedSeries, nivoData, colors, legendItems, visibleData } =
+    useLineChartData({
+      data,
+      colorRegistry,
+      id,
+    });
+
+  const calculatedValueRange =
+    calculateValueRangeFromLineChartSeries(visibleData);
 
   const hasNoData =
-    data.length === 0 || data.every((series) => series.data.length === 0);
+    visibleData.length === 0 ||
+    visibleData.every((series) => series.data.length === 0);
 
   const { effectiveMinimumValue, effectiveMaximumValue } =
     computeEffectiveValueRange({
@@ -122,12 +131,6 @@ export const GraphWidgetLineChart = ({
       rangeMin,
       rangeMax,
     });
-
-  const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
-    data,
-    colorRegistry,
-    id,
-  });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -262,7 +265,7 @@ export const GraphWidgetLineChart = ({
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
-    data,
+    visibleData,
   );
   const chartMargins = {
     top: LINE_CHART_MARGIN_TOP,
@@ -353,7 +356,10 @@ export const GraphWidgetLineChart = ({
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />
-      <GraphWidgetLegend show={showLegend && !hasNoData} items={legendItems} />
+      <GraphWidgetLegend
+        show={showLegend && data.length > 0}
+        items={legendItems}
+      />
     </StyledContainer>
   );
 };

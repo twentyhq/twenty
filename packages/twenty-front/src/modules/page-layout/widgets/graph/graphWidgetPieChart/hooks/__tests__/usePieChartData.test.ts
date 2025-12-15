@@ -4,9 +4,18 @@ import { type DatumId } from '@nivo/pie';
 import { renderHook } from '@testing-library/react';
 import { usePieChartData } from '../usePieChartData';
 
+const mockUseRecoilComponentValue = jest.fn();
+jest.mock(
+  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  () => ({
+    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
+  }),
+);
+
 describe('usePieChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseRecoilComponentValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
@@ -124,5 +133,65 @@ describe('usePieChartData', () => {
     rerender({ hoveredSliceId: null as DatumId | null });
 
     expect(result.current.enrichedData).toBe(firstEnrichedData);
+  });
+
+  it('should return legend items from all data', () => {
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.legendItems).toHaveLength(3);
+    expect(result.current.legendItems[0]).toMatchObject({
+      id: 'item1',
+      label: 'item1',
+      color: 'redSolid',
+    });
+  });
+
+  it('should filter enriched data based on hidden legend ids', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item2']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(2);
+    expect(result.current.enrichedData.map((d) => d.id)).toEqual([
+      'item1',
+      'item3',
+    ]);
+  });
+
+  it('should maintain colors after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item1']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData[0].colorScheme.name).toBe('blue');
+  });
+
+  it('should keep all items in legend even when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item1', 'item2']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(1);
+    expect(result.current.legendItems).toHaveLength(3);
   });
 });
