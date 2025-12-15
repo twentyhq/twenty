@@ -8,6 +8,7 @@ import {
   ApplicationManifest,
   FieldManifest,
   ObjectManifest,
+  RoleManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'twenty-shared/application';
@@ -41,7 +42,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 
@@ -106,13 +106,11 @@ export class ApplicationSyncService {
       });
     }
 
-    if (isDefined(application.defaultServerlessFunctionRoleId)) {
-      await this.syncApplicationRolePermissions({
-        manifest,
-        workspaceId,
-        roleId: application.defaultServerlessFunctionRoleId,
-      });
-    }
+    await this.syncRoles({
+      manifest,
+      workspaceId,
+      applicationId: application.id,
+    });
 
     this.logger.log('✅ Application sync from manifest completed');
   }
@@ -138,6 +136,7 @@ export class ApplicationSyncService {
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         serverlessFunctionLayerId: null,
+        defaultServerlessFunctionRoleId: null,
         workspaceId,
       }));
 
@@ -165,56 +164,6 @@ export class ApplicationSyncService {
       );
     }
 
-    const applicationRole = manifest.application.role;
-
-    let role: RoleDTO | null = null;
-
-    if (
-      isDefined(applicationRole) &&
-      isDefined(applicationRole.universalIdentifier)
-    ) {
-      role = await this.roleService.getRoleByUniversalIdentifier({
-        universalIdentifier: applicationRole.universalIdentifier,
-        workspaceId,
-      });
-
-      if (role) {
-        await this.roleService.updateRole({
-          input: {
-            id: role.id,
-            update: {
-              ...role,
-              canAccessAllTools: false,
-              canUpdateAllSettings: false,
-              canBeAssignedToAgents: false,
-              canBeAssignedToUsers: false,
-              canBeAssignedToApiKeys: false,
-              canBeAssignedToApplications: true,
-            },
-          },
-          workspaceId,
-        });
-      } else {
-        role = await this.roleService.createRole({
-          input: {
-            canReadAllObjectRecords: false,
-            canUpdateAllObjectRecords: false,
-            canSoftDeleteAllObjectRecords: false,
-            canDestroyAllObjectRecords: false,
-            ...applicationRole,
-            canAccessAllTools: false,
-            canUpdateAllSettings: false,
-            canBeAssignedToAgents: false,
-            canBeAssignedToUsers: false,
-            canBeAssignedToApiKeys: false,
-            canBeAssignedToApplications: true,
-          },
-          workspaceId,
-          applicationId: application.id,
-        });
-      }
-    }
-
     await this.applicationVariableService.upsertManyApplicationVariableEntities(
       {
         applicationVariables: manifest.application.applicationVariables,
@@ -227,26 +176,76 @@ export class ApplicationSyncService {
       description: manifest.application.description,
       version: packageJson.version,
       serverlessFunctionLayerId,
-      defaultServerlessFunctionRoleId: role?.id,
+      defaultServerlessFunctionRoleId: null,
     });
   }
 
-  private async syncApplicationRolePermissions({
+  private async syncRoles({
     manifest,
     workspaceId,
-    roleId,
+    applicationId,
   }: {
     manifest: ApplicationManifest;
     workspaceId: string;
+    applicationId: string;
+  }) {
+    let defaultServerlessFunctionRoleId: string | null = null;
+
+    for (const role of manifest.roles ?? []) {
+      let existingRole = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: role.universalIdentifier,
+        workspaceId,
+      });
+
+      if (existingRole) {
+        await this.roleService.updateRole({
+          input: {
+            id: existingRole.id,
+            update: role,
+          },
+          workspaceId,
+        });
+      } else {
+        existingRole = await this.roleService.createRole({
+          input: role,
+          workspaceId,
+          applicationId,
+        });
+      }
+
+      await this.syncApplicationRolePermissions({
+        role,
+        workspaceId,
+        roleId: existingRole.id,
+      });
+
+      if (
+        existingRole.universalIdentifier ===
+        manifest.application.functionRoleUniversalIdentifier
+      ) {
+        defaultServerlessFunctionRoleId = existingRole.id;
+      }
+    }
+
+    if (isDefined(defaultServerlessFunctionRoleId)) {
+      await this.applicationService.update(applicationId, {
+        defaultServerlessFunctionRoleId: defaultServerlessFunctionRoleId,
+      });
+    }
+  }
+
+  private async syncApplicationRolePermissions({
+    role,
+    workspaceId,
+    roleId,
+  }: {
+    role: RoleManifest;
+    workspaceId: string;
     roleId: string;
   }) {
-    const applicationRole = manifest.application.role;
-
     if (
-      (isDefined(applicationRole?.objectPermissions) &&
-        applicationRole.objectPermissions.length > 0) ||
-      (isDefined(applicationRole?.fieldPermissions) &&
-        applicationRole.fieldPermissions.length > 0)
+      (role.objectPermissions ?? []).length > 0 ||
+      (role.fieldPermissions ?? []).length > 0
     ) {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -259,7 +258,7 @@ export class ApplicationSyncService {
       const { idByNameSingular: objectIdByNameSingular } =
         buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
-      const formattedObjectPermissions = applicationRole.objectPermissions
+      const formattedObjectPermissions = role.objectPermissions
         ?.map((perm) => ({
           ...perm,
           objectMetadataId: isDefined(perm.objectNameSingular)
@@ -284,7 +283,7 @@ export class ApplicationSyncService {
         });
       }
 
-      const formattedFieldPermissions = applicationRole?.fieldPermissions
+      const formattedFieldPermissions = role?.fieldPermissions
         ?.map((perm) => {
           const objectMetadataId = isDefined(perm.objectNameSingular)
             ? objectIdByNameSingular[perm.objectNameSingular]
@@ -340,15 +339,12 @@ export class ApplicationSyncService {
       }
     }
 
-    if (
-      isDefined(applicationRole?.permissionFlags) &&
-      applicationRole.permissionFlags.length > 0
-    ) {
+    if (isDefined(role?.permissionFlags) && role.permissionFlags.length > 0) {
       await this.permissionService.upsertPermissionFlags({
         workspaceId,
         input: {
           roleId,
-          permissionFlagKeys: applicationRole.permissionFlags,
+          permissionFlagKeys: role.permissionFlags,
         },
       });
     }

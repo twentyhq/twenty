@@ -1,4 +1,4 @@
-import { type ApplicationVariables, type Role } from '@/application';
+import { type ApplicationVariables } from '@/application';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type Application = SyncableEntityOptions & {
@@ -6,5 +6,5 @@ export type Application = SyncableEntityOptions & {
   description?: string;
   icon?: string;
   applicationVariables?: ApplicationVariables;
-  role?: Role;
+  functionRoleUniversalIdentifier?: string;
 };

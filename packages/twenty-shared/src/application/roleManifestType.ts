@@ -43,7 +43,7 @@ type FieldPermission =
   | (BaseFieldPermission & WithObjectName & WithFieldIdentifier)
   | (BaseFieldPermission & WithObjectName & WithFieldName);
 
-export type Role = SyncableEntityOptions & {
+export type RoleManifest = SyncableEntityOptions & {
   label: string;
   description?: string;
   icon?: string;

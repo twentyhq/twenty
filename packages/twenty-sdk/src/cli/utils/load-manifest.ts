@@ -40,6 +40,7 @@ import {
   type ApplicationManifest,
   type ServerlessFunctionManifest,
   type ObjectManifest,
+  type RoleManifest,
 } from 'twenty-shared/application';
 import { findPathFile } from '@/cli/utils/find-path-file';
 import { getTsProgramAndDiagnostics } from '@/cli/utils/get-ts-program-and-diagnostics';
@@ -486,6 +487,39 @@ const isGeneratedModuleUsedInProgram = (program: Program): boolean => {
   return false;
 };
 
+export const collectRoles = (program: Program): Array<RoleManifest> => {
+  const roles: Array<RoleManifest> = [];
+
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+
+    for (const st of sf.statements) {
+      if (!isVariableStatement(st)) continue;
+
+      // must be "export const ..."
+      const isExported =
+        st.modifiers?.some((m) => m.kind === SyntaxKind.ExportKeyword) ?? false;
+      if (!isExported) continue;
+
+      for (const decl of st.declarationList.declarations) {
+        if (!isIdentifier(decl.name)) continue;
+
+        // must be typed RoleConfig (matches: RoleConfig, foo.RoleConfig, import type RoleConfig, etc.)
+        const typeText = decl.type?.getText(sf) ?? '';
+        if (!typeText.includes('RoleConfig')) continue;
+
+        // must be "= { ... }"
+        const init = decl.initializer;
+        if (!init || !isObjectLiteralExpression(init)) continue;
+
+        roles.push(exprToValue(init) as unknown as RoleManifest);
+      }
+    }
+  }
+
+  return roles;
+};
+
 export const loadManifest = async (
   appPath: string,
 ): Promise<{
@@ -510,10 +544,11 @@ export const loadManifest = async (
     diagnostics,
   });
 
-  const [objects, serverlessFunctions, application, sources] = [
+  const [objects, serverlessFunctions, application, roles, sources] = [
     collectObjects(program),
     collectServerlessFunctions(program, appPath),
     extractTwentyAppConfig(program),
+    collectRoles(program),
     await loadFolderContentIntoJson(program, appPath),
   ];
 
@@ -526,6 +561,7 @@ export const loadManifest = async (
       application,
       objects,
       serverlessFunctions,
+      roles,
       sources,
     },
     shouldGenerate,
