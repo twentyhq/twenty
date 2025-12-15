@@ -71,7 +71,10 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     updateCurrentWidgetConfig({
       configToUpdate: { secondaryAxisOrderBy: orderBy },
     });
-    closeDropdown();
+
+    if (orderBy !== GraphOrderBy.MANUAL) {
+      closeDropdown();
+    }
   };
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
