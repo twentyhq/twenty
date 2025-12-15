@@ -24,13 +24,11 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     super(ALL_METADATA_NAME.serverlessFunction);
   }
 
-  public async validateAndBuild(
+  public validateAndBuild(
     args: ValidateAndBuildArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
-  ): Promise<
-    ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.serverlessFunction>
-  > {
+  ): ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.serverlessFunction> {
     const { to: toFlatEntityMaps } = args;
-    const baseResult = await super.validateAndBuild(args);
+    const baseResult = super.validateAndBuild(args);
 
     if (baseResult.status === 'fail') {
       return baseResult;
@@ -61,16 +59,14 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     };
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.serverlessFunction,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.serverlessFunction,
+    'created'
   > {
     const validationResult =
-      await this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionCreation(
+      this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionCreation(
         args,
       );
 
@@ -92,13 +88,11 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.serverlessFunction,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.serverlessFunction,
+    'deleted'
   > {
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionDeletion(
@@ -123,15 +117,13 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.serverlessFunction
     >,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.serverlessFunction,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.serverlessFunction,
+    'updated'
   > {
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionUpdate(

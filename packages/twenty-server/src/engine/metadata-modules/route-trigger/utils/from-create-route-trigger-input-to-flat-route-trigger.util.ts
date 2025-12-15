@@ -6,23 +6,25 @@ import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger
 export const fromCreateRouteTriggerInputToFlatRouteTrigger = ({
   createRouteTriggerInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createRouteTriggerInput: CreateRouteTriggerInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatRouteTrigger => {
   const now = new Date();
+  const id = uuidV4();
 
   return {
-    id: uuidV4(),
-    universalIdentifier:
-      createRouteTriggerInput.universalIdentifier ?? uuidV4(),
+    id,
+    universalIdentifier: createRouteTriggerInput.universalIdentifier ?? id,
     path: createRouteTriggerInput.path,
     isAuthRequired: createRouteTriggerInput.isAuthRequired,
     httpMethod: createRouteTriggerInput.httpMethod,
     serverlessFunctionId: createRouteTriggerInput.serverlessFunctionId,
     workspaceId,
-    createdAt: now,
-    updatedAt: now,
-    applicationId: createRouteTriggerInput.applicationId ?? null,
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+    applicationId: workspaceCustomApplicationId,
   };
 };

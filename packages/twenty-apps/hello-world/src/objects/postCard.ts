@@ -1,11 +1,16 @@
+import { type Note } from '../../generated';
+
 import {
-  BaseObject,
+  type AddressField,
   Field,
-  Object,
   FieldType,
   type FullNameField,
-  type AddressField,
-} from 'twenty-sdk/application';
+  Object,
+  OnDeleteAction,
+  Relation,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -23,7 +28,7 @@ enum PostCardStatus {
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard extends BaseObject {
+export class PostCard {
   @Field({
     universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
     type: FieldType.TEXT,
@@ -84,7 +89,16 @@ export class PostCard extends BaseObject {
   })
   status: PostCardStatus;
 
-  //  notes?: string // optional internal notes or comments
+  @Relation({
+    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
+    type: RelationType.ONE_TO_MANY,
+    label: 'Notes',
+    icon: 'IconComment',
+    inverseSideTargetUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
+    onDelete: OnDeleteAction.CASCADE,
+  })
+  notes: Note[];
 
   @Field({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',

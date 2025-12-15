@@ -6,7 +6,8 @@ import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-sch
 import { ObjectMetadataOrderByBaseGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-base.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -20,22 +21,24 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
   ) {}
 
   public buildAndStore({
-    objectMetadata,
+    flatObjectMetadata,
+    fields,
   }: {
-    objectMetadata: ObjectMetadataEntity;
+    flatObjectMetadata: FlatObjectMetadata;
+    fields: FlatFieldMetadata[];
   }) {
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
-      description: objectMetadata.description,
+      name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
+      description: flatObjectMetadata.description,
       fields: () =>
         this.objectMetadataOrderByBaseGenerator.generateFields({
-          objectMetadata,
+          fields,
           logger: this.logger,
         }),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       GqlInputTypeDefinitionKind.OrderBy,
     );
 

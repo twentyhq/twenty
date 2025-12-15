@@ -1,3 +1,24 @@
+export type CodeExecutionFile = {
+  filename: string;
+  url: string;
+  mimeType: string;
+};
+
+export type CodeExecutionState = 'pending' | 'running' | 'completed' | 'error';
+
+export type CodeExecutionData = {
+  executionId: string;
+  state: CodeExecutionState;
+  code: string;
+  language: 'python';
+  stdout: string;
+  stderr: string;
+  exitCode?: number;
+  executionTimeMs?: number;
+  files: CodeExecutionFile[];
+  error?: string;
+};
+
 export type DataMessagePart = {
   'routing-status': {
     text: string;
@@ -13,7 +34,8 @@ export type DataMessagePart = {
       selectedAgentId?: string;
       selectedAgentLabel?: string;
       availableAgents?: Array<{ id: string; label: string }>;
-      routerModel?: string;
+      fastModel?: string;
+      smartModel?: string;
       agentModel?: string;
       context?: string;
       contextRecordCount?: number;
@@ -32,6 +54,15 @@ export type DataMessagePart = {
       routingCostInCredits?: number;
       agentCostInCredits?: number;
       totalCostInCredits?: number;
+      // Plan execution
+      planReasoning?: string;
+      totalSteps?: number;
+      steps?: Array<{
+        stepNumber: number;
+        agent: string;
+        task: string;
+      }>;
     };
   };
+  'code-execution': CodeExecutionData;
 };

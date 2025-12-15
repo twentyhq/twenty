@@ -11,14 +11,10 @@ import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/com
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
-import {
-  FeatureFlagKey,
-  type MessageChannelVisibility,
-} from '~/generated-metadata/graphql';
+import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -46,10 +42,6 @@ export const SettingsAccountsMessageChannelDetails = ({
   const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
-
-  const isFolderControlEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
-  );
 
   const handleVisibilityChange = (value: MessageChannelVisibility) => {
     updateOneRecord({
@@ -100,35 +92,31 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
-      {isFolderControlEnabled && messageChannel.messageFolders && (
-        <>
-          <Section>
-            <H2Title
-              title={t`Import`}
-              description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
-            />
-            <SettingsAccountsMessageFolderCard
-              onChange={handleMessageFolderImportPolicyChange}
-              value={messageChannel.messageFolderImportPolicy}
-            />
-          </Section>
-          <Section>
-            <Card rounded>
-              <SettingsOptionCardContentToggle
-                Icon={IconUsers}
-                title={t`Exclude group emails`}
-                description={t`Don't sync emails from team@ support@ noreply@...`}
-                checked={messageChannel.excludeGroupEmails}
-                onChange={() =>
-                  handleIsGroupEmailExcludedToggle(
-                    !messageChannel.excludeGroupEmails,
-                  )
-                }
-              />
-            </Card>
-          </Section>
-        </>
-      )}
+      <Section>
+        <H2Title
+          title={t`Import`}
+          description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
+        />
+        <SettingsAccountsMessageFolderCard
+          onChange={handleMessageFolderImportPolicyChange}
+          value={messageChannel.messageFolderImportPolicy}
+        />
+      </Section>
+      <Section>
+        <Card rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconUsers}
+            title={t`Exclude group emails`}
+            description={t`Don't sync emails from team@ support@ noreply@...`}
+            checked={messageChannel.excludeGroupEmails}
+            onChange={() =>
+              handleIsGroupEmailExcludedToggle(
+                !messageChannel.excludeGroupEmails,
+              )
+            }
+          />
+        </Card>
+      </Section>
       <Section>
         <H2Title
           title={t`Visibility`}

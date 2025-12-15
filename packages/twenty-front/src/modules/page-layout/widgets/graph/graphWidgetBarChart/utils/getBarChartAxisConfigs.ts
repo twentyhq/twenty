@@ -1,12 +1,15 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import {
+  type BarChartTickConfig,
+  getBarChartTickConfig,
+} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { type BarDatum } from '@nivo/bar';
 
 const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
 const TICK_PADDING = 5;
@@ -22,13 +25,15 @@ const COMMON_AXIS_CONFIG = {
 type GetBarChartAxisConfigsProps = {
   width: number;
   height: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   layout: BarChartLayout;
   indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
   axisFontSize?: number;
+  valueTickValues?: number[];
+  tickConfig?: BarChartTickConfig;
 };
 
 export const getBarChartAxisConfigs = ({
@@ -41,24 +46,32 @@ export const getBarChartAxisConfigs = ({
   yAxisLabel,
   formatOptions,
   axisFontSize = 11,
+  valueTickValues,
+  tickConfig,
 }: GetBarChartAxisConfigsProps) => {
   const {
     categoryTickValues,
     numberOfValueTicks,
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
-  } = getBarChartTickConfig({
-    width,
-    height,
-    data,
-    indexBy,
-    xAxisLabel,
-    yAxisLabel,
-    axisFontSize,
-    layout,
-  });
+  } =
+    tickConfig ??
+    getBarChartTickConfig({
+      width,
+      height,
+      data,
+      indexBy,
+      xAxisLabel,
+      yAxisLabel,
+      axisFontSize,
+      layout,
+    });
 
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+  const resolvedValueTickValues =
+    valueTickValues && valueTickValues.length > 0
+      ? valueTickValues
+      : numberOfValueTicks;
 
   if (layout === BarChartLayout.VERTICAL) {
     return {
@@ -72,7 +85,7 @@ export const getBarChartAxisConfigs = ({
       },
       axisLeft: {
         ...COMMON_AXIS_CONFIG,
-        tickValues: numberOfValueTicks,
+        tickValues: resolvedValueTickValues,
         legend: yAxisLabel,
         legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
         format: (value: number) =>
@@ -87,7 +100,7 @@ export const getBarChartAxisConfigs = ({
   return {
     axisBottom: {
       ...COMMON_AXIS_CONFIG,
-      tickValues: numberOfValueTicks,
+      tickValues: resolvedValueTickValues,
       legend: yAxisLabel,
       legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) =>

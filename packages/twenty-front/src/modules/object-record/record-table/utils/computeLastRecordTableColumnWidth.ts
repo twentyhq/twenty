@@ -7,14 +7,14 @@ import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-t
 export const computeLastRecordTableColumnWidth = ({
   recordFields,
   tableWidth,
-  isMobile,
+  shouldCompactFirstColumn,
 }: {
   recordFields: Pick<RecordField, 'size'>[];
   tableWidth: number;
-  isMobile: boolean;
+  shouldCompactFirstColumn: boolean;
 }) => {
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
-    isMobile,
+    shouldCompactFirstColumn,
     visibleRecordFields: recordFields,
   });
 

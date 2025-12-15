@@ -16,7 +16,7 @@ export const getObjectMetadataItemViews = (
       key: view.key,
       position: view.position,
       objectMetadataId: view.objectMetadataId,
-      kanbanFieldMetadataId: view.kanbanFieldMetadataId,
+      mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
       kanbanAggregateOperation: view.kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId:
         view.kanbanAggregateOperationFieldMetadataId,

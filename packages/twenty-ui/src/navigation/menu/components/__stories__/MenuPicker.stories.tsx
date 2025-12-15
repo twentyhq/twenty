@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { IconChartPie } from '@ui/display';
+import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
 
@@ -67,19 +67,44 @@ export const AllStates: Story = {
     >
       <div>
         <StyledTitle>Default</StyledTitle>
-        <MenuPicker icon={IconChartPie} label="Default" />
+        <MenuPicker id="default" icon={IconChartPie} label="Default" />
       </div>
       <div>
         <StyledTitle>Selected</StyledTitle>
-        <MenuPicker icon={IconChartPie} label="Selected" selected />
+        <MenuPicker
+          id="selected"
+          icon={IconChartPie}
+          label="Selected"
+          selected
+        />
       </div>
       <div>
         <StyledTitle>Disabled</StyledTitle>
-        <MenuPicker icon={IconChartPie} label="Disabled" disabled />
+        <MenuPicker
+          id="disabled"
+          icon={IconChartPie}
+          label="Disabled"
+          disabled
+        />
       </div>
       <div>
         <StyledTitle>No Label</StyledTitle>
-        <MenuPicker icon={IconChartPie} label="No Label" showLabel={false} />
+        <MenuPicker
+          id="no-label"
+          icon={IconChartPie}
+          label="No Label"
+          showLabel={false}
+        />
+      </div>
+      <div>
+        <StyledTitle> With Tooltip</StyledTitle>
+        <MenuPicker
+          id="tooltip"
+          icon={IconChartPie}
+          label="Tooltip"
+          tooltipContent="Tooltip"
+          tooltipDelay={TooltipDelay.mediumDelay}
+        />
       </div>
     </div>
   ),

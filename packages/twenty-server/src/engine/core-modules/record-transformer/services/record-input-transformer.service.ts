@@ -11,22 +11,34 @@ import { transformEmailsValue } from 'src/engine/core-modules/record-transformer
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class RecordInputTransformerService {
   async process({
     recordInput,
-    objectMetadataMapItem,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   }: {
     recordInput: Partial<ObjectRecord>;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<Partial<ObjectRecord>> {
     let transformedEntries = {};
 
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
     for (const [key, value] of Object.entries(recordInput)) {
-      const fieldMetadataId = objectMetadataMapItem.fieldIdByName[key];
-      const fieldMetadata = objectMetadataMapItem.fieldsById[fieldMetadataId];
+      const fieldMetadataId = fieldIdByName[key];
+      const fieldMetadata = fieldMetadataId
+        ? flatFieldMetadataMaps.byId[fieldMetadataId]
+        : undefined;
 
       if (!fieldMetadata) {
         transformedEntries = { ...transformedEntries, [key]: value };

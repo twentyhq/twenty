@@ -3,10 +3,10 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 import { sumByProperty } from 'twenty-shared/utils';
 
 export const computeVisibleRecordFieldsWidthOnTable = ({
-  isMobile,
+  shouldCompactFirstColumn,
   visibleRecordFields,
 }: {
-  isMobile: boolean;
+  shouldCompactFirstColumn: boolean;
   visibleRecordFields: Pick<RecordField, 'size'>[];
 }) => {
   const visibleRecordFieldsWithoutFirst = visibleRecordFields.slice(1);
@@ -18,12 +18,14 @@ export const computeVisibleRecordFieldsWidthOnTable = ({
 
   const sumWithAllFields = visibleRecordFields.reduce(sumByProperty('size'), 0);
 
-  const sumForMobile =
+  const sumForCompactedFirstColumn =
     RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE + sumWithoutFirstField;
 
-  const sumForNonMobile = sumWithAllFields;
+  const sumForNoCompactColumn = sumWithAllFields;
 
-  const visibleRecordFieldsWidth = isMobile ? sumForMobile : sumForNonMobile;
+  const visibleRecordFieldsWidth = shouldCompactFirstColumn
+    ? sumForCompactedFirstColumn
+    : sumForNoCompactColumn;
 
   return {
     visibleRecordFieldsWidth,

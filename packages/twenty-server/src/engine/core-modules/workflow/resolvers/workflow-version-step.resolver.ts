@@ -1,12 +1,13 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
@@ -23,7 +24,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -47,7 +47,7 @@ export class WorkflowVersionStepResolver {
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly toolRegistryService: ToolRegistryService,
+    private readonly httpTool: HttpTool,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -150,14 +150,18 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => TestHttpRequestOutput)
   async testHttpRequest(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestOutput> {
-    return this.toolRegistryService.getTool(ToolType.HTTP_REQUEST).execute({
-      url,
-      method,
-      headers,
-      body,
-    });
+    return this.httpTool.execute(
+      {
+        url,
+        method,
+        headers,
+        body,
+      },
+      { workspaceId: workspace.id },
+    );
   }
 }

@@ -45,10 +45,9 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
@@ -58,7 +57,7 @@ export class OpenApiService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly objectMetadataService: ObjectMetadataServiceV2,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -75,22 +74,35 @@ export class OpenApiService {
     }
   }
 
-  private async getObjectMetadataItems(workspace: WorkspaceEntity) {
-    return await this.objectMetadataService.findManyWithinWorkspace(
-      workspace.id,
-      {
-        order: {
-          namePlural: 'ASC',
+  private async getFlatObjectMetadataArray(workspaceId: string) {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
-      },
+      );
+
+    const flatObjectMetadataArray = Object.values(
+      flatObjectMetadataMaps.byId,
+    ).filter(isDefined);
+
+    flatObjectMetadataArray.sort((a, b) =>
+      a.namePlural.localeCompare(b.namePlural),
     );
+
+    return {
+      flatObjectMetadataArray,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    };
   }
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(
@@ -105,36 +117,92 @@ export class OpenApiService {
       return schema;
     }
 
-    const objectMetadataItems = await this.getObjectMetadataItems(workspace);
+    const {
+      flatObjectMetadataArray,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.getFlatObjectMetadataArray(workspace.id);
 
-    if (!objectMetadataItems.length) {
+    if (!flatObjectMetadataArray.length) {
       return schema;
     }
 
     const workspaceFeatureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
 
-    const filteredObjectMetadataItems = objectMetadataItems.filter((item) => {
-      return !shouldExcludeFromWorkspaceApi(
-        item,
-        standardObjectMetadataDefinitions,
-        workspaceFeatureFlagsMap,
-      );
-    });
+    const filteredObjectMetadataItems = flatObjectMetadataArray.filter(
+      (item) => {
+        return !shouldExcludeFromWorkspaceApi(
+          item,
+          standardObjectMetadataDefinitions,
+          workspaceFeatureFlagsMap,
+        );
+      },
+    );
 
     schema.paths = filteredObjectMetadataItems.reduce((paths, item) => {
-      paths[`/${item.namePlural}`] = computeManyResultPath(item);
-      paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
-      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
-      paths[`/${item.namePlural}/duplicates`] =
-        computeDuplicatesResultPath(item);
-      paths[`/restore/${item.namePlural}/{id}`] =
-        computeRestoreOneResultPath(item);
-      paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(item);
-      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(item);
+      paths[`/${item.namePlural}`] = computeManyResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/batch/${item.namePlural}`] = computeBatchPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/${item.namePlural}/duplicates`] = computeDuplicatesResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/restore/${item.namePlural}/{id}`] = computeRestoreOneResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
+
+    schema.paths['/dashboards/{id}/duplicate'] = {
+      post: {
+        tags: ['dashboards'],
+        summary: 'Duplicate a dashboard',
+        description: 'Creates a duplicate of an existing dashboard',
+        operationId: 'duplicateDashboard',
+        parameters: [{ $ref: '#/components/parameters/idPath' }],
+        responses: {
+          '201': {
+            description: 'Dashboard duplicated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/DashboardForResponse',
+                },
+              },
+            },
+          },
+          '400': { $ref: '#/components/responses/400' },
+          '401': { $ref: '#/components/responses/401' },
+        },
+      },
+    } as OpenAPIV3_1.PathItemObject;
 
     schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
@@ -143,19 +211,34 @@ export class OpenApiService {
             DatabaseEventAction.CREATED,
             item.nameSingular,
           )
-        ] = computeWebhooks(DatabaseEventAction.CREATED, item);
+        ] = computeWebhooks(
+          DatabaseEventAction.CREATED,
+          item,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
         paths[
           this.createWebhookEventName(
             DatabaseEventAction.UPDATED,
             item.nameSingular,
           )
-        ] = computeWebhooks(DatabaseEventAction.UPDATED, item);
+        ] = computeWebhooks(
+          DatabaseEventAction.UPDATED,
+          item,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
         paths[
           this.createWebhookEventName(
             DatabaseEventAction.DELETED,
             item.nameSingular,
           )
-        ] = computeWebhooks(DatabaseEventAction.DELETED, item);
+        ] = computeWebhooks(
+          DatabaseEventAction.DELETED,
+          item,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
 
         return paths;
       },
@@ -167,7 +250,11 @@ export class OpenApiService {
 
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeSchemaComponents(filteredObjectMetadataItems),
+      schemas: computeSchemaComponents(
+        filteredObjectMetadataItems,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      ),
       parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),
@@ -183,10 +270,10 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(
@@ -347,7 +434,7 @@ export class OpenApiService {
       metadata.map((item) => ({
         nameSingular: item.nameSingular,
         namePlural: item.namePlural,
-      })) as ObjectMetadataEntity[],
+      })) as FlatObjectMetadata[],
     );
 
     return schema;

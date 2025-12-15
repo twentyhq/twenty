@@ -75,6 +75,10 @@ export class WorkspaceMemberTranspiler {
 
     const roles = fromRoleEntitiesToRoleDtos(userWorkspaceRoles);
 
+    if (!isDefined(userEmail)) {
+      throw new Error(`Workspace member ${id} has no userEmail`);
+    }
+
     return {
       id,
       name,
@@ -110,6 +114,10 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
     } = workspaceMember;
+
+    if (!isDefined(userEmail)) {
+      throw new Error(`Workspace member ${id} has no userEmail`);
+    }
 
     const avatarUrl = userWorkspaceId
       ? this.generateSignedAvatarUrl({

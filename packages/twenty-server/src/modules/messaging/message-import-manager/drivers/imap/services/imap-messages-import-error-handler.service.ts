@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import { parseImapError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-error.util';
 import { parseImapMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-messages-import-error.util';
-import { ImapNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-network-error-handler.service';
 
 @Injectable()
 export class ImapMessagesImportErrorHandler {
-  constructor(
-    private readonly imapNetworkErrorHandler: ImapNetworkErrorHandler,
-  ) {}
+  private readonly logger = new Logger(ImapMessagesImportErrorHandler.name);
 
   public handleError(error: Error, messageExternalId: string): void {
-    const networkError = this.imapNetworkErrorHandler.handleError(error);
+    this.logger.error(
+      `IMAP: Error importing message ${messageExternalId}: ${JSON.stringify(error)}`,
+    );
+
+    const networkError = parseImapError(error, { cause: error });
 
     if (networkError) {
       throw networkError;

@@ -12,6 +12,9 @@ export const fromViewEntityToFlatView = (viewEntity: ViewEntity): FlatView => {
 
   return {
     ...viewEntityWithoutRelations,
+    createdAt: viewEntity.createdAt.toISOString(),
+    updatedAt: viewEntity.updatedAt.toISOString(),
+    deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier:
       viewEntityWithoutRelations.universalIdentifier ??
       viewEntityWithoutRelations.id,

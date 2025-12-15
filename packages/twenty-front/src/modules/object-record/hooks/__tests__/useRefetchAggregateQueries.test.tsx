@@ -1,5 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 import { renderHook } from '@testing-library/react';
 
@@ -22,6 +23,9 @@ describe('useRefetchAggregateQueries', () => {
     // Arrange
     const objectMetadataNamePlural = 'opportunities';
     const expectedQueryName = getAggregateQueryName(objectMetadataNamePlural);
+    const expectedQueryNameGroupBy = getGroupByAggregateQueryName({
+      objectMetadataNamePlural,
+    });
 
     // Act
     const { result } = renderHook(() =>
@@ -32,7 +36,7 @@ describe('useRefetchAggregateQueries', () => {
     // Assert
     expect(mockRefetchQueries).toHaveBeenCalledTimes(1);
     expect(mockRefetchQueries).toHaveBeenCalledWith({
-      include: [expectedQueryName],
+      include: [expectedQueryName, expectedQueryNameGroupBy],
     });
   });
 

@@ -16,11 +16,18 @@ import {
 
 import assert from 'assert';
 
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
+
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -65,10 +72,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -101,6 +108,7 @@ export class WorkspaceResolver {
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -129,7 +137,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -143,6 +151,13 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
+    @Parent() _workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return 'auto';
   }
 
   @Mutation(() => SignedFileDTO)
@@ -225,17 +240,49 @@ export class WorkspaceResolver {
       return null;
     }
 
-    return await this.roleService.getRoleById(
+    const defaultRoleEntity = await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
+
+    return isDefined(defaultRoleEntity)
+      ? fromRoleEntityToRoleDto(defaultRoleEntity)
+      : null;
   }
 
   @ResolveField(() => String, { nullable: true })
-  async routerModel(
+  async fastModel(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    return workspace.routerModel;
+    return workspace.fastModel;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async smartModel(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return workspace.smartModel;
+  }
+
+  @ResolveField(() => ApplicationDTO, { nullable: true })
+  async workspaceCustomApplication(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO | null> {
+    try {
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          {
+            workspace,
+          },
+        );
+
+      return fromFlatApplicationToApplicationDto(
+        workspaceCustomFlatApplication,
+      );
+    } catch {
+      // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
+      return null;
+    }
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })

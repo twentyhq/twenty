@@ -12,8 +12,10 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { css } from '@emotion/react';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -73,11 +75,15 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 `;
 
 export const PhonesFieldInput = () => {
-  const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
+  const { getLatestDraftValue, fieldDefinition, setDraftValue, draftValue } =
+    usePhonesField();
 
   const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
   const phones = createPhonesFromFieldValue(draftValue);
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const defaultCountry = stripSimpleQuotesFromString(
     fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
@@ -131,7 +137,8 @@ export const PhonesFieldInput = () => {
     _newValue: any,
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({ newValue: draftValue, event });
+    const latestDraftValue = getLatestDraftValue(instanceId);
+    onClickOutside?.({ newValue: latestDraftValue, event });
   };
 
   const handleEscape = (_newValue: any) => {

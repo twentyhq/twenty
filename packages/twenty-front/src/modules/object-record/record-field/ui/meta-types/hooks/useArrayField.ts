@@ -24,7 +24,8 @@ export const useArrayField = () => {
     }),
   );
 
-  const { setDraftValue } = useRecordFieldInput<FieldArrayValue>();
+  const { getLatestDraftValue, setDraftValue } =
+    useRecordFieldInput<FieldArrayValue>();
 
   const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
@@ -33,8 +34,9 @@ export const useArrayField = () => {
   return {
     fieldValue,
     fieldDefinition,
-    setFieldValue,
     draftValue,
+    getLatestDraftValue,
+    setFieldValue,
     setDraftValue,
   };
 };

@@ -17,6 +17,10 @@ import {
   computeStartingAfterParameters,
   computeUpsertParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -31,12 +35,18 @@ type Properties = {
 type OpenApiExample = Record<string, FieldMetadataDefaultValue>;
 
 const getSchemaComponentsExample = (
-  item: ObjectMetadataEntity,
+  item: FlatObjectMetadata,
+  flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
-  return item.fields.reduce((node, field) => {
+  return flatFieldMetadatas.reduce((node, field) => {
     // If field is required
     if (!field.isNullable && field.defaultValue === null) {
-      return { ...node, [field.name]: generateRandomFieldValue({ field }) };
+      return {
+        ...node,
+        [field.name]: generateRandomFieldValue({
+          field,
+        }),
+      };
     }
 
     switch (field.type) {
@@ -60,7 +70,9 @@ const getSchemaComponentsExample = (
       case FieldMetadataType.PHONES: {
         return {
           ...node,
-          [field.name]: generateRandomFieldValue({ field }),
+          [field.name]: generateRandomFieldValue({
+            field,
+          }),
         };
       }
 
@@ -72,9 +84,13 @@ const getSchemaComponentsExample = (
 };
 
 const getSchemaComponentsRelationProperties = (
-  item: ObjectMetadataEntity,
+  flatFieldMetadatas: FlatFieldMetadata[],
+  flatObjectMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps'
+  >['flatObjectMetadataMaps'],
 ): Properties => {
-  return item.fields.reduce((node, field) => {
+  return flatFieldMetadatas.reduce((node, field) => {
     if (field.type !== FieldMetadataType.RELATION) {
       return node;
     }
@@ -82,13 +98,20 @@ const getSchemaComponentsRelationProperties = (
     let itemProperty = {} as Property;
 
     if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
+      const targetObjectMetadata =
+        flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+
+      if (!targetObjectMetadata) {
+        return node;
+      }
+
       if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
         itemProperty = {
           type: 'object',
           oneOf: [
             {
               $ref: `#/components/schemas/${capitalize(
-                field.relationTargetObjectMetadata.nameSingular,
+                targetObjectMetadata.nameSingular,
               )}ForResponse`,
             },
           ],
@@ -98,7 +121,7 @@ const getSchemaComponentsRelationProperties = (
           type: 'array',
           items: {
             $ref: `#/components/schemas/${capitalize(
-              field.relationTargetObjectMetadata.nameSingular,
+              targetObjectMetadata.nameSingular,
             )}ForResponse`,
           },
         };
@@ -117,8 +140,10 @@ const getSchemaComponentsRelationProperties = (
   }, {} as Properties);
 };
 
-const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
-  return item.fields.reduce((required, field) => {
+const getRequiredFields = (
+  flatFieldMetadatas: FlatFieldMetadata[],
+): string[] => {
+  return flatFieldMetadatas.reduce((required, field) => {
     if (!field.isNullable && field.defaultValue === null) {
       required.push(field.name);
 
@@ -131,10 +156,17 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
 const computeSchemaComponent = ({
   item,
+  flatFieldMetadatas,
+  flatObjectMetadataMaps,
   forResponse,
   forUpdate,
 }: {
-  item: ObjectMetadataEntity;
+  item: FlatObjectMetadata;
+  flatFieldMetadatas: FlatFieldMetadata[];
+  flatObjectMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps'
+  >['flatObjectMetadataMaps'];
   forResponse: boolean;
   forUpdate: boolean;
 }): OpenAPIV3_1.SchemaObject => {
@@ -142,20 +174,31 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
+  // Create a temporary object that looks like ObjectMetadataEntity for the converter
+  const tempItem = {
+    ...item,
+    fields: flatFieldMetadatas,
+  } as unknown as ObjectMetadataEntity;
+
   const result: OpenAPIV3_1.SchemaObject = {
     type: 'object',
     description: item.description ?? undefined,
     properties: convertObjectMetadataToSchemaProperties({
-      item,
+      item: tempItem,
       forResponse,
     }) as Properties,
-    ...(!forResponse ? { example: getSchemaComponentsExample(item) } : {}),
+    ...(!forResponse
+      ? { example: getSchemaComponentsExample(item, flatFieldMetadatas) }
+      : {}),
   };
 
   if (withRelations) {
     result.properties = {
       ...result.properties,
-      ...getSchemaComponentsRelationProperties(item),
+      ...getSchemaComponentsRelationProperties(
+        flatFieldMetadatas,
+        flatObjectMetadataMaps,
+      ),
     };
   }
 
@@ -163,7 +206,7 @@ const computeSchemaComponent = ({
     return result;
   }
 
-  const requiredFields = getRequiredFields(item);
+  const requiredFields = getRequiredFields(flatFieldMetadatas);
 
   if (requiredFields?.length) {
     result.required = requiredFields;
@@ -173,24 +216,44 @@ const computeSchemaComponent = ({
 };
 
 export const computeSchemaComponents = (
-  objectMetadataItems: ObjectMetadataEntity[],
+  flatObjectMetadataItems: FlatObjectMetadata[],
+  flatObjectMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps'
+  >['flatObjectMetadataMaps'],
+  flatFieldMetadataMaps: Pick<
+    AllFlatEntityMaps,
+    'flatFieldMetadataMaps'
+  >['flatFieldMetadataMaps'],
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
-  return objectMetadataItems.reduce(
+  return flatObjectMetadataItems.reduce(
     (schemas, item) => {
+      const flatFieldMetadatas =
+        findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityIds: item.fieldMetadataIds,
+        });
+
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,
+        flatFieldMetadatas,
+        flatObjectMetadataMaps,
         forResponse: false,
         forUpdate: false,
       });
       schemas[capitalize(item.nameSingular) + 'ForUpdate'] =
         computeSchemaComponent({
           item,
+          flatFieldMetadatas,
+          flatObjectMetadataMaps,
           forResponse: false,
           forUpdate: true,
         });
       schemas[capitalize(item.nameSingular) + 'ForResponse'] =
         computeSchemaComponent({
           item,
+          flatFieldMetadatas,
+          flatObjectMetadataMaps,
           forResponse: true,
           forUpdate: false,
         });

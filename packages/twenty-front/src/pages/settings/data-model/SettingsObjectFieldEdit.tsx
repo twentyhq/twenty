@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -12,6 +13,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -20,20 +22,28 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconArchive,
+  IconArchiveOff,
+  IconTrash,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 //TODO: fix this type
 export type SettingsDataModelFieldEditFormValues = z.infer<
@@ -41,10 +51,19 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
 > &
   any;
 
+const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
+const StyledDangerButtons = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
+
+  const { openModal, closeModal } = useModal();
+  const { enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigate();
 
@@ -64,14 +83,23 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
-  const { deactivateMetadataField, activateMetadataField } =
-    useFieldMetadataItem();
+  const {
+    deactivateMetadataField,
+    activateMetadataField,
+    deleteMetadataField,
+  } = useFieldMetadataItem();
 
   const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
     null,
   );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
@@ -91,14 +119,15 @@ export const SettingsObjectFieldEdit = () => {
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
+      settings: fieldMetadataItem?.settings,
     },
   });
 
   useEffect(() => {
-    if (!objectMetadataItem || !fieldMetadataItem) {
+    if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
       navigateApp(AppPath.NotFound);
     }
-  }, [navigateApp, objectMetadataItem, fieldMetadataItem]);
+  }, [navigateApp, objectMetadataItem, fieldMetadataItem, isDeleting]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
@@ -107,6 +136,9 @@ export const SettingsObjectFieldEdit = () => {
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
     return null;
   }
+
+  const fieldLabel = fieldMetadataItem.label;
+  const objectLabel = objectMetadataItem.labelPlural;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: fieldMetadataItem,
@@ -222,6 +254,41 @@ export const SettingsObjectFieldEdit = () => {
     }
   };
 
+  const handleDelete = () => {
+    if (readonly || !fieldMetadataItem?.isCustom) {
+      return;
+    }
+
+    openModal(DELETE_FIELD_MODAL_ID);
+  };
+
+  const confirmDelete = async () => {
+    if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    const deleteResult = await deleteMetadataField({
+      idToDelete: fieldMetadataItem.id,
+      objectMetadataId: objectMetadataItem.id,
+    });
+
+    if (deleteResult.status === 'successful') {
+      enqueueSuccessSnackBar({
+        message: t`Field deleted`,
+      });
+      closeModal(DELETE_FIELD_MODAL_ID);
+      navigateSettings(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+      return;
+    }
+
+    setIsDeleting(false);
+    closeModal(DELETE_FIELD_MODAL_ID);
+  };
+
   return (
     <>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -314,26 +381,51 @@ export const SettingsObjectFieldEdit = () => {
                   title={t`Danger zone`}
                   description={t`Deactivate this field`}
                 />
-                <Button
-                  Icon={
-                    fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
-                  }
-                  variant="secondary"
-                  title={
-                    fieldMetadataItem.isActive ? t`Deactivate` : t`Activate`
-                  }
-                  size="small"
-                  onClick={
-                    fieldMetadataItem.isActive
-                      ? handleDeactivate
-                      : handleActivate
-                  }
-                />
+                <StyledDangerButtons>
+                  <Button
+                    Icon={
+                      fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
+                    }
+                    variant="secondary"
+                    title={
+                      fieldMetadataItem.isActive ? t`Deactivate` : t`Activate`
+                    }
+                    size="small"
+                    onClick={
+                      fieldMetadataItem.isActive
+                        ? handleDeactivate
+                        : handleActivate
+                    }
+                  />
+                  {fieldMetadataItem.isCustom && (
+                    <Button
+                      Icon={IconTrash}
+                      variant="secondary"
+                      accent="danger"
+                      title={t`Delete`}
+                      size="small"
+                      onClick={handleDelete}
+                    />
+                  )}
+                </StyledDangerButtons>
               </Section>
             )}
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>
+      {fieldMetadataItem?.isCustom && (
+        <ConfirmationModal
+          modalId={DELETE_FIELD_MODAL_ID}
+          title={t`Delete ${fieldLabel} field?`}
+          subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
+          confirmButtonText={t`Delete`}
+          confirmationValue="yes"
+          confirmationPlaceholder="yes"
+          onConfirmClick={confirmDelete}
+          onClose={() => closeModal(DELETE_FIELD_MODAL_ID)}
+          loading={isDeleting}
+        />
+      )}
     </>
   );
 };

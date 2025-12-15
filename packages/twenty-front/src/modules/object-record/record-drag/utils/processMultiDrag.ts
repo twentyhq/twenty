@@ -7,6 +7,7 @@ type MultiDragContext = {
   targetRecordId: string;
   selectedRecordIds: string[];
   recordsWithPosition: RecordWithPosition[];
+  isDroppedAfterList: boolean;
 };
 
 export const processMultiDrag = ({
@@ -14,12 +15,14 @@ export const processMultiDrag = ({
   targetRecordId,
   selectedRecordIds,
   recordsWithPosition,
+  isDroppedAfterList,
 }: MultiDragContext): MultiDragResult => {
   const newPositionOfDraggedRecords = computeNewPositionsOfDraggedRecords({
     arrayOfRecordsWithPosition: recordsWithPosition,
     draggedRecordId,
     targetRecordId,
     sourceRecordIds: selectedRecordIds,
+    isDroppedAfterList,
   });
 
   return {

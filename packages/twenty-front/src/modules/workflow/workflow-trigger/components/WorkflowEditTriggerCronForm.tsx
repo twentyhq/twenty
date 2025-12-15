@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -11,19 +10,13 @@ import {
   type CronTriggerInterval,
 } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
-import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
@@ -53,18 +46,9 @@ export const WorkflowEditTriggerCronForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerCronFormProps) => {
-  const theme = useTheme();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
   const dateLocale = useRecoilValue(dateLocaleState);
-
-  const { getIcon } = useIcons();
-
-  const headerIcon = getTriggerIcon(trigger);
-
-  const defaultLabel = getTriggerDefaultLabel(trigger);
-  const headerTitle = trigger.name ?? defaultLabel;
-  const headerType = getTriggerHeaderType(trigger);
 
   const customDescription = getTriggerScheduleDescription(
     trigger,
@@ -77,24 +61,6 @@ export const WorkflowEditTriggerCronForm = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (triggerOptions.readonly === true) {
-            return;
-          }
-
-          triggerOptions.onTriggerUpdate({
-            ...trigger,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={triggerOptions.readonly}
-        iconTooltip={getTriggerDefaultLabel(trigger)}
-      />
       <WorkflowStepBody>
         <FormSelectFieldInput
           label={t`Trigger interval`}
@@ -457,6 +423,13 @@ export const WorkflowEditTriggerCronForm = ({
                   return;
                 }
 
+                if (newMinute > 60) {
+                  setErrorMessages({
+                    MINUTES: t`Minute value cannot exceed 60. For intervals greater than 60 minutes, use the "Hours" trigger type or a custom cron expression`,
+                  });
+                  return;
+                }
+
                 setErrorMessages((prev) => ({
                   ...prev,
                   MINUTES: undefined,
@@ -473,7 +446,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder={t`Enter number greater than 1`}
+              placeholder={t`Enter number between 1 and 60`}
               readonly={triggerOptions.readonly}
             />
             <CronExpressionHelperLazy

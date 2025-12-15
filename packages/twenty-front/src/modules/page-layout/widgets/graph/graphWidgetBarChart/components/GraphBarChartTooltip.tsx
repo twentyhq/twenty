@@ -1,33 +1,32 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { BAR_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartTooltipOffsetPx';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
-import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
+import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
-  containerId: string;
+  containerRef: RefObject<HTMLDivElement>;
   enrichedKeys: BarChartEnrichedKey[];
-  data: BarChartDataItem[];
-  indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
+  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
 
 export const GraphBarChartTooltip = ({
-  containerId,
+  containerRef,
   enrichedKeys,
-  data,
-  indexBy,
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
+  onBarClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphBarChartTooltipProps) => {
@@ -35,51 +34,40 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
+  const containerElement = containerRef.current;
+  if (!isDefined(containerElement)) {
+    return null;
+  }
+
+  const handleTooltipClick: (() => void) | undefined = isDefined(onBarClick)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onBarClick(tooltipState.datum);
+        }
+      }
+    : undefined;
+
   const tooltipData = !isDefined(tooltipState)
     ? null
     : getBarChartTooltipData({
         datum: tooltipState.datum,
         enrichedKeys,
-        data,
-        indexBy,
         formatOptions,
         enableGroupTooltip,
         layout,
       });
 
-  let reference = null;
-  let boundary = null;
-
-  if (isDefined(tooltipState)) {
-    try {
-      const positioning = getTooltipReferenceFromBarChartElementAnchor(
-        tooltipState.anchorElement,
-        containerId,
-      );
-      reference = positioning.reference;
-      boundary = positioning.boundary;
-    } catch {
-      reference = null;
-      boundary = null;
-    }
-  }
-
-  if (
-    !isDefined(tooltipData) ||
-    !isDefined(reference) ||
-    !isDefined(boundary)
-  ) {
-    return null;
-  }
+  const reference = isDefined(tooltipState) ? tooltipState.anchorElement : null;
 
   return (
     <GraphWidgetFloatingTooltip
       reference={reference}
-      boundary={boundary}
-      items={tooltipData.tooltipItems}
-      indexLabel={tooltipData.indexLabel}
-      highlightedKey={tooltipData.hoveredKey}
-      linkTo={tooltipData.linkTo}
+      boundary={containerElement}
+      tooltipOffsetFromAnchorInPx={BAR_CHART_TOOLTIP_OFFSET_PX}
+      items={tooltipData?.tooltipItems ?? []}
+      indexLabel={tooltipData?.indexLabel}
+      highlightedKey={tooltipData?.hoveredKey}
+      onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

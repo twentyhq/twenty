@@ -1,123 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Field metadata relation update should fail relation when name is changed 1`] = `
-[
-  {
-    "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "FIELD_MUTATION_NOT_ALLOWED",
-                "message": "Forbidden updated properties for relation field metadata: name",
-                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "newName",
-              "objectMetadataId": Any<String>,
-            },
-            "status": "fail",
-            "type": "update_field",
-          },
-          {
-            "errors": [
-              {
-                "code": "FIELD_MUTATION_NOT_ALLOWED",
-                "message": "Forbidden updated properties for relation field metadata: name",
-                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "newName",
-              "objectMetadataId": Any<String>,
-            },
-            "status": "fail",
-            "type": "update_field",
-          },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
-    },
-    "message": "Multiple validation errors occurred while updating field",
-    "name": "GraphQLError",
-  },
-]
-`;
-
 exports[`Field metadata relation update should fail relation when name is not in camel case 1`] = `
 [
   {
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "FIELD_MUTATION_NOT_ALLOWED",
-                "message": "Forbidden updated properties for relation field metadata: name",
-                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name should be in camelCase",
-                "userFriendlyMessage": "Name should be in camelCase",
-                "value": "New Name",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "value": "New Name",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "New Name",
-              "objectMetadataId": Any<String>,
-            },
-            "status": "fail",
-            "type": "update_field",
-          },
-          {
-            "errors": [
-              {
-                "code": "FIELD_MUTATION_NOT_ALLOWED",
-                "message": "Forbidden updated properties for relation field metadata: name",
-                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Name should be in camelCase",
@@ -142,6 +36,11 @@ exports[`Field metadata relation update should fail relation when name is not in
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayout": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -151,11 +50,17 @@ exports[`Field metadata relation update should fail relation when name is not in
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayout": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,

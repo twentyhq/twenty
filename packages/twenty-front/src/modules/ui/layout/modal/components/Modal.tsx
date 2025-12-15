@@ -1,6 +1,7 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { ModalHotkeysAndClickOutsideEffect } from '@/ui/layout/modal/components/ModalHotkeysAndClickOutsideEffect';
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
+import { useModalContainer } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
@@ -13,6 +14,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
@@ -122,19 +125,23 @@ const StyledFooter = styled.div`
 
 const StyledBackDrop = styled(motion.div)<{
   modalVariant: ModalVariants;
+  isInContainer?: boolean;
 }>`
   align-items: center;
-  background: ${({ theme, modalVariant }) =>
-    modalVariant === 'primary' || modalVariant === 'transparent'
-      ? theme.background.overlayPrimary
-      : modalVariant === 'secondary'
-        ? theme.background.overlaySecondary
-        : theme.background.overlayTertiary};
+  background: ${({ theme, modalVariant, isInContainer }) =>
+    isInContainer
+      ? theme.background.overlayTertiary
+      : modalVariant === 'primary' || modalVariant === 'transparent'
+        ? theme.background.overlayPrimary
+        : modalVariant === 'secondary'
+          ? theme.background.overlaySecondary
+          : theme.background.overlayTertiary};
   display: flex;
   height: 100%;
   justify-content: center;
   left: 0;
-  position: fixed;
+  pointer-events: auto;
+  position: ${({ isInContainer }) => (isInContainer ? 'absolute' : 'fixed')};
   top: 0;
   width: 100%;
   z-index: ${RootStackingContextZIndices.RootModalBackDrop};
@@ -194,6 +201,7 @@ export type ModalProps = React.PropsWithChildren & {
   modalVariant?: ModalVariants;
   dataGloballyPreventClickOutside?: boolean;
   shouldCloseModalOnClickOutsideOrEscape?: boolean;
+  ignoreContainer?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -217,9 +225,17 @@ export const Modal = ({
   modalVariant = 'primary',
   dataGloballyPreventClickOutside = false,
   shouldCloseModalOnClickOutsideOrEscape = true,
+  ignoreContainer = false,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
+  const { container } = useModalContainer();
+  const effectiveContainer = ignoreContainer
+    ? isDefined(document)
+      ? document.body
+      : null
+    : container;
+  const isInContainer = isDefined(container) && !ignoreContainer;
 
   const theme = useTheme();
 
@@ -239,7 +255,7 @@ export const Modal = ({
     if (shouldCloseModalOnClickOutsideOrEscape) closeModal(modalId);
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence mode="wait">
       {isModalOpened && (
         <ModalComponentInstanceContext.Provider
@@ -264,6 +280,7 @@ export const Modal = ({
               data-click-outside-id={MODAL_BACKDROP_CLICK_OUTSIDE_ID}
               onMouseDown={stopEventPropagation}
               modalVariant={modalVariant}
+              isInContainer={isInContainer}
             >
               <StyledModalDiv
                 ref={modalRef}
@@ -290,6 +307,12 @@ export const Modal = ({
       )}
     </AnimatePresence>
   );
+
+  if (isDefined(effectiveContainer)) {
+    return createPortal(modalContent, effectiveContainer);
+  }
+
+  return modalContent;
 };
 
 Modal.Header = ModalHeader;

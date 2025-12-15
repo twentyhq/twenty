@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne FieldMetadataService morph relation fields v2 It should update all morph related flat field metadata and their related field allowing its deletion 1`] = `
+{
+  "description": [
+    "Description for all",
+  ],
+  "isActive": [
+    true,
+  ],
+  "label": [
+    "field label",
+  ],
+  "name": [
+    "fieldNameOpportunityForMorphRelationSecond",
+    "fieldNamePersonForMorphRelationSecond",
+  ],
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 It should update all morph related flat field metadata and their related field allowing its deletion 2`] = `
+{
+  "description": [
+    "Description for all",
+  ],
+  "isActive": [
+    true,
+  ],
+  "label": [
+    "tata",
+    "toto",
+  ],
+  "name": [
+    "tata",
+    "toto",
+  ],
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 It should update all morph related flat field metadata and their related field allowing its deletion 3`] = `
+{
+  "description": [
+    "new description",
+  ],
+  "isActive": [
+    false,
+  ],
+  "label": [
+    "new label",
+  ],
+  "name": [
+    "fieldNameOpportunityForMorphRelationSecond",
+    "fieldNamePersonForMorphRelationSecond",
+  ],
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 It should update all morph related flat field metadata and their related field allowing its deletion 4`] = `
+{
+  "description": [
+    "Description for all",
+  ],
+  "isActive": [
+    false,
+  ],
+  "label": [
+    "tata",
+    "toto",
+  ],
+  "name": [
+    "tata",
+    "toto",
+  ],
+}
+`;

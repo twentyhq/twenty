@@ -34,10 +34,10 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
       type: FieldMetadataType.DATE,
       universalIdentifier: 'field-universal-1',
       viewFieldIds: [],
-      viewGroupIds: [],
       viewFilterIds: [],
       workspaceId,
       calendarViewIds: [viewId],
+      mainGroupByFieldMetadataViewIds: [],
       applicationId,
     });
 
@@ -50,8 +50,8 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
       viewGroupIds: [],
       workspaceId,
       calendarFieldMetadataId: mockFieldMetadata.id,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01'),
+      createdAt: new Date('2024-01-01').toISOString(),
+      updatedAt: new Date('2024-01-01').toISOString(),
       icon: 'icon',
       isCompact: false,
       name: 'View Name',

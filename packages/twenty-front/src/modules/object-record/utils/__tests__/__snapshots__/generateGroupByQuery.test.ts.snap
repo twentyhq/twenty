@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateGroupByQuery should generate valid GraphQL query for empty aggregate operations 1`] = `
+"
+    query PeopleGroupByAggregates(
+      $groupBy: [PersonGroupByInput!]!
+      $filter: PersonFilterInput
+      $orderBy: [PersonOrderByWithGroupByInput!]
+      $viewId: UUID
+      $limit: Int
+    ) {
+      peopleGroupBy(
+        groupBy: $groupBy
+        filter: $filter
+        orderBy: $orderBy
+        viewId: $viewId
+        limit: $limit
+      ) {
+        groupByDimensionValues
+      }
+    }
+  "
+`;
+
+exports[`generateGroupByQuery should generate valid GraphQL query for multiple aggregate operations 1`] = `
+"
+    query OpportunitiesGroupByAggregates(
+      $groupBy: [OpportunityGroupByInput!]!
+      $filter: OpportunityFilterInput
+      $orderBy: [OpportunityOrderByWithGroupByInput!]
+      $viewId: UUID
+      $limit: Int
+    ) {
+      opportunitiesGroupBy(
+        groupBy: $groupBy
+        filter: $filter
+        orderBy: $orderBy
+        viewId: $viewId
+        limit: $limit
+      ) {
+        groupByDimensionValues
+        totalCount
+        sumAmountAmountMicros
+        avgAmountAmountMicros
+      }
+    }
+  "
+`;
+
+exports[`generateGroupByQuery should generate valid GraphQL query for single aggregate operation 1`] = `
+"
+    query OpportunitiesGroupByAggregates(
+      $groupBy: [OpportunityGroupByInput!]!
+      $filter: OpportunityFilterInput
+      $orderBy: [OpportunityOrderByWithGroupByInput!]
+      $viewId: UUID
+      $limit: Int
+    ) {
+      opportunitiesGroupBy(
+        groupBy: $groupBy
+        filter: $filter
+        orderBy: $orderBy
+        viewId: $viewId
+        limit: $limit
+      ) {
+        groupByDimensionValues
+        sumAmountAmountMicros
+      }
+    }
+  "
+`;

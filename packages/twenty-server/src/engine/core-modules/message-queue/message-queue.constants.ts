@@ -18,4 +18,5 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   serverlessFunctionQueue = 'serverless-function-queue',
   triggerQueue = 'trigger-queue',
+  aiQueue = 'ai-queue',
 }

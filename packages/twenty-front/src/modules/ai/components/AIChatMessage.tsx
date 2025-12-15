@@ -4,14 +4,11 @@ import { useRecoilValue } from 'recoil';
 import { Avatar, IconSparkles } from 'twenty-ui/display';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
+import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
-import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -156,22 +153,18 @@ export const AIChatMessage = ({
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-
   const showError =
-    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
+    isDefined(error) && message.role === AgentMessageRole.ASSISTANT;
 
   const fileParts = message.parts.filter((part) => part.type === 'file');
 
   return (
     <StyledMessageBubble
       key={message.id}
-      isUser={message.role === AgentChatMessageRole.USER}
+      isUser={message.role === AgentMessageRole.USER}
     >
       <StyledMessageRow>
-        {message.role === AgentChatMessageRole.ASSISTANT && (
+        {message.role === AgentMessageRole.ASSISTANT && (
           <StyledAvatarContainer>
             <Avatar
               size="sm"
@@ -181,15 +174,13 @@ export const AIChatMessage = ({
             />
           </StyledAvatarContainer>
         )}
-        {message.role === AgentChatMessageRole.USER && (
+        {message.role === AgentMessageRole.USER && (
           <StyledAvatarContainer isUser>
             <Avatar size="sm" placeholder="U" type="rounded" />
           </StyledAvatarContainer>
         )}
         <StyledMessageContainer>
-          <StyledMessageText
-            isUser={message.role === AgentChatMessageRole.USER}
-          >
+          <StyledMessageText isUser={message.role === AgentMessageRole.USER}>
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
@@ -203,12 +194,7 @@ export const AIChatMessage = ({
               ))}
             </StyledFilesContainer>
           )}
-          {showError &&
-            (contextStoreCurrentObjectMetadataItemId ? (
-              <AIChatErrorMessageWithRecordsContext error={error} />
-            ) : (
-              <AIChatErrorMessage error={error} />
-            ))}
+          {showError && <AIChatErrorMessage error={error} />}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

@@ -1,0 +1,275 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a created entity 1`] = `
+{
+  "createdFlatEntityMaps": {
+    "byId": {
+      "field-id-1": {
+        "applicationId": "application-id-1",
+        "calendarViewIds": [],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "defaultValue": null,
+        "description": "default flat field metadata description",
+        "icon": "icon",
+        "id": "field-id-1",
+        "isActive": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isNullable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "isUnique": false,
+        "kanbanAggregateOperationViewIds": [],
+        "label": "flat field metadata label",
+        "mainGroupByFieldMetadataViewIds": [],
+        "morphId": null,
+        "name": "flatFieldMetadataName",
+        "objectMetadataId": "object-metadata-id-1",
+        "options": null,
+        "relationTargetFieldMetadataId": null,
+        "relationTargetObjectMetadataId": null,
+        "settings": null,
+        "standardId": null,
+        "standardOverrides": null,
+        "type": "TEXT",
+        "universalIdentifier": "universal-identifier-1",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "workspaceId": "workspace-id-1",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "universal-identifier-1": "field-id-1",
+    },
+    "universalIdentifiersByApplicationId": {
+      "application-id-1": [
+        "universal-identifier-1",
+      ],
+    },
+  },
+  "deletedFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "updatedFlatEntityMaps": {
+    "byId": {},
+  },
+}
+`;
+
+exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a deleted entity 1`] = `
+{
+  "createdFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "deletedFlatEntityMaps": {
+    "byId": {
+      "field-id-1": {
+        "applicationId": "application-id-1",
+        "calendarViewIds": [],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "defaultValue": null,
+        "description": "default flat field metadata description",
+        "icon": "icon",
+        "id": "field-id-1",
+        "isActive": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isNullable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "isUnique": false,
+        "kanbanAggregateOperationViewIds": [],
+        "label": "flat field metadata label",
+        "mainGroupByFieldMetadataViewIds": [],
+        "morphId": null,
+        "name": "flatFieldMetadataName",
+        "objectMetadataId": "object-metadata-id-1",
+        "options": null,
+        "relationTargetFieldMetadataId": null,
+        "relationTargetObjectMetadataId": null,
+        "settings": null,
+        "standardId": null,
+        "standardOverrides": null,
+        "type": "TEXT",
+        "universalIdentifier": "universal-identifier-1",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "workspaceId": "workspace-id-1",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "universal-identifier-1": "field-id-1",
+    },
+    "universalIdentifiersByApplicationId": {
+      "application-id-1": [
+        "universal-identifier-1",
+      ],
+    },
+  },
+  "updatedFlatEntityMaps": {
+    "byId": {},
+  },
+}
+`;
+
+exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an updated entity 1`] = `
+{
+  "createdFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "deletedFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "updatedFlatEntityMaps": {
+    "byId": {
+      "field-id-1": {
+        "updates": [
+          {
+            "from": false,
+            "property": "isActive",
+            "to": true,
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1`] = `
+{
+  "createdFlatEntityMaps": {
+    "byId": {
+      "field-id-3": {
+        "applicationId": "application-id-1",
+        "calendarViewIds": [],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "defaultValue": null,
+        "description": "default flat field metadata description",
+        "icon": "icon",
+        "id": "field-id-3",
+        "isActive": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isNullable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "isUnique": false,
+        "kanbanAggregateOperationViewIds": [],
+        "label": "flat field metadata label",
+        "mainGroupByFieldMetadataViewIds": [],
+        "morphId": null,
+        "name": "flatFieldMetadataName",
+        "objectMetadataId": "object-metadata-id-1",
+        "options": null,
+        "relationTargetFieldMetadataId": null,
+        "relationTargetObjectMetadataId": null,
+        "settings": null,
+        "standardId": null,
+        "standardOverrides": null,
+        "type": "TEXT",
+        "universalIdentifier": "universal-identifier-3",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "workspaceId": "workspace-id-1",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "universal-identifier-3": "field-id-3",
+    },
+    "universalIdentifiersByApplicationId": {
+      "application-id-1": [
+        "universal-identifier-3",
+      ],
+    },
+  },
+  "deletedFlatEntityMaps": {
+    "byId": {
+      "field-id-2": {
+        "applicationId": "application-id-1",
+        "calendarViewIds": [],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "defaultValue": null,
+        "description": "default flat field metadata description",
+        "icon": "icon",
+        "id": "field-id-2",
+        "isActive": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isNullable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "isUnique": false,
+        "kanbanAggregateOperationViewIds": [],
+        "label": "flat field metadata label",
+        "mainGroupByFieldMetadataViewIds": [],
+        "morphId": null,
+        "name": "flatFieldMetadataName",
+        "objectMetadataId": "object-metadata-id-1",
+        "options": null,
+        "relationTargetFieldMetadataId": null,
+        "relationTargetObjectMetadataId": null,
+        "settings": null,
+        "standardId": null,
+        "standardOverrides": null,
+        "type": "TEXT",
+        "universalIdentifier": "universal-identifier-2",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "workspaceId": "workspace-id-1",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "universal-identifier-2": "field-id-2",
+    },
+    "universalIdentifiersByApplicationId": {
+      "application-id-1": [
+        "universal-identifier-2",
+      ],
+    },
+  },
+  "updatedFlatEntityMaps": {
+    "byId": {
+      "field-id-1": {
+        "updates": [
+          {
+            "from": true,
+            "property": "isActive",
+            "to": false,
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should not detect deleted entities when inferDeletionFromMissingEntities is false 1`] = `
+{
+  "createdFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "deletedFlatEntityMaps": {
+    "byId": {},
+    "idByUniversalIdentifier": {},
+    "universalIdentifiersByApplicationId": {},
+  },
+  "updatedFlatEntityMaps": {
+    "byId": {},
+  },
+}
+`;

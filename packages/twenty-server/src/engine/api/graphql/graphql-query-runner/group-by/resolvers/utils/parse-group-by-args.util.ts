@@ -1,74 +1,73 @@
-import { isDefined } from 'class-validator';
-import {
-  FieldMetadataType,
-  ObjectRecordGroupByDateGranularity,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-
-const isGroupByDateFieldDefinition = (
-  fieldGroupByDefinition:
-    | boolean
-    | Record<string, boolean>
-    | { granularity: ObjectRecordGroupByDateGranularity }
-    | undefined,
-): fieldGroupByDefinition is {
-  granularity: ObjectRecordGroupByDateGranularity;
-} => {
-  if (
-    typeof fieldGroupByDefinition !== 'object' ||
-    !isDefined(fieldGroupByDefinition)
-  ) {
-    return false;
-  }
-  if (!('granularity' in fieldGroupByDefinition)) {
-    return false;
-  }
-
-  const granularity = fieldGroupByDefinition.granularity;
-
-  return (
-    isDefined(granularity) &&
-    typeof granularity === 'string' &&
-    Object.values(ObjectRecordGroupByDateGranularity).includes(
-      granularity as ObjectRecordGroupByDateGranularity,
-    )
-  );
-};
+import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field-definition.util';
+import { parseGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-relation-field.util';
+import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const parseGroupByArgs = (
   args: GroupByResolverArgs,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): GroupByField[] => {
   const groupByFieldNames = args.groupBy;
 
   const groupByFields: GroupByField[] = [];
 
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
   for (const fieldNames of groupByFieldNames) {
-    if (Object.keys(fieldNames).length > 1) {
-      throw new GraphqlQueryRunnerException(
+    validateSingleKeyForGroupByOrThrow({
+      groupByKeys: Object.keys(fieldNames),
+      errorMessage:
         'You cannot provide multiple fields in one GroupByInput, split them into multiple GroupByInput',
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
+    });
+
     for (const fieldName of Object.keys(fieldNames)) {
       const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName] ||
-        objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[fieldName];
-      const fieldMetadata =
-        objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+        fieldIdByName[fieldName] || fieldIdByJoinColumnName[fieldName];
+      const fieldMetadata = fieldMetadataId
+        ? flatFieldMetadataMaps.byId[fieldMetadataId]
+        : undefined;
 
       if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {
         throw new Error(`Unidentified field in groupBy: ${fieldName}`);
       }
 
+      const isGroupByRelationField =
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+        typeof fieldNames[fieldName] === 'object' &&
+        fieldNames[fieldName] !== null &&
+        !isGroupByDateFieldDefinition(fieldNames[fieldName]);
+
+      // Handle relation fields
+      if (isGroupByRelationField) {
+        parseGroupByRelationField({
+          fieldNames,
+          fieldName,
+          fieldMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          groupByFields,
+        });
+
+        continue;
+      }
+
+      // Handle date fields
       if (
         fieldMetadata.type === FieldMetadataType.DATE ||
         fieldMetadata.type === FieldMetadataType.DATE_TIME
@@ -83,11 +82,13 @@ export const parseGroupByArgs = (
           groupByFields.push({
             fieldMetadata,
             dateGranularity: fieldGroupByDefinition.granularity,
+            weekStartDay: fieldGroupByDefinition.weekStartDay,
           });
           continue;
         }
       }
 
+      // Handle regular fields and composite fields
       if (fieldNames[fieldName] === true) {
         groupByFields.push({
           fieldMetadata,
@@ -95,12 +96,12 @@ export const parseGroupByArgs = (
         });
         continue;
       } else if (typeof fieldNames[fieldName] === 'object') {
-        if (Object.keys(fieldNames[fieldName]).length > 1) {
-          throw new GraphqlQueryRunnerException(
+        validateSingleKeyForGroupByOrThrow({
+          groupByKeys: Object.keys(fieldNames[fieldName]),
+          errorMessage:
             'You cannot provide multiple subfields in one GroupByInput, split them into multiple GroupByInput',
-            GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-          );
-        }
+        });
+
         for (const subFieldName of Object.keys(fieldNames[fieldName])) {
           if (
             (fieldNames[fieldName] as Record<string, boolean>)[subFieldName] ===

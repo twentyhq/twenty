@@ -5,10 +5,11 @@ import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -18,7 +19,8 @@ export class ProcessNestedRelationsHelper {
   ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
     parentObjectRecordsAggregatedValues = {},
@@ -30,8 +32,9 @@ export class ProcessNestedRelationsHelper {
     rolePermissionConfig,
     selectedFields,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
@@ -39,13 +42,14 @@ export class ProcessNestedRelationsHelper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
+    workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedFields: Record<string, any>;
   }): Promise<void> {
     return this.processNestedRelationsV2Helper.processNestedRelations({
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
       parentObjectRecordsAggregatedValues,

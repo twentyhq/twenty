@@ -3,10 +3,10 @@ import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/de
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -390,34 +390,6 @@ describe('roles permissions', () => {
         };
 
         await assertPermissionDeniedForMemberWithMemberRole({ query });
-      });
-
-      it('should throw an error when role is not editable', async () => {
-        const query = {
-          query: `
-          mutation UpdateOneRole {
-              updateOneRole(updateRoleInput: {id: "${adminRoleId}", update: {label: "new role label (2)"}}) {
-                  id
-              }
-          }
-        `,
-        };
-
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(query)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
       });
 
       it('should update a role when user has permission to update a role (admin role)', async () => {

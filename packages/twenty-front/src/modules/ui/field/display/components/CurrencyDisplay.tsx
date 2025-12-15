@@ -23,8 +23,6 @@ export const CurrencyDisplay = ({
 }: CurrencyDisplayProps) => {
   const theme = useTheme();
 
-  const shouldDisplayCurrency = isDefined(currencyValue?.currencyCode);
-
   const CurrencyIcon = isDefined(currencyValue?.currencyCode)
     ? SETTINGS_FIELD_CURRENCY_CODES[currencyValue?.currencyCode]?.Icon
     : null;
@@ -35,10 +33,6 @@ export const CurrencyDisplay = ({
 
   const format = fieldDefinition.metadata.settings?.format;
   const { formatNumber } = useNumberFormat();
-
-  if (!shouldDisplayCurrency) {
-    return <EllipsisDisplay>{0}</EllipsisDisplay>;
-  }
 
   return (
     <EllipsisDisplay>

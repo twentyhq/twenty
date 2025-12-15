@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -22,6 +23,8 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { WorkspaceFlatServerlessFunctionMapCacheService } from 'src/engine/metadata-modules/serverless-function/services/workspace-flat-serverless-function-map-cache.service';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 @Module({
   imports: [
@@ -35,12 +38,15 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ]),
     FileModule,
     ThrottlerModule,
+    ApplicationModule,
     AuditModule,
     FeatureFlagModule,
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
     ServerlessFunctionLayerModule,
+    SubscriptionsModule,
+    TokenModule,
   ],
   providers: [
     ServerlessFunctionService,

@@ -6,20 +6,22 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
-import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { WidgetType } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -59,7 +61,13 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
+  // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
+  // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
+  const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
+  const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
+
+  const showHeader =
+    layoutMode !== 'canvas' && !isInPinnedTab && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({
@@ -86,17 +94,24 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     setIsHovered(false);
   };
 
+  const variant = getWidgetCardVariant({
+    layoutMode,
+    isInPinnedTab,
+    pageLayoutType: currentPageLayout.type,
+  });
+
   return (
     <WidgetCard
+      headerLess={!showHeader}
+      variant={variant}
+      isEditable={isPageLayoutInEditMode}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+      isEditing={isEditing}
       isDragging={isDragging}
       isResizing={isResizing}
-      layoutMode={layoutMode}
-      isEditing={isEditing}
-      pageLayoutType={currentPageLayout.type}
-      isInPinnedTab={isInPinnedTab}
-      onClick={isPageLayoutInEditMode ? handleClick : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-widget-id={widget.id}
     >
       {showHeader && (
         <WidgetCardHeader
@@ -116,14 +131,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         />
       )}
 
-      <WidgetCardContent
-        layoutMode={layoutMode}
-        pageLayoutType={currentPageLayout.type}
-        isInPinnedTab={isInPinnedTab}
-        isPageLayoutInEditMode={isPageLayoutInEditMode}
-      >
+      <WidgetCardContent variant={variant}>
         {hasAccess && <WidgetContentRenderer widget={widget} />}
-        {!hasAccess && currentPageLayout.type === PageLayoutType.DASHBOARD && (
+        {!hasAccess && (
           <IconLock
             color={theme.font.color.tertiary}
             stroke={theme.icon.stroke.sm}

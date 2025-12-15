@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -19,7 +18,6 @@ export class GlobalWorkspaceDataSourceService
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -35,15 +33,18 @@ export class GlobalWorkspaceDataSourceService
               rejectUnauthorized: false,
             }
           : undefined,
+        poolSize: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
         extra: {
           query_timeout: 10000, // 10 seconds,
-          idleTimeoutMillis: 120_000, // 2 minutes,
-          max: 4,
-          allowExitOnIdle: true,
+          idleTimeoutMillis: this.twentyConfigService.get(
+            'PG_POOL_IDLE_TIMEOUT_MS',
+          ),
+          allowExitOnIdle: this.twentyConfigService.get(
+            'PG_POOL_ALLOW_EXIT_ON_IDLE',
+          ),
         },
       },
       this.workspaceEventEmitter,
-      this.entitySchemaFactory,
     );
 
     await this.globalWorkspaceDataSource.initialize();

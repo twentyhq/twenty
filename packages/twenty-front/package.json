@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "NODE_ENV=production VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build": "NODE_ENV=production VITE_DISABLE_TYPESCRIPT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
     "start:prod": "NODE_ENV=production npx serve -s build",
     "tsup": "npx tsup"
   },
@@ -55,6 +55,7 @@
     "@react-email/components": "^0.5.3",
     "@react-pdf/renderer": "^4.1.6",
     "@scalar/api-reference-react": "^0.4.36",
+    "@sentry/react": "^10.27.0",
     "@tiptap/core": "^3.4.2",
     "@tiptap/extension-bold": "^3.4.2",
     "@tiptap/extension-document": "^3.4.2",
@@ -146,6 +147,8 @@
     "optionator": "^0.9.1",
     "playwright": "^1.56.1",
     "rollup-plugin-visualizer": "^5.14.0",
+    "vite-plugin-checker": "^0.10.2",
+    "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^4.2.1"
   }
 }

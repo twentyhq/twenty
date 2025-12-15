@@ -40,13 +40,14 @@ export class MergeManyResolverFactory
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.objectMetadataMaps,
+            internalContext.flatObjectMetadataMaps,
+            internalContext.flatFieldMetadataMaps,
+            internalContext.objectIdByNameSingular,
           );
 
         return typeORMObjectRecordsParser.processRecord({
           objectRecord: record,
-          objectName:
-            internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+          objectName: internalContext.flatObjectMetadata.nameSingular,
           take: 1,
           totalCount: 1,
         });

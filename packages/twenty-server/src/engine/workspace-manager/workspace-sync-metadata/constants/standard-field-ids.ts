@@ -102,7 +102,7 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   externalUpdatedAt: '20202020-b355-4c18-8825-ef42c8a5a755',
   description: '20202020-52c4-4266-a98f-e90af0b4d271',
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
-  iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
+  iCalUid: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
@@ -157,52 +157,26 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   connectionParameters: '20202020-a1b2-46be-814f-6228af16c481',
 } as const;
 
-export const EVENT_STANDARD_FIELD_IDS = {
-  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
-  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
-  person: '20202020-c414-45b9-a60a-ac27aa96229e',
-  company: '20202020-04ad-4221-a744-7a8278a5ce20',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
-} as const;
-
-export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
-  name: '20202020-2462-4b9d-b5d9-745febb3b095',
-  properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
-  context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
-  objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
-  objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
-  recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
-  workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
-} as const;
-
-export const BEHAVIORAL_EVENT_STANDARD_FIELD_IDS = {
-  name: '20202020-2462-4b9d-b5d9-745febb3b095',
-  properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
-  context: '20202020-bd62-4b5b-8385-6caeed8f8078',
-  objectName: '20202020-a744-406c-a2e1-9d83d74f4341',
-  recordId: '20202020-6d8b-4ca5-9869-f882cb335673',
-} as const;
-
 export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   happensAt: '20202020-9526-4993-b339-c4318c4d39f0',
   type: '20202020-5e7b-4ccd-8b8a-86b94b474134',
   name: '20202020-7207-46e8-9dab-849505ae8497',
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
-  person: '20202020-c414-45b9-a60a-ac27aa96229f',
-  company: '20202020-04ad-4221-a744-7a8278a5ce21',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd527',
-  task: '20202020-b2f5-415c-9135-a31dfe49501b',
-  note: '20202020-ec55-4135-8da5-3a20badc0156',
-  workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
-  workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
-  workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
-  dashboard: '20202020-7864-48f5-af7c-9e4b60140948',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
+  targetPerson: '20202020-c414-45b9-a60a-ac27aa96229f',
+  targetCompany: '20202020-04ad-4221-a744-7a8278a5ce21',
+  targetOpportunity: '20202020-7664-4a35-a3df-580d389fd527',
+  targetTask: '20202020-b2f5-415c-9135-a31dfe49501b',
+  targetNote: '20202020-ec55-4135-8da5-3a20badc0156',
+  targetWorkflow: '20202020-616c-4ad3-a2e9-c477c341e295',
+  targetWorkflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
+  targetWorkflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
+  targetDashboard: '20202020-7864-48f5-af7c-9e4b60140948',
+  targetCustom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
+  targetMorphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -443,6 +417,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   kanbanAggregateOperation: '20202020-8da2-45de-a731-61bed84b17a8',
   kanbanAggregateOperationFieldMetadataId:
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
+  mainGroupByFieldMetadataId: '20202020-f782-4f89-96eb-083a02cca887',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',
@@ -537,7 +512,6 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
   numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
-
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
@@ -568,7 +542,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   activity: ACTIVITY_STANDARD_FIELD_IDS,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
-  behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
   calendarChannelEventAssociation:
     CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS,
   calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
@@ -579,7 +552,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
   dashboard: DASHBOARD_STANDARD_FIELD_IDS,
   favorite: FAVORITE_STANDARD_FIELD_IDS,
-  auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
   messageChannelMessageAssociation:
     MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,

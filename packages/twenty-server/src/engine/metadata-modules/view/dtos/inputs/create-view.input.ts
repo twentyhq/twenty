@@ -60,6 +60,11 @@ export class CreateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  shouldHideEmptyGroups?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,
@@ -91,6 +96,11 @@ export class CreateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string;
 
   @IsOptional()
   @IsEnum(ViewVisibility)

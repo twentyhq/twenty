@@ -73,6 +73,8 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   NUMBER: [
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     RecordFilterOperand.GREATER_THAN_OR_EQUAL,
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,

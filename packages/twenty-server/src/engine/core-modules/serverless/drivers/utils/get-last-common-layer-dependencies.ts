@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
 import { join } from 'path';
 
+import { type PackageJson } from 'twenty-shared/application';
+
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
-import { type PackageJson } from 'src/engine/core-modules/application/types/application.types';
 
 export type LayerDependencies = {
   packageJson: PackageJson;

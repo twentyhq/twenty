@@ -4,6 +4,7 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   relativeDateFilterSchema,
@@ -21,6 +22,7 @@ const StyledContainer = styled.div<{ noPadding: boolean }>`
 `;
 
 type RelativeDatePickerHeaderProps = {
+  instanceId: string;
   direction: RelativeDateFilterDirection;
   amount?: Nullable<number>;
   unit: RelativeDateFilterUnit;
@@ -31,6 +33,7 @@ type RelativeDatePickerHeaderProps = {
 };
 
 export const RelativeDatePickerHeader = ({
+  instanceId,
   direction,
   unit,
   amount,
@@ -41,8 +44,10 @@ export const RelativeDatePickerHeader = ({
 }: RelativeDatePickerHeaderProps) => {
   const amountString = amount?.toString() ?? '';
 
-  const textInputValue = direction === 'THIS' ? '' : amountString;
-  const textInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
+  const amountTextValue = direction === 'THIS' ? '' : amountString;
+  const amountInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
+
+  const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
   const isUnitPlural = amount && amount > 1 && direction !== 'THIS';
   const unitSelectOptions = RELATIVE_DATE_UNITS_SELECT_OPTIONS.map((unit) => ({
@@ -53,11 +58,19 @@ export const RelativeDatePickerHeader = ({
   return (
     <StyledContainer noPadding={isFormField ?? false}>
       <Select
-        dropdownId="direction-select"
+        dropdownId={`direction-select-${instanceId}`}
         value={direction}
         onChange={(newDirection) => {
           if (amount === undefined && newDirection !== 'THIS') {
             return;
+          }
+
+          if (draftAmountValue === '') {
+            setDraftAmountValue('1');
+          }
+
+          if (newDirection === 'THIS') {
+            setDraftAmountValue('');
           }
 
           onChange?.({
@@ -71,11 +84,13 @@ export const RelativeDatePickerHeader = ({
         disabled={readonly}
       />
       <SettingsTextInput
-        instanceId="relative-date-picker-amount"
+        instanceId={`relative-date-picker-amount-${instanceId}`}
         width={50}
-        value={textInputValue}
+        value={draftAmountValue}
         onChange={(text) => {
           const amountString = text.replace(/[^0-9]|^0+/g, '');
+          setDraftAmountValue(amountString);
+
           const amount = parseInt(amountString);
 
           const valueParts = {
@@ -88,15 +103,19 @@ export const RelativeDatePickerHeader = ({
             onChange?.(valueParts);
           }
         }}
-        placeholder={textInputPlaceholder}
+        placeholder={amountInputPlaceholder}
         disabled={direction === 'THIS' || readonly}
       />
       <Select
-        dropdownId="unit-select"
+        dropdownId={`unit-select-${instanceId}`}
         value={unit}
         onChange={(newUnit) => {
           if (direction !== 'THIS' && amount === undefined) {
             return;
+          }
+
+          if (draftAmountValue === '' && direction !== 'THIS') {
+            setDraftAmountValue('1');
           }
 
           onChange?.({

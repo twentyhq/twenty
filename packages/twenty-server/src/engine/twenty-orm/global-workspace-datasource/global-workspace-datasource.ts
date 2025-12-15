@@ -4,7 +4,6 @@ import {
   DataSource,
   type DataSourceOptions,
   type EntityMetadata,
-  type EntitySchema,
   type EntityTarget,
   type ObjectLiteral,
   type QueryRunner,
@@ -12,9 +11,7 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
-import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
 import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
-import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -23,12 +20,10 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { type EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/workspace-context.storage';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -36,29 +31,17 @@ type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
-const ENTITY_METADATA_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
-
-type CachedEntityMetadata = {
-  entityMetadataMap: Map<EntityTarget<ObjectLiteral>, EntityMetadata>;
-  timestamp: number;
-};
-
 export class GlobalWorkspaceDataSource extends DataSource {
-  private entityMetadataCache: Map<string, CachedEntityMetadata>;
-  private eventEmitterService: WorkspaceEventEmitter;
-  private entitySchemaFactory: EntitySchemaFactory;
+  readonly eventEmitterService: WorkspaceEventEmitter;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
   constructor(
     options: DataSourceOptions,
     eventEmitterService: WorkspaceEventEmitter,
-    entitySchemaFactory: EntitySchemaFactory,
   ) {
     super(options);
     this.eventEmitterService = eventEmitterService;
-    this.entitySchemaFactory = entitySchemaFactory;
-    this.entityMetadataCache = new Map();
     this._isConstructing = false;
 
     Object.defineProperty(this, 'manager', {
@@ -97,17 +80,9 @@ export class GlobalWorkspaceDataSource extends DataSource {
     target: EntityTarget<ObjectLiteral>,
   ): EntityMetadata | undefined {
     const context = getWorkspaceContext();
-    const { authContext, metadataVersion } = context;
-    const workspaceId = authContext.workspace.id;
-    const cacheKey = `${workspaceId}-${metadataVersion}`;
+    const { entityMetadatas } = context;
 
-    const cachedEntityMetadata = this.getCachedEntityMetadata(cacheKey);
-
-    if (!cachedEntityMetadata) {
-      return undefined;
-    }
-
-    return cachedEntityMetadata.entityMetadataMap.get(target);
+    return entityMetadatas.find((metadata) => metadata.target === target);
   }
 
   override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
@@ -127,18 +102,7 @@ export class GlobalWorkspaceDataSource extends DataSource {
       return super.createEntityManager(queryRunner) as WorkspaceEntityManager;
     }
 
-    const context = getWorkspaceContext();
-
-    return new WorkspaceEntityManager(
-      {
-        workspaceId: context.authContext.workspace.id,
-        objectMetadataMaps: context.objectMetadataMaps,
-        featureFlagsMap: context.featureFlagsMap,
-        eventEmitterService: this.eventEmitterService,
-      },
-      this,
-      queryRunner,
-    );
+    return new WorkspaceEntityManager(this, queryRunner);
   }
 
   override createQueryRunner(
@@ -280,95 +244,5 @@ export class GlobalWorkspaceDataSource extends DataSource {
     }
 
     return super.query(query, parameters, queryRunner);
-  }
-
-  async buildWorkspaceMetadata(
-    workspaceId: string,
-    metadataVersion: number,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ): Promise<void> {
-    const cacheKey = `${workspaceId}-${metadataVersion}`;
-
-    if (this.getCachedEntityMetadata(cacheKey)) {
-      return;
-    }
-
-    this.clearWorkspaceEntityMetadataCache(workspaceId);
-
-    const entitySchemas = await Promise.all(
-      Object.values(objectMetadataMaps.byId)
-        .filter(isDefined)
-        .map((objectMetadata) =>
-          this.entitySchemaFactory.create(
-            workspaceId,
-            objectMetadata,
-            objectMetadataMaps,
-          ),
-        ),
-    );
-
-    const entityMetadatas = this.buildMetadatasFromSchemas(entitySchemas);
-
-    const metadataMap = new Map<EntityTarget<ObjectLiteral>, EntityMetadata>();
-
-    for (const metadata of entityMetadatas) {
-      metadataMap.set(metadata.target, metadata);
-    }
-
-    this.entityMetadataCache.set(cacheKey, {
-      entityMetadataMap: metadataMap,
-      timestamp: Date.now(),
-    });
-  }
-
-  private clearWorkspaceEntityMetadataCache(workspaceId: string): void {
-    for (const key of this.entityMetadataCache.keys()) {
-      if (key.startsWith(`${workspaceId}-`)) {
-        this.entityMetadataCache.delete(key);
-      }
-    }
-  }
-
-  private buildMetadatasFromSchemas(
-    entitySchemas: EntitySchema[],
-  ): EntityMetadata[] {
-    const transformer = new EntitySchemaTransformer();
-    const metadataArgsStorage = transformer.transform(entitySchemas);
-
-    const entityMetadataBuilder = new EntityMetadataBuilder(
-      this,
-      metadataArgsStorage,
-    );
-
-    const entityMetadatas = entityMetadataBuilder.build();
-
-    return entityMetadatas;
-  }
-
-  hasWorkspaceEntityMetadataCacheForVersion(
-    workspaceId: string,
-    metadataVersion: number,
-  ): boolean {
-    const cacheKey = `${workspaceId}-${metadataVersion}`;
-
-    return !!this.getCachedEntityMetadata(cacheKey);
-  }
-
-  private getCachedEntityMetadata(
-    cacheKey: string,
-  ): CachedEntityMetadata | undefined {
-    const cached = this.entityMetadataCache.get(cacheKey);
-
-    if (!cached) {
-      return undefined;
-    }
-
-    if (Date.now() - cached.timestamp > ENTITY_METADATA_CACHE_TTL_MS) {
-      this.entityMetadataCache.delete(cacheKey);
-
-      return undefined;
-    }
-
-    return cached;
   }
 }

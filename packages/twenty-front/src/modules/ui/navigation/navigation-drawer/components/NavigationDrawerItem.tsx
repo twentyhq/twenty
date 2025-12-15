@@ -17,6 +17,7 @@ import {
   AppTooltip,
   type IconComponent,
   Label,
+  OverflowingTextWithTooltip,
   type TablerIconsProps,
   TooltipDelay,
   TooltipPosition,
@@ -51,6 +52,7 @@ export type NavigationDrawerItemProps = {
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
   mouseUpNavigation?: boolean;
+  preventCollapseOnMobile?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -141,11 +143,6 @@ const StyledLabelParent = styled.div`
   min-width: 0px;
   overflow: hidden;
   text-overflow: clip;
-`;
-const StyledEllipsisContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledItemLabel = styled.span`
@@ -267,6 +264,7 @@ export const NavigationDrawerItem = ({
   isRightOptionsDropdownOpen,
   triggerEvent,
   mouseUpNavigation = false,
+  preventCollapseOnMobile = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -282,7 +280,7 @@ export const NavigationDrawerItem = ({
   );
 
   const handleMobileNavigation = () => {
-    if (isMobile) {
+    if (isMobile && !preventCollapseOnMobile) {
       setIsNavigationDrawerExpanded(false);
     }
   };
@@ -342,15 +340,22 @@ export const NavigationDrawerItem = ({
           )}
 
           <StyledLabelParent>
-            <StyledEllipsisContainer>
-              <StyledItemLabel>{label}</StyledItemLabel>
-              {secondaryLabel && (
-                <StyledItemSecondaryLabel>
-                  {' · '}
-                  {secondaryLabel}
-                </StyledItemSecondaryLabel>
-              )}
-            </StyledEllipsisContainer>
+            <OverflowingTextWithTooltip
+              text={
+                <>
+                  <StyledItemLabel>{label}</StyledItemLabel>
+                  {secondaryLabel && (
+                    <StyledItemSecondaryLabel>
+                      {' · '}
+                      {secondaryLabel}
+                    </StyledItemSecondaryLabel>
+                  )}
+                </>
+              }
+              tooltipContent={
+                secondaryLabel ? `${label} · ${secondaryLabel}` : label
+              }
+            />
           </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}

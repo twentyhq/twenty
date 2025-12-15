@@ -3,6 +3,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -116,6 +117,10 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new NotFoundError(error.message);
       case ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID:
+        throw new InternalServerError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {

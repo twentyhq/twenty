@@ -1,9 +1,9 @@
 import { type ReasoningUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { type AgentChatMessagePart } from '~/generated/graphql';
+import { type AgentMessagePart } from '~/generated/graphql';
 
 export const mapDBPartToUIMessagePart = (
-  part: AgentChatMessagePart,
+  part: AgentMessagePart,
 ): ExtendedUIMessagePart => {
   switch (part.type) {
     case 'text':
