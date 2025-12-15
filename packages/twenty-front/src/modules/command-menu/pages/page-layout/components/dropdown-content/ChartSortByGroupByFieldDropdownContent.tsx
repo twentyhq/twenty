@@ -4,6 +4,7 @@ import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layou
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -80,7 +81,15 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const availableOptions = AGGREGATE_SORT_BY_OPTIONS.filter((option) => {
     const isManualSort = option.value === GraphOrderBy.MANUAL;
 
+    const isPositionSort =
+      option.value === GraphOrderBy.FIELD_POSITION_ASC ||
+      option.value === GraphOrderBy.FIELD_POSITION_DESC;
+
     if (isManualSort && !isSecondaryAxisSelectField) {
+      return false;
+    }
+
+    if (isPositionSort && !isSecondaryAxisSelectField) {
       return false;
     }
 
@@ -113,7 +122,13 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               })}
               selected={configuration.secondaryAxisOrderBy === sortOption.value}
               focused={selectedItemId === sortOption.value}
-              LeftIcon={sortOption.icon}
+              LeftIcon={
+                sortOption.icon ??
+                getSortIconForFieldType({
+                  fieldType: secondaryAxisField?.type,
+                  orderBy: sortOption.value,
+                })
+              }
               onClick={() => {
                 handleSelectSortOption(sortOption.value);
               }}

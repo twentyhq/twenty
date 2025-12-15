@@ -1,14 +1,26 @@
-import { IconArrowDown, IconArrowUp, IconHandMove } from 'twenty-ui/display';
+import {
+  IconHandMove,
+  IconSortAscending,
+  IconSortDescending,
+} from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated/graphql';
 
 export const AGGREGATE_SORT_BY_OPTIONS = [
   {
     value: GraphOrderBy.FIELD_ASC,
-    icon: IconArrowUp,
+    icon: null,
   },
   {
     value: GraphOrderBy.FIELD_DESC,
-    icon: IconArrowDown,
+    icon: null,
+  },
+  {
+    value: GraphOrderBy.FIELD_POSITION_ASC,
+    icon: IconSortAscending,
+  },
+  {
+    value: GraphOrderBy.FIELD_POSITION_DESC,
+    icon: IconSortDescending,
   },
   {
     value: GraphOrderBy.MANUAL,

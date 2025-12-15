@@ -1,8 +1,10 @@
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
+import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
 export const useGraphGroupBySortOptionLabels = ({
@@ -35,15 +37,24 @@ export const useGraphGroupBySortOptionLabels = ({
       objectMetadataItems,
     });
 
+    const groupBySortLabelSuffix = getSortLabelSuffixForFieldType({
+      fieldType: field?.type,
+      orderBy: graphOrderBy,
+    });
+
     switch (graphOrderBy) {
       case GraphOrderBy.FIELD_ASC:
-        return `${fieldLabel} ${t`Ascending`}`;
       case GraphOrderBy.FIELD_DESC:
-        return `${fieldLabel} ${t`Descending`}`;
+      case GraphOrderBy.FIELD_POSITION_ASC:
+      case GraphOrderBy.FIELD_POSITION_DESC:
+        return `${fieldLabel} ${groupBySortLabelSuffix}`;
+      case GraphOrderBy.VALUE_ASC:
+      case GraphOrderBy.VALUE_DESC:
+        return '';
       case GraphOrderBy.MANUAL:
         return t`Manual`;
       default:
-        return '';
+        assertUnreachable(graphOrderBy);
     }
   };
 

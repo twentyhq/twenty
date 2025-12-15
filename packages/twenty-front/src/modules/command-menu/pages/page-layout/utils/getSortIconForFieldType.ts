@@ -28,10 +28,24 @@ export const getSortIconForFieldType = ({
   fieldType,
   orderBy,
 }: {
-  fieldType: FieldMetadataType;
+  fieldType: FieldMetadataType | undefined;
   orderBy: GraphOrderBy;
 }): IconComponent => {
-  const isAscending = orderBy === GraphOrderBy.FIELD_ASC;
+  const isAscending =
+    orderBy === GraphOrderBy.FIELD_ASC ||
+    orderBy === GraphOrderBy.FIELD_POSITION_ASC;
+
+  const isPositionSort =
+    orderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+    orderBy === GraphOrderBy.FIELD_POSITION_DESC;
+
+  if (isPositionSort) {
+    return isAscending ? IconSortAscending : IconSortDescending;
+  }
+
+  if (!fieldType) {
+    return isAscending ? IconSortAscending : IconSortDescending;
+  }
 
   if (TEXT_FIELD_TYPES.includes(fieldType)) {
     return isAscending ? IconSortAscendingLetters : IconSortDescendingLetters;
