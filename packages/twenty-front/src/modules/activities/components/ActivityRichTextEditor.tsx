@@ -18,33 +18,27 @@ import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/com
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
-import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
-import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
-import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
-import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
+import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
+import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
+import { prepareBodyWithSignedUrls } from '@/ui/input/editor/utils/prepareBodyWithSignedUrls';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import type { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
-import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ActivityRichTextEditorProps = {
@@ -72,14 +66,6 @@ export const ActivityRichTextEditor = ({
     (field) => field.name === 'bodyV2',
   );
 
-  const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-  });
-
-  const { restoreManyRecords: restoreAttachments } = useRestoreManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-  });
-
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -102,18 +88,8 @@ export const ActivityRichTextEditor = ({
     },
   });
 
-  const { fetchAllRecords: findSoftDeletedAttachments } =
-    useLazyFetchAllRecords({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
-      filter: {
-        deletedAt: {
-          is: 'NOT_NULL',
-        },
-      },
-    });
-  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-  });
+  const { syncAttachments } = useAttachmentSync(attachments);
+
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
   });
@@ -155,37 +131,13 @@ export const ActivityRichTextEditor = ({
     });
   };
 
-  const prepareBody = (newStringifiedBody: string) => {
-    if (!newStringifiedBody) return newStringifiedBody;
-
-    const body = JSON.parse(newStringifiedBody);
-
-    const bodyWithSignedPayload = body.map((block: any) => {
-      if (block.type !== 'image' || !block.props.url) {
-        return block;
-      }
-
-      const imageProps = block.props;
-      const imageUrl = new URL(imageProps.url);
-
-      return {
-        ...block,
-        props: {
-          ...imageProps,
-          url: `${imageUrl.toString()}`,
-        },
-      };
-    });
-    return JSON.stringify(bodyWithSignedPayload);
-  };
-
   const handlePersistBody = useCallback(
     (activityBody: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
 
-      persistBodyDebounced(prepareBody(activityBody));
+      persistBodyDebounced(prepareBodyWithSignedUrls(activityBody));
     },
     [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
   );
@@ -225,60 +177,17 @@ export const ActivityRichTextEditor = ({
 
         handlePersistBody(newStringifiedBody);
 
-        const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
+        await syncAttachments(
           newStringifiedBody,
-          attachments,
           oldActivity?.bodyV2.blocknote,
         );
-
-        if (attachmentIdsToDelete.length > 0) {
-          await deleteAttachments({
-            recordIdsToDelete: attachmentIdsToDelete,
-          });
-        }
-
-        const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
-          newStringifiedBody,
-          attachments,
-        );
-
-        if (attachmentPathsToRestore.length > 0) {
-          const softDeletedAttachments =
-            (await findSoftDeletedAttachments()) as Attachment[];
-
-          const attachmentIdsToRestore = filterAttachmentsToRestore(
-            attachmentPathsToRestore,
-            softDeletedAttachments,
-          );
-
-          await restoreAttachments({
-            idsToRestore: attachmentIdsToRestore,
-          });
-        }
-        const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
-          newStringifiedBody,
-          attachments,
-        );
-        if (attachmentsToUpdate.length > 0) {
-          for (const attachmentToUpdate of attachmentsToUpdate) {
-            if (!attachmentToUpdate.id) continue;
-            await updateOneAttachment({
-              idToUpdate: attachmentToUpdate.id,
-              updateOneRecordInput: { name: attachmentToUpdate.name },
-            });
-          }
-        }
       },
     [
-      attachments,
       activityId,
       cache,
       objectMetadataItemActivity,
       handlePersistBody,
-      deleteAttachments,
-      restoreAttachments,
-      findSoftDeletedAttachments,
-      updateOneAttachment,
+      syncAttachments,
     ],
   );
 
@@ -291,35 +200,14 @@ export const ActivityRichTextEditor = ({
   };
 
   const initialBody = useMemo(() => {
-    const blocknote = activity?.bodyV2?.blocknote;
-
-    if (
-      isDefined(activity) &&
-      isNonEmptyString(blocknote) &&
-      blocknote !== '{}'
-    ) {
-      let parsedBody: PartialBlock[] | undefined = undefined;
-
-      // TODO: Remove this once we have removed the old rich text
-      try {
-        parsedBody = JSON.parse(blocknote);
-      } catch {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
-        );
-        // eslint-disable-next-line no-console
-        console.warn(blocknote);
-      }
-
-      if (isArray(parsedBody) && parsedBody.length === 0) {
-        return undefined;
-      }
-
-      return parsedBody;
+    if (!isDefined(activity)) {
+      return undefined;
     }
 
-    return undefined;
+    return parseInitialBlocknote(
+      activity?.bodyV2?.blocknote,
+      `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
+    );
   }, [activity, activityId]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
@@ -431,10 +319,7 @@ export const ActivityRichTextEditor = ({
             type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
           },
           focusId: activityId,
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-            enableGlobalHotkeysWithModifiers: true,
-          },
+          globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
         });
       },
     [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],
