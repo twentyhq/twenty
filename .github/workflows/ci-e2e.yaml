@@ -77,7 +77,7 @@ jobs:
 
     - name: Setup environment files
       run: |
-        cp packages/twenty-front/.env.example packages/twenty-front/.env
+        cp packages/twenty-front/.env.test packages/twenty-front/.env
         npx nx reset:env twenty-server
 
     - name: Build frontend
@@ -103,7 +103,7 @@ jobs:
         npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
         echo "Waiting for frontend to be ready..."
         timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
-        
+
     - name: Start worker
       run: |
         npx nx run twenty-server:worker &
