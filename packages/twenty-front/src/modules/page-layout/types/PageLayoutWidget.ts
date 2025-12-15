@@ -5,7 +5,7 @@ import { type Nullable } from 'twenty-shared/types';
 import {
   type PageLayoutWidget as PageLayoutWidgetGenerated,
   type WidgetConfiguration,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export type PageLayoutWidget = Omit<
   PageLayoutWidgetGenerated,
