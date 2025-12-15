@@ -73,7 +73,8 @@ export const Success: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Completed')).toBeVisible();
-    expect(await canvas.findByText(/Total Revenue/)).toBeVisible();
+    // Output content is inside a scrollable container
+    expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
   },
 };
 
@@ -116,9 +117,11 @@ export const WithImageFiles: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(await canvas.findByText('Generated Files')).toBeVisible();
-    expect(await canvas.findByText('revenue_chart.png')).toBeVisible();
-    expect(await canvas.findByText('pie_chart.png')).toBeVisible();
+    // Text includes file count: "Generated Files (2)"
+    expect(await canvas.findByText(/Generated Files/)).toBeInTheDocument();
+    // Filenames may be truncated, check by title attribute
+    expect(await canvas.findByTitle('revenue_chart.png')).toBeInTheDocument();
+    expect(await canvas.findByTitle('pie_chart.png')).toBeInTheDocument();
   },
 };
 
@@ -153,8 +156,9 @@ print("Files exported successfully!")`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(await canvas.findByText('report.csv')).toBeVisible();
-    expect(await canvas.findByText('data.json')).toBeVisible();
+    // Filenames may be truncated, check by title attribute
+    expect(await canvas.findByTitle('report.csv')).toBeInTheDocument();
+    expect(await canvas.findByTitle('data.json')).toBeInTheDocument();
   },
 };
 
