@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveFieldMetadataIdEntityGroup1765808791153
+export class RemoveFieldMetadataIdInViewGroup1765808791153
   implements MigrationInterface
 {
-  name = 'RemoveFieldMetadataIdEntityGroup1765808791153';
+  name = 'RemoveFieldMetadataIdInViewGroup1765808791153';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

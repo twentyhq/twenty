@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
-import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-view-main-group-by-field-metadata-id.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
@@ -59,7 +58,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   ],
   providers: [
     CleanEmptyStringNullInTextFieldsCommand,
-    BackfillViewMainGroupByFieldMetadataIdCommand,
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     RenameIndexNameCommand,
@@ -69,7 +67,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   ],
   exports: [
     CleanEmptyStringNullInTextFieldsCommand,
-    BackfillViewMainGroupByFieldMetadataIdCommand,
     BackfillPageLayoutUniversalIdentifiersCommand,
     DeduplicateRoleTargetsCommand,
     RenameIndexNameCommand,
