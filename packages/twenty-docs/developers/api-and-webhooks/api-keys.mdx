@@ -33,6 +33,25 @@ Since your API key gives access to sensitive information, you shouldn't share it
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
 
+### Assign a Role to an API Key
+
+By default, API keys have full access to your workspace data. For better security, you can assign a specific role to limit what each API key can access or modify.
+
+1. Go to **Settings → Roles**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Confirm the assignment
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+**Best practice**: For production integrations, always assign a specific role with only the permissions needed. This follows the principle of least privilege and reduces risk if the key is compromised.
+</Note>
+
+For more details on creating and managing roles, see [Permissions](/user-guide/permissions-access/capabilities/permissions).
+
 ### Manage API Keys
 
 **Regenerate an API Key:**

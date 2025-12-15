@@ -154,9 +154,41 @@ Control access to general workspace actions:
 
 ## Assigning Roles to API Keys and AI Agents
 
-Roles can also be assigned to:
-- **API Keys**: Control what actions API integrations can perform
-- **AI Agents**: Define permissions for AI-powered automations
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
 
-{/* TODO: Detail how to assign roles to API keys under Settings → API and Webhooks */}
-{/* TODO: Detail how to assign roles to AI agents once AI features are released */}
+### Why Assign Roles to API Keys and AI Agents?
+
+- **Security**: Limit what automated processes can access or modify
+- **Compliance**: Ensure integrations only touch the data they need
+- **Control**: Prevent accidental data changes from misconfigured automations
+- **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. Go to **Settings → Roles**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Confirm the assignment
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. Go to **Settings → Roles**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Confirm the assignment
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>
