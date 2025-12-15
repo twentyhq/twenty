@@ -1,9 +1,9 @@
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
 import {
   CodeInterpreterDriverType,
   type CodeInterpreterModuleOptions,
 } from './code-interpreter.interface';
-
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const codeInterpreterModuleFactory = async (
   twentyConfigService: TwentyConfigService,
@@ -41,4 +41,3 @@ export const codeInterpreterModuleFactory = async (
       );
   }
 };
-

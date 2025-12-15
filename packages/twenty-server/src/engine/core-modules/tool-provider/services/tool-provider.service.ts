@@ -13,6 +13,7 @@ import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provid
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
+import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
@@ -42,6 +43,7 @@ export class ToolProviderService {
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
+    private readonly codeInterpreterTool: CodeInterpreterTool,
     // Database CRUD tools
     private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
     private readonly createRecordService: CreateRecordService,
@@ -84,6 +86,13 @@ export class ToolProviderService {
         {
           tool: this.searchHelpCenterTool,
           // No permission flag - available to all
+        },
+      ],
+      [
+        ToolType.CODE_INTERPRETER,
+        {
+          tool: this.codeInterpreterTool,
+          flag: PermissionFlagType.CODE_INTERPRETER_TOOL,
         },
       ],
     ]);
@@ -164,6 +173,7 @@ export class ToolProviderService {
 
   private async getActionTools(spec: ToolSpecification): Promise<ToolSet> {
     const tools: ToolSet = {};
+    const executionContext = { workspaceId: spec.workspaceId };
 
     for (const [toolType, { tool, flag }] of this.actionTools) {
       if (!flag) {
@@ -172,7 +182,7 @@ export class ToolProviderService {
           description: tool.description,
           inputSchema: tool.inputSchema,
           execute: async (parameters: { input: ToolInput }) =>
-            tool.execute(parameters.input, spec.workspaceId),
+            tool.execute(parameters.input, executionContext),
         };
       } else if (spec.rolePermissionConfig && spec.workspaceId) {
         const hasPermission = await this.permissionsService.hasToolPermission(
@@ -186,7 +196,7 @@ export class ToolProviderService {
             description: tool.description,
             inputSchema: tool.inputSchema,
             execute: async (parameters: { input: ToolInput }) =>
-              tool.execute(parameters.input, spec.workspaceId),
+              tool.execute(parameters.input, executionContext),
           };
         }
       }

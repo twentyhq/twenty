@@ -14,6 +14,8 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
@@ -50,6 +52,7 @@ export type ChatExecutionOptions = {
   userWorkspaceId: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 export type ChatExecutionResult = {
@@ -83,14 +86,22 @@ export class ChatExecutionService {
     userWorkspaceId,
     messages,
     browsingContext,
+    onCodeExecutionUpdate,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId } =
+    const { actorContext, roleId, userId } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
       );
 
-    const toolContext = { workspaceId: workspace.id, roleId, actorContext };
+    const toolContext = {
+      workspaceId: workspace.id,
+      roleId,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
+    };
 
     const contextString = browsingContext
       ? this.buildContextFromBrowsingContext(workspace, browsingContext)

@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createUIMessageStream, pipeUIMessageStreamToResponse } from 'ai';
 import { type Response } from 'express';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type CodeExecutionData,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -64,12 +67,22 @@ export class AgentChatStreamingService {
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
+          // Create callback to stream code execution updates
+          const onCodeExecutionUpdate = (data: CodeExecutionData) => {
+            writer.write({
+              type: 'data-code-execution' as const,
+              id: `code-execution-${data.executionId}`,
+              data,
+            });
+          };
+
           const { stream, modelConfig } =
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId,
               messages,
               browsingContext,
+              onCodeExecutionUpdate,
             });
 
           // Write initial status

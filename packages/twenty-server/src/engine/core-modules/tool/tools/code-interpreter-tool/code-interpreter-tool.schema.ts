@@ -23,4 +23,3 @@ export const CodeInterpreterToolParametersZodSchema = z.object({
     ),
   input: CodeInterpreterInputZodSchema,
 });
-

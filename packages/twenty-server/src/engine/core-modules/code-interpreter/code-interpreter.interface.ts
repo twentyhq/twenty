@@ -28,4 +28,3 @@ export type CodeInterpreterModuleAsyncOptions = {
   ) => CodeInterpreterModuleOptions | Promise<CodeInterpreterModuleOptions>;
 } & Pick<ModuleMetadata, 'imports'> &
   Pick<FactoryProvider, 'inject'>;
-

@@ -1,20 +1,38 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  type CodeExecutionData,
+  type CodeExecutionFile,
+  type CodeExecutionState,
+} from 'twenty-shared/ai';
 import { v4 } from 'uuid';
 
-import { type InputFile } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
+import {
+  type InputFile,
+  type OutputFile,
+} from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import {
+  type AccessTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { CodeInterpreterToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
+import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
 import { type CodeInterpreterInput } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  type Tool,
+  type ToolExecutionContext,
+} from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class CodeInterpreterTool implements Tool {
@@ -31,13 +49,49 @@ export class CodeInterpreterTool implements Tool {
     private readonly fileService: FileService,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
+
+  private buildExecutionState(
+    executionId: string,
+    state: CodeExecutionState,
+    code: string,
+    stdout: string,
+    stderr: string,
+    files: CodeExecutionFile[],
+    extras?: { exitCode?: number; executionTimeMs?: number; error?: string },
+  ): CodeExecutionData {
+    return {
+      executionId,
+      state,
+      code,
+      language: 'python',
+      stdout,
+      stderr,
+      files,
+      ...extras,
+    };
+  }
 
   async execute(
     parameters: ToolInput,
-    workspaceId: string,
+    context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    const { workspaceId, userId, userWorkspaceId, onCodeExecutionUpdate } =
+      context;
     const { code, files } = parameters as CodeInterpreterInput;
+    const executionId = v4();
+    const startTime = Date.now();
+
+    // Streaming state
+    let accumulatedStdout = '';
+    let accumulatedStderr = '';
+    const streamedFiles: CodeExecutionFile[] = [];
+
+    // Emit initial pending state
+    onCodeExecutionUpdate?.(
+      this.buildExecutionState(executionId, 'pending', code, '', '', []),
+    );
 
     try {
       const inputFiles = await this.downloadInputFiles(files);
@@ -46,14 +100,118 @@ export class CodeInterpreterTool implements Tool {
         `Executing code interpreter with ${inputFiles.length} input files`,
       );
 
-      const result = await this.codeInterpreterService.execute(
-        code,
-        inputFiles,
+      // Emit running state
+      onCodeExecutionUpdate?.(
+        this.buildExecutionState(executionId, 'running', code, '', '', []),
       );
 
-      const outputFileUrls = await this.uploadOutputFiles(
+      // Generate short-lived session token for MCP access
+      const serverUrl = this.twentyConfigService.get('SERVER_URL');
+      const sessionToken = this.generateSessionToken(
+        workspaceId,
+        userId,
+        userWorkspaceId,
+      );
+
+      this.logger.debug(
+        `MCP session: workspaceId=${workspaceId}, userId=${userId}, userWorkspaceId=${userWorkspaceId}, serverUrl=${serverUrl}`,
+      );
+
+      // Prepend the Twenty MCP helper to the user code
+      const codeWithHelper = TWENTY_MCP_HELPER + '\n\n' + code;
+
+      const result = await this.codeInterpreterService.execute(
+        codeWithHelper,
+        inputFiles,
+        {
+          env: {
+            TWENTY_SERVER_URL: serverUrl,
+            TWENTY_API_TOKEN: sessionToken,
+          },
+        },
+        {
+          onStdout: (line) => {
+            accumulatedStdout += line + '\n';
+            onCodeExecutionUpdate?.(
+              this.buildExecutionState(
+                executionId,
+                'running',
+                code,
+                accumulatedStdout,
+                accumulatedStderr,
+                streamedFiles,
+              ),
+            );
+          },
+          onStderr: (line) => {
+            accumulatedStderr += line + '\n';
+            onCodeExecutionUpdate?.(
+              this.buildExecutionState(
+                executionId,
+                'running',
+                code,
+                accumulatedStdout,
+                accumulatedStderr,
+                streamedFiles,
+              ),
+            );
+          },
+          onResult: async (outputFile: OutputFile) => {
+            // Upload file immediately and add to streamed files
+            const uploadedFile = await this.uploadSingleFile(
+              outputFile,
+              workspaceId,
+              executionId,
+            );
+
+            if (uploadedFile) {
+              streamedFiles.push(uploadedFile);
+              onCodeExecutionUpdate?.(
+                this.buildExecutionState(
+                  executionId,
+                  'running',
+                  code,
+                  accumulatedStdout,
+                  accumulatedStderr,
+                  streamedFiles,
+                ),
+              );
+            }
+          },
+        },
+      );
+
+      this.logger.debug(
+        `Execution result: exitCode=${result.exitCode}, stdout length=${result.stdout.length}, stderr length=${result.stderr.length}`,
+      );
+
+      // Upload any remaining files that weren't streamed
+      const allOutputFileUrls = await this.uploadOutputFiles(
         result.files,
         workspaceId,
+        executionId,
+        streamedFiles,
+      );
+
+      const executionTimeMs = Date.now() - startTime;
+
+      // Emit final state
+      const finalState = result.exitCode === 0 ? 'completed' : 'error';
+
+      onCodeExecutionUpdate?.(
+        this.buildExecutionState(
+          executionId,
+          finalState,
+          code,
+          result.stdout || accumulatedStdout,
+          result.stderr || accumulatedStderr,
+          allOutputFileUrls,
+          {
+            exitCode: result.exitCode,
+            executionTimeMs,
+            error: result.error,
+          },
+        ),
       );
 
       return {
@@ -66,17 +224,34 @@ export class CodeInterpreterTool implements Tool {
           stdout: result.stdout,
           stderr: result.stderr,
           exitCode: result.exitCode,
-          files: outputFileUrls,
+          files: allOutputFileUrls,
         },
         error: result.error,
       };
     } catch (error) {
       this.logger.error('Code interpreter execution failed', error);
 
+      const executionTimeMs = Date.now() - startTime;
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+
+      // Emit error state
+      onCodeExecutionUpdate?.(
+        this.buildExecutionState(
+          executionId,
+          'error',
+          code,
+          accumulatedStdout,
+          accumulatedStderr,
+          streamedFiles,
+          { executionTimeMs, error: errorMessage },
+        ),
+      );
+
       return {
         success: false,
         message: 'Code interpreter execution failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: errorMessage,
       };
     }
   }
@@ -143,16 +318,89 @@ export class CodeInterpreterTool implements Tool {
     };
   }
 
-  private async uploadOutputFiles(
-    files: { filename: string; content: Buffer; mimeType: string }[],
+  private generateSessionToken(
     workspaceId: string,
-  ): Promise<{ filename: string; url: string }[]> {
-    const executionId = v4();
-    const outputFileUrls: { filename: string; url: string }[] = [];
+    userId?: string,
+    userWorkspaceId?: string,
+  ): string {
+    // Generate ACCESS token for MCP endpoint authentication
+    const secret = this.jwtWrapperService.generateAppSecret(
+      JwtTokenTypeEnum.ACCESS,
+      workspaceId,
+    );
+
+    const payload: AccessTokenJwtPayload = {
+      sub: userId ?? workspaceId,
+      type: JwtTokenTypeEnum.ACCESS,
+      workspaceId,
+      userId: userId ?? workspaceId,
+      userWorkspaceId: userWorkspaceId ?? workspaceId,
+      authProvider: AuthProviderEnum.Password,
+    };
+
+    return this.jwtWrapperService.sign(payload, {
+      secret,
+      expiresIn: '5m', // Short-lived token for code execution session
+    });
+  }
+
+  private async uploadSingleFile(
+    file: OutputFile,
+    workspaceId: string,
+    executionId: string,
+  ): Promise<CodeExecutionFile | null> {
     const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
     const folder = `workspace-${workspaceId}/${subFolder}`;
 
+    try {
+      await this.fileStorageService.write({
+        file: file.content,
+        name: file.filename,
+        mimeType: file.mimeType,
+        folder,
+      });
+
+      const filePath = `${subFolder}/${file.filename}`;
+      const signedPath = this.fileService.signFileUrl({
+        url: filePath,
+        workspaceId,
+      });
+
+      const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+      return {
+        filename: file.filename,
+        url: `${serverUrl}/files/${signedPath}`,
+        mimeType: file.mimeType,
+      };
+    } catch (error) {
+      this.logger.warn(`Failed to upload output file ${file.filename}`, error);
+
+      return null;
+    }
+  }
+
+  private async uploadOutputFiles(
+    files: OutputFile[],
+    workspaceId: string,
+    executionId: string,
+    alreadyUploadedFiles: CodeExecutionFile[],
+  ): Promise<CodeExecutionFile[]> {
+    const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
+    const folder = `workspace-${workspaceId}/${subFolder}`;
+
+    // Start with already uploaded files
+    const outputFileUrls: CodeExecutionFile[] = [...alreadyUploadedFiles];
+    const uploadedFilenames = new Set(
+      alreadyUploadedFiles.map((f) => f.filename),
+    );
+
     for (const file of files) {
+      // Skip files that were already uploaded during streaming
+      if (uploadedFilenames.has(file.filename)) {
+        continue;
+      }
+
       try {
         await this.fileStorageService.write({
           file: file.content,
@@ -161,7 +409,6 @@ export class CodeInterpreterTool implements Tool {
           folder,
         });
 
-        // Use the standard signFileUrl method for consistent URL generation
         const filePath = `${subFolder}/${file.filename}`;
         const signedPath = this.fileService.signFileUrl({
           url: filePath,
@@ -173,6 +420,7 @@ export class CodeInterpreterTool implements Tool {
         outputFileUrls.push({
           filename: file.filename,
           url: `${serverUrl}/files/${signedPath}`,
+          mimeType: file.mimeType,
         });
       } catch (error) {
         this.logger.warn(

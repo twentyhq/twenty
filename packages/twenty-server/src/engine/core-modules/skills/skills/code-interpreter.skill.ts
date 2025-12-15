@@ -74,5 +74,34 @@ plt.tight_layout()
 os.makedirs('/home/user/output', exist_ok=True)
 plt.savefig('/home/user/output/analysis.png')
 print('Analysis complete!')
-\`\`\``,
+\`\`\`
+
+## Calling Twenty Tools from Python (MCP Bridge)
+
+A \`twenty\` helper is automatically available in your code. Use it to call any Twenty tool directly from Python:
+
+\`\`\`python
+# Find records
+people = twenty.call_tool('find_person_records', {'limit': 10})
+print(f"Found {len(people['edges'])} people")
+
+# Create a record
+result = twenty.call_tool('create_company_record', {
+    'data': {'name': 'Acme Corp', 'domainName': {'primaryLinkUrl': 'acme.com'}}
+})
+print(f"Created company: {result['id']}")
+
+# Update a record
+twenty.call_tool('update_person_record', {
+    'id': 'person-uuid',
+    'data': {'jobTitle': 'CEO'}
+})
+
+# List available tools
+tools = twenty.list_tools()
+for tool in tools:
+    print(f"- {tool['name']}: {tool['description']}")
+\`\`\`
+
+This allows you to orchestrate complex multi-step operations in a single code execution, which is more efficient than multiple tool calls.`,
 };

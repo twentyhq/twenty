@@ -1,17 +1,19 @@
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { promisify } from 'util';
+
+import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
 
 import {
   type CodeExecutionResult,
   type CodeInterpreterDriver,
+  type ExecutionContext,
   type InputFile,
   type OutputFile,
+  type StreamCallbacks,
 } from './interfaces/code-interpreter-driver.interface';
-
-const execAsync = promisify(exec);
 
 export type LocalDriverOptions = {
   timeoutMs?: number;
@@ -25,6 +27,8 @@ export class LocalDriver implements CodeInterpreterDriver {
   async execute(
     code: string,
     files?: InputFile[],
+    context?: ExecutionContext,
+    callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
     const workDir = await fs.mkdtemp(join(tmpdir(), 'code-interpreter-'));
     const outputDir = join(workDir, 'output');
@@ -49,38 +53,17 @@ export class LocalDriver implements CodeInterpreterDriver {
 
       await fs.writeFile(scriptPath, rewrittenCode);
 
-      const timeoutMs = this.options.timeoutMs ?? 300_000;
+      const timeoutMs =
+        this.options.timeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS;
 
-      let stdout = '';
-      let stderr = '';
-      let exitCode = 0;
-      let error: string | undefined;
-
-      try {
-        const result = await execAsync(`python3 "${scriptPath}"`, {
-          cwd: workDir,
-          timeout: timeoutMs,
-          env: {
-            ...process.env,
-            OUTPUT_DIR: outputDir,
-          },
-        });
-
-        stdout = result.stdout;
-        stderr = result.stderr;
-      } catch (execError) {
-        const err = execError as {
-          code?: number;
-          stdout?: string;
-          stderr?: string;
-          message?: string;
-        };
-
-        exitCode = err.code ?? 1;
-        stdout = err.stdout ?? '';
-        stderr = err.stderr ?? '';
-        error = err.message;
-      }
+      const { stdout, stderr, exitCode, error } = await this.runPythonScript(
+        scriptPath,
+        workDir,
+        outputDir,
+        context?.env,
+        timeoutMs,
+        callbacks,
+      );
 
       const outputFiles: OutputFile[] = [];
 
@@ -92,12 +75,14 @@ export class LocalDriver implements CodeInterpreterDriver {
         for (const entry of outputEntries) {
           if (entry.isFile()) {
             const content = await fs.readFile(join(outputDir, entry.name));
-
-            outputFiles.push({
+            const outputFile: OutputFile = {
               filename: entry.name,
               content,
-              mimeType: this.getMimeType(entry.name),
-            });
+              mimeType: getMimeType(entry.name),
+            };
+
+            outputFiles.push(outputFile);
+            callbacks?.onResult?.(outputFile);
           }
         }
       } catch {
@@ -116,20 +101,85 @@ export class LocalDriver implements CodeInterpreterDriver {
     }
   }
 
-  private getMimeType(filename: string): string {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      csv: 'text/csv',
-      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      pdf: 'application/pdf',
-      json: 'application/json',
-      txt: 'text/plain',
-    };
+  private runPythonScript(
+    scriptPath: string,
+    workDir: string,
+    outputDir: string,
+    env?: Record<string, string>,
+    timeoutMs?: number,
+    callbacks?: StreamCallbacks,
+  ): Promise<{
+    stdout: string;
+    stderr: string;
+    exitCode: number;
+    error?: string;
+  }> {
+    return new Promise((resolve) => {
+      const child = spawn('python3', [scriptPath], {
+        cwd: workDir,
+        env: {
+          ...process.env,
+          OUTPUT_DIR: outputDir,
+          ...env,
+        },
+      });
 
-    return mimeTypes[ext ?? ''] ?? 'application/octet-stream';
+      let stdout = '';
+      let stderr = '';
+      let killed = false;
+
+      const timeout = setTimeout(() => {
+        killed = true;
+        child.kill('SIGKILL');
+      }, timeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS);
+
+      child.stdout.on('data', (data: Buffer) => {
+        const text = data.toString();
+
+        stdout += text;
+        // Stream line by line
+        const lines = text.split('\n');
+
+        for (const line of lines) {
+          if (line) {
+            callbacks?.onStdout?.(line);
+          }
+        }
+      });
+
+      child.stderr.on('data', (data: Buffer) => {
+        const text = data.toString();
+
+        stderr += text;
+        // Stream line by line
+        const lines = text.split('\n');
+
+        for (const line of lines) {
+          if (line) {
+            callbacks?.onStderr?.(line);
+          }
+        }
+      });
+
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        resolve({
+          stdout,
+          stderr,
+          exitCode: code ?? 0,
+          error: killed ? 'Process timed out' : undefined,
+        });
+      });
+
+      child.on('error', (err) => {
+        clearTimeout(timeout);
+        resolve({
+          stdout,
+          stderr,
+          exitCode: 1,
+          error: err.message,
+        });
+      });
+    });
   }
 }

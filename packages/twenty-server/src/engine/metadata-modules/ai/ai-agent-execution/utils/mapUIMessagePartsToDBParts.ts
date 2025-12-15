@@ -61,6 +61,14 @@ export const mapUIMessagePartsToDBParts = (
           textContent: part.data.text,
           state: part.data.state,
         };
+      case 'data-code-execution':
+        // Code execution parts are streamed during execution but don't need
+        // to be persisted - the final result is captured in the tool part
+        return {
+          ...basePart,
+          textContent: JSON.stringify(part.data),
+          state: part.data.state,
+        };
       default:
         {
           if (isToolPart(part)) {

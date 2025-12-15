@@ -6,6 +6,7 @@ import {
   type CodeInterpreterModuleAsyncOptions,
 } from './code-interpreter.interface';
 import { CodeInterpreterService } from './code-interpreter.service';
+
 import { E2BDriver } from './drivers/e2b.driver';
 import { LocalDriver } from './drivers/local.driver';
 
@@ -34,4 +35,3 @@ export class CodeInterpreterModule {
     };
   }
 }
-

@@ -1,10 +1,15 @@
 import { Sandbox } from '@e2b/code-interpreter';
 
+import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
+
 import {
   type CodeExecutionResult,
   type CodeInterpreterDriver,
+  type ExecutionContext,
   type InputFile,
   type OutputFile,
+  type StreamCallbacks,
 } from './interfaces/code-interpreter-driver.interface';
 
 export type E2BDriverOptions = {
@@ -18,10 +23,12 @@ export class E2BDriver implements CodeInterpreterDriver {
   async execute(
     code: string,
     files?: InputFile[],
+    context?: ExecutionContext,
+    callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
     const sbx = await Sandbox.create({
       apiKey: this.options.apiKey,
-      timeoutMs: this.options.timeoutMs ?? 300_000,
+      timeoutMs: this.options.timeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
     });
 
     try {
@@ -31,20 +38,40 @@ export class E2BDriver implements CodeInterpreterDriver {
         await sbx.files.write(`/home/user/${file.filename}`, arrayBuffer);
       }
 
-      const execution = await sbx.runCode(code);
+      // Set environment variables by prepending os.environ assignments
+      const envSetup = context?.env
+        ? `import os\n${Object.entries(context.env)
+            .map(([key, value]) => {
+              const escapedValue = value
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'");
+
+              return `os.environ['${key}'] = '${escapedValue}'`;
+            })
+            .join('\n')}\n\n`
+        : '';
 
       const outputFiles: OutputFile[] = [];
+      let chartCounter = 0;
 
-      for (const result of execution.results) {
-        if (result.png) {
-          outputFiles.push({
-            filename: `chart-${outputFiles.length}.png`,
-            content: Buffer.from(result.png, 'base64'),
-            mimeType: 'image/png',
-          });
-        }
-      }
+      const execution = await sbx.runCode(envSetup + code, {
+        onStdout: (data) => callbacks?.onStdout?.(data.line),
+        onStderr: (data) => callbacks?.onStderr?.(data.line),
+        onResult: (result) => {
+          if (result.png) {
+            const outputFile: OutputFile = {
+              filename: `chart-${chartCounter++}.png`,
+              content: Buffer.from(result.png, 'base64'),
+              mimeType: 'image/png',
+            };
 
+            outputFiles.push(outputFile);
+            callbacks?.onResult?.(outputFile);
+          }
+        },
+      });
+
+      // Also collect any files written to the output directory
       try {
         const outputDir = await sbx.files.list('/home/user/output');
 
@@ -54,11 +81,14 @@ export class E2BDriver implements CodeInterpreterDriver {
               `/home/user/output/${file.name}`,
             );
 
-            outputFiles.push({
+            const outputFile: OutputFile = {
               filename: file.name,
               content: Buffer.from(content),
-              mimeType: this.getMimeType(file.name),
-            });
+              mimeType: getMimeType(file.name),
+            };
+
+            outputFiles.push(outputFile);
+            callbacks?.onResult?.(outputFile);
           }
         }
       } catch {
@@ -76,22 +106,4 @@ export class E2BDriver implements CodeInterpreterDriver {
       await sbx.kill();
     }
   }
-
-  private getMimeType(filename: string): string {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      csv: 'text/csv',
-      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      pdf: 'application/pdf',
-      json: 'application/json',
-      txt: 'text/plain',
-    };
-
-    return mimeTypes[ext ?? ''] ?? 'application/octet-stream';
-  }
 }
-
