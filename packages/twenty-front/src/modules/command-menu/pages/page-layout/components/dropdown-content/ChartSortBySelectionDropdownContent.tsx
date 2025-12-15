@@ -113,15 +113,31 @@ export const ChartSortBySelectionDropdownContent = () => {
     primaryAxisField?.type === FieldMetadataType.MULTI_SELECT;
 
   const handleSelect = (orderBy: GraphOrderBy) => {
-    if (isPieChart) {
-      updateCurrentWidgetConfig({
-        configToUpdate: { orderBy },
-      });
+    const configToUpdate: Record<string, unknown> = {};
+
+    if (orderBy === GraphOrderBy.MANUAL) {
+      const options = primaryAxisField?.options ?? [];
+      const sortedByPosition = options.toSorted(
+        (a, b) => (a.position ?? 0) - (b.position ?? 0),
+      );
+      const manualSortOrder = sortedByPosition.map((option) => option.value);
+
+      if (isPieChart) {
+        configToUpdate.orderBy = orderBy;
+        configToUpdate.manualSortOrder = manualSortOrder;
+      } else {
+        configToUpdate.primaryAxisOrderBy = orderBy;
+        configToUpdate.primaryAxisManualSortOrder = manualSortOrder;
+      }
     } else {
-      updateCurrentWidgetConfig({
-        configToUpdate: { primaryAxisOrderBy: orderBy },
-      });
+      if (isPieChart) {
+        configToUpdate.orderBy = orderBy;
+      } else {
+        configToUpdate.primaryAxisOrderBy = orderBy;
+      }
     }
+
+    updateCurrentWidgetConfig({ configToUpdate });
     closeDropdown();
   };
 

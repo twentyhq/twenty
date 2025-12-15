@@ -68,9 +68,22 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectSortOption = (orderBy: GraphOrderByType) => {
-    updateCurrentWidgetConfig({
-      configToUpdate: { secondaryAxisOrderBy: orderBy },
-    });
+    const configToUpdate: Record<string, unknown> = {
+      secondaryAxisOrderBy: orderBy,
+    };
+
+    if (orderBy === GraphOrderBy.MANUAL) {
+      const options = secondaryAxisField?.options ?? [];
+      const sortedByPosition = options.toSorted(
+        (a, b) => (a.position ?? 0) - (b.position ?? 0),
+      );
+
+      configToUpdate.secondaryAxisManualSortOrder = sortedByPosition.map(
+        (option) => option.value,
+      );
+    }
+
+    updateCurrentWidgetConfig({ configToUpdate });
 
     if (orderBy !== GraphOrderBy.MANUAL) {
       closeDropdown();
