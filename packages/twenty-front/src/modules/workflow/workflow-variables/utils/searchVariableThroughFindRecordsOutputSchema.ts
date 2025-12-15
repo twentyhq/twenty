@@ -45,11 +45,13 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
   searchRecordOutputSchema,
   rawVariableName,
   isFullRecord = false,
+  stepNameLabel,
 }: {
   stepName: string;
   searchRecordOutputSchema: FindRecordsOutputSchema;
   rawVariableName: string;
   isFullRecord?: boolean;
+  stepNameLabel?: string;
 }): VariableSearchResult => {
   if (!isDefined(searchRecordOutputSchema)) {
     return {
@@ -84,6 +86,7 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
       selectedField: fieldName,
       path: pathSegments,
       isFullRecord,
+      stepNameLabel,
     });
   }
 
@@ -91,7 +94,7 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
     return {
       variableLabel:
         searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count',
-      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count'}`,
+      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count'} ${stepNameLabel ?? ""}`,
       variableType: FieldMetadataType.NUMBER,
     };
   }
