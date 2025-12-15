@@ -11,7 +11,12 @@ export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
-export type { DataMessagePart } from './types/DataMessagePart';
+export type {
+  CodeExecutionFile,
+  CodeExecutionState,
+  CodeExecutionData,
+  DataMessagePart,
+} from './types/DataMessagePart';
 export type {
   AIChatUsageMetadata,
   AIChatModelMetadata,
