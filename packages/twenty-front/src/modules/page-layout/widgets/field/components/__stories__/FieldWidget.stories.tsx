@@ -39,6 +39,10 @@ const opportunityObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Opportunity,
 );
 
+const timelineActivityObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.TimelineActivity,
+);
+
 const nameField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'name',
@@ -94,9 +98,20 @@ const companyWorkPolicyField = getMockFieldMetadataItemOrThrow({
   fieldName: 'workPolicy',
 });
 
+const companyPeopleField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'people',
+});
+
+const timelineActivityWorkspaceMemberField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: timelineActivityObjectMetadataItem,
+  fieldName: 'workspaceMember',
+});
+
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 const TEST_OPPORTUNITY_RECORD_ID = 'test-opportunity-789';
+const TEST_TIMELINE_ACTIVITY_RECORD_ID = 'test-timeline-def';
 
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
@@ -133,6 +148,46 @@ const mockOpportunityRecord: ObjectRecord = {
   closeDate: '2025-12-31T00:00:00Z',
 };
 
+const mockWorkspaceMemberRecord: ObjectRecord = {
+  __typename: 'WorkspaceMember',
+  id: 'test-workspace-member-xyz',
+  name: {
+    __typename: 'FullName',
+    firstName: 'Sarah',
+    lastName: 'Johnson',
+  },
+  avatarUrl: '',
+  userEmail: 'sarah.johnson@acme.com',
+  colorScheme: 'Light',
+  locale: 'en',
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  userId: 'test-user-xyz',
+};
+
+const mockTimelineActivityRecord: ObjectRecord = {
+  __typename: 'TimelineActivity',
+  id: TEST_TIMELINE_ACTIVITY_RECORD_ID,
+  name: 'Note created',
+  workspaceMember: {
+    __typename: 'WorkspaceMember',
+    id: 'test-workspace-member-xyz',
+    name: {
+      __typename: 'FullName',
+      firstName: 'Sarah',
+      lastName: 'Johnson',
+    },
+    avatarUrl: '',
+    userEmail: 'sarah.johnson@acme.com',
+    colorScheme: 'Light',
+    locale: 'en',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    userId: 'test-user-xyz',
+  },
+  happenedAt: '2025-01-15T10:30:00Z',
+};
+
 const mockCompanyRecord: ObjectRecord = {
   __typename: 'Company',
   id: TEST_RECORD_ID,
@@ -160,6 +215,17 @@ const mockCompanyRecord: ObjectRecord = {
     currencyCode: 'USD',
   },
   workPolicy: ['ON_SITE', 'HYBRID'],
+  people: [
+    {
+      __typename: 'Person',
+      id: TEST_PERSON_RECORD_ID,
+      name: {
+        __typename: 'FullName',
+        firstName: 'Jane',
+        lastName: 'Smith',
+      },
+    },
+  ],
   accountOwner: {
     __typename: 'WorkspaceMember',
     id: '20202020-0687-4c41-b707-ed1bfca972a7',
@@ -205,6 +271,8 @@ const meta: Meta<typeof FieldWidget> = {
         personPhonesField,
         opportunityStageField,
         companyWorkPolicyField,
+        companyPeopleField,
+        timelineActivityWorkspaceMemberField,
       ].find((field) => field.id === fieldMetadataId);
 
       // Determine which object and record to use based on the field
@@ -214,21 +282,30 @@ const meta: Meta<typeof FieldWidget> = {
       const isOpportunityField = [opportunityStageField].some(
         (field) => field.id === fieldMetadataId,
       );
+      const isTimelineActivityField = [
+        timelineActivityWorkspaceMemberField,
+      ].some((field) => field.id === fieldMetadataId);
       const objectMetadataItem = isPersonField
         ? personObjectMetadataItem
         : isOpportunityField
           ? opportunityObjectMetadataItem
-          : companyObjectMetadataItem;
+          : isTimelineActivityField
+            ? timelineActivityObjectMetadataItem
+            : companyObjectMetadataItem;
       const mockRecord = isPersonField
         ? mockPersonRecord
         : isOpportunityField
           ? mockOpportunityRecord
-          : mockCompanyRecord;
+          : isTimelineActivityField
+            ? mockTimelineActivityRecord
+            : mockCompanyRecord;
       const recordId = isPersonField
         ? TEST_PERSON_RECORD_ID
         : isOpportunityField
           ? TEST_OPPORTUNITY_RECORD_ID
-          : TEST_RECORD_ID;
+          : isTimelineActivityField
+            ? TEST_TIMELINE_ACTIVITY_RECORD_ID
+            : TEST_RECORD_ID;
 
       const initializeState = (snapshot: MutableSnapshot) => {
         snapshot.set(
@@ -268,6 +345,22 @@ const meta: Meta<typeof FieldWidget> = {
           snapshot.set(
             recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
             mockCompanyRecord.accountOwner,
+          );
+        }
+
+        // Set the related Person record for ONE_TO_MANY relation display
+        if (!isPersonField && !isOpportunityField && !isTimelineActivityField) {
+          snapshot.set(
+            recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+            mockPersonRecord,
+          );
+        }
+
+        // Set the related WorkspaceMember record for TimelineActivity relation display
+        if (isTimelineActivityField) {
+          snapshot.set(
+            recordStoreFamilyState('test-workspace-member-xyz'),
+            mockWorkspaceMemberRecord,
           );
         }
       };
@@ -474,7 +567,7 @@ export const LinkFieldWidget: Story = {
   },
 };
 
-export const RelationFieldWidget: Story = {
+export const ManyToOneRelationFieldWidget: Story = {
   args: {
     widget: {
       __typename: 'PageLayoutWidget',
@@ -510,6 +603,45 @@ export const RelationFieldWidget: Story = {
 
     const accountOwner = await canvas.findByText('John Doe');
     expect(accountOwner).toBeVisible();
+  },
+};
+
+export const OneToManyRelationFieldWidget: Story = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-one-to-many-relation-field',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.FIELD,
+      title: 'People',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 11,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        fieldMetadataId: companyPeopleField.id,
+        layout: 'FIELD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  render: (args) => (
+    <div style={{ width: '400px', padding: '20px' }}>
+      <FieldWidget widget={args.widget} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const personChip = await canvas.findByText('Jane Smith');
+    expect(personChip).toBeVisible();
   },
 };
 
@@ -747,5 +879,45 @@ export const MultiSelectFieldWidget: Story = {
 
     const hybridChip = await canvas.findByText(/Hybrid/);
     expect(hybridChip).toBeVisible();
+  },
+};
+
+export const TimelineActivityRelationFieldWidget: Story = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-timeline-activity-relation-field',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.FIELD,
+      title: 'Workspace Member',
+      objectMetadataId: timelineActivityObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 12,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        fieldMetadataId: timelineActivityWorkspaceMemberField.id,
+        layout: 'FIELD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  render: (args) => (
+    <div style={{ width: '400px', padding: '20px' }}>
+      <FieldWidget widget={args.widget} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // MANY_TO_ONE relation from TimelineActivity to WorkspaceMember
+    const workspaceMemberChip = await canvas.findByText('Sarah Johnson');
+    expect(workspaceMemberChip).toBeVisible();
   },
 };
