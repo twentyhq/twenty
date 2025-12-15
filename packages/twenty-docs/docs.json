@@ -245,9 +245,9 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "FAQ",
                     "pages": [
-                      "user-guide/dashboards/how-tos/create-dashboards"
+                      "user-guide/dashboards/how-tos/dashboards-faq"
                     ]
                   }
                 ]

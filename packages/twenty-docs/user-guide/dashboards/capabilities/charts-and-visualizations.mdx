@@ -1,16 +1,11 @@
 ---
-title: Charts and Visualizations
-description: Explore the chart types and visualization options in Twenty.
-image: /images/user-guide/reporting/pie-chart.png
+title: Widgets and Visualizations
+description: Explore the widget types and visualization options in Twenty.
 ---
 
-<Frame>
-  <img src="/images/user-guide/reporting/pie-chart.png" alt="Charts" />
-</Frame>
+## Available Widgets
 
-## Available Chart Types
-
-Twenty provides various chart types to visualize your CRM data.
+Twenty provides various widget types to visualize your CRM data.
 
 ### Bar Charts
 Display data as horizontal or vertical bars.
@@ -24,6 +19,10 @@ Display data as horizontal or vertical bars.
 - Deals by stage
 - Revenue by sales rep
 - Contacts added per month
+
+<Note>
+**Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
+</Note>
 
 ### Pie Charts
 Show proportions of a whole.
@@ -64,7 +63,29 @@ Display single key values prominently.
 - Number of open opportunities
 - Conversion rate
 
-## Configuring Charts
+**Advanced options:**
+- **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
+- **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
+
+### iFrames
+Embed external tools and content directly in your dashboard.
+
+**Best for:**
+- Displaying external reports or dashboards
+- Integrating third-party sales tools
+- Showing live content from other systems
+
+**Example uses:**
+- Metrics from your Support tool
+- Metrics from your dialer
+- Live content from your Sales sequence tool
+
+
+<Note>
+**Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+</Note>
+
+## Configuring Widgets
 
 ### Data Source
 1. Select the object to visualize (Opportunities, People, etc.)
@@ -85,19 +106,55 @@ Customize your charts with:
 
 ## Dashboard Layout
 
-### Arranging Charts
+### Arranging Widgets
 - Drag and drop to position
 - Resize for emphasis
 - Group related charts together
+
+### Duplicating Elements
+
+**Duplicate a widget:**
+1. Click on the widget
+2. Open **Options**
+3. Click **Duplicate widget**
+
+**Duplicate a tab:**
+1. Click on the tab
+2. Click the **Duplicate** button in the side panel
+
+**Duplicate a dashboard:**
+1. Exit edit mode (view mode only)
+2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
+3. Select **Duplicate dashboard**
 
 ### Best Practices
 - **Logical flow**: Arrange from overview to detail
 - **Visual hierarchy**: Larger charts for key metrics
 - **Consistent styling**: Use matching colors and fonts
 
+## Visibility & Access
+
+### Dashboard Visibility
+Dashboards are visible to everyone who has access to your Twenty workspace. There is no private dashboard option at the moment.
+
+### Favorites
+You can add dashboards to your favorites for quick access. This is a personal setting—your favorites are not visible to other users.
+
+### Timezone Behavior
+
+Dashboards currently display data based on the timezone of the user viewing them. This means the same dashboard may show different metrics for team members in different regions (e.g., APAC vs. US).
+
+<Note>
+**Coming soon**: We will add the ability to set a specific timezone for a dashboard, so all users see consistent data regardless of their location.
+</Note>
+
+<Note>
+**Coming soon**: Dashboard-level filters will allow you to apply filters across all widgets at once, making it faster to explore your data.
+</Note>
+
 ## Data Refresh
 
-Charts update automatically as your CRM data changes:
+Widgets update automatically as your CRM data changes:
 - Real-time updates for most metrics
 - Refresh button for manual update
 - Historical data preserved for trends
