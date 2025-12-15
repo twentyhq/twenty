@@ -8,6 +8,7 @@ import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseBarChartDataProps = {
   data: BarDatum[];
@@ -36,57 +37,40 @@ export const useBarChartData = ({
     [series],
   );
 
-  const allEnrichedKeys = useMemo(
-    (): BarChartEnrichedKey[] =>
-      keys.map((key, index) => {
-        const seriesConfig = seriesConfigMap.get(key);
-        const colorScheme = getColorScheme({
-          registry: colorRegistry,
-          colorName: seriesConfig?.color,
-          fallbackIndex: index,
-          totalGroups: keys.length,
-        });
+  const allEnrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
+    const seriesConfig = seriesConfigMap.get(key);
+    const colorScheme = getColorScheme({
+      registry: colorRegistry,
+      colorName: seriesConfig?.color,
+      fallbackIndex: index,
+      totalGroups: keys.length,
+    });
 
-        return {
-          key,
-          colorScheme,
-          label: seriesConfig?.label ?? seriesLabels?.[key] ?? key,
-        };
-      }),
-    [keys, colorRegistry, seriesConfigMap, seriesLabels],
-  );
+    return {
+      key,
+      colorScheme,
+      label: seriesConfig?.label ?? seriesLabels?.[key] ?? key,
+    };
+  });
 
-  const legendItems = useMemo(
-    (): GraphWidgetLegendItem[] =>
-      allEnrichedKeys.map((item) => ({
-        id: item.key,
-        label: item.label,
-        color: item.colorScheme.solid,
-      })),
-    [allEnrichedKeys],
-  );
+  const legendItems: GraphWidgetLegendItem[] = allEnrichedKeys.map((item) => ({
+    id: item.key,
+    label: item.label,
+    color: item.colorScheme.solid,
+  }));
 
-  const visibleKeys = useMemo(
-    () => keys.filter((key) => !hiddenLegendIds.includes(key)),
-    [keys, hiddenLegendIds],
-  );
+  const visibleKeys = keys.filter((key) => !hiddenLegendIds.includes(key));
 
-  const enrichedKeys = useMemo(
-    () => allEnrichedKeys.filter((item) => !hiddenLegendIds.includes(item.key)),
-    [allEnrichedKeys, hiddenLegendIds],
-  );
-
-  const enrichedKeyMap = useMemo(
-    () => new Map(allEnrichedKeys.map((ek) => [ek.key, ek])),
-    [allEnrichedKeys],
+  const enrichedKeys = allEnrichedKeys.filter(
+    (item) => !hiddenLegendIds.includes(item.key),
   );
 
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
       return visibleKeys.flatMap((key): BarChartConfig[] => {
-        const enrichedKey = enrichedKeyMap.get(key);
-        if (enrichedKey === undefined) {
+        const enrichedKey = allEnrichedKeys.find((ek) => ek.key === key);
+        if (!isDefined(enrichedKey)) {
           return [];
         }
         return [
@@ -98,7 +82,7 @@ export const useBarChartData = ({
         ];
       });
     });
-  }, [data, indexBy, visibleKeys, enrichedKeyMap]);
+  }, [data, indexBy, visibleKeys, allEnrichedKeys]);
 
   return {
     seriesConfigMap,

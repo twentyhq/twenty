@@ -42,19 +42,14 @@ export const usePieChartData = ({
     });
   }, [data, colorRegistry]);
 
-  const legendItems = useMemo(
-    (): GraphWidgetLegendItem[] =>
-      allEnrichedData.map((item) => ({
-        id: item.id,
-        label: String(item.id),
-        color: item.colorScheme.solid,
-      })),
-    [allEnrichedData],
-  );
+  const legendItems: GraphWidgetLegendItem[] = allEnrichedData.map((item) => ({
+    id: item.id,
+    label: String(item.id),
+    color: item.colorScheme.solid,
+  }));
 
-  const enrichedData = useMemo(
-    () => allEnrichedData.filter((item) => !hiddenLegendIds.includes(item.id)),
-    [allEnrichedData, hiddenLegendIds],
+  const enrichedData = allEnrichedData.filter(
+    (item) => !hiddenLegendIds.includes(item.id),
   );
 
   const enrichedDataMap = useMemo(

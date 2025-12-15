@@ -42,41 +42,29 @@ export const useLineChartData = ({
     });
   }, [data, colorRegistry, id]);
 
-  const legendItems = useMemo(
-    (): GraphWidgetLegendItem[] =>
-      allEnrichedSeries.map((series) => ({
-        id: series.id,
-        label: series.label,
-        color: series.colorScheme.solid,
-      })),
-    [allEnrichedSeries],
+  const legendItems: GraphWidgetLegendItem[] = allEnrichedSeries.map(
+    (series) => ({
+      id: series.id,
+      label: series.label,
+      color: series.colorScheme.solid,
+    }),
   );
 
-  const visibleData = useMemo(
-    () => data.filter((series) => !hiddenLegendIds.includes(series.id)),
-    [data, hiddenLegendIds],
+  const visibleData = data.filter(
+    (series) => !hiddenLegendIds.includes(series.id),
   );
 
-  const enrichedSeries = useMemo(
-    () =>
-      allEnrichedSeries.filter(
-        (series) => !hiddenLegendIds.includes(series.id),
-      ),
-    [allEnrichedSeries, hiddenLegendIds],
+  const enrichedSeries = allEnrichedSeries.filter(
+    (series) => !hiddenLegendIds.includes(series.id),
   );
 
-  const nivoData = useMemo(
-    (): LineSeries[] =>
-      visibleData.map((series) => ({
-        id: series.id,
-        data: series.data.map((point) => ({ x: point.x, y: point.y })),
-      })),
-    [visibleData],
-  );
+  const nivoData: LineSeries[] = visibleData.map((series) => ({
+    id: series.id,
+    data: series.data.map((point) => ({ x: point.x, y: point.y })),
+  }));
 
-  const colors = useMemo(
-    (): string[] => enrichedSeries.map((series) => series.colorScheme.solid),
-    [enrichedSeries],
+  const colors: string[] = enrichedSeries.map(
+    (series) => series.colorScheme.solid,
   );
 
   return { enrichedSeries, nivoData, colors, legendItems, visibleData };

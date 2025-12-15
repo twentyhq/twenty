@@ -65,7 +65,8 @@ export const CustomBarItem = <D extends BarDatum>({
   );
 
   const isDimmed =
-    isDefined(highlightedLegendId) && highlightedLegendId !== barData.id;
+    isDefined(highlightedLegendId) &&
+    String(highlightedLegendId) !== String(barData.id);
 
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
