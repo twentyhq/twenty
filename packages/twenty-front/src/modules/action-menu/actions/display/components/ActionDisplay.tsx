@@ -38,13 +38,23 @@ export const ActionDisplay = ({
 
   if (displayType === 'button') {
     return (
-      <ActionButton action={action} onClick={onClick} to={to} disabled={disabled} />
+      <ActionButton
+        action={action}
+        onClick={onClick}
+        to={to}
+        disabled={disabled}
+      />
     );
   }
 
   if (displayType === 'listItem') {
     return (
-      <ActionListItem action={action} onClick={onClick} to={to} disabled={disabled} />
+      <ActionListItem
+        action={action}
+        onClick={onClick}
+        to={to}
+        disabled={disabled}
+      />
     );
   }
 
