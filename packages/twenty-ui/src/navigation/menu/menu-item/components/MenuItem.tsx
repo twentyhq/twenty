@@ -25,6 +25,7 @@ export type MenuItemIconButton = {
   accent?: LightIconButtonProps['accent'];
   onClick?: (event: MouseEvent<any>) => void;
   ariaLabel?: string;
+  dataTestId?: string;
 };
 
 export type MenuItemProps = {

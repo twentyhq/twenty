@@ -52,7 +52,7 @@ type RecordDetailSectionContainerProps = {
   rightAdornment?: React.ReactNode;
   hideRightAdornmentOnMouseLeave?: boolean;
   areRecordsAvailable?: boolean;
-  ariaLabel?: string;
+  dataTestId?: string;
 };
 
 export const RecordDetailSectionContainer = ({
@@ -62,7 +62,7 @@ export const RecordDetailSectionContainer = ({
   rightAdornment,
   hideRightAdornmentOnMouseLeave = true,
   areRecordsAvailable = false,
-  ariaLabel,
+  dataTestId,
 }: RecordDetailSectionContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
@@ -71,7 +71,7 @@ export const RecordDetailSectionContainer = ({
         areRecordsAvailable={areRecordsAvailable}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        aria-label={ariaLabel}
+        data-testid={dataTestId}
       >
         <StyledTitle>
           <StyledTitleLabel>{title}</StyledTitleLabel>

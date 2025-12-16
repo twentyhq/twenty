@@ -107,7 +107,7 @@ test('Create and update record', async ({ page }) => {
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
     // Fill company relation
-    const companyRelationHeader = page.getByLabel('Company (relation)');
+    const companyRelationHeader = page.getByTestId('company-relation');
     await expect(companyRelationHeader).toBeVisible();
 
     await companyRelationHeader.locator('.tabler-icon-pencil').click();

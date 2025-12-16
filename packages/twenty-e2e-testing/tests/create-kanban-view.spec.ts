@@ -44,10 +44,10 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
   }
   await page.getByText('Options').click();
   await page.getByText('Group', { exact: true }).click();
-  await Promise.all([page.getByRole('button', { name: 'Hide group null', exact: true }).click(),
+  await Promise.all([page.getByTestId('hide-group-').click(),
     page.waitForRequest((req) => {
     return req.url().includes('/metadata') &&
-           req.method() === 'POST'
+           req.method() === 'POST';
   })]);
   await expect(page.getByText('No value')).not.toBeVisible();
 });

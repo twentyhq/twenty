@@ -185,7 +185,7 @@ export const RecordDetailRelationSection = ({
       }}
     >
       <RecordDetailSectionContainer
-        ariaLabel={`${fieldDefinition.label} (relation)`}
+        dataTestId={`${fieldDefinition.label.toLowerCase().replace(' ', '-')}-relation`}
         title={fieldDefinition.label}
         link={
           isToManyObjects

@@ -39,6 +39,9 @@ export const RecordGroupMenuItemDraggable = ({
         ariaLabel: recordGroup.isVisible
           ? `Hide group ${recordGroup.value}`
           : `Show group ${recordGroup.value}`,
+        dataTestId: recordGroup.isVisible
+          ? `hide-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`
+          : `show-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`,
         onClick: () =>
           onVisibilityChange({
             ...recordGroup,

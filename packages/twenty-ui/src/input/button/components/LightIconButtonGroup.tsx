@@ -24,6 +24,7 @@ export type LightIconButtonGroupProps = Pick<
     onClick?: (event: MouseEvent<any>) => void;
     disabled?: boolean;
     ariaLabel?: string;
+    dataTestId?: string;
   }[];
 };
 
@@ -33,27 +34,30 @@ export const LightIconButtonGroup = ({
   className,
 }: LightIconButtonGroupProps) => (
   <StyledLightIconButtonGroupContainer className={className}>
-    {iconButtons.map(({ Wrapper, Icon, accent, onClick, ariaLabel }, index) => {
-      const iconButton = (
-        <LightIconButton
-          key={`light-icon-button-${index}`}
-          Icon={Icon}
-          accent={accent}
-          disabled={!onClick}
-          onClick={onClick}
-          size={size}
-          aria-label={ariaLabel}
-        />
-      );
+    {iconButtons.map(
+      ({ Wrapper, Icon, accent, onClick, ariaLabel, dataTestId }, index) => {
+        const iconButton = (
+          <LightIconButton
+            key={`light-icon-button-${index}`}
+            Icon={Icon}
+            accent={accent}
+            disabled={!onClick}
+            onClick={onClick}
+            size={size}
+            aria-label={ariaLabel}
+            testId={dataTestId}
+          />
+        );
 
-      return Wrapper ? (
-        <Wrapper
-          key={`light-icon-button-wrapper-${index}`}
-          iconButton={iconButton}
-        />
-      ) : (
-        iconButton
-      );
-    })}
+        return Wrapper ? (
+          <Wrapper
+            key={`light-icon-button-wrapper-${index}`}
+            iconButton={iconButton}
+          />
+        ) : (
+          iconButton
+        );
+      },
+    )}
   </StyledLightIconButtonGroupContainer>
 );
