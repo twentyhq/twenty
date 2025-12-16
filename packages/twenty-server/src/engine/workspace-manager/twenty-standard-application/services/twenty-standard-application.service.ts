@@ -116,7 +116,7 @@ export class TwentyStandardApplicationService {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating view field',
+        'Multiple validation errors occurred while synchronizing twenty-standard application',
       );
     }
 
