@@ -180,8 +180,6 @@ export const MultiItemFieldInput = <T,>({
 
   const handleEnter = () => {
     const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
-    console.log('handleEnter isValid', isValid);
-    console.log('handleEnter updatedItems', updatedItems);
     if (!isValid) {
       return;
     }
