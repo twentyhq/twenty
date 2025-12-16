@@ -20,6 +20,8 @@ import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-m
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 import { assertNotNull } from 'src/utils/assert';
 
+const GMAIL_BATCH_REQUEST_MAX_SIZE = 50;
+
 @Injectable()
 export class GmailGetMessageListService {
   private readonly logger = new Logger(GmailGetMessageListService.name);
@@ -217,11 +219,13 @@ export class GmailGetMessageListService {
         connectedAccount,
       );
 
-    const fetchImpl = batchFetchImplementation({ maxBatchSize: 50 });
+    const batchedFetchImplementation = batchFetchImplementation({
+      maxBatchSize: GMAIL_BATCH_REQUEST_MAX_SIZE,
+    });
     const batchedGmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
-      fetchImplementation: fetchImpl,
+      fetchImplementation: batchedFetchImplementation,
     });
 
     const historyPromises = toBeExcludedFolders.map((folder) =>

@@ -129,11 +129,15 @@ export class MessagingMessageListFetchService {
               workspaceId,
             );
 
-          const messageFoldersToSync =
+          const messageFoldersToSync = (
             messageChannelWithFreshTokens.messageFolderImportPolicy ===
             MessageFolderImportPolicy.ALL_FOLDERS
               ? messageFolders
-              : messageFolders.filter((folder) => folder.isSynced);
+              : messageFolders.filter((folder) => folder.isSynced)
+          ).filter(
+            (folder) =>
+              folder.pendingSyncAction === MessageFolderPendingSyncAction.NONE,
+          );
 
           const messageLists =
             await this.messagingGetMessageListService.getMessageLists(

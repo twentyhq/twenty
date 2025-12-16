@@ -2,12 +2,24 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
-export type MessageFolder = Pick<
+export type DiscoveredMessageFolder = Pick<
   MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'parentFolderId' | 'id'
+  'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'parentFolderId'
 >;
 
-export interface MessageFolderDriver {
+export type MessageFolder = Pick<
+  MessageFolderWorkspaceEntity,
+  | 'name'
+  | 'isSynced'
+  | 'isSentFolder'
+  | 'externalId'
+  | 'parentFolderId'
+  | 'id'
+  | 'syncCursor'
+  | 'pendingSyncAction'
+>;
+
+export type MessageFolderDriver = {
   getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
@@ -22,5 +34,5 @@ export interface MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]>;
-}
+  ): Promise<DiscoveredMessageFolder[]>;
+};

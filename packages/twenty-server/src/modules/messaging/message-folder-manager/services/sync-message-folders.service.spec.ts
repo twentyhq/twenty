@@ -2,10 +2,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+import { type DiscoveredMessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  type MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service';
 import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
@@ -20,6 +23,7 @@ type SyncedMessageFolder = Pick<
   | 'externalId'
   | 'syncCursor'
   | 'parentFolderId'
+  | 'pendingSyncAction'
 >;
 
 const createMockMessageChannel = (
@@ -40,14 +44,13 @@ const createMockMessageChannel = (
 });
 
 const createMockDiscoveredFolder = (
-  overrides: Partial<MessageFolder> = {},
-): MessageFolder => ({
+  overrides: Partial<DiscoveredMessageFolder> = {},
+): DiscoveredMessageFolder => ({
   externalId: `external-${Math.random().toString(36).substring(7)}`,
   name: 'Test Folder',
   isSynced: false,
   isSentFolder: false,
   parentFolderId: null,
-  id: `folder-${Math.random().toString(36).substring(7)}`,
   ...overrides,
 });
 
@@ -61,6 +64,7 @@ const createMockExistingFolder = (
   isSentFolder: false,
   syncCursor: null,
   parentFolderId: null,
+  pendingSyncAction: MessageFolderPendingSyncAction.NONE,
   ...overrides,
 });
 
@@ -71,6 +75,7 @@ describe('SyncMessageFoldersService', () => {
   let mockRepository: {
     delete: jest.Mock;
     update: jest.Mock;
+    updateMany: jest.Mock;
     save: jest.Mock;
   };
   let mockTransactionManager: object;
@@ -79,6 +84,7 @@ describe('SyncMessageFoldersService', () => {
     mockRepository = {
       delete: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
       save: jest.fn().mockImplementation((folders) =>
         folders.map((folder: Partial<MessageFolderWorkspaceEntity>) => ({
           ...folder,
@@ -108,6 +114,9 @@ describe('SyncMessageFoldersService', () => {
               .mockImplementation((_, callback) => callback()),
             getRepository: jest.fn().mockResolvedValue(mockRepository),
             getDataSourceForWorkspace: jest
+              .fn()
+              .mockResolvedValue(mockDataSource),
+            getGlobalWorkspaceDataSource: jest
               .fn()
               .mockResolvedValue(mockDataSource),
           },
@@ -249,9 +258,13 @@ describe('SyncMessageFoldersService', () => {
           workspaceId,
         );
 
-        expect(mockRepository.update).toHaveBeenCalledWith(
-          { id: 'folder-1' },
-          expect.objectContaining({ name: 'Primary Inbox' }),
+        expect(mockRepository.updateMany).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              criteria: 'folder-1',
+              partialEntity: expect.objectContaining({ name: 'Primary Inbox' }),
+            }),
+          ]),
           mockTransactionManager,
         );
         expect(result).toContainEqual(
@@ -286,9 +299,15 @@ describe('SyncMessageFoldersService', () => {
 
         await service.syncMessageFolders(messageChannel as never, workspaceId);
 
-        expect(mockRepository.update).toHaveBeenCalledWith(
-          { id: 'folder-1' },
-          expect.objectContaining({ parentFolderId: 'new-parent-id' }),
+        expect(mockRepository.updateMany).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              criteria: 'folder-1',
+              partialEntity: expect.objectContaining({
+                parentFolderId: 'new-parent-id',
+              }),
+            }),
+          ]),
           mockTransactionManager,
         );
       });
@@ -319,7 +338,7 @@ describe('SyncMessageFoldersService', () => {
 
         await service.syncMessageFolders(messageChannel as never, workspaceId);
 
-        expect(mockRepository.update).not.toHaveBeenCalled();
+        expect(mockRepository.updateMany).not.toHaveBeenCalled();
       });
     });
 
@@ -356,13 +375,24 @@ describe('SyncMessageFoldersService', () => {
           workspaceId,
         );
 
-        expect(mockRepository.delete).toHaveBeenCalledWith(
-          ['folder-2'],
+        expect(mockRepository.updateMany).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              criteria: 'folder-2',
+              partialEntity: expect.objectContaining({
+                pendingSyncAction: 'FOLDER_DELETION',
+              }),
+            }),
+          ]),
           mockTransactionManager,
         );
-        expect(result).not.toContainEqual(
-          expect.objectContaining({ id: 'folder-2' }),
+        expect(result).toContainEqual(
+          expect.objectContaining({
+            id: 'folder-2',
+            pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
+          }),
         );
+        expect(result).toHaveLength(2);
       });
     });
 
@@ -412,13 +442,24 @@ describe('SyncMessageFoldersService', () => {
           workspaceId,
         );
 
-        expect(mockRepository.delete).toHaveBeenCalledWith(
-          ['folder-to-delete'],
+        expect(mockRepository.updateMany).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              criteria: 'folder-to-delete',
+              partialEntity: expect.objectContaining({
+                pendingSyncAction: 'FOLDER_DELETION',
+              }),
+            }),
+          ]),
           mockTransactionManager,
         );
-        expect(mockRepository.update).toHaveBeenCalledWith(
-          { id: 'folder-to-update' },
-          expect.objectContaining({ name: 'New Name' }),
+        expect(mockRepository.updateMany).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            expect.objectContaining({
+              criteria: 'folder-to-update',
+              partialEntity: expect.objectContaining({ name: 'New Name' }),
+            }),
+          ]),
           mockTransactionManager,
         );
         expect(mockRepository.save).toHaveBeenCalledWith(
@@ -428,7 +469,13 @@ describe('SyncMessageFoldersService', () => {
           {},
           mockTransactionManager,
         );
-        expect(result).toHaveLength(3);
+        expect(result).toHaveLength(4);
+        expect(result).toContainEqual(
+          expect.objectContaining({
+            id: 'folder-to-delete',
+            pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
+          }),
+        );
       });
 
       it('should preserve syncCursor and isSynced for unchanged folders', async () => {
@@ -463,6 +510,7 @@ describe('SyncMessageFoldersService', () => {
             id: 'folder-1',
             isSynced: true,
             syncCursor: 'cursor-abc123',
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           }),
         );
       });
