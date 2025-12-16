@@ -4,11 +4,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 
 export const useUpdateOneFieldMetadataItem = () => {
@@ -24,6 +25,9 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const apolloClient = useApolloClient();
+  const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const updateOneFieldMetadataItem = async ({
     objectMetadataId,
@@ -53,6 +57,16 @@ export const useUpdateOneFieldMetadataItem = () => {
         variables: {
           idToUpdate: fieldMetadataIdToUpdate,
           updatePayload: updatePayload,
+        },
+      });
+
+      const objectMetadataItem = getObjectMetadataItemById(objectMetadataId);
+
+      apolloClient.cache.modify({
+        fields: {
+          [objectMetadataItem.namePlural]: (_, { INVALIDATE }) => {
+            return INVALIDATE;
+          },
         },
       });
 
