@@ -1,6 +1,6 @@
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
-import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
 
 export const getSubFlatEntityMapsByApplicationIdOrThrow = <
@@ -12,7 +12,7 @@ export const getSubFlatEntityMapsByApplicationIdOrThrow = <
   applicationId: string;
   flatEntityMaps: FlatEntityMaps<T>;
 }) => {
-  const allApplicationFlatEntity = getFlatEntitiesByApplicationId({
+  const allApplicationFlatEntity = findFlatEntitiesByApplicationId({
     applicationId,
     flatEntityMaps,
   });

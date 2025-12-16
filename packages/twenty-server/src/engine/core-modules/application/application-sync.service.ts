@@ -29,7 +29,7 @@ import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-e
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -1172,19 +1172,19 @@ export class ApplicationSyncService {
     }
 
     const flatObjectMetadataMapsByApplicationId =
-      getFlatEntitiesByApplicationId({
+      findFlatEntitiesByApplicationId({
         flatEntityMaps: existingFlatObjectMetadataMaps,
         applicationId: application.id,
       });
 
-    const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+    const flatIndexMetadataMapsByApplicationId = findFlatEntitiesByApplicationId(
       {
         flatEntityMaps: existingFlatIndexMetadataMaps,
         applicationId: application.id,
       },
     );
 
-    const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
+    const flatFieldMetadataMapsByApplicationId = findFlatEntitiesByApplicationId(
       {
         flatEntityMaps: existingFlatFieldMetadataMaps,
         applicationId: application.id,
