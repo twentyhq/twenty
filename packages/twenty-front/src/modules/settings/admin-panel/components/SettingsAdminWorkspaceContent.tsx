@@ -99,7 +99,7 @@ export const SettingsAdminWorkspaceContent = ({
       },
       onError: (error) => {
         enqueueErrorSnackBar({
-          message: `Failed to impersonate user. ${error.message}`,
+          message: t`Failed to impersonate user. ${error.message}`,
         });
       },
     }).finally(() => {

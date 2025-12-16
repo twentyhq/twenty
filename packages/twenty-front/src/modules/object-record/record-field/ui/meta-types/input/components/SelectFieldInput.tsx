@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
@@ -69,7 +70,7 @@ export const SelectFieldInput = () => {
   });
 
   const optionIds = [
-    `No ${fieldDefinition.label}`,
+    t`No ${fieldDefinition.label}`,
     ...filteredOptions.map((option) => option.value),
   ];
 

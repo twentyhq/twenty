@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -96,7 +97,7 @@ export const SettingsAccountsBlocklistInput = ({
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <SettingsTextInput
                 instanceId="settings-accounts-blocklist-input"
-                placeholder="eddy@gmail.com, @apple.com"
+                placeholder={t`eddy@gmail.com, @apple.com`}
                 value={value}
                 onChange={onChange}
                 error={error?.message}

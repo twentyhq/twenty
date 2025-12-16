@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   type ExecutionStatus,
   WorkflowStepExecutionResult,
@@ -31,10 +32,10 @@ export const ServerlessFunctionExecutionResult = ({
     isSuccess,
     isError,
     successMessage: isSuccess
-      ? `200 OK - ${serverlessFunctionTestData.output.duration}ms`
+      ? t`200 OK - ${serverlessFunctionTestData.output.duration}ms`
       : undefined,
     errorMessage: isError
-      ? `500 Error - ${serverlessFunctionTestData.output.duration}ms`
+      ? t`500 Error - ${serverlessFunctionTestData.output.duration}ms`
       : undefined,
   };
 
@@ -48,8 +49,8 @@ export const ServerlessFunctionExecutionResult = ({
       )}
       status={status}
       isTesting={isTesting}
-      loadingMessage="Running function"
-      idleMessage="Output"
+      loadingMessage={t`Running function`}
+      idleMessage={t`Output`}
     />
   );
 };

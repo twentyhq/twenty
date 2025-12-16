@@ -154,11 +154,16 @@ export default [
             '^[HhMmSsYyDdAaPp:.,\\s-]+$', // date format patterns (HH:mm, yyyy-MM-dd, etc.)
             '^Arrow(Up|Down|Left|Right)$', // keyboard keys
             '^(Enter|Escape|Tab|Space|Backspace|Delete)$', // keyboard keys
+            '^Text$', // clipboard data type
+            '^(allow-|sandbox)', // iframe sandbox values
             '^(Dark|Light)$', // color schemes
             '^Icon[A-Z]\\w*$', // Icon names like IconDefault, IconTable, IconSettings
             '^\\w*Icon$', // Icon names that end with Icon like FieldIcon
             '^%c.*$', // Console format strings
-            '^(Group|CalendarView|CalendarDateField|Compact view)$', // Common item IDs for selectable lists
+            // Common item IDs for selectable lists
+            '^(Group|CalendarView|CalendarDateField|Compact view)$',
+            '^(Layout|Visibility|Fields|Delete view|Copy link to view|Create custom view)$',
+            '^(GroupBy|Sort|HideEmptyGroups|HiddenGroups)$',
           ],
           ignoreNames: [
             // HTML/React attributes that shouldn't be translated
@@ -517,6 +522,20 @@ export default [
     files: ['**/*.stories.ts', '**/*.stories.tsx', '**/*.stories.js', '**/*.stories.jsx'],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Debug files - development only, not user-facing
+  {
+    files: [
+      '**/Debug*.tsx',
+      '**/*Debug*.tsx',
+      '**/*DebugDisplay*.tsx',
+      '**/*DebugHelper*.tsx',
+      '**/*DebugObserver*.tsx',
+    ],
+    rules: {
       'lingui/no-unlocalized-strings': 'off',
     },
   },

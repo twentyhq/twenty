@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -81,7 +82,7 @@ export const MorphRelationManyToOneFieldInput = () => {
       focusId={instanceId}
       componentInstanceId={instanceId}
       EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
+      emptyLabel={t`No ${fieldDefinition.label}`}
       onCancel={onCancel}
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={objectNameSingulars}

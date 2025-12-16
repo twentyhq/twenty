@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import { Select } from '@/ui/input/components/Select';
@@ -18,7 +19,7 @@ export const MergeSettingsTab = () => {
 
   const priorityOptions = selectedRecords.map((_, index) => ({
     value: index,
-    label: `${getPositionWordLabel(index)} record holds priority`,
+    label: t`${getPositionWordLabel(index)} record holds priority`,
     Icon: getPositionNumberIcon(index),
     recordIndex: index,
   }));
@@ -38,7 +39,7 @@ export const MergeSettingsTab = () => {
         options={priorityOptions}
         value={mergeSettings.conflictPriorityIndex}
         onChange={handleSelectionChange}
-        label="Fields conflicts"
+        label={t`Fields conflicts`}
       />
     </StyledSection>
   );
