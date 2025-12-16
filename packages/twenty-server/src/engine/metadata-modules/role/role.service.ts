@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -25,7 +26,6 @@ import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fr
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
 
 @Injectable()
 export class RoleService {
@@ -214,6 +214,38 @@ export class RoleService {
     roleId: string;
     workspaceId: string;
   }): Promise<RoleDTO> {
+    const deletedRoles = await this.deleteManyRoles({
+      ids: [roleId],
+      workspaceId,
+      isSystemBuild: false,
+    });
+
+    const [deletedRole] = deletedRoles;
+
+    return deletedRole;
+  }
+
+  public async deleteManyRoles({
+    ids,
+    workspaceId,
+    isSystemBuild = false,
+  }: {
+    ids: string[];
+    workspaceId: string;
+    isSystemBuild?: boolean;
+  }): Promise<RoleDTO[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
@@ -232,34 +264,32 @@ export class RoleService {
       );
     }
 
-    if (defaultRoleId === roleId) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
-        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
-        {
-          userFriendlyMessage: msg`The default role cannot be deleted as it is required for the workspace to function properly.`,
-        },
-      );
+    const rolesToDelete = [];
+
+    for (const roleId of ids) {
+      const flatRoleToDelete = fromDeleteRoleInputToFlatRoleOrThrow({
+        flatRoleMaps,
+        roleId,
+      });
+
+      if (defaultRoleId === roleId) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
+          PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+          {
+            userFriendlyMessage: msg`The default role cannot be deleted as it is required for the workspace to function properly.`,
+          },
+        );
+      }
+
+      await this.assignDefaultRoleToMembersWithRoleToDelete({
+        roleId,
+        workspaceId,
+        defaultRoleId,
+      });
+
+      rolesToDelete.push(flatRoleToDelete);
     }
-
-    await this.assignDefaultRoleToMembersWithRoleToDelete({
-      roleId,
-      workspaceId,
-      defaultRoleId,
-    });
-
-    const { flatRoleMaps: existingFlatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
-    const flatRoleToDelete = fromDeleteRoleInputToFlatRoleOrThrow({
-      flatRoleMaps: existingFlatRoleMaps,
-      roleId,
-    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -267,23 +297,23 @@ export class RoleService {
           allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatRoleToDelete],
+              flatEntityToDelete: rolesToDelete,
               flatEntityToUpdate: [],
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting role',
+        `Multiple validation errors occurred while deleting role${ids.length > 1 ? 's' : ''}`,
       );
     }
 
-    return fromFlatRoleToRoleDto(flatRoleToDelete);
+    return rolesToDelete.map(fromFlatRoleToRoleDto);
   }
 
   public async createMemberRole({
