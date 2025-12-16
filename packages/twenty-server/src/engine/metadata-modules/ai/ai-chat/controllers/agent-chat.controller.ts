@@ -18,7 +18,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
 @Controller('rest/agent-chat')
@@ -36,7 +36,7 @@ export class AgentChatController {
     body: {
       threadId: string;
       messages: ExtendedUIMessage[];
-      recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
+      browsingContext?: BrowsingContextType | null;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -45,8 +45,7 @@ export class AgentChatController {
     this.agentStreamingService.streamAgentChat({
       threadId: body.threadId,
       messages: body.messages,
-      recordIdsByObjectMetadataNameSingular:
-        body.recordIdsByObjectMetadataNameSingular ?? [],
+      browsingContext: body.browsingContext ?? null,
       userWorkspaceId,
       workspace,
       response,

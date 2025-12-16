@@ -13,58 +13,55 @@ import {
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { In } from 'typeorm';
 
-import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
   type ToolIndexEntry,
   ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
-  AGENT_SEARCH_TOOL_NAME,
-  createAgentSearchTool,
+  createLoadSkillTool,
   createLoadToolsTool,
   type DynamicToolStore,
+  LOAD_SKILL_TOOL_NAME,
   LOAD_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import {
+  extractCodeInterpreterFiles,
+  type ExtractedFile,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import {
+  type AIModelConfig,
+  ModelProvider,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
-  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
+  browsingContext: BrowsingContextType | null;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   preloadedTools: string[];
-  initialAgents: string[];
+  modelConfig: AIModelConfig;
 };
 
-const INITIAL_AGENTS_LIMIT = 2;
-
-// Common tools to pre-load for quick access
-const COMMON_PRELOAD_TOOLS = ['http_request', 'search_articles'];
+const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
 
 @Injectable()
 export class ChatExecutionService {
@@ -72,11 +69,10 @@ export class ChatExecutionService {
 
   constructor(
     private readonly toolRegistry: ToolRegistryService,
-    private readonly agentService: AgentService,
+    private readonly skillsService: SkillsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
@@ -84,37 +80,37 @@ export class ChatExecutionService {
     workspace,
     userWorkspaceId,
     messages,
-    recordIdsByObjectMetadataNameSingular,
+    browsingContext,
+    onCodeExecutionUpdate,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId } =
+    const { actorContext, roleId, userId } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
       );
 
-    const toolContext = { workspaceId: workspace.id, roleId, actorContext };
+    const toolContext = {
+      workspaceId: workspace.id,
+      roleId,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
+    };
 
-    const lastUserMessage = this.getLastUserMessage(messages);
+    const contextString = browsingContext
+      ? this.buildContextFromBrowsingContext(workspace, browsingContext)
+      : undefined;
 
-    let recordContext: string | undefined;
+    const toolCatalog = await this.toolRegistry.buildToolIndex(
+      workspace.id,
+      roleId,
+    );
 
-    if (recordIdsByObjectMetadataNameSingular.length > 0) {
-      recordContext = await this.buildContextFromRecords(
-        workspace,
-        recordIdsByObjectMetadataNameSingular,
-        userWorkspaceId,
-      );
-    }
-
-    const [toolCatalog, initialAgents] = await Promise.all([
-      this.toolRegistry.buildToolIndex(workspace.id, roleId),
-      this.agentService.searchAgents(lastUserMessage, workspace.id, {
-        limit: INITIAL_AGENTS_LIMIT,
-      }),
-    ]);
+    const skillCatalog = this.skillsService.getAllSkills();
 
     this.logger.log(
-      `Built tool catalog with ${toolCatalog.length} tools, ${initialAgents.length} agents`,
+      `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
@@ -130,6 +126,10 @@ export class ChatExecutionService {
 
     const registeredModel =
       this.aiModelRegistryService.getDefaultPerformanceModel();
+
+    const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
+      registeredModel.modelId,
+    );
 
     const activeTools: ToolSet = {
       ...preloadedTools,
@@ -148,16 +148,33 @@ export class ChatExecutionService {
           this.logger.log(`Dynamically loaded tools: ${toolNames.join(', ')}`);
         },
       ),
-      [AGENT_SEARCH_TOOL_NAME]: createAgentSearchTool((query, options) =>
-        this.agentService.searchAgents(query, workspace.id, options),
+      [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
+        this.skillsService.getSkillsByNames(skillNames),
       ),
     };
 
+    const { processedMessages, extractedFiles } =
+      extractCodeInterpreterFiles(messages);
+
+    let storedFiles: Array<{
+      filename: string;
+      storagePath: string;
+      url: string;
+    }> = [];
+
+    if (extractedFiles.length > 0) {
+      storedFiles = await this.storeExtractedFiles(
+        extractedFiles,
+        workspace.id,
+      );
+    }
+
     const systemPrompt = this.buildSystemPrompt(
       toolCatalog,
-      initialAgents,
+      skillCatalog,
       preloadedToolNames,
-      recordContext,
+      contextString,
+      storedFiles,
     );
 
     this.logger.log(
@@ -167,7 +184,7 @@ export class ChatExecutionService {
     const stream = streamText({
       model: registeredModel.model,
       system: systemPrompt,
-      messages: convertToModelMessages(messages),
+      messages: convertToModelMessages(processedMessages),
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
@@ -203,173 +220,136 @@ export class ChatExecutionService {
     return {
       stream,
       preloadedTools: preloadedToolNames,
-      initialAgents: initialAgents.map((a) => a.name),
+      modelConfig,
     };
   }
 
-  private async buildContextFromRecords(
+  private buildContextFromBrowsingContext(
     workspace: WorkspaceEntity,
-    recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
-    userWorkspaceId: string,
-  ): Promise<string> {
-    const authContext = buildSystemAuthContext(workspace.id);
-
-    const contextFromRecords =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () => {
-          const {
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            objectIdByNameSingular,
-            permissionsPerRoleId: objectMetadataPermissions,
-            userWorkspaceRoleMap,
-          } = getWorkspaceContext();
-
-          const roleId = userWorkspaceRoleMap[userWorkspaceId];
-
-          if (!roleId) {
-            throw new AgentException(
-              'Failed to retrieve user role.',
-              AgentExceptionCode.ROLE_NOT_FOUND,
-            );
-          }
-
-          const workspaceDataSource =
-            await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-              workspace.id,
-            );
-
-          const contextObject = (
-            await Promise.all(
-              recordIdsByObjectMetadataNameSingular.map(
-                async (recordsWithObjectMetadataNameSingular) => {
-                  if (
-                    recordsWithObjectMetadataNameSingular.recordIds.length === 0
-                  ) {
-                    return [];
-                  }
-
-                  const objectMetadataId =
-                    objectIdByNameSingular[
-                      recordsWithObjectMetadataNameSingular
-                        .objectMetadataNameSingular
-                    ];
-                  const objectMetadataMapItem = objectMetadataId
-                    ? flatObjectMetadataMaps.byId[objectMetadataId]
-                    : undefined;
-
-                  if (!objectMetadataMapItem) {
-                    this.logger.warn(
-                      `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
-                    );
-
-                    return [];
-                  }
-
-                  const repository = workspaceDataSource.getRepository(
-                    recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-                    { unionOf: [roleId] },
-                  );
-
-                  const restrictedFields =
-                    objectMetadataPermissions?.[roleId]?.[
-                      objectMetadataMapItem.id
-                    ]?.restrictedFields ?? {};
-
-                  const hasRestrictedFields = Object.values(
-                    restrictedFields,
-                  ).some((field) => field.canRead === false);
-
-                  const selectOptions = hasRestrictedFields
-                    ? getAllSelectableColumnNames({
-                        restrictedFields,
-                        objectMetadata: {
-                          objectMetadataMapItem,
-                          flatFieldMetadataMaps,
-                        },
-                      })
-                    : undefined;
-
-                  return (
-                    await repository.find({
-                      ...(selectOptions && { select: selectOptions }),
-                      where: {
-                        id: In(recordsWithObjectMetadataNameSingular.recordIds),
-                      },
-                    })
-                  ).map((record) => {
-                    return {
-                      ...record,
-                      resourceUrl:
-                        this.workspaceDomainsService.buildWorkspaceURL({
-                          workspace,
-                          pathname: getAppPath(AppPath.RecordShowPage, {
-                            objectNameSingular:
-                              recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-                            objectRecordId: record.id,
-                          }),
-                        }),
-                    };
-                  });
-                },
-              ),
-            )
-          ).flat(2);
-
-          return JSON.stringify(contextObject);
-        },
-      );
-
-    return contextFromRecords;
-  }
-
-  private getLastUserMessage(
-    messages: UIMessage<unknown, UIDataTypes, UITools>[],
+    browsingContext: BrowsingContextType,
   ): string {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const message = messages[i];
+    if (browsingContext.type === 'recordPage') {
+      return this.buildRecordPageContext(
+        workspace,
+        browsingContext.objectNameSingular,
+        browsingContext.recordId,
+      );
+    }
 
-      if (message.role === 'user') {
-        const textPart = message.parts.find((part) => part.type === 'text');
-
-        if (textPart && 'text' in textPart) {
-          return textPart.text;
-        }
-      }
+    if (browsingContext.type === 'listView') {
+      return this.buildListViewContext(browsingContext);
     }
 
     return '';
   }
 
+  private buildRecordPageContext(
+    workspace: WorkspaceEntity,
+    objectNameSingular: string,
+    recordId: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      }),
+    });
+
+    return `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
+  }
+
+  private buildListViewContext(browsingContext: {
+    type: 'listView';
+    objectNameSingular: string;
+    viewId: string;
+    viewName: string;
+    filterDescriptions: string[];
+  }): string {
+    const { objectNameSingular, viewId, viewName, filterDescriptions } =
+      browsingContext;
+
+    let context = `The user is viewing a list of ${objectNameSingular} records in a view called "${viewName}" (viewId: ${viewId}).`;
+
+    if (filterDescriptions.length > 0) {
+      context += `\nFilters applied: ${filterDescriptions.join(', ')}`;
+    }
+
+    context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
+
+    return context;
+  }
+
   private buildSystemPrompt(
     toolCatalog: ToolIndexEntry[],
-    agents: AgentEntity[],
+    skillCatalog: Array<{ name: string; label: string; description: string }>,
     preloadedTools: string[],
-    recordContext?: string,
+    contextString?: string,
+    storedFiles?: Array<{ filename: string; storagePath: string; url: string }>,
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
-    if (agents.length > 0) {
-      const skillsSection = agents
-        .map((agent) => `## ${agent.label} Expertise\n${agent.prompt}`)
-        .join('\n\n');
+    parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
+    parts.push(this.buildSkillCatalogSection(skillCatalog));
 
-      parts.push(`\nYou have the following expertise:\n\n${skillsSection}`);
+    if (storedFiles && storedFiles.length > 0) {
+      parts.push(this.buildUploadedFilesSection(storedFiles));
     }
 
-    parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
-
-    if (recordContext) {
+    if (contextString) {
       parts.push(
-        `\nCONTEXT (records the user is currently viewing):\n${recordContext}`,
+        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
       );
     }
 
     return parts.join('\n');
+  }
+
+  private buildUploadedFilesSection(
+    storedFiles: Array<{ filename: string; storagePath: string; url: string }>,
+  ): string {
+    const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
+
+    const filesJson = JSON.stringify(
+      storedFiles.map((f) => ({ filename: f.filename, url: f.url })),
+    );
+
+    return `
+## Uploaded Files
+
+The user has uploaded the following files:
+${fileList}
+
+**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
+When calling code_interpreter, include the files parameter with these values:
+\`\`\`json
+${filesJson}
+\`\`\`
+
+In your Python code, access files at \`/home/user/{filename}\`.`;
+  }
+
+  private buildSkillCatalogSection(
+    skillCatalog: Array<{ name: string; label: string; description: string }>,
+  ): string {
+    if (skillCatalog.length === 0) {
+      return '';
+    }
+
+    const skillsList = skillCatalog
+      .map((skill) => `- \`${skill.name}\`: ${skill.description}`)
+      .join('\n');
+
+    return `
+## Available Skills
+
+Skills provide detailed expertise for specialized tasks. Load a skill before attempting complex operations.
+To load a skill, call \`${LOAD_SKILL_TOOL_NAME}\` with the skill name(s).
+
+${skillsList}`;
   }
 
   private buildToolCatalogSection(
@@ -402,7 +382,14 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
 
 ### Tool Catalog by Category`);
 
-    const categoryOrder = ['database', 'action', 'workflow', 'metadata'];
+    const categoryOrder = [
+      'database',
+      'action',
+      'workflow',
+      'dashboard',
+      'metadata',
+      'view',
+    ];
 
     for (const category of categoryOrder) {
       const tools = toolsByCategory.get(category);
@@ -428,8 +415,7 @@ ${tools
 ### How to Use Tools
 1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet
 2. **Pre-loaded tools** (marked with ✓): Use directly
-3. **Other tools**: First call \`${LOAD_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\`, then use the tool
-4. **Agent expertise**: Call \`${AGENT_SEARCH_TOOL_NAME}\` to load specialized knowledge for workflows, etc.`);
+3. **Other tools**: First call \`${LOAD_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\`, then use the tool`);
 
     return sections.join('\n');
   }
@@ -444,6 +430,10 @@ ${tools
         return 'Workflow Tools (create/manage workflows)';
       case 'metadata':
         return 'Metadata Tools (schema management)';
+      case 'view':
+        return 'View Tools (query views)';
+      case 'dashboard':
+        return 'Dashboard Tools (create/manage dashboards)';
       default:
         return category;
     }
@@ -459,5 +449,18 @@ ${tools
         // Other providers don't have native web search
         return {};
     }
+  }
+
+  private async storeExtractedFiles(
+    files: ExtractedFile[],
+    _workspaceId: string,
+  ): Promise<Array<{ filename: string; storagePath: string; url: string }>> {
+    // Files are already uploaded and have URLs, just return them with their info
+    // The code interpreter tool will download them when needed
+    return files.map((file) => ({
+      filename: file.filename,
+      storagePath: file.filename,
+      url: file.url,
+    }));
   }
 }

@@ -87,6 +87,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -181,7 +182,7 @@ msgstr "{failedCount}개의 파일 업로드 실패"
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr ""
+msgstr "{filterRulesCount, plural, one {{filterRulesCount}개 규칙} other {{filterRulesCount}개 규칙}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -501,6 +502,11 @@ msgstr "ACS Url이 클립보드에 복사되었습니다"
 msgid "Action"
 msgstr "액션"
 
+#. js-lingui-id: j6ogTf
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Action on click"
+msgstr ""
+
 #. js-lingui-id: 7L01XJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -586,6 +592,7 @@ msgstr "승인된 액세스 도메인 추가"
 
 #. js-lingui-id: We0vOO
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Add Block"
 msgstr "블록 추가"
 
@@ -851,7 +858,7 @@ msgstr "설정된 시간 이후"
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "agent"
-msgstr ""
+msgstr "에이전트"
 
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1066,7 +1073,7 @@ msgstr "이메일과 비밀번호로 로그인 허용."
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
-msgstr ""
+msgstr "오류가 발생했습니다"
 
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -1118,7 +1125,7 @@ msgstr "내부 오류가 발생하여 변경 사항을 검증할 수 없습니�
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
-msgstr ""
+msgstr "이 이름을 가진 객체가 이미 존재합니다"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1297,7 +1304,7 @@ msgstr "아랍어"
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Archive files cannot be previewed. Please download the file to access its contents."
-msgstr ""
+msgstr "압축 파일은 미리 볼 수 없습니다. 파일을 다운로드하여 내용을 확인하세요."
 
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1327,7 +1334,7 @@ msgstr "이 기록을 복원하시겠습니까?"
 #. js-lingui-id: 9JFf0y
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
-msgstr ""
+msgstr "이 사용자의 역할을 \"{oldRoleLabel}\"에서 \"{newRoleLabel}\"(으)로 업데이트하시겠습니까?"
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -1576,6 +1583,11 @@ msgstr "뒤로"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "콘텐츠로 돌아가기"
+
+#. js-lingui-id: Hv/jpu
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Background Colors"
+msgstr ""
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1841,6 +1853,7 @@ msgstr "카탈로니아어"
 
 #. js-lingui-id: tHntRt
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Change Color"
 msgstr "색상 변경"
 
@@ -1966,6 +1979,21 @@ msgstr "레코드를 식별할 필드를 선택하세요"
 msgid "Choose the format used to display date value"
 msgstr "날짜 형식을 선택하세요"
 
+#. js-lingui-id: CiPJbh
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a link"
+msgstr ""
+
+#. js-lingui-id: D3MauW
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a phone number"
+msgstr ""
+
+#. js-lingui-id: QR1yAR
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click an email"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -2042,6 +2070,11 @@ msgstr "닫기"
 msgid "Close command menu"
 msgstr "명령 메뉴 닫기"
 
+#. js-lingui-id: EWPtMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Code"
+msgstr ""
+
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Code Editor"
@@ -2059,6 +2092,7 @@ msgstr "함수 코딩하기"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2118,6 +2152,7 @@ msgstr "완료됨"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Completed"
 msgstr "완료됨"
 
@@ -2207,7 +2242,7 @@ msgstr "도메인 제공업체와 함께 이 DNS 기록 구성하기"
 #. js-lingui-id: BgaUQT
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "Configure this widget to display fields"
-msgstr ""
+msgstr "필드를 표시하도록 이 위젯을 구성하세요"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2247,7 +2282,7 @@ msgstr "다운그레이드 확인"
 #. js-lingui-id: 28b8wO
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Confirm role update"
-msgstr ""
+msgstr "역할 업데이트 확인"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2317,7 +2352,6 @@ msgstr "포함"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
-#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "컨텍스트"
 
@@ -2369,6 +2403,11 @@ msgstr "클립보드에 복사되었습니다"
 msgid "Copy"
 msgstr "복사"
 
+#. js-lingui-id: NmPNJJ
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Copy code"
+msgstr ""
+
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -2384,6 +2423,11 @@ msgstr "링크 복사"
 msgid "Copy link to view"
 msgstr "보기 링크 복사"
 
+#. js-lingui-id: VBIlvI
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Copy output"
+msgstr ""
+
 #. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Copy paste the code below"
@@ -2398,6 +2442,11 @@ msgstr "설정 키 복사"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "이 키는 다시 표시되지 않으므로 복사하세요"
+
+#. js-lingui-id: /4gGIX
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Copy to clipboard"
+msgstr ""
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -2670,7 +2719,7 @@ msgstr ""
 #. js-lingui-id: J1QT+3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Cumulative"
-msgstr ""
+msgstr "누적"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2753,7 +2802,7 @@ msgstr "페이지 레이아웃 및 UI 구조 맞춤화"
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Customize what this user can view and perform"
-msgstr ""
+msgstr "이 사용자가 열람하고 수행할 수 있는 항목을 사용자 지정하세요"
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2788,6 +2837,11 @@ msgstr "덴마크어"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "다크"
+
+#. js-lingui-id: ogQzcZ
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Dashboard duplicated successfully"
+msgstr "대시보드가 성공적으로 복제되었습니다"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3077,6 +3131,7 @@ msgstr "삭제"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -3089,12 +3144,12 @@ msgstr "삭제"
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
-msgstr ""
+msgstr "{fieldLabel} 필드를 삭제하시겠습니까?"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
-msgstr ""
+msgstr "{objectLabel} 객체를 삭제하시겠습니까?"
 
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -3134,6 +3189,11 @@ msgstr "API 키 삭제"
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
+msgstr "대시보드 삭제"
+
+#. js-lingui-id: qnWLDf
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboards"
 msgstr "대시보드 삭제"
 
 #. js-lingui-id: gf2eXy
@@ -3408,6 +3468,11 @@ msgstr "점과 쉼표 - {dotsAndCommaExample}"
 msgid "Downgrade"
 msgstr "다운그레이드"
 
+#. js-lingui-id: qnTwse
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Download {filename}"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -3421,7 +3486,7 @@ msgstr "파일 다운로드"
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Download sample"
-msgstr ""
+msgstr "샘플 파일 다운로드"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3431,8 +3496,14 @@ msgstr "파일을 여기에 드롭하세요..."
 #. js-lingui-id: euc6Ns
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate"
 msgstr ""
+
+#. js-lingui-id: MR2sZ1
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Duplicate Dashboard"
+msgstr "대시보드 복제"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -3599,6 +3670,7 @@ msgstr "이메일은 비워 둘 수 없습니다"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 msgid "Email copied to clipboard"
 msgstr "이메일이 클립보드에 복사되었습니다"
 
@@ -3712,6 +3784,7 @@ msgstr "비어 있음"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3730,6 +3803,7 @@ msgstr "받은 편지함 비우기"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3826,7 +3900,7 @@ msgstr "0에서 59 사이의 숫자를 입력하세요"
 #. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 1 and 60"
-msgstr ""
+msgstr "1에서 60 사이의 숫자를 입력하세요"
 
 #. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -3890,11 +3964,6 @@ msgstr "환경 변수"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Erasure of soft-deleted records"
 msgstr "소프트 삭제된 기록 지우기"
-
-#. js-lingui-id: XOEl9R
-#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-msgid "Error copying to clipboard"
-msgstr "클립보드에 복사 오류"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4005,7 +4074,7 @@ msgstr ""
 #. js-lingui-id: FDRUdE
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "Evaluating"
-msgstr ""
+msgstr "평가 중"
 
 #. js-lingui-id: Y3MReI
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -4148,6 +4217,7 @@ msgstr "설정 종료"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4303,6 +4373,7 @@ msgstr "추가 크레딧 사용됨"
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Failed"
 msgstr "실패"
 
@@ -4320,6 +4391,11 @@ msgstr "{translatedMetadataName} 생성에 실패하였습니다. 관련 {relate
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "작업 삭제에 실패했습니다. 나중에 다시 시도하세요."
+
+#. js-lingui-id: NUmmdc
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Failed to duplicate dashboard"
+msgstr "대시보드 복제에 실패했습니다"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
@@ -4375,7 +4451,7 @@ msgstr "가격 업데이트 실패."
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
-msgstr ""
+msgstr "역할 업데이트 실패"
 
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
@@ -4443,7 +4519,7 @@ msgstr "필드"
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
-msgstr ""
+msgstr "필드 삭제됨"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -4645,7 +4721,7 @@ msgstr "기능 - 설정"
 #. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
-msgstr ""
+msgstr "게이지 차트"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4659,6 +4735,11 @@ msgstr "일반"
 #: src/utils/title-utils.ts
 msgid "General - Settings"
 msgstr "일반 - 설정"
+
+#. js-lingui-id: wu9eMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Generated Files"
+msgstr ""
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4890,6 +4971,11 @@ msgstr "삭제된 실행 숨기기"
 msgid "Hide deleted workflows"
 msgstr "삭제된 워크플로 숨기기"
 
+#. js-lingui-id: MuEcPp
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Hide empty category"
+msgstr ""
+
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
@@ -4933,7 +5019,7 @@ msgstr "Http"
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
-msgstr ""
+msgstr "HTTP 요청"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5131,7 +5217,7 @@ msgstr "색인"
 #. js-lingui-id: 623chP
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Infos"
-msgstr ""
+msgstr "정보"
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5436,7 +5522,7 @@ msgstr "이탈리아어"
 #. js-lingui-id: hgr8eo
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "items"
-msgstr ""
+msgstr "항목"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -5676,11 +5762,12 @@ msgstr ""
 #. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
-msgstr ""
+msgstr "선형 차트"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -5985,7 +6072,7 @@ msgstr "메시지 동기화가 불가능합니다, 서비스가 중단되었습�
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Messages"
-msgstr ""
+msgstr "메시지"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -6031,7 +6118,7 @@ msgstr "최소 범위"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr ""
+msgstr "분 값은 60을 초과할 수 없습니다. 60분보다 긴 간격에는 \"시간\" 트리거 유형 또는 사용자 지정 cron 식을 사용하세요."
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -6450,7 +6537,7 @@ msgstr "국가 없음"
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 msgid "No data"
-msgstr ""
+msgstr "데이터 없음"
 
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -6525,7 +6612,7 @@ msgstr ""
 #. js-lingui-id: eiEb25
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "No fields to display"
-msgstr ""
+msgstr "표시할 필드가 없습니다"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6615,6 +6702,11 @@ msgstr "사용 가능한 모델이 없습니다. 작업 공간 설정에서 AI �
 msgid "No option found"
 msgstr "옵션을 찾을 수 없음"
 
+#. js-lingui-id: XRc1G9
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "No output"
+msgstr ""
+
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
@@ -6656,7 +6748,7 @@ msgstr "결과 없음"
 #. js-lingui-id: FVzmGK
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "No role assigned to this member"
-msgstr ""
+msgstr "이 멤버에게 역할이 할당되지 않았습니다."
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -6819,7 +6911,7 @@ msgstr "개체"
 #. js-lingui-id: 5Dll32
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Object deleted"
-msgstr ""
+msgstr "객체 삭제됨"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -6977,6 +7069,11 @@ msgstr "타임스탬프 및 참가자만 팀과 공유됩니다."
 msgid "Open"
 msgstr "열기"
 
+#. js-lingui-id: JG4LoU
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open as link"
+msgstr ""
+
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
@@ -6996,7 +7093,7 @@ msgstr "열기"
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
-msgstr ""
+msgstr "역할에서 열기"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7080,6 +7177,12 @@ msgstr "기타 워크스페이스"
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
 msgstr "저희 팀은 귀하의 특정 요구와 워크플로우에 맞게 작업 공간을 설정하는 데 도움을 줄 수 있습니다."
 
+#. js-lingui-id: gh06VD
+#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Output"
+msgstr ""
+
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
@@ -7103,17 +7206,17 @@ msgstr "페이지"
 #. js-lingui-id: SZgFyi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout"
-msgstr ""
+msgstr "페이지 레이아웃"
 
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout tab"
-msgstr ""
+msgstr "페이지 레이아웃 탭"
 
 #. js-lingui-id: sVcqjZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout widget"
-msgstr ""
+msgstr "페이지 레이아웃 위젯"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -7216,6 +7319,11 @@ msgstr "영구 삭제. 날짜를 입력하세요."
 msgid "Permanently destroy dashboard"
 msgstr "대시보드 영구 삭제"
 
+#. js-lingui-id: n7S2Oo
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboards"
+msgstr "대시보드 영구 삭제"
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -7282,7 +7390,7 @@ msgstr "사진"
 #. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
-msgstr ""
+msgstr "파이 차트"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7389,7 +7497,7 @@ msgstr "작업 영역 데이터 미리 채우기..."
 #. js-lingui-id: rNqTKZ
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
-msgstr ""
+msgstr "접두사"
 
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
@@ -7405,7 +7513,7 @@ msgstr "미리보기"
 #. js-lingui-id: Fe5cbB
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Preview Not Available"
-msgstr ""
+msgstr "미리 보기를 사용할 수 없음"
 
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7520,6 +7628,11 @@ msgstr "공개 도메인이 성공적으로 삭제되었습니다."
 msgid "Public Domains"
 msgstr "공개 도메인"
 
+#. js-lingui-id: GUpZQM
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Python Code Execution"
+msgstr ""
+
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter"
@@ -7562,7 +7675,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "Ratio"
-msgstr ""
+msgstr "비율"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7592,7 +7705,7 @@ msgstr "기록"
 #. js-lingui-id: aGGOPJ
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Record (ID)"
-msgstr ""
+msgstr "레코드(ID)"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -7882,10 +7995,15 @@ msgstr "반환 값"
 msgid "Revoked for this object"
 msgstr "이 객체에서 취소됨"
 
+#. js-lingui-id: NP5Nbf
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Rich Text"
+msgstr ""
+
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role"
-msgstr ""
+msgstr "역할"
 
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -7958,6 +8076,11 @@ msgstr "워크플로를 실행하고 여기로 돌아와 실행 결과를 확인
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "기능 실행"
+
+#. js-lingui-id: LTC198
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Running..."
+msgstr ""
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8153,7 +8276,7 @@ msgstr "작업 검색"
 #. js-lingui-id: 996xRf
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
-msgstr ""
+msgstr "검색 옵션"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8387,7 +8510,7 @@ msgstr "사용할 시트 선택"
 #. js-lingui-id: iWf0Zj
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Select value"
-msgstr ""
+msgstr "값 선택"
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8955,7 +9078,7 @@ msgstr "{recordCount}개의 레코드가 성공적으로 병합되었습니다"
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
-msgstr ""
+msgstr "접미사"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -9163,6 +9286,11 @@ msgstr "텍스트"
 msgid "Text"
 msgstr "텍스트"
 
+#. js-lingui-id: fq+5a1
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Text Colors"
+msgstr ""
+
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
@@ -9350,7 +9478,7 @@ msgstr "이 데이터베이스 값은 환경 설정을 덮어씁니다."
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file type cannot be previewed. Please download the file to view it."
-msgstr ""
+msgstr "이 파일 형식은 미리 볼 수 없습니다. 보려면 파일을 다운로드하세요."
 
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -9405,12 +9533,12 @@ msgstr "이것은 예정된 플랜 변경을 취소하고 현재 플랜을 유�
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
-msgstr ""
+msgstr "이 작업을 수행하면 {objectLabel}에서 해당 필드와 모든 데이터가 영구적으로 삭제됩니다. 확인하려면 \"yes\"를 입력하세요."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
-msgstr ""
+msgstr "이 작업을 수행하면 해당 객체와 모든 레코드가 영구적으로 삭제됩니다. 확인하려면 \"yes\"를 입력하세요."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -9724,7 +9852,7 @@ msgstr "고유 필드"
 #: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
-msgstr ""
+msgstr "단위"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9797,7 +9925,7 @@ msgstr "업데이트"
 #. js-lingui-id: 5bRMKt
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Update role"
-msgstr ""
+msgstr "역할 업데이트"
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10116,6 +10244,11 @@ msgstr "대기 중"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting Children"
 msgstr "대기 중인 하위 항목"
+
+#. js-lingui-id: TdQd9Q
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Waiting for output..."
+msgstr ""
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx

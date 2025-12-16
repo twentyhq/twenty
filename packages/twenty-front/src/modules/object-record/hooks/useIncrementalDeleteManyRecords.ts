@@ -225,7 +225,7 @@ export const useIncrementalDeleteManyRecords = <T>({
 
     await refetchAggregateQueries();
 
-    registerObjectOperation(objectNameSingular, {
+    registerObjectOperation(objectMetadataItem, {
       type: 'delete-many',
     });
 

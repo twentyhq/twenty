@@ -202,12 +202,12 @@ msgstr "Адреса компаније - застарело у корист н�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Agent not found"
-msgstr ""
+msgstr "Агент није пронађен"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "Agent with name \"{name}\" already exists"
-msgstr ""
+msgstr "Агент са именом \"{name}\" већ постоји"
 
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -240,7 +240,7 @@ msgstr "Износ"
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
-msgstr ""
+msgstr "Агент са овим именом већ постоји"
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -633,12 +633,12 @@ msgstr "Не можете избрисати налог: Ви сте једин�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot delete standard agent"
-msgstr ""
+msgstr "Није могуће обрисати стандардног агента"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
-msgstr ""
+msgstr "Није могуће избрисати јединствени индекс који није креиран прилагођеном апликацијом радног простора"
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -669,7 +669,7 @@ msgstr "Не могу ажурирати канал порука док је с�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
-msgstr ""
+msgstr "Није могуће ажурирати стандардног агента"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -963,6 +963,11 @@ msgstr "Децембар"
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Подразумевана вредност \"{defaultValue}\" мора бити једна од вредности опција"
 
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr "Подразумевана вредност не може бити null."
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
@@ -1032,7 +1037,7 @@ msgstr "Рок за испуњење"
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
-msgstr ""
+msgstr "Пронађен је дупликат коренског резолвера. Сваки коренски резолвер може бити позван само једном по документу."
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1221,7 +1226,7 @@ msgstr "Спољни ИД"
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
-msgstr ""
+msgstr "Није успело креирање евалуације. Покушајте поново."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1485,7 +1490,7 @@ msgstr "Поље за ажурирање није пронађено"
 #. js-lingui-id: 5cm5Hn
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field to update object metadata not found"
-msgstr ""
+msgstr "Поље за ажурирање метаподатака објекта није пронађено"
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -1513,7 +1518,7 @@ msgstr "Поље коришћено за текстуалну претрагу"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "Field value is required"
-msgstr ""
+msgstr "Вредност поља је обавезна"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1693,7 +1698,7 @@ msgstr "Индекс са истим именом већ постоји"
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Invalid CALDAV credentials. Please check your username and password."
-msgstr ""
+msgstr "Неисправни CALDAV подаци за пријаву. Молимо проверите ваше корисничко име и лозинку."
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1757,7 +1762,7 @@ msgstr ""
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Invalid response format type"
-msgstr ""
+msgstr "Неважећи тип формата одговора"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1858,7 +1863,7 @@ msgstr "Json објекат за пружање окдашају"
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
-msgstr ""
+msgstr "JSON формат одговора захтева шему"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1883,21 +1888,21 @@ msgstr "Јун"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field metadata not found"
-msgstr ""
+msgstr "Метаподаци за главно поље за груписање Канбан приказа нису пронађени"
 
 #. js-lingui-id: ZfLcEk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a select field"
-msgstr ""
+msgstr "Главно поље за груписање у Канбан приказу мора бити поље за избор"
 
 #. js-lingui-id: RoCvZe
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a SELECT field"
-msgstr ""
+msgstr "Главно поље за груписање у Канбан приказу мора бити поље типа SELECT"
 
 #. js-lingui-id: mAbBLH
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -1905,13 +1910,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban view must have a main group by field"
-msgstr ""
+msgstr "Канбан приказ мора да има главно поље за груписање"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
-msgstr ""
+msgstr "Ознака не може бити празна"
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2228,7 +2233,7 @@ msgstr "Недостају обавезна поља: бар једно једи
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Model ID cannot be empty"
-msgstr ""
+msgstr "ID модела не може бити празан"
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2249,6 +2254,11 @@ msgstr "Подаци о креирању односа мокра морају с
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Правила креирања односа морфа морају садржати само односе са истим метаподацима објекта"
+
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr "Поље morph релације мора да има morph ID"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2705,7 +2715,7 @@ msgstr "ИД распореда странице"
 #. js-lingui-id: xCAYz6
 #: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout is not deleted and cannot be restored"
-msgstr ""
+msgstr "Изглед странице није обрисан и не може бити враћен"
 
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
@@ -2715,12 +2725,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout not found"
-msgstr ""
+msgstr "Распоред странице није пронађен"
 
 #. js-lingui-id: tR9faK
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab is not deleted and cannot be restored"
-msgstr ""
+msgstr "Картица распореда странице није обрисана и не може бити враћена"
 
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2730,86 +2740,86 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout tab not found"
-msgstr ""
+msgstr "Картица распореда странице није пронађена"
 
 #. js-lingui-id: CWtQfv
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to delete not found"
-msgstr ""
+msgstr "Картица распореда странице за брисање није пронађена"
 
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
-msgstr ""
+msgstr "Картица распореда странице за уништавање није пронађена"
 
 #. js-lingui-id: BaYGVl
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to restore not found"
-msgstr ""
+msgstr "Картица распореда странице за враћање није пронађена"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
-msgstr ""
+msgstr "Картица распореда странице за ажурирање није пронађена"
 
 #. js-lingui-id: eQHXfb
 #: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to delete not found"
-msgstr ""
+msgstr "Распоред странице за брисање није пронађен"
 
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
-msgstr ""
+msgstr "Распоред странице за уништавање није пронађен"
 
 #. js-lingui-id: TsrNXq
 #: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to restore not found"
-msgstr ""
+msgstr "Распоред странице за враћање није пронађен"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
 msgid "Page layout to update not found"
-msgstr ""
+msgstr "Распоред странице за ажурирање није пронађен"
 
 #. js-lingui-id: k6Npai
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget already exists"
-msgstr ""
+msgstr "Виџет распореда странице већ постоји"
 
 #. js-lingui-id: A3hsQ6
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget is not deleted and cannot be restored"
-msgstr ""
+msgstr "Виџет распореда странице није обрисан и не може бити враћен"
 
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
-msgstr ""
+msgstr "Виџет распореда странице за брисање није пронађен"
 
 #. js-lingui-id: v2G/zq
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
-msgstr ""
+msgstr "Виџет распореда странице за уништавање није пронађен"
 
 #. js-lingui-id: fDTVnj
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to restore not found"
-msgstr ""
+msgstr "Виџет распореда странице за враћање није пронађен"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
 msgid "Page layout widget to update not found"
-msgstr ""
+msgstr "Виџет распореда странице за ажурирање није пронађен"
 
 #. js-lingui-id: +4z9mT
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr ""
+msgstr "Виџет распореда странице са id {flatPageLayoutWidgetId} већ постоји"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2950,7 +2960,7 @@ msgstr "Вероватноћа"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
-msgstr ""
+msgstr "Упутство не може бити празно"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -2995,12 +3005,12 @@ msgstr "URL јавног домена није дефинисан. Молимо 
 #. js-lingui-id: uzWClp
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr ""
+msgstr "Сложеност упита је превисока. Релација један-према-више не може бити угнежђена у другу релацију један-према-више."
 
 #. js-lingui-id: XkHjXW
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr ""
+msgstr "Сложеност упита је превисока. Смањите број тражених поља релација. Сложеност упита: {queryComplexity}. Максимална сложеност: {maximumComplexity}."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3061,17 +3071,17 @@ msgstr "Захтев је истекао, молимо покушајте пон
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format type must be either \"text\" or \"json\""
-msgstr ""
+msgstr "Тип формата одговора мора бити или \"text\" или \"json\""
 
 #. js-lingui-id: 6Plp3x
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include a schema"
-msgstr ""
+msgstr "Формат одговора са типом \"json\" мора да укључује шему"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"text\" should not include a schema"
-msgstr ""
+msgstr "Формат одговора са типом \"text\" не би требало да укључује шему"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -3481,7 +3491,7 @@ msgstr "Текст"
 #. js-lingui-id: mQj02P
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Text response format should not have a schema"
-msgstr ""
+msgstr "Текстуални формат одговора не би требало да има шему"
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3496,7 +3506,7 @@ msgstr "Провајдер налога"
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "Агент којег тражите није пронађен. Могуће је да је избрисан или можда немате приступ њему."
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3595,12 +3605,12 @@ msgstr "Назив прилике"
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
-msgstr ""
+msgstr "Захтев је превише сложен за обраду. Покушајте да смањите број тражених поља."
 
 #. js-lingui-id: 4LVaa7
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
-msgstr ""
+msgstr "Захтев је превише сложен за обраду. Покушајте да смањите број тражених коренских резолвера."
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
@@ -3676,7 +3686,7 @@ msgstr "Овај API кључ је истекао. Молимо направит
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr ""
+msgstr "Ово име је резервисано. Користите друго име или ће систем додати суфикс \"Custom\"."
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts

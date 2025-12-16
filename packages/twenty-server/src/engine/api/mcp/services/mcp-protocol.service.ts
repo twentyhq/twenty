@@ -1,15 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -58,21 +61,21 @@ export class McpProtocolService {
   async getRoleId(
     workspaceId: string,
     userWorkspaceId?: string,
-    apiKey?: string,
+    apiKey?: ApiKeyEntity,
   ) {
-    if (apiKey) {
-      const roles = await this.roleRepository.find({
+    if (isDefined(apiKey)) {
+      const [role] = await this.roleRepository.find({
         where: {
           workspaceId,
           standardId: ADMIN_ROLE.standardId,
         },
       });
 
-      if (roles.length === 0) {
+      if (!isDefined(role)) {
         throw new HttpException('Admin role not found', HttpStatus.FORBIDDEN);
       }
 
-      return roles[0].id;
+      return role.id;
     }
 
     if (!userWorkspaceId) {
@@ -103,7 +106,7 @@ export class McpProtocolService {
     }: {
       workspace: WorkspaceEntity;
       userWorkspaceId?: string;
-      apiKey?: string;
+      apiKey: ApiKeyEntity | undefined;
     },
   ): Promise<Record<string, unknown>> {
     try {
@@ -134,6 +137,9 @@ export class McpProtocolService {
         categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
         rolePermissionConfig: { unionOf: [roleId] },
         wrapWithErrorContext: false,
+        // Exclude code_interpreter from MCP to prevent recursive execution attacks
+        // (code running in the sandbox could call code_interpreter via MCP)
+        excludeTools: [ToolType.CODE_INTERPRETER],
       });
 
       if (method === 'tools/call' && params) {

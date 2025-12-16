@@ -202,12 +202,12 @@ msgstr "Địa chỉ của công ty - không còn được sử dụng nữa, th
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Agent not found"
-msgstr ""
+msgstr "Không tìm thấy đại lý"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "Agent with name \"{name}\" already exists"
-msgstr ""
+msgstr "Tác nhân có tên \"{name}\" đã tồn tại"
 
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -240,7 +240,7 @@ msgstr "Số tiền"
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
-msgstr ""
+msgstr "Một tác nhân có tên này đã tồn tại"
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -633,12 +633,12 @@ msgstr "Không thể xóa tài khoản: bạn là quản trị viên duy nhất.
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot delete standard agent"
-msgstr ""
+msgstr "Không thể xóa tác nhân tiêu chuẩn"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
-msgstr ""
+msgstr "Không thể xóa chỉ mục duy nhất không do ứng dụng tùy chỉnh của không gian làm việc tạo ra."
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -669,7 +669,7 @@ msgstr "Không thể cập nhật kênh tin nhắn khi đồng bộ đang diễn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
-msgstr ""
+msgstr "Không thể cập nhật tác nhân tiêu chuẩn"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -963,6 +963,11 @@ msgstr "Tháng Mười Hai"
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Giá trị mặc định \"{defaultValue}\" phải là một trong những giá trị lựa chọn"
 
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr "Giá trị mặc định không được là null."
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
@@ -1032,7 +1037,7 @@ msgstr "Ngày đến hạn"
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
-msgstr ""
+msgstr "Đã phát hiện resolver gốc trùng lặp. Mỗi resolver gốc chỉ có thể được gọi một lần cho mỗi tài liệu."
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1221,7 +1226,7 @@ msgstr "ID bên ngoài"
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
-msgstr ""
+msgstr "Không thể tạo đánh giá. Vui lòng thử lại."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1485,7 +1490,7 @@ msgstr "Không tìm thấy trường để cập nhật"
 #. js-lingui-id: 5cm5Hn
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field to update object metadata not found"
-msgstr ""
+msgstr "Không tìm thấy trường để cập nhật siêu dữ liệu đối tượng."
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -1513,7 +1518,7 @@ msgstr "Trường được sử dụng cho tìm kiếm toàn văn bản"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "Field value is required"
-msgstr ""
+msgstr "Giá trị của trường là bắt buộc"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1693,7 +1698,7 @@ msgstr "Chỉ mục với tên tương tự đã tồn tại"
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Invalid CALDAV credentials. Please check your username and password."
-msgstr ""
+msgstr "Thông tin xác thực CALDAV không hợp lệ. Vui lòng kiểm tra tên người dùng và mật khẩu của bạn."
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1757,7 +1762,7 @@ msgstr ""
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Invalid response format type"
-msgstr ""
+msgstr "Kiểu định dạng phản hồi không hợp lệ"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1858,7 +1863,7 @@ msgstr "Đối tượng Json cung cấp cò súng"
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
-msgstr ""
+msgstr "Định dạng phản hồi JSON yêu cầu một lược đồ"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1883,21 +1888,21 @@ msgstr "Tháng Sáu"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field metadata not found"
-msgstr ""
+msgstr "Không tìm thấy siêu dữ liệu của trường nhóm chính của Kanban"
 
 #. js-lingui-id: ZfLcEk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a select field"
-msgstr ""
+msgstr "Trường nhóm chính của Kanban phải là một trường chọn"
 
 #. js-lingui-id: RoCvZe
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a SELECT field"
-msgstr ""
+msgstr "Trường nhóm chính của Kanban phải là một trường SELECT"
 
 #. js-lingui-id: mAbBLH
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -1905,13 +1910,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban view must have a main group by field"
-msgstr ""
+msgstr "Chế độ xem Kanban phải có một trường nhóm chính"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
-msgstr ""
+msgstr "Nhãn không thể để trống"
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2217,7 +2222,7 @@ msgstr "Token làm mới của nhà cung cấp dịch vụ nhắn tin"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr ""
+msgstr "Giá trị phút không được vượt quá 60. Đối với khoảng thời gian lớn hơn 60 phút, hãy sử dụng loại kích hoạt \"Giờ\" hoặc một biểu thức cron tùy chỉnh."
 
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -2228,7 +2233,7 @@ msgstr "Thiếu các trường bắt buộc: ít nhất một ràng buộc duy n
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Model ID cannot be empty"
-msgstr ""
+msgstr "ID mô hình không thể để trống"
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2249,6 +2254,11 @@ msgstr "Các tải trọng tạo quan hệ Morph chỉ được phép chứa th�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Payloads tạo mối quan hệ dạng lỗi chỉ được chứa liên kết đến cùng một siêu dữ liệu đối tượng"
+
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr "Trường quan hệ morph phải có một ID morph"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2705,7 +2715,7 @@ msgstr "ID Bố cục Trang"
 #. js-lingui-id: xCAYz6
 #: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout is not deleted and cannot be restored"
-msgstr ""
+msgstr "Bố cục trang chưa bị xóa nên không thể khôi phục."
 
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
@@ -2715,12 +2725,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout not found"
-msgstr ""
+msgstr "Không tìm thấy bố cục trang"
 
 #. js-lingui-id: tR9faK
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab is not deleted and cannot be restored"
-msgstr ""
+msgstr "Thẻ bố cục trang chưa bị xóa nên không thể khôi phục."
 
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2730,86 +2740,86 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout tab not found"
-msgstr ""
+msgstr "Không tìm thấy tab bố cục trang"
 
 #. js-lingui-id: CWtQfv
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to delete not found"
-msgstr ""
+msgstr "Không tìm thấy thẻ bố cục trang cần xóa"
 
 #. js-lingui-id: LTouJ4
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to destroy not found"
-msgstr ""
+msgstr "Không tìm thấy thẻ bố cục trang để hủy bỏ"
 
 #. js-lingui-id: BaYGVl
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab to restore not found"
-msgstr ""
+msgstr "Không tìm thấy thẻ bố cục trang để khôi phục"
 
 #. js-lingui-id: m8tBqi
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
 msgid "Page layout tab to update not found"
-msgstr ""
+msgstr "Không tìm thấy thẻ bố cục trang cần cập nhật"
 
 #. js-lingui-id: eQHXfb
 #: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to delete not found"
-msgstr ""
+msgstr "Không tìm thấy bố cục trang cần xóa"
 
 #. js-lingui-id: zrm54u
 #: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to destroy not found"
-msgstr ""
+msgstr "Không tìm thấy bố cục trang để hủy bỏ"
 
 #. js-lingui-id: TsrNXq
 #: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
 msgid "Page layout to restore not found"
-msgstr ""
+msgstr "Không tìm thấy bố cục trang để khôi phục"
 
 #. js-lingui-id: /5c/t7
 #: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
 msgid "Page layout to update not found"
-msgstr ""
+msgstr "Không tìm thấy bố cục trang cần cập nhật"
 
 #. js-lingui-id: k6Npai
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget already exists"
-msgstr ""
+msgstr "Tiện ích bố cục trang đã tồn tại"
 
 #. js-lingui-id: A3hsQ6
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget is not deleted and cannot be restored"
-msgstr ""
+msgstr "Tiện ích bố cục trang chưa bị xóa nên không thể khôi phục."
 
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
-msgstr ""
+msgstr "Không tìm thấy tiện ích bố cục trang cần xóa"
 
 #. js-lingui-id: v2G/zq
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
-msgstr ""
+msgstr "Không tìm thấy tiện ích bố cục trang để hủy bỏ"
 
 #. js-lingui-id: fDTVnj
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to restore not found"
-msgstr ""
+msgstr "Không tìm thấy tiện ích bố cục trang để khôi phục"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
 msgid "Page layout widget to update not found"
-msgstr ""
+msgstr "Không tìm thấy tiện ích bố cục trang cần cập nhật"
 
 #. js-lingui-id: +4z9mT
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr ""
+msgstr "Tiện ích bố cục trang với id {flatPageLayoutWidgetId} đã tồn tại"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2950,7 +2960,7 @@ msgstr "Xác suất"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
-msgstr ""
+msgstr "Lời nhắc không thể để trống"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -2995,12 +3005,12 @@ msgstr "URL tên miền công cộng chưa được xác định. Vui lòng thi�
 #. js-lingui-id: uzWClp
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr ""
+msgstr "Độ phức tạp truy vấn quá cao. Quan hệ một-nhiều không thể được lồng trong một quan hệ một-nhiều khác."
 
 #. js-lingui-id: XkHjXW
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr ""
+msgstr "Độ phức tạp truy vấn quá cao. Vui lòng giảm số lượng các trường quan hệ được yêu cầu. Độ phức tạp truy vấn: {queryComplexity}. Độ phức tạp tối đa: {maximumComplexity}."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3061,17 +3071,17 @@ msgstr "Yêu cầu đã hết hạn, vui lòng thử lại."
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format type must be either \"text\" or \"json\""
-msgstr ""
+msgstr "Kiểu định dạng phản hồi phải là \"text\" hoặc \"json\""
 
 #. js-lingui-id: 6Plp3x
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include a schema"
-msgstr ""
+msgstr "Định dạng phản hồi với kiểu \"json\" phải bao gồm một lược đồ"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"text\" should not include a schema"
-msgstr ""
+msgstr "Định dạng phản hồi với kiểu \"text\" không nên bao gồm lược đồ"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -3243,7 +3253,7 @@ msgstr "Một số quyền hạn bạn đã chọn không hợp lệ. Vui lòng 
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
-msgstr ""
+msgstr "Không thể tìm thấy một số tư cách thành viên không gian làm việc. Có thể họ không còn quyền truy cập vào không gian làm việc này nữa."
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -3481,7 +3491,7 @@ msgstr "Văn bản"
 #. js-lingui-id: mQj02P
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Text response format should not have a schema"
-msgstr ""
+msgstr "Định dạng phản hồi văn bản không nên có lược đồ"
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3496,7 +3506,7 @@ msgstr "Nhà cung cấp tài khoản"
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "Không thể tìm thấy tác nhân bạn đang tìm kiếm. Nó có thể đã bị xóa hoặc bạn có thể không có quyền truy cập vào nó."
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3595,12 +3605,12 @@ msgstr "Tên cơ hội"
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
-msgstr ""
+msgstr "Yêu cầu quá phức tạp để xử lý. Vui lòng thử giảm số lượng trường được yêu cầu."
 
 #. js-lingui-id: 4LVaa7
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
-msgstr ""
+msgstr "Yêu cầu quá phức tạp để xử lý. Vui lòng thử giảm số lượng resolver gốc được yêu cầu."
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
@@ -3676,7 +3686,7 @@ msgstr "Khóa API này đã hết thời gian sử dụng. Vui lòng tạo một
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr ""
+msgstr "Tên này đã được dành riêng. Hãy dùng tên khác, nếu không hệ thống sẽ thêm hậu tố \"Custom\"."
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts

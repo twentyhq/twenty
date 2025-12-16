@@ -92,7 +92,7 @@ export const CustomStackedAreasLayer = ({
     <g>
       <LineAreaGradientDefs enrichedSeries={enrichedSeries} />
       {paths.map(({ id, path, fillId }) => (
-        <LineAnimatedAreaPath key={id} path={path} fillId={fillId} />
+        <LineAnimatedAreaPath key={id} id={id} path={path} fillId={fillId} />
       ))}
     </g>
   );

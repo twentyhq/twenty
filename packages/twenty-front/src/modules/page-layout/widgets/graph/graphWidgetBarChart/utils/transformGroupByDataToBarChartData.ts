@@ -226,6 +226,7 @@ export const transformGroupByDataToBarChartData = ({
           dateGranularity:
             primaryAxisDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
           hasSecondDimension: isDefined(groupByFieldY),
+          orderBy: configuration.primaryAxisOrderBy,
         })
       : { data: filteredResults, wasTruncated: false };
 

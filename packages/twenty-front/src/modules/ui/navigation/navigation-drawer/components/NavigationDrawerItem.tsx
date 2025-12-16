@@ -144,11 +144,6 @@ const StyledLabelParent = styled.div`
   overflow: hidden;
   text-overflow: clip;
 `;
-const StyledEllipsisContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -345,17 +340,22 @@ export const NavigationDrawerItem = ({
           )}
 
           <StyledLabelParent>
-            <StyledEllipsisContainer>
-              <StyledItemLabel>
-                <OverflowingTextWithTooltip text={label} />
-              </StyledItemLabel>
-              {secondaryLabel && (
-                <StyledItemSecondaryLabel>
-                  {' · '}
-                  {secondaryLabel}
-                </StyledItemSecondaryLabel>
-              )}
-            </StyledEllipsisContainer>
+            <OverflowingTextWithTooltip
+              text={
+                <>
+                  <StyledItemLabel>{label}</StyledItemLabel>
+                  {secondaryLabel && (
+                    <StyledItemSecondaryLabel>
+                      {' · '}
+                      {secondaryLabel}
+                    </StyledItemSecondaryLabel>
+                  )}
+                </>
+              }
+              tooltipContent={
+                secondaryLabel ? `${label} · ${secondaryLabel}` : label
+              }
+            />
           </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}

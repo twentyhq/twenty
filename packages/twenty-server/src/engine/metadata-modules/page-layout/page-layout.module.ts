@@ -18,6 +18,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { PageLayoutTabResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout-tab.resolver';
 import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout-widget.resolver';
 import { PageLayoutResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout.resolver';
+import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
@@ -57,12 +58,18 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     PageLayoutService,
     PageLayoutTabService,
     PageLayoutWidgetService,
+    PageLayoutDuplicationService,
     PageLayoutResolver,
     PageLayoutTabResolver,
     PageLayoutWidgetResolver,
     PageLayoutUpdateService,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
-  exports: [PageLayoutService, PageLayoutTabService, PageLayoutWidgetService],
+  exports: [
+    PageLayoutService,
+    PageLayoutTabService,
+    PageLayoutWidgetService,
+    PageLayoutDuplicationService,
+  ],
 })
 export class PageLayoutModule {}

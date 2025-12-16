@@ -33,6 +33,7 @@ export const pageLayoutGraphqlApiExceptionHandler = (
       case PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND:
         throw new NotFoundError(error.message);
       case PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA:
+      case PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
