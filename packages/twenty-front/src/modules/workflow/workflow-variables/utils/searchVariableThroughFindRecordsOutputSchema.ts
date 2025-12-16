@@ -104,10 +104,15 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
   }
 
   if (searchResultKey === 'all') {
+    const label =
+      searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records';
+    const basePath = `${stepName} > ${label}`;
     return {
       variableLabel:
         searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records',
-      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records'}`,
+      variablePathLabel: stepNameLabel
+        ? `${basePath} (${stepNameLabel})`
+        : basePath,
       variableType: FieldMetadataType.ARRAY,
     };
   }
