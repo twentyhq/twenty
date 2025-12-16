@@ -2,6 +2,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useArrayField } from '@/object-record/record-field/ui/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { arraySchema } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -55,11 +56,8 @@ export const ArrayFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const dropdownId = `array-field-input-${fieldDefinition.metadata.fieldName}`;
-
   return (
     <MultiItemFieldInput
-      dropdownId={`array-field-input-${fieldDefinition.metadata.fieldName}`}
       newItemLabel="Add Item"
       items={arrayItems}
       onChange={handleChange}
@@ -71,7 +69,7 @@ export const ArrayFieldInput = () => {
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
           key={index}
-          dropdownId={dropdownId}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
           value={value}
           onEdit={handleEdit}
           onDelete={handleDelete}

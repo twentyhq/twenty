@@ -1,6 +1,7 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldMenuItem';
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
@@ -101,11 +102,8 @@ export const EmailsFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const dropdownId = `emails-field-input-${fieldDefinition.metadata.fieldName}`;
-
   return (
     <MultiItemFieldInput
-      dropdownId={dropdownId}
       items={emails}
       onChange={handleChange}
       onEnter={handleEnter}
@@ -123,7 +121,7 @@ export const EmailsFieldInput = () => {
       }) => (
         <EmailsFieldMenuItem
           key={index}
-          dropdownId={dropdownId}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           showCopyButton={true}

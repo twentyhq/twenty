@@ -11,6 +11,7 @@ import 'react-phone-number-input/style.css';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import {
   type FieldPhonesValue,
@@ -152,11 +153,8 @@ export const PhonesFieldInput = () => {
     onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
   };
 
-  const dropdownId = `phones-field-input-${fieldDefinition.metadata.fieldName}`;
-
   return (
     <MultiItemFieldInput
-      dropdownId={dropdownId}
       items={phones}
       onChange={handlePhonesChange}
       onClickOutside={handleClickOutside}
@@ -166,6 +164,14 @@ export const PhonesFieldInput = () => {
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}
       formatInput={(input) => {
+        if (input === '') {
+          return {
+            number: '',
+            callingCode: '',
+            countryCode: '',
+          };
+        }
+
         const phone = parsePhoneNumber(input);
         if (phone !== undefined) {
           return {
@@ -174,6 +180,7 @@ export const PhonesFieldInput = () => {
             countryCode: phone.country as string,
           };
         }
+
         return {
           number: '',
           callingCode: '',
@@ -189,7 +196,7 @@ export const PhonesFieldInput = () => {
       }) => (
         <PhonesFieldMenuItem
           key={index}
-          dropdownId={`phones-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           phone={phone}
