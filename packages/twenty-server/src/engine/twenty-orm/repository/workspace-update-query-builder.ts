@@ -54,7 +54,6 @@ export class WorkspaceUpdateQueryBuilder<
     criteria: string;
     partialEntity: QueryDeepPartialEntity<T>;
   }[];
-  private rowLevelPermissionPredicatesApplied = false;
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -86,9 +85,6 @@ export class WorkspaceUpdateQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
-
-    workspaceUpdateQueryBuilder.rowLevelPermissionPredicatesApplied =
-      this.rowLevelPermissionPredicatesApplied;
 
     return workspaceUpdateQueryBuilder;
   }
@@ -494,12 +490,6 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (this.rowLevelPermissionPredicatesApplied) {
-      return;
-    }
-
-    this.rowLevelPermissionPredicatesApplied = true;
-
     const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(

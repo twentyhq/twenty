@@ -36,7 +36,6 @@ export class WorkspaceSelectQueryBuilder<
   internalContext: WorkspaceInternalContext;
   authContext: AuthContext;
   featureFlagMap: FeatureFlagMap;
-  private rowLevelPermissionPredicatesApplied = false;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
@@ -68,9 +67,6 @@ export class WorkspaceSelectQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
-
-    workspaceSelectQueryBuilder.rowLevelPermissionPredicatesApplied =
-      this.rowLevelPermissionPredicatesApplied;
 
     return workspaceSelectQueryBuilder;
   }
@@ -359,12 +355,6 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (this.rowLevelPermissionPredicatesApplied) {
-      return;
-    }
-
-    this.rowLevelPermissionPredicatesApplied = true;
-
     const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(

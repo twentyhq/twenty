@@ -38,7 +38,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
   private internalContext: WorkspaceInternalContext;
   private authContext: AuthContext;
   private featureFlagMap: FeatureFlagMap;
-  private rowLevelPermissionPredicatesApplied = false;
 
   constructor(
     queryBuilder: SoftDeleteQueryBuilder<T>,
@@ -67,9 +66,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
-
-    workspaceSoftDeleteQueryBuilder.rowLevelPermissionPredicatesApplied =
-      this.rowLevelPermissionPredicatesApplied;
 
     return workspaceSoftDeleteQueryBuilder;
   }
@@ -194,12 +190,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (this.rowLevelPermissionPredicatesApplied) {
-      return;
-    }
-
-    this.rowLevelPermissionPredicatesApplied = true;
-
     const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(
