@@ -12,11 +12,16 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import {
+  type FieldPhonesValue,
+  type PhoneRecord,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { css } from '@emotion/react';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -75,7 +80,9 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 export const PhonesFieldInput = () => {
   const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
+  const { onEscape, onClickOutside, onEnter } = useContext(
+    FieldInputEventContext,
+  );
 
   const phones = createPhonesFromFieldValue(draftValue);
 
@@ -87,26 +94,26 @@ export const PhonesFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const handlePhonesChange = (
-    updatedPhones: {
-      number: string;
-      countryCode: string;
-      callingCode: string;
-    }[],
-  ) => {
-    const [nextPrimaryPhone, ...nextAdditionalPhones] = updatedPhones;
+  const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
+    const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
 
-    const newValue = {
+    const nextValue: FieldPhonesValue = {
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
       primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
       primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     };
+    const parseResponse = phonesSchema.safeParse(nextValue);
+    if (parseResponse.success) {
+      return parseResponse.data;
+    }
+  };
 
-    const newValidatedPhoneResponse = phonesSchema.safeParse(newValue);
+  const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {
+    const nextValue = parseArrayToPhonesValue(updatedPhones);
 
-    if (newValidatedPhoneResponse.success) {
-      setDraftValue(newValidatedPhoneResponse.data);
+    if (isDefined(nextValue)) {
+      setDraftValue(nextValue);
     }
   };
 
@@ -128,22 +135,33 @@ export const PhonesFieldInput = () => {
   };
 
   const handleClickOutside = (
-    _newValue: any,
+    updatedPhones: PhoneRecord[],
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({ newValue: draftValue, event });
+    onClickOutside?.({
+      newValue: parseArrayToPhonesValue(updatedPhones),
+      event,
+    });
   };
 
-  const handleEscape = (_newValue: any) => {
-    onEscape?.({ newValue: draftValue });
+  const handleEscape = (updatedPhones: PhoneRecord[]) => {
+    onEscape?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
   };
+
+  const handleEnter = (updatedPhones: PhoneRecord[]) => {
+    onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+  };
+
+  const dropdownId = `phones-field-input-${fieldDefinition.metadata.fieldName}`;
 
   return (
     <MultiItemFieldInput
+      dropdownId={dropdownId}
       items={phones}
       onChange={handlePhonesChange}
       onClickOutside={handleClickOutside}
       onEscape={handleEscape}
+      onEnter={handleEnter}
       placeholder="Phone"
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}

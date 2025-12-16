@@ -11,20 +11,28 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const ArrayFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
-  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
+  const { onEscape, onClickOutside, onEnter } = useContext(
+    FieldInputEventContext,
+  );
 
   const arrayItems = useMemo<Array<string>>(
     () => (Array.isArray(draftValue) ? draftValue : []),
     [draftValue],
   );
+  const parseStringArrayToArrayValue = (arrayItems: string[]) => {
+    const parseResponse = arraySchema.safeParse(arrayItems);
+    if (parseResponse.success) {
+      return parseResponse.data;
+    }
+  };
 
   const handleChange = (newValue: any[]) => {
     if (!isDefined(newValue)) setDraftValue(null);
 
-    const parseResponse = arraySchema.safeParse(newValue);
+    const nextValue = parseStringArrayToArrayValue(newValue);
 
-    if (parseResponse.success) {
-      setDraftValue(parseResponse.data);
+    if (isDefined(nextValue)) {
+      setDraftValue(nextValue);
     }
   };
 
@@ -35,19 +43,27 @@ export const ArrayFieldInput = () => {
     onClickOutside?.({ newValue: draftValue, event });
   };
 
-  const handleEscape = (_newValue: any) => {
-    onEscape?.({ newValue: draftValue });
+  const handleEscape = (newValue: string[]) => {
+    onEscape?.({ newValue: parseStringArrayToArrayValue(newValue) });
+  };
+
+  const handleEnter = (newValue: string[]) => {
+    onEnter?.({ newValue: parseStringArrayToArrayValue(newValue) });
   };
 
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
+  const dropdownId = `array-field-input-${fieldDefinition.metadata.fieldName}`;
+
   return (
     <MultiItemFieldInput
+      dropdownId={`array-field-input-${fieldDefinition.metadata.fieldName}`}
       newItemLabel="Add Item"
       items={arrayItems}
       onChange={handleChange}
+      onEnter={handleEnter}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder="Enter value"
@@ -55,7 +71,7 @@ export const ArrayFieldInput = () => {
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
           key={index}
-          dropdownId={`array-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
+          dropdownId={dropdownId}
           value={value}
           onEdit={handleEdit}
           onDelete={handleDelete}
