@@ -1,14 +1,10 @@
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
+import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 
 export type TwentyStandardAllFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  | 'flatIndexMaps'
-  | 'flatObjectMetadataMaps'
-  | 'flatFieldMetadataMaps'
-  | 'flatViewFieldMaps'
-  | 'flatViewFilterMaps'
-  | 'flatViewGroupMaps'
-  | 'flatViewMaps'
-  | 'flatRoleMaps'
-  | 'flatAgentMaps'
+  MetadataToFlatEntityMapsKey<
+    (typeof TWENTY_STANDARD_ALL_METADATA_NAME)[number]
+  >
 >;

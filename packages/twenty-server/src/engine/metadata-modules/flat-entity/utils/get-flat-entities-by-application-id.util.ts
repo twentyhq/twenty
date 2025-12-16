@@ -3,12 +3,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
-export const getFlatEntitiesByApplicationId = <T extends SyncableFlatEntity>(
-  maps: FlatEntityMaps<T>,
-  applicationId: string,
-): T[] => {
+export const getFlatEntitiesByApplicationId = <T extends SyncableFlatEntity>({
+  applicationId,
+  flatEntityMaps,
+}: {
+  flatEntityMaps: FlatEntityMaps<T>;
+  applicationId: string;
+}): T[] => {
   const universalIdentifiers =
-    maps.universalIdentifiersByApplicationId[applicationId];
+    flatEntityMaps.universalIdentifiersByApplicationId[applicationId];
 
   if (!isDefined(universalIdentifiers)) {
     return [];
@@ -16,13 +19,13 @@ export const getFlatEntitiesByApplicationId = <T extends SyncableFlatEntity>(
 
   return universalIdentifiers
     .map((universalId) => {
-      const id = maps.idByUniversalIdentifier[universalId];
+      const id = flatEntityMaps.idByUniversalIdentifier[universalId];
 
       if (!isDefined(id)) {
         return undefined;
       }
 
-      const entity = maps.byId[id];
+      const entity = flatEntityMaps.byId[id];
 
       if (!isDefined(entity)) {
         return undefined;

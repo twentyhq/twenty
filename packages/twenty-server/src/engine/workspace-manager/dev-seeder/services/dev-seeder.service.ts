@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -21,7 +20,6 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -70,18 +68,7 @@ export class DevSeederService {
         schemaName,
       );
 
-    const twentyStandardApplication =
-      await this.applicationService.findByUniversalIdentifier({
-        workspaceId,
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      });
-
-    if (!isDefined(twentyStandardApplication)) {
-      throw new Error(
-        'Seeder failed to find twenty standard application, should never occur',
-      );
-    }
-    const { workspaceCustomFlatApplication } =
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -92,7 +79,7 @@ export class DevSeederService {
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
-        twentyStandardApplicationId: twentyStandardApplication.id,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
     const validateAndBuildResult =
@@ -160,7 +147,7 @@ export class DevSeederService {
 
     await this.devSeederPermissionsService.initPermissions({
       workspaceId,
-      twentyStandardApplication,
+      twentyStandardFlatApplication,
     });
 
     await seedPageLayouts(

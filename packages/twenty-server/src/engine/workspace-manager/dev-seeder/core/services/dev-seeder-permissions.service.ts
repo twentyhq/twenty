@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -45,11 +45,11 @@ export class DevSeederPermissionsService {
   ) {}
 
   public async initPermissions({
-    twentyStandardApplication,
+    twentyStandardFlatApplication,
     workspaceId,
   }: {
     workspaceId: string;
-    twentyStandardApplication: ApplicationEntity;
+    twentyStandardFlatApplication: FlatApplication;
   }) {
     const adminRole = await this.roleRepository.findOne({
       where: {
@@ -70,7 +70,7 @@ export class DevSeederPermissionsService {
           roleId: adminRole.id,
           targetId: API_KEY_DATA_SEED_IDS.ID_1,
           targetMetadataForeignKey: 'apiKeyId',
-          applicationId: twentyStandardApplication.id,
+          applicationId: twentyStandardFlatApplication.id,
         },
         workspaceId,
       });
@@ -96,7 +96,7 @@ export class DevSeederPermissionsService {
 
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
-        applicationId: twentyStandardApplication.id,
+        applicationId: twentyStandardFlatApplication.id,
       });
 
       await this.userRoleService.assignRoleToManyUserWorkspace({
@@ -107,7 +107,7 @@ export class DevSeederPermissionsService {
 
       const limitedRole = await this.createLimitedRoleForSeedWorkspace({
         workspaceId,
-        applicationId: twentyStandardApplication.id,
+        applicationId: twentyStandardFlatApplication.id,
       });
 
       await this.userRoleService.assignRoleToManyUserWorkspace({
@@ -134,7 +134,7 @@ export class DevSeederPermissionsService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
-      applicationId: twentyStandardApplication.id,
+      applicationId: twentyStandardFlatApplication.id,
     });
 
     await this.coreDataSource

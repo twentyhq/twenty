@@ -17,6 +17,7 @@ import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/w
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
+  FromToAllFlatEntityMaps,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
@@ -116,7 +117,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allFlatEntityOperationByMetadataName,
     workspaceId,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
-    fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'];
+    fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
@@ -130,7 +131,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
     });
 
-    const fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'] =
+    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps =
       {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
