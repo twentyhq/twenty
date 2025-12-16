@@ -13,7 +13,6 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -37,7 +36,6 @@ export class DevSeederPermissionsService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly roleTargetService: RoleTargetService,
     @InjectDataSource()

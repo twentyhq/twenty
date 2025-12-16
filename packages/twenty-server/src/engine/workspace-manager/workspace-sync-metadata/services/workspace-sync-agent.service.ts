@@ -75,7 +75,7 @@ export class WorkspaceSyncAgentService {
               const roleRepository = manager.getRepository(RoleEntity);
               const role = await roleRepository.findOne({
                 where: {
-                  standardId: agentDefinition.standardRoleId,
+                  universalIdentifier: agentDefinition.standardRoleId,
                   workspaceId: context.workspaceId,
                 },
               });
@@ -126,7 +126,7 @@ export class WorkspaceSyncAgentService {
               const roleRepository = manager.getRepository(RoleEntity);
               const role = await roleRepository.findOne({
                 where: {
-                  standardId: agentDefinition.standardRoleId,
+                  universalIdentifier: agentDefinition.standardRoleId,
                   workspaceId: context.workspaceId,
                 },
               });

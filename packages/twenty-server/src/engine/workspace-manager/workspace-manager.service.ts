@@ -21,7 +21,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -191,7 +191,7 @@ export class WorkspaceManagerService {
   }): Promise<void> {
     const adminRole = await this.roleRepository.findOne({
       where: {
-        standardId: ADMIN_ROLE.standardId,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
         workspaceId,
       },
     });
