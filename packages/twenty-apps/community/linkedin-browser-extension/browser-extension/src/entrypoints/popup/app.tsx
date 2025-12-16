@@ -22,13 +22,13 @@ function App() {
       const isLinkedinHost =
         url.protocol === 'https:' && url.hostname === 'www.linkedin.com';
 
-      if (isLinkedinHost && url.pathname.startsWith('/in')) {
+      if (isLinkedinHost && url.pathname.startsWith('/in/')) {
         sendMessage('getPersonviaRelay').then((data) => {
           setValue({ ...data, type: 'person' });
         });
       }
 
-      if (isLinkedinHost && url.pathname.startsWith('/company')) {
+      if (isLinkedinHost && url.pathname.startsWith('/company/')) {
         sendMessage('getCompanyviaRelay').then((data) => {
           setValue({ ...data, type: 'company' });
         });
