@@ -3,6 +3,7 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
 import { useRecoilCallback } from 'recoil';
 
@@ -13,6 +14,7 @@ export const useRecordGroupVisibility = () => {
     );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
+  const { updateCurrentView } = useUpdateCurrentView();
 
   const handleVisibilityChange = useRecoilCallback(
     ({ set }) =>
@@ -28,14 +30,21 @@ export const useRecordGroupVisibility = () => {
   );
 
   const handleHideEmptyRecordGroupChange = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       async () => {
-        set(
-          recordIndexShouldHideEmptyRecordGroupsCallbackState,
-          (currentHideState) => !currentHideState,
-        );
+        const currentHideState = snapshot
+          .getLoadable(recordIndexShouldHideEmptyRecordGroupsCallbackState)
+          .getValue();
+
+        const newHideState = !currentHideState;
+
+        set(recordIndexShouldHideEmptyRecordGroupsCallbackState, newHideState);
+
+        await updateCurrentView({
+          shouldHideEmptyGroups: newHideState,
+        });
       },
-    [recordIndexShouldHideEmptyRecordGroupsCallbackState],
+    [recordIndexShouldHideEmptyRecordGroupsCallbackState, updateCurrentView],
   );
 
   return {

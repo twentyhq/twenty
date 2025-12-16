@@ -14,7 +14,7 @@ export const fromRoleTargetsEntityToFlatRoleTarget = (
     targetApplicationId: roleTarget.targetApplicationId,
     applicationId: roleTarget.applicationId,
     universalIdentifier: roleTarget.universalIdentifier ?? roleTarget.id,
-    createdAt: roleTarget.createdAt,
-    updatedAt: roleTarget.updatedAt,
+    createdAt: roleTarget.createdAt.toISOString(),
+    updatedAt: roleTarget.updatedAt.toISOString(),
   };
 };

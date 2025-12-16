@@ -202,12 +202,12 @@ msgstr "Indirizzo dell'azienda - deprecato a favore del nuovo campo indirizzo"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Agent not found"
-msgstr ""
+msgstr "Agente non trovato"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "Agent with name \"{name}\" already exists"
-msgstr ""
+msgstr "Esiste già un agente con il nome \"{name}\""
 
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -240,7 +240,7 @@ msgstr "Importo"
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
 msgid "An agent with this name already exists"
-msgstr ""
+msgstr "Esiste già un agente con questo nome"
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -633,12 +633,12 @@ msgstr "Impossibile eliminare l'account: sei l'unico amministratore. Assegna un 
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot delete standard agent"
-msgstr ""
+msgstr "Impossibile eliminare l'agente standard"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
-msgstr ""
+msgstr "Impossibile eliminare un indice univoco non creato dall'applicazione personalizzata dello spazio di lavoro"
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -669,7 +669,7 @@ msgstr "Impossibile aggiornare il canale di messaggi mentre la sincronizzazione 
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
-msgstr ""
+msgstr "Impossibile aggiornare l'agente standard"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -963,6 +963,11 @@ msgstr "Dicembre"
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Il valore predefinito \"{defaultValue}\" deve essere uno dei valori opzione"
 
+#. js-lingui-id: XeWfi3
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Default value cannot be null."
+msgstr "Il valore predefinito non può essere nullo."
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
@@ -1032,7 +1037,7 @@ msgstr "Data di scadenza"
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
-msgstr ""
+msgstr "Rilevato resolver radice duplicato. Ogni resolver radice può essere chiamato una sola volta per documento."
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1221,7 +1226,7 @@ msgstr "ID esterno"
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
-msgstr ""
+msgstr "Impossibile creare la valutazione. Per favore riprova."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1485,7 +1490,7 @@ msgstr "Campo da aggiornare non trovato"
 #. js-lingui-id: 5cm5Hn
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field to update object metadata not found"
-msgstr ""
+msgstr "Campo per l'aggiornamento dei metadati dell'oggetto non trovato"
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -1513,7 +1518,7 @@ msgstr "Campo utilizzato per la ricerca full-text"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "Field value is required"
-msgstr ""
+msgstr "Valore del campo richiesto"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -1693,7 +1698,7 @@ msgstr "Indice con lo stesso nome esiste già"
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Invalid CALDAV credentials. Please check your username and password."
-msgstr ""
+msgstr "Credenziali CALDAV non valide. Si prega di controllare nome utente e password."
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1757,7 +1762,7 @@ msgstr ""
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Invalid response format type"
-msgstr ""
+msgstr "Tipo di formato di risposta non valido"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1858,7 +1863,7 @@ msgstr "Oggetto Json per fornire il trigger"
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
-msgstr ""
+msgstr "Il formato di risposta JSON richiede uno schema"
 
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1883,21 +1888,21 @@ msgstr "Giugno"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field metadata not found"
-msgstr ""
+msgstr "Metadati del campo principale di raggruppamento della vista Kanban non trovati"
 
 #. js-lingui-id: ZfLcEk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a select field"
-msgstr ""
+msgstr "Il campo principale di raggruppamento Kanban deve essere un campo di selezione"
 
 #. js-lingui-id: RoCvZe
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban main group by field must be a SELECT field"
-msgstr ""
+msgstr "Il campo principale di raggruppamento Kanban deve essere un campo SELECT"
 
 #. js-lingui-id: mAbBLH
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -1905,13 +1910,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Kanban view must have a main group by field"
-msgstr ""
+msgstr "La vista Kanban deve avere un campo principale di raggruppamento"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Label cannot be empty"
-msgstr ""
+msgstr "L'etichetta non può essere vuota"
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2217,7 +2222,7 @@ msgstr "Token di aggiornamento del provider di messaggistica"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr ""
+msgstr "Il valore dei minuti non può superare 60. Per intervalli superiori a 60 minuti, usa il tipo di trigger \"Ore\" o un'espressione cron personalizzata"
 
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -2228,7 +2233,7 @@ msgstr "Campi richiesti mancanti: almeno un vincolo unico deve essere completame
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Model ID cannot be empty"
-msgstr ""
+msgstr "L'ID del modello non può essere vuoto"
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2249,6 +2254,11 @@ msgstr "I payload di creazione di relazioni morfologiche devono contenere solo r
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "I payload di creazione di relazioni morfologiche devono contenere solo relazioni allo stesso metadato dell'oggetto"
+
+#. js-lingui-id: Lcqv5g
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Morph relation field must have a morph id"
+msgstr "Il campo della relazione morph deve avere un ID morph"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2702,50 +2712,114 @@ msgstr "Le opzioni sono richieste per i campi enum"
 msgid "Page Layout ID"
 msgstr "ID Layout Pagina"
 
+#. js-lingui-id: xCAYz6
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout is not deleted and cannot be restored"
+msgstr "Il layout di pagina non è stato eliminato e non può essere ripristinato"
+
 #. js-lingui-id: ZKtamk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout not found"
-msgstr ""
+msgstr "Layout della pagina non trovato"
+
+#. js-lingui-id: tR9faK
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab is not deleted and cannot be restored"
+msgstr "La scheda del layout di pagina non è stata eliminata e non può essere ripristinata"
 
 #. js-lingui-id: qJ9V6q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout tab not found"
-msgstr ""
+msgstr "Scheda del layout della pagina non trovata"
+
+#. js-lingui-id: CWtQfv
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to delete not found"
+msgstr "Scheda del layout di pagina da eliminare non trovata"
+
+#. js-lingui-id: LTouJ4
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to destroy not found"
+msgstr "Scheda del layout di pagina da distruggere non trovata"
+
+#. js-lingui-id: BaYGVl
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
+msgid "Page layout tab to restore not found"
+msgstr "Scheda del layout di pagina da ripristinare non trovata"
+
+#. js-lingui-id: m8tBqi
+#: src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util.ts
+msgid "Page layout tab to update not found"
+msgstr "Scheda del layout di pagina da aggiornare non trovata"
+
+#. js-lingui-id: eQHXfb
+#: src/engine/metadata-modules/flat-page-layout/utils/from-delete-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to delete not found"
+msgstr "Layout di pagina da eliminare non trovato"
+
+#. js-lingui-id: zrm54u
+#: src/engine/metadata-modules/flat-page-layout/utils/from-destroy-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to destroy not found"
+msgstr "Layout di pagina da distruggere non trovato"
+
+#. js-lingui-id: TsrNXq
+#: src/engine/metadata-modules/flat-page-layout/utils/from-restore-page-layout-input-to-flat-page-layout-or-throw.util.ts
+msgid "Page layout to restore not found"
+msgstr "Layout di pagina da ripristinare non trovato"
+
+#. js-lingui-id: /5c/t7
+#: src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util.ts
+msgid "Page layout to update not found"
+msgstr "Layout di pagina da aggiornare non trovato"
 
 #. js-lingui-id: k6Npai
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget already exists"
-msgstr ""
+msgstr "Il widget del layout di pagina esiste già"
+
+#. js-lingui-id: A3hsQ6
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget is not deleted and cannot be restored"
+msgstr "Il widget del layout di pagina non è stato eliminato e non può essere ripristinato"
 
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-delete-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to delete not found"
-msgstr ""
+msgstr "Widget del layout di pagina da eliminare non trovato"
 
 #. js-lingui-id: v2G/zq
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget to destroy not found"
-msgstr ""
+msgstr "Widget del layout di pagina da distruggere non trovato"
+
+#. js-lingui-id: fDTVnj
+#: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
+msgid "Page layout widget to restore not found"
+msgstr "Widget del layout di pagina da ripristinare non trovato"
 
 #. js-lingui-id: yCsIxc
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util.ts
 msgid "Page layout widget to update not found"
-msgstr ""
+msgstr "Widget del layout di pagina da aggiornare non trovato"
 
 #. js-lingui-id: +4z9mT
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr ""
+msgstr "Il widget del layout di pagina con ID {flatPageLayoutWidgetId} esiste già"
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2886,7 +2960,7 @@ msgstr "Probabilità"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 msgid "Prompt cannot be empty"
-msgstr ""
+msgstr "Il prompt non può essere vuoto"
 
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -2931,12 +3005,12 @@ msgstr "URL del dominio pubblico non definito. Imposta la variabile d'ambiente P
 #. js-lingui-id: uzWClp
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
-msgstr ""
+msgstr "La complessità della query è troppo elevata. Una relazione uno-a-molti non può essere annidata in un'altra relazione uno-a-molti."
 
 #. js-lingui-id: XkHjXW
 #: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
 msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
-msgstr ""
+msgstr "La complessità della query è troppo elevata. Riduci il numero di campi di relazione richiesti. Complessità della query: {queryComplexity}. Complessità massima: {maximumComplexity}."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2997,17 +3071,17 @@ msgstr "La richiesta è scaduta, riprova."
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format type must be either \"text\" or \"json\""
-msgstr ""
+msgstr "Il tipo di formato di risposta deve essere \"text\" o \"json\""
 
 #. js-lingui-id: 6Plp3x
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include a schema"
-msgstr ""
+msgstr "Il formato di risposta con tipo \"json\" deve includere uno schema"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"text\" should not include a schema"
-msgstr ""
+msgstr "Il formato di risposta con tipo \"text\" non dovrebbe includere uno schema"
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -3179,7 +3253,7 @@ msgstr "Alcuni dei permessi selezionati non sono validi. Riprovare con impostazi
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
-msgstr ""
+msgstr "Alcune appartenenze al workspace non sono state trovate. Potrebbero non avere più accesso a questo workspace."
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -3417,7 +3491,7 @@ msgstr "Testo"
 #. js-lingui-id: mQj02P
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Text response format should not have a schema"
-msgstr ""
+msgstr "Il formato di risposta testuale non dovrebbe avere uno schema"
 
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3432,7 +3506,7 @@ msgstr "Il fornitore dell'account"
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
-msgstr ""
+msgstr "L'agente che stai cercando non è stato trovato. Potrebbe essere stato eliminato oppure potresti non avere accesso ad esso."
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3531,12 +3605,12 @@ msgstr "Il nome dell'opportunità"
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
-msgstr ""
+msgstr "La richiesta è troppo complessa da elaborare. Prova a ridurre il numero di campi richiesti."
 
 #. js-lingui-id: 4LVaa7
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
-msgstr ""
+msgstr "La richiesta è troppo complessa da elaborare. Prova a ridurre il numero di resolver radice richiesti."
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
@@ -3612,7 +3686,7 @@ msgstr "Questa chiave API è scaduta. Si prega di crearne una nuova."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
-msgstr ""
+msgstr "Questo nome è riservato. Usa un nome diverso o il sistema aggiungerà il suffisso \"Custom\"."
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts

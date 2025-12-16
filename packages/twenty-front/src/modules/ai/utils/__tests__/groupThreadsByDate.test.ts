@@ -5,6 +5,11 @@ describe('groupThreadsByDate', () => {
   const baseThread: Omit<AgentChatThread, 'createdAt' | 'id'> = {
     title: 'Test Thread',
     updatedAt: new Date().toISOString(),
+    totalInputTokens: 0,
+    totalOutputTokens: 0,
+    contextWindowTokens: null,
+    totalInputCredits: 0,
+    totalOutputCredits: 0,
   };
 
   const today = new Date();

@@ -168,6 +168,7 @@ export class FlatAgentValidatorService {
     validationResult.errors.push(
       ...validateAgentRequiredProperties({
         flatAgent: optimisticFlatAgent,
+        updatedProperties: partialFlatAgent,
       }),
     );
 

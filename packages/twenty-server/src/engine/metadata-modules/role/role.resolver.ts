@@ -288,6 +288,9 @@ export class RoleResolver {
     return agents.map((agentEntity) =>
       fromFlatAgentWithRoleIdToAgentDto({
         ...agentEntity,
+        createdAt: agentEntity.createdAt.toISOString(),
+        updatedAt: agentEntity.updatedAt.toISOString(),
+        deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
         universalIdentifier: agentEntity.universalIdentifier ?? agentEntity.id,
         roleId: role.id,
       }),

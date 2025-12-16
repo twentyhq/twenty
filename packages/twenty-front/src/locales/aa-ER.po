@@ -178,6 +178,11 @@ msgstr "crwdns8648:0deletedCount={deletedCount}crwdnd8648:0deletedCount={deleted
 msgid "{failedCount} file(s) failed to upload"
 msgstr "crwdns6738:0{failedCount}crwdne6738:0"
 
+#. js-lingui-id: bv2QCV
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
+msgstr "crwdns64870:0filterRulesCount={filterRulesCount}crwdnd64870:0filterRulesCount={filterRulesCount}crwdnd64870:0filterRulesCount={filterRulesCount}crwdne64870:0"
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -222,6 +227,16 @@ msgstr "crwdns8660:0jobCount={jobCount}crwdne8660:0"
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr "crwdns8020:0num={num}crwdnd8020:0num={num}crwdnd8020:0num={num}crwdnd8020:0num={num}crwdnd8020:0num={num}crwdne8020:0"
+
+#. js-lingui-id: FaQB54
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "{permissionLabel} permission removed"
+msgstr "crwdns64794:0{permissionLabel}crwdne64794:0"
+
+#. js-lingui-id: VsXMnq
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "{permissionLabel} Permission removed"
+msgstr "crwdns64796:0{permissionLabel}crwdne64796:0"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -487,6 +502,8 @@ msgid "Action"
 msgstr "crwdns5594:0crwdne5594:0"
 
 #. js-lingui-id: 7L01XJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
@@ -532,6 +549,7 @@ msgid "Active API keys created by you or your team."
 msgstr "crwdns77:0crwdne77:0"
 
 #. js-lingui-id: m16xKo
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Add"
 msgstr "crwdns63726:0crwdne63726:0"
@@ -601,12 +619,6 @@ msgstr "crwdns5007:0crwdne5007:0"
 msgid "Add first filter"
 msgstr "crwdns6642:0crwdne6642:0"
 
-#. js-lingui-id: B0gWuX
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Add Handoff"
-msgstr "crwdns6932:0crwdne6932:0"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -654,7 +666,7 @@ msgid "Add option"
 msgstr "crwdns5011:0crwdne5011:0"
 
 #. js-lingui-id: M067Bn
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Add or remove users"
 msgstr "crwdns5700:0crwdne5700:0"
 
@@ -662,6 +674,12 @@ msgstr "crwdns5700:0crwdne5700:0"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "crwdns6330:0crwdne6330:0"
+
+#. js-lingui-id: aYtHO6
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+msgid "Add permission"
+msgstr "crwdns64798:0crwdne64798:0"
 
 #. js-lingui-id: wTsnV9
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
@@ -688,6 +706,11 @@ msgstr "crwdns85:0crwdne85:0"
 #: src/modules/activities/tasks/components/AddTaskButton.tsx
 msgid "Add task"
 msgstr "crwdns63732:0crwdne63732:0"
+
+#. js-lingui-id: 6Tl23V
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
+msgstr "crwdns64708:0crwdne64708:0"
 
 #. js-lingui-id: FQArA8
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -720,13 +743,13 @@ msgid "Add view"
 msgstr "crwdns5015:0crwdne5015:0"
 
 #. js-lingui-id: 8sZiWP
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr "crwdns63734:0crwdne63734:0"
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "crwdns7482:0crwdne7482:0"
@@ -767,6 +790,11 @@ msgstr "crwdns7018:0crwdne7018:0"
 msgid "Adjust the role-related settings"
 msgstr "crwdns5355:0crwdne5355:0"
 
+#. js-lingui-id: U3pytU
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "Admin"
+msgstr "crwdns64812:0crwdne64812:0"
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -779,6 +807,8 @@ msgstr "crwdns5465:0crwdne5465:0"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
 msgid "Advanced"
 msgstr "crwdns5734:0crwdne5734:0"
 
@@ -791,6 +821,11 @@ msgstr "crwdns63736:0crwdne63736:0"
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 msgid "Advanced filter"
 msgstr "crwdns3979:0crwdne3979:0"
+
+#. js-lingui-id: luNzWN
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Advanced model for complex planning"
+msgstr "crwdns64680:0crwdne64680:0"
 
 #. js-lingui-id: miuPUc
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -813,16 +848,24 @@ msgstr "crwdns1787:0crwdne1787:0"
 msgid "After a set amount of time"
 msgstr "crwdns8682:0crwdne8682:0"
 
+#. js-lingui-id: fcYF58
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "agent"
+msgstr "crwdns64906:0crwdne64906:0"
+
 #. js-lingui-id: iEQQyu
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "Agent"
 msgstr "crwdns6934:0crwdne6934:0"
 
-#. js-lingui-id: Q37C8E
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Agent Handoffs"
-msgstr "crwdns6936:0crwdne6936:0"
+#. js-lingui-id: WrQ+BN
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Agent interactions will appear here once the agent is used in conversations"
+msgstr "crwdns64710:0crwdne64710:0"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -851,18 +894,21 @@ msgstr "crwdns8570:0crwdne8570:0"
 msgid "Agents used to route queries to specialized agents"
 msgstr "crwdns6942:0crwdne6942:0"
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
-msgstr "crwdns8684:0crwdne8684:0"
+msgid "Aggregate Chart"
+msgstr "crwdns64662:0crwdne64662:0"
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -872,9 +918,14 @@ msgstr "crwdns6944:0crwdne6944:0"
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "AI Model"
 msgstr "crwdns6334:0crwdne6334:0"
+
+#. js-lingui-id: tGx4Zn
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "AI Models"
+msgstr "crwdns64682:0crwdne64682:0"
 
 #. js-lingui-id: QwgquD
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -953,7 +1004,7 @@ msgid "All your custom objects"
 msgstr "crwdns6230:0crwdne6230:0"
 
 #. js-lingui-id: 2M5OF+
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
 msgstr "crwdns63738:0crwdne63738:0"
 
@@ -963,7 +1014,7 @@ msgid "Allow email & password login for SSO bypass users."
 msgstr "crwdns63740:0crwdne63740:0"
 
 #. js-lingui-id: +XmkDf
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow exporting data to CSV files"
 msgstr "crwdns6858:0crwdne6858:0"
 
@@ -973,7 +1024,7 @@ msgid "Allow Google-based login for users with SSO bypass permissions."
 msgstr "crwdns63742:0crwdne63742:0"
 
 #. js-lingui-id: gCnKdT
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "crwdns6860:0crwdne6860:0"
 
@@ -1003,7 +1054,7 @@ msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "crwdns105:0crwdne105:0"
 
 #. js-lingui-id: JBjv4v
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow uploading files and attachments"
 msgstr "crwdns63746:0crwdne63746:0"
 
@@ -1011,6 +1062,11 @@ msgstr "crwdns63746:0crwdne63746:0"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow users to sign in with an email and password."
 msgstr "crwdns107:0crwdne107:0"
+
+#. js-lingui-id: Vw8l6h
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "An error occurred"
+msgstr "crwdns64984:0crwdne64984:0"
 
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -1025,15 +1081,10 @@ msgstr "crwdns8572:0crwdne8572:0"
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
@@ -1063,6 +1114,11 @@ msgstr "crwdns8874:0crwdne8874:0"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "crwdns8876:0crwdne8876:0"
+
+#. js-lingui-id: U+NKyj
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "An object with this name already exists"
+msgstr "crwdns64852:0crwdne64852:0"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1131,7 +1187,7 @@ msgid "API Keys - Settings"
 msgstr "crwdns7562:0crwdne7562:0"
 
 #. js-lingui-id: vByqA1
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "API Keys & Webhooks"
 msgstr "crwdns5704:0crwdne5704:0"
 
@@ -1218,7 +1274,7 @@ msgstr "crwdns64642:0crwdne64642:0"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Applications"
 msgstr "crwdns8582:0crwdne8582:0"
@@ -1237,6 +1293,16 @@ msgstr "crwdns5367:0crwdne5367:0"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "crwdns1789:0crwdne1789:0"
+
+#. js-lingui-id: i19Zro
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Archive files cannot be previewed. Please download the file to access its contents."
+msgstr "crwdns65008:0crwdne65008:0"
+
+#. js-lingui-id: 4CHeVx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Are you sure you want to delete this evaluation input?"
+msgstr "crwdns64712:0crwdne64712:0"
 
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
@@ -1258,10 +1324,20 @@ msgstr "crwdns63750:0crwdne63750:0"
 msgid "Are you sure you want to restore this record?"
 msgstr "crwdns63752:0crwdne63752:0"
 
+#. js-lingui-id: 9JFf0y
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
+msgstr "crwdns64886:0{oldRoleLabel}crwdnd64886:0{newRoleLabel}crwdne64886:0"
+
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr "crwdns5632:0crwdne5632:0"
+
+#. js-lingui-id: cybVUo
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "As it will be displayed in the workspace"
+msgstr "crwdns64814:0crwdne64814:0"
 
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
@@ -1274,7 +1350,7 @@ msgid "Ascending"
 msgstr "crwdns127:0crwdne127:0"
 
 #. js-lingui-id: xWEvuo
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -1318,10 +1394,10 @@ msgstr "crwdns7516:0crwdne7516:0"
 msgid "Assignable to API Keys"
 msgstr "crwdns7518:0crwdne7518:0"
 
-#. js-lingui-id: 6cOTMx
+#. js-lingui-id: OUbMUU
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
-msgid "Assignable to team members"
-msgstr "crwdns7520:0crwdne7520:0"
+msgid "Assignable to Workspace Members"
+msgstr "crwdns64714:0crwdne64714:0"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -1337,6 +1413,11 @@ msgstr "crwdns133:0crwdne133:0"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Assignment"
 msgstr "crwdns135:0crwdne135:0"
+
+#. js-lingui-id: d/bvvp
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Assistant"
+msgstr "crwdns64716:0crwdne64716:0"
 
 #. js-lingui-id: UHs3Ds
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
@@ -1443,6 +1524,11 @@ msgstr "crwdns5031:0crwdne5031:0"
 msgid "Auto-creation"
 msgstr "crwdns5033:0crwdne5033:0"
 
+#. js-lingui-id: HX/jD4
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "Auto-generated role for {agentDisplayName}"
+msgstr "crwdns64800:0{agentDisplayName}crwdne64800:0"
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -1514,7 +1600,7 @@ msgstr "crwdns8044:0{startOrdinal}crwdnd8044:0{endOrdinal}crwdne8044:0"
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "crwdns149:0crwdne149:0"
@@ -1670,7 +1756,6 @@ msgid "Can't scan? Copy the"
 msgstr "crwdns7320:0crwdne7320:0"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -1736,8 +1821,8 @@ msgid "Cannot display message"
 msgstr "crwdns64314:0crwdne64314:0"
 
 #. js-lingui-id: W3MumH
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Cannot impersonate selected user"
 msgstr "crwdns7976:0crwdne7976:0"
 
@@ -1822,7 +1907,7 @@ msgid "Chat"
 msgstr "crwdns6634:0crwdne6634:0"
 
 #. js-lingui-id: UxeiNP
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Chat with AI agents and use AI features"
 msgstr "crwdns63758:0crwdne63758:0"
 
@@ -1923,7 +2008,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "crwdns5919:0crwdne5919:0"
 
 #. js-lingui-id: WTlZnA
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Click to add your first widget"
 msgstr "crwdns8398:0crwdne8398:0"
 
@@ -2010,6 +2095,11 @@ msgstr "crwdns7198:0crwdne7198:0"
 msgid "Commas and dot - {commasAndDotExample}"
 msgstr "crwdns7866:0{commasAndDotExample}crwdne7866:0"
 
+#. js-lingui-id: NBdIgR
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Comment"
+msgstr "crwdns64718:0crwdne64718:0"
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -2053,6 +2143,11 @@ msgstr "crwdns5921:0crwdne5921:0"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Configuration"
 msgstr "crwdns63762:0crwdne63762:0"
+
+#. js-lingui-id: 9px+al
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Configure AI models for routing and planning"
+msgstr "crwdns64684:0crwdne64684:0"
 
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2109,10 +2204,10 @@ msgstr "crwdns6680:0crwdne6680:0"
 msgid "Configure these DNS records with your domain provider"
 msgstr "crwdns63766:0crwdne63766:0"
 
-#. js-lingui-id: SpV+F6
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Configure which agents this agent can hand off conversations to"
-msgstr "crwdns6946:0crwdne6946:0"
+#. js-lingui-id: BgaUQT
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "Configure this widget to display fields"
+msgstr "crwdns65004:0crwdne65004:0"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2148,6 +2243,11 @@ msgstr "crwdns6240:0{roleName}crwdne6240:0"
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "crwdns7910:0crwdne7910:0"
+
+#. js-lingui-id: 28b8wO
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Confirm role update"
+msgstr "crwdns64888:0crwdne64888:0"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2195,12 +2295,12 @@ msgid "Connection successfully updated"
 msgstr "crwdns6688:0crwdne6688:0"
 
 #. js-lingui-id: JdGr7p
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter or changing the date granularity to display more data."
 msgstr "crwdns64634:0crwdne64634:0"
 
 #. js-lingui-id: G++HwN
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter to display more data."
 msgstr "crwdns64636:0crwdne64636:0"
 
@@ -2217,7 +2317,6 @@ msgstr "crwdns5061:0crwdne5061:0"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
-#: src/modules/ai/components/internal/AgentChatContextRecordPreview.tsx
 msgid "Context"
 msgstr "crwdns203:0crwdne203:0"
 
@@ -2407,7 +2506,7 @@ msgid "Create a workspace"
 msgstr "crwdns6200:0crwdne6200:0"
 
 #. js-lingui-id: 8ZjIgO
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "crwdns63770:0crwdne63770:0"
 
@@ -2507,7 +2606,7 @@ msgid "Create your workspace"
 msgstr "crwdns241:0crwdne241:0"
 
 #. js-lingui-id: OHF273
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Create, edit, and delete workspace views"
 msgstr "crwdns63772:0crwdne63772:0"
 
@@ -2560,6 +2659,17 @@ msgstr "crwdns8878:0crwdne8878:0"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Cron will be triggered at UTC time"
 msgstr "crwdns64534:0crwdne64534:0"
+
+#. js-lingui-id: 174gCJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsCrudList.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
+msgid "CRUD"
+msgstr "crwdns64802:0crwdne64802:0"
+
+#. js-lingui-id: J1QT+3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Cumulative"
+msgstr "crwdns64884:0crwdne64884:0"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2635,9 +2745,14 @@ msgid "Customize fields"
 msgstr "crwdns5071:0crwdne5071:0"
 
 #. js-lingui-id: NSv0tC
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Customize page layouts and UI structure"
 msgstr "crwdns63776:0crwdne63776:0"
+
+#. js-lingui-id: ZBgSzH
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Customize what this user can view and perform"
+msgstr "crwdns64890:0crwdne64890:0"
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2673,6 +2788,11 @@ msgstr "crwdns1803:0crwdne1803:0"
 msgid "Dark"
 msgstr "crwdns3989:0crwdne3989:0"
 
+#. js-lingui-id: ogQzcZ
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Dashboard duplicated successfully"
+msgstr "crwdns65040:0crwdne65040:0"
+
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Dashboards"
@@ -2680,6 +2800,7 @@ msgstr "crwdns63778:0crwdne63778:0"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Data"
 msgstr "crwdns7244:0crwdne7244:0"
 
@@ -2707,7 +2828,7 @@ msgid "Data model"
 msgstr "crwdns253:0crwdne253:0"
 
 #. js-lingui-id: 4BuYDo
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Data Model"
 msgstr "crwdns5706:0crwdne5706:0"
 
@@ -2747,6 +2868,9 @@ msgid "database trigger"
 msgstr "crwdns8880:0crwdne8880:0"
 
 #. js-lingui-id: mYGY3B
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -2809,6 +2933,8 @@ msgstr "crwdns63788:0crwdne63788:0"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "days"
 msgstr "crwdns7570:0crwdne7570:0"
 
@@ -2854,6 +2980,8 @@ msgstr "crwdns267:0crwdne267:0"
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "crwdns5077:0crwdne5077:0"
@@ -2905,7 +3033,7 @@ msgid "Define the name and description of your object"
 msgstr "crwdns269:0crwdne269:0"
 
 #. js-lingui-id: Ntu10D
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
 msgstr "crwdns5708:0crwdne5708:0"
 
@@ -2933,6 +3061,10 @@ msgstr "crwdns6300:0crwdne6300:0"
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
@@ -2940,12 +3072,13 @@ msgstr "crwdns6300:0crwdne6300:0"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
-#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
@@ -2957,6 +3090,16 @@ msgstr "crwdns6300:0crwdne6300:0"
 msgid "Delete"
 msgstr "crwdns271:0crwdne271:0"
 
+#. js-lingui-id: EsGY/k
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Delete {fieldLabel} field?"
+msgstr "crwdns64856:0{fieldLabel}crwdne64856:0"
+
+#. js-lingui-id: j/OgnL
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Delete {objectLabel} object?"
+msgstr "crwdns64858:0{objectLabel}crwdne64858:0"
+
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Delete {objectLabelPlural}"
@@ -2965,6 +3108,7 @@ msgstr "crwdns7042:0{objectLabelPlural}crwdne7042:0"
 #. js-lingui-id: ZDGm40
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
 msgstr "crwdns273:0crwdne273:0"
@@ -2995,6 +3139,16 @@ msgstr "crwdns277:0crwdne277:0"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
 msgstr "crwdns7840:0crwdne7840:0"
+
+#. js-lingui-id: qnWLDf
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboards"
+msgstr "crwdns65042:0crwdne65042:0"
+
+#. js-lingui-id: gf2eXy
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Delete Evaluation Input"
+msgstr "crwdns64720:0crwdne64720:0"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -3103,32 +3257,21 @@ msgid "Descending"
 msgstr "crwdns295:0crwdne295:0"
 
 #. js-lingui-id: g+5exC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Describe what you want the AI to do..."
 msgstr "crwdns6344:0crwdne6344:0"
-
-#. js-lingui-id: ptyOy7
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Describe when this handoff should be used"
-msgstr "crwdns6954:0crwdne6954:0"
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "crwdns297:0crwdne297:0"
-
-#. js-lingui-id: /mo9tB
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Description (Optional)"
-msgstr "crwdns6956:0crwdne6956:0"
 
 #. js-lingui-id: CuAMy4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -3280,14 +3423,14 @@ msgid "Download file"
 msgstr "crwdns4897:0crwdne4897:0"
 
 #. js-lingui-id: IDPv1P
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Download Files"
 msgstr "crwdns63796:0crwdne63796:0"
 
-#. js-lingui-id: wrT4hq
+#. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
-msgid "Download sample file."
-msgstr "crwdns6218:0crwdne6218:0"
+msgid "Download sample"
+msgstr "crwdns64868:0crwdne64868:0"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3297,13 +3440,24 @@ msgstr "crwdns5642:0crwdne5642:0"
 #. js-lingui-id: euc6Ns
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate"
 msgstr "crwdns64322:0crwdne64322:0"
+
+#. js-lingui-id: MR2sZ1
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Duplicate Dashboard"
+msgstr "crwdns65044:0crwdne65044:0"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "crwdns7774:0crwdne7774:0"
+
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
+msgstr "crwdns64660:0crwdne64660:0"
 
 #. js-lingui-id: 2RpRNn
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -3375,7 +3529,7 @@ msgid "Edit Dashboard"
 msgstr "crwdns7842:0crwdne7842:0"
 
 #. js-lingui-id: DMIYL8
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Edit data structure and fields"
 msgstr "crwdns63800:0crwdne63800:0"
 
@@ -3401,7 +3555,7 @@ msgid "Edit iFrame"
 msgstr "crwdns7778:0crwdne7778:0"
 
 #. js-lingui-id: IaSCqp
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
 msgstr "crwdns64326:0crwdne64326:0"
 
@@ -3411,7 +3565,7 @@ msgid "Edit payment method, see your invoices and more"
 msgstr "crwdns317:0crwdne317:0"
 
 #. js-lingui-id: QJQd1J
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit Profile"
 msgstr "crwdns64328:0crwdne64328:0"
 
@@ -3436,13 +3590,14 @@ msgid "Eighth"
 msgstr "crwdns6894:0crwdne6894:0"
 
 #. js-lingui-id: O3oNi5
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "crwdns321:0crwdne321:0"
@@ -3597,7 +3752,7 @@ msgid "Empty Object"
 msgstr "crwdns5513:0crwdne5513:0"
 
 #. js-lingui-id: q11Dk2
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "crwdns63802:0crwdne63802:0"
 
@@ -3683,8 +3838,12 @@ msgstr "crwdns8046:0crwdne8046:0"
 msgid "Enter number between 0 and 59"
 msgstr "crwdns8048:0crwdne8048:0"
 
-#. js-lingui-id: ahwn7G
+#. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 1 and 60"
+msgstr "crwdns64992:0crwdne64992:0"
+
+#. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number greater than 1"
@@ -3758,7 +3917,7 @@ msgid "Error deleting api key."
 msgstr "crwdns6468:0crwdne6468:0"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
 msgstr "crwdns4915:0crwdne4915:0"
 
@@ -3788,7 +3947,7 @@ msgid "Error regenerating api key."
 msgstr "crwdns6470:0crwdne6470:0"
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "crwdns4921:0crwdne4921:0"
 
@@ -3827,6 +3986,11 @@ msgstr "crwdns7928:0crwdne7928:0"
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "crwdns5802:0crwdne5802:0"
 
+#. js-lingui-id: 5g78zo
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Error while saving the name"
+msgstr "crwdns64816:0crwdne64816:0"
+
 #. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to {oppositPlan} Plan."
@@ -3842,6 +4006,26 @@ msgstr "crwdns7932:0crwdne7932:0"
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "crwdns349:0crwdne349:0"
+
+#. js-lingui-id: 4ASb34
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Evals"
+msgstr "crwdns64722:0crwdne64722:0"
+
+#. js-lingui-id: UKdZ7G
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluate"
+msgstr "crwdns64724:0crwdne64724:0"
+
+#. js-lingui-id: FDRUdE
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluating"
+msgstr "crwdns64904:0crwdne64904:0"
+
+#. js-lingui-id: Y3MReI
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Evaluations"
+msgstr "crwdns64728:0crwdne64728:0"
 
 #. js-lingui-id: poC90w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4014,7 +4198,7 @@ msgid "Expiration Date"
 msgstr "crwdns361:0crwdne361:0"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "crwdns4923:0crwdne4923:0"
@@ -4025,7 +4209,7 @@ msgid "Expires"
 msgstr "crwdns7526:0crwdne7526:0"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
 msgstr "crwdns363:0crwdne363:0"
 
@@ -4049,7 +4233,7 @@ msgid "Export"
 msgstr "crwdns365:0crwdne365:0"
 
 #. js-lingui-id: 2KAI4N
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
 msgstr "crwdns6862:0crwdne6862:0"
 
@@ -4147,20 +4331,30 @@ msgstr "crwdns8882:0{translatedMetadataName}crwdne8882:0"
 msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "crwdns8884:0{translatedMetadataName}crwdnd8884:0{relatedEntityNames}crwdne8884:0"
 
-#. js-lingui-id: w/6jdn
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Failed to create handoff"
-msgstr "crwdns6964:0crwdne6964:0"
-
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "crwdns8736:0crwdne8736:0"
 
+#. js-lingui-id: NUmmdc
+#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+msgid "Failed to duplicate dashboard"
+msgstr "crwdns65046:0crwdne65046:0"
+
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Failed to duplicate workflow"
 msgstr "crwdns64336:0crwdne64336:0"
+
+#. js-lingui-id: dqEkUR
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Failed to evaluate turn"
+msgstr "crwdns64730:0crwdne64730:0"
+
+#. js-lingui-id: P/885a
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Failed to execute evaluation input"
+msgstr "crwdns64732:0crwdne64732:0"
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -4171,11 +4365,6 @@ msgstr "crwdns8592:0crwdne8592:0"
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Failed to load webhook"
 msgstr "crwdns6658:0crwdne6658:0"
-
-#. js-lingui-id: 99t8X7
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Failed to remove handoff"
-msgstr "crwdns6966:0crwdne6966:0"
 
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -4189,18 +4378,29 @@ msgstr "crwdns8738:0crwdne8738:0"
 
 #. js-lingui-id: y3HIOa
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr "crwdns64564:0{errorMessage}crwdne64564:0"
+
+#. js-lingui-id: YMSYb+
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Failed to update fast model"
+msgstr "crwdns64686:0crwdne64686:0"
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "crwdns7386:0crwdne7386:0"
 
-#. js-lingui-id: yS3a92
+#. js-lingui-id: QGaQRo
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Failed to update role"
+msgstr "crwdns64892:0crwdne64892:0"
+
+#. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update router model"
-msgstr "crwdns8740:0crwdne8740:0"
+msgid "Failed to update smart model"
+msgstr "crwdns64688:0crwdne64688:0"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -4220,13 +4420,20 @@ msgstr "crwdns7934:0crwdne7934:0"
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "crwdns5131:0crwdne5131:0"
 
-#. js-lingui-id: 9Ue4+J
+#. js-lingui-id: XVIZ7v
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Fast model to route to the right agent"
-msgstr "crwdns8742:0crwdne8742:0"
+msgid "Fast Model"
+msgstr "crwdns64690:0crwdne64690:0"
+
+#. js-lingui-id: UJHTjm
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Fast model updated successfully"
+msgstr "crwdns64692:0crwdne64692:0"
 
 #. js-lingui-id: X9kySA
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
@@ -4252,6 +4459,11 @@ msgstr "crwdns8886:0crwdne8886:0"
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
 msgstr "crwdns8254:0crwdne8254:0"
+
+#. js-lingui-id: LX8Pu1
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Field deleted"
+msgstr "crwdns64860:0crwdne64860:0"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -4379,6 +4591,7 @@ msgstr "crwdns5143:0crwdne5143:0"
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/settings/members/components/MemberNameFields.tsx
 msgid "First Name"
 msgstr "crwdns387:0crwdne387:0"
 
@@ -4449,10 +4662,10 @@ msgstr "crwdns397:0crwdne397:0"
 msgid "Functions - Settings"
 msgstr "crwdns7580:0crwdne7580:0"
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
-msgstr "crwdns8306:0crwdne8306:0"
+msgid "Gauge Chart"
+msgstr "crwdns64664:0crwdne64664:0"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4618,16 +4831,6 @@ msgstr "crwdns63954:0crwdne63954:0"
 msgid "h3"
 msgstr "crwdns63956:0crwdne63956:0"
 
-#. js-lingui-id: /Oqu/V
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Handoff created successfully"
-msgstr "crwdns6968:0crwdne6968:0"
-
-#. js-lingui-id: cZP3a/
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Handoff removed successfully"
-msgstr "crwdns6970:0crwdne6970:0"
-
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4717,10 +4920,10 @@ msgstr "crwdns5155:0crwdne5155:0"
 msgid "Hide hidden groups"
 msgstr "crwdns5937:0crwdne5937:0"
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
-msgstr "crwdns8744:0crwdne8744:0"
+msgid "Horizontal Bar Chart"
+msgstr "crwdns64666:0crwdne64666:0"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -4746,6 +4949,11 @@ msgstr "crwdns5471:0crwdne5471:0"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Http"
 msgstr "crwdns8596:0crwdne8596:0"
+
+#. js-lingui-id: DvpBQM
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+msgid "HTTP Request"
+msgstr "crwdns64734:0crwdne64734:0"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -4820,11 +5028,6 @@ msgstr "crwdns63816:0crwdne63816:0"
 msgid "iFrame Widget"
 msgstr "crwdns63818:0crwdne63818:0"
 
-#. js-lingui-id: YdCuhS
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "IframeConfiguration is not supported"
-msgstr "crwdns8258:0crwdne8258:0"
-
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -4861,14 +5064,14 @@ msgid "imap.example.com"
 msgstr "crwdns6418:0crwdne6418:0"
 
 #. js-lingui-id: tSVr6t
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
-#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "crwdns5159:0crwdne5159:0"
 
 #. js-lingui-id: n3ohBy
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Impersonate workspace users"
 msgstr "crwdns7978:0crwdne7978:0"
 
@@ -4889,7 +5092,7 @@ msgid "Import all emails"
 msgstr "crwdns8194:0crwdne8194:0"
 
 #. js-lingui-id: 2CeOI3
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Import CSV"
 msgstr "crwdns6866:0crwdne6866:0"
 
@@ -4945,7 +5148,14 @@ msgstr "crwdns8888:0crwdne8888:0"
 msgid "Indexes"
 msgstr "crwdns425:0crwdne425:0"
 
+#. js-lingui-id: 623chP
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Infos"
+msgstr "crwdns64894:0crwdne64894:0"
+
 #. js-lingui-id: XU5AOg
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Input"
 msgstr "crwdns7632:0crwdne7632:0"
@@ -4967,7 +5177,7 @@ msgid "Insert a JSON input, then press \"Run\" to test your function."
 msgstr "crwdns7634:0crwdne7634:0"
 
 #. js-lingui-id: 4ZM8/a
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "crwdns63820:0crwdne63820:0"
 
@@ -4977,7 +5187,7 @@ msgid "Instances"
 msgstr "crwdns429:0crwdne429:0"
 
 #. js-lingui-id: g+29+d
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Instructions for AI"
 msgstr "crwdns6350:0crwdne6350:0"
 
@@ -5099,12 +5309,12 @@ msgid "Invite"
 msgstr "crwdns3993:0crwdne3993:0"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Invite by email"
 msgstr "crwdns441:0crwdne441:0"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Invite by link"
 msgstr "crwdns443:0crwdne443:0"
 
@@ -5243,6 +5453,11 @@ msgstr "crwdns5187:0crwdne5187:0"
 msgid "Italian"
 msgstr "crwdns451:0crwdne451:0"
 
+#. js-lingui-id: hgr8eo
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "items"
+msgstr "crwdns64774:0crwdne64774:0"
+
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Items to iterate over"
@@ -5366,6 +5581,11 @@ msgstr "crwdns5487:0crwdne5487:0"
 msgid "Last message {lastMessageSentAtFormatted}"
 msgstr "crwdns7590:0{lastMessageSentAtFormatted}crwdne7590:0"
 
+#. js-lingui-id: 1ZaQUH
+#: src/modules/settings/members/components/MemberNameFields.tsx
+msgid "Last name"
+msgstr "crwdns64818:0crwdne64818:0"
+
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -5411,7 +5631,7 @@ msgid "Layout"
 msgstr "crwdns5523:0crwdne5523:0"
 
 #. js-lingui-id: yU0QVO
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Layouts"
 msgstr "crwdns63824:0crwdne63824:0"
 
@@ -5436,6 +5656,11 @@ msgstr "crwdns6702:0crwdne6702:0"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Leave workspace"
 msgstr "crwdns63826:0crwdne63826:0"
+
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr "crwdns64704:0crwdne64704:0"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -5468,10 +5693,10 @@ msgstr "crwdns8368:0crwdne8368:0"
 msgid "Limit must be greater than 0."
 msgstr "crwdns64344:0crwdne64344:0"
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
-msgstr "crwdns8308:0crwdne8308:0"
+msgid "Line Chart"
+msgstr "crwdns64668:0crwdne64668:0"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5524,7 +5749,6 @@ msgid "Loading retention configuration..."
 msgstr "crwdns8756:0crwdne8756:0"
 
 #. js-lingui-id: Z3FXyt
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -5554,6 +5778,7 @@ msgid "Logout"
 msgstr "crwdns5608:0crwdne5608:0"
 
 #. js-lingui-id: w/bY7R
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Logs"
 msgstr "crwdns8758:0crwdne8758:0"
@@ -5578,13 +5803,18 @@ msgstr "crwdns7696:0crwdne7696:0"
 msgid "Mail Account"
 msgstr "crwdns7150:0crwdne7150:0"
 
+#. js-lingui-id: MOLprz
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+msgid "Make HTTP requests to external APIs"
+msgstr "crwdns64736:0crwdne64736:0"
+
 #. js-lingui-id: n0FHLv
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage API keys and webhooks"
 msgstr "crwdns5718:0crwdne5718:0"
 
 #. js-lingui-id: IT5nsa
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage billing and subscriptions"
 msgstr "crwdns63828:0crwdne63828:0"
 
@@ -5605,7 +5835,7 @@ msgid "Manage in settings"
 msgstr "crwdns64546:0crwdne64546:0"
 
 #. js-lingui-id: T6YjCk
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "crwdns473:0crwdne473:0"
 
@@ -5615,7 +5845,7 @@ msgid "Manage members in settings"
 msgstr "crwdns64548:0crwdne64548:0"
 
 #. js-lingui-id: eGGH1l
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage security policies"
 msgstr "crwdns5720:0crwdne5720:0"
 
@@ -5625,17 +5855,17 @@ msgid "Manage support access settings"
 msgstr "crwdns5756:0crwdne5756:0"
 
 #. js-lingui-id: N7fMy9
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Manage the members of your workspace here"
 msgstr "crwdns6068:0crwdne6068:0"
 
 #. js-lingui-id: /berfj
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage Views"
 msgstr "crwdns63830:0crwdne63830:0"
 
 #. js-lingui-id: fEqDWx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage workflows"
 msgstr "crwdns6248:0crwdne6248:0"
 
@@ -5716,9 +5946,15 @@ msgstr "crwdns63970:0crwdne63970:0"
 msgid "Member of"
 msgstr "crwdns6204:0crwdne6204:0"
 
+#. js-lingui-id: cNIHA/
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Member removed from workspace"
+msgstr "crwdns64820:0crwdne64820:0"
+
 #. js-lingui-id: wlQNTg
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5766,6 +6002,11 @@ msgstr "crwdns8766:0crwdne8766:0"
 msgid "Message Sync is not available because the service is down"
 msgstr "crwdns8768:0crwdne8768:0"
 
+#. js-lingui-id: t7TeQU
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Messages"
+msgstr "crwdns64738:0crwdne64738:0"
+
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -5806,6 +6047,11 @@ msgstr "crwdns487:0crwdne487:0"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "crwdns8770:0crwdne8770:0"
+
+#. js-lingui-id: G6wJK8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
+msgstr "crwdns64994:0crwdne64994:0"
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -5854,6 +6100,12 @@ msgstr "crwdns63834:0crwdne63834:0"
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "crwdns7404:0crwdne7404:0"
+
+#. js-lingui-id: 6jefe3
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "months"
+msgstr "crwdns64776:0crwdne64776:0"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -5909,9 +6161,9 @@ msgstr "crwdns63836:0crwdne63836:0"
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5933,6 +6185,7 @@ msgstr "crwdns63836:0crwdne63836:0"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -6122,6 +6375,11 @@ msgstr "crwdns4939:0crwdne4939:0"
 msgid "New task"
 msgstr "crwdns63844:0crwdne63844:0"
 
+#. js-lingui-id: vam7Jz
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "New widget"
+msgstr "crwdns64702:0crwdne64702:0"
+
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6163,11 +6421,6 @@ msgstr "crwdns7532:0crwdne7532:0"
 msgid "No agents available"
 msgstr "crwdns7534:0crwdne7534:0"
 
-#. js-lingui-id: pC+mOo
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "No agents available for handoff"
-msgstr "crwdns6976:0crwdne6976:0"
-
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
@@ -6198,6 +6451,11 @@ msgstr "crwdns6870:0crwdne6870:0"
 msgid "No change detected"
 msgstr "crwdns5351:0crwdne5351:0"
 
+#. js-lingui-id: wgUPZ1
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No comment"
+msgstr "crwdns64740:0crwdne64740:0"
+
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
@@ -6207,6 +6465,12 @@ msgstr "crwdns5939:0crwdne5939:0"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "crwdns5203:0crwdne5203:0"
+
+#. js-lingui-id: plhHQt
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
+msgid "No data"
+msgstr "crwdns64996:0crwdne64996:0"
 
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -6250,7 +6514,6 @@ msgstr "crwdns7646:0crwdne7646:0"
 
 #. js-lingui-id: flmDTf
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "crwdns6978:0crwdne6978:0"
 
@@ -6259,10 +6522,30 @@ msgstr "crwdns6978:0crwdne6978:0"
 msgid "No email exchange has occurred with this record yet."
 msgstr "crwdns7598:0crwdne7598:0"
 
+#. js-lingui-id: p3Hivn
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "No evaluation inputs yet. Add your first test input above."
+msgstr "crwdns64742:0crwdne64742:0"
+
+#. js-lingui-id: ntMCci
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No evaluations yet for this turn"
+msgstr "crwdns64744:0crwdne64744:0"
+
+#. js-lingui-id: /hvarH
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
+msgid "No fields available"
+msgstr "crwdns64792:0crwdne64792:0"
+
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
 msgstr "crwdns64348:0crwdne64348:0"
+
+#. js-lingui-id: eiEb25
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "No fields to display"
+msgstr "crwdns65006:0crwdne65006:0"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6284,15 +6567,10 @@ msgstr "crwdns5804:0crwdne5804:0"
 msgid "No free workflow executions left. Please contact your admin."
 msgstr "crwdns6026:0crwdne6026:0"
 
-#. js-lingui-id: S81IYy
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs configured for this agent"
-msgstr "crwdns6980:0crwdne6980:0"
-
-#. js-lingui-id: zsMgNq
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs match your search"
-msgstr "crwdns6982:0crwdne6982:0"
+#. js-lingui-id: gIrKyO
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "No input"
+msgstr "crwdns64746:0crwdne64746:0"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6315,8 +6593,13 @@ msgstr "crwdns8780:0{errorDetails}crwdne8780:0"
 msgid "No latest version found"
 msgstr "crwdns5814:0crwdne5814:0"
 
+#. js-lingui-id: 5sf2dF
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "No logs yet"
+msgstr "crwdns64748:0crwdne64748:0"
+
 #. js-lingui-id: UwvrGq
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "No members"
 msgstr "crwdns5572:0crwdne5572:0"
 
@@ -6326,9 +6609,14 @@ msgid "No members assigned"
 msgstr "crwdns5574:0crwdne5574:0"
 
 #. js-lingui-id: /nLvVj
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "No members match your search"
 msgstr "crwdns5576:0crwdne5576:0"
+
+#. js-lingui-id: JzzHsG
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No messages found for this turn"
+msgstr "crwdns64750:0crwdne64750:0"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -6384,6 +6672,11 @@ msgstr "crwdns5907:0crwdne5907:0"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "crwdns4857:0crwdne4857:0"
+
+#. js-lingui-id: FVzmGK
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "No role assigned to this member"
+msgstr "crwdns64896:0crwdne64896:0"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -6543,13 +6836,18 @@ msgstr "crwdns8890:0crwdne8890:0"
 msgid "Object"
 msgstr "crwdns539:0crwdne539:0"
 
+#. js-lingui-id: 5Dll32
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Object deleted"
+msgstr "crwdns64862:0crwdne64862:0"
+
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "crwdns5219:0crwdne5219:0"
 
 #. js-lingui-id: rDycBw
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "crwdns8916:0crwdne8916:0"
 
@@ -6694,6 +6992,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "crwdns5223:0crwdne5223:0"
 
 #. js-lingui-id: 1TNIig
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/action-menu/components/RecordShowRightDrawerOpenRecordButton.tsx
 msgid "Open"
 msgstr "crwdns8866:0crwdne8866:0"
@@ -6713,6 +7012,11 @@ msgstr "crwdns6166:0crwdne6166:0"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "crwdns4943:0crwdne4943:0"
+
+#. js-lingui-id: DP5C7w
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Open in Roles"
+msgstr "crwdns64898:0crwdne64898:0"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -6735,13 +7039,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr "crwdns6184:0crwdne6184:0"
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr "crwdns547:0crwdne547:0"
 
@@ -6816,6 +7119,21 @@ msgstr "crwdns63984:0crwdne63984:0"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
 msgstr "crwdns8784:0crwdne8784:0"
+
+#. js-lingui-id: SZgFyi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout"
+msgstr "crwdns64982:0crwdne64982:0"
+
+#. js-lingui-id: HFlGEK
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout tab"
+msgstr "crwdns64954:0crwdne64954:0"
+
+#. js-lingui-id: sVcqjZ
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "page layout widget"
+msgstr "crwdns64968:0crwdne64968:0"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -6899,8 +7217,14 @@ msgstr "crwdns565:0crwdne565:0"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "crwdns5231:0crwdne5231:0"
+
+#. js-lingui-id: /YAKmj
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "Perform administrative actions or permanently delete this user"
+msgstr "crwdns64822:0crwdne64822:0"
 
 #. js-lingui-id: wSpwGR
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -6911,6 +7235,11 @@ msgstr "crwdns8610:0crwdne8610:0"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Permanently destroy dashboard"
 msgstr "crwdns7850:0crwdne7850:0"
+
+#. js-lingui-id: n7S2Oo
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboards"
+msgstr "crwdns65048:0crwdne65048:0"
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6944,6 +7273,8 @@ msgid "Permanently destroy workflows"
 msgstr "crwdns571:0crwdne571:0"
 
 #. js-lingui-id: 9cDpsw
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "crwdns573:0crwdne573:0"
@@ -6969,13 +7300,14 @@ msgstr "crwdns7690:0{objectLabel}crwdne7690:0"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Picture"
 msgstr "crwdns575:0crwdne575:0"
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
-msgstr "crwdns8310:0crwdne8310:0"
+msgid "Pie Chart"
+msgstr "crwdns64670:0crwdne64670:0"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7079,6 +7411,11 @@ msgstr "crwdns7026:0crwdne7026:0"
 msgid "Prefilling your workspace data..."
 msgstr "crwdns6378:0crwdne6378:0"
 
+#. js-lingui-id: rNqTKZ
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Prefix"
+msgstr "crwdns64872:0crwdne64872:0"
+
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 msgid "Prevent from assigning the same value to different records"
@@ -7089,6 +7426,11 @@ msgstr "crwdns7184:0crwdne7184:0"
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
 msgstr "crwdns587:0crwdne587:0"
+
+#. js-lingui-id: Fe5cbB
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Preview Not Available"
+msgstr "crwdns65010:0crwdne65010:0"
 
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7156,6 +7498,11 @@ msgstr "crwdns7604:0crwdne7604:0"
 msgid "Profile Picture"
 msgstr "crwdns64350:0crwdne64350:0"
 
+#. js-lingui-id: W9uQXX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Prompt"
+msgstr "crwdns64804:0crwdne64804:0"
+
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
@@ -7208,6 +7555,12 @@ msgstr "crwdns63854:0crwdne63854:0"
 msgid "Quarter of the year"
 msgstr "crwdns63856:0crwdne63856:0"
 
+#. js-lingui-id: kyP980
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "quarters"
+msgstr "crwdns64778:0crwdne64778:0"
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -7222,6 +7575,19 @@ msgstr "crwdns5503:0crwdne5503:0"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Queue: {queueName}"
 msgstr "crwdns8792:0{queueName}crwdne8792:0"
+
+#. js-lingui-id: GaAG2G
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Quick model for routing decisions"
+msgstr "crwdns64694:0crwdne64694:0"
+
+#. js-lingui-id: iaocTt
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "Ratio"
+msgstr "crwdns64998:0crwdne64998:0"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7247,6 +7613,11 @@ msgstr "crwdns5233:0crwdne5233:0"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Record"
 msgstr "crwdns8794:0crwdne8794:0"
+
+#. js-lingui-id: aGGOPJ
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+msgid "Record (ID)"
+msgstr "crwdns64938:0crwdne64938:0"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -7365,23 +7736,13 @@ msgstr "crwdns7656:0crwdne7656:0"
 msgid "Remove from favorites"
 msgstr "crwdns611:0crwdne611:0"
 
-#. js-lingui-id: utQSYi
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove handoff"
-msgstr "crwdns6988:0crwdne6988:0"
-
-#. js-lingui-id: OwOSPx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove Handoff"
-msgstr "crwdns6990:0crwdne6990:0"
-
 #. js-lingui-id: 99VIgC
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Remove member"
 msgstr "crwdns63860:0crwdne63860:0"
 
 #. js-lingui-id: FzY1pn
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Remove member from workspace"
 msgstr "crwdns63862:0crwdne63862:0"
 
@@ -7546,11 +7907,17 @@ msgstr "crwdns8800:0crwdne8800:0"
 msgid "Revoked for this object"
 msgstr "crwdns5903:0crwdne5903:0"
 
+#. js-lingui-id: E1BXUR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role"
+msgstr "crwdns64832:0crwdne64832:0"
+
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "crwdns6992:0crwdne6992:0"
@@ -7571,14 +7938,20 @@ msgstr "crwdns6372:0crwdne6372:0"
 msgid "Role name cannot be empty"
 msgstr "crwdns5892:0crwdne5892:0"
 
+#. js-lingui-id: jLNGne
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role target"
+msgstr "crwdns64834:0crwdne64834:0"
+
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Role updated successfully"
 msgstr "crwdns7038:0crwdne7038:0"
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -7596,25 +7969,10 @@ msgstr "crwdns1831:0crwdne1831:0"
 msgid "route trigger"
 msgstr "crwdns8894:0crwdne8894:0"
 
-#. js-lingui-id: 4E5bBq
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router"
-msgstr "crwdns8802:0crwdne8802:0"
-
-#. js-lingui-id: jBPgd3
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router is used in the chat to dispatch to the right agent"
-msgstr "crwdns8804:0crwdne8804:0"
-
-#. js-lingui-id: nWR0bQ
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router Model"
-msgstr "crwdns8806:0crwdne8806:0"
-
-#. js-lingui-id: ilPOUX
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router model updated successfully"
-msgstr "crwdns8808:0crwdne8808:0"
+#. js-lingui-id: 3JjdaA
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Run"
+msgstr "crwdns64752:0crwdne64752:0"
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -7668,6 +8026,13 @@ msgstr "crwdns5457:0crwdne5457:0"
 msgid "Schema name"
 msgstr "crwdns8812:0crwdne8812:0"
 
+#. js-lingui-id: Eq6YVV
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Score"
+msgstr "crwdns64754:0crwdne64754:0"
+
 #. js-lingui-id: A1taO8
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFilterInputMenuHeader.tsx
@@ -7704,7 +8069,7 @@ msgid "Search a role..."
 msgstr "crwdns7732:0crwdne7732:0"
 
 #. js-lingui-id: xdl79x
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
 msgstr "crwdns5578:0crwdne5578:0"
 
@@ -7779,6 +8144,7 @@ msgstr "crwdns5909:0crwdne5909:0"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 msgid "Search fields"
@@ -7794,11 +8160,6 @@ msgstr "crwdns8198:0crwdne8198:0"
 msgid "Search for an object..."
 msgstr "crwdns633:0crwdne633:0"
 
-#. js-lingui-id: OflyKY
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Search handoffs..."
-msgstr "crwdns6996:0crwdne6996:0"
-
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
@@ -7813,6 +8174,11 @@ msgstr "crwdns8268:0crwdne8268:0"
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "Search operations"
 msgstr "crwdns8270:0crwdne8270:0"
+
+#. js-lingui-id: 996xRf
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Search options"
+msgstr "crwdns65000:0crwdne65000:0"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -7864,7 +8230,7 @@ msgstr "crwdns6188:0crwdne6188:0"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "crwdns637:0crwdne637:0"
@@ -7966,11 +8332,6 @@ msgstr "crwdns63872:0crwdne63872:0"
 msgid "Select a field from a previous step"
 msgstr "crwdns6872:0crwdne6872:0"
 
-#. js-lingui-id: l5KvVl
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Select a target agent"
-msgstr "crwdns7000:0crwdne7000:0"
-
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
 msgid "Select a value"
@@ -8048,6 +8409,11 @@ msgstr "crwdns647:0crwdne647:0"
 msgid "Select the sheet to use"
 msgstr "crwdns5682:0crwdne5682:0"
 
+#. js-lingui-id: iWf0Zj
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Select value"
+msgstr "crwdns65002:0crwdne65002:0"
+
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your preferred language"
@@ -8059,18 +8425,18 @@ msgid "Send"
 msgstr "crwdns6638:0crwdne6638:0"
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "crwdns651:0crwdne651:0"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send Email"
 msgstr "crwdns6854:0crwdne6854:0"
 
 #. js-lingui-id: CqsED8
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "crwdns63876:0crwdne63876:0"
 
@@ -8126,7 +8492,7 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "crwdns655:0crwdne655:0"
 
 #. js-lingui-id: 6KA8xy
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Set global workspace preferences"
 msgstr "crwdns5728:0crwdne5728:0"
 
@@ -8213,7 +8579,7 @@ msgid "Share"
 msgstr "crwdns63882:0crwdne63882:0"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "crwdns663:0crwdne663:0"
 
@@ -8241,6 +8607,11 @@ msgstr "crwdns5953:0crwdne5953:0"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "crwdns5684:0crwdne5684:0"
+
+#. js-lingui-id: TJ4tz9
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Show value in center"
+msgstr "crwdns64770:0crwdne64770:0"
 
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
@@ -8309,6 +8680,16 @@ msgstr "crwdns673:0crwdne673:0"
 msgid "Small section heading"
 msgstr "crwdns63990:0crwdne63990:0"
 
+#. js-lingui-id: 5J8ZFl
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart Model"
+msgstr "crwdns64696:0crwdne64696:0"
+
+#. js-lingui-id: qgvZ/2
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart model updated successfully"
+msgstr "crwdns64698:0crwdne64698:0"
+
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Configuration"
@@ -8354,11 +8735,6 @@ msgstr "crwdns7072:0crwdne7072:0"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
 msgstr "crwdns8200:0crwdne8200:0"
-
-#. js-lingui-id: yHwG3y
-#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
-msgid "Soon"
-msgstr "crwdns8312:0crwdne8312:0"
 
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -8413,7 +8789,7 @@ msgstr "crwdns5616:0crwdne5616:0"
 
 #. js-lingui-id: qBpBSc
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "SSO Bypass"
 msgstr "crwdns63884:0crwdne63884:0"
 
@@ -8496,6 +8872,11 @@ msgstr "crwdns5957:0crwdne5957:0"
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
 msgid "String"
 msgstr "crwdns64630:0crwdne64630:0"
+
+#. js-lingui-id: 1CalO6
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
+msgid "Style"
+msgstr "crwdns64780:0crwdne64780:0"
 
 #. js-lingui-id: WIUeUf
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
@@ -8596,6 +8977,11 @@ msgstr "crwdns63994:0crwdne63994:0"
 msgid "Successfully merged {recordCount} records"
 msgstr "crwdns6916:0{recordCount}crwdne6916:0"
 
+#. js-lingui-id: QJz8/3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Suffix"
+msgstr "crwdns64874:0crwdne64874:0"
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -8644,12 +9030,12 @@ msgid "Switch to Yearly"
 msgstr "crwdns6140:0crwdne6140:0"
 
 #. js-lingui-id: avDJC3
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
 msgstr "crwdns63888:0crwdne63888:0"
 
 #. js-lingui-id: MsxItJ
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync email and calendar accounts"
 msgstr "crwdns63890:0crwdne63890:0"
 
@@ -8684,6 +9070,7 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "crwdns4009:0crwdne4009:0"
 
 #. js-lingui-id: D+NlUC
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
 msgstr "crwdns7424:0crwdne7424:0"
@@ -8755,12 +9142,6 @@ msgstr "crwdns8910:0crwdne8910:0"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Table"
 msgstr "crwdns5287:0crwdne5287:0"
-
-#. js-lingui-id: orMfFk
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Target Agent"
-msgstr "crwdns7006:0crwdne7006:0"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8837,6 +9218,11 @@ msgstr "crwdns713:0crwdne713:0"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 msgid "The domain name you want to use for emailing"
 msgstr "crwdns8012:0crwdne8012:0"
+
+#. js-lingui-id: xJSPh6
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "The email associated to this account"
+msgstr "crwdns64824:0crwdne64824:0"
 
 #. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
@@ -8970,13 +9356,8 @@ msgstr "crwdns7008:0crwdne7008:0"
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "crwdns733:0crwdne733:0"
 
-#. js-lingui-id: igSFzI
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "This action cannot be undone. This will permanently remove the handoff configuration."
-msgstr "crwdns7010:0crwdne7010:0"
-
 #. js-lingui-id: fTuKde
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
 msgstr "crwdns63898:0crwdne63898:0"
 
@@ -8989,6 +9370,11 @@ msgstr "crwdns63900:0crwdne63900:0"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "crwdns5959:0crwdne5959:0"
+
+#. js-lingui-id: hMvPrD
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "This file type cannot be previewed. Please download the file to view it."
+msgstr "crwdns65012:0crwdne65012:0"
 
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -9039,6 +9425,16 @@ msgstr "crwdns7952:0{currentIntervalLabel}crwdne7952:0"
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
 msgstr "crwdns7954:0{planKeyWord}crwdne7954:0"
+
+#. js-lingui-id: XGDxrH
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
+msgstr "crwdns64864:0{objectLabel}crwdne64864:0"
+
+#. js-lingui-id: L85ZX9
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
+msgstr "crwdns64866:0crwdne64866:0"
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -9116,6 +9512,11 @@ msgstr "crwdns6320:0crwdne6320:0"
 msgid "Tomorrow"
 msgstr "crwdns6050:0crwdne6050:0"
 
+#. js-lingui-id: 72c5Qo
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+msgid "Total"
+msgstr "crwdns64772:0crwdne64772:0"
+
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
@@ -9178,6 +9579,8 @@ msgstr "crwdns8622:0crwdne8622:0"
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "crwdns5305:0crwdne5305:0"
 
@@ -9201,6 +9604,34 @@ msgstr "crwdns8014:0crwdne8014:0"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
 msgstr "crwdns1845:0crwdne1845:0"
+
+#. js-lingui-id: n0iUzM
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn"
+msgstr "crwdns64756:0crwdne64756:0"
+
+#. js-lingui-id: qsUXL3
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn Details"
+msgstr "crwdns64758:0crwdne64758:0"
+
+#. js-lingui-id: fFSDTy
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Turn evaluated successfully"
+msgstr "crwdns64760:0crwdne64760:0"
+
+#. js-lingui-id: 8680YN
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn not found"
+msgstr "crwdns64762:0crwdne64762:0"
+
+#. js-lingui-id: NCGTnP
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn Not Found"
+msgstr "crwdns64764:0crwdne64764:0"
 
 #. js-lingui-id: YIjS4q
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -9240,6 +9671,7 @@ msgid "Type"
 msgstr "crwdns749:0crwdne749:0"
 
 #. js-lingui-id: qzD6hf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
 msgstr "crwdns64656:0crwdne64656:0"
@@ -9254,20 +9686,35 @@ msgstr "crwdns1847:0crwdne1847:0"
 msgid "ul"
 msgstr "crwdns64000:0crwdne64000:0"
 
+#. js-lingui-id: N/XI5S
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Unable to delete member right now"
+msgstr "crwdns64826:0crwdne64826:0"
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "crwdns7430:0crwdne7430:0"
 
-#. js-lingui-id: ZjTKHy
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Undisplayed data: max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart."
-msgstr "crwdns64638:0{BAR_CHART_MAXIMUM_NUMBER_OF_BARS}crwdne64638:0"
+#. js-lingui-id: o23uCL
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} {granularityLabel} per chart."
+msgstr "crwdns64782:0{maxItems}crwdnd64782:0{granularityLabel}crwdne64782:0"
 
-#. js-lingui-id: 29HVk/
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
-msgstr "crwdns64640:0{LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS}crwdne64640:0"
+#. js-lingui-id: LshHRh
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} bars per chart."
+msgstr "crwdns64784:0{maxItems}crwdne64784:0"
+
+#. js-lingui-id: 8MwfeU
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} data points per chart."
+msgstr "crwdns64786:0{maxItems}crwdne64786:0"
+
+#. js-lingui-id: 0LZhoy
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} slices per chart."
+msgstr "crwdns64788:0{maxItems}crwdne64788:0"
 
 #. js-lingui-id: fo0VXg
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
@@ -9293,9 +9740,15 @@ msgid "Unique"
 msgstr "crwdns753:0crwdne753:0"
 
 #. js-lingui-id: +WHV0k
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Unique fields"
 msgstr "crwdns8918:0crwdne8918:0"
+
+#. js-lingui-id: pRpC/r
+#: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
+msgid "unit"
+msgstr "crwdns64876:0crwdne64876:0"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9365,6 +9818,11 @@ msgstr "crwdns6322:0crwdne6322:0"
 msgid "Update"
 msgstr "crwdns6036:0crwdne6036:0"
 
+#. js-lingui-id: 5bRMKt
+#: src/modules/settings/members/components/MemberPermissionsTab.tsx
+msgid "Update role"
+msgstr "crwdns64900:0crwdne64900:0"
+
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Update view"
@@ -9404,7 +9862,7 @@ msgid "Upload File"
 msgstr "crwdns6152:0crwdne6152:0"
 
 #. js-lingui-id: HAKBY9
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "crwdns63906:0crwdne63906:0"
 
@@ -9448,6 +9906,7 @@ msgstr "crwdns767:0{objectLabel}crwdne767:0"
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -9478,7 +9937,7 @@ msgid "User is not logged in"
 msgstr "crwdns771:0crwdne771:0"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Users"
 msgstr "crwdns5732:0crwdne5732:0"
 
@@ -9566,10 +10025,10 @@ msgstr "crwdns8830:0crwdne8830:0"
 msgid "Version of the application"
 msgstr "crwdns5321:0crwdne5321:0"
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
-msgstr "crwdns8832:0crwdne8832:0"
+msgid "Vertical Bar Chart"
+msgstr "crwdns64672:0crwdne64672:0"
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9585,6 +10044,16 @@ msgstr "crwdns8898:0crwdne8898:0"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
 msgstr "crwdns5323:0crwdne5323:0"
+
+#. js-lingui-id: 8qPdO7
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "View Agent"
+msgstr "crwdns64806:0crwdne64806:0"
+
+#. js-lingui-id: nK72s8
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "View all evaluations"
+msgstr "crwdns64766:0crwdne64766:0"
 
 #. js-lingui-id: KANz0G
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -9617,6 +10086,16 @@ msgstr "crwdns8834:0crwdne8834:0"
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"
 msgstr "crwdns6754:0crwdne6754:0"
+
+#. js-lingui-id: hAAsm/
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "View role"
+msgstr "crwdns64808:0crwdne64808:0"
+
+#. js-lingui-id: mzftV9
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "View Role"
+msgstr "crwdns64810:0crwdne64810:0"
 
 #. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -9683,7 +10162,7 @@ msgid "We encountered an issue verifying"
 msgstr "crwdns6176:0crwdne6176:0"
 
 #. js-lingui-id: 6d9mjh
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
 msgstr "crwdns8920:0{objectLabelSingular}crwdne8920:0"
 
@@ -9754,8 +10233,14 @@ msgstr "crwdns785:0crwdne785:0"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "crwdns7750:0crwdne7750:0"
+
+#. js-lingui-id: IAUiSh
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "weeks"
+msgstr "crwdns64790:0crwdne64790:0"
 
 #. js-lingui-id: ke0EDP
 #: src/pages/auth/SignInUp.tsx
@@ -9799,12 +10284,11 @@ msgid "Workflow duplicated successfully"
 msgstr "crwdns64358:0crwdne64358:0"
 
 #. js-lingui-id: woYYQq
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
 msgstr "crwdns6250:0crwdne6250:0"
 
 #. js-lingui-id: pmUArF
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -9812,6 +10296,8 @@ msgstr "crwdns6250:0crwdne6250:0"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -9831,11 +10317,14 @@ msgstr "crwdns6250:0crwdne6250:0"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -9919,6 +10408,7 @@ msgstr "crwdns63918:0crwdne63918:0"
 
 #. js-lingui-id: SHqkdn
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "X axis"
 msgstr "crwdns8278:0crwdne8278:0"
 
@@ -9930,6 +10420,7 @@ msgstr "crwdns8842:0crwdne8842:0"
 
 #. js-lingui-id: fplGg6
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Y axis"
 msgstr "crwdns8284:0crwdne8284:0"
 
@@ -9951,6 +10442,7 @@ msgstr "crwdns7436:0crwdne7436:0"
 
 #. js-lingui-id: +BGee5
 #: src/utils/date-utils.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
 msgstr "crwdns7614:0crwdne7614:0"
 

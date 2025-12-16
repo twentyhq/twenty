@@ -197,8 +197,8 @@ const validateDuplicates = (
   return errors;
 };
 
-const validateFieldMetadataInputOptions = <T extends EnumFieldMetadataType>(
-  flatFieldMetadata: FlatFieldMetadata<T>,
+const validateFieldMetadataInputOptions = (
+  flatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>,
 ): FlatFieldMetadataValidationError[] => {
   const { options } = flatFieldMetadata;
 

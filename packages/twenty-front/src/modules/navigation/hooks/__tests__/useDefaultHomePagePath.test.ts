@@ -59,6 +59,7 @@ const renderHooks = ({
               viewFilters: [],
               visibility: ViewVisibility.WORKSPACE,
               createdByUserWorkspaceId: null,
+              shouldHideEmptyGroups: false,
             },
           ]);
         } else {

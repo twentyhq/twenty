@@ -35,6 +35,6 @@ export const fromDeleteViewGroupInputToFlatViewGroupOrThrow = ({
 
   return {
     ...existingFlatViewGroupToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };

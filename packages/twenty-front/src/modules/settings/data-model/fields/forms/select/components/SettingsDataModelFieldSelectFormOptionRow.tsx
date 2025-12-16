@@ -32,6 +32,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onInputEnter?: () => void;
   option: FieldMetadataItemOption;
   isNewRow?: boolean;
+  fieldIsNullable?: boolean;
 };
 
 const StyledRow = styled.div`
@@ -76,6 +77,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onInputEnter,
   option,
   isNewRow,
+  fieldIsNullable,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
@@ -83,6 +85,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   const { closeDropdown: closeColorDropdown } = useCloseDropdown();
   const { closeDropdown: closeActionsDropdown } = useCloseDropdown();
+
+  const shouldForbidRemoveAsDefault = isDefault && !fieldIsNullable;
 
   const handleInputEnter = () => {
     onInputEnter?.();
@@ -157,43 +161,49 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
         clickableComponent={
-          <StyledLightIconButton accent="tertiary" Icon={IconDotsVertical} />
+          <StyledLightIconButton
+            accent="tertiary"
+            Icon={IconDotsVertical}
+            disabled={shouldForbidRemoveAsDefault}
+          />
         }
         dropdownComponents={
-          <DropdownContent>
-            <DropdownMenuItemsContainer>
-              {isDefault ? (
-                <MenuItem
-                  LeftIcon={IconX}
-                  text={t`Remove as default`}
-                  onClick={() => {
-                    onRemoveAsDefault?.();
-                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                  }}
-                />
-              ) : (
-                <MenuItem
-                  LeftIcon={IconCheck}
-                  text={t`Set as default`}
-                  onClick={() => {
-                    onSetAsDefault?.();
-                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                  }}
-                />
-              )}
-              {!!onRemove && !isDefault && (
-                <MenuItem
-                  accent="danger"
-                  LeftIcon={IconTrash}
-                  text={t`Remove option`}
-                  onClick={() => {
-                    onRemove();
-                    closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                  }}
-                />
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
+          shouldForbidRemoveAsDefault ? null : (
+            <DropdownContent>
+              <DropdownMenuItemsContainer>
+                {isDefault ? (
+                  <MenuItem
+                    LeftIcon={IconX}
+                    text={t`Remove as default`}
+                    onClick={() => {
+                      onRemoveAsDefault?.();
+                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                    }}
+                  />
+                ) : (
+                  <MenuItem
+                    LeftIcon={IconCheck}
+                    text={t`Set as default`}
+                    onClick={() => {
+                      onSetAsDefault?.();
+                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                    }}
+                  />
+                )}
+                {!!onRemove && !isDefault && (
+                  <MenuItem
+                    accent="danger"
+                    LeftIcon={IconTrash}
+                    text={t`Remove option`}
+                    onClick={() => {
+                      onRemove();
+                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                    }}
+                  />
+                )}
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          )
         }
       />
     </StyledRow>
