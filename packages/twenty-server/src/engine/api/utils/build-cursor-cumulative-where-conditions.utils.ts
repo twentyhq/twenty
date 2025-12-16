@@ -25,6 +25,10 @@ type BuildCursorCumulativeWhereConditionsParams<CursorValue> = {
   }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter;
 };
 
+const isEmptyFilter = (filter: ObjectRecordFilter): boolean => {
+  return Object.keys(filter).length === 0;
+};
+
 export const buildCursorCumulativeWhereCondition = <
   CursorValue extends
     | ObjectRecordCursorLeafCompositeValue
@@ -34,41 +38,53 @@ export const buildCursorCumulativeWhereCondition = <
   buildEqualityCondition,
   buildMainCondition,
 }: BuildCursorCumulativeWhereConditionsParams<CursorValue>): ReturnType => {
-  return cursorEntries.map((cursorEntry, index) => {
-    const [currentCursorKey, currentCursorValue] =
-      Object.entries(cursorEntry)[0];
-    const andConditions: ObjectRecordFilter[] = [];
+  return cursorEntries
+    .map((cursorEntry, index) => {
+      const [currentCursorKey, currentCursorValue] =
+        Object.entries(cursorEntry)[0];
+      const andConditions: ObjectRecordFilter[] = [];
 
-    for (
-      let subConditionIndex = 0;
-      subConditionIndex < index;
-      subConditionIndex++
-    ) {
-      const previousCursorEntry = cursorEntries[subConditionIndex];
-      const [previousCursorKey, previousCursorValue] =
-        Object.entries(previousCursorEntry)[0];
+      for (
+        let subConditionIndex = 0;
+        subConditionIndex < index;
+        subConditionIndex++
+      ) {
+        const previousCursorEntry = cursorEntries[subConditionIndex];
+        const [previousCursorKey, previousCursorValue] =
+          Object.entries(previousCursorEntry)[0];
 
-      andConditions.push(
-        buildEqualityCondition({
+        const equalityCondition = buildEqualityCondition({
           cursorKey: previousCursorKey,
           cursorValue: previousCursorValue,
-        }),
-      );
-    }
+        });
 
-    andConditions.push(
-      buildMainCondition({
+        if (!isEmptyFilter(equalityCondition)) {
+          andConditions.push(equalityCondition);
+        }
+      }
+
+      const mainCondition = buildMainCondition({
         cursorKey: currentCursorKey,
         cursorValue: currentCursorValue,
-      }),
-    );
+      });
 
-    if (andConditions.length === 1) {
-      return andConditions[0];
-    }
+      if (isEmptyFilter(mainCondition)) {
+        return null;
+      }
 
-    return {
-      and: andConditions,
-    };
-  });
+      andConditions.push(mainCondition);
+
+      if (andConditions.length === 0) {
+        return null;
+      }
+
+      if (andConditions.length === 1) {
+        return andConditions[0];
+      }
+
+      return {
+        and: andConditions,
+      };
+    })
+    .filter((condition): condition is ObjectRecordFilter => condition !== null);
 };
