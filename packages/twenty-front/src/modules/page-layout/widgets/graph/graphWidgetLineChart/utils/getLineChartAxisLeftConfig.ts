@@ -3,7 +3,6 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getLineChartAxisLeftConfig = (
@@ -21,7 +20,7 @@ export const getLineChartAxisLeftConfig = (
   return {
     tickSize: COMMON_CHART_CONSTANTS.TICK_SIZE,
     tickPadding: COMMON_CHART_CONSTANTS.TICK_PADDING,
-    tickRotation: NO_ROTATION_ANGLE,
+    tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
     tickValues,
     legend: yAxisLabel,
     legendPosition: 'middle' as const,

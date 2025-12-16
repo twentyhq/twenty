@@ -1,5 +1,4 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 
 const TICK_ROTATION_ANGLE_RAD =
   (Math.abs(COMMON_CHART_CONSTANTS.TICK_ROTATION_ANGLE) * Math.PI) / 180;
@@ -22,7 +21,7 @@ export const getTickRotationConfig = ({
     widthPerTick <
     COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS *
       COMMON_CHART_CONSTANTS.HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO *
-      COMMON_CHART_CONSTANTS.AXIS_FONT_SIZE +
+      axisFontSize +
       TICK_MARGIN;
 
   if (shouldRotate) {
@@ -45,13 +44,14 @@ export const getTickRotationConfig = ({
   const characterWidth =
     axisFontSize *
     COMMON_CHART_CONSTANTS.HORIZONTAL_LABEL_CHARACTER_WIDTH_RATIO;
+
   const calculatedLength = Math.max(
     MIN_CALCULATED_LENGTH,
     Math.floor(widthPerTick / characterWidth),
   );
 
   return {
-    tickRotation: NO_ROTATION_ANGLE,
+    tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
     maxLabelLength: calculatedLength,
   };
 };

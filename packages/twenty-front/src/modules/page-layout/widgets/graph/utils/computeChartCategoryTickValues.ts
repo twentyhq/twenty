@@ -1,5 +1,6 @@
 import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
 import { computeCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeCategoryTickValues';
+import { isDefined } from 'twenty-shared/utils';
 
 export const computeChartCategoryTickValues = ({
   availableSize,
@@ -16,7 +17,7 @@ export const computeChartCategoryTickValues = ({
     return [];
   }
 
-  if (widthPerTick !== undefined) {
+  if (isDefined(widthPerTick)) {
     const willRotate = widthPerTick < ROTATION_THRESHOLD_WIDTH;
     const shouldOmitTicks = willRotate && widthPerTick < minimumSizePerTick;
 

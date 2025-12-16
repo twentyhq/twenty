@@ -1,15 +1,14 @@
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 
 type GetBarChartAxisConfigsProps = {
   layout: BarChartLayout;
@@ -75,7 +74,7 @@ export const getBarChartAxisConfigs = ({
         tickSize: BAR_CHART_CONSTANTS.TICK_SIZE,
         tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
         legendPosition: 'middle' as const,
-        tickRotation: NO_ROTATION_ANGLE,
+        tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
         tickValues: resolvedValueTickValues,
         legend: yAxisLabel,
         legendOffset:
@@ -95,7 +94,7 @@ export const getBarChartAxisConfigs = ({
       tickSize: BAR_CHART_CONSTANTS.TICK_SIZE,
       tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
       legendPosition: 'middle' as const,
-      tickRotation: NO_ROTATION_ANGLE,
+      tickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: resolvedValueTickValues,
       legend: yAxisLabel,
       legendOffset: BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
@@ -109,7 +108,7 @@ export const getBarChartAxisConfigs = ({
       tickSize: COMMON_CHART_CONSTANTS.TICK_SIZE,
       tickPadding: COMMON_CHART_CONSTANTS.TICK_PADDING,
       legendPosition: 'middle' as const,
-      tickRotation: NO_ROTATION_ANGLE,
+      tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: categoryTickValues,
       legend: xAxisLabel,
       legendOffset:
