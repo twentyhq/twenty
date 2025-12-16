@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -15,7 +18,6 @@ import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manag
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class TwentyStandardApplicationService {
@@ -50,6 +52,7 @@ export class TwentyStandardApplicationService {
           viewId: flatView.id,
           position: favoriteCount + index,
         }));
+
         await favoriteRepository.insert(favoriteToCreate);
       },
     );
@@ -79,6 +82,7 @@ export class TwentyStandardApplicationService {
       });
 
     const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
+
     for (const metadataName of TWENTY_STANDARD_ALL_METADATA_NAME) {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
       const fromFlatEntityMaps =
