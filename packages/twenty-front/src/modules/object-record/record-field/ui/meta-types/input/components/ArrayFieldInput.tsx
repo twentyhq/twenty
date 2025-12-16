@@ -39,11 +39,11 @@ export const ArrayFieldInput = () => {
   };
 
   const handleClickOutside = (
-    _newValue: string[],
+    newValue: string[],
     event: MouseEvent | TouchEvent,
   ) => {
     onClickOutside?.({
-      newValue: parseStringArrayToArrayValue(draftValue),
+      newValue: parseStringArrayToArrayValue(newValue),
       event,
     });
   };
