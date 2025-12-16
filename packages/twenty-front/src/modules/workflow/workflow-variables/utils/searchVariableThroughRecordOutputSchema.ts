@@ -98,7 +98,8 @@ const buildVariableResult = (
 
   // Build the full path: stepName > field1 > field2 > targetField
   const fullPathSegments = [stepName, ...pathLabels, variableLabel];
-  const variablePathLabel = fullPathSegments.join(' > ') + (stepNameLabel ?? "");
+  const basePath = fullPathSegments.join(' > ');
+  const variablePathLabel = stepNameLabel ? `${basePath} (${stepNameLabel})` : basePath;
 
   return {
     variableLabel,

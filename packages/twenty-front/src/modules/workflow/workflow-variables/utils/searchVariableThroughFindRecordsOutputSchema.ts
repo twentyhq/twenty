@@ -91,10 +91,11 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
   }
 
   if (searchResultKey === 'totalCount') {
+    const label = searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count';
+    const basePath = `${stepName} > ${label}`;
     return {
-      variableLabel:
-        searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count',
-      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count'} ${stepNameLabel ?? ""}`,
+      variableLabel: label,
+      variablePathLabel: stepNameLabel ? `${basePath} (${stepNameLabel})` : basePath,
       variableType: FieldMetadataType.NUMBER,
     };
   }
