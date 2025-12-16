@@ -117,6 +117,8 @@ export const WorkflowStepFilterValueInput = ({
     variableType === FieldMetadataType.DATE_TIME ||
     variableType === FieldMetadataType.DATE;
 
+  const isDateTimeField = variableType === FieldMetadataType.DATE_TIME;
+
   if (isFullRecord) {
     return (
       <FormSingleRecordPicker
@@ -172,6 +174,7 @@ export const WorkflowStepFilterValueInput = ({
         defaultValue={stepFilter.value}
         onChange={handleValueChange}
         readonly={readonly}
+        isDateTimeField={isDateTimeField}
       />
     );
   }
