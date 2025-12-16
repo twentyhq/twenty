@@ -1,1 +1,0 @@
-export const LINE_CHART_CROSSHAIR_STROKE_WIDTH = 1;

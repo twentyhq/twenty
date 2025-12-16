@@ -1,6 +1,5 @@
-import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups.constant';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfGroupsPerBar.constant';
+import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import {
   type BarChartConfiguration,
   BarChartGroupMode,
@@ -16,7 +15,8 @@ describe('getBarChartQueryLimit', () => {
     } as BarChartConfiguration);
 
     expect(result).toBe(
-      BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
+      BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS +
+        EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
     );
   });
 
@@ -28,8 +28,8 @@ describe('getBarChartQueryLimit', () => {
     } as BarChartConfiguration);
 
     expect(result).toBe(
-      BAR_CHART_MAXIMUM_NUMBER_OF_BARS *
-        BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR +
+      BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS *
+        BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_GROUPS_PER_BAR +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
     );
   });
@@ -42,7 +42,8 @@ describe('getBarChartQueryLimit', () => {
     } as BarChartConfiguration);
 
     expect(result).toBe(
-      BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
+      BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS +
+        EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
     );
   });
 });
