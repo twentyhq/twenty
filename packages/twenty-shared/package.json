@@ -57,6 +57,11 @@
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.cjs"
     },
+    "./database-events": {
+      "types": "./dist/database-events/index.d.ts",
+      "import": "./dist/database-events.mjs",
+      "require": "./dist/database-events.cjs"
+    },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
       "import": "./dist/metadata.mjs",
@@ -98,6 +103,7 @@
     "ai",
     "application",
     "constants",
+    "database-events",
     "metadata",
     "testing",
     "translations",
@@ -116,6 +122,9 @@
       ],
       "constants": [
         "dist/constants/index.d.ts"
+      ],
+      "database-events": [
+        "dist/database-events/index.d.ts"
       ],
       "metadata": [
         "dist/metadata/index.d.ts"

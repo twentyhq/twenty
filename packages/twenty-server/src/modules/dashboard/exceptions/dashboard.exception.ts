@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -14,7 +16,27 @@ export enum DashboardExceptionMessageKey {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
 }
 
-export class DashboardException extends CustomException<DashboardExceptionCode> {}
+const dashboardExceptionUserFriendlyMessages: Record<
+  DashboardExceptionCode,
+  MessageDescriptor
+> = {
+  [DashboardExceptionCode.DASHBOARD_NOT_FOUND]: msg`Dashboard not found.`,
+  [DashboardExceptionCode.DASHBOARD_DUPLICATION_FAILED]: msg`Failed to duplicate dashboard.`,
+  [DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND]: msg`Page layout not found.`,
+};
+
+export class DashboardException extends CustomException<DashboardExceptionCode> {
+  constructor(
+    message: string,
+    code: DashboardExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? dashboardExceptionUserFriendlyMessages[code],
+    });
+  }
+}
 
 export const generateDashboardExceptionMessage = (
   key: DashboardExceptionMessageKey,

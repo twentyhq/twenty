@@ -263,6 +263,8 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'accountOwner',
       label: 'Account Owner',
       description: 'Account Owner',
@@ -285,6 +287,8 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageChannels',
       label: 'Message Channels',
       description: 'Message Channels',
@@ -305,6 +309,8 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarChannels',
       label: 'Calendar Channels',
       description: 'Calendar Channels',

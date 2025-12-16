@@ -10161,6 +10161,11 @@ msgstr "View all evaluations"
 msgid "View billing details"
 msgstr "View billing details"
 
+#. js-lingui-id: Mv1YVf
+#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+msgid "View existing record"
+msgstr "View existing record"
+
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"
