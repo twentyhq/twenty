@@ -546,7 +546,7 @@ export class ConfigVariables {
     isSensitive: true,
   })
   @ValidateIf(
-    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E2B,
+    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E_2_B,
   )
   E2B_API_KEY?: string;
 
