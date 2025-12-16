@@ -5,7 +5,7 @@ exports[`Standard field metadata update should be ignored when trying to update 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`Standard field metadata update should be ignored when trying to update 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: name",
   "name": "ForbiddenError",
@@ -29,7 +29,7 @@ exports[`Standard field metadata update should be ignored when trying to update 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName, name",
   "name": "ForbiddenError",
