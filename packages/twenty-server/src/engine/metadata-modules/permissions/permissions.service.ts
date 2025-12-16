@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
@@ -110,6 +110,7 @@ export class PermissionsService {
         [PermissionFlagType.DOWNLOAD_FILE]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
         [PermissionFlagType.HTTP_REQUEST_TOOL]: false,
+        [PermissionFlagType.CODE_INTERPRETER_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
@@ -131,8 +132,8 @@ export class PermissionsService {
     setting: PermissionFlagType;
     apiKeyId?: string;
   }): Promise<boolean> {
-    if (apiKeyId) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+    if (isDefined(apiKeyId)) {
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKeyId,
         workspaceId,
       );

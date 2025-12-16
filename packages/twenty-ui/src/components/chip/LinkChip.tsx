@@ -19,6 +19,7 @@ export type LinkChipProps = Omit<
   onClick?: (event: MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
   triggerEvent?: TriggerEventType;
+  target?: '_blank' | '_self';
 };
 
 const StyledLink = styled(Link)`
@@ -40,6 +41,7 @@ export const LinkChip = ({
   maxWidth,
   onClick,
   triggerEvent,
+  target,
 }: LinkChipProps) => {
   const { onClick: onClickHandler, onMouseDown: onMouseDownHandler } =
     useMouseDownNavigation({
@@ -57,6 +59,8 @@ export const LinkChip = ({
       }}
       onMouseDown={onMouseDownHandler}
       data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
+      target={target}
+      rel={target === '_blank' ? 'noopener noreferrer' : undefined}
     >
       <Chip
         size={size}

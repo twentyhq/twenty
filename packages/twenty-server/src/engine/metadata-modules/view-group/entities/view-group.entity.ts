@@ -14,7 +14,6 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
@@ -28,15 +27,6 @@ export class ViewGroupEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  fieldMetadataId: string;
-
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'fieldMetadataId' })
-  fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: false, default: true })
   isVisible: boolean;

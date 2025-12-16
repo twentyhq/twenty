@@ -4,6 +4,7 @@ import { type ToolSet } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import {
+  type CodeExecutionStreamEmitter,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -41,6 +42,9 @@ export type ToolContext = {
   workspaceId: string;
   roleId: string;
   actorContext?: ActorMetadata;
+  userId?: string;
+  userWorkspaceId?: string;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 @Injectable()
@@ -142,7 +146,13 @@ export class ToolRegistryService {
     names: string[],
     context: ToolContext,
   ): Promise<ToolSet> {
-    const fullContext = this.buildContext(context.workspaceId, context.roleId);
+    const fullContext = this.buildContext(
+      context.workspaceId,
+      context.roleId,
+      context.onCodeExecutionUpdate,
+      context.userId,
+      context.userWorkspaceId,
+    );
     const allTools: ToolSet = {};
 
     for (const provider of this.providers) {
@@ -163,6 +173,9 @@ export class ToolRegistryService {
   private buildContext(
     workspaceId: string,
     roleId: string,
+    onCodeExecutionUpdate?: CodeExecutionStreamEmitter,
+    userId?: string,
+    userWorkspaceId?: string,
   ): ToolProviderContext {
     const rolePermissionConfig: RolePermissionConfig = {
       unionOf: [roleId],
@@ -172,6 +185,9 @@ export class ToolRegistryService {
       workspaceId,
       roleId,
       rolePermissionConfig,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
     };
   }
 

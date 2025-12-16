@@ -15,7 +15,6 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'kanbanAggregateOperationViews',
   'calendarViews',
   'mainGroupByFieldMetadataViews',
-  'viewGroups',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =

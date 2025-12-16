@@ -101,7 +101,6 @@ export class ViewGroupService {
           createViewGroupInput,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-          mainGroupByFieldMetadataId,
         });
       },
     );

@@ -175,15 +175,12 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
   }): Promise<WorkflowAction> {
-    // We don't enrich on the fly for code and HTTP request workflow actions.
-    // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests, OutputSchema is determined by the example response input
-    // AI agent OutputSchema is enriched from agent's responseFormat
-    if (
-      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
-        step.type,
-      )
-    ) {
+    const BACKEND_ENRICHED_TYPES = [
+      WorkflowActionType.AI_AGENT,
+      WorkflowActionType.ITERATOR,
+    ];
+
+    if (!BACKEND_ENRICHED_TYPES.includes(step.type)) {
       return step;
     }
 

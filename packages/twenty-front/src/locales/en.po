@@ -2065,6 +2065,11 @@ msgstr "Close"
 msgid "Close command menu"
 msgstr "Close command menu"
 
+#. js-lingui-id: EWPtMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Code"
+msgstr "Code"
+
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Code Editor"
@@ -2142,6 +2147,7 @@ msgstr "completed"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Completed"
 msgstr "Completed"
 
@@ -2392,6 +2398,11 @@ msgstr "Copied to clipboard"
 msgid "Copy"
 msgstr "Copy"
 
+#. js-lingui-id: NmPNJJ
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Copy code"
+msgstr "Copy code"
+
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -2406,6 +2417,11 @@ msgstr "Copy link"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 msgid "Copy link to view"
 msgstr "Copy link to view"
+
+#. js-lingui-id: VBIlvI
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Copy output"
+msgstr "Copy output"
 
 #. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -3447,6 +3463,11 @@ msgstr "Dots and comma - {dotsAndCommaExample}"
 msgid "Downgrade"
 msgstr "Downgrade"
 
+#. js-lingui-id: qnTwse
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Download {filename}"
+msgstr "Download {filename}"
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -4347,6 +4368,7 @@ msgstr "Extra Credits Used"
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Failed"
 msgstr "Failed"
 
@@ -4709,6 +4731,11 @@ msgstr "General"
 msgid "General - Settings"
 msgstr "General - Settings"
 
+#. js-lingui-id: wu9eMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Generated Files"
+msgstr "Generated Files"
+
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "German"
@@ -4938,6 +4965,11 @@ msgstr "Hide deleted runs"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "Hide deleted workflows"
+
+#. js-lingui-id: MuEcPp
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Hide empty category"
+msgstr "Hide empty category"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -6665,6 +6697,11 @@ msgstr "No models available. Please configure AI models in your workspace settin
 msgid "No option found"
 msgstr "No option found"
 
+#. js-lingui-id: XRc1G9
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "No output"
+msgstr "No output"
+
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
@@ -7135,6 +7172,12 @@ msgstr "Other workspaces"
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
 msgstr "Our team can help you set up your workspace to match your specific needs and workflows."
 
+#. js-lingui-id: gh06VD
+#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Output"
+msgstr "Output"
+
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
@@ -7580,6 +7623,11 @@ msgstr "Public domain successfully deleted"
 msgid "Public Domains"
 msgstr "Public Domains"
 
+#. js-lingui-id: GUpZQM
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Python Code Execution"
+msgstr "Python Code Execution"
+
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter"
@@ -8023,6 +8071,11 @@ msgstr "Run a workflow and return here to view its executions"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Run Function"
+
+#. js-lingui-id: LTC198
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Running..."
+msgstr "Running..."
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -10108,6 +10161,11 @@ msgstr "View all evaluations"
 msgid "View billing details"
 msgstr "View billing details"
 
+#. js-lingui-id: Mv1YVf
+#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+msgid "View existing record"
+msgstr "View existing record"
+
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"
@@ -10188,6 +10246,11 @@ msgstr "Waiting"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting Children"
 msgstr "Waiting Children"
+
+#. js-lingui-id: TdQd9Q
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Waiting for output..."
+msgstr "Waiting for output..."
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
