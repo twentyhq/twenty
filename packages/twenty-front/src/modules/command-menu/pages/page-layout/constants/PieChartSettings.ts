@@ -7,6 +7,7 @@ import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/
 import { DATE_GRANULARITY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DateGranularitySetting';
 import { EACH_SLICE_REPRESENTS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/EachSliceRepresentsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
+import { HIDE_EMPTY_CATEGORY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/HideEmptyCategorySetting';
 import { PRIMARY_SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
@@ -21,6 +22,7 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
       DATE_GRANULARITY_SETTING,
       EACH_SLICE_REPRESENTS_SETTING,
       PRIMARY_SORT_BY_SETTING,
+      HIDE_EMPTY_CATEGORY_SETTING,
     ],
   },
   {

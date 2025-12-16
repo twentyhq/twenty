@@ -23,7 +23,11 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
 
   const type = checkUrlType(absoluteUrl);
 
-  if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
+  if (
+    type === LinkType.LinkedIn ||
+    type === LinkType.Twitter ||
+    type === LinkType.Facebook
+  ) {
     return (
       <EllipsisDisplay>
         <SocialLink

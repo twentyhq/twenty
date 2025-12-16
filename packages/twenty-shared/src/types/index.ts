@@ -84,6 +84,7 @@ export {
   FieldMetadataDefaultArray,
 } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
+export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
 export {
   FieldMetadataDefaultOption,

@@ -189,4 +189,108 @@ describe('filterEmails', () => {
 
     expect(result).toEqual(messages);
   });
+
+  it('should not filter out messages when user handle looks like a group email', () => {
+    const primaryHandle = 'hello@company.com';
+    const handleAliases = ['support@company.com'];
+    const messages: MessageWithParticipants[] = [
+      {
+        externalId: 'user-sent-message',
+        subject: 'User sent message',
+        receivedAt: new Date('2025-01-09T09:54:37.000Z'),
+        text: 'User sending from hello@ address',
+        headerMessageId: '<msg1@company.com>',
+        messageThreadExternalId: 'thread-1',
+        direction: MessageDirection.OUTGOING,
+        participants: [
+          {
+            role: MessageParticipantRole.FROM,
+            handle: 'hello@company.com',
+            displayName: 'Hello',
+          },
+          {
+            role: MessageParticipantRole.TO,
+            handle: 'john@other.com',
+            displayName: 'John',
+          },
+        ],
+        attachments: [],
+      },
+      {
+        externalId: 'alias-sent-message',
+        subject: 'Alias sent message',
+        receivedAt: new Date('2025-01-09T09:54:37.000Z'),
+        text: 'User sending from support@ alias',
+        headerMessageId: '<msg2@company.com>',
+        messageThreadExternalId: 'thread-2',
+        direction: MessageDirection.OUTGOING,
+        participants: [
+          {
+            role: MessageParticipantRole.FROM,
+            handle: 'support@company.com',
+            displayName: 'Support',
+          },
+          {
+            role: MessageParticipantRole.TO,
+            handle: 'jane@other.com',
+            displayName: 'Jane',
+          },
+        ],
+        attachments: [],
+      },
+      {
+        externalId: 'reply-from-john',
+        subject: 'Reply from John',
+        receivedAt: new Date('2025-01-09T10:54:37.000Z'),
+        text: 'John replying to the user',
+        headerMessageId: '<msg3@other.com>',
+        messageThreadExternalId: 'thread-1',
+        direction: MessageDirection.INCOMING,
+        participants: [
+          {
+            role: MessageParticipantRole.FROM,
+            handle: 'john@other.com',
+            displayName: 'John',
+          },
+          {
+            role: MessageParticipantRole.TO,
+            handle: 'hello@company.com',
+            displayName: 'Hello',
+          },
+        ],
+        attachments: [],
+      },
+      {
+        externalId: 'incoming-from-noreply',
+        subject: 'From external noreply',
+        receivedAt: new Date('2025-01-09T11:54:37.000Z'),
+        text: 'Incoming from external group address',
+        headerMessageId: '<msg4@external.com>',
+        messageThreadExternalId: 'thread-3',
+        direction: MessageDirection.INCOMING,
+        participants: [
+          {
+            role: MessageParticipantRole.FROM,
+            handle: 'noreply@external.com',
+            displayName: 'No Reply',
+          },
+          {
+            role: MessageParticipantRole.TO,
+            handle: 'hello@company.com',
+            displayName: 'Hello',
+          },
+        ],
+        attachments: [],
+      },
+    ];
+
+    const result = filterEmails(primaryHandle, handleAliases, messages, []);
+
+    expect(result).toHaveLength(3);
+    expect(result.map((msg) => msg.externalId)).toEqual([
+      'user-sent-message',
+      'alias-sent-message',
+      'reply-from-john',
+    ]);
+  });
 });

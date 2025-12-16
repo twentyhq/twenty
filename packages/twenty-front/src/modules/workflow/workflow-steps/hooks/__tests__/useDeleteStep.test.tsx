@@ -25,7 +25,7 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useStepsOutputSchema', () => ({
+jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
   useStepsOutputSchema: () => ({
     deleteStepsOutputSchema: mockDeleteStepsOutputSchema,
   }),

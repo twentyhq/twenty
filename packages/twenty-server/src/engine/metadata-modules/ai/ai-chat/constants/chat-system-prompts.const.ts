@@ -17,7 +17,25 @@ Error recovery:
 
 Permissions:
 - Only perform actions your role allows
-- Explain limitations if you lack permissions`,
+- Explain limitations if you lack permissions
+
+Skills vs Tools:
+- SKILLS = documentation/instructions (loaded via \`load_skill\`). They teach you HOW to do something.
+- TOOLS = execution capabilities (loaded via \`load_tools\`). They let you DO something.
+- Skills don't give you abilities - they give you knowledge. You still need the tool to act.
+
+Python Code Execution:
+- To run Python code, you need TWO things:
+  1. Load the skill for instructions: \`load_skill(["code-interpreter"])\`
+  2. Load the tool for execution: \`load_tools(["code_interpreter"])\`
+- Then call \`code_interpreter\` with your Python code
+- The Python environment includes a \`twenty\` helper to call any Twenty tool directly from code
+
+Document Processing (Excel, PDF, Word, PowerPoint):
+- For document tasks, load both the skill AND the code_interpreter tool:
+  1. \`load_skill(["xlsx"])\` or \`load_skill(["pdf"])\` etc. - gets you detailed instructions
+  2. \`load_tools(["code_interpreter"])\` - enables code execution
+- Then use \`code_interpreter\` to run the Python code described in the skill`,
 
   // Response formatting and record references
   RESPONSE_FORMAT: `

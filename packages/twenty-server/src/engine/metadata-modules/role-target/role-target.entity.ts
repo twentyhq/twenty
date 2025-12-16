@@ -56,9 +56,6 @@ export class RoleTargetEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
   apiKeyId: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  targetApplicationId: string | null;
-
   @ManyToOne(() => ApiKeyEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'apiKeyId' })
   apiKey: Relation<ApiKeyEntity>;

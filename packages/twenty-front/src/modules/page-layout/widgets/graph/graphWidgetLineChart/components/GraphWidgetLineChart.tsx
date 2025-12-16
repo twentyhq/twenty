@@ -5,6 +5,7 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { CustomLinesLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomLinesLayer';
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
@@ -45,6 +46,7 @@ import { useDebouncedCallback } from 'use-debounce';
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type StackedAreasLayerProps = LineCustomSvgLayerProps<LineSeries>;
+type LinesLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type NoDataLayerWrapperProps = LineCustomSvgLayerProps<LineSeries>;
 
 const LINE_CHART_DEFAULT_TICK_COUNT = 5;
@@ -108,10 +110,19 @@ export const GraphWidgetLineChart = ({
     customFormatter,
   };
 
-  const calculatedValueRange = calculateValueRangeFromLineChartSeries(data);
+  const { enrichedSeries, nivoData, colors, legendItems, visibleData } =
+    useLineChartData({
+      data,
+      colorRegistry,
+      id,
+    });
+
+  const calculatedValueRange =
+    calculateValueRangeFromLineChartSeries(visibleData);
 
   const hasNoData =
-    data.length === 0 || data.every((series) => series.data.length === 0);
+    visibleData.length === 0 ||
+    visibleData.every((series) => series.data.length === 0);
 
   const { effectiveMinimumValue, effectiveMaximumValue } =
     computeEffectiveValueRange({
@@ -120,12 +131,6 @@ export const GraphWidgetLineChart = ({
       rangeMin,
       rangeMax,
     });
-
-  const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
-    data,
-    colorRegistry,
-    id,
-  });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -235,6 +240,20 @@ export const GraphWidgetLineChart = ({
     );
   };
 
+  const LinesLayer = (layerProps: LinesLayerProps) => {
+    if (hasNoData) {
+      return null;
+    }
+
+    return (
+      <CustomLinesLayer
+        series={layerProps.series}
+        lineGenerator={layerProps.lineGenerator}
+        lineWidth={layerProps.lineWidth}
+      />
+    );
+  };
+
   const NoDataLayerWrapper = (layerProps: NoDataLayerWrapperProps) => (
     <NoDataLayer
       innerWidth={layerProps.innerWidth}
@@ -246,7 +265,7 @@ export const GraphWidgetLineChart = ({
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
-    data,
+    visibleData,
   );
   const chartMargins = {
     top: LINE_CHART_MARGIN_TOP,
@@ -319,7 +338,7 @@ export const GraphWidgetLineChart = ({
             'markers',
             'axes',
             StackedAreasLayer,
-            'lines',
+            LinesLayer,
             CrosshairLayer,
             'points',
             PointLabelsLayer,
@@ -337,7 +356,10 @@ export const GraphWidgetLineChart = ({
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />
-      <GraphWidgetLegend show={showLegend && !hasNoData} items={legendItems} />
+      <GraphWidgetLegend
+        show={showLegend && data.length > 0}
+        items={legendItems}
+      />
     </StyledContainer>
   );
 };
