@@ -1,9 +1,11 @@
-import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import type {
+  ObjectRecordEvent,
+  DatabaseEventPayload,
+} from 'twenty-shared/database-events';
 
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type ServerlessFunctionTriggerJobData } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { type DatabaseEventPayload } from 'src/engine/metadata-modules/database-event-trigger/types/database-event-payload.type';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
