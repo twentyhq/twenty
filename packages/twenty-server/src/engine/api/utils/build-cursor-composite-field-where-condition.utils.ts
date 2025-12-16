@@ -52,6 +52,7 @@ const buildAllNullComparisonFilter = (
   fieldKey: keyof ObjectRecord,
   firstProperty: { name: string },
   computedOperator: string,
+  orderByDirection: OrderByDirection,
 ): ObjectRecordFilter | Record<string, never> => {
   if (computedOperator === 'gt') {
     return {
@@ -62,9 +63,17 @@ const buildAllNullComparisonFilter = (
   }
 
   if (computedOperator === 'lt') {
+    const isNullsFirst =
+      orderByDirection === OrderByDirection.AscNullsFirst ||
+      orderByDirection === OrderByDirection.DescNullsFirst;
+
+    if (isNullsFirst) {
+      return {};
+    }
+
     return {
       [fieldKey]: {
-        [firstProperty.name]: { is: 'NULL' },
+        [firstProperty.name]: { is: 'NOT NULL' },
       },
     };
   }
@@ -170,6 +179,7 @@ export const buildCursorCompositeFieldWhereCondition = ({
       fieldKey,
       firstProperty,
       computedOperator,
+      firstOrderByDirection,
     );
   }
 
