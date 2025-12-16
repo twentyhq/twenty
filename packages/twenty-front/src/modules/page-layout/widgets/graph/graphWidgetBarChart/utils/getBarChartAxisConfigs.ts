@@ -1,51 +1,29 @@
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import {
-  type BarChartTickConfig,
-  getBarChartTickConfig,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { type BarDatum } from '@nivo/bar';
 
-const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
-const TICK_PADDING = 5;
-const BOTTOM_AXIS_LEGEND_OFFSET = 40;
-
-const COMMON_AXIS_CONFIG = {
-  tickSize: 0,
-  tickPadding: TICK_PADDING,
-  tickRotation: 0,
-  legendPosition: 'middle' as const,
-};
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 
 type GetBarChartAxisConfigsProps = {
-  width: number;
-  height: number;
-  data: BarDatum[];
   layout: BarChartLayout;
-  indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   formatOptions?: GraphValueFormatOptions;
-  axisFontSize?: number;
   valueTickValues?: number[];
-  tickConfig?: BarChartTickConfig;
+  tickConfig: BarChartTickConfig;
 };
 
 export const getBarChartAxisConfigs = ({
-  width,
-  height,
-  data,
   layout,
-  indexBy,
   xAxisLabel,
   yAxisLabel,
   formatOptions,
-  axisFontSize = 11,
   valueTickValues,
   tickConfig,
 }: GetBarChartAxisConfigsProps) => {
@@ -54,55 +32,72 @@ export const getBarChartAxisConfigs = ({
     numberOfValueTicks,
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
-  } =
-    tickConfig ??
-    getBarChartTickConfig({
-      width,
-      height,
-      data,
-      indexBy,
-      xAxisLabel,
-      yAxisLabel,
-      axisFontSize,
-      layout,
-    });
+    bottomAxisTickRotation,
+  } = tickConfig;
 
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
   const resolvedValueTickValues =
     valueTickValues && valueTickValues.length > 0
       ? valueTickValues
       : numberOfValueTicks;
 
+  const baseMargins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+
+  const hasRotation = bottomAxisTickRotation !== 0;
+  const margins =
+    layout === BarChartLayout.VERTICAL && hasRotation
+      ? {
+          ...baseMargins,
+          bottom:
+            baseMargins.bottom +
+            COMMON_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN,
+        }
+      : baseMargins;
+
   if (layout === BarChartLayout.VERTICAL) {
     return {
       axisBottom: {
-        ...COMMON_AXIS_CONFIG,
+        tickSize: BAR_CHART_CONSTANTS.TICK_SIZE,
+        tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
+        legendPosition: 'middle' as const,
         tickValues: categoryTickValues,
+        tickRotation: bottomAxisTickRotation,
         legend: xAxisLabel,
-        legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
+        legendOffset:
+          BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET +
+          (hasRotation
+            ? BAR_CHART_CONSTANTS.ROTATED_LABELS_EXTRA_BOTTOM_MARGIN
+            : 0),
         format: (value: string | number) =>
           truncateTickLabel(String(value), maxBottomAxisTickLabelLength),
       },
       axisLeft: {
-        ...COMMON_AXIS_CONFIG,
+        tickSize: BAR_CHART_CONSTANTS.TICK_SIZE,
+        tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
+        legendPosition: 'middle' as const,
+        tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
         tickValues: resolvedValueTickValues,
         legend: yAxisLabel,
-        legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
+        legendOffset:
+          -margins.left + BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING,
         format: (value: number) =>
           truncateTickLabel(
             formatGraphValue(value, formatOptions ?? {}),
             maxLeftAxisTickLabelLength,
           ),
       },
+      margins,
     };
   }
 
   return {
     axisBottom: {
-      ...COMMON_AXIS_CONFIG,
+      tickSize: BAR_CHART_CONSTANTS.TICK_SIZE,
+      tickPadding: BAR_CHART_CONSTANTS.TICK_PADDING,
+      legendPosition: 'middle' as const,
+      tickRotation: BAR_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: resolvedValueTickValues,
       legend: yAxisLabel,
-      legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
+      legendOffset: BAR_CHART_CONSTANTS.BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) =>
         truncateTickLabel(
           formatGraphValue(value, formatOptions ?? {}),
@@ -110,12 +105,17 @@ export const getBarChartAxisConfigs = ({
         ),
     },
     axisLeft: {
-      ...COMMON_AXIS_CONFIG,
+      tickSize: COMMON_CHART_CONSTANTS.TICK_SIZE,
+      tickPadding: COMMON_CHART_CONSTANTS.TICK_PADDING,
+      legendPosition: 'middle' as const,
+      tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
       tickValues: categoryTickValues,
       legend: xAxisLabel,
-      legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
+      legendOffset:
+        -margins.left + BAR_CHART_CONSTANTS.LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>
         truncateTickLabel(String(value), maxLeftAxisTickLabelLength),
     },
+    margins,
   };
 };

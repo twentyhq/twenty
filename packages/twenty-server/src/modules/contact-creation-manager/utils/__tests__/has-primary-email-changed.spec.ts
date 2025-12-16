@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
+import { type ObjectRecordDiff } from 'twenty-shared/database-events';
 
-import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { hasPrimaryEmailChanged } from 'src/modules/contact-creation-manager/utils/has-primary-email-changed';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 

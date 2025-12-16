@@ -56,7 +56,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
       },
       author: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.author },
-      activity: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.activity },
       task: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.task },
       note: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.note },
       person: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.person },
@@ -68,7 +67,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
       },
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
-      custom: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
       authorIdIndex: {
@@ -629,7 +627,6 @@ export const STANDARD_OBJECTS = {
       task: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.task },
       note: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.note },
       view: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view },
-      custom: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.custom },
       favoriteFolder: {
         universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
       },
@@ -1098,7 +1095,6 @@ export const STANDARD_OBJECTS = {
       opportunity: {
         universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
       },
-      custom: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
       noteIdIndex: {
@@ -1514,7 +1510,6 @@ export const STANDARD_OBJECTS = {
       opportunity: {
         universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.opportunity,
       },
-      custom: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
       taskIdIndex: {
@@ -1555,32 +1550,37 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workspaceMember,
       },
-      person: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
+      targetPerson: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetPerson,
       },
-      company: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
+      targetCompany: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCompany,
       },
-      opportunity: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
-      },
-      task: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task },
-      note: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.note },
-      workflow: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflow,
-      },
-      workflowVersion: {
+      targetOpportunity: {
         universalIdentifier:
-          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowVersion,
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetOpportunity,
       },
-      workflowRun: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowRun,
+      targetTask: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetTask,
       },
-      dashboard: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.dashboard,
+      targetNote: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetNote,
       },
-      custom: {
-        universalIdentifier: '20202020-a9b2-4f85-b3c7-6d8e9f1a4c2b',
+      targetWorkflow: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflow,
+      },
+      targetWorkflowVersion: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflowVersion,
+      },
+      targetWorkflowRun: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetWorkflowRun,
+      },
+      targetDashboard: {
+        universalIdentifier:
+          TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetDashboard,
       },
       linkedRecordCachedName: {
         universalIdentifier:
@@ -1671,9 +1671,6 @@ export const STANDARD_OBJECTS = {
       position: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.position },
       versions: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.versions },
       runs: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.runs },
-      eventListeners: {
-        universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
-      },
       automatedTriggers: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
       },

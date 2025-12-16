@@ -15,7 +15,18 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
+> = CreateStandardMorphOrRelationFieldContext<
+  O,
+  T,
+  FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+>;
+
+export type CreateStandardMorphOrRelationFieldContext<
+  O extends AllStandardObjectName,
+  T extends AllStandardObjectName,
+  F extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
 > = {
+  type: F;
   fieldName: AllStandardObjectFieldName<O>;
   label: string;
   description: string;
@@ -26,8 +37,9 @@ export type CreateStandardRelationFieldContext<
   isNullable?: boolean;
   isUIReadOnly?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings: FieldMetadataSettings<FieldMetadataType.RELATION>;
+  settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
+  morphId: F extends FieldMetadataType.MORPH_RELATION ? string : null;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -57,6 +69,7 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue = null,
     settings,
     options: fieldOptions = null,
+    morphId,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -95,7 +108,7 @@ export const createStandardRelationFieldFlatMetadata = <
     relationTargetFieldMetadataId: targetFieldIds[targetFieldName].id,
     relationTargetObjectMetadataId:
       standardObjectMetadataRelatedEntityIds[targetObjectName].id,
-    morphId: null,
+    morphId,
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],

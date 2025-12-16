@@ -272,6 +272,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('workflow')
   workflowId: string | null;
 
+  // todo: remove this decorator and the custom field
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({

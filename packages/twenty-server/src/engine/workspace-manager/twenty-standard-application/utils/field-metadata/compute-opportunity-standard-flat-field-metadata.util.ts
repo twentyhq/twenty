@@ -247,6 +247,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'pointOfContact',
       label: 'Point of Contact',
       description: 'Opportunity point of contact',
@@ -269,6 +271,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'Opportunity company',
@@ -291,6 +295,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the opportunity',
@@ -312,6 +318,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'taskTargets',
       label: 'Tasks',
       description: 'Tasks tied to the opportunity',
@@ -333,6 +341,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'noteTargets',
       label: 'Notes',
       description: 'Notes tied to the opportunity',
@@ -354,6 +364,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the opportunity',
@@ -375,6 +387,8 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the opportunity.',
@@ -382,7 +396,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'opportunity',
+      targetFieldName: 'targetOpportunity',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

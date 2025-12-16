@@ -256,6 +256,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'taskTargets',
       label: 'Relations',
       description: 'Task targets',
@@ -277,6 +279,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Task attachments',
@@ -298,6 +302,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'assignee',
       label: 'Assignee',
       description: 'Task assignee',
@@ -320,6 +326,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the task.',
@@ -327,7 +335,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'task',
+      targetFieldName: 'targetTask',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -341,6 +349,8 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the task',

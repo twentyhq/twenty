@@ -1,5 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
+import { GRAPH_DEFAULT_ORDER_BY } from '@/page-layout/widgets/graph/constants/GraphDefaultOrderBy';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import {
@@ -117,24 +118,21 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     | ObjectRecordOrderByForRelationField
   > = [];
 
-  if (isDefined(chartConfiguration.primaryAxisOrderBy)) {
-    orderBy.push(
-      getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.primaryAxisOrderBy,
-        groupByField: groupByFieldX,
-        groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
-        aggregateOperation,
-        dateGranularity: shouldApplyDateGranularityX
-          ? (chartConfiguration.primaryAxisDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY)
-          : undefined,
-      }),
-    );
-  }
-  if (
-    isDefined(groupByFieldY) &&
-    isDefined(chartConfiguration.secondaryAxisOrderBy)
-  ) {
+  orderBy.push(
+    getGroupByOrderBy({
+      graphOrderBy:
+        chartConfiguration.primaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
+      groupByField: groupByFieldX,
+      groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
+      aggregateOperation,
+      dateGranularity: shouldApplyDateGranularityX
+        ? (chartConfiguration.primaryAxisDateGranularity ??
+          GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
+    }),
+  );
+
+  if (isDefined(groupByFieldY)) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
     const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind({
@@ -148,7 +146,8 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
     orderBy.push(
       getGroupByOrderBy({
-        graphOrderBy: chartConfiguration.secondaryAxisOrderBy,
+        graphOrderBy:
+          chartConfiguration.secondaryAxisOrderBy ?? GRAPH_DEFAULT_ORDER_BY,
         groupByField: groupByFieldY,
         groupBySubFieldName:
           chartConfiguration.secondaryAxisGroupBySubFieldName,
@@ -163,7 +162,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   return {
     groupBy,
-    ...(orderBy.length > 0 && { orderBy }),
+    orderBy,
     ...(isDefined(limit) && { limit }),
   };
 };

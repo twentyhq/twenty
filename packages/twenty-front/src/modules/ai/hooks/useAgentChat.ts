@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
@@ -19,6 +20,7 @@ import { agentChatInputState } from '../states/agentChatInputState';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);
+  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
 
@@ -99,6 +101,34 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     messages: uiMessages,
     id: `${currentAIChatThread}-${uiMessages.length}`,
     experimental_throttle: 100,
+    onFinish: ({ message }) => {
+      type UsageMetadata = {
+        inputTokens: number;
+        outputTokens: number;
+        inputCredits: number;
+        outputCredits: number;
+      };
+      type ModelMetadata = {
+        contextWindowTokens: number;
+      };
+      const metadata = message.metadata as
+        | { usage?: UsageMetadata; model?: ModelMetadata }
+        | undefined;
+      const usage = metadata?.usage;
+      const model = metadata?.model;
+
+      if (isDefined(usage) && isDefined(model)) {
+        setAgentChatUsage((prev) => ({
+          inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
+          outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
+          totalTokens:
+            (prev?.totalTokens ?? 0) + usage.inputTokens + usage.outputTokens,
+          contextWindowTokens: model.contextWindowTokens,
+          inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
+          outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
+        }));
+      }
+    },
   });
 
   const isStreaming = status === 'streaming';

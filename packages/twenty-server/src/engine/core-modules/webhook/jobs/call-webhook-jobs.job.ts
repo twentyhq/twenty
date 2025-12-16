@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -13,7 +15,6 @@ import {
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
 import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;

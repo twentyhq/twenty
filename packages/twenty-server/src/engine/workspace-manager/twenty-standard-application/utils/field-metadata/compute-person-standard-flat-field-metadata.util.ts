@@ -316,6 +316,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: "Contact's company",
@@ -338,6 +340,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'pointOfContactForOpportunities',
       label: 'Opportunities',
       description:
@@ -359,6 +363,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'taskTargets',
       label: 'Tasks',
       description: 'Tasks tied to the contact',
@@ -380,6 +386,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'noteTargets',
       label: 'Notes',
       description: 'Notes tied to the contact',
@@ -401,6 +409,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the contact',
@@ -422,6 +432,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the contact.',
@@ -443,6 +455,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -464,6 +478,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
@@ -485,6 +501,8 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Events',
       description: 'Events linked to the person',
@@ -492,7 +510,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

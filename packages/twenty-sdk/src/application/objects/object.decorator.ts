@@ -1,13 +1,6 @@
-import { type SyncableEntityOptions } from '@/application/syncable-entity-options.type';
+import { type ObjectManifest } from 'twenty-shared/application';
 
-type ObjectMetadataOptions = SyncableEntityOptions & {
-  nameSingular: string;
-  namePlural: string;
-  labelSingular: string;
-  labelPlural: string;
-  description?: string;
-  icon?: string;
-};
+type ObjectMetadataOptions = Omit<ObjectManifest, 'fields'>;
 
 export const Object = (_: ObjectMetadataOptions): ClassDecorator => {
   return () => {};

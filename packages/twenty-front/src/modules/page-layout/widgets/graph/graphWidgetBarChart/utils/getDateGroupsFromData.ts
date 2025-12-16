@@ -1,5 +1,6 @@
 import { generateDateGroupsInRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/generateDateGroupsInRange';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import { GraphOrderBy } from '~/generated/graphql';
 
 export type SupportedDateGranularity =
   | ObjectRecordGroupByDateGranularity.DAY
@@ -8,10 +9,17 @@ export type SupportedDateGranularity =
   | ObjectRecordGroupByDateGranularity.YEAR
   | ObjectRecordGroupByDateGranularity.WEEK;
 
-export const getDateGroupsFromData = (
-  parsedDates: Date[],
-  dateGranularity: SupportedDateGranularity,
-): { dates: Date[]; wasTruncated: boolean } => {
+type GetDateGroupsFromDataParams = {
+  parsedDates: Date[];
+  dateGranularity: SupportedDateGranularity;
+  orderBy?: GraphOrderBy | null;
+};
+
+export const getDateGroupsFromData = ({
+  parsedDates,
+  dateGranularity,
+  orderBy,
+}: GetDateGroupsFromDataParams): { dates: Date[]; wasTruncated: boolean } => {
   const timestamps = parsedDates.map((date) => date.getTime());
   const minDate = new Date(Math.min(...timestamps));
   const maxDate = new Date(Math.max(...timestamps));
@@ -22,5 +30,10 @@ export const getDateGroupsFromData = (
     granularity: dateGranularity,
   });
 
-  return { dates: result.dates, wasTruncated: result.wasTruncated };
+  const dates =
+    orderBy === GraphOrderBy.FIELD_DESC
+      ? result.dates.toReversed()
+      : result.dates;
+
+  return { dates, wasTruncated: result.wasTruncated };
 };

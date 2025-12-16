@@ -296,6 +296,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflowVersion',
       label: 'Workflow version',
       description: 'Workflow version linked to the run.',
@@ -318,6 +320,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Workflow linked to the run.',
@@ -340,6 +344,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workflow run',
@@ -361,6 +367,8 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline activities linked to the run',
@@ -368,7 +376,7 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'workflowRun',
+      targetFieldName: 'targetWorkflowRun',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

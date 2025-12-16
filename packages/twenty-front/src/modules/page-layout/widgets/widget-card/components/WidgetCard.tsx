@@ -10,6 +10,7 @@ const StyledWidgetCard = styled.div<{
   isEditing: boolean;
   isDragging: boolean;
   isResizing: boolean;
+  headerLess?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -26,13 +27,14 @@ const StyledWidgetCard = styled.div<{
     isDragging,
     isResizing,
     onClick,
+    headerLess,
   }) => {
     if (variant === 'dashboard' && !isEditable) {
       return css`
         background: ${theme.background.secondary};
         border: 1px solid ${theme.border.color.light};
         border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
+        padding: ${headerLess ? 0 : theme.spacing(2)};
         gap: ${theme.spacing(2)};
       `;
     }
@@ -42,7 +44,7 @@ const StyledWidgetCard = styled.div<{
         background: ${theme.background.secondary};
         border: 1px solid ${theme.border.color.light};
         border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
+        padding: ${headerLess ? 0 : theme.spacing(2)};
         gap: ${theme.spacing(2)};
 
         ${!isDragging &&

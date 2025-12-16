@@ -318,6 +318,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'people',
       label: 'People',
       description: 'People linked to the company.',
@@ -338,6 +340,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'accountOwner',
       label: 'Account Owner',
       description:
@@ -361,6 +365,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'taskTargets',
       label: 'Tasks',
       description: 'Tasks tied to the company',
@@ -382,6 +388,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'noteTargets',
       label: 'Notes',
       description: 'Notes tied to the company',
@@ -403,6 +411,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunities',
       label: 'Opportunities',
       description: 'Opportunities linked to the company.',
@@ -423,6 +433,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the company',
@@ -444,6 +456,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the company',
@@ -465,6 +479,8 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the company',
@@ -472,7 +488,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'company',
+      targetFieldName: 'targetCompany',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

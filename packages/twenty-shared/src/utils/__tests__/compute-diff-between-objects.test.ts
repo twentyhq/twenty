@@ -99,7 +99,7 @@ describe('computeDiffBetweenObjects', () => {
 
   it('should restore and update deleted objects', () => {
     const existingObjects = [
-      { id: '1', name: 'Object 1', deletedAt: new Date('2024-01-01') },
+      { id: '1', name: 'Object 1', deletedAt: '2024-01-01' },
     ];
     const receivedObjects = [{ id: '1', name: 'Restored Object 1' }];
 
@@ -120,7 +120,7 @@ describe('computeDiffBetweenObjects', () => {
   it('should not include deleted objects in idsToDelete', () => {
     const existingObjects = [
       { id: '1', name: 'Object 1', deletedAt: null },
-      { id: '2', name: 'Object 2', deletedAt: new Date('2024-01-01') },
+      { id: '2', name: 'Object 2', deletedAt: '2024-01-01' },
     ];
     const receivedObjects: { id: string; name: string }[] = [];
 
