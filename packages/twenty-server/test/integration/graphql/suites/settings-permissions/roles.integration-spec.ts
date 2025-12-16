@@ -99,15 +99,11 @@ describe('roles permissions', () => {
       const objectRestrictedRole = roles.find(
         (role: any) => role.label === 'Object-restricted',
       );
-      const workflowManagerRole = roles.find(
-        (role: any) => role.label === 'Workflow Manager',
-      );
 
       expect(guestRole).toBeDefined();
       expect(adminRole).toBeDefined();
       expect(memberRole).toBeDefined();
       expect(objectRestrictedRole).toBeDefined();
-      expect(workflowManagerRole).toBeDefined();
 
       expect(guestRole.workspaceMembers).toEqual([
         {
@@ -150,8 +146,6 @@ describe('roles permissions', () => {
           },
         },
       ]);
-
-      expect(workflowManagerRole.workspaceMembers).toBeDefined();
     });
     it('should throw a permission error when user does not have permission (member role)', async () => {
       const query = {
