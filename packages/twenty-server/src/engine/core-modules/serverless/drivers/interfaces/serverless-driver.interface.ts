@@ -18,9 +18,15 @@ export type ServerlessExecuteResult = {
 // TODO refactor to be using FlatServerlessFunction
 export interface ServerlessDriver {
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
-  execute(
-    serverlessFunction: ServerlessFunctionEntity,
-    payload: object,
-    version: string,
-  ): Promise<ServerlessExecuteResult>;
+  execute({
+    serverlessFunction,
+    payload,
+    version,
+    env,
+  }: {
+    serverlessFunction: ServerlessFunctionEntity;
+    payload: object;
+    version: string;
+    env?: Record<string, string>;
+  }): Promise<ServerlessExecuteResult>;
 }

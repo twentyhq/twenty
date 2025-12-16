@@ -17,12 +17,12 @@ type Story = StoryObj<typeof VariableChip>;
 
 export const Default: Story = {
   args: {
-    rawVariableName: `{{${MOCKED_STEP_ID}.address.street1}}`,
+    rawVariableName: `{{trigger.properties.after.address.addressStreet1}}`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Street 1')).toBeVisible();
+    expect(await canvas.findByText('Address Street1')).toBeVisible();
   },
 };
 
@@ -33,12 +33,12 @@ export const DefaultDeleteHovered: Story = {
     },
   },
   args: {
-    rawVariableName: `{{${MOCKED_STEP_ID}.address.street1}}`,
+    rawVariableName: `{{trigger.properties.after.address.addressStreet1}}`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Street 1')).toBeVisible();
+    expect(await canvas.findByText('Address Street1')).toBeVisible();
   },
 };
 

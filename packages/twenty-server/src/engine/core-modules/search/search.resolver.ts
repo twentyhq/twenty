@@ -71,7 +71,7 @@ export class SearchResolver {
     let rolePermissionConfig: RolePermissionConfig | undefined;
 
     if (isDefined(apiKey)) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKey.id,
         workspace.id,
       );

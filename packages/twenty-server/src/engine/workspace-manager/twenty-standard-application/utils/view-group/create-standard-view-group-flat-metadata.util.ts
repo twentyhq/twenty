@@ -3,19 +3,17 @@ import { v4 } from 'uuid';
 
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type AllStandardObjectViewGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-group-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
-export type CreateStandardViewGroupOptions<
+type CreateStandardViewGroupOptions<
   O extends AllStandardObjectName,
   V extends AllStandardObjectViewName<O>,
 > = {
   viewName: V;
   viewGroupName: AllStandardObjectViewGroupName<O, V>;
-  fieldName: AllStandardObjectFieldName<O>;
   isVisible: boolean;
   fieldValue: string;
   position: number;
@@ -35,14 +33,7 @@ export const createStandardViewGroupFlatMetadata = <
 >({
   workspaceId,
   objectName,
-  context: {
-    viewName,
-    viewGroupName,
-    fieldName,
-    isVisible,
-    fieldValue,
-    position,
-  },
+  context: { viewName, viewGroupName, isVisible, fieldValue, position },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
@@ -66,8 +57,6 @@ export const createStandardViewGroupFlatMetadata = <
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
-    fieldMetadataId:
-      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     isVisible,
     fieldValue,
     position,

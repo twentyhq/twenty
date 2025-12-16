@@ -95,6 +95,12 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
       'In our multi-tenant cloud app, we offload untrusted custom code from workflows to a serverless system (Lambda) for enhanced security and scalability. Self-hosters with a single tenant can typically ignore this configuration.',
     isHiddenOnLoad: true,
   },
+  [ConfigVariablesGroup.CODE_INTERPRETER_CONFIG]: {
+    position: 1550,
+    description:
+      'Configure the code interpreter for AI data analysis. Use LOCAL for development (unsafe) or E2B for sandboxed execution.',
+    isHiddenOnLoad: true,
+  },
   [ConfigVariablesGroup.SSL]: {
     position: 1600,
     description:
