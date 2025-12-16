@@ -50,7 +50,7 @@ export const createStandardObjectFlatMetadata = <
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
   universalIdentifier,
-  standardId: null,
+  standardId: universalIdentifier,
   applicationId: twentyStandardApplicationId,
   workspaceId,
   nameSingular,

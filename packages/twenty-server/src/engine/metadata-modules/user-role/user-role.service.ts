@@ -16,7 +16,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
@@ -212,8 +212,7 @@ export class UserRoleService {
 
     if (
       isDefined(roleOfUserWorkspace) &&
-      roleOfUserWorkspace.universalIdentifier ===
-        STANDARD_ROLE.admin.universalIdentifier
+      roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId
     ) {
       const adminRole = roleOfUserWorkspace;
 
@@ -274,8 +273,7 @@ export class UserRoleService {
 
       if (
         isDefined(currentRole) &&
-        currentRole.universalIdentifier ===
-          STANDARD_ROLE.admin.universalIdentifier
+        currentRole.standardId === ADMIN_ROLE.standardId
       ) {
         adminRoleIdToValidate = currentRole.id;
       }

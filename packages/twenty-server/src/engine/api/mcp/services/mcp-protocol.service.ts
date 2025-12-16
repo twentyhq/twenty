@@ -16,7 +16,7 @@ import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class McpProtocolService {
@@ -67,7 +67,7 @@ export class McpProtocolService {
       const [role] = await this.roleRepository.find({
         where: {
           workspaceId,
-          universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 
