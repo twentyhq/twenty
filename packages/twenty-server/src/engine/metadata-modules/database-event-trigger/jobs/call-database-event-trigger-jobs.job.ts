@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import chunk from 'lodash.chunk';
 
-import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

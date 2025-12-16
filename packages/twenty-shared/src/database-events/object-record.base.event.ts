@@ -1,4 +1,4 @@
-import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordDiff } from '@/database-events/object-record-diff';
 
 type Properties<T> = {
   updatedFields?: string[];
