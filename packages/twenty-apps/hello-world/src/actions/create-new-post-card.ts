@@ -1,18 +1,30 @@
-import { type FunctionConfig } from 'twenty-sdk';
-import Twenty from '../../generated';
+import type {
+  FunctionConfig,
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  CronPayload,
+} from 'twenty-sdk';
+import Twenty, { type Person } from '../../generated';
 
-export const main = async (params: { recipient?: string }) => {
+type CreateNewPostCardParams =
+  | { name?: string }
+  | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
+  | CronPayload;
+
+export const main = async (params: CreateNewPostCardParams) => {
   try {
     const client = new Twenty();
+
+    const name =
+      'name' in params
+        ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+        : 'Hello world';
 
     const createPostCard = await client.mutation({
       createPostCard: {
         __args: {
           data: {
-            name:
-              params.recipient ??
-              process.env.DEFAULT_RECIPIENT_NAME ??
-              'Hello world',
+            name,
           },
         },
         name: true,
