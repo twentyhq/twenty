@@ -23,7 +23,7 @@ import {
   USER_WORKSPACE_DATA_SEED_IDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -53,7 +53,7 @@ export class DevSeederPermissionsService {
   }) {
     const adminRole = await this.roleRepository.findOne({
       where: {
-        standardId: ADMIN_ROLE.standardId,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
         workspaceId,
       },
     });
