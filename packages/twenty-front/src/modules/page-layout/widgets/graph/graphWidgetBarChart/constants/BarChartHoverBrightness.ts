@@ -1,1 +1,0 @@
-export const BAR_CHART_HOVER_BRIGHTNESS = 0.85;

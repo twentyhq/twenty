@@ -1,11 +1,11 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldMenuItem';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
@@ -16,14 +16,12 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 export const EmailsFieldInput = () => {
-  const { getLatestDraftValue, setDraftValue, draftValue, fieldDefinition } =
-    useEmailsField();
+  const { setDraftValue, draftValue, fieldDefinition } = useEmailsField();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
-  const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
+  const { onEscape, onClickOutside, onEnter } = useContext(
+    FieldInputEventContext,
   );
 
   const emails = useMemo<string[]>(
@@ -35,10 +33,10 @@ export const EmailsFieldInput = () => {
     [draftValue?.primaryEmail, draftValue?.additionalEmails],
   );
 
-  const handleChange = (updatedEmails: string[]) => {
-    const [nextPrimaryEmail, ...nextAdditionalEmails] = updatedEmails;
+  const parseStringArrayToEmailsValue = (emails: string[]) => {
+    const [nextPrimaryEmail, ...nextAdditionalEmails] = emails;
 
-    const nextValue = {
+    const nextValue: FieldEmailsValue = {
       primaryEmail: nextPrimaryEmail ?? '',
       additionalEmails: nextAdditionalEmails,
     };
@@ -46,7 +44,15 @@ export const EmailsFieldInput = () => {
     const parseResponse = emailsSchema.safeParse(nextValue);
 
     if (parseResponse.success) {
-      setDraftValue(parseResponse.data);
+      return parseResponse.data;
+    }
+  };
+
+  const handleChange = (updatedEmails: string[]) => {
+    const nextValue = parseStringArrayToEmailsValue(updatedEmails);
+
+    if (isDefined(nextValue)) {
+      setDraftValue(nextValue);
     }
   };
 
@@ -75,15 +81,21 @@ export const EmailsFieldInput = () => {
   };
 
   const handleClickOutside = (
-    _newValue: any,
+    updatedEmails: string[],
     event: MouseEvent | TouchEvent,
   ) => {
-    const latestDraftValue = getLatestDraftValue(instanceId);
-    onClickOutside?.({ newValue: latestDraftValue, event });
+    onClickOutside?.({
+      newValue: parseStringArrayToEmailsValue(updatedEmails),
+      event,
+    });
   };
 
-  const handleEscape = (_newValue: any) => {
-    onEscape?.({ newValue: draftValue });
+  const handleEscape = (updatedEmails: string[]) => {
+    onEscape?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
+  };
+
+  const handleEnter = (updatedEmails: string[]) => {
+    onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
   };
 
   const maxNumberOfValues =
@@ -94,6 +106,7 @@ export const EmailsFieldInput = () => {
     <MultiItemFieldInput
       items={emails}
       onChange={handleChange}
+      onEnter={handleEnter}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder="Email"
@@ -108,7 +121,7 @@ export const EmailsFieldInput = () => {
       }) => (
         <EmailsFieldMenuItem
           key={index}
-          dropdownId={`emails-${index}`}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           showCopyButton={true}

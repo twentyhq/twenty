@@ -1,3 +1,4 @@
+import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
 import { computeChartCategoryTickValues } from '../computeChartCategoryTickValues';
 
 describe('computeChartCategoryTickValues', () => {
@@ -88,5 +89,61 @@ describe('computeChartCategoryTickValues', () => {
     });
 
     expect(result).toEqual([]);
+  });
+
+  describe('with widthPerTick parameter', () => {
+    it('should return all values when widthPerTick is above rotation threshold', () => {
+      const values = ['A', 'B', 'C', 'D', 'E'];
+      const result = computeChartCategoryTickValues({
+        availableSize: 200,
+        minimumSizePerTick: 100,
+        values,
+        widthPerTick: ROTATION_THRESHOLD_WIDTH + 10,
+      });
+
+      expect(result).toEqual(['A', 'B', 'C', 'D', 'E']);
+    });
+
+    it('should return all values when rotated and widthPerTick exceeds minimumSizePerTick', () => {
+      const values = ['A', 'B', 'C', 'D', 'E'];
+      const result = computeChartCategoryTickValues({
+        availableSize: 200,
+        minimumSizePerTick: 20,
+        values,
+        widthPerTick: 30,
+      });
+
+      expect(result).toEqual(['A', 'B', 'C', 'D', 'E']);
+    });
+
+    it('should omit ticks when rotated and widthPerTick is below minimumSizePerTick', () => {
+      const values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      const result = computeChartCategoryTickValues({
+        availableSize: 400,
+        minimumSizePerTick: 100,
+        values,
+        widthPerTick: 10,
+      });
+
+      expect(result.length).toBe(4);
+      expect(result).toEqual(['A', 'C', 'F', 'H']);
+    });
+
+    it('should behave like no widthPerTick when widthPerTick is undefined', () => {
+      const values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      const resultWithoutWidthPerTick = computeChartCategoryTickValues({
+        availableSize: 400,
+        minimumSizePerTick: 100,
+        values,
+      });
+      const resultWithUndefined = computeChartCategoryTickValues({
+        availableSize: 400,
+        minimumSizePerTick: 100,
+        values,
+        widthPerTick: undefined,
+      });
+
+      expect(resultWithoutWidthPerTick).toEqual(resultWithUndefined);
+    });
   });
 });

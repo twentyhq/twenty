@@ -51,35 +51,23 @@ export const MultiItemFieldMenuItem = <T,>({
     setIsHovered(false);
   };
 
-  const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleDeleteClick = () => {
     closeDropdown(dropdownId);
     setIsHovered(false);
     onDelete?.();
   };
 
-  const handleSetAsPrimaryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleSetAsPrimaryClick = () => {
     closeDropdown(dropdownId);
     onSetAsPrimary?.();
   };
 
-  const handleEditClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleEditClick = () => {
     closeDropdown(dropdownId);
     onEdit?.();
   };
 
-  const handleCopyClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleCopyClick = () => {
     closeDropdown(dropdownId);
     onCopy?.(value);
   };

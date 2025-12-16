@@ -4,14 +4,16 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewFilterGroupException extends CustomException {
-  declare code: ViewFilterGroupExceptionCode;
+export class ViewFilterGroupException extends CustomException<ViewFilterGroupExceptionCode> {
   constructor(
     message: string,
     code: ViewFilterGroupExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view filter group error occurred.`,
+    });
   }
 }
 
