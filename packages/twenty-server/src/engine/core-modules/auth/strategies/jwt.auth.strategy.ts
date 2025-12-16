@@ -9,6 +9,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -16,9 +17,11 @@ import {
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
+  ApplicationTokenJwtPayload,
   type AuthContext,
   type FileTokenJwtPayload,
   type JwtPayload,
+  JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -30,12 +33,15 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -56,7 +62,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         >(rawJwtToken);
 
         const appSecretBody =
-          decodedToken.type === 'WORKSPACE_AGNOSTIC'
+          decodedToken.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
             ? decodedToken.userId
             : decodedToken.workspaceId;
 
@@ -316,7 +322,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateWorkspaceAgnosticToken(
     payload: WorkspaceAgnosticTokenJwtPayload,
-  ) {
+  ): Promise<AuthContext> {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
@@ -329,6 +335,39 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return { user, authProvider: payload.authProvider };
   }
 
+  private async validateApplicationToken(
+    payload: ApplicationTokenJwtPayload,
+  ): Promise<AuthContext> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const applicationId = payload.sub ?? payload.applicationId;
+
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId },
+    });
+
+    if (!isDefined(application)) {
+      throw new AuthException(
+        'Application not found',
+        AuthExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return {
+      application,
+      workspace,
+    };
+  }
+
   private isLegacyApiKeyPayload(
     payload: JwtPayload,
   ): payload is ApiKeyTokenJwtPayload {
@@ -337,17 +376,23 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
     // Support legacy api keys
-    if (payload.type === 'API_KEY' || this.isLegacyApiKeyPayload(payload)) {
+    if (
+      payload.type === JwtTokenTypeEnum.API_KEY ||
+      this.isLegacyApiKeyPayload(payload)
+    ) {
       return await this.validateAPIKey(payload);
     }
 
-    if (payload.type === 'WORKSPACE_AGNOSTIC') {
+    if (payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    // `!payload.type` is here to support legacy token
-    if (payload.type === 'ACCESS' || !payload.type) {
+    if (payload.type === JwtTokenTypeEnum.ACCESS) {
       return await this.validateAccessToken(payload);
+    }
+
+    if (payload.type === JwtTokenTypeEnum.APPLICATION) {
+      return await this.validateApplicationToken(payload);
     }
 
     throw new AuthException(

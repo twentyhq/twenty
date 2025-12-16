@@ -4,6 +4,7 @@ import { type ToolSet } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import {
+  type CodeExecutionStreamEmitter,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -15,20 +16,35 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type ToolIndexEntry = {
   name: string;
   description: string;
-  category: 'database' | 'action' | 'workflow' | 'metadata' | 'view';
+  category:
+    | 'database'
+    | 'action'
+    | 'workflow'
+    | 'metadata'
+    | 'view'
+    | 'dashboard';
   objectName?: string;
   operation?: string;
 };
 
 export type ToolSearchOptions = {
   limit?: number;
-  category?: 'database' | 'action' | 'workflow' | 'metadata' | 'view';
+  category?:
+    | 'database'
+    | 'action'
+    | 'workflow'
+    | 'metadata'
+    | 'view'
+    | 'dashboard';
 };
 
 export type ToolContext = {
   workspaceId: string;
   roleId: string;
   actorContext?: ActorMetadata;
+  userId?: string;
+  userWorkspaceId?: string;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 @Injectable()
@@ -130,7 +146,13 @@ export class ToolRegistryService {
     names: string[],
     context: ToolContext,
   ): Promise<ToolSet> {
-    const fullContext = this.buildContext(context.workspaceId, context.roleId);
+    const fullContext = this.buildContext(
+      context.workspaceId,
+      context.roleId,
+      context.onCodeExecutionUpdate,
+      context.userId,
+      context.userWorkspaceId,
+    );
     const allTools: ToolSet = {};
 
     for (const provider of this.providers) {
@@ -151,6 +173,9 @@ export class ToolRegistryService {
   private buildContext(
     workspaceId: string,
     roleId: string,
+    onCodeExecutionUpdate?: CodeExecutionStreamEmitter,
+    userId?: string,
+    userWorkspaceId?: string,
   ): ToolProviderContext {
     const rolePermissionConfig: RolePermissionConfig = {
       unionOf: [roleId],
@@ -160,6 +185,9 @@ export class ToolRegistryService {
       workspaceId,
       roleId,
       rolePermissionConfig,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
     };
   }
 
@@ -174,6 +202,7 @@ export class ToolRegistryService {
       METADATA: 'metadata',
       NATIVE_MODEL: 'action',
       VIEW: 'view',
+      DASHBOARD: 'dashboard',
     };
 
     return Object.entries(tools).map(([name, tool]) => ({

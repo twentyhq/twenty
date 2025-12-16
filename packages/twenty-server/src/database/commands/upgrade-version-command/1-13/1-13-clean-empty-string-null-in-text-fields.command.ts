@@ -62,16 +62,6 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         `Could not find workspace ${workspaceId}, should never occur`,
       );
     }
-    if (
-      !isDefined(workspace.version) ||
-      !['1.12.0', '1.12.1'].includes(workspace.version)
-    ) {
-      this.logger.log(
-        `Workspace ${workspaceId} is not a v1.12.0 or v1.12.1 workspace, skipping`,
-      );
-
-      return;
-    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
@@ -85,26 +75,33 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     });
 
     for (const objectMetadataItem of objectMetadataItems) {
-      const tableName = computeObjectTargetTable(objectMetadataItem);
+      try {
+        const tableName = computeObjectTargetTable(objectMetadataItem);
 
-      if (!objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
-        );
-      }
+        if (!objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
 
-      if (objectMetadataItem.isCustom) {
-        await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
-          objectMetadataItem,
-          tableName,
-          schemaName,
-          dataSource,
-          isDryRun,
+        if (objectMetadataItem.isCustom) {
+          await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
+            objectMetadataItem,
+            tableName,
+            schemaName,
+            dataSource,
+            isDryRun,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Could not cleanup ${objectMetadataItem.isCustom ? 'custom' : 'standard'} object ${objectMetadataItem.nameSingular} records for workspace ${workspaceId}`,
         );
+        this.logger.error(error);
       }
     }
   }

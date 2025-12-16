@@ -1,3 +1,4 @@
+import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
@@ -65,6 +66,15 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
+  // Filter out data-code-execution parts when tool-code_interpreter exists
+  // (the tool part contains the final result, data-code-execution is for streaming updates)
+  const hasCodeInterpreterTool = messageParts.some(
+    (part) => part.type === 'tool-code_interpreter',
+  );
+  const filteredParts = hasCodeInterpreterTool
+    ? messageParts.filter((part) => part.type !== 'data-code-execution')
+    : messageParts;
+
   const renderMessagePart = (part: ExtendedUIMessagePart, index: number) => {
     switch (part.type) {
       case 'reasoning':
@@ -79,6 +89,20 @@ export const AIChatAssistantMessageRenderer = ({
         return <LazyMarkdownRenderer key={index} text={part.text} />;
       case 'data-routing-status':
         return <RoutingStatusDisplay data={part.data} key={index} />;
+      case 'data-code-execution':
+        return (
+          <CodeExecutionDisplay
+            key={index}
+            code={part.data.code}
+            stdout={part.data.stdout}
+            stderr={part.data.stderr}
+            exitCode={part.data.exitCode}
+            files={part.data.files}
+            isRunning={
+              part.data.state === 'running' || part.data.state === 'pending'
+            }
+          />
+        );
       default:
         {
           if (isToolUIPart(part)) {
@@ -89,14 +113,14 @@ export const AIChatAssistantMessageRenderer = ({
     }
   };
 
-  if (!messageParts.length && !hasError) {
+  if (!filteredParts.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {messageParts.map(renderMessagePart)}
+        {filteredParts.map(renderMessagePart)}
       </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>

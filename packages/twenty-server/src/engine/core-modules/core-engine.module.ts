@@ -42,6 +42,8 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
+import { codeInterpreterModuleFactory } from 'src/engine/core-modules/code-interpreter/code-interpreter-module.factory';
+import { CodeInterpreterModule } from 'src/engine/core-modules/code-interpreter/code-interpreter.module';
 import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
 import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
@@ -137,6 +139,10 @@ import { FileModule } from './file/file.module';
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [TwentyConfigService, FileStorageService],
+    }),
+    CodeInterpreterModule.forRootAsync({
+      useFactory: codeInterpreterModuleFactory,
+      inject: [TwentyConfigService],
     }),
     SearchModule,
     ApiKeyModule,

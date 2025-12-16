@@ -209,6 +209,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'noteTargets',
       label: 'Relations',
       description: 'Note targets',
@@ -230,6 +232,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Note attachments',
@@ -251,6 +255,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline Activities linked to the note.',
@@ -272,6 +278,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the note',

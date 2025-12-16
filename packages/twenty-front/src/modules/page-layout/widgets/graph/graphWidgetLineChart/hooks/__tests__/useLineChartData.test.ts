@@ -4,7 +4,20 @@ import { renderHook } from '@testing-library/react';
 
 import { useLineChartData } from '../useLineChartData';
 
+const mockUseRecoilComponentValue = jest.fn();
+jest.mock(
+  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  () => ({
+    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
+  }),
+);
+
 describe('useLineChartData', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseRecoilComponentValue.mockReturnValue([]);
+  });
+
   const mockColorRegistry: GraphColorRegistry = {
     red: {
       name: 'red',
@@ -170,5 +183,82 @@ describe('useLineChartData', () => {
     );
 
     expect(result.current.enrichedSeries[0].label).toBe('series1');
+  });
+
+  it('should filter visible data based on hidden legend ids', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['series2']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.visibleData).toHaveLength(1);
+    expect(result.current.visibleData[0].id).toBe('series1');
+    expect(result.current.enrichedSeries).toHaveLength(1);
+    expect(result.current.nivoData).toHaveLength(1);
+  });
+
+  it('should maintain colors after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.enrichedSeries[0].colorScheme.name).toBe('blue');
+  });
+
+  it('should keep all items in legend even when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.visibleData).toHaveLength(1);
+    expect(result.current.legendItems).toHaveLength(2);
+  });
+
+  it('should maintain alignment between nivoData and colors when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.nivoData.length).toBe(result.current.colors.length);
+    expect(result.current.nivoData.length).toBe(1);
+    expect(result.current.nivoData[0].id).toBe('series2');
+  });
+
+  it('should handle hidden ids that do not exist in data', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    expect(result.current.visibleData).toHaveLength(2);
+    expect(result.current.enrichedSeries).toHaveLength(2);
   });
 });
