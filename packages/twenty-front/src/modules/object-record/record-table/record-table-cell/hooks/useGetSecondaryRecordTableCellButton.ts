@@ -11,7 +11,7 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -44,21 +44,19 @@ export const useGetSecondaryRecordTableCellButton = () => {
   if (isFieldPhones(fieldDefinition)) {
     const { primaryPhoneCallingCode = '', primaryPhoneNumber = '' } =
       fieldValue as FieldPhonesValue;
+    const phoneNumber = `${primaryPhoneCallingCode}${primaryPhoneNumber}`;
     openLinkOnClick = () => {
-      const text = `${primaryPhoneCallingCode}${primaryPhoneNumber}`;
-      window.open(`tel:${text}`, '_blank');
+      window.open(`tel:${phoneNumber}`, '_blank');
     };
     copyOnClick = () => {
-      const text = `${primaryPhoneCallingCode}${primaryPhoneNumber}`;
-      copyToClipboard(text, t`Phone number copied to clipboard`);
+      copyToClipboard(phoneNumber, t`Phone number copied to clipboard`);
     };
   }
 
   if (isFieldEmails(fieldDefinition)) {
     const email = (fieldValue as FieldEmailsValue).primaryEmail ?? '';
     openLinkOnClick = () => {
-      const text = (fieldValue as FieldEmailsValue).primaryEmail ?? '';
-      window.open(`mailto:${text}`, '_blank');
+      window.open(`mailto:${email}`, '_blank');
     };
     copyOnClick = () => {
       copyToClipboard(email, t`Email copied to clipboard`);
@@ -68,7 +66,7 @@ export const useGetSecondaryRecordTableCellButton = () => {
   if (isFieldLinks(fieldDefinition)) {
     const url = (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
     openLinkOnClick = () => {
-      window.open(url, '_blank');
+      window.open(getAbsoluteUrl(url), '_blank');
     };
     copyOnClick = () => {
       copyToClipboard(url, t`Link copied to clipboard`);
