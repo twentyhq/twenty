@@ -85,7 +85,6 @@ export const createStandardRoleTargetFlatMetadata = <
     userWorkspaceId: null,
     agentId,
     apiKeyId: null,
-    targetApplicationId: null,
     workspaceId,
     applicationId: twentyStandardApplicationId,
     createdAt: now,
