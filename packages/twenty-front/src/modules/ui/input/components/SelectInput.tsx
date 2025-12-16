@@ -10,6 +10,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type TagColor } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
@@ -114,16 +115,16 @@ export const SelectInput = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {onClear && clearLabel && (
           <SelectableListItem
-            itemId={`No ${clearLabel}`}
+            itemId={t`No ${clearLabel}`}
             onEnter={handleClearOption}
           >
             <MenuItemSelectTag
-              key={`No ${clearLabel}`}
-              text={`No ${clearLabel}`}
+              key={t`No ${clearLabel}`}
+              text={t`No ${clearLabel}`}
               color="transparent"
               variant="outline"
               onClick={handleClearOption}
-              isKeySelected={selectedItemId === `No ${clearLabel}`}
+              isKeySelected={selectedItemId === t`No ${clearLabel}`}
             />
           </SelectableListItem>
         )}

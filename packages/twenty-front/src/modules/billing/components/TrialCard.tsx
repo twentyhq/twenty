@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 type TrialCardProps = {
   duration: number;
@@ -24,10 +25,11 @@ const StyledCreditCardRequirementContainer = styled.div`
 `;
 
 export const TrialCard = ({ duration, withCreditCard }: TrialCardProps) => {
+  const { t } = useLingui();
   return (
     <StyledTrialCardContainer>
-      <StyledTrialDurationContainer>{`${duration} days trial`}</StyledTrialDurationContainer>
-      <StyledCreditCardRequirementContainer>{`${withCreditCard ? 'With Credit Card' : 'Without Credit Card'}`}</StyledCreditCardRequirementContainer>
+      <StyledTrialDurationContainer>{t`${duration} days trial`}</StyledTrialDurationContainer>
+      <StyledCreditCardRequirementContainer>{withCreditCard ? t`With Credit Card` : t`Without Credit Card`}</StyledCreditCardRequirementContainer>
     </StyledTrialCardContainer>
   );
 };

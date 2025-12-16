@@ -50,7 +50,7 @@ export const ObjectOptionsDropdownCustomView = ({
     ? {
         ...currentView,
         key: ViewKey.Custom,
-        name: currentView.name || 'Custom View',
+        name: currentView.name || t`Custom View`,
       }
     : null;
 
@@ -211,7 +211,7 @@ export const ObjectOptionsDropdownCustomView = ({
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={`${visibleBoardFields.length} shown`}
+              contextualText={t`${visibleBoardFields.length} shown`}
               contextualTextPosition="right"
               hasSubMenu
             />

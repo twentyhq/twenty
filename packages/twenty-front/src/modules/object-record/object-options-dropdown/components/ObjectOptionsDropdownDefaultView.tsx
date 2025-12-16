@@ -86,7 +86,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={`${visibleBoardFields.length} shown`}
+              contextualText={t`${visibleBoardFields.length} shown`}
               contextualTextPosition="right"
               hasSubMenu
             />

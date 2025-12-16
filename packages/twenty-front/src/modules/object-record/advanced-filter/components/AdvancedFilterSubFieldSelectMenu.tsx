@@ -23,6 +23,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { t } from '@lingui/core/macro';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -146,7 +147,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                   handleSelectFilter(fieldMetadataItemUsedInDropdown);
                 }}
                 LeftIcon={getIcon(fieldMetadataItemUsedInDropdown.icon)}
-                text={`Any ${fieldMetadataItemUsedInDropdown.label} field`}
+                text={t`Any ${fieldMetadataItemUsedInDropdown.label} field`}
               />
             </SelectableListItem>
           )}

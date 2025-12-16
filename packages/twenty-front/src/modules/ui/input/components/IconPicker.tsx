@@ -259,7 +259,7 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent || (
             <IconButton
-              ariaLabel={`Click to select icon ${
+              ariaLabel={t`Click to select icon ${
                 selectedIconKey
                   ? `(selected: ${selectedIconKey})`
                   : `(no icon selected)`

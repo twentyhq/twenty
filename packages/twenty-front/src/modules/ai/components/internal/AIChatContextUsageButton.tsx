@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ProgressBar } from 'twenty-ui/feedback';
@@ -103,6 +104,7 @@ const formatTokenCount = (count: number): string => {
 };
 
 export const AIChatContextUsageButton = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const agentChatUsage = useRecoilValue(agentChatUsageState);
@@ -162,23 +164,23 @@ export const AIChatContextUsageButton = () => {
 
           <StyledBody>
             <StyledRow>
-              <StyledLabel>Input</StyledLabel>
+              <StyledLabel>{t`Input`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.inputTokens)} •{' '}
-                {agentChatUsage.inputCredits.toLocaleString()} credits
+                {t`${agentChatUsage.inputCredits.toLocaleString()} credits`}
               </StyledValue>
             </StyledRow>
             <StyledRow>
-              <StyledLabel>Output</StyledLabel>
+              <StyledLabel>{t`Output`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.outputTokens)} •{' '}
-                {agentChatUsage.outputCredits.toLocaleString()} credits
+                {t`${agentChatUsage.outputCredits.toLocaleString()} credits`}
               </StyledValue>
             </StyledRow>
           </StyledBody>
 
           <StyledFooter>
-            <StyledLabel>Total credits</StyledLabel>
+            <StyledLabel>{t`Total credits`}</StyledLabel>
             <StyledPercentage>{totalCredits.toLocaleString()}</StyledPercentage>
           </StyledFooter>
         </StyledHoverCard>

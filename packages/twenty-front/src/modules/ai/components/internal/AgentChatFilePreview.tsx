@@ -3,6 +3,7 @@ import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { type FileUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
@@ -23,7 +24,7 @@ export const AgentChatFilePreview = ({
     useFileCategoryColors();
 
   const fileName =
-    file instanceof File ? file.name : (file.filename ?? 'Unknown file');
+    file instanceof File ? file.name : (file.filename ?? t`Unknown file`);
 
   const fileUrl = file instanceof File ? undefined : file.url;
 

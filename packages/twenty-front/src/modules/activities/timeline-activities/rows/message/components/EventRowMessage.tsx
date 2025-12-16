@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
@@ -42,7 +43,7 @@ export const EventRowMessage = ({
       <StyledRowContainer>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         <StyledEventRowItemAction>
-          linked an email with
+          {t`linked an email with`}
         </StyledEventRowItemAction>
         <StyledEventRowItemColumn>
           {labelIdentifierValue}

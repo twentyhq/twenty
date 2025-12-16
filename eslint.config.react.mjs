@@ -128,6 +128,305 @@ export default [
           additionalHooks: 'useRecoilCallback',
         },
       ],
+      // Lingui - detect untranslated strings
+      'lingui/no-unlocalized-strings': [
+        'error',
+        {
+          ignore: [
+            // Ignore strings which are a single "word" (no spaces) and don't start with uppercase
+            '^(?![A-Z])\\S+$',
+            // Ignore UPPERCASE literals (constants, env vars)
+            '^[A-Z0-9_-]+$',
+            // Ignore strings that look like code/technical (contain special chars)
+            '^[\\s]*$', // whitespace only
+            '.*[{}/<>].*', // contains code-like characters
+            '^\\d+(\\.\\d+)?(px|rem|em|%|vh|vw|s|ms)?$', // CSS units
+            '^[\\d.]+(px|rem|em|%|vh|vw|fr|s|ms)?(\\s+[\\d.]+(px|rem|em|%|vh|vw|fr|s|ms)?)*$', // CSS values like "200px 1fr 20px"
+            '^#[0-9a-fA-F]{3,8}$', // hex colors
+            '^rgba?\\(.*\\)$', // rgb/rgba colors
+            '^(auto|none|inherit|initial|unset|flex|grid|block|inline|inline-block|relative|absolute|fixed|sticky)$', // CSS keywords
+            '^color:.*$', // CSS color declarations
+            '^font-.*$', // CSS font declarations
+            '^\\d+$', // numbers only
+            '^https?:\\/\\/.*', // URLs
+            '^@.*', // @ mentions or decorators
+            '^\\/.*', // paths starting with /
+            '^[HhMmSsYyDdAaPp:.,\\s-]+$', // date format patterns (HH:mm, yyyy-MM-dd, etc.)
+            '^Arrow(Up|Down|Left|Right)$', // keyboard keys
+            '^(Enter|Escape|Tab|Space|Backspace|Delete)$', // keyboard keys
+            '^(Dark|Light)$', // color schemes
+            '^Icon[A-Z]\\w*$', // Icon names like IconDefault, IconTable, IconSettings
+            '^%c.*$', // Console format strings
+            '^(Group|CalendarView|CalendarDateField|Compact view)$', // Common item IDs for selectable lists
+          ],
+          ignoreNames: [
+            // HTML/React attributes that shouldn't be translated
+            { regex: { pattern: 'className', flags: 'i' } },
+            { regex: { pattern: 'styleName', flags: 'i' } },
+            { regex: { pattern: 'testId', flags: 'i' } },
+            'data-testid',
+            'dataTestId',
+            'src',
+            'srcSet',
+            'href',
+            'target',
+            'rel',
+            'type',
+            'id',
+            'key',
+            'name',
+            'htmlFor',
+            'width',
+            'height',
+            'fill',
+            'stroke',
+            'viewBox',
+            'clipPath',
+            'd', // SVG path
+            'transform',
+            'displayName',
+            'defaultValue',
+            'to', // router links
+            'path',
+            'pathname',
+            'hash',
+            'componentInstanceId',
+            'hotkeyScope',
+            'dropdownId',
+            'recoilScopeId',
+            'modalId',
+            'dialogId',
+            'itemId',
+            'selectableItemIdArray',
+            'listenerId',
+            'focusId',
+            'color', // color prop values
+            'variant', // component variants
+            'size', // size prop values
+            'position', // position values
+            'align', // alignment values
+            'justify', // justification values
+            'direction', // direction values
+            'orientation', // orientation values
+            'status', // status values
+            'state', // state values
+            'mode', // mode values
+            'accent', // accent values
+
+            // CSS-related props
+            'gridAutoColumns',
+            'gridAutoRows',
+            'gridTemplateColumns',
+            'gridTemplateRows',
+            'gridColumn',
+            'gridRow',
+            'gap',
+            'margin',
+            'padding',
+            'border',
+            'borderRadius',
+            'boxShadow',
+            'flex',
+            'flexDirection',
+            'flexWrap',
+            'justifyContent',
+            'alignItems',
+            'alignContent',
+            'overflow',
+            'display',
+            'cursor',
+            'zIndex',
+            'opacity',
+            'fontWeight',
+            'fontSize',
+            'lineHeight',
+            'textAlign',
+            'textDecoration',
+            'whiteSpace',
+            'wordBreak',
+            'objectFit',
+            'backgroundSize',
+            'backgroundPosition',
+            'minWidth',
+            'maxWidth',
+            'minHeight',
+            'maxHeight',
+            'mobileGridAutoColumns',
+            'tabletGridAutoColumns',
+
+            // Styled components
+            'css',
+            'theme',
+            'animation',
+            'transition',
+
+            // GraphQL
+            'query',
+            'mutation',
+            'subscription',
+            'fragment',
+            'operationName',
+            'variables',
+            '__typename',
+
+            // Technical identifiers
+            'fieldName',
+            'columnName',
+            'objectNameSingular',
+            'objectNamePlural',
+            'metadataId',
+            'nameSingular',
+            'namePlural',
+
+            // Event types
+            'eventName',
+            'event',
+            'action',
+            'actionType',
+
+            // UPPER_CASE names (constants)
+            { regex: { pattern: '^[A-Z][A-Z0-9_]*$' } },
+
+            // Sort direction values (backend API)
+            'orderBy',
+            { regex: { pattern: '^(Asc|Desc)(NullsFirst|NullsLast)?$' } },
+          ],
+          ignoreFunctions: [
+            // Console and logging
+            'console.*',
+            '*.log',
+            '*.warn',
+            '*.error',
+            '*.debug',
+            '*.info',
+            '*.trace',
+            'logDebug',
+            'formatTitle',
+
+            // Error handling (technical messages, not user-facing)
+            'Error',
+            'TypeError',
+            'RangeError',
+            'SyntaxError',
+            'throw',
+            'assertUnreachable',
+            'CustomError',
+            'parseInitialBlocknote',
+
+            // Testing
+            'describe',
+            'it',
+            'test',
+            'expect',
+            'jest.*',
+            '*.toBe',
+            '*.toEqual',
+            '*.toContain',
+            '*.toMatch',
+            '*.toThrow',
+
+            // React/Libraries internals
+            'require',
+            'import',
+            'styled',
+            'styled.*',
+            'css',
+            'keyframes',
+            'createGlobalStyle',
+
+            // Router
+            'useNavigate',
+            'navigate',
+            'useLocation',
+            'useParams',
+
+            // Date formatting (patterns are not translatable)
+            'format',
+            'formatDate',
+            'formatDateTime',
+            'formatTime',
+            'parseISO',
+            'parse',
+
+            // Navigation
+            'useNavigationSection',
+
+            // Recoil
+            'atom',
+            'atomFamily',
+            'selector',
+            'selectorFamily',
+            'useSetRecoilState',
+            'useRecoilState',
+            'useRecoilValue',
+
+            // GraphQL operations
+            'gql',
+            'useQuery',
+            'useMutation',
+            'useLazyQuery',
+            'useSubscription',
+
+            // Type checking and validation
+            '*.includes',
+            '*.indexOf',
+            '*.startsWith',
+            '*.endsWith',
+            '*.split',
+            '*.join',
+            '*.match',
+            '*.replace',
+            '*.test',
+            'Object.keys',
+            'Object.values',
+            'Object.entries',
+            'Array.isArray',
+
+            // DOM operations
+            '*.getElementById',
+            '*.getElementsByClassName',
+            '*.querySelector',
+            '*.querySelectorAll',
+            '*.getAttribute',
+            '*.setAttribute',
+            '*.addEventListener',
+            '*.removeEventListener',
+            '*.dispatchEvent',
+            '*.createElement',
+
+            // Storage
+            'localStorage.*',
+            'sessionStorage.*',
+            'searchParams.*',
+            '*.get',
+            '*.set',
+            '*.has',
+            '*.delete',
+
+            // Misc utilities
+            'cva',
+            'cn',
+            'clsx',
+            'classNames',
+            'track',
+            '*.postMessage',
+            '*.dispatch',
+            '*.commit',
+
+            // Event handlers (typically receive enum values, not user-facing text)
+            'onChange',
+            'onClick',
+            'onSelect',
+            'onSubmit',
+            'onFocus',
+            'onBlur',
+            'onKeyDown',
+            'onKeyUp',
+            'onMouseEnter',
+            'onMouseLeave',
+          ],
+        },
+      ],
     },
   },
 
@@ -175,7 +474,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
@@ -210,9 +509,10 @@ export default [
 
   // Storybook files
   {
-    files: ['*.stories.@(ts|tsx|js|jsx)'],
+    files: ['**/*.stories.ts', '**/*.stories.tsx', '**/*.stories.js', '**/*.stories.jsx'],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
+      'lingui/no-unlocalized-strings': 'off',
     },
   },
 
@@ -250,7 +550,18 @@ export default [
   // Test files
   {
     files: [
-      '*.test.@(ts|tsx|js|jsx)',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.test.js',
+      '**/*.test.jsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.spec.js',
+      '**/*.spec.jsx',
+      '**/__tests__/**/*.ts',
+      '**/__tests__/**/*.tsx',
+      '**/__mocks__/**/*.ts',
+      '**/__mocks__/**/*.tsx',
     ],
     languageOptions: {
       globals: {
@@ -266,6 +577,7 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
+      'lingui/no-unlocalized-strings': 'off',
     },
   },
 

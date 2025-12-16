@@ -152,6 +152,7 @@ type TimingTabProps = {
 };
 
 const TimingTab = ({ debug }: TimingTabProps) => {
+  const { t } = useLingui();
   const totalTime =
     debug.agentExecutionStartTimeMs !== undefined
       ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
@@ -160,37 +161,37 @@ const TimingTab = ({ debug }: TimingTabProps) => {
   return (
     <StyledTimingSection>
       <TimingRow
-        label="Routing decision"
+        label={t`Routing decision`}
         value={debug.routingTimeMs && `${debug.routingTimeMs}ms`}
       />
       <TimingRow
-        label="Context building (routing)"
+        label={t`Context building (routing)`}
         value={debug.contextBuildTimeMs && `${debug.contextBuildTimeMs}ms`}
       />
       <TimingRow
-        label="Context building (agent)"
+        label={t`Context building (agent)`}
         value={
           debug.agentContextBuildTimeMs && `${debug.agentContextBuildTimeMs}ms`
         }
       />
       <TimingRow
-        label="Tool generation"
+        label={t`Tool generation`}
         value={debug.toolGenerationTimeMs && `${debug.toolGenerationTimeMs}ms`}
       />
       <TimingRow
-        label="AI request prep"
+        label={t`AI request prep`}
         value={debug.aiRequestPrepTimeMs && `${debug.aiRequestPrepTimeMs}ms`}
       />
       <TimingRow
-        label="Agent execution"
+        label={t`Agent execution`}
         value={debug.agentExecutionTimeMs && `${debug.agentExecutionTimeMs}ms`}
       />
-      <TimingRow label="Total time" value={totalTime} />
-      <TimingRow label="Available tools" value={debug.toolCount} />
-      <TimingRow label="Tool calls made" value={debug.toolCallCount} />
-      <TimingRow label="Context records" value={debug.contextRecordCount} />
+      <TimingRow label={t`Total time`} value={totalTime} />
+      <TimingRow label={t`Available tools`} value={debug.toolCount} />
+      <TimingRow label={t`Tool calls made`} value={debug.toolCallCount} />
+      <TimingRow label={t`Context records`} value={debug.contextRecordCount} />
       <TimingRow
-        label="Context size"
+        label={t`Context size`}
         value={
           debug.contextSizeBytes !== undefined
             ? formatBytes(debug.contextSizeBytes)
@@ -198,7 +199,7 @@ const TimingTab = ({ debug }: TimingTabProps) => {
         }
       />
       <TimingRow
-        label="Routing tokens"
+        label={t`Routing tokens`}
         value={
           debug.routingTotalTokens !== undefined
             ? formatTokenBreakdown(
@@ -210,7 +211,7 @@ const TimingTab = ({ debug }: TimingTabProps) => {
         }
       />
       <TimingRow
-        label="Agent tokens"
+        label={t`Agent tokens`}
         value={
           debug.agentTotalTokens !== undefined
             ? formatTokenBreakdown(
@@ -222,10 +223,10 @@ const TimingTab = ({ debug }: TimingTabProps) => {
         }
       />
       <TimingRow
-        label="Total cost"
+        label={t`Total cost`}
         value={
           debug.totalCostInCredits !== undefined
-            ? `${formatNumber(debug.totalCostInCredits)} credits`
+            ? t`${formatNumber(debug.totalCostInCredits)} credits`
             : undefined
         }
       />
@@ -279,7 +280,7 @@ const ContextTab = ({ debug, copyToClipboard }: ContextTabProps) => {
   if (!debug.context) {
     return (
       <StyledTimingLabel>
-        No context was provided for this request
+        {t`No context was provided for this request`}
       </StyledTimingLabel>
     );
   }
@@ -304,7 +305,7 @@ const ContextTab = ({ debug, copyToClipboard }: ContextTabProps) => {
   } catch {
     return (
       <StyledTimingLabel>
-        Failed to parse context: {debug.context}
+        {t`Failed to parse context: ${debug.context}`}
       </StyledTimingLabel>
     );
   }
@@ -315,6 +316,7 @@ type RoutingDebugDisplayProps = {
 };
 
 export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -323,7 +325,7 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
   return (
     <StyledContainer>
       <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
-        <StyledTimingLabel>Debug Info</StyledTimingLabel>
+        <StyledTimingLabel>{t`Debug Info`}</StyledTimingLabel>
         {isExpanded ? (
           <IconChevronUp size={theme.icon.size.sm} />
         ) : (
@@ -338,20 +340,20 @@ export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
               isActive={activeTab === 'timing'}
               onClick={() => setActiveTab('timing')}
             >
-              Timing
+              {t`Timing`}
             </StyledTab>
             <StyledTab
               isActive={activeTab === 'details'}
               onClick={() => setActiveTab('details')}
             >
-              Details
+              {t`Details`}
             </StyledTab>
             {debug.context && (
               <StyledTab
                 isActive={activeTab === 'context'}
                 onClick={() => setActiveTab('context')}
               >
-                Context
+                {t`Context`}
               </StyledTab>
             )}
           </StyledTabContainer>

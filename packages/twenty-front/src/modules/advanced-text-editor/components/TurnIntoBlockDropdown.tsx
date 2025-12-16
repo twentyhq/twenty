@@ -5,6 +5,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/display';
@@ -50,7 +51,7 @@ export const TurnIntoBlockDropdown = ({
 
   const options = useTurnIntoBlockOptions(editor);
   const activeItem = options.find((option) => option.isActive());
-  const { icon: ActiveIcon = IconPilcrow, title: activeTitle = 'Paragraph' } =
+  const { icon: ActiveIcon = IconPilcrow, title: activeTitle = t`Paragraph` } =
     activeItem ?? {};
 
   return (

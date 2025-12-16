@@ -8,6 +8,7 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -66,7 +67,7 @@ export const ObjectFilterDropdownSourceSelect = ({
 
     const filterDisplayValue =
       selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? `${selectedItemNames.length} source types`
+        ? t`${selectedItemNames.length} source types`
         : selectedItemNames.join(', ');
 
     const newFilterValue =

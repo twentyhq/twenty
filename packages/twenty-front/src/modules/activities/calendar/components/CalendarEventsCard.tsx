@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
@@ -46,6 +47,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 export const CalendarEventsCard = () => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
@@ -109,11 +111,10 @@ export const CalendarEventsCard = () => {
         <AnimatedPlaceholder type="noMatchRecord" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No Events
+            {t`No Events`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No events have been scheduled with this{' '}
-            {targetRecord.targetObjectNameSingular} yet.
+            {t`No events have been scheduled with this ${targetRecord.targetObjectNameSingular} yet.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

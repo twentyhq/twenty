@@ -75,10 +75,10 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
           />
         }
       >
-        Hidden {recordGroupFieldMetadata?.label}
+        {t`Hidden`} {recordGroupFieldMetadata?.label}
       </DropdownMenuHeader>
       <RecordGroupsVisibilityDropdownSection
-        title={`Hidden ${recordGroupFieldMetadata?.label}`}
+        title={`${t`Hidden`} ${recordGroupFieldMetadata?.label}`}
         recordGroupIds={hiddenRecordGroupIds}
         onVisibilityChange={handleRecordGroupVisibilityChange}
         isDraggable={false}
