@@ -153,8 +153,6 @@ export class DevSeederService {
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
-      featureFlags: featureFlagsMap,
-      twentyStandardFlatApplication,
     });
 
     await this.devSeederMetadataService.seedRelations({

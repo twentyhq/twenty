@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
@@ -25,7 +22,6 @@ import { ROCKET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seed
 import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/survey-results-object-seed.constant';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
-import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 
 @Injectable()
 export class DevSeederMetadataService {
@@ -33,8 +29,6 @@ export class DevSeederMetadataService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -85,13 +79,9 @@ export class DevSeederMetadataService {
   public async seed({
     dataSourceMetadata,
     workspaceId,
-    featureFlags,
-    twentyStandardFlatApplication,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
-    twentyStandardFlatApplication: FlatApplication;
-    featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
 
@@ -172,36 +162,6 @@ export class DevSeederMetadataService {
     await this.fieldMetadataService.createManyFields({
       createFieldInputs,
       workspaceId,
-    });
-  }
-
-  private async seedCoreViews({
-    workspaceId,
-    dataSourceMetadata,
-    featureFlags,
-    twentyStandardFlatApplication,
-  }: {
-    workspaceId: string;
-    dataSourceMetadata: DataSourceEntity;
-    featureFlags?: Record<string, boolean>;
-    twentyStandardFlatApplication: FlatApplication;
-  }): Promise<void> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    await prefillCoreViews({
-      coreDataSource: this.coreDataSource,
-      workspaceId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      workspaceSchemaName: dataSourceMetadata.schema,
-      featureFlags,
-      twentyStandardFlatApplication,
     });
   }
 
