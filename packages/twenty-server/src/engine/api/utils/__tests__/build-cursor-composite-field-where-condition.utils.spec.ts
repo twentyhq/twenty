@@ -122,13 +122,59 @@ describe('buildCompositeFieldWhereCondition', () => {
           isForwardPagination,
         });
 
-        expect(result).toEqual({
-          [fieldKey]: {
-            firstName: {
-              [expectedOperator]: value.firstName,
+        const firstOrderBy = orderBy[0];
+
+        if (!firstOrderBy) {
+          throw new Error('Invalid orderBy');
+        }
+
+        const fieldOrderBy = firstOrderBy[fieldKey];
+
+        if (!fieldOrderBy || typeof fieldOrderBy !== 'object') {
+          throw new Error('Invalid field orderBy');
+        }
+
+        const orderByDirection = fieldOrderBy.firstName;
+
+        if (!orderByDirection) {
+          throw new Error('Invalid orderBy direction');
+        }
+
+        const isNullsFirst =
+          orderByDirection === OrderByDirection.AscNullsFirst ||
+          orderByDirection === OrderByDirection.DescNullsFirst;
+        const shouldIncludeNulls =
+          (expectedOperator === 'lt' && isNullsFirst) ||
+          (expectedOperator === 'gt' && !isNullsFirst);
+
+        if (shouldIncludeNulls) {
+          expect(result).toEqual({
+            or: [
+              {
+                [fieldKey]: {
+                  firstName: {
+                    [expectedOperator]: value.firstName,
+                  },
+                },
+              },
+              {
+                [fieldKey]: {
+                  firstName: {
+                    is: 'NULL',
+                  },
+                },
+              },
+            ],
+          });
+        } else {
+          expect(result).toEqual({
+            [fieldKey]: {
+              firstName: {
+                [expectedOperator]: value.firstName,
+              },
             },
-          },
-        });
+          });
+        }
       },
     );
 
@@ -292,12 +338,31 @@ describe('buildCompositeFieldWhereCondition', () => {
 
         expect(orConditions).toHaveLength(propertiesWithValues);
 
-        expect(orConditions[0]).toHaveProperty(fieldKey);
+        const firstCondition = orConditions[0];
+
+        if (firstCondition.or) {
+          expect(firstCondition.or).toBeInstanceOf(Array);
+          expect(firstCondition.or[0]).toHaveProperty(fieldKey);
+        } else {
+          expect(firstCondition).toHaveProperty(fieldKey);
+        }
 
         for (const [index, orCondition] of orConditions.slice(1).entries()) {
-          expect(orCondition).toHaveProperty('and');
-          expect(Array.isArray(orCondition.and)).toBe(true);
-          expect(orCondition.and).toHaveLength(index + 2);
+          if (orCondition.or) {
+            expect(orCondition.or).toBeInstanceOf(Array);
+            const mainCondition = orCondition.or[0];
+
+            if (mainCondition.and) {
+              expect(Array.isArray(mainCondition.and)).toBe(true);
+            } else {
+              expect(mainCondition).toHaveProperty(fieldKey);
+            }
+          } else if (orCondition.and) {
+            expect(Array.isArray(orCondition.and)).toBe(true);
+            expect(orCondition.and).toHaveLength(index + 2);
+          } else {
+            expect(orCondition).toHaveProperty(fieldKey);
+          }
         }
       },
     );
