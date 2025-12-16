@@ -62,21 +62,15 @@ export class DevSeederPermissionsService {
       );
     }
 
-    try {
-      await this.roleTargetService.create({
-        createRoleTargetInput: {
-          roleId: adminRole.id,
-          targetId: API_KEY_DATA_SEED_IDS.ID_1,
-          targetMetadataForeignKey: 'apiKeyId',
-          applicationId: twentyStandardFlatApplication.id,
-        },
-        workspaceId,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Could not assign role to test API key: ${error.message}`,
-      );
-    }
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId: adminRole.id,
+        targetId: API_KEY_DATA_SEED_IDS.ID_1,
+        targetMetadataForeignKey: 'apiKeyId',
+        applicationId: twentyStandardFlatApplication.id,
+      },
+      workspaceId,
+    });
 
     let adminUserWorkspaceId: string | undefined;
     let memberUserWorkspaceIds: string[] = [];
