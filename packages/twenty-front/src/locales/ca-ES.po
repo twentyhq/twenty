@@ -87,6 +87,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -181,7 +182,7 @@ msgstr "{failedCount} fitxer(s) no s'ha(n) pogut carregar"
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr ""
+msgstr "{filterRulesCount, plural, one {{filterRulesCount} regla} other {{filterRulesCount} regles}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -501,6 +502,11 @@ msgstr "URL ACS copiat al porta-retalls"
 msgid "Action"
 msgstr "Acció"
 
+#. js-lingui-id: j6ogTf
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Action on click"
+msgstr ""
+
 #. js-lingui-id: 7L01XJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -586,6 +592,7 @@ msgstr "Afegeix un domini d'accés aprovat"
 
 #. js-lingui-id: We0vOO
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Add Block"
 msgstr "Afegeix Bloc"
 
@@ -851,7 +858,7 @@ msgstr "Després d'un temps determinat"
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "agent"
-msgstr ""
+msgstr "agent"
 
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1066,7 +1073,7 @@ msgstr "Permetre als usuaris iniciar sessió amb un correu electrònic i contras
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
-msgstr ""
+msgstr "S'ha produït un error"
 
 #. js-lingui-id: VD5bNu
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -1118,7 +1125,7 @@ msgstr "S'ha produït un error intern en validar els vostres canvis. Contacteu a
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
-msgstr ""
+msgstr "Ja existeix un objecte amb aquest nom"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1297,7 +1304,7 @@ msgstr "Àrab"
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Archive files cannot be previewed. Please download the file to access its contents."
-msgstr ""
+msgstr "Els fitxers comprimits no es poden previsualitzar. Si us plau, descarrega el fitxer per accedir al seu contingut."
 
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1327,7 +1334,7 @@ msgstr "Esteu segur que voleu restaurar aquest registre?"
 #. js-lingui-id: 9JFf0y
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Are you sure you want to update the role of this user from \"{oldRoleLabel}\" to \"{newRoleLabel}\"?"
-msgstr ""
+msgstr "Segur que voleu actualitzar el rol d'aquest usuari de \"{oldRoleLabel}\" a \"{newRoleLabel}\"?"
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -1576,6 +1583,11 @@ msgstr "Enrere"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Tornar al contingut"
+
+#. js-lingui-id: Hv/jpu
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Background Colors"
+msgstr ""
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1841,6 +1853,7 @@ msgstr "Català"
 
 #. js-lingui-id: tHntRt
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Change Color"
 msgstr "Canvia Color"
 
@@ -1966,6 +1979,21 @@ msgstr "Trieu els camps que identificaran els vostres registres"
 msgid "Choose the format used to display date value"
 msgstr "Tria el format utilitzat per mostrar el valor de la data"
 
+#. js-lingui-id: CiPJbh
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a link"
+msgstr ""
+
+#. js-lingui-id: D3MauW
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click a phone number"
+msgstr ""
+
+#. js-lingui-id: QR1yAR
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+msgid "Choose what happens when you click an email"
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -2042,6 +2070,11 @@ msgstr "Tanca"
 msgid "Close command menu"
 msgstr "Tanca el menú de comandament"
 
+#. js-lingui-id: EWPtMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Code"
+msgstr ""
+
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Code Editor"
@@ -2059,6 +2092,7 @@ msgstr "Programar la teva funció"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2118,6 +2152,7 @@ msgstr "completat"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Completed"
 msgstr "Completat"
 
@@ -2207,7 +2242,7 @@ msgstr "Configura aquests registres DNS amb el teu proveïdor de domini"
 #. js-lingui-id: BgaUQT
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "Configure this widget to display fields"
-msgstr ""
+msgstr "Configura aquest giny per mostrar camps"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -2247,7 +2282,7 @@ msgstr "Confirmar la reducció"
 #. js-lingui-id: 28b8wO
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Confirm role update"
-msgstr ""
+msgstr "Confirmeu l'actualització del rol"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -2368,6 +2403,11 @@ msgstr "Copiat al porta-retalls"
 msgid "Copy"
 msgstr "Copia"
 
+#. js-lingui-id: NmPNJJ
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Copy code"
+msgstr ""
+
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Copy invitation link"
@@ -2383,6 +2423,11 @@ msgstr "Copia l'enllaç"
 msgid "Copy link to view"
 msgstr "Copia l'enllaç per veure"
 
+#. js-lingui-id: VBIlvI
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Copy output"
+msgstr ""
+
 #. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Copy paste the code below"
@@ -2397,6 +2442,11 @@ msgstr "Copia la clau de configuració"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "Copia aquesta clau ja que no serà visible de nou"
+
+#. js-lingui-id: /4gGIX
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Copy to clipboard"
+msgstr ""
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -2752,7 +2802,7 @@ msgstr "Personalitza dissenys de pàgina i estructura d'UI"
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Customize what this user can view and perform"
-msgstr ""
+msgstr "Personalitzeu què pot veure i fer aquest usuari"
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2791,7 +2841,7 @@ msgstr "Fosc"
 #. js-lingui-id: ogQzcZ
 #: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
 msgid "Dashboard duplicated successfully"
-msgstr ""
+msgstr "Quadre de comandament duplicat correctament"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3081,6 +3131,7 @@ msgstr "elimina"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -3093,12 +3144,12 @@ msgstr "Elimina"
 #. js-lingui-id: EsGY/k
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
-msgstr ""
+msgstr "Eliminar el camp {fieldLabel}?"
 
 #. js-lingui-id: j/OgnL
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
-msgstr ""
+msgstr "Eliminar l'objecte {objectLabel}?"
 
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -3143,7 +3194,7 @@ msgstr "Suprimir quadre de comandament"
 #. js-lingui-id: qnWLDf
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboards"
-msgstr ""
+msgstr "Suprimir quadres de comandament"
 
 #. js-lingui-id: gf2eXy
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -3417,6 +3468,11 @@ msgstr "Punts i coma - {dotsAndCommaExample}"
 msgid "Downgrade"
 msgstr "Baixar de categoria"
 
+#. js-lingui-id: qnTwse
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Download {filename}"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -3430,7 +3486,7 @@ msgstr "Descarregar Arxius"
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Download sample"
-msgstr ""
+msgstr "Descarrega el fitxer de mostra"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3447,7 +3503,7 @@ msgstr ""
 #. js-lingui-id: MR2sZ1
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate Dashboard"
-msgstr ""
+msgstr "Duplicar quadre de comandament"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -3614,6 +3670,7 @@ msgstr "El correu electrònic no pot estar buit"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 msgid "Email copied to clipboard"
 msgstr "Correu electrònic copiat al porta-retalls"
 
@@ -3727,6 +3784,7 @@ msgstr "Buit"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3745,6 +3803,7 @@ msgstr "Bústia buida"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3841,7 +3900,7 @@ msgstr "Introdueix un número entre 0 i 59"
 #. js-lingui-id: uhDeRP
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 1 and 60"
-msgstr ""
+msgstr "Introdueix un número entre 1 i 60"
 
 #. js-lingui-id: ahwn7G
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -3905,11 +3964,6 @@ msgstr "Variables d'entorn"
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Erasure of soft-deleted records"
 msgstr "Esborrament de registres eliminats suaument"
-
-#. js-lingui-id: XOEl9R
-#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-msgid "Error copying to clipboard"
-msgstr "Error en copiar al porta-retalls"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4020,7 +4074,7 @@ msgstr ""
 #. js-lingui-id: FDRUdE
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "Evaluating"
-msgstr ""
+msgstr "Avaluant"
 
 #. js-lingui-id: Y3MReI
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -4163,6 +4217,7 @@ msgstr "Sortir de la configuració"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4318,6 +4373,7 @@ msgstr "Crèdits extres utilitzats"
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Failed"
 msgstr "Error"
 
@@ -4339,7 +4395,7 @@ msgstr "Error al suprimir feines. Torneu-ho a provar més tard."
 #. js-lingui-id: NUmmdc
 #: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
 msgid "Failed to duplicate dashboard"
-msgstr ""
+msgstr "No s'ha pogut duplicar el quadre de comandament"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
@@ -4395,7 +4451,7 @@ msgstr "Ha fallat l'actualització del preu."
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
-msgstr ""
+msgstr "Ha fallat l'actualització del rol"
 
 #. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
@@ -4463,7 +4519,7 @@ msgstr "Camp"
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
-msgstr ""
+msgstr "Camp eliminat"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -4665,7 +4721,7 @@ msgstr "Funcions - Configuració"
 #. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
-msgstr ""
+msgstr "Gràfic de mesurador"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4679,6 +4735,11 @@ msgstr "General"
 #: src/utils/title-utils.ts
 msgid "General - Settings"
 msgstr "General - Configuració"
+
+#. js-lingui-id: wu9eMO
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Generated Files"
+msgstr ""
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4910,6 +4971,11 @@ msgstr "Amaga execucions eliminades"
 msgid "Hide deleted workflows"
 msgstr "Amagar fluxos de treball eliminats"
 
+#. js-lingui-id: MuEcPp
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Hide empty category"
+msgstr ""
+
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
@@ -4953,7 +5019,7 @@ msgstr "Http"
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
-msgstr ""
+msgstr "Sol·licitud HTTP"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5151,7 +5217,7 @@ msgstr "Índexs"
 #. js-lingui-id: 623chP
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Infos"
-msgstr ""
+msgstr "Informació"
 
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -5456,7 +5522,7 @@ msgstr "Italià"
 #. js-lingui-id: hgr8eo
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "items"
-msgstr ""
+msgstr "elements"
 
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -5696,11 +5762,12 @@ msgstr ""
 #. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
-msgstr ""
+msgstr "Gràfic de línies"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -6005,7 +6072,7 @@ msgstr "La sincronització de missatges no està disponible perquè el servei es
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Messages"
-msgstr ""
+msgstr "Missatges"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -6051,7 +6118,7 @@ msgstr "Rang mínim"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr ""
+msgstr "El valor del minut no pot superar 60. Per a intervals superiors a 60 minuts, utilitza el tipus de disparador \"Hores\" o una expressió cron personalitzada."
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -6470,7 +6537,7 @@ msgstr "Sense país"
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 msgid "No data"
-msgstr ""
+msgstr "Sense dades"
 
 #. js-lingui-id: B6C0XJ
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -6545,7 +6612,7 @@ msgstr ""
 #. js-lingui-id: eiEb25
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "No fields to display"
-msgstr ""
+msgstr "No hi ha cap camp per mostrar"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6635,6 +6702,11 @@ msgstr "No hi ha models disponibles. Si us plau, configureu models d'IA a la con
 msgid "No option found"
 msgstr "No s'ha trobat cap opció"
 
+#. js-lingui-id: XRc1G9
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "No output"
+msgstr ""
+
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
@@ -6676,7 +6748,7 @@ msgstr "Cap resultat"
 #. js-lingui-id: FVzmGK
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "No role assigned to this member"
-msgstr ""
+msgstr "No s'ha assignat cap rol a aquest membre"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -6839,7 +6911,7 @@ msgstr "Objecte"
 #. js-lingui-id: 5Dll32
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Object deleted"
-msgstr ""
+msgstr "Objecte eliminat"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -6997,6 +7069,11 @@ msgstr "Només la marca de temps i els participants seran compartits amb el teu 
 msgid "Open"
 msgstr "Obrir"
 
+#. js-lingui-id: JG4LoU
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open as link"
+msgstr ""
+
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Open command menu"
@@ -7016,7 +7093,7 @@ msgstr "Obrir en"
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
-msgstr ""
+msgstr "Obre en Rols"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7100,6 +7177,12 @@ msgstr "Altres espais de treball"
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
 msgstr "El nostre equip pot ajudar-te a configurar el teu espai de treball perquè s'adapti a les teves necessitats i fluxos de treball específics."
 
+#. js-lingui-id: gh06VD
+#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Output"
+msgstr ""
+
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
@@ -7123,17 +7206,17 @@ msgstr "Pàgina"
 #. js-lingui-id: SZgFyi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout"
-msgstr ""
+msgstr "disseny de pàgina"
 
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout tab"
-msgstr ""
+msgstr "pestanya de disseny de pàgina"
 
 #. js-lingui-id: sVcqjZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout widget"
-msgstr ""
+msgstr "giny de disseny de pàgina"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -7239,7 +7322,7 @@ msgstr "Destruir permanentment el quadre de comandament"
 #. js-lingui-id: n7S2Oo
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Permanently destroy dashboards"
-msgstr ""
+msgstr "Destruir permanentment quadres de comandament"
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7307,7 +7390,7 @@ msgstr "Fotografia"
 #. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
-msgstr ""
+msgstr "Gràfic circular"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7414,7 +7497,7 @@ msgstr "Omplint prèviament les dades del teu espai de treball..."
 #. js-lingui-id: rNqTKZ
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
-msgstr ""
+msgstr "Prefix"
 
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
@@ -7430,7 +7513,7 @@ msgstr "Previsualització"
 #. js-lingui-id: Fe5cbB
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Preview Not Available"
-msgstr ""
+msgstr "Vista prèvia no disponible"
 
 #. js-lingui-id: DHhJ7s
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7545,6 +7628,11 @@ msgstr "Domini públic eliminat correctament"
 msgid "Public Domains"
 msgstr "Dominis públics"
 
+#. js-lingui-id: GUpZQM
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Python Code Execution"
+msgstr ""
+
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter"
@@ -7587,7 +7675,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "Ratio"
-msgstr ""
+msgstr "Ràtio"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7617,7 +7705,7 @@ msgstr "Registre"
 #. js-lingui-id: aGGOPJ
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Record (ID)"
-msgstr ""
+msgstr "Registre (ID)"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -7907,10 +7995,15 @@ msgstr "Valors de retorn"
 msgid "Revoked for this object"
 msgstr "Revocat per aquest objecte"
 
+#. js-lingui-id: NP5Nbf
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Rich Text"
+msgstr ""
+
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role"
-msgstr ""
+msgstr "rol"
 
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -7983,6 +8076,11 @@ msgstr "Executa un workflow i torna aquí per veure les seves execucions"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Executa Funció"
+
+#. js-lingui-id: LTC198
+#: src/modules/ai/components/CodeExecutionDisplay.tsx
+msgid "Running..."
+msgstr ""
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8178,7 +8276,7 @@ msgstr "Cerca operacions"
 #. js-lingui-id: 996xRf
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
-msgstr ""
+msgstr "Opcions de cerca"
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -8412,7 +8510,7 @@ msgstr "Selecciona el full a utilitzar"
 #. js-lingui-id: iWf0Zj
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Select value"
-msgstr ""
+msgstr "Selecciona un valor"
 
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8980,7 +9078,7 @@ msgstr "{recordCount, plural, one {s'ha fusionat un registre} other {s'han fusio
 #. js-lingui-id: QJz8/3
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
-msgstr ""
+msgstr "Sufix"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -9188,6 +9286,11 @@ msgstr "text"
 msgid "Text"
 msgstr "Text"
 
+#. js-lingui-id: fq+5a1
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
+msgid "Text Colors"
+msgstr ""
+
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
@@ -9375,7 +9478,7 @@ msgstr "Aquest valor de la base de dades supera la configuració de l'entorn."
 #. js-lingui-id: hMvPrD
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file type cannot be previewed. Please download the file to view it."
-msgstr ""
+msgstr "Aquest tipus de fitxer no es pot previsualitzar. Si us plau, descarrega el fitxer per veure'l."
 
 #. js-lingui-id: E4JJ5C
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -9430,12 +9533,12 @@ msgstr "Això cancel·larà el canvi de pla programat i mantindrà el teu pla ac
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
-msgstr ""
+msgstr "Això eliminarà permanentment el camp i totes les seves dades de {objectLabel}. Escriu \"yes\" per confirmar."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
-msgstr ""
+msgstr "Això eliminarà permanentment l'objecte i tots els seus registres. Escriu \"yes\" per confirmar."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -9749,7 +9852,7 @@ msgstr "Camps únics"
 #: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
-msgstr ""
+msgstr "unitat"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9822,7 +9925,7 @@ msgstr "Actualitza"
 #. js-lingui-id: 5bRMKt
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Update role"
-msgstr ""
+msgstr "Actualitza el rol"
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -10061,6 +10164,11 @@ msgstr ""
 msgid "View billing details"
 msgstr "Veure els detalls de facturació"
 
+#. js-lingui-id: Mv1YVf
+#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+msgid "View existing record"
+msgstr ""
+
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"
@@ -10141,6 +10249,11 @@ msgstr "Esperant"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting Children"
 msgstr "Infants en espera"
+
+#. js-lingui-id: TdQd9Q
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Waiting for output..."
+msgstr ""
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx

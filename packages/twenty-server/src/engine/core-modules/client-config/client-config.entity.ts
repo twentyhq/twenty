@@ -47,6 +47,9 @@ export class ClientAIModelConfig {
 
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;
+
+  @Field(() => Boolean, { nullable: true })
+  deprecated?: boolean;
 }
 
 @ObjectType()

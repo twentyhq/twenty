@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 type GraphWidgetLegendDotProps = {
   color: string;
+  className?: string;
 };
 
 const StyledDot = styled.div<{ color: string }>`
@@ -12,6 +13,9 @@ const StyledDot = styled.div<{ color: string }>`
   flex-shrink: 0;
 `;
 
-export const GraphWidgetLegendDot = ({ color }: GraphWidgetLegendDotProps) => {
-  return <StyledDot color={color} />;
+export const GraphWidgetLegendDot = ({
+  color,
+  className,
+}: GraphWidgetLegendDotProps) => {
+  return <StyledDot color={color} className={className} />;
 };

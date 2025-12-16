@@ -2,6 +2,7 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -26,6 +27,11 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutId,
   );
 
+  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
+
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const endPageLayoutDragSelection = useRecoilCallback(
@@ -42,6 +48,7 @@ export const useEndPageLayoutDragSelection = (
 
           if (isDefined(draggedBounds)) {
             set(pageLayoutDraggedAreaState, draggedBounds);
+            set(pageLayoutEditingWidgetIdState, null);
 
             navigatePageLayoutCommandMenu({
               commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
@@ -54,6 +61,7 @@ export const useEndPageLayoutDragSelection = (
     [
       navigatePageLayoutCommandMenu,
       pageLayoutDraggedAreaState,
+      pageLayoutEditingWidgetIdState,
       pageLayoutSelectedCellsState,
     ],
   );

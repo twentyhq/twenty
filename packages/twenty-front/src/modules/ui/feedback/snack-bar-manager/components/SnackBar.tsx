@@ -30,10 +30,9 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   duration?: number;
   icon?: ReactNode;
   message: string;
-  link?: {
-    href: string;
-    text: string;
-  };
+  actionText?: string;
+  actionOnClick?: () => void;
+  actionTo?: string;
   detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
@@ -118,6 +117,10 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const StyledActionButton = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(6)};
+`;
+
 const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
   [SnackBarVariant.Default]: 'Alert',
   [SnackBarVariant.Error]: 'Error',
@@ -134,7 +137,9 @@ export const SnackBar = ({
   id,
   message,
   detailedMessage,
-  link,
+  actionText,
+  actionOnClick,
+  actionTo,
   onCancel,
   onClose,
   role = 'status',
@@ -230,7 +235,14 @@ export const SnackBar = ({
       {isDefined(sanitizedDetailedMessage) && (
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
-      {link && <StyledLink to={link.href}>{link.text}</StyledLink>}
+      {actionText && actionTo && (
+        <StyledLink to={actionTo}>{actionText}</StyledLink>
+      )}
+      {actionText && actionOnClick && !actionTo && (
+        <StyledActionButton>
+          <LightButton title={actionText} onClick={actionOnClick} />
+        </StyledActionButton>
+      )}
     </StyledContainer>
   );
 };

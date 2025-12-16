@@ -140,7 +140,6 @@ describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
   let workspaceRepository: Repository<WorkspaceEntity>;
   let runCoreMigrationsSpy: jest.SpyInstance;
-  let globalWorkspaceOrmManagerSpy: GlobalWorkspaceOrmManager;
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
@@ -184,9 +183,6 @@ describe('UpgradeCommandRunner', () => {
     workspaceRepository = module.get<Repository<WorkspaceEntity>>(
       getRepositoryToken(WorkspaceEntity),
     );
-    globalWorkspaceOrmManagerSpy = module.get<GlobalWorkspaceOrmManager>(
-      GlobalWorkspaceOrmManager,
-    );
   };
 
   it('should ignore and list as succesfull upgrade on workspace with higher version', async () => {
@@ -214,10 +210,9 @@ describe('UpgradeCommandRunner', () => {
     expect(successReport.length).toBe(1);
     expect(failReport.length).toBe(0);
 
-    [
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-      upgradeCommandRunner.runOnWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(1));
+    [upgradeCommandRunner.runOnWorkspace].forEach((fn) =>
+      expect(fn).toHaveBeenCalledTimes(1),
+    );
 
     [workspaceRepository.update].forEach((fn) =>
       expect(fn).not.toHaveBeenCalled(),
@@ -239,10 +234,9 @@ describe('UpgradeCommandRunner', () => {
     // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
-    [
-      upgradeCommandRunner.runOnWorkspace,
-      globalWorkspaceOrmManagerSpy.destroyDataSourceForWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfWorkspace));
+    [upgradeCommandRunner.runOnWorkspace].forEach((fn) =>
+      expect(fn).toHaveBeenCalledTimes(numberOfWorkspace),
+    );
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
       numberOfWorkspace,
       { id: expect.any(String) },

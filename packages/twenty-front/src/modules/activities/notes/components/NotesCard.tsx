@@ -1,3 +1,4 @@
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
@@ -29,7 +30,14 @@ const StyledNotesContainer = styled.div`
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
-  const { notes, loading } = useNotes(targetRecord);
+  const { notes, loading, totalCountNotes, fetchMoreNotes, hasNextPage } =
+    useNotes(targetRecord);
+
+  const handleLastRowVisible = async () => {
+    if (hasNextPage) {
+      await fetchMoreNotes();
+    }
+  };
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
@@ -87,6 +95,7 @@ export const NotesCard = () => {
       <NoteList
         title={t`All`}
         notes={notes}
+        totalCount={totalCountNotes}
         button={
           hasObjectUpdatePermissions && (
             <Button
@@ -102,6 +111,10 @@ export const NotesCard = () => {
             />
           )
         }
+      />
+      <CustomResolverFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={handleLastRowVisible}
       />
     </StyledNotesContainer>
   );

@@ -3,8 +3,8 @@ import { Scope } from '@nestjs/common';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 
-import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

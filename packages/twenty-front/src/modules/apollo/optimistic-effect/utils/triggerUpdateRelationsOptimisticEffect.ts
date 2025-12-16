@@ -7,15 +7,18 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
-import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ObjectPermissions,
+} from 'twenty-shared/types';
 import {
   computeMorphRelationFieldName,
   CustomError,
@@ -147,12 +150,12 @@ const triggerUpdateRelationOptimisticEffect = ({
   }
 
   const currentFieldValueOnSourceRecord:
-    | RecordGqlConnection
+    | RecordGqlConnectionEdgesRequired
     | RecordGqlNode
     | null = currentSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
   const updatedFieldValueOnSourceRecord:
-    | RecordGqlConnection
+    | RecordGqlConnectionEdgesRequired
     | RecordGqlNode
     | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
@@ -179,6 +182,7 @@ const triggerUpdateRelationOptimisticEffect = ({
     CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
       targetObjectMetadata.nameSingular as CoreObjectNameSingular,
     );
+
   const gqlFieldNameOnTargetRecord =
     targetFieldMetadataFullObject.type === FieldMetadataType.RELATION
       ? targetFieldMetadataFullObject.name
@@ -189,7 +193,10 @@ const triggerUpdateRelationOptimisticEffect = ({
             sourceObjectMetadataItem.nameSingular,
           targetObjectMetadataNamePlural: sourceObjectMetadataItem.namePlural,
         });
-  if (shouldCascadeDeleteTargetRecords) {
+  if (
+    shouldCascadeDeleteTargetRecords &&
+    targetRecordsToDetachFrom.length > 0
+  ) {
     triggerDestroyRecordsOptimisticEffect({
       cache,
       objectMetadataItem: fullTargetObjectMetadataItem,
@@ -198,7 +205,10 @@ const triggerUpdateRelationOptimisticEffect = ({
       upsertRecordsInStore,
       objectPermissionsByObjectMetadataId,
     });
-  } else if (isDefined(currentSourceRecord)) {
+  } else if (
+    isDefined(currentSourceRecord) &&
+    targetRecordsToDetachFrom.length > 0
+  ) {
     targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
       triggerDetachRelationOptimisticEffect({
         cache,
@@ -306,12 +316,12 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
     }
 
     const currentFieldValueOnSourceRecord:
-      | RecordGqlConnection
+      | RecordGqlConnectionEdgesRequired
       | RecordGqlNode
       | null = currentSourceRecord?.[gqlFieldMorphRelation];
 
     const updatedFieldValueOnSourceRecord:
-      | RecordGqlConnection
+      | RecordGqlConnectionEdgesRequired
       | RecordGqlNode
       | null = updatedSourceRecord?.[gqlFieldMorphRelation];
 
@@ -338,7 +348,10 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
         targetObjectMetadata.nameSingular as CoreObjectNameSingular,
       );
-    if (shouldCascadeDeleteTargetRecords) {
+    if (
+      shouldCascadeDeleteTargetRecords &&
+      targetRecordsToDetachFrom.length > 0
+    ) {
       triggerDestroyRecordsOptimisticEffect({
         cache,
         objectMetadataItem: fullTargetObjectMetadataItem,
@@ -347,7 +360,10 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
         objectPermissionsByObjectMetadataId,
         upsertRecordsInStore,
       });
-    } else if (isDefined(currentSourceRecord)) {
+    } else if (
+      isDefined(currentSourceRecord) &&
+      targetRecordsToDetachFrom.length > 0
+    ) {
       targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
         triggerDetachRelationOptimisticEffect({
           cache,
@@ -387,7 +403,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
 };
 
 const extractTargetRecordsFromRelation = (
-  value: RecordGqlConnection | RecordGqlNode | null,
+  value: RecordGqlConnectionEdgesRequired | RecordGqlNode | null,
   relation: FieldMetadataItemRelation,
 ): RecordGqlNode[] => {
   // TODO investigate on the root cause of array injection here, should never occurs
@@ -399,9 +415,9 @@ const extractTargetRecordsFromRelation = (
   if (!isDefined(relation)) {
     throw new Error('Relation found is undefined');
   }
-  if (isObjectRecordConnection(relation, value)) {
-    return value.edges.map(({ node }) => node);
+  if (relation.type === RelationType.ONE_TO_MANY) {
+    return value.edges.map(({ node }: { node: RecordGqlNode }) => node);
   }
 
-  return [value];
+  return [value as RecordGqlNode];
 };

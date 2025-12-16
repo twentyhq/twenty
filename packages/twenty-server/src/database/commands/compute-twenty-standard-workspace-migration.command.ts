@@ -78,6 +78,14 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatViewMaps,
             },
+            flatAgentMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatAgentMaps,
+            },
+            flatRoleMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatRoleMaps,
+            },
           },
           workspaceId,
         })

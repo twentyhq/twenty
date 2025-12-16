@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -14,7 +16,27 @@ export enum PageLayoutExceptionMessageKey {
   TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION = 'TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION',
 }
 
-export class PageLayoutException extends CustomException<PageLayoutExceptionCode> {}
+const pageLayoutExceptionUserFriendlyMessages: Record<
+  PageLayoutExceptionCode,
+  MessageDescriptor
+> = {
+  [PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND]: msg`Page layout not found.`,
+  [PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA]: msg`Invalid page layout data.`,
+  [PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION]: msg`Tab not found for widget duplication.`,
+};
+
+export class PageLayoutException extends CustomException<PageLayoutExceptionCode> {
+  constructor(
+    message: string,
+    code: PageLayoutExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? pageLayoutExceptionUserFriendlyMessages[code],
+    });
+  }
+}
 
 export const generatePageLayoutExceptionMessage = (
   key: PageLayoutExceptionMessageKey,

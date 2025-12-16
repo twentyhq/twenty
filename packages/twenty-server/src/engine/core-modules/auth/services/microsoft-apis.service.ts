@@ -107,9 +107,7 @@ export class MicrosoftAPIsService {
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
-            workspaceId,
-          );
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
         await workspaceDataSource.transaction(
           async (manager: WorkspaceEntityManager) => {

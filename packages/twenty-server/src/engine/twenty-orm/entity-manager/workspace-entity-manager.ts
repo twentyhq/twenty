@@ -34,7 +34,6 @@ import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -45,7 +44,6 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
@@ -73,52 +71,34 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  private readonly _legacyInternalContext?: WorkspaceInternalContext;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
-  declare connection: WorkspaceDataSource;
+  declare connection: GlobalWorkspaceDataSource;
 
   constructor(
-    legacyInternalContext: WorkspaceInternalContext | undefined,
-    connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
+    connection: GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
     this.repositories = new Map();
-    this._legacyInternalContext = legacyInternalContext;
   }
 
   private get eventEmitterService(): WorkspaceEventEmitter {
-    const isGlobalFlow = (this.connection as WorkspaceDataSourceInterface)
-      .isGlobalFlow;
-
-    if (isGlobalFlow) {
-      return (this.connection as unknown as GlobalWorkspaceDataSource)
-        .eventEmitterService;
-    }
-
-    return this._legacyInternalContext!.eventEmitterService;
+    return this.connection.eventEmitterService;
   }
 
   get internalContext(): WorkspaceInternalContext {
-    const isGlobalFlow = (this.connection as WorkspaceDataSourceInterface)
-      .isGlobalFlow;
+    const context = getWorkspaceContext();
 
-    if (isGlobalFlow) {
-      const context = getWorkspaceContext();
-
-      return {
-        workspaceId: context.authContext.workspace.id,
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        flatIndexMaps: context.flatIndexMaps,
-        objectIdByNameSingular: context.objectIdByNameSingular,
-        featureFlagsMap: context.featureFlagsMap,
-        eventEmitterService: this.eventEmitterService,
-      };
-    }
-
-    return this._legacyInternalContext!;
+    return {
+      workspaceId: context.authContext.workspace.id,
+      flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+      flatIndexMaps: context.flatIndexMaps,
+      objectIdByNameSingular: context.objectIdByNameSingular,
+      featureFlagsMap: context.featureFlagsMap,
+      eventEmitterService: this.eventEmitterService,
+    };
   }
 
   getFeatureFlagMap(): FeatureFlagMap {
@@ -487,7 +467,7 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   private extractTargetNameSingularFromEntityTarget(
-    target: EntityTarget<unknown>,
+    target: EntityTarget<ObjectLiteral>,
   ): string {
     return this.connection.getMetadata(target).name;
   }
@@ -1316,7 +1296,12 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadataItem);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadataItem,
+        this,
+        this.internalContext,
+      );
     }
   }
 

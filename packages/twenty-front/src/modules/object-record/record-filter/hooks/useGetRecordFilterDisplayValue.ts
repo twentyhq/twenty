@@ -97,6 +97,10 @@ export const useGetRecordFilterDisplayValue = () => {
         case RecordFilterOperand.IS_BEFORE: {
           const pointInTime = new Date(recordFilter.value);
 
+          if (!isValid(pointInTime)) {
+            return '';
+          }
+
           const { displayValue } = getDateTimeFilterDisplayValue(pointInTime);
 
           return `${displayValue}`;

@@ -123,7 +123,7 @@ export class ObjectMetadataToolsFactory {
 
   generateTools(workspaceId: string): ToolSet {
     return {
-      'get-object-metadata': {
+      get_object_metadata: {
         description:
           'Find objects metadata. Retrieve information about the data model objects in the workspace.',
         inputSchema: GetObjectMetadataInputSchema,
@@ -146,7 +146,7 @@ export class ObjectMetadataToolsFactory {
           );
         },
       },
-      'create-object-metadata': {
+      create_object_metadata: {
         description:
           'Create a new object metadata in the workspace data model.',
         inputSchema: CreateObjectMetadataInputSchema,
@@ -183,7 +183,7 @@ export class ObjectMetadataToolsFactory {
           }
         },
       },
-      'update-object-metadata': {
+      update_object_metadata: {
         description:
           'Update an existing object metadata. Provide the object ID and the fields to update.',
         inputSchema: UpdateObjectMetadataInputSchema,
@@ -223,7 +223,7 @@ export class ObjectMetadataToolsFactory {
           }
         },
       },
-      'delete-object-metadata': {
+      delete_object_metadata: {
         description:
           'Delete an object metadata by its ID. This will also delete all associated fields.',
         inputSchema: DeleteObjectMetadataInputSchema,
