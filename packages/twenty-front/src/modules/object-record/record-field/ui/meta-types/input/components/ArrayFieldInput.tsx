@@ -22,12 +22,13 @@ export const ArrayFieldInput = () => {
   );
   const parseStringArrayToArrayValue = (arrayItems: string[]) => {
     const parseResponse = arraySchema.safeParse(arrayItems);
+
     if (parseResponse.success) {
       return parseResponse.data;
     }
   };
 
-  const handleChange = (newValue: any[]) => {
+  const handleChange = (newValue: string[]) => {
     if (!isDefined(newValue)) setDraftValue(null);
 
     const nextValue = parseStringArrayToArrayValue(newValue);
@@ -38,10 +39,13 @@ export const ArrayFieldInput = () => {
   };
 
   const handleClickOutside = (
-    _newValue: any,
+    _newValue: string[],
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({ newValue: draftValue, event });
+    onClickOutside?.({
+      newValue: parseStringArrayToArrayValue(draftValue),
+      event,
+    });
   };
 
   const handleEscape = (newValue: string[]) => {
