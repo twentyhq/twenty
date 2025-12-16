@@ -5,7 +5,6 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 
 export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   universalIdentifier: string;
-  standardId: string;
   nameSingular: O;
   namePlural: string;
   labelSingular: string;
@@ -32,7 +31,6 @@ export const createStandardObjectFlatMetadata = <
 >({
   context: {
     universalIdentifier,
-    standardId,
     nameSingular,
     namePlural,
     labelSingular,
@@ -52,7 +50,7 @@ export const createStandardObjectFlatMetadata = <
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
   universalIdentifier,
-  standardId,
+  standardId: null,
   applicationId: twentyStandardApplicationId,
   workspaceId,
   nameSingular,

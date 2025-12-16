@@ -58,7 +58,6 @@ export const computeFlatViewGroupsOnViewCreate = ({
 
     flatViewGroups.push({
       id: emptyGroupId,
-      fieldMetadataId: mainGroupByFieldMetadata.id,
       viewId: flatViewToCreateId,
       workspaceId: mainGroupByFieldMetadata.workspaceId,
       createdAt,

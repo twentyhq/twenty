@@ -7,6 +7,7 @@ import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBar
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
+import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -22,8 +23,8 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -37,9 +38,6 @@ import {
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-
-import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type NoDataLayerWrapperProps = BarCustomLayerProps<BarDatum>;
 
@@ -117,21 +115,22 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys } = useBarChartData({
-    data,
-    indexBy,
-    keys,
-    series,
-    colorRegistry,
-    seriesLabels,
-  });
+  const { barConfigs, enrichedKeys, legendItems, visibleKeys } =
+    useBarChartData({
+      data,
+      indexBy,
+      keys,
+      series,
+      colorRegistry,
+      seriesLabels,
+    });
 
   const calculatedValueRange =
     groupMode === 'stacked'
-      ? calculateStackedBarChartValueRange(data, keys)
-      : calculateValueRangeFromBarChartKeys(data, keys);
+      ? calculateStackedBarChartValueRange(data, visibleKeys)
+      : calculateValueRangeFromBarChartKeys(data, visibleKeys);
 
-  const hasNoData = data.length === 0;
+  const hasNoData = data.length === 0 || visibleKeys.length === 0;
 
   const { effectiveMinimumValue, effectiveMaximumValue } =
     computeEffectiveValueRange({
@@ -203,7 +202,7 @@ export const GraphWidgetBarChart = ({
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
-        keys={keys}
+        keys={visibleKeys}
         groupMode={groupMode}
         data={data}
         indexBy={indexBy}
@@ -211,7 +210,7 @@ export const GraphWidgetBarChart = ({
         chartId={id}
       />
     ),
-    [keys, groupMode, data, indexBy, layout, id],
+    [visibleKeys, groupMode, data, indexBy, layout, id],
   );
 
   const TotalsLayer = ({
@@ -275,7 +274,7 @@ export const GraphWidgetBarChart = ({
         <ResponsiveBar
           barComponent={BarItemWithContext}
           data={data}
-          keys={keys}
+          keys={visibleKeys}
           indexBy={indexBy}
           margin={margins}
           padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
@@ -317,7 +316,7 @@ export const GraphWidgetBarChart = ({
             chartWidth,
             chartHeight,
             dataLength: data.length,
-            keysLength: keys.length,
+            keysLength: visibleKeys.length,
             layout,
             margins,
             groupMode,
@@ -350,14 +349,8 @@ export const GraphWidgetBarChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       <GraphWidgetLegend
-        show={showLegend && !hasNoData}
-        items={enrichedKeys.map((item) => {
-          return {
-            id: item.key,
-            label: item.label,
-            color: item.colorScheme.solid,
-          };
-        })}
+        show={showLegend && data.length > 0 && keys.length > 0}
+        items={legendItems}
       />
     </StyledContainer>
   );

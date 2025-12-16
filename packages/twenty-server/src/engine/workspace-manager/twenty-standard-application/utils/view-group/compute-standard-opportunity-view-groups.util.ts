@@ -14,7 +14,6 @@ export const computeStandardOpportunityViewGroups = (
       context: {
         viewName: 'byStage',
         viewGroupName: 'new',
-        fieldName: 'stage',
         isVisible: true,
         fieldValue: 'NEW',
         position: 0,
@@ -26,7 +25,6 @@ export const computeStandardOpportunityViewGroups = (
       context: {
         viewName: 'byStage',
         viewGroupName: 'screening',
-        fieldName: 'stage',
         isVisible: true,
         fieldValue: 'SCREENING',
         position: 1,
@@ -38,7 +36,6 @@ export const computeStandardOpportunityViewGroups = (
       context: {
         viewName: 'byStage',
         viewGroupName: 'meeting',
-        fieldName: 'stage',
         isVisible: true,
         fieldValue: 'MEETING',
         position: 2,
@@ -50,7 +47,6 @@ export const computeStandardOpportunityViewGroups = (
       context: {
         viewName: 'byStage',
         viewGroupName: 'proposal',
-        fieldName: 'stage',
         isVisible: true,
         fieldValue: 'PROPOSAL',
         position: 3,
@@ -62,7 +58,6 @@ export const computeStandardOpportunityViewGroups = (
       context: {
         viewName: 'byStage',
         viewGroupName: 'customer',
-        fieldName: 'stage',
         isVisible: true,
         fieldValue: 'CUSTOMER',
         position: 4,

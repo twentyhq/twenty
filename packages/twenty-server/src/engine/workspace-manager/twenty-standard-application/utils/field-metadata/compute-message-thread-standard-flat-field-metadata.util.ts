@@ -98,6 +98,8 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messages',
       label: 'Messages',
       description: 'Messages from the thread.',
@@ -118,6 +120,8 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageChannelMessageAssociations',
       label: 'Message Channel Association',
       description: 'Messages from the channel.',
