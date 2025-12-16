@@ -4,8 +4,7 @@ import {
 } from 'src/utils/custom-exception';
 
 export class DnsManagerException extends CustomException<
-  keyof typeof DnsManagerExceptionCode,
-  true
+  keyof typeof DnsManagerExceptionCode
 > {}
 
 export const DnsManagerExceptionCode = appendCommonExceptionCode({
