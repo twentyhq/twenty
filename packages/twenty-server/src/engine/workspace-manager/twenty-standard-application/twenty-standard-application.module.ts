@@ -13,7 +13,7 @@ import { TwentyStandardApplicationService } from './services/twenty-standard-app
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceMigrationV2Module,
-    GlobalWorkspaceDataSourceModule
+    GlobalWorkspaceDataSourceModule,
   ],
   exports: [TwentyStandardApplicationService],
 })
