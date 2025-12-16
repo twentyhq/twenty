@@ -1,5 +1,4 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { ELLIPSIS_LENGTH } from '@/page-layout/widgets/graph/utils/ellipsisLength';
 
 export const computeMaxLabelLengthForMargin = ({
   marginSize,
@@ -14,8 +13,7 @@ export const computeMaxLabelLengthForMargin = ({
   const availableWidth =
     marginSize - COMMON_CHART_CONSTANTS.TICK_PADDING_ALLOWANCE;
   const calculatedLength = Math.max(
-    COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS +
-      ELLIPSIS_LENGTH,
+    COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS,
     Math.floor(availableWidth / characterWidth),
   );
 

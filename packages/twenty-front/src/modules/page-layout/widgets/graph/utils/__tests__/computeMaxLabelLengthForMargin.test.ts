@@ -1,5 +1,4 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
-import { ELLIPSIS_LENGTH } from '@/page-layout/widgets/graph/utils/ellipsisLength';
 import { computeMaxLabelLengthForMargin } from '../computeMaxLabelLengthForMargin';
 
 describe('computeMaxLabelLengthForMargin', () => {
@@ -24,8 +23,7 @@ describe('computeMaxLabelLengthForMargin', () => {
     });
 
     const minimumLength =
-      COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS +
-      ELLIPSIS_LENGTH;
+      COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS;
 
     expect(result).toBe(minimumLength);
   });
@@ -58,15 +56,14 @@ describe('computeMaxLabelLengthForMargin', () => {
     expect(largeMargin).toBeGreaterThan(smallMargin);
   });
 
-  it('should never return less than the minimum displayable characters plus ellipsis', () => {
+  it('should never return less than the minimum displayable characters', () => {
     const result = computeMaxLabelLengthForMargin({
       marginSize: 0,
       axisFontSize: 11,
     });
 
     const minimumLength =
-      COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS +
-      ELLIPSIS_LENGTH;
+      COMMON_CHART_CONSTANTS.TICK_MINIMUM_NUMBER_OF_DISPLAYED_CHARACTERS;
 
     expect(result).toBeGreaterThanOrEqual(minimumLength);
   });
