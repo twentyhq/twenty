@@ -13,6 +13,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import console from 'console';
 import { CustomError } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -88,6 +89,8 @@ export const MultiItemFieldInput = <T,>({
   });
 
   const getItemValueAsString = (index: number): string => {
+    console.log('items', items);
+    console.log('index', index);
     let item;
     switch (fieldMetadataType) {
       case FieldMetadataType.LINKS:
@@ -115,9 +118,12 @@ export const MultiItemFieldInput = <T,>({
   const [isInputDisplayed, setIsInputDisplayed] = useState(
     shouldAutoEditSingleItem,
   );
+  const firstItemAsString = getItemValueAsString(0);
+
   const [inputValue, setInputValue] = useState(() =>
-    shouldAutoEditSingleItem ? getItemValueAsString(0) : '',
+    shouldAutoEditSingleItem ? firstItemAsString : '',
   );
+
   const [itemToEditIndex, setItemToEditIndex] = useState(
     shouldAutoEditSingleItem ? 0 : -1,
   );
@@ -193,7 +199,6 @@ export const MultiItemFieldInput = <T,>({
 
     onChange(updatedItems);
     setIsInputDisplayed(false);
-    setInputValue('');
   };
 
   const handleSetPrimaryItem = (index: number) => {
@@ -220,7 +225,9 @@ export const MultiItemFieldInput = <T,>({
                 index,
                 handleEdit: () => handleEditButtonClick(index),
                 handleSetPrimary: () => handleSetPrimaryItem(index),
-                handleDelete: () => handleDeleteItem(index),
+                handleDelete: () => {
+                  handleDeleteItem(index);
+                },
               }),
             )}
           </DropdownMenuItemsContainer>
