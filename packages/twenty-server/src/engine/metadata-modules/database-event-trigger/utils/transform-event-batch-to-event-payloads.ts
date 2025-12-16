@@ -2,12 +2,7 @@ import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type ServerlessFunctionTriggerJobData } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-
-type DatabaseEventPayload<T = ObjectRecordEvent> = Omit<
-  WorkspaceEventBatch<T>,
-  'events'
-> &
-  T;
+import { type DatabaseEventPayload } from 'src/engine/metadata-modules/database-event-trigger/types/database-event-payload.type';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
@@ -22,10 +17,12 @@ export const transformEventBatchToEventPayloads = ({
     const { events, ...batchEventInfo } = workspaceEventBatch;
 
     for (const event of events) {
+      const payload: DatabaseEventPayload = { ...batchEventInfo, ...event };
+
       result.push({
         serverlessFunctionId: databaseEventListener.serverlessFunction.id,
         workspaceId: databaseEventListener.workspaceId,
-        payload: { ...batchEventInfo, ...event },
+        payload,
       });
     }
   }
