@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { writeFileSync } from 'fs';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -22,7 +24,8 @@ import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/ut
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class DevSeederService {
@@ -31,8 +34,7 @@ export class DevSeederService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
@@ -81,7 +83,6 @@ export class DevSeederService {
         'Seeder failed to find twenty standard application, should never occur',
       );
     }
-
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -89,11 +90,71 @@ export class DevSeederService {
         },
       );
 
-    await this.workspaceSyncMetadataService.synchronize({
-      workspaceId: workspaceId,
-      dataSourceId: dataSourceMetadata.id,
-      featureFlags: featureFlagsMap,
-    });
+    const twentyStandardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardApplication.id,
+      });
+
+    writeFileSync(
+      `${Date.now()}-from-db-reset-all-flat-entity-maps.json`,
+      JSON.stringify(twentyStandardAllFlatEntityMaps, null, 2),
+    );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+        {
+          buildOptions: {
+            isSystemBuild: true,
+          },
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
+            flatFieldMetadataMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatFieldMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatIndexMaps,
+            },
+            flatViewFieldMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFieldMaps,
+            },
+            flatViewFilterMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFilterMaps,
+            },
+            flatViewGroupMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewGroupMaps,
+            },
+            flatViewMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewMaps,
+            },
+            flatAgentMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatAgentMaps,
+            },
+            flatRoleMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatRoleMaps,
+            },
+          },
+          workspaceId,
+        },
+      );
+
+    if (validateAndBuildResult?.status === 'fail') {
+      throw new Error(
+        `[SEED] Twenty standard app installation failed for workspace ${workspaceId}`,
+      );
+    }
 
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
