@@ -11,10 +11,11 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { FieldWidgetCellEditModePortal } from '@/page-layout/widgets/field/components/FieldWidgetCellEditModePortal';
 import { FieldWidgetCellHoveredPortal } from '@/page-layout/widgets/field/components/FieldWidgetCellHoveredPortal';
 import { FieldWidgetInlineCell } from '@/page-layout/widgets/field/components/FieldWidgetInlineCell';
+import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
@@ -36,7 +37,9 @@ export const FieldWidgetDisplay = ({
   recordId,
   isInRightDrawer,
 }: FieldWidgetDisplayProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useRecoilComponentState(
+    fieldWidgetHoverComponentState,
+  );
 
   const instanceId = `field-widget-${recordId}-${fieldMetadataItem.name}-${isInRightDrawer ? 'right-drawer' : ''}`;
 
@@ -66,7 +69,7 @@ export const FieldWidgetDisplay = ({
           }),
         }}
       >
-        <StyledContainer onMouseEnter={handleMouseEnter}>
+        <StyledContainer>
           <FieldContext.Provider
             value={{
               recordId,
@@ -87,7 +90,7 @@ export const FieldWidgetDisplay = ({
                   isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
                 },
               }),
-              // onMouseEnter: handleMouseEnter,
+              onMouseEnter: handleMouseEnter,
               anchorId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName: fieldMetadataItem.name,

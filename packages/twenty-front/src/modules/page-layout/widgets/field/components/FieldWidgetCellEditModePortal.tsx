@@ -5,7 +5,9 @@ import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-ce
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/components/FieldWidgetInputContextProvider';
+import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilValue } from 'recoil';
 
 type FieldWidgetCellEditModePortalProps = {
@@ -29,6 +31,14 @@ export const FieldWidgetCellEditModePortal = ({
   );
   const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
 
+  const setIsHovered = useSetRecoilComponentState(
+    fieldWidgetHoverComponentState,
+  );
+
+  const handleCloseEditMode = () => {
+    setIsHovered(false);
+  };
+
   if (!isEditing) {
     return null;
   }
@@ -39,6 +49,7 @@ export const FieldWidgetCellEditModePortal = ({
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}
       instanceIdPrefix={instanceId}
+      onCloseEditMode={handleCloseEditMode}
     >
       <FieldWidgetInputContextProvider>
         <RecordInlineCellEditMode>
