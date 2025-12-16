@@ -1,5 +1,4 @@
-import { BAR_CHART_DEFAULT_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartDefaultInnerPadding';
-import { BAR_CHART_OUTER_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartOuterPaddingRatio';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 
 type BarChartMargins = {
@@ -19,8 +18,6 @@ type GetBarChartInnerPaddingProps = {
   groupMode?: 'grouped' | 'stacked';
 };
 
-const MINIMUM_BAR_WIDTH = 2;
-
 export const getBarChartInnerPadding = ({
   chartWidth,
   chartHeight,
@@ -35,7 +32,7 @@ export const getBarChartInnerPadding = ({
   }
 
   if (dataLength === 0 || keysLength === 0) {
-    return BAR_CHART_DEFAULT_INNER_PADDING;
+    return BAR_CHART_CONSTANTS.DEFAULT_INNER_PADDING;
   }
 
   const availableSpace =
@@ -44,13 +41,21 @@ export const getBarChartInnerPadding = ({
       : chartHeight - margins.top - margins.bottom;
 
   const spacePerGroup =
-    (availableSpace / dataLength) * (1 - BAR_CHART_OUTER_PADDING_RATIO);
+    (availableSpace / dataLength) *
+    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
 
   const spacePerBar = spacePerGroup / keysLength;
 
-  if (spacePerBar < MINIMUM_BAR_WIDTH + BAR_CHART_DEFAULT_INNER_PADDING) {
-    return Math.max(0, (spacePerBar - MINIMUM_BAR_WIDTH) / 2);
+  if (
+    spacePerBar <
+    BAR_CHART_CONSTANTS.MINIMUM_BAR_WIDTH +
+      BAR_CHART_CONSTANTS.DEFAULT_INNER_PADDING
+  ) {
+    return Math.max(
+      0,
+      (spacePerBar - BAR_CHART_CONSTANTS.MINIMUM_BAR_WIDTH) / 2,
+    );
   }
 
-  return BAR_CHART_DEFAULT_INNER_PADDING;
+  return BAR_CHART_CONSTANTS.DEFAULT_INNER_PADDING;
 };

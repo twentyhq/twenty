@@ -14,10 +14,10 @@ import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayo
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconCancel,
   IconCopyPlus,
   IconDeviceFloppy,
   IconPencil,
-  IconX,
 } from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
@@ -63,7 +63,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`Cancel`,
       isPinned: true,
       position: 5,
-      Icon: IconX,
+      Icon: IconCancel,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
       shouldBeRegistered: ({ selectedRecord }) =>

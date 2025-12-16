@@ -2,13 +2,14 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   UpdateSubscriptionQuantityJob,
   type UpdateSubscriptionQuantityJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
-import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';

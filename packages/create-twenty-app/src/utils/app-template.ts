@@ -127,7 +127,7 @@ const createPackageJson = async ({
       auth: 'twenty auth login',
     },
     dependencies: {
-      'twenty-sdk': '0.2.0',
+      'twenty-sdk': '0.2.2',
     },
     devDependencies: {
       '@types/node': '^24.7.2',
