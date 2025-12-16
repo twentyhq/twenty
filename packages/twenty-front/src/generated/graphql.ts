@@ -919,7 +919,7 @@ export type CreateRouteTriggerInput = {
 };
 
 export type CreateRowLevelPermissionPredicateGroupInput = {
-  logicalOperator: Scalars['String'];
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   roleId: Scalars['String'];
@@ -928,7 +928,7 @@ export type CreateRowLevelPermissionPredicateGroupInput = {
 export type CreateRowLevelPermissionPredicateInput = {
   fieldMetadataId: Scalars['String'];
   objectMetadataId: Scalars['String'];
-  operand: Scalars['String'];
+  operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   roleId: Scalars['String'];
   rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
@@ -3781,7 +3781,7 @@ export type RowLevelPermissionPredicate = {
   fieldMetadataId: Scalars['String'];
   id: Scalars['String'];
   objectMetadataId: Scalars['String'];
-  operand: Scalars['String'];
+  operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
   roleId: Scalars['String'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
@@ -3794,11 +3794,35 @@ export type RowLevelPermissionPredicate = {
 export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
   id: Scalars['String'];
-  logicalOperator: Scalars['String'];
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
   roleId: Scalars['String'];
 };
+
+export enum RowLevelPermissionPredicateGroupLogicalOperator {
+  AND = 'AND',
+  OR = 'OR'
+}
+
+export enum RowLevelPermissionPredicateOperand {
+  CONTAINS = 'CONTAINS',
+  DOES_NOT_CONTAIN = 'DOES_NOT_CONTAIN',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  IS = 'IS',
+  IS_AFTER = 'IS_AFTER',
+  IS_BEFORE = 'IS_BEFORE',
+  IS_EMPTY = 'IS_EMPTY',
+  IS_IN_FUTURE = 'IS_IN_FUTURE',
+  IS_IN_PAST = 'IS_IN_PAST',
+  IS_NOT = 'IS_NOT',
+  IS_NOT_EMPTY = 'IS_NOT_EMPTY',
+  IS_NOT_NULL = 'IS_NOT_NULL',
+  IS_RELATIVE = 'IS_RELATIVE',
+  IS_TODAY = 'IS_TODAY',
+  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+  VECTOR_SEARCH = 'VECTOR_SEARCH'
+}
 
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */

@@ -1,9 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
+import { RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
 import { RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
 
+registerEnumType(RowLevelPermissionPredicateOperand, {
+  name: 'RowLevelPermissionPredicateOperand',
+});
 @ObjectType('RowLevelPermissionPredicate')
 export class RowLevelPermissionPredicateDTO {
   @Field(() => String)
@@ -15,8 +19,8 @@ export class RowLevelPermissionPredicateDTO {
   @Field(() => String)
   objectMetadataId: string;
 
-  @Field(() => String)
-  operand: string;
+  @Field(() => RowLevelPermissionPredicateOperand)
+  operand: RowLevelPermissionPredicateOperand;
 
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;

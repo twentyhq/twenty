@@ -92,11 +92,10 @@ export class WorkspaceUpdateQueryBuilder<
 
   override async execute(): Promise<UpdateResult> {
     try {
-      this.applyRowLevelPermissionPredicates();
       if (this.manyInputs) {
         return this.executeMany();
       }
-
+      this.applyRowLevelPermissionPredicates();
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
