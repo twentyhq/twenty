@@ -64,6 +64,7 @@ export class TwentyStandardApplicationService {
         {
           buildOptions: {
             isSystemBuild: true,
+            inferDeletionFromMissingEntities: true,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
@@ -71,8 +72,9 @@ export class TwentyStandardApplicationService {
       );
 
     if (validateAndBuildResult?.status === 'fail') {
+      // TODO create custom error ?
       throw new Error(
-        `[SEED] Twenty standard app installation failed for workspace ${workspaceId}`,
+        `Twenty standard app installation failed for workspace ${workspaceId}`,
       );
     }
   }
