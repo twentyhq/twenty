@@ -1,9 +1,4 @@
 import { expect, test } from '../lib/fixtures/screenshot';
-
-if (process.env.LINK) {
-  const baseURL = new URL(process.env.LINK).origin;
-  test.use({ baseURL });
-}
 test.describe.serial('Create Kanban View', () => {
 test('Create Industry Select Field', async ({ page }) => {
     await page.getByRole('link', { name: 'Settings' }).click();

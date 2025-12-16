@@ -2,10 +2,6 @@ import { expect, test } from '../lib/fixtures/screenshot';
 import { deleteWorkflow } from '../lib/requests/delete-workflow';
 import { destroyWorkflow } from '../lib/requests/destroy-workflow';
 
-if (process.env.LINK) {
-  const baseURL = new URL(process.env.LINK).origin;
-  test.use({ baseURL });
-}
 test('Create workflow', async ({ page }) => {
   const NEW_WORKFLOW_NAME = 'Test Workflow';
 

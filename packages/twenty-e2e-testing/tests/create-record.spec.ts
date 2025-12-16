@@ -2,11 +2,6 @@ import { expect, test } from '../lib/fixtures/screenshot';
 import { backendGraphQLUrl } from '../lib/requests/backend';
 import { getAccessAuthToken } from '../lib/utils/getAccessAuthToken';
 
-if (process.env.LINK) {
-  const baseURL = new URL(process.env.LINK).origin;
-  test.use({ baseURL });
-}
-
 const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
     filter: {or: [{deletedAt: {is: NULL}}, {deletedAt: {is: NOT_NULL}}], id: {eq: $objectRecordId}}
