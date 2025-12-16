@@ -1,6 +1,6 @@
 import type {
-  ObjectRecordEvent,
   DatabaseEventPayload,
+  ObjectRecordEvent,
 } from 'twenty-shared/database-events';
 
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';

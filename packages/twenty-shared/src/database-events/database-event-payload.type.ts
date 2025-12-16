@@ -2,7 +2,6 @@ import { type ObjectRecordEvent } from '@/database-events/object-record-event.ev
 
 type SimplifiedFlatObjectMetadata = {
   id: string;
-  dataSourceId: string;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;

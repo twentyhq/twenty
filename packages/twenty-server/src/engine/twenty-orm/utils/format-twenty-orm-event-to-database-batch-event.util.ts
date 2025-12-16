@@ -6,10 +6,10 @@ import {
   ObjectRecordDestroyEvent,
   ObjectRecordUpdateEvent,
   ObjectRecordUpsertEvent,
+  type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
 
 import type { ObjectLiteral } from 'typeorm';
-import type { ObjectRecordDiff } from 'twenty-shared/database-events';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import type { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
