@@ -1177,19 +1177,17 @@ export class ApplicationSyncService {
         applicationId: application.id,
       });
 
-    const flatIndexMetadataMapsByApplicationId = findFlatEntitiesByApplicationId(
-      {
+    const flatIndexMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
         flatEntityMaps: existingFlatIndexMetadataMaps,
         applicationId: application.id,
-      },
-    );
+      });
 
-    const flatFieldMetadataMapsByApplicationId = findFlatEntitiesByApplicationId(
-      {
+    const flatFieldMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
         flatEntityMaps: existingFlatFieldMetadataMaps,
         applicationId: application.id,
-      },
-    );
+      });
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
