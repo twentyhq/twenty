@@ -90,7 +90,7 @@ export const RecordFieldList = ({
         instanceId,
       }}
     >
-      <PropertyBox ariaLabel="Record fields list">
+      <PropertyBox dataTestId="record-fields-list-container">
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
         ) : (

@@ -58,7 +58,7 @@ test('Create and update record', async ({ page }) => {
     await lastNameInput.press('Enter');
 
     // Focus on recordFieldList
-    const recordFieldList = page.locator('div[aria-label="Record fields list"]');
+    const recordFieldList = page.getByTestId('record-fields-list-container');
     await expect(recordFieldList).toBeVisible();
     await recordFieldList.getByText('Emails').first().click();
 

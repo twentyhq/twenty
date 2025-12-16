@@ -1,12 +1,15 @@
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 
 interface PropertyBoxProps {
   children: React.ReactNode;
   className?: string;
-  ariaLabel?: string;
+  dataTestId?: string;
 }
 
-const StyledPropertyBoxContainer = styled.div`
+const StyledPropertyBoxContainer = styled('div', {
+  shouldForwardProp: isPropValid,
+})`
   align-self: stretch;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
@@ -21,9 +24,9 @@ const StyledPropertyBoxContainer = styled.div`
 export const PropertyBox = ({
   children,
   className,
-  ariaLabel,
+  dataTestId,
 }: PropertyBoxProps) => (
-  <StyledPropertyBoxContainer className={className} aria-label={ariaLabel}>
+  <StyledPropertyBoxContainer className={className} data-testid={dataTestId}>
     {children}
   </StyledPropertyBoxContainer>
 );

@@ -53,8 +53,6 @@ test('Sign up with invite link via email', async ({
     await confirmationModal.typePlaceholderToInput();
     await confirmationModal.clickConfirmButton();
 
-    await Promise.all([
-      page.waitForURL('**/welcome'),
-    ]);
+    await page.waitForURL('**/welcome');
   });
 });
