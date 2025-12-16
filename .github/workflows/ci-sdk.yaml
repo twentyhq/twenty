@@ -46,7 +46,7 @@ jobs:
           tasks: ${{ matrix.task }}
   sdk-e2e-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-24.04
     needs: [changed-files-check, sdk-test]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     services:
