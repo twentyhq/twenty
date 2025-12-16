@@ -131,8 +131,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
     });
 
-    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps =
-      {};
+    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const allMetadataNameToCompare = Object.keys(
