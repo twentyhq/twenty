@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { LightIconButtonGroup } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -15,37 +14,20 @@ const StyledButtonContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.strong};
 `;
 
-type RecordTableCellButtonProps = {
+type RecordTableCellButtonsProps = {
   onClick?: () => void;
   Icon: IconComponent;
-  onSecondaryClick?: () => void;
-  SecondaryIcon?: IconComponent;
-};
+}[];
 
-export const RecordTableCellButton = ({
-  onClick,
-  Icon,
-  onSecondaryClick,
-  SecondaryIcon,
-}: RecordTableCellButtonProps) => {
-  const iconButtons = [];
-
-  if (isDefined(SecondaryIcon) && isDefined(onSecondaryClick)) {
-    iconButtons.push({
-      Icon: SecondaryIcon,
-      onClick: onSecondaryClick,
-    });
-  }
-
-  iconButtons.push({
-    Icon,
-    onClick,
-  });
-
+export const RecordTableCellButtons = ({
+  buttons,
+}: {
+  buttons: RecordTableCellButtonsProps;
+}) => {
   return (
     <AnimatedContainer>
       <StyledButtonContainer>
-        <LightIconButtonGroup size="small" iconButtons={iconButtons} />
+        <LightIconButtonGroup size="small" iconButtons={buttons} />
       </StyledButtonContainer>
     </AnimatedContainer>
   );
