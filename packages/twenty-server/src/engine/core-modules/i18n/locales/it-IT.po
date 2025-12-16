@@ -3671,6 +3671,11 @@ msgstr "Lo stato della versione del workflow"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "C'è stato un problema con le impostazioni di connessione. Riprovare."
 
+#. js-lingui-id: Iy9pZw
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldLabel} value is already in use. Please check your data and try again."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3694,6 +3699,7 @@ msgid "This operation is not allowed. Please try a different approach or contact
 msgstr "Questa operazione non è permessa. Si prega di provare un approccio diverso o contattare il supporto se serve assistenza."
 
 #. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Questo record esiste già. Si prega di controllare i dati e riprovare."

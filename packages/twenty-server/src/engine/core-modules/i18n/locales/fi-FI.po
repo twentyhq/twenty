@@ -3671,6 +3671,11 @@ msgstr "Työnkulun version tila"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Yhteysasetuksissasi oli ongelma. Yritä uudelleen."
 
+#. js-lingui-id: Iy9pZw
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldLabel} value is already in use. Please check your data and try again."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3694,6 +3699,7 @@ msgid "This operation is not allowed. Please try a different approach or contact
 msgstr "Tätä toimintoa ei sallita. Yritä toista lähestymistapaa tai ota yhteyttä tukeen, jos tarvitset apua."
 
 #. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Tämä tietue on jo olemassa. Tarkista tietosi ja yritä uudelleen."
