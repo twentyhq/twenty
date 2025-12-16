@@ -203,6 +203,11 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       description: 'The executor of the workflow',
       icon: 'IconCreativeCommonsSa',
       isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

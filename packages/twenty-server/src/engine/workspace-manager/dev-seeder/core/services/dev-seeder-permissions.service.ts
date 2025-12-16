@@ -116,13 +116,17 @@ export class DevSeederPermissionsService {
       ];
     }
 
-    if (adminUserWorkspaceId) {
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId,
-        userWorkspaceIds: [adminUserWorkspaceId],
-        roleId: adminRole.id,
-      });
+    if (!adminUserWorkspaceId) {
+      throw new Error(
+        'Should never occur, no eligible user workspace for admin has been found',
+      );
     }
+
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId,
+      userWorkspaceIds: [adminUserWorkspaceId],
+      roleId: adminRole.id,
+    });
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
