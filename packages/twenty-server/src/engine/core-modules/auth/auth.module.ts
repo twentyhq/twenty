@@ -63,6 +63,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 import { TwoFactorAuthenticationMethodEntity } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
@@ -87,6 +88,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       UserEntity,
       AppTokenEntity,
       ApiKeyEntity,
+      ApplicationEntity,
       FeatureFlagEntity,
       WorkspaceSSOIdentityProviderEntity,
       KeyValuePairEntity,

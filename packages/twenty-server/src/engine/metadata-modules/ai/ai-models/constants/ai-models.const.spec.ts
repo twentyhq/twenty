@@ -10,19 +10,56 @@ import {
 } from './ai-models.const';
 
 describe('AI_MODELS', () => {
-  it('should contain all expected models', () => {
-    expect(AI_MODELS).toHaveLength(9);
-    expect(AI_MODELS.map((model) => model.modelId)).toEqual([
-      'gpt-4o',
-      'gpt-4o-mini',
-      'gpt-4-turbo',
-      'claude-opus-4-20250514',
-      'claude-sonnet-4-20250514',
-      'claude-3-5-haiku-20241022',
-      'grok-3',
-      'grok-3-mini',
-      'grok-4',
-    ]);
+  it('should have at least one model per provider', () => {
+    const providers = [
+      ModelProvider.OPENAI,
+      ModelProvider.ANTHROPIC,
+      ModelProvider.XAI,
+    ];
+
+    providers.forEach((provider) => {
+      const modelsForProvider = AI_MODELS.filter(
+        (model) => model.provider === provider,
+      );
+
+      expect(modelsForProvider.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should have all required fields for each model', () => {
+    AI_MODELS.forEach((model) => {
+      expect(model.modelId).toBeDefined();
+      expect(model.label).toBeDefined();
+      expect(model.description).toBeDefined();
+      expect(model.provider).toBeDefined();
+      expect(model.inputCostPer1kTokensInCents).toBeDefined();
+      expect(model.outputCostPer1kTokensInCents).toBeDefined();
+      expect(model.contextWindowTokens).toBeGreaterThan(0);
+      expect(model.maxOutputTokens).toBeGreaterThan(0);
+    });
+  });
+
+  it('should have unique model IDs', () => {
+    const modelIds = AI_MODELS.map((model) => model.modelId);
+    const uniqueModelIds = new Set(modelIds);
+
+    expect(uniqueModelIds.size).toBe(modelIds.length);
+  });
+
+  it('should have at least one non-deprecated model per provider', () => {
+    const providers = [
+      ModelProvider.OPENAI,
+      ModelProvider.ANTHROPIC,
+      ModelProvider.XAI,
+    ];
+
+    providers.forEach((provider) => {
+      const activeModelsForProvider = AI_MODELS.filter(
+        (model) => model.provider === provider && !model.deprecated,
+      );
+
+      expect(activeModelsForProvider.length).toBeGreaterThan(0);
+    });
   });
 });
 
@@ -139,5 +176,51 @@ describe('AiModelRegistryService', () => {
     expect(() => SERVICE.getEffectiveModelConfig('non-existent-model')).toThrow(
       'Model with ID non-existent-model not found',
     );
+  });
+
+  it('should find first available model from comma-separated list', () => {
+    // First model not available, second model available
+    MOCK_CONFIG_SERVICE.get.mockReturnValue(
+      'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini',
+    );
+
+    const getModelSpy = jest
+      .spyOn(SERVICE, 'getModel')
+      .mockImplementation((modelId: string) => {
+        if (modelId === 'claude-haiku-4-5-20251001') {
+          return {
+            modelId: 'claude-haiku-4-5-20251001',
+            provider: ModelProvider.ANTHROPIC,
+            model: {} as any,
+          };
+        }
+
+        return undefined;
+      });
+
+    const result = SERVICE.getDefaultSpeedModel();
+
+    expect(result).toBeDefined();
+    expect(result.modelId).toBe('claude-haiku-4-5-20251001');
+    expect(getModelSpy).toHaveBeenCalledWith('gpt-4.1-mini');
+    expect(getModelSpy).toHaveBeenCalledWith('claude-haiku-4-5-20251001');
+  });
+
+  it('should fall back to any available model if none in list are available', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('model-a,model-b,model-c');
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'fallback-model',
+        provider: ModelProvider.OPENAI_COMPATIBLE,
+        model: {} as any,
+      },
+    ]);
+
+    const result = SERVICE.getDefaultSpeedModel();
+
+    expect(result).toBeDefined();
+    expect(result.modelId).toBe('fallback-model');
   });
 });

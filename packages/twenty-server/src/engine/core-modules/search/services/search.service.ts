@@ -130,19 +130,24 @@ export class SearchService {
     includedObjectNameSingulars: string[];
     excludedObjectNameSingulars: string[];
   }) {
-    return flatObjectMetadatas.filter(({ nameSingular, isSearchable }) => {
-      if (!isSearchable) {
-        return false;
-      }
-      if (excludedObjectNameSingulars.includes(nameSingular)) {
-        return false;
-      }
-      if (includedObjectNameSingulars.length > 0) {
-        return includedObjectNameSingulars.includes(nameSingular);
-      }
+    return flatObjectMetadatas.filter(
+      ({ nameSingular, isSearchable, isActive }) => {
+        if (!isSearchable) {
+          return false;
+        }
+        if (!isActive) {
+          return false;
+        }
+        if (excludedObjectNameSingulars.includes(nameSingular)) {
+          return false;
+        }
+        if (includedObjectNameSingulars.length > 0) {
+          return includedObjectNameSingulars.includes(nameSingular);
+        }
 
-      return true;
-    });
+        return true;
+      },
+    );
   }
 
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({

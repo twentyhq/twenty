@@ -1,1 +1,0 @@
-export const BAR_CHART_MAXIMUM_VALUE_TICK_COUNT = 6;

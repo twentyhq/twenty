@@ -400,10 +400,6 @@ export class CleanerWorkspaceService {
           `Error while processing workspace ${workspace.id} ${workspace.displayName}: ${error}`,
         );
       }
-
-      await this.globalWorkspaceOrmManager.destroyDataSourceForWorkspace(
-        workspace.id,
-      );
     }
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces done!`,

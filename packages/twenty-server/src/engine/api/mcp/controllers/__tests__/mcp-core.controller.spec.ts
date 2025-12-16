@@ -1,13 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
-import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
+import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
+import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('McpCoreController', () => {
   let controller: McpCoreController;
@@ -53,7 +54,7 @@ describe('McpCoreController', () => {
   describe('handleMcpCore', () => {
     const mockWorkspace = { id: 'workspace-1' } as WorkspaceEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
-    const mockApiKey = 'api-key-1';
+    const mockApiKey = { id: 'api-key-1' } as ApiKeyEntity;
 
     it('should call mcpProtocolService.handleMCPCoreQuery with correct parameters', async () => {
       const mockRequest: JsonRpc = {

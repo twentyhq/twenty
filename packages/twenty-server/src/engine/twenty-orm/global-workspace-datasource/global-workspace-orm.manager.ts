@@ -3,17 +3,15 @@ import { Injectable, type Type } from '@nestjs/common';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import type { WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
@@ -23,20 +21,7 @@ export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
-
-  async isGlobalDataSourceFlow(workspaceId: string): Promise<boolean> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return (
-      featureFlagsMap[FeatureFlagKey.IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED] ===
-      true
-    );
-  }
 
   async getRepository<T extends ObjectLiteral>(
     workspaceId: string,
@@ -51,62 +36,29 @@ export class GlobalWorkspaceOrmManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
+    _workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>> {
-    const isGlobalFlow = await this.isGlobalDataSourceFlow(workspaceId);
-
-    if (isGlobalFlow) {
-      let objectMetadataName: string;
-
-      if (typeof workspaceEntityOrObjectMetadataName === 'string') {
-        objectMetadataName = workspaceEntityOrObjectMetadataName;
-      } else {
-        objectMetadataName = convertClassNameToObjectMetadataName(
-          workspaceEntityOrObjectMetadataName.name,
-        );
-      }
-
-      const globalDataSource =
-        this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-
-      return globalDataSource.getRepository<T>(
-        objectMetadataName,
-        permissionOptions,
-      );
-    }
+    let objectMetadataName: string;
 
     if (typeof workspaceEntityOrObjectMetadataName === 'string') {
-      return this.twentyORMGlobalManager.getRepositoryForWorkspace<T>(
-        workspaceId,
-        workspaceEntityOrObjectMetadataName,
-        permissionOptions,
+      objectMetadataName = workspaceEntityOrObjectMetadataName;
+    } else {
+      objectMetadataName = convertClassNameToObjectMetadataName(
+        workspaceEntityOrObjectMetadataName.name,
       );
     }
 
-    return this.twentyORMGlobalManager.getRepositoryForWorkspace<T>(
-      workspaceId,
-      workspaceEntityOrObjectMetadataName,
+    const globalDataSource = await this.getGlobalWorkspaceDataSource();
+
+    return globalDataSource.getRepository<T>(
+      objectMetadataName,
       permissionOptions,
     );
   }
 
-  async getDataSourceForWorkspace(
-    workspaceId: string,
-  ): Promise<WorkspaceDataSourceInterface> {
-    const isGlobalFlow = await this.isGlobalDataSourceFlow(workspaceId);
-
-    if (isGlobalFlow) {
-      return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-    }
-
-    return this.twentyORMGlobalManager.getDataSourceForWorkspace({
-      workspaceId,
-    });
-  }
-
-  async getGlobalWorkspaceDataSource() {
+  async getGlobalWorkspaceDataSource(): Promise<GlobalWorkspaceDataSource> {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
   }
 
@@ -117,18 +69,6 @@ export class GlobalWorkspaceOrmManager {
     const context = await this.loadWorkspaceContext(authContext);
 
     return withWorkspaceContext(context, fn);
-  }
-
-  async destroyDataSourceForWorkspace(workspaceId: string): Promise<void> {
-    const isGlobalFlow = await this.isGlobalDataSourceFlow(workspaceId);
-
-    if (isGlobalFlow) {
-      return;
-    }
-
-    await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-      workspaceId,
-    );
   }
 
   private async loadWorkspaceContext(

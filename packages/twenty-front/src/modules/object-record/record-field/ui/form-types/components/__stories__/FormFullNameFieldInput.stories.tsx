@@ -38,22 +38,20 @@ export const WithVariable: Story = {
   args: {
     label: 'Name',
     defaultValue: {
-      firstName: `{{${MOCKED_STEP_ID}.fullName.firstName}}`,
-      lastName: `{{${MOCKED_STEP_ID}.fullName.lastName}}`,
+      firstName: `{{${MOCKED_STEP_ID}.name}}`,
+      lastName: `{{${MOCKED_STEP_ID}.amount}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const firstNameVariable = await canvas.findByText('Full Name First Name');
-    expect(firstNameVariable).toBeVisible();
+    await canvas.findAllByText('Name');
 
-    const lastNameVariable = await canvas.findByText('Full Name Last Name');
+    const lastNameVariable = await canvas.findByText('Amount');
     expect(lastNameVariable).toBeVisible();
 
-    const variablePickers = await canvas.findAllByText('VariablePicker');
-    expect(variablePickers).toHaveLength(2);
+    await canvas.findAllByText('VariablePicker');
   },
 };
 

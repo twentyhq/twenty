@@ -47,11 +47,11 @@ export const WithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const amountMicros = await canvas.findByText('My Amount Micros');
-    const currencyCode = await canvas.findByText('My Currency Code');
+    const amountMicros = await canvas.findByText('Amount Micros');
+    const currencyCode = await canvas.findAllByText('Currency Code');
 
     expect(amountMicros).toBeVisible();
-    expect(currencyCode).toBeVisible();
+    expect(currencyCode).toHaveLength(2);
   },
 };
 
