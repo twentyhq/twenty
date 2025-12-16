@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -11,7 +11,7 @@ import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.serv
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -38,12 +38,11 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentService: AgentService,
+    private readonly roleService: RoleService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -129,9 +128,10 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
 
     const roleIds = rolesToDelete.map((role) => role.id);
 
-    await this.roleRepository.delete({
-      id: In(roleIds),
+    await this.roleService.deleteManyRoles({
+      ids: roleIds,
       workspaceId,
+      isSystemBuild: true,
     });
 
     this.logger.log(
