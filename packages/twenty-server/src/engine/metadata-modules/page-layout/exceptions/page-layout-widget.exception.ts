@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -18,7 +20,27 @@ export enum PageLayoutWidgetExceptionMessageKey {
   INVALID_WIDGET_CONFIGURATION = 'INVALID_WIDGET_CONFIGURATION',
 }
 
-export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetExceptionCode> {}
+const pageLayoutWidgetExceptionUserFriendlyMessages: Record<
+  PageLayoutWidgetExceptionCode,
+  MessageDescriptor
+> = {
+  [PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND]: msg`Page layout widget not found.`,
+  [PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA]: msg`Invalid page layout widget data.`,
+};
+
+export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetExceptionCode> {
+  constructor(
+    message: string,
+    code: PageLayoutWidgetExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        pageLayoutWidgetExceptionUserFriendlyMessages[code],
+    });
+  }
+}
 
 export const generatePageLayoutWidgetExceptionMessage = (
   key: PageLayoutWidgetExceptionMessageKey,

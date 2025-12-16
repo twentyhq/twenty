@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
-import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -44,7 +44,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(
     0,
-    LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+    LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
 
   const formattedValues = formatPrimaryDimensionValues({
@@ -112,7 +112,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
   return {
     series,
     hasTooManyGroups:
-      rawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+      rawResults.length > LINE_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_DATA_POINTS,
     formattedToRawLookup,
   };
 };

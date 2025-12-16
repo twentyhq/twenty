@@ -363,6 +363,58 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         },
       },
     },
+    {
+      title:
+        'should not merge create_field actions containing relation fields into create_object',
+      context: {
+        input: {
+          ...createEmptyOrchestratorActionsReport(),
+          objectMetadata: {
+            created: [
+              {
+                type: 'create_object',
+                flatObjectMetadata: getFlatObjectMetadataMock({
+                  universalIdentifier: 'object-1',
+                  id: 'object-1',
+                  nameSingular: 'attachment',
+                  namePlural: 'attachments',
+                }),
+                flatFieldMetadatas: [],
+              } satisfies CreateObjectAction,
+            ],
+            updated: [],
+            deleted: [],
+          },
+          fieldMetadata: {
+            created: [
+              {
+                type: 'create_field',
+                objectMetadataId: 'object-1',
+                flatFieldMetadatas: [
+                  getFlatFieldMetadataMock({
+                    universalIdentifier: 'field-1',
+                    objectMetadataId: 'object-1',
+                    type: FieldMetadataType.RELATION,
+                    id: 'field-1',
+                    name: 'author',
+                  }),
+                ],
+              } satisfies CreateFieldAction,
+            ],
+            updated: [],
+            deleted: [],
+          },
+        } satisfies OrchestratorActionsReport,
+        expected: {
+          expectCreateFieldActionPerObjectMetadataId: {
+            'object-1': 1,
+          },
+          expectCreateObjectActionPerObjectMetadataId: {
+            'object-1': 1,
+          },
+        },
+      },
+    },
   ];
 
   test.each(eachTestingContextFilter(testCases))(

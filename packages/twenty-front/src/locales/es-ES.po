@@ -10166,6 +10166,11 @@ msgstr ""
 msgid "View billing details"
 msgstr "Ver detalles de facturación"
 
+#. js-lingui-id: Mv1YVf
+#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+msgid "View existing record"
+msgstr ""
+
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"

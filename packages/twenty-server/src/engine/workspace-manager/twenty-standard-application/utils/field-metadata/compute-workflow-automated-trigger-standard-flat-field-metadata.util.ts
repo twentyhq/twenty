@@ -146,6 +146,8 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'WorkflowAutomatedTrigger workflow',

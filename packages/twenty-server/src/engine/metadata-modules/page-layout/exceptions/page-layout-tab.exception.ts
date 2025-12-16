@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -15,7 +17,26 @@ export enum PageLayoutTabExceptionMessageKey {
   PAGE_LAYOUT_TAB_NOT_DELETED = 'PAGE_LAYOUT_TAB_NOT_DELETED',
 }
 
-export class PageLayoutTabException extends CustomException<PageLayoutTabExceptionCode> {}
+const pageLayoutTabExceptionUserFriendlyMessages: Record<
+  PageLayoutTabExceptionCode,
+  MessageDescriptor
+> = {
+  [PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND]: msg`Page layout tab not found.`,
+  [PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA]: msg`Invalid page layout tab data.`,
+};
+
+export class PageLayoutTabException extends CustomException<PageLayoutTabExceptionCode> {
+  constructor(
+    message: string,
+    code: PageLayoutTabExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? pageLayoutTabExceptionUserFriendlyMessages[code],
+    });
+  }
+}
 
 export const generatePageLayoutTabExceptionMessage = (
   key: PageLayoutTabExceptionMessageKey,

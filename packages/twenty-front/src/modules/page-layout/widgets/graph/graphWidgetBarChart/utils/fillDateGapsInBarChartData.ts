@@ -1,4 +1,4 @@
-import { BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartDateGranularitiesWithoutGapFilling.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { fillDateGapsInOneDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInOneDimensionalBarChartData';
 import { fillDateGapsInTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInTwoDimensionalBarChartData';
 import { type SupportedDateGranularity } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getDateGroupsFromData';
@@ -25,7 +25,11 @@ export const fillDateGapsInBarChartData = ({
     return { data, wasTruncated: false };
   }
 
-  if (BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING.has(dateGranularity)) {
+  if (
+    BAR_CHART_CONSTANTS.DATE_GRANULARITIES_WITHOUT_GAP_FILLING.has(
+      dateGranularity,
+    )
+  ) {
     return { data, wasTruncated: false };
   }
 

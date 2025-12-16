@@ -1,32 +1,33 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { isDefined } from 'twenty-shared/utils';
 
 const BAR_CHART_MARGINS = {
-  top: 20,
-  right: 20,
-  bottom: 45,
-  left: 65,
+  top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
+  right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+  bottom: COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL,
+  left: COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITHOUT_LABEL,
 } as const;
 
 const BAR_CHART_MARGINS_WITH_BOTH_LABELS = {
-  top: 20,
-  right: 20,
-  bottom: 60,
-  left: 80,
+  top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
+  right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+  bottom: COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITH_LABEL,
+  left: COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL,
 } as const;
 
 const BAR_CHART_MARGINS_WITH_X_LABEL = {
-  top: 20,
-  right: 20,
-  bottom: 60,
-  left: 65,
+  top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
+  right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+  bottom: COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITH_LABEL,
+  left: COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITHOUT_LABEL,
 } as const;
 
 const BAR_CHART_MARGINS_WITH_Y_LABEL = {
-  top: 20,
-  right: 20,
-  bottom: 45,
-  left: 80,
+  top: COMMON_CHART_CONSTANTS.MARGIN_TOP,
+  right: COMMON_CHART_CONSTANTS.MARGIN_RIGHT,
+  bottom: COMMON_CHART_CONSTANTS.MARGIN_BOTTOM_WITHOUT_LABEL,
+  left: COMMON_CHART_CONSTANTS.MARGIN_LEFT_WITH_LABEL,
 } as const;
 
 export const getBarChartMargins = ({
