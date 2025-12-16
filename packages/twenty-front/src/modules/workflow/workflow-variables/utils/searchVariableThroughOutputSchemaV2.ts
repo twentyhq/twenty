@@ -66,7 +66,7 @@ export const searchVariableThroughOutputSchemaV2 = ({
       searchRecordOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
-      stepNameLabel:stepOutputSchema.objectName,
+      stepNameLabel: stepOutputSchema.objectName,
     });
   }
 
