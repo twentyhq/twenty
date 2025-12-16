@@ -125,13 +125,6 @@ export class DevSeederMetadataService {
         fieldMetadataSeeds: fieldConfig.seeds,
       });
     }
-
-    await this.seedCoreViews({
-      workspaceId,
-      dataSourceMetadata,
-      featureFlags,
-      twentyStandardFlatApplication,
-    });
   }
 
   private async seedCustomObject({

@@ -119,11 +119,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  view: createStandardFieldFlatMetadata({
+  viewId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'view',
+      fieldName: 'viewId',
       type: FieldMetadataType.UUID,
       label: 'ViewId',
       description: 'ViewId',

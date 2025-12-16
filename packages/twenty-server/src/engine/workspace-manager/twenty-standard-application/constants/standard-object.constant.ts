@@ -626,7 +626,7 @@ export const STANDARD_OBJECTS = {
       },
       task: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.task },
       note: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.note },
-      view: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view },
+      viewId: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view },
       favoriteFolder: {
         universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
       },
