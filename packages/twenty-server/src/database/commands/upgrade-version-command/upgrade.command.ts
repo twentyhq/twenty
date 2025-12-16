@@ -10,7 +10,6 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
-import { BackfillViewMainGroupByFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-view-main-group-by-field-metadata-id.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
 import { MigrateStandardInvalidEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-migrate-standard-invalid-entities.command';
@@ -21,6 +20,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
 
 @Command({
   name: 'upgrade',
@@ -42,9 +42,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
     protected readonly backfillPageLayoutUniversalIdentifiersCommand: BackfillPageLayoutUniversalIdentifiersCommand,
     protected readonly migrateStandardInvalidEntitiesCommand: MigrateStandardInvalidEntitiesCommand,
-    protected readonly backfillViewMainGroupByFieldMetadataIdCommand: BackfillViewMainGroupByFieldMetadataIdCommand,
     protected readonly cleanEmptyStringNullInTextFieldsCommand: CleanEmptyStringNullInTextFieldsCommand,
     protected readonly renameIndexNameCommand: RenameIndexNameCommand,
+
+    // 1.14 Commands
+    protected readonly updateCreatedByEnumCommand: UpdateCreatedByEnumCommand,
   ) {
     super(
       workspaceRepository,
@@ -62,14 +64,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.updateRoleTargetsUniqueConstraintMigrationCommand,
       this.backfillPageLayoutUniversalIdentifiersCommand,
       this.migrateStandardInvalidEntitiesCommand,
-      this.backfillViewMainGroupByFieldMetadataIdCommand,
       this.cleanEmptyStringNullInTextFieldsCommand,
       this.renameIndexNameCommand,
     ];
 
+    const commands_1140: VersionCommands = [this.updateCreatedByEnumCommand];
+
     this.allCommands = {
       '1.12.0': commands_1120,
       '1.13.0': commands_1130,
+      '1.14.0': commands_1140,
     };
   }
 

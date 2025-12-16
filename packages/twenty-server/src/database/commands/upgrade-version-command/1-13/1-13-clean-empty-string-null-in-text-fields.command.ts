@@ -62,16 +62,6 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         `Could not find workspace ${workspaceId}, should never occur`,
       );
     }
-    if (
-      !isDefined(workspace.version) ||
-      !['1.12.0', '1.12.1'].includes(workspace.version)
-    ) {
-      this.logger.log(
-        `Workspace ${workspaceId} is not a v1.12.0 or v1.12.1 workspace, skipping`,
-      );
-
-      return;
-    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
