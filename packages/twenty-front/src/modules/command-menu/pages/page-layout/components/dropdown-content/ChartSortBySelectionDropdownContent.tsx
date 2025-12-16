@@ -138,7 +138,10 @@ export const ChartSortBySelectionDropdownContent = () => {
     }
 
     updateCurrentWidgetConfig({ configToUpdate });
-    closeDropdown();
+
+    if (orderBy !== GraphOrderBy.MANUAL) {
+      closeDropdown();
+    }
   };
 
   const availableOptions = X_SORT_BY_OPTIONS.filter((option) => {
