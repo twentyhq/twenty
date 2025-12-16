@@ -2,13 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -20,20 +23,23 @@ const REMOVED_AGENT_STANDARD_IDS = [
   '20202020-0002-0001-0001-000000000001', // workflow-builder
 ];
 
-const HELPER_AGENT_STANDARD_ID = '20202020-0002-0001-0001-000000000004';
-
-const DATA_MANIPULATOR_ROLE_STANDARD_ID =
-  '20202020-0001-0001-0001-000000000004';
+const REMOVED_ROLE_STANDARD_IDS = [
+  '20202020-0001-0001-0001-000000000002', // workflow-manager
+  '20202020-0001-0001-0001-000000000004', // data-manipulator
+  '20202020-0001-0001-0001-000000000005', // dashboard-manager
+  '20202020-0001-0001-0001-000000000006', // data-model-manager
+];
 
 @Command({
   name: 'upgrade:1-14:delete-removed-agents',
-  description:
-    'Delete agents that were removed from the codebase and update helper agent role',
+  description: 'Delete agents and roles that were removed from the codebase',
 })
 export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -48,83 +54,88 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun || false;
 
-    const { flatAgentMaps, flatRoleTargetByAgentIdMaps, flatRoleMaps } =
+    const { flatAgentMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatAgentMaps',
-        'flatRoleTargetByAgentIdMaps',
         'flatRoleMaps',
       ]);
 
+    await this.deleteRemovedAgents({ flatAgentMaps, workspaceId, isDryRun });
+    await this.deleteRemovedRoles({ flatRoleMaps, workspaceId, isDryRun });
+  }
+
+  private async deleteRemovedAgents({
+    flatAgentMaps,
+    workspaceId,
+    isDryRun,
+  }: {
+    flatAgentMaps: FlatAgentMaps;
+    workspaceId: string;
+    isDryRun: boolean;
+  }): Promise<void> {
     const allAgents = Object.values(flatAgentMaps.byId).filter(isDefined);
 
     const agentsToDelete = allAgents.filter((agent) =>
       REMOVED_AGENT_STANDARD_IDS.includes(agent.standardId ?? ''),
     );
 
-    const helperAgent = allAgents.find(
-      (agent) => agent.standardId === HELPER_AGENT_STANDARD_ID,
-    );
-
-    const dataManipulatorRole = Object.values(flatRoleMaps.byId)
-      .filter(isDefined)
-      .find((role) => role.standardId === DATA_MANIPULATOR_ROLE_STANDARD_ID);
-
-    const existingHelperRoleTarget = isDefined(helperAgent)
-      ? flatRoleTargetByAgentIdMaps[helperAgent.id]
-      : undefined;
-
-    const shouldUpdateHelperRole =
-      isDefined(helperAgent) &&
-      isDefined(dataManipulatorRole) &&
-      existingHelperRoleTarget?.roleId !== dataManipulatorRole.id;
-
-    const hasAgentsToDelete = agentsToDelete.length > 0;
-
-    if (!hasAgentsToDelete && !shouldUpdateHelperRole) {
-      return;
-    }
-
     const agentNames = agentsToDelete.map((agent) => agent.name).join(', ');
 
-    if (isDryRun) {
-      if (hasAgentsToDelete) {
-        this.logger.log(
-          `DRY RUN: Would delete ${agentsToDelete.length} removed agent(s): ${agentNames}`,
-        );
-      }
-      if (shouldUpdateHelperRole) {
-        this.logger.log(
-          `DRY RUN: Would update helper agent role to data manipulator role`,
-        );
-      }
+    this.logger.log(
+      `DRY RUN: Would delete ${agentsToDelete.length} removed agent(s): ${agentNames}`,
+    );
 
+    if (agentsToDelete.length === 0 || isDryRun) {
       return;
     }
 
-    if (hasAgentsToDelete) {
-      const agentIds = agentsToDelete.map((agent) => agent.id);
+    const agentIds = agentsToDelete.map((agent) => agent.id);
 
-      await this.agentService.deleteManyAgents({
-        ids: agentIds,
-        workspaceId,
-        isSystemBuild: true,
-      });
+    await this.agentService.deleteManyAgents({
+      ids: agentIds,
+      workspaceId,
+      isSystemBuild: true,
+    });
 
-      this.logger.log(
-        `Deleted ${agentsToDelete.length} removed agent(s): ${agentNames}`,
-      );
+    this.logger.log(
+      `Deleted ${agentsToDelete.length} removed agent(s): ${agentNames}`,
+    );
+  }
+
+  private async deleteRemovedRoles({
+    flatRoleMaps,
+    workspaceId,
+    isDryRun,
+  }: {
+    flatRoleMaps: MetadataFlatEntityMaps<'role'>;
+    workspaceId: string;
+    isDryRun: boolean;
+  }): Promise<void> {
+    const allRoles = Object.values(flatRoleMaps.byId).filter(isDefined);
+
+    const rolesToDelete = allRoles.filter((role) =>
+      REMOVED_ROLE_STANDARD_IDS.includes(role.standardId ?? ''),
+    );
+
+    const roleLabels = rolesToDelete.map((role) => role.label).join(', ');
+
+    this.logger.log(
+      `DRY RUN: Would delete ${rolesToDelete.length} removed role(s): ${roleLabels}`,
+    );
+
+    if (rolesToDelete.length === 0 || isDryRun) {
+      return;
     }
 
-    if (shouldUpdateHelperRole && isDefined(helperAgent)) {
-      await this.agentService.updateOneAgent({
-        input: {
-          id: helperAgent.id,
-          roleId: dataManipulatorRole.id,
-        },
-        workspaceId,
-      });
+    const roleIds = rolesToDelete.map((role) => role.id);
 
-      this.logger.log(`Updated helper agent role to data manipulator role`);
-    }
+    await this.roleRepository.delete({
+      id: In(roleIds),
+      workspaceId,
+    });
+
+    this.logger.log(
+      `Deleted ${rolesToDelete.length} removed role(s): ${roleLabels}`,
+    );
   }
 }
