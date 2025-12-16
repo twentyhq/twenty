@@ -8,9 +8,9 @@ import { Repository } from 'typeorm';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
+import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
@@ -238,6 +238,14 @@ export class RoleService {
       return [];
     }
 
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
@@ -256,7 +264,14 @@ export class RoleService {
       );
     }
 
+    const rolesToDelete = [];
+
     for (const roleId of ids) {
+      const flatRoleToDelete = fromDeleteRoleInputToFlatRoleOrThrow({
+        flatRoleMaps,
+        roleId,
+      });
+
       if (defaultRoleId === roleId) {
         throw new PermissionsException(
           PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
@@ -272,20 +287,9 @@ export class RoleService {
         workspaceId,
         defaultRoleId,
       });
+
+      rolesToDelete.push(flatRoleToDelete);
     }
-
-    const { flatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
-    const rolesToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: ids,
-      flatEntityMaps: flatRoleMaps,
-    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
