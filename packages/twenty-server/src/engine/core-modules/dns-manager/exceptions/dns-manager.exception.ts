@@ -15,7 +15,8 @@ export class DnsManagerException extends CustomException<
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
-      userFriendlyMessage: userFriendlyMessage ?? msg`A DNS manager error occurred.`,
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A DNS manager error occurred.`,
     });
   }
 }
