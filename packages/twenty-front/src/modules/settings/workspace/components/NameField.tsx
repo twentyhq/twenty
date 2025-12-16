@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
@@ -92,7 +93,7 @@ export const NameField = ({
         label={t`Name`}
         value={displayName}
         onChange={setDisplayName}
-        placeholder="Apple"
+        placeholder={t`Apple`}
         fullWidth
       />
     </StyledComboInputContainer>

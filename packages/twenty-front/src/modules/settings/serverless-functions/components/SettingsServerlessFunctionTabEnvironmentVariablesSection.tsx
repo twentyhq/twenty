@@ -12,12 +12,12 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = () => {
     <Section>
       <H2Title
         title={t`Environment Variables`}
-        description="Accessible in your function via process.env.KEY"
+        description={t`Accessible in your function via process.env.KEY`}
       />
       Environment variables are defined at application level for all functions.
       Please check{' '}
       <LinkChip
-        label={'application detail page'}
+        label={t`application detail page`}
         to={getSettingsPath(
           SettingsPath.ApplicationDetail,
           {

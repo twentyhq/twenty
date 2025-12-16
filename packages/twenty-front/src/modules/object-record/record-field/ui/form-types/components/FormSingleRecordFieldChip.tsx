@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import {
@@ -63,5 +64,5 @@ export const FormSingleRecordFieldChip = ({
     );
   }
 
-  return <StyledPlaceholder>Select a {objectNameSingular}</StyledPlaceholder>;
+  return <StyledPlaceholder>{t`Select a ${objectNameSingular}`}</StyledPlaceholder>;
 };

@@ -1,6 +1,7 @@
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
@@ -109,7 +110,7 @@ export const VariableChip = ({
       {onRemove ? (
         <StyledDelete
           onClick={onRemove}
-          aria-label="Remove variable"
+          aria-label={t`Remove variable`}
           danger={isVariableNotFound}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

@@ -156,6 +156,7 @@ export default [
             '^(Enter|Escape|Tab|Space|Backspace|Delete)$', // keyboard keys
             '^(Dark|Light)$', // color schemes
             '^Icon[A-Z]\\w*$', // Icon names like IconDefault, IconTable, IconSettings
+            '^\\w*Icon$', // Icon names that end with Icon like FieldIcon
             '^%c.*$', // Console format strings
             '^(Group|CalendarView|CalendarDateField|Compact view)$', // Common item IDs for selectable lists
           ],
@@ -283,6 +284,10 @@ export default [
             'event',
             'action',
             'actionType',
+
+            // Icon names
+            'iconName',
+            { regex: { pattern: '^Icon[A-Z]' } },
 
             // UPPER_CASE names (constants)
             { regex: { pattern: '^[A-Z][A-Z0-9_]*$' } },

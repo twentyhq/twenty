@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
@@ -122,7 +123,7 @@ export const WorkspaceInviteTeam = () => {
               return (
                 <SettingsTextInput
                   instanceId="workspace-invite-team-emails"
-                  placeholder="tim@apple.com, jony.ive@apple.dev"
+                  placeholder={t`tim@apple.com, jony.ive@apple.dev`}
                   value={value}
                   onChange={onChange}
                   error={error?.message}

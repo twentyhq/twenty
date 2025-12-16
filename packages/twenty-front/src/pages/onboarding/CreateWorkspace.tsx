@@ -17,6 +17,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
@@ -218,7 +219,7 @@ export const CreateWorkspace = () => {
                   <TextInput
                     autoFocus
                     value={value}
-                    placeholder="Apple"
+                    placeholder={t`Apple`}
                     onBlur={onBlur}
                     onChange={onChange}
                     error={error?.message}

@@ -17,6 +17,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,7 +37,7 @@ const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-const DEFAULT_SELECTED_OPTION = { label: 'Select an option', value: '' };
+const DEFAULT_SELECTED_OPTION = { label: t`Select an option`, value: '' };
 
 const filterOptionsBySearch = <T extends { label: string }>(
   options: T[],
@@ -167,7 +168,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     <>
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
-          <StyledLabel>Record Type</StyledLabel>
+          <StyledLabel>{t`Record Type`}</StyledLabel>
           <Dropdown
             dropdownId="workflow-edit-trigger-record-type"
             dropdownPlacement="bottom-start"
@@ -235,7 +236,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             searchInputValue.toLowerCase(),
                           )) && (
                           <MenuItem
-                            text="Advanced"
+                            text={t`Advanced`}
                             LeftIcon={IconSettings}
                             onClick={handleSystemObjectsClick}
                             hasSubMenu
@@ -251,8 +252,8 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
-            label="Fields (Optional)"
-            placeholder="Select specific fields to listen to"
+            label={t`Fields (Optional)`}
+            placeholder={t`Select specific fields to listen to`}
             objectMetadataItem={selectedObjectMetadataItem}
             handleFieldsChange={handleFieldsChange}
             readonly={triggerOptions.readonly ?? false}

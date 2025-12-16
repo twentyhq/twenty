@@ -229,7 +229,7 @@ export const WorkflowEditActionSendEmail = ({
     },
   });
 
-  let emptyOption: SelectOption<string | null> = { label: 'None', value: null };
+  let emptyOption: SelectOption<string | null> = { label: t`None`, value: null };
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
@@ -263,7 +263,7 @@ export const WorkflowEditActionSendEmail = ({
         <WorkflowStepBody>
           <Select
             dropdownId="select-connected-account-id"
-            label="Account"
+            label={t`Account`}
             fullWidth
             emptyOption={emptyOption}
             value={formData.connectedAccountId}
@@ -274,7 +274,7 @@ export const WorkflowEditActionSendEmail = ({
                 navigate(SettingsPath.NewAccount);
               },
               Icon: IconPlus,
-              text: 'Add account',
+              text: t`Add account`,
             }}
             onChange={(connectedAccountId) => {
               handleFieldChange('connectedAccountId', connectedAccountId);
@@ -284,8 +284,8 @@ export const WorkflowEditActionSendEmail = ({
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <FormTextFieldInput
-            label="Email"
-            placeholder="Enter receiver email"
+            label={t`Email`}
+            placeholder={t`Enter receiver email`}
             readonly={actionOptions.readonly}
             defaultValue={formData.email}
             onChange={(email) => {
@@ -294,8 +294,8 @@ export const WorkflowEditActionSendEmail = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <FormTextFieldInput
-            label="Subject"
-            placeholder="Enter email subject"
+            label={t`Subject`}
+            placeholder={t`Enter email subject`}
             readonly={actionOptions.readonly}
             defaultValue={formData.subject}
             onChange={(subject) => {
@@ -304,7 +304,7 @@ export const WorkflowEditActionSendEmail = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <FormAdvancedTextFieldInput
-            label="Body"
+            label={t`Body`}
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
             onChange={(body: string) => {
@@ -331,7 +331,7 @@ export const WorkflowEditActionSendEmail = ({
             maxWidth={EMAIL_EDITOR_MAX_WIDTH}
           />
           <WorkflowSendEmailAttachments
-            label="Attachments"
+            label={t`Attachments`}
             files={formData.files}
             onChange={(files) => {
               handleFieldChange('files', files);

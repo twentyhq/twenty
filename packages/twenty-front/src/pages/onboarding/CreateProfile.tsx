@@ -21,6 +21,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -206,7 +207,7 @@ export const CreateProfile = () => {
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="Tim"
+                  placeholder={t`Tim`}
                   error={error?.message}
                   fullWidth
                 />
@@ -228,7 +229,7 @@ export const CreateProfile = () => {
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="Cook"
+                  placeholder={t`Cook`}
                   error={error?.message}
                   fullWidth
                 />

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -151,7 +152,7 @@ export const PhonesFieldInput = () => {
       onChange={handlePhonesChange}
       onClickOutside={handleClickOutside}
       onEscape={handleEscape}
-      placeholder="Phone"
+      placeholder={t`Phone`}
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}
       formatInput={(input) => {

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { Select } from '@/ui/input/components/Select';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
@@ -82,7 +83,7 @@ export const SettingsDatabaseEventsForm = ({
               updateOperation?.(index, 'object', newValue)
             }
             fullWidth
-            emptyOption={{ label: 'Object', value: null }}
+            emptyOption={{ label: t`Object`, value: null }}
             disabled={disabled}
           />
           <Select
