@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { writeFileSync } from 'fs';
 
 import {
   AllMetadataName,
@@ -186,11 +185,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             error.message,
           );
         });
-
-    writeFileSync(
-      `${Date.now()}-validate-build-and-run.json`,
-      JSON.stringify(validateAndBuildResult, null, 2),
-    );
 
     if (validateAndBuildResult.status === 'fail') {
       return validateAndBuildResult;

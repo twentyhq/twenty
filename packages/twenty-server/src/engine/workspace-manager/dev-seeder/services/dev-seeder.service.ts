@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { writeFileSync } from 'fs';
 
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
@@ -96,11 +95,6 @@ export class DevSeederService {
         workspaceId,
         twentyStandardApplicationId: twentyStandardApplication.id,
       });
-
-    writeFileSync(
-      `${Date.now()}-from-db-reset-all-flat-entity-maps.json`,
-      JSON.stringify(twentyStandardAllFlatEntityMaps, null, 2),
-    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
