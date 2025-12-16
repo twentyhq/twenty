@@ -235,9 +235,7 @@ export const NetworkError: Story = {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Request Failed')).toBeVisible();
     // Use regex matcher since Monaco editor splits text across multiple DOM elements
-    expect(
-      await canvas.findByText(/Network connection failed/),
-    ).toBeVisible();
+    expect(await canvas.findByText(/Network connection failed/)).toBeVisible();
   },
 };
 
