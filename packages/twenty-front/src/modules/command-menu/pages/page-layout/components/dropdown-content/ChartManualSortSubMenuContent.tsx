@@ -4,6 +4,11 @@ import { type DropResult } from '@hello-pangea/dnd';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import {
+  type ChartManualSortAxis,
+  getManualSortConfigKey,
+} from '@/command-menu/pages/page-layout/utils/getManualSortConfigKey';
+import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { sortOptionsForManualOrder } from '@/page-layout/widgets/graph/utils/sortOptionsForManualOrder';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -16,11 +21,6 @@ import { Tag } from 'twenty-ui/components';
 import { IconChevronLeft, IconGripVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import {
-  type ChartManualSortAxis,
-  getManualSortConfigKey,
-} from '@/command-menu/pages/page-layout/utils/getManualSortConfigKey';
-import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
 
 type ChartManualSortSubMenuContentProps = {
   fieldMetadataItem: FieldMetadataItem;
