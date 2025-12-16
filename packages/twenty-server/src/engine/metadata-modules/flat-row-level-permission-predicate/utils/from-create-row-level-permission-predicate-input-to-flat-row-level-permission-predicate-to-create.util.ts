@@ -4,14 +4,15 @@ import { v4 } from 'uuid';
 import { type CreateRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/create-row-level-permission-predicate.input';
 import { RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
 
 export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate =
   ({
     createRowLevelPermissionPredicateInput:
       rawCreateRowLevelPermissionPredicateInput,
+    workspaceId,
   }: {
     createRowLevelPermissionPredicateInput: CreateRowLevelPermissionPredicateInput;
+    workspaceId: string;
   }): FlatRowLevelPermissionPredicate => {
     const sanitizedInput = (
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties as unknown as (
@@ -23,7 +24,6 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       'objectMetadataId',
       'roleId',
       'rowLevelPermissionPredicateGroupId',
-      'workspaceId',
       'workspaceMemberFieldMetadataId',
       'subFieldName',
       'workspaceMemberSubFieldName',
@@ -34,7 +34,6 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       fieldMetadataId,
       objectMetadataId,
       roleId,
-      workspaceId,
       value,
       ...createRowLevelPermissionPredicateInput
     } = sanitizedInput;
@@ -55,7 +54,7 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       operand:
         (createRowLevelPermissionPredicateInput.operand as RowLevelPermissionPredicateOperand) ??
         RowLevelPermissionPredicateOperand.CONTAINS,
-      value: value as RowLevelPermissionPredicateValue,
+      value: value,
       rowLevelPermissionPredicateGroupId:
         createRowLevelPermissionPredicateInput.rowLevelPermissionPredicateGroupId ??
         null,

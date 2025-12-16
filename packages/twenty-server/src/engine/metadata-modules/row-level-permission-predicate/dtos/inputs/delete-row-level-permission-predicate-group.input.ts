@@ -4,7 +4,4 @@ import { Field, InputType } from '@nestjs/graphql';
 export class DeleteRowLevelPermissionPredicateGroupInput {
   @Field(() => String)
   id: string;
-
-  @Field(() => String)
-  workspaceId: string;
 }

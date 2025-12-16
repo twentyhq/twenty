@@ -15,8 +15,5 @@ export class RowLevelPermissionPredicateGroupDTO {
   positionInRowLevelPermissionPredicateGroup?: number | null;
 
   @Field(() => String)
-  workspaceId: string;
-
-  @Field(() => String)
   roleId: string;
 }

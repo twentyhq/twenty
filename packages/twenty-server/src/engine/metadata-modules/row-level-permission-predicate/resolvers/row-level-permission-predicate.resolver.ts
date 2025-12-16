@@ -54,11 +54,10 @@ export class RowLevelPermissionPredicateResolver {
     return this.predicateService.createOne({
       createRowLevelPermissionPredicateInput: {
         ...input,
-        workspaceId: input.workspaceId ?? workspace.id,
         operand: input.operand as RowLevelPermissionPredicateOperand,
-        value: safeParseJson(input.value),
+        value: input.value,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
@@ -68,18 +67,13 @@ export class RowLevelPermissionPredicateResolver {
     input: UpdateRowLevelPermissionPredicateInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RowLevelPermissionPredicateDTO> {
-    const maybeValue =
-      input.value !== undefined
-        ? safeParseJson(input.value as string)
-        : undefined;
-
     return this.predicateService.updateOne({
       updateRowLevelPermissionPredicateInput: {
         ...input,
         operand: input.operand as RowLevelPermissionPredicateOperand,
-        value: maybeValue ?? input.value,
+        value: input.value,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
@@ -92,17 +86,8 @@ export class RowLevelPermissionPredicateResolver {
     return this.predicateService.deleteOne({
       deleteRowLevelPermissionPredicateInput: {
         ...input,
-        workspaceId: input.workspaceId ?? workspace.id,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 }
-
-const safeParseJson = (value: string) => {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-};

@@ -40,11 +40,10 @@ export class RowLevelPermissionPredicateGroupResolver {
     return this.predicateGroupService.createOne({
       createRowLevelPermissionPredicateGroupInput: {
         ...input,
-        workspaceId: input.workspaceId ?? workspace.id,
         logicalOperator:
           input.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
@@ -60,7 +59,7 @@ export class RowLevelPermissionPredicateGroupResolver {
         logicalOperator:
           input.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 
@@ -73,9 +72,8 @@ export class RowLevelPermissionPredicateGroupResolver {
     return this.predicateGroupService.deleteOne({
       deleteRowLevelPermissionPredicateGroupInput: {
         ...input,
-        workspaceId: input.workspaceId ?? workspace.id,
       },
-      workspaceId: input.workspaceId ?? workspace.id,
+      workspaceId: workspace.id,
     });
   }
 }

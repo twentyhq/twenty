@@ -42,6 +42,7 @@ export class RowLevelPermissionPredicateService {
       fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicateToCreate(
         {
           createRowLevelPermissionPredicateInput,
+          workspaceId,
         },
       );
 

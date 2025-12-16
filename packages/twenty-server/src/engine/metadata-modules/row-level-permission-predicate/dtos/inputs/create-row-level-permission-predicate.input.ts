@@ -1,5 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
+import { RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
+
 @InputType()
 export class CreateRowLevelPermissionPredicateInput {
   @Field(() => String)
@@ -11,8 +15,8 @@ export class CreateRowLevelPermissionPredicateInput {
   @Field(() => String)
   operand: string;
 
-  @Field(() => String)
-  value: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  value: RowLevelPermissionPredicateValue | null;
 
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;
@@ -28,9 +32,6 @@ export class CreateRowLevelPermissionPredicateInput {
 
   @Field(() => Number, { nullable: true })
   positionInRowLevelPermissionPredicateGroup?: number | null;
-
-  @Field(() => String)
-  workspaceId: string;
 
   @Field(() => String)
   roleId: string;

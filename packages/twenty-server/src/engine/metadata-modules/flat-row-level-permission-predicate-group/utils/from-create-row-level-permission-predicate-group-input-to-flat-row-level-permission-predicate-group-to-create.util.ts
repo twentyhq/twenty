@@ -9,8 +9,10 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
   ({
     createRowLevelPermissionPredicateGroupInput:
       rawCreateRowLevelPermissionPredicateGroupInput,
+    workspaceId,
   }: {
     createRowLevelPermissionPredicateGroupInput: CreateRowLevelPermissionPredicateGroupInput;
+    workspaceId: string;
   }): FlatRowLevelPermissionPredicateGroup => {
     const sanitizedInput = (
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties as unknown as (
@@ -18,17 +20,13 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
         keys: string[],
       ) => CreateRowLevelPermissionPredicateGroupInput
     )(rawCreateRowLevelPermissionPredicateGroupInput, [
-      'workspaceId',
       'roleId',
       'parentRowLevelPermissionPredicateGroupId',
       'logicalOperator',
     ]);
 
-    const {
-      workspaceId,
-      roleId,
-      ...createRowLevelPermissionPredicateGroupInput
-    } = sanitizedInput;
+    const { roleId, ...createRowLevelPermissionPredicateGroupInput } =
+      sanitizedInput;
 
     const createdAt = new Date().toISOString();
     const predicateGroupId = v4();

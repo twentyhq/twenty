@@ -5,9 +5,6 @@ export class UpdateRowLevelPermissionPredicateInput {
   @Field(() => String)
   id: string;
 
-  @Field(() => String)
-  workspaceId: string;
-
   @Field(() => String, { nullable: true })
   operand?: string;
 

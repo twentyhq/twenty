@@ -12,8 +12,5 @@ export class CreateRowLevelPermissionPredicateGroupInput {
   positionInRowLevelPermissionPredicateGroup?: number | null;
 
   @Field(() => String)
-  workspaceId: string;
-
-  @Field(() => String)
   roleId: string;
 }

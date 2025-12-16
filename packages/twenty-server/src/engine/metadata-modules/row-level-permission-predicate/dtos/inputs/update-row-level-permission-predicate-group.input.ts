@@ -5,9 +5,6 @@ export class UpdateRowLevelPermissionPredicateGroupInput {
   @Field(() => String)
   id: string;
 
-  @Field(() => String)
-  workspaceId: string;
-
   @Field(() => String, { nullable: true })
   parentRowLevelPermissionPredicateGroupId?: string | null;
 
