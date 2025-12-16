@@ -1,10 +1,10 @@
 import {
-    type IconComponent,
-    IconHandMove,
-    IconSortAscending,
-    IconSortDescending,
-    IconTrendingDown,
-    IconTrendingUp,
+  type IconComponent,
+  IconHandMove,
+  IconSortAscending,
+  IconSortDescending,
+  IconTrendingDown,
+  IconTrendingUp,
 } from 'twenty-ui/display';
 import { GraphOrderBy } from '~/generated/graphql';
 
