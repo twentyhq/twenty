@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -22,7 +23,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
   }: Omit<
-    CreateStandardFieldArgs<'messageChannelMessageAssociation'>,
+    CreateStandardFieldArgs<'messageChannelMessageAssociation', FieldMetadataType>,
     'context'
   >): Record<
     AllStandardObjectFieldName<'messageChannelMessageAssociation'>,
@@ -59,7 +60,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         isNullable: false,
         isUIReadOnly: true,
         defaultValue: 'now',
-        settings: { displayFormat: 'RELATIVE' },
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -78,7 +79,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         isNullable: false,
         isUIReadOnly: true,
         defaultValue: 'now',
-        settings: { displayFormat: 'RELATIVE' },
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -96,7 +97,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconCalendarMinus',
         isNullable: true,
         isUIReadOnly: true,
-        settings: { displayFormat: 'RELATIVE' },
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
