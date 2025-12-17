@@ -163,23 +163,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  addressOld: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'addressOld',
-      type: FieldMetadataType.TEXT,
-      label: 'Address (deprecated)',
-      description:
-        'Address of the company - deprecated in favor of new address field',
-      icon: 'IconMap',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   employees: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
