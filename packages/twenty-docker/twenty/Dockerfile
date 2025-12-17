@@ -1,10 +1,6 @@
 # Base image for common dependencies
 FROM node:24-alpine AS common-deps
 
-# Optional: constrain Node.js heap for memory-limited CI environments
-# Pass --build-arg NODE_OPTIONS="--max-old-space-size=2048" to enable
-ARG NODE_OPTIONS
-
 WORKDIR /app
 
 # Copy only the necessary files for dependency resolution
@@ -27,8 +23,6 @@ RUN yarn && yarn cache clean && npx nx reset
 # Build the back
 FROM common-deps AS twenty-server-build
 
-ARG NODE_OPTIONS
-
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
@@ -41,7 +35,6 @@ RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 # Build the front
 FROM common-deps AS twenty-front-build
 
-ARG NODE_OPTIONS
 ARG REACT_APP_SERVER_BASE_URL
 
 COPY ./packages/twenty-front /app/packages/twenty-front
