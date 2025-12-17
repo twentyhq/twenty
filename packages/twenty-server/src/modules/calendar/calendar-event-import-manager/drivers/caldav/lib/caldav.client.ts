@@ -13,6 +13,7 @@ import {
   syncCollection,
 } from 'tsdav';
 
+import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
@@ -269,18 +270,26 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
       const participants = this.extractParticipantsFromEvent(event);
 
+      const title = icalDataExtractPropertyValue(
+        event.summary,
+        'Untitled Event',
+      );
+      const description = icalDataExtractPropertyValue(event.description);
+      const location = icalDataExtractPropertyValue(event.location);
+      const conferenceLinkUrl = icalDataExtractPropertyValue(event.url);
+
       return {
         id: objectUrl,
-        title: event.summary || 'Untitled Event',
+        title,
         iCalUid: event.uid || '',
-        description: event.description || '',
+        description,
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),
-        location: event.location || '',
+        location,
         isFullDay: this.isFullDayEvent(rawData),
         isCanceled: event.status === 'CANCELLED',
         conferenceLinkLabel: '',
-        conferenceLinkUrl: event.url,
+        conferenceLinkUrl,
         externalCreatedAt:
           event.created?.toISOString() || new Date().toISOString(),
         externalUpdatedAt:
