@@ -116,6 +116,7 @@ export const SettingsAgentRoleTab = ({
               agentId,
               roleId: data.createOneRole.id,
             },
+            // eslint-disable-next-line lingui/no-unlocalized-strings
             refetchQueries: ['GetRoles'],
           });
         }
