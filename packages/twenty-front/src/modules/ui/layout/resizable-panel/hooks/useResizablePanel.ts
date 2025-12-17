@@ -89,19 +89,12 @@ export const useResizablePanel = ({
         onCollapse();
       } else {
         const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const rawWidth = startWidth + widthDelta;
-
-        // Check collapse threshold before clamping
-        if (rawWidth < constraints.collapseThreshold) {
-          onCollapse();
-        } else {
-          const finalWidth = clampWidth(
-            rawWidth,
-            constraints.min,
-            constraints.max,
-          );
-          onWidthChange(finalWidth);
-        }
+        const finalWidth = clampWidth(
+          startWidth + widthDelta,
+          constraints.min,
+          constraints.max,
+        );
+        onWidthChange(finalWidth);
       }
 
       setStartX(null);
@@ -114,7 +107,6 @@ export const useResizablePanel = ({
       side,
       constraints.min,
       constraints.max,
-      constraints.collapseThreshold,
       onCollapse,
       onWidthChange,
     ],
