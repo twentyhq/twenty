@@ -1,4 +1,8 @@
-import { InputField, Node, NodeField } from '../utils/data.types';
+import {
+  type InputField,
+  type Node,
+  type NodeField,
+} from '../utils/data.types';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const getListFromFieldMetadataType = (fieldMetadataType: FieldMetadataType) => {
@@ -244,7 +248,6 @@ export const computeInputFields = (
       case FieldMetadataType.BOOLEAN:
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.POSITION:
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.RATING: {
         const nodeFieldType = getTypeFromFieldMetadataType(nodeField.type);
