@@ -1,6 +1,6 @@
 import {
-  FieldMetadataDefaultValue,
-  FieldMetadataSettings,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataType,

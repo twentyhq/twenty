@@ -20,10 +20,10 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'attachment', FieldMetadataType>, 'context'>): Record<
-  AllStandardObjectFieldName<'attachment'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'attachment', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'attachment'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

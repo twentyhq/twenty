@@ -1,3 +1,5 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -33,7 +35,6 @@ import { buildWorkflowStandardFlatFieldMetadatas } from 'src/engine/workspace-ma
 import { buildWorkflowVersionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util';
 import { buildWorkspaceMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util';
 import { type CreateStandardFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type StandardFieldBuilder<P extends AllStandardObjectName> = (
   args: Omit<CreateStandardFieldArgs<P, FieldMetadataType>, 'context'>,

@@ -1,4 +1,8 @@
-import { DateDisplayFormat, FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -20,10 +24,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'dashboard', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'dashboard'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'dashboard'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

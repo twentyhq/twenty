@@ -23,10 +23,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'message', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'message'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'message'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

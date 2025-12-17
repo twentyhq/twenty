@@ -23,10 +23,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'favorite', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'favorite'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'favorite'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

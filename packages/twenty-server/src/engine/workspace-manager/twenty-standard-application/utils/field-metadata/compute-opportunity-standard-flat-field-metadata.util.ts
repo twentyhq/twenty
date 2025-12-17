@@ -25,10 +25,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'opportunity', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'opportunity'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'opportunity'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

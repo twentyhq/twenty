@@ -23,7 +23,10 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
   }: Omit<
-    CreateStandardFieldArgs<'messageChannelMessageAssociation', FieldMetadataType>,
+    CreateStandardFieldArgs<
+      'messageChannelMessageAssociation',
+      FieldMetadataType
+    >,
     'context'
   >): Record<
     AllStandardObjectFieldName<'messageChannelMessageAssociation'>,

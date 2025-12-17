@@ -64,4 +64,3 @@ export const createManyOperation = async ({
     errors: response.body.errors,
   };
 };
-

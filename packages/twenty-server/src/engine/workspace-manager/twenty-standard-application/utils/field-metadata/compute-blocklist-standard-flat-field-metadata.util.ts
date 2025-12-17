@@ -20,10 +20,10 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'blocklist', FieldMetadataType>, 'context'>): Record<
-  AllStandardObjectFieldName<'blocklist'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'blocklist', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'blocklist'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

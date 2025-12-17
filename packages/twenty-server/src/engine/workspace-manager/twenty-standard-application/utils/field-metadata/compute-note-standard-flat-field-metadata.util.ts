@@ -1,4 +1,8 @@
-import { DateDisplayFormat, FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -17,10 +21,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<
-  CreateStandardFieldArgs<'note', FieldMetadataType>,
-  'context'
->): Record<
+}: Omit<CreateStandardFieldArgs<'note', FieldMetadataType>, 'context'>): Record<
   AllStandardObjectFieldName<'note'>,
   FlatFieldMetadata
 > => ({

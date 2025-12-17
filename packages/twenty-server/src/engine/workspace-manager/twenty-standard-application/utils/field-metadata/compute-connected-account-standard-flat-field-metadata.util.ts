@@ -23,7 +23,10 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'connectedAccount', FieldMetadataType>,
   'context'
->): Record<AllStandardObjectFieldName<'connectedAccount'>, FlatFieldMetadata> => ({
+>): Record<
+  AllStandardObjectFieldName<'connectedAccount'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

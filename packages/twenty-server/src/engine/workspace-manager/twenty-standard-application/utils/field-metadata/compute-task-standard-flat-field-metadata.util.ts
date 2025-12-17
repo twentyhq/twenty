@@ -22,10 +22,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<
-  CreateStandardFieldArgs<'task', FieldMetadataType>,
-  'context'
->): Record<
+}: Omit<CreateStandardFieldArgs<'task', FieldMetadataType>, 'context'>): Record<
   AllStandardObjectFieldName<'task'>,
   FlatFieldMetadata
 > => ({
