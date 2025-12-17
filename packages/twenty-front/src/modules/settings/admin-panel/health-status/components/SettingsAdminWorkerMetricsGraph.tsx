@@ -54,7 +54,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
     fetchPolicy: 'no-cache',
     onError: (error) => {
       enqueueErrorSnackBar({
-        message: `Error fetching worker metrics: ${error.message}`,
+        message: t`Error fetching worker metrics: ${error.message}`,
       });
     },
   });

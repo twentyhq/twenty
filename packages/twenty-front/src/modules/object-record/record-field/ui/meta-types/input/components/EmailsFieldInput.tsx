@@ -7,7 +7,6 @@ import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFie
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';

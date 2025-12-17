@@ -64,5 +64,7 @@ export const FormSingleRecordFieldChip = ({
     );
   }
 
-  return <StyledPlaceholder>{t`Select a ${objectNameSingular}`}</StyledPlaceholder>;
+  return (
+    <StyledPlaceholder>{t`Select a ${objectNameSingular}`}</StyledPlaceholder>
+  );
 };

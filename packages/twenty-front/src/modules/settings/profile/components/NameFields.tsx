@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';

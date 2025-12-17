@@ -129,7 +129,7 @@ export const SettingsAdminWorkspaceContent = ({
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
         enqueueErrorSnackBar({
-          message: `Failed to update feature flag. ${error.message}`,
+          message: t`Failed to update feature flag. ${error.message}`,
         });
       },
     });

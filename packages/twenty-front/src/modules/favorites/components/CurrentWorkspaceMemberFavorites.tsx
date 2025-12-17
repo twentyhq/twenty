@@ -254,8 +254,16 @@ export const CurrentWorkspaceMemberFavorites = ({
         createPortal(
           <ConfirmationModal
             modalId={modalId}
-            title={folder.favorites.length > 1 ? t`Remove ${folder.favorites.length} favorites?` : t`Remove ${folder.favorites.length} favorite?`}
-            subtitle={folder.favorites.length > 1 ? t`This action will delete this favorite folder and all ${folder.favorites.length} favorites inside. Do you want to continue?` : t`This action will delete this favorite folder and the favorite inside. Do you want to continue?`}
+            title={
+              folder.favorites.length > 1
+                ? t`Remove ${folder.favorites.length} favorites?`
+                : t`Remove ${folder.favorites.length} favorite?`
+            }
+            subtitle={
+              folder.favorites.length > 1
+                ? t`This action will delete this favorite folder and all ${folder.favorites.length} favorites inside. Do you want to continue?`
+                : t`This action will delete this favorite folder and the favorite inside. Do you want to continue?`
+            }
             onConfirmClick={handleConfirmDelete}
             confirmButtonText={t`Delete Folder`}
           />,

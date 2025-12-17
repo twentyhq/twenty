@@ -15,7 +15,6 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';

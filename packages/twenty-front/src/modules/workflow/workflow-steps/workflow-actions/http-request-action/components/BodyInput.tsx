@@ -165,7 +165,11 @@ export const BodyInput = ({
       <StyledSelectDropdown
         options={[
           { label: t`Key/Value`, value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
-          { label: t`Raw JSON`, value: BODY_TYPES.RAW_JSON, Icon: IconFileText },
+          {
+            label: t`Raw JSON`,
+            value: BODY_TYPES.RAW_JSON,
+            Icon: IconFileText,
+          },
           { label: t`Form Data`, value: BODY_TYPES.FORM_DATA, Icon: IconKey },
           { label: t`Text`, value: BODY_TYPES.TEXT, Icon: IconFileText },
           { label: t`None`, value: BODY_TYPES.NONE, Icon: IconFileText },

@@ -540,6 +540,17 @@ export default [
     },
   },
 
+  // Testing utilities - not user-facing
+  {
+    files: [
+      '**/testing/**/*.tsx',
+      '**/testing/**/*.ts',
+    ],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
   // JavaScript specific configuration
   {
     files: ['*.{js,jsx}'],

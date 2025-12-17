@@ -43,7 +43,7 @@ export const SettingsAdminJsonDataIndicatorHealthStatus = () => {
       {isDown && (
         <StyledErrorMessage>
           {indicatorHealth.errorMessage ||
-            `${indicatorHealth.label} service is unreachable`}
+            t`${indicatorHealth.label} service is unreachable`}
         </StyledErrorMessage>
       )}
       {parsedDetails && (

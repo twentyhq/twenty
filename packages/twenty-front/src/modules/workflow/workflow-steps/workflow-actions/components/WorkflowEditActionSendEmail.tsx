@@ -229,7 +229,10 @@ export const WorkflowEditActionSendEmail = ({
     },
   });
 
-  let emptyOption: SelectOption<string | null> = { label: t`None`, value: null };
+  let emptyOption: SelectOption<string | null> = {
+    label: t`None`,
+    value: null,
+  };
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {

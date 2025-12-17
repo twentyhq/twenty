@@ -1,7 +1,6 @@
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
