@@ -28,6 +28,7 @@ describe('Granular settings permissions', () => {
     originalMemberRoleId = memberRole.id;
 
     // Create a custom role with canUpdateAllSettings = false
+    // canUpdateAllObjectRecords must be true to allow creating records like workflows
     const createRoleQuery = {
       query: `
         mutation CreateOneRole {
@@ -36,7 +37,7 @@ describe('Granular settings permissions', () => {
             description: "Role for testing specific setting permissions"
             canUpdateAllSettings: false
             canReadAllObjectRecords: true
-            canUpdateAllObjectRecords: false
+            canUpdateAllObjectRecords: true
             canSoftDeleteAllObjectRecords: false
             canDestroyAllObjectRecords: false
           }) {
