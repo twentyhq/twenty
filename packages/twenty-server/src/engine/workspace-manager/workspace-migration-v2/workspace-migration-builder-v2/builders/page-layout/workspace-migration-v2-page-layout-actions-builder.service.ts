@@ -19,11 +19,13 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     super(ALL_METADATA_NAME.pageLayout);
   }
 
-  protected validateFlatEntityCreation(
+  protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayout,
-    'created'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayout,
+      'created'
+    >
   > {
     const validationResult =
       this.flatPageLayoutValidatorService.validateFlatPageLayoutCreation(args);
@@ -73,11 +75,13 @@ export class WorkspaceMigrationV2PageLayoutActionsBuilderService extends Workspa
     };
   }
 
-  protected validateFlatEntityUpdate(
+  protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayout,
-    'updated'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayout,
+      'updated'
+    >
   > {
     const validationResult =
       this.flatPageLayoutValidatorService.validateFlatPageLayoutUpdate(args);
