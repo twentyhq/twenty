@@ -188,6 +188,9 @@ export const MultiItemFieldInput = <T,>({
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
     }
+    setIsInputDisplayed(false);
+    setIsAddingNewItem(false);
+    setInputValue('');
   };
 
   const handleSubmitChanges = () => {
