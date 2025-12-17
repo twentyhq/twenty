@@ -47,10 +47,13 @@ COPY ./packages/twenty-server /app/packages/twenty-server
 
 RUN npx nx run twenty-server:build
 
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
+# Build the front (depends on server build completing first to save memory)
+FROM common-deps AS twenty-front-build-deps
+# Wait for server build to complete
+COPY --from=twenty-server-build /app/packages/twenty-server/dist /tmp/.twenty-server-build-done
 
 # Build the front
-FROM twenty-server-build AS twenty-front-build
+FROM twenty-front-build-deps AS twenty-front-build
 
 # Inherit memory optimization settings
 ARG NX_DAEMON=false
