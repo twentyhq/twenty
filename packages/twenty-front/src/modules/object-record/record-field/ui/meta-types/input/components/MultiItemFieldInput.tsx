@@ -184,7 +184,10 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
-    onEnter(updatedItems);
+    handleSubmitChanges();
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      onEnter(updatedItems);
+    }
   };
 
   const handleSubmitChanges = () => {
