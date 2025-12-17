@@ -27,8 +27,8 @@ const StyledLinkContainer = styled.div`
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
-const emailsInvalidMessage = msg`Emails "${invalidEmails}" are invalid`;
-const emailInvalidMessage = msg`Email "${invalidEmail}" is invalid`;
+const emailsAreInvalidMessage = msg`are invalid`;
+const emailIsInvalidMessage = msg`is invalid`;
 
 const validationSchema = z
   .object({
@@ -56,14 +56,8 @@ const validationSchema = z
             code: 'custom',
             message:
               invalidEmails.length > 1
-                ? i18n._(emailsInvalidMessage).replace(
-                    'are invalid',
-                    `"${invalidEmailsList}" are invalid`,
-                  )
-                : i18n._(emailInvalidMessage).replace(
-                    'is invalid',
-                    `"${invalidEmailsList}" is invalid`,
-                  ),
+                ? `Emails "${invalidEmailsList}" ${i18n._(emailsAreInvalidMessage)}`
+                : `Email "${invalidEmailsList}" ${i18n._(emailIsInvalidMessage)}`,
           });
         }
     }),
