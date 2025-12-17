@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
@@ -24,42 +26,49 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-const emailValidationSchema = (email: string) =>
-  z.email(`Invalid email '${email}'`);
+const emailsEmptyErrorMessage = msg`Emails should not be empty`;
+const emailsInvalidMessage = msg`Emails "${invalidEmails}" are invalid`;
+const emailInvalidMessage = msg`Email "${invalidEmail}" is invalid`;
 
-const validationSchema = () =>
-  z
-    .object({
-      emails: z.string().superRefine((value, ctx) => {
-        if (!value.length) {
-          return;
+const validationSchema = z
+  .object({
+    emails: z.string().superRefine((value, ctx) => {
+      if (!value.length) {
+        return;
+      }
+      const emails = sanitizeEmailList(value.split(','));
+      if (emails.length === 0) {
+        ctx.addIssue({
+          code: 'custom',
+          message: i18n._(emailsEmptyErrorMessage),
+        });
+      }
+      const invalidEmails: string[] = [];
+      for (const email of emails) {
+        const result = z.email().safeParse(email);
+        if (!result.success) {
+          invalidEmails.push(email);
         }
-        const emails = sanitizeEmailList(value.split(','));
-        if (emails.length === 0) {
-          ctx.addIssue({
-            code: 'custom',
-            message: 'Emails should not be empty',
-          });
-        }
-        const invalidEmails: string[] = [];
-        for (const email of emails) {
-          const result = emailValidationSchema(email).safeParse(email);
-          if (!result.success) {
-            invalidEmails.push(email);
-          }
-        }
+      }
         if (invalidEmails.length > 0) {
+          const invalidEmailsList = invalidEmails.join('", "');
           ctx.addIssue({
             code: 'custom',
             message:
               invalidEmails.length > 1
-                ? 'Emails "' + invalidEmails.join('", "') + '" are invalid'
-                : 'Email "' + invalidEmails.join('", "') + '" is invalid',
+                ? i18n._(emailsInvalidMessage).replace(
+                    'are invalid',
+                    `"${invalidEmailsList}" are invalid`,
+                  )
+                : i18n._(emailInvalidMessage).replace(
+                    'is invalid',
+                    `"${invalidEmailsList}" is invalid`,
+                  ),
           });
         }
-      }),
-    })
-    .required();
+    }),
+  })
+  .required();
 
 type FormInput = {
   emails: string;
@@ -74,7 +83,7 @@ export const WorkspaceInviteTeam = () => {
   const { reset, handleSubmit, control, formState, watch } = useForm<FormInput>(
     {
       mode: 'onSubmit',
-      resolver: zodResolver(validationSchema()),
+      resolver: zodResolver(validationSchema),
       defaultValues: {
         emails: '',
       },
@@ -87,7 +96,7 @@ export const WorkspaceInviteTeam = () => {
     const { data } = await sendInvitation({ emails: emailsList });
     if (isDefined(data) && data.sendInvitations.result.length > 0) {
       enqueueSuccessSnackBar({
-        message: `${data.sendInvitations.result.length} invitations sent`,
+        message: t`${data.sendInvitations.result.length} invitations sent`,
         options: {
           duration: 2000,
         },

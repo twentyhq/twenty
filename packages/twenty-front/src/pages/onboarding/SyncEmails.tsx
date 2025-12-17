@@ -17,7 +17,7 @@ import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAut
 import { PageFocusId } from '@/types/PageFocusId';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { t } from '@lingui/core/macro';
+import { Trans, t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -106,9 +106,9 @@ export const SyncEmails = () => {
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <Title noMarginTop>Emails and Calendar</Title>
+      <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
-        Sync your Emails and Calendar with Twenty. Choose your privacy settings.
+        {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard
@@ -145,7 +145,7 @@ export const SyncEmails = () => {
       </StyledProviderContainer>
       <StyledActionLinkContainer>
         <ClickToActionLink onClick={continueWithoutSync}>
-          Continue without sync
+          {t`Continue without sync`}
         </ClickToActionLink>
       </StyledActionLinkContainer>
     </Modal.Content>

@@ -21,6 +21,8 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { ApolloError } from '@apollo/client';
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -47,13 +49,16 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
+const firstNameErrorMessage = msg`First name can not be empty`;
+const lastNameErrorMessage = msg`Last name can not be empty`;
+
 const validationSchema = z
   .object({
     firstName: z.string().min(1, {
-      error: 'First name can not be empty',
+      error: i18n._(firstNameErrorMessage),
     }),
     lastName: z.string().min(1, {
-      error: 'Last name can not be empty',
+      error: i18n._(lastNameErrorMessage),
     }),
   })
   .required();
@@ -104,6 +109,7 @@ export const CreateProfile = () => {
               firstName: data.firstName,
               lastName: data.lastName,
             },
+            // eslint-disable-next-line lingui/no-unlocalized-strings
             colorScheme: 'System',
           },
         });
@@ -116,6 +122,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
+              // eslint-disable-next-line lingui/no-unlocalized-strings
               colorScheme: 'System',
             };
           }
