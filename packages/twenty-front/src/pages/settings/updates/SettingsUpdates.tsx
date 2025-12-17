@@ -14,7 +14,7 @@ const StyledCardLink = styled.a`
   text-decoration: none;
 `;
 
-export const SettingsReleases = () => {
+export const SettingsUpdates = () => {
   const theme = useTheme();
 
   return (
@@ -23,7 +23,7 @@ export const SettingsReleases = () => {
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.Releases),
+          href: getSettingsPath(SettingsPath.Updates),
         },
         { children: t`Updates` },
       ]}
@@ -62,3 +62,4 @@ export const SettingsReleases = () => {
     </SubMenuTopBarContainer>
   );
 };
+

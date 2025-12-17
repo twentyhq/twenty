@@ -191,7 +191,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         },
         {
           label: t`Updates`,
-          path: SettingsPath.Releases,
+          path: SettingsPath.Updates,
           Icon: IconRocket,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
