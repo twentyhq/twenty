@@ -55,6 +55,7 @@ export const AgentChatFilePreview = ({
     return (
       <LinkChip
         label={fileName}
+        emptyLabel={t`Untitled`}
         variant={ChipVariant.Static}
         to={fileUrl}
         target="_blank"
@@ -67,6 +68,7 @@ export const AgentChatFilePreview = ({
   return (
     <Chip
       label={fileName}
+      emptyLabel={t`Untitled`}
       variant={ChipVariant.Static}
       clickable={false}
       leftComponent={leftComponent}

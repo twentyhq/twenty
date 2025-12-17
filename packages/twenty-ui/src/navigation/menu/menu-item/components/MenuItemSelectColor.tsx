@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import { useLingui } from '@lingui/react/macro';
 
 import {
   StyledMenuItemIconCheck,
@@ -11,6 +10,36 @@ import { ColorSample, type ColorSampleVariant } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
+export type ColorLabels = Record<ThemeColor, string>;
+
+const DEFAULT_COLOR_LABELS: ColorLabels = {
+  gray: 'Gray',
+  tomato: 'Tomato',
+  red: 'Red',
+  ruby: 'Ruby',
+  crimson: 'Crimson',
+  pink: 'Pink',
+  plum: 'Plum',
+  purple: 'Purple',
+  violet: 'Violet',
+  iris: 'Iris',
+  cyan: 'Cyan',
+  turquoise: 'Turquoise',
+  sky: 'Sky',
+  blue: 'Blue',
+  jade: 'Jade',
+  green: 'Green',
+  grass: 'Grass',
+  mint: 'Mint',
+  lime: 'Lime',
+  bronze: 'Bronze',
+  gold: 'Gold',
+  brown: 'Brown',
+  orange: 'Orange',
+  amber: 'Amber',
+  yellow: 'Yellow',
+};
+
 type MenuItemSelectColorProps = {
   selected: boolean;
   className?: string;
@@ -19,37 +48,7 @@ type MenuItemSelectColorProps = {
   focused?: boolean;
   color: ThemeColor;
   variant?: ColorSampleVariant;
-};
-
-const useColorLabels = (): Record<ThemeColor, string> => {
-  const { t } = useLingui();
-  return {
-    gray: t`Gray`,
-    tomato: t`Tomato`,
-    red: t`Red`,
-    ruby: t`Ruby`,
-    crimson: t`Crimson`,
-    pink: t`Pink`,
-    plum: t`Plum`,
-    purple: t`Purple`,
-    violet: t`Violet`,
-    iris: t`Iris`,
-    cyan: t`Cyan`,
-    turquoise: t`Turquoise`,
-    sky: t`Sky`,
-    blue: t`Blue`,
-    jade: t`Jade`,
-    green: t`Green`,
-    grass: t`Grass`,
-    mint: t`Mint`,
-    lime: t`Lime`,
-    bronze: t`Bronze`,
-    gold: t`Gold`,
-    brown: t`Brown`,
-    orange: t`Orange`,
-    amber: t`Amber`,
-    yellow: t`Yellow`,
-  };
+  colorLabels?: ColorLabels;
 };
 
 export const MenuItemSelectColor = ({
@@ -60,9 +59,9 @@ export const MenuItemSelectColor = ({
   disabled,
   focused,
   variant = 'default',
+  colorLabels = DEFAULT_COLOR_LABELS,
 }: MenuItemSelectColorProps) => {
   const theme = useTheme();
-  const colorLabels = useColorLabels();
 
   return (
     <StyledMenuItemSelect

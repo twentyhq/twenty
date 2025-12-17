@@ -1,6 +1,5 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
@@ -17,6 +16,7 @@ import {
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
     animatedSvg: React.ReactNode;
+    soonLabel?: string;
   };
 
 const StyledButton = styled.button<
@@ -409,6 +409,7 @@ export const AnimatedButton = ({
   transition,
   dataClickOutsideId,
   dataGloballyPreventClickOutside,
+  soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -455,7 +456,7 @@ export const AnimatedButton = ({
           </StyledShortcutLabel>
         </>
       )}
-      {soon && <StyledSoonPill label={t`Soon`} />}
+      {soon && <StyledSoonPill label={soonLabel} />}
     </StyledButton>
   );
 };

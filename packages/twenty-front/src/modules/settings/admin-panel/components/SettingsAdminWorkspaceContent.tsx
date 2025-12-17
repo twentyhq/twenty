@@ -148,6 +148,7 @@ export const SettingsAdminWorkspaceContent = ({
       value: (
         <Chip
           label={activeWorkspace?.name ?? ''}
+          emptyLabel={t`Untitled`}
           leftComponent={
             <AvatarChip
               avatarUrl={

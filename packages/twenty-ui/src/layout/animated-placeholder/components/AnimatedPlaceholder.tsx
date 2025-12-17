@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background';
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
@@ -92,14 +91,14 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
     <StyledContainer>
       <StyledBackgroundImage
         src={theme.name === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
-        alt={t`Background`}
+        alt=""
         type={type}
       />
       <StyledMovingImage
         src={
           theme.name === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
         }
-        alt={t`Moving`}
+        alt=""
         style={{ translateX, translateY }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
         type={type}

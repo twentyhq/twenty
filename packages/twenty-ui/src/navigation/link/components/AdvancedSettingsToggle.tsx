@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { useId } from 'react';
@@ -44,9 +43,8 @@ type AdvancedSettingsToggleProps = {
 export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
-  label,
+  label = 'Advanced:',
 }: AdvancedSettingsToggleProps) => {
-  const displayLabel = label ?? t`Advanced:`;
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
@@ -64,7 +62,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={instanceId}>
-        <StyledText>{displayLabel}</StyledText>
+        <StyledText>{label}</StyledText>
 
         <Toggle
           id={instanceId}
