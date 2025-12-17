@@ -67,6 +67,16 @@
         ]
       },
       "dependsOn": ["build"]
+    },
+    "promote": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "zapier promote"
+        ]
+      },
+      "dependsOn": ["build"]
     }
   }
 }
