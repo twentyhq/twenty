@@ -1,3 +1,4 @@
+import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -24,6 +25,7 @@ import { scrollAtRealIndexComponentState } from '@/object-record/record-table/vi
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
+import { useSubscribeToRefetch } from '@/subscription/hooks/useSubscribeToRefetch';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
@@ -37,7 +39,10 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
   const showAuthModal = useShowAuthModal();
 
-  const { findManyRecordsLazy } =
+  const { filter, orderBy, limit } =
+    useFindManyRecordIndexTableParams(objectNameSingular);
+
+  const { findManyRecordsLazy, findManyRecordsQuery, refetchRecords } =
     useRecordIndexTableFetchMore(objectNameSingular);
 
   const isInitializingVirtualTableDataLoadingCallbackState =
@@ -101,6 +106,33 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     useRecoilComponentCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
+
+  const refreshRecordTableData = useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        const { records, totalCount } = await refetchRecords();
+
+        set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+
+        if (isDefined(records)) {
+          upsertRecordsInStore(records);
+
+          loadRecordsToVirtualRows({
+            records,
+            startingRealIndex: 0,
+          });
+
+          reapplyRowSelection();
+        }
+      },
+    [
+      refetchRecords,
+      totalNumberOfRecordsToVirtualizeCallbackState,
+      upsertRecordsInStore,
+      loadRecordsToVirtualRows,
+      reapplyRowSelection,
+    ],
+  );
 
   const triggerInitialRecordTableDataLoad = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -223,6 +255,19 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       reapplyRowSelection,
     ],
   );
+
+  useSubscribeToRefetch({
+    query: findManyRecordsQuery,
+    variables: {
+      filter,
+      orderBy,
+      limit,
+    },
+    refetch: () => {
+      refreshRecordTableData();
+    },
+    skip: showAuthModal,
+  });
 
   return {
     triggerInitialRecordTableDataLoad,

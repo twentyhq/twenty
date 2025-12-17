@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @Module({
   imports: [RedisClientModule],
