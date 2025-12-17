@@ -55,6 +55,7 @@ export const SelectSheetStep = ({
   onBack,
   currentStepState,
 }: SelectSheetStepProps) => {
+  const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
 
   const [value, setValue] = useState(sheetNames[0]);
@@ -106,8 +107,6 @@ export const SelectSheetStep = ({
     },
     [handleContinue],
   );
-
-  const { t } = useLingui();
 
   return (
     <>

@@ -17,7 +17,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -66,7 +65,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
   const dropdownId = 'workflow-edit-trigger-record-type';
@@ -83,8 +82,8 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const isFieldFilteringSupported = isUpdateEvent || isUpsertEvent;
 
   const defaultSelectedOption = useMemo(
-    () => ({ label: _(msg`Select an option`), value: '' }),
-    [_],
+    () => ({ label: t`Select an option`, value: '' }),
+    [t],
   );
 
   const regularObjects = objectMetadataItems
