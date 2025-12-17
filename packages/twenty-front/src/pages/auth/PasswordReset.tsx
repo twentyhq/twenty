@@ -35,16 +35,17 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
 
-const validationSchema = z
-  .object({
-    passwordResetToken: z.string(),
-    newPassword: z
-      .string()
-      .regex(PASSWORD_REGEX, 'Password must be min. 8 characters'),
-  })
-  .required();
+const getValidationSchema = (t: (str: string) => string) =>
+  z
+    .object({
+      passwordResetToken: z.string(),
+      newPassword: z
+        .string()
+        .regex(PASSWORD_REGEX, t`Password must be min. 8 characters`),
+    })
+    .required();
 
-type Form = z.infer<typeof validationSchema>;
+type Form = z.infer<ReturnType<typeof getValidationSchema>>;
 
 const StyledMainContainer = styled.div`
   display: flex;
@@ -105,7 +106,7 @@ export const PasswordReset = () => {
       passwordResetToken: passwordResetToken ?? '',
       newPassword: '',
     },
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(getValidationSchema(t)),
   });
 
   useValidatePasswordResetTokenQuery({
