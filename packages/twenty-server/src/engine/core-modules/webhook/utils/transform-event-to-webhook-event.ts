@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
 export const transformEventToWebhookEvent = ({

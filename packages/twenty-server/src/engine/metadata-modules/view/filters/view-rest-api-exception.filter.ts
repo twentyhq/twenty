@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -87,6 +88,7 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',
+      { userFriendlyMessage: msg`An unexpected error occurred.` },
     );
 
     return this.httpExceptionHandlerService.handleError(

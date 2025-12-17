@@ -1,4 +1,4 @@
-import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio.constant';
+import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { getAvailableAggregateOperationsForAggregateChart } from '../getAvailableAggregateOperationsForAggregateChart';

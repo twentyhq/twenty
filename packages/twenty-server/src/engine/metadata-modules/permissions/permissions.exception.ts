@@ -1,12 +1,7 @@
-import { CustomException } from 'src/utils/custom-exception';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
-// TODO: It would be usefull to enable typed message like below. More refactorisation is necessary to use it.
-// export class PermissionsException extends CustomException<
-//   PermissionsExceptionCode,
-//   false,
-//   PermissionsExceptionMessage
-// > {}
-export class PermissionsException extends CustomException<PermissionsExceptionCode> {}
+import { CustomException } from 'src/utils/custom-exception';
 
 export enum PermissionsExceptionCode {
   PERMISSION_DENIED = 'PERMISSION_DENIED',
@@ -51,6 +46,67 @@ export enum PermissionsExceptionCode {
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
+}
+
+const permissionsExceptionUserFriendlyMessages: Record<
+  PermissionsExceptionCode,
+  MessageDescriptor
+> = {
+  [PermissionsExceptionCode.PERMISSION_DENIED]: msg`You do not have permission to perform this action.`,
+  [PermissionsExceptionCode.ADMIN_ROLE_NOT_FOUND]: msg`Admin role not found.`,
+  [PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND]: msg`User workspace not found.`,
+  [PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH]: msg`Workspace ID and role mismatch.`,
+  [PermissionsExceptionCode.TOO_MANY_ADMIN_CANDIDATES]: msg`Too many admin candidates found.`,
+  [PermissionsExceptionCode.USER_WORKSPACE_ALREADY_HAS_ROLE]: msg`User already has a role assigned.`,
+  [PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND]: msg`Workspace member not found.`,
+  [PermissionsExceptionCode.ROLE_NOT_FOUND]: msg`Role not found.`,
+  [PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN]: msg`Cannot remove the last admin from the workspace.`,
+  [PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER]: msg`Cannot delete the last admin user.`,
+  [PermissionsExceptionCode.UNKNOWN_OPERATION_NAME]: msg`Unknown operation.`,
+  [PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION]: msg`Unknown permission required.`,
+  [PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE]: msg`You cannot update your own role.`,
+  [PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE]: msg`No role found for this user in the workspace.`,
+  [PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND]: msg`API key role not found.`,
+  [PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT]: msg`Authentication is required.`,
+  [PermissionsExceptionCode.INVALID_ARG]: msg`Invalid argument provided.`,
+  [PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS]: msg`A role with this label already exists.`,
+  [PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND]: msg`Default role not found.`,
+  [PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND]: msg`Object metadata not found.`,
+  [PermissionsExceptionCode.INVALID_SETTING]: msg`Invalid permission setting.`,
+  [PermissionsExceptionCode.ROLE_NOT_EDITABLE]: msg`This role cannot be edited.`,
+  [PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED]: msg`The default role cannot be deleted.`,
+  [PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE]: msg`No permissions found in datasource.`,
+  [PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT]: msg`Cannot add permissions on system objects.`,
+  [PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT]: msg`Cannot add field permissions on system objects.`,
+  [PermissionsExceptionCode.METHOD_NOT_ALLOWED]: msg`This method is not allowed.`,
+  [PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED]: msg`Raw SQL queries are not allowed.`,
+  [PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT]: msg`Cannot give write permission on non-readable objects.`,
+  [PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION]: msg`Cannot give write permission without read permission.`,
+  [PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND]: msg`Field metadata not found.`,
+  [PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED]: msg`Only field restrictions are allowed.`,
+  [PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT]: msg`Field restrictions only apply to readable objects.`,
+  [PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT]: msg`Update field restrictions only apply to updatable objects.`,
+  [PermissionsExceptionCode.UPSERT_FIELD_PERMISSION_FAILED]: msg`Failed to update field permission.`,
+  [PermissionsExceptionCode.PERMISSION_NOT_FOUND]: msg`Permission not found.`,
+  [PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND]: msg`Object permission not found.`,
+  [PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED]: msg`Empty field permissions are not allowed.`,
+  [PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED]: msg`Join column name is required.`,
+  [PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND]: msg`Composite type not found.`,
+  [PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET]: msg`Role must have at least one target.`,
+  [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS]: msg`This role cannot be assigned to users.`,
+};
+
+export class PermissionsException extends CustomException<PermissionsExceptionCode> {
+  constructor(
+    message: string,
+    code: PermissionsExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? permissionsExceptionUserFriendlyMessages[code],
+    });
+  }
 }
 
 export enum PermissionsExceptionMessage {
