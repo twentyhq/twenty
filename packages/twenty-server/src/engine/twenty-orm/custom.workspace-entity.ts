@@ -146,6 +146,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     },
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetCustom',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

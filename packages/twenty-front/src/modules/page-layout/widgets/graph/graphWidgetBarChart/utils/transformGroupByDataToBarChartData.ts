@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
@@ -44,13 +44,14 @@ type TransformGroupByDataToBarChartDataResult = {
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
-const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
+const EMPTY_BAR_CHART_RESULT: Omit<
+  TransformGroupByDataToBarChartDataResult,
+  'xAxisLabel' | 'yAxisLabel'
+> = {
   data: [],
   indexBy: '',
   keys: [],
   series: [],
-  xAxisLabel: undefined,
-  yAxisLabel: undefined,
   showDataLabels: false,
   showLegend: true,
   layout: BarChartLayout.VERTICAL,
@@ -65,10 +66,6 @@ export const transformGroupByDataToBarChartData = ({
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToBarChartDataParams): TransformGroupByDataToBarChartDataResult => {
-  if (!isDefined(groupByData)) {
-    return EMPTY_BAR_CHART_RESULT;
-  }
-
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
       field.id === configuration.primaryAxisGroupByFieldMetadataId,
@@ -88,13 +85,53 @@ export const transformGroupByDataToBarChartData = ({
       field.id === configuration.aggregateFieldMetadataId,
   );
 
+  const queryResultGqlFieldName =
+    getGroupByQueryResultGqlFieldName(objectMetadataItem);
+  const rawResults = groupByData?.[queryResultGqlFieldName];
+  const hasNoData =
+    !isDefined(groupByData) ||
+    !isDefined(rawResults) ||
+    !Array.isArray(rawResults) ||
+    rawResults.length === 0;
+
+  const showXAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.X ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const showYAxis =
+    hasNoData ||
+    configuration.axisNameDisplay === AxisNameDisplay.Y ||
+    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
+
+  const xAxisLabel =
+    showXAxis && isDefined(groupByFieldX) ? groupByFieldX.label : undefined;
+
+  const yAxisLabel =
+    showYAxis && isDefined(aggregateField)
+      ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
+      : undefined;
+
+  const layout =
+    configuration.graphType === GraphType.HORIZONTAL_BAR
+      ? BarChartLayout.HORIZONTAL
+      : BarChartLayout.VERTICAL;
+
+  if (!isDefined(groupByData)) {
+    return {
+      ...EMPTY_BAR_CHART_RESULT,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
+    };
+  }
+
   if (!isDefined(groupByFieldX) || !isDefined(aggregateField)) {
     return {
       ...EMPTY_BAR_CHART_RESULT,
-      layout:
-        configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? BarChartLayout.HORIZONTAL
-          : BarChartLayout.VERTICAL,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
     };
   }
 
@@ -108,18 +145,13 @@ export const transformGroupByDataToBarChartData = ({
     subFieldName: primaryAxisSubFieldName,
   });
 
-  const queryResultGqlFieldName =
-    getGroupByQueryResultGqlFieldName(objectMetadataItem);
-  const rawResults = groupByData[queryResultGqlFieldName];
-
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
     return {
       ...EMPTY_BAR_CHART_RESULT,
       indexBy: indexByKey,
-      layout:
-        configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? BarChartLayout.HORIZONTAL
-          : BarChartLayout.VERTICAL,
+      xAxisLabel,
+      yAxisLabel,
+      layout,
     };
   }
 
@@ -140,20 +172,6 @@ export const transformGroupByDataToBarChartData = ({
     aggregateOperationFromRawResult: aggregateOperation,
     objectMetadataItem,
   });
-
-  const showXAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.X ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const showYAxis =
-    configuration.axisNameDisplay === AxisNameDisplay.Y ||
-    configuration.axisNameDisplay === AxisNameDisplay.BOTH;
-
-  const xAxisLabel = showXAxis ? groupByFieldX.label : undefined;
-
-  const yAxisLabel = showYAxis
-    ? `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`
-    : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
@@ -208,6 +226,7 @@ export const transformGroupByDataToBarChartData = ({
           dateGranularity:
             primaryAxisDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
           hasSecondDimension: isDefined(groupByFieldY),
+          orderBy: configuration.primaryAxisOrderBy,
         })
       : { data: filteredResults, wasTruncated: false };
 
@@ -234,11 +253,6 @@ export const transformGroupByDataToBarChartData = ({
         objectMetadataItem,
         primaryAxisSubFieldName,
       });
-
-  const layout =
-    configuration.graphType === GraphType.HORIZONTAL_BAR
-      ? BarChartLayout.HORIZONTAL
-      : BarChartLayout.VERTICAL;
 
   return {
     ...baseResult,

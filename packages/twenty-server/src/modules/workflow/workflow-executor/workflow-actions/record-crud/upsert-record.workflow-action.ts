@@ -9,7 +9,6 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpsertRecordService } from 'src/engine/core-modules/record-crud/services/upsert-record.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -25,7 +24,6 @@ import { WorkflowUpsertRecordActionInput } from 'src/modules/workflow/workflow-e
 export class UpsertRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly upsertRecordService: UpsertRecordService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
@@ -59,14 +57,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new RecordCrudException(
-        'Failed to update: Workspace ID is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const { workspaceId } = runInfo;
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);

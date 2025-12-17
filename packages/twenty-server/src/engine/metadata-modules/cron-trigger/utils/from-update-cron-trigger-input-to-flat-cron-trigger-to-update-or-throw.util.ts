@@ -26,6 +26,6 @@ export const fromUpdateCronTriggerInputToFlatCronTriggerToUpdateOrThrow = ({
   return {
     ...existingFlatCronTrigger,
     settings: updateCronTriggerInput.update.settings,
-    updatedAt: new Date(),
+    updatedAt: new Date().toISOString(),
   };
 };

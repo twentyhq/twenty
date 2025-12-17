@@ -14,6 +14,7 @@ import {
 } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
@@ -42,7 +43,6 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -288,6 +288,9 @@ export class RoleResolver {
     return agents.map((agentEntity) =>
       fromFlatAgentWithRoleIdToAgentDto({
         ...agentEntity,
+        createdAt: agentEntity.createdAt.toISOString(),
+        updatedAt: agentEntity.updatedAt.toISOString(),
+        deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
         universalIdentifier: agentEntity.universalIdentifier ?? agentEntity.id,
         roleId: role.id,
       }),

@@ -82,6 +82,26 @@ export const triggerUpdateRecordOptimisticEffect = ({
           objectMetadataItem,
         });
 
+        const currentRecordIndexInRootQueryEdges = isRecordMatchingFilter({
+          record: currentRecord,
+          filter: rootQueryFilter ?? {},
+          objectMetadataItem,
+        });
+
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryConnection,
+        );
+
+        const newTotalCount = isDefined(totalCount)
+          ? Math.max(
+              totalCount +
+                (updatedRecordMatchesThisRootQueryFilter ? 1 : 0) +
+                (currentRecordIndexInRootQueryEdges ? -1 : 0),
+              0,
+            )
+          : undefined;
+
         const updatedRecordIndexInRootQueryEdges =
           rootQueryCurrentEdges.findIndex(
             (cachedEdge) =>
@@ -131,6 +151,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         return {
           ...rootQueryConnection,
           edges: rootQueryNextEdges,
+          totalCount: newTotalCount,
         };
       },
     },

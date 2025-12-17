@@ -23,8 +23,8 @@ export const fromCreateRouteTriggerInputToFlatRouteTrigger = ({
     httpMethod: createRouteTriggerInput.httpMethod,
     serverlessFunctionId: createRouteTriggerInput.serverlessFunctionId,
     workspaceId,
-    createdAt: now,
-    updatedAt: now,
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
     applicationId: workspaceCustomApplicationId,
   };
 };

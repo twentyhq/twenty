@@ -6,7 +6,6 @@ export const enum RecordGroupDefinitionType {
 
 export type RecordGroupDefinition = {
   id: string;
-  fieldMetadataId: string;
   type: RecordGroupDefinitionType;
   title: string;
   value: string | null;

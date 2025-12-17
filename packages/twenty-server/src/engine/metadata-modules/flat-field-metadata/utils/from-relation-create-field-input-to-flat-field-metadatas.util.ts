@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -37,12 +37,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   if (!isDefined(rawCreationPayload)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Relation creation payload is required`,
-        userFriendlyMessage: msg`Relation creation payload is required`,
-        value: rawCreationPayload,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Relation creation payload is required`,
+          userFriendlyMessage: msg`Relation creation payload is required`,
+          value: rawCreationPayload,
+        },
+      ],
     };
   }
 
@@ -68,6 +70,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       }),
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata,
+    targetFlatFieldMetadataType: FieldMetadataType.RELATION,
     workspaceId,
     workspaceCustomApplicationId,
   });

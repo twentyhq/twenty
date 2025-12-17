@@ -5,9 +5,9 @@ import {
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
-import { Tag } from 'twenty-ui/components';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;
@@ -36,6 +36,12 @@ export const RecordGroupMenuItemDraggable = ({
     const iconButtons = [
       {
         Icon: recordGroup.isVisible ? IconEyeOff : IconEye,
+        ariaLabel: recordGroup.isVisible
+          ? `Hide group ${recordGroup.value}`
+          : `Show group ${recordGroup.value}`,
+        dataTestId: recordGroup.isVisible
+          ? `hide-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`
+          : `show-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`,
         onClick: () =>
           onVisibilityChange({
             ...recordGroup,

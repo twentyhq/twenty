@@ -9,9 +9,6 @@ export class ViewGroupDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  fieldMetadataId: string;
-
   @Field({ nullable: false, defaultValue: true })
   isVisible: boolean;
 

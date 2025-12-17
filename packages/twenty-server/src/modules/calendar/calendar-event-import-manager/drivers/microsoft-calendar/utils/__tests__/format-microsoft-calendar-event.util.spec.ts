@@ -100,7 +100,7 @@ describe('formatMicrosoftCalendarEvents', () => {
       mockMicrosoftEventWithImproperData2,
     ]);
 
-    expect(result[0].iCalUID).toBe('eventStrange@microsoft.com');
-    expect(result[1].iCalUID).toBe('>\u0015-;_�^�W&�p\u001f�');
+    expect(result[0].iCalUid).toBe('eventStrange@microsoft.com');
+    expect(result[1].iCalUid).toBe('>\u0015-;_�^�W&�p\u001f�');
   });
 });

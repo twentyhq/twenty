@@ -397,7 +397,10 @@ describe('useTestHttpRequest', () => {
     });
 
     expect(result.current.httpRequestTestData.output?.error).toBe(
-      '{"code":"ERR_CONNECTION_REFUSED","details":"Connection refused"}',
+      `{
+  "code": "ERR_CONNECTION_REFUSED",
+  "details": "Connection refused"
+}`,
     );
   });
 

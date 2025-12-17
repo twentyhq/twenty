@@ -13,18 +13,17 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
   workspaceId: string;
   workspaceCustomApplicationId: string;
 }): FlatViewGroup => {
-  const { fieldMetadataId, viewId, ...createViewGroupInput } =
+  const { viewId, ...createViewGroupInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateViewGroupInput,
-      ['fieldMetadataId', 'fieldValue', 'id', 'viewId'],
+      ['fieldValue', 'id', 'viewId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewGroupId = createViewGroupInput.id ?? v4();
 
   return {
     id: viewGroupId,
-    fieldMetadataId,
     viewId,
     workspaceId,
     createdAt: createdAt,

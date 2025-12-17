@@ -1,30 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { V1_10_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-10/1-10-upgrade-version-command.module';
-import { V1_11_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-11/1-11-upgrade-version-command.module';
-import { V1_12_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-12/1-12-upgrade-version-command.module';
 import { V1_13_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-13/1-13-upgrade-version-command.module';
-import { V1_6_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-6/1-6-upgrade-version-command.module';
-import { V1_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-7/1-7-upgrade-version-command.module';
-import { V1_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-8/1-8-upgrade-version-command.module';
+import { V1_14_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-14/1-14-upgrade-version-command.module';
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity]),
-    V1_6_UpgradeVersionCommandModule,
-    V1_7_UpgradeVersionCommandModule,
-    V1_8_UpgradeVersionCommandModule,
-    V1_10_UpgradeVersionCommandModule,
-    V1_11_UpgradeVersionCommandModule,
-    V1_12_UpgradeVersionCommandModule,
     V1_13_UpgradeVersionCommandModule,
+    V1_14_UpgradeVersionCommandModule,
     DataSourceModule,
-    WorkspaceSyncMetadataModule,
   ],
   providers: [UpgradeCommand],
 })

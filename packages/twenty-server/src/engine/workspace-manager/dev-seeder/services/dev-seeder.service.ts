@@ -111,7 +111,12 @@ export class DevSeederService {
       twentyStandardApplication,
     });
 
-    await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
+    await seedPageLayouts(
+      this.coreDataSource,
+      'core',
+      workspaceId,
+      workspaceCustomFlatApplication.id,
+    );
     await seedPageLayoutTabs({
       applicationId: workspaceCustomFlatApplication.id,
       workspaceId,
@@ -135,6 +140,7 @@ export class DevSeederService {
       workspaceId,
       objectMetadataItems,
       isDashboardV2Enabled,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.devSeederDataService.seed({

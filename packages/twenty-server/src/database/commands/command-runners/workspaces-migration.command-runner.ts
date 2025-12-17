@@ -1,14 +1,15 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, type Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type WorkspacesMigrationCommandOptions = {
   workspaceIds: string[];
@@ -21,7 +22,7 @@ export type WorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: WorkspacesMigrationCommandOptions;
   workspaceId: string;
-  dataSource?: WorkspaceDataSource;
+  dataSource?: GlobalWorkspaceDataSource;
   index: number;
   total: number;
 };
@@ -50,7 +51,7 @@ export abstract class WorkspacesMigrationCommandRunner<
 
   constructor(
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     protected readonly activationStatuses: WorkspaceActivationStatus[],
   ) {
@@ -138,24 +139,30 @@ export abstract class WorkspacesMigrationCommandRunner<
       );
 
       try {
-        const workspaceHasDataSource =
-          await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
-            workspaceId,
-          );
+        const authContext = buildSystemAuthContext(workspaceId);
 
-        const dataSource = isDefined(workspaceHasDataSource)
-          ? await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          authContext,
+          async () => {
+            const workspaceHasDataSource =
+              await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
+                workspaceId,
+              );
+
+            const dataSource = isDefined(workspaceHasDataSource)
+              ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
+              : undefined;
+
+            await this.runOnWorkspace({
+              options,
               workspaceId,
-            })
-          : undefined;
+              dataSource,
+              index: index,
+              total: workspaceIdsToProcess.length,
+            });
+          },
+        );
 
-        await this.runOnWorkspace({
-          options,
-          workspaceId,
-          dataSource,
-          index: index,
-          total: workspaceIdsToProcess.length,
-        });
         this.migrationReport.success.push({
           workspaceId,
         });
@@ -167,14 +174,6 @@ export abstract class WorkspacesMigrationCommandRunner<
         this.logger.warn(
           chalk.red(`Error in workspace ${workspaceId}: ${error.message}`),
         );
-      }
-
-      try {
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
-        );
-      } catch (error) {
-        this.logger.error(error);
       }
     }
 

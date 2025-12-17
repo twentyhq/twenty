@@ -1,11 +1,13 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
-import { BAR_CHART_OUTER_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartOuterPaddingRatio';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
+import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -13,18 +15,21 @@ import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
+import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveBar,
+  type BarCustomLayerProps,
   type BarDatum,
   type BarItemProps,
   type ComputedBarDatum,
@@ -34,8 +39,7 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+type NoDataLayerWrapperProps = BarCustomLayerProps<BarDatum>;
 
 type GraphWidgetBarChartProps = {
   data: BarDatum[];
@@ -111,14 +115,48 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys } = useBarChartData({
+  const { barConfigs, enrichedKeys, legendItems, visibleKeys } =
+    useBarChartData({
+      data,
+      indexBy,
+      keys,
+      series,
+      colorRegistry,
+      seriesLabels,
+    });
+
+  const calculatedValueRange =
+    groupMode === 'stacked'
+      ? calculateStackedBarChartValueRange(data, visibleKeys)
+      : calculateValueRangeFromBarChartKeys(data, visibleKeys);
+
+  const hasNoData = data.length === 0 || visibleKeys.length === 0;
+
+  const { effectiveMinimumValue, effectiveMaximumValue } =
+    computeEffectiveValueRange({
+      calculatedMinimum: calculatedValueRange.minimum,
+      calculatedMaximum: calculatedValueRange.maximum,
+      rangeMin,
+      rangeMax,
+    });
+
+  const tickConfig = getBarChartTickConfig({
+    width: chartWidth,
+    height: chartHeight,
     data,
     indexBy,
-    keys,
-    series,
-    colorRegistry,
-    seriesLabels,
+    xAxisLabel,
+    yAxisLabel,
+    axisFontSize: chartTheme.axis.ticks.text.fontSize,
+    layout,
   });
+
+  const { tickValues: valueTickValues, domain: valueDomain } =
+    computeValueTickValues({
+      minimum: effectiveMinimumValue,
+      maximum: effectiveMaximumValue,
+      tickCount: tickConfig.numberOfValueTicks,
+    });
 
   const hasClickableItems = isDefined(onBarClick);
 
@@ -146,25 +184,25 @@ export const GraphWidgetBarChart = ({
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
 
-  const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
-    getBarChartAxisConfigs({
-      width: chartWidth,
-      height: chartHeight,
-      data,
-      layout,
-      indexBy,
-      xAxisLabel,
-      yAxisLabel,
-      formatOptions,
-      axisFontSize: chartTheme.axis.ticks.text.fontSize,
-    });
+  const {
+    axisBottom: axisBottomConfig,
+    axisLeft: axisLeftConfig,
+    margins,
+  } = getBarChartAxisConfigs({
+    layout,
+    xAxisLabel,
+    yAxisLabel,
+    formatOptions,
+    valueTickValues,
+    tickConfig,
+  });
 
   const BarItemWithContext = useMemo(
     () => (props: BarItemProps<BarDatum>) => (
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
-        keys={keys}
+        keys={visibleKeys}
         groupMode={groupMode}
         data={data}
         indexBy={indexBy}
@@ -172,31 +210,38 @@ export const GraphWidgetBarChart = ({
         chartId={id}
       />
     ),
-    [keys, groupMode, data, indexBy, layout, id],
+    [visibleKeys, groupMode, data, indexBy, layout, id],
   );
 
   const TotalsLayer = ({
     bars,
   }: {
     bars: readonly ComputedBarDatum<BarDatum>[];
-  }) => (
-    <CustomTotalsLayer
-      bars={bars}
-      formatValue={(value) => formatGraphValue(value, formatOptions)}
-      offset={theme.spacingMultiplicator * 2}
-      layout={layout}
-      groupMode={groupMode}
-      omitNullValues={omitNullValues}
-      showValues={showValues}
+  }) => {
+    if (hasNoData) {
+      return null;
+    }
+
+    return (
+      <CustomTotalsLayer
+        bars={bars}
+        formatValue={(value) => formatGraphValue(value, formatOptions)}
+        offset={theme.spacingMultiplicator * 2}
+        layout={layout}
+        groupMode={groupMode}
+        omitNullValues={omitNullValues}
+        showValues={showValues}
+      />
+    );
+  };
+
+  const NoDataLayerWrapper = (layerProps: NoDataLayerWrapperProps) => (
+    <NoDataLayer
+      innerWidth={layerProps.innerWidth}
+      innerHeight={layerProps.innerHeight}
+      hasNoData={hasNoData}
     />
   );
-
-  const calculatedValueRange =
-    groupMode === 'stacked'
-      ? calculateStackedBarChartValueRange(data, keys)
-      : calculateValueRangeFromBarChartKeys(data, keys);
-  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
-  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
   const hasNegativeValues = calculatedValueRange.minimum < 0;
   const zeroMarker = hasNegativeValues
@@ -211,8 +256,6 @@ export const GraphWidgetBarChart = ({
         },
       ]
     : undefined;
-
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
   return (
     <StyledContainer id={id}>
@@ -231,21 +274,29 @@ export const GraphWidgetBarChart = ({
         <ResponsiveBar
           barComponent={BarItemWithContext}
           data={data}
-          keys={keys}
+          keys={visibleKeys}
           indexBy={indexBy}
           margin={margins}
-          padding={BAR_CHART_OUTER_PADDING_RATIO}
+          padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
           groupMode={groupMode}
           layout={layout}
           valueScale={{
             type: 'linear',
-            min: effectiveMinimumValue,
-            max: effectiveMaximumValue,
+            min: valueDomain.min,
+            max: valueDomain.max,
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'markers', 'axes', 'bars', 'legends', TotalsLayer]}
+          layers={[
+            'grid',
+            'markers',
+            'axes',
+            'bars',
+            'legends',
+            TotalsLayer,
+            NoDataLayerWrapper,
+          ]}
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
@@ -253,15 +304,19 @@ export const GraphWidgetBarChart = ({
           axisLeft={axisLeftConfig}
           enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
           enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
-          gridXValues={layout === BarChartLayout.HORIZONTAL ? 5 : undefined}
-          gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
+          gridXValues={
+            layout === BarChartLayout.HORIZONTAL ? valueTickValues : undefined
+          }
+          gridYValues={
+            layout === BarChartLayout.VERTICAL ? valueTickValues : undefined
+          }
           enableLabel={false}
           labelSkipWidth={12}
           innerPadding={getBarChartInnerPadding({
             chartWidth,
             chartHeight,
             dataLength: data.length,
-            keysLength: keys.length,
+            keysLength: visibleKeys.length,
             layout,
             margins,
             groupMode,
@@ -275,16 +330,16 @@ export const GraphWidgetBarChart = ({
             formatGraphValue(Number(barDatumCandidate.value), formatOptions)
           }
           tooltip={() => null}
-          onMouseEnter={handleBarEnter}
-          onMouseLeave={handleBarLeave}
-          onClick={onBarClick}
+          onMouseEnter={hasNoData ? undefined : handleBarEnter}
+          onMouseLeave={hasNoData ? undefined : handleBarLeave}
+          onClick={hasNoData ? undefined : onBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
 
       <GraphBarChartTooltip
-        containerId={id}
+        containerRef={containerRef}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
@@ -294,14 +349,8 @@ export const GraphWidgetBarChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       <GraphWidgetLegend
-        show={showLegend}
-        items={enrichedKeys.map((item) => {
-          return {
-            id: item.key,
-            label: item.label,
-            color: item.colorScheme.solid,
-          };
-        })}
+        show={showLegend && data.length > 0 && keys.length > 0}
+        items={legendItems}
       />
     </StyledContainer>
   );

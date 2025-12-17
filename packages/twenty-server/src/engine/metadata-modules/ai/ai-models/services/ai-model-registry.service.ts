@@ -13,6 +13,9 @@ import {
   ModelProvider,
   type AIModelConfig,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { ANTHROPIC_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/anthropic-models.const';
+import { OPENAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/openai-models.const';
+import { XAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/xai-models.const';
 
 export interface RegisteredAIModel {
   modelId: string;
@@ -66,25 +69,18 @@ export class AiModelRegistryService {
   }
 
   private registerOpenAIModels(): void {
-    const openaiModels = AI_MODELS.filter(
-      (model) => model.provider === ModelProvider.OPENAI,
-    );
-
-    openaiModels.forEach((modelConfig) => {
+    OPENAI_MODELS.forEach((modelConfig) => {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         provider: ModelProvider.OPENAI,
         model: openai(modelConfig.modelId),
+        doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });
   }
 
   private registerAnthropicModels(): void {
-    const anthropicModels = AI_MODELS.filter(
-      (model) => model.provider === ModelProvider.ANTHROPIC,
-    );
-
-    anthropicModels.forEach((modelConfig) => {
+    ANTHROPIC_MODELS.forEach((modelConfig) => {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         provider: ModelProvider.ANTHROPIC,
@@ -95,15 +91,12 @@ export class AiModelRegistryService {
   }
 
   private registerXaiModels(): void {
-    const xaiModels = AI_MODELS.filter(
-      (model) => model.provider === ModelProvider.XAI,
-    );
-
-    xaiModels.forEach((modelConfig) => {
+    XAI_MODELS.forEach((modelConfig) => {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         provider: ModelProvider.XAI,
         model: xai(modelConfig.modelId),
+        doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });
   }
@@ -140,11 +133,30 @@ export class AiModelRegistryService {
     return Array.from(this.modelRegistry.values());
   }
 
+  private getFirstAvailableModelFromList(
+    modelIdList: string,
+  ): RegisteredAIModel | undefined {
+    const modelIds = modelIdList
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => id.length > 0);
+
+    for (const modelId of modelIds) {
+      const model = this.getModel(modelId);
+
+      if (model) {
+        return model;
+      }
+    }
+
+    return undefined;
+  }
+
   getDefaultSpeedModel(): RegisteredAIModel {
-    const defaultModelId = this.twentyConfigService.get(
+    const defaultModelIds = this.twentyConfigService.get(
       'DEFAULT_AI_SPEED_MODEL_ID',
     );
-    let model = this.getModel(defaultModelId);
+    let model = this.getFirstAvailableModelFromList(defaultModelIds);
 
     if (!model) {
       const availableModels = this.getAvailableModels();
@@ -156,10 +168,10 @@ export class AiModelRegistryService {
   }
 
   getDefaultPerformanceModel(): RegisteredAIModel {
-    const defaultModelId = this.twentyConfigService.get(
+    const defaultModelIds = this.twentyConfigService.get(
       'DEFAULT_AI_PERFORMANCE_MODEL_ID',
     );
-    let model = this.getModel(defaultModelId);
+    let model = this.getFirstAvailableModelFromList(defaultModelIds);
 
     if (!model) {
       const availableModels = this.getAvailableModels();

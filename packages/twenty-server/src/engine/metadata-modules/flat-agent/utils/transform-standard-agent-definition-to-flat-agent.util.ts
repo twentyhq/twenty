@@ -21,13 +21,13 @@ export const transformStandardAgentDefinitionToFlatAgent = ({
     outputStrategy: _outputStrategy,
     ...agentData
   } = standardAgentDefinition;
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   return {
     id: existingAgentEntity?.id ?? v4(),
-    createdAt: existingAgentEntity?.createdAt ?? createdAt,
-    updatedAt: existingAgentEntity?.updatedAt ?? createdAt,
-    deletedAt: existingAgentEntity?.deletedAt ?? null,
+    createdAt: existingAgentEntity?.createdAt?.toISOString() ?? createdAt,
+    updatedAt: existingAgentEntity?.updatedAt?.toISOString() ?? createdAt,
+    deletedAt: existingAgentEntity?.deletedAt?.toISOString() ?? null,
     ...agentData,
     workspaceId,
     universalIdentifier: standardAgentDefinition.standardId,

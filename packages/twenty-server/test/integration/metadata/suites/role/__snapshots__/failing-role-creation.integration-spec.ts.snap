@@ -11,7 +11,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -45,7 +47,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -74,7 +78,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -108,7 +114,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -137,7 +145,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -171,7 +181,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -200,7 +212,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -234,7 +248,9 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -263,7 +279,9 @@ exports[`Role creation should fail when label already exists 1`] = `
       "fieldMetadata": [],
       "index": [],
       "objectMetadata": [],
+      "pageLayout": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -297,7 +315,9 @@ exports[`Role creation should fail when label already exists 1`] = `
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

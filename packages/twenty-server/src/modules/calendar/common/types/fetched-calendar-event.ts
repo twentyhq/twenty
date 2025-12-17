@@ -8,7 +8,7 @@ export type FetchedCalendarEventParticipant = {
 export type FetchedCalendarEvent = {
   id: string;
   title: string;
-  iCalUID: string;
+  iCalUid: string;
   description: string;
   startsAt: string;
   endsAt: string;

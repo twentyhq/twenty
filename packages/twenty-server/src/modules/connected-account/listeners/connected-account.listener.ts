@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -12,7 +14,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Injectable()
 export class ConnectedAccountListener {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
@@ -22,28 +24,39 @@ export class ConnectedAccountListener {
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>
     >,
   ) {
-    for (const eventPayload of payload.events) {
-      const workspaceMemberId = eventPayload.properties.before.accountOwnerId;
-      const workspaceId = payload.workspaceId;
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-      const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-        where: { id: workspaceMemberId },
-      });
+    const workspaceId = payload.workspaceId;
+    const authContext = buildSystemAuthContext(workspaceId);
 
-      const userId = workspaceMember.userId;
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        for (const eventPayload of payload.events) {
+          const workspaceMemberId =
+            eventPayload.properties.before.accountOwnerId;
 
-      const connectedAccountId = eventPayload.properties.before.id;
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+          const workspaceMember = await workspaceMemberRepository.findOneOrFail(
+            {
+              where: { id: workspaceMemberId },
+            },
+          );
 
-      await this.accountsToReconnectService.removeAccountToReconnect(
-        userId,
-        workspaceId,
-        connectedAccountId,
-      );
-    }
+          const userId = workspaceMember.userId;
+
+          const connectedAccountId = eventPayload.properties.before.id;
+
+          await this.accountsToReconnectService.removeAccountToReconnect(
+            userId,
+            workspaceId,
+            connectedAccountId,
+          );
+        }
+      },
+    );
   }
 }

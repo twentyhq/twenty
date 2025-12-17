@@ -12,6 +12,7 @@ import {
   IconMail,
   IconMicrosoftCalendar,
   IconMicrosoftOutlook,
+  IconPlug,
   IconRobot,
   IconSettingsAutomation,
   IconWebhook,
@@ -62,6 +63,8 @@ export const ActorDisplay = ({
         return IconSettingsAutomation;
       case 'WEBHOOK':
         return IconWebhook;
+      case 'APPLICATION':
+        return IconPlug;
       default:
         return undefined;
     }

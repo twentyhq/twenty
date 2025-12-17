@@ -11,17 +11,15 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -70,10 +68,6 @@ export const AIChatTab = () => {
 
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
-
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
 
   const { uploadFiles } = useAIChatFileUpload();
   const { createChatThread } = useCreateNewAIChatThread();
@@ -145,11 +139,8 @@ export const AIChatTab = () => {
                 onClick={() => createChatThread()}
               />
               <AgentChatFileUploadButton />
-              {contextStoreCurrentObjectMetadataItemId ? (
-                <SendMessageWithRecordsContextButton />
-              ) : (
-                <SendMessageButton />
-              )}
+              <AIChatContextUsageButton />
+              <SendMessageButton />
             </StyledButtonsContainer>
           </StyledInputArea>
         </>

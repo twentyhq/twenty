@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
@@ -27,8 +27,8 @@ describe('WorkflowStatusesUpdate', () => {
     update: jest.fn(),
   };
 
-  const mockTwentyORMGlobalManager = {
-    getRepositoryForWorkspace: jest
+  const mockGlobalWorkspaceOrmManager = {
+    getRepository: jest
       .fn()
       .mockImplementation((_workspaceId, entity, options) => {
         if (!options?.shouldBypassPermissionChecks) {
@@ -46,6 +46,10 @@ describe('WorkflowStatusesUpdate', () => {
 
         return Promise.resolve(null);
       }),
+    executeInWorkspaceContext: jest
+      .fn()
+
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   const mockServerlessFunctionService = {
@@ -58,8 +62,8 @@ describe('WorkflowStatusesUpdate', () => {
       providers: [
         WorkflowStatusesUpdateJob,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: mockTwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
         },
         {
           provide: ServerlessFunctionService,

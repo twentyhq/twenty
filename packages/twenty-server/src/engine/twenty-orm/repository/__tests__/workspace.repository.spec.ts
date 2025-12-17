@@ -59,6 +59,9 @@ describe('WorkspaceRepository', () => {
       decrement: jest.fn(),
       preload: jest.fn(),
       clear: jest.fn(),
+      get internalContext() {
+        return mockInternalContext;
+      },
     } as unknown as jest.Mocked<WorkspaceEntityManager>;
 
     const mockFieldMetadata: FlatFieldMetadata = {
@@ -78,8 +81,8 @@ describe('WorkspaceRepository', () => {
       icon: 'IconKey',
       workspaceId: 'test-workspace-id',
       universalIdentifier: 'id-field-universal-id',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       defaultValue: null,
       options: null,
       settings: null,
@@ -91,7 +94,6 @@ describe('WorkspaceRepository', () => {
       relationTargetObjectMetadataId: null,
       calendarViewIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       viewFieldIds: [],
       mainGroupByFieldMetadataViewIds: [],
@@ -137,7 +139,6 @@ describe('WorkspaceRepository', () => {
     mockQueryRunner = {} as QueryRunner;
 
     repository = new WorkspaceRepository(
-      mockInternalContext,
       'test-entity',
       mockEntityManager,
       mockFeatureFlagMap,

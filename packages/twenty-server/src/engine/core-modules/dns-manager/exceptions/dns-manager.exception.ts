@@ -1,12 +1,25 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 import {
   appendCommonExceptionCode,
   CustomException,
 } from 'src/utils/custom-exception';
 
 export class DnsManagerException extends CustomException<
-  keyof typeof DnsManagerExceptionCode,
-  true
-> {}
+  keyof typeof DnsManagerExceptionCode
+> {
+  constructor(
+    message: string,
+    code: keyof typeof DnsManagerExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A DNS manager error occurred.`,
+    });
+  }
+}
 
 export const DnsManagerExceptionCode = appendCommonExceptionCode({
   HOSTNAME_ALREADY_REGISTERED: 'HOSTNAME_ALREADY_REGISTERED',

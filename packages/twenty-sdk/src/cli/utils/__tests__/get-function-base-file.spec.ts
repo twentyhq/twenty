@@ -1,4 +1,4 @@
-import { getFunctionBaseFile } from '../get-function-base-file';
+import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
 
 describe('getFunctionBaseFile', () => {
   it('should render proper file', () => {
@@ -26,6 +26,7 @@ export const config: FunctionConfig = {
   universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
   name: 'serverless-function-name',
   timeoutSeconds: 5,
+  triggers: [],
 };
 
 `);
