@@ -1,15 +1,21 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { type ReactNode, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { type ReactNode, useCallback, useState } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
+import {
+  NAVIGATION_DRAWER_COLLAPSED_WIDTH,
+  NAVIGATION_DRAWER_CONSTRAINTS,
+} from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';
+import {
+  NAVIGATION_DRAWER_WIDTH_VAR,
+  navigationDrawerWidthState,
+} from '../../states/navigationDrawerWidthState';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -19,9 +25,23 @@ export type NavigationDrawerProps = {
   title: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)`
+const StyledAnimatedContainer = styled.div<{
+  isExpanded: boolean;
+  isResizing: boolean;
+}>`
   max-height: 100vh;
   overflow: hidden;
+  position: relative;
+  width: ${({ isExpanded }) =>
+    isExpanded
+      ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})`
+      : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
+  transition: ${({ isResizing, theme }) =>
+    isResizing ? 'none' : `width ${theme.animation.duration.normal}s`};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: ${({ isExpanded }) => (isExpanded ? '100%' : '0')};
+  }
 `;
 
 const StyledContainer = styled.div<{
@@ -31,8 +51,7 @@ const StyledContainer = styled.div<{
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: ${({ isSettings }) =>
-    isSettings ? '100%' : NAV_DRAWER_WIDTHS.menu.desktop.expanded + 'px'};
+  width: var(${NAVIGATION_DRAWER_WIDTH_VAR});
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   padding: ${({ theme, isSettings, isMobile }) =>
@@ -54,11 +73,17 @@ export const NavigationDrawer = ({
   title,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
-  const theme = useTheme();
-  const isNavigationDrawerExpanded = useRecoilValue(
-    isNavigationDrawerExpandedState,
+
+  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
+    useRecoilState(isNavigationDrawerExpandedState);
+  const [navigationDrawerWidth, setNavigationDrawerWidth] = useRecoilState(
+    navigationDrawerWidthState,
+  );
+  const setTableWidthResizeIsActive = useSetRecoilState(
+    tableWidthResizeIsActiveState,
   );
 
   const handleHover = () => {
@@ -69,25 +94,29 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const desktopWidth = isNavigationDrawerExpanded
-    ? NAV_DRAWER_WIDTHS.menu.desktop.expanded
-    : NAV_DRAWER_WIDTHS.menu.desktop.collapsed;
-
-  const mobileWidth = isNavigationDrawerExpanded
-    ? NAV_DRAWER_WIDTHS.menu.mobile.expanded
-    : NAV_DRAWER_WIDTHS.menu.mobile.collapsed;
-
-  const navigationDrawerAnimate = {
-    width: isMobile ? mobileWidth : desktopWidth,
-    opacity: isNavigationDrawerExpanded || !isSettingsDrawer ? 1 : 0,
+  const handleCollapse = () => {
+    setIsNavigationDrawerExpanded(false);
   };
+
+  const handleWidthChange = useCallback(
+    (width: number) => {
+      setNavigationDrawerWidth(width);
+      setIsResizing(false);
+      setTableWidthResizeIsActive(true);
+    },
+    [setNavigationDrawerWidth, setTableWidthResizeIsActive],
+  );
+
+  const handleResizeStart = useCallback(() => {
+    setIsResizing(true);
+    setTableWidthResizeIsActive(false);
+  }, [setTableWidthResizeIsActive]);
 
   return (
     <StyledAnimatedContainer
       className={className}
-      initial={false}
-      animate={navigationDrawerAnimate}
-      transition={{ duration: theme.animation.duration.normal }}
+      isExpanded={isNavigationDrawerExpanded}
+      isResizing={isResizing}
     >
       <StyledContainer
         isSettings={isSettingsDrawer}
@@ -103,6 +132,19 @@ export const NavigationDrawer = ({
 
         {children}
       </StyledContainer>
+
+      {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
+        <ResizablePanelEdge
+          side="right"
+          constraints={NAVIGATION_DRAWER_CONSTRAINTS}
+          currentWidth={navigationDrawerWidth}
+          onWidthChange={handleWidthChange}
+          onCollapse={handleCollapse}
+          showHandle={false}
+          cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
+          onResizeStart={handleResizeStart}
+        />
+      )}
     </StyledAnimatedContainer>
   );
 };

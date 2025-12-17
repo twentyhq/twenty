@@ -1,17 +1,21 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import {
+  COMMAND_MENU_WIDTH_VAR,
+  commandMenuWidthState,
+} from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
-import { useTheme } from '@emotion/react';
+import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { type ReactNode, useCallback, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { memo, type ReactNode, useCallback, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type CommandMenuPageLayoutProps = {
@@ -33,13 +37,19 @@ const StyledPageBody = styled(PageBody)`
   padding-right: 0;
 `;
 
-const StyledSidePanelWrapper = styled(motion.div)`
+const StyledSidePanelWrapper = styled.div<{
+  isOpen: boolean;
+  isResizing: boolean;
+}>`
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
+  width: ${({ isOpen }) => (isOpen ? `var(${COMMAND_MENU_WIDTH_VAR})` : '0px')};
+  transition: ${({ isResizing, theme }) =>
+    isResizing ? 'none' : `width ${theme.animation.duration.normal}s`};
 `;
 
-const StyledSidePanel = styled(motion.aside)`
+const StyledSidePanel = styled.aside`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -48,7 +58,7 @@ const StyledSidePanel = styled(motion.aside)`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: ${COMMAND_MENU_SIDE_PANEL_WIDTH}px;
+  width: var(${COMMAND_MENU_WIDTH_VAR});
   box-sizing: border-box;
 `;
 
@@ -62,18 +72,28 @@ const StyledModalContainer = styled.div`
   z-index: 1;
 `;
 
+const GAP_WIDTH = 8;
+
+// Memoized wrapper to prevent re-renders of children during resize
+const MemoizedPageBody = memo(({ children }: { children: ReactNode }) => (
+  <StyledPageBody>{children}</StyledPageBody>
+));
+
 export const CommandMenuPageLayout = ({
   children,
 }: CommandMenuPageLayoutProps) => {
-  const theme = useTheme();
   const isMobile = useIsMobile();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const isCommandMenuClosing = useRecoilValue(isCommandMenuClosingState);
+  const [commandMenuWidth, setCommandMenuWidth] =
+    useRecoilState(commandMenuWidthState);
+  const { closeCommandMenu } = useCommandMenu();
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
   );
+  const [isResizing, setIsResizing] = useState(false);
 
   const setTableWidthResizeIsActive = useSetRecoilState(
     tableWidthResizeIsActiveState,
@@ -84,24 +104,22 @@ export const CommandMenuPageLayout = ({
 
   const shouldShowContent = isCommandMenuOpened || shouldRenderContent;
 
-  const handleAnimationComplete = () => {
+  // Handle open/close content rendering
+  useEffect(() => {
+    if (isCommandMenuOpened) {
+      setShouldRenderContent(true);
+      setTableWidthResizeIsActive(false);
+    }
+  }, [isCommandMenuOpened, setTableWidthResizeIsActive]);
+
+  const handleTransitionEnd = () => {
     if (!isCommandMenuOpened) {
       setShouldRenderContent(false);
+      if (isCommandMenuClosing) {
+        commandMenuCloseAnimationCompleteCleanup();
+      }
     }
-
-    if (isCommandMenuClosing) {
-      commandMenuCloseAnimationCompleteCleanup();
-    }
-
     setTableWidthResizeIsActive(true);
-  };
-
-  const handleAnimationStart = () => {
-    if (isCommandMenuOpened && !shouldRenderContent) {
-      setShouldRenderContent(true);
-    }
-
-    setTableWidthResizeIsActive(false);
   };
 
   const handleModalContainerRef = useCallback(
@@ -111,6 +129,20 @@ export const CommandMenuPageLayout = ({
     [],
   );
 
+  const handleWidthChange = useCallback(
+    (width: number) => {
+      setCommandMenuWidth(width);
+      setIsResizing(false);
+      setTableWidthResizeIsActive(true);
+    },
+    [setCommandMenuWidth, setTableWidthResizeIsActive],
+  );
+
+  const handleResizeStart = useCallback(() => {
+    setIsResizing(true);
+    setTableWidthResizeIsActive(false);
+  }, [setTableWidthResizeIsActive]);
+
   useCommandMenuHotKeys();
 
   if (isMobile) {
@@ -119,26 +151,25 @@ export const CommandMenuPageLayout = ({
 
   return (
     <StyledLayout>
-      <StyledPageBody>{children}</StyledPageBody>
+      <MemoizedPageBody>{children}</MemoizedPageBody>
+
+      <ResizablePanelGap
+        side="left"
+        constraints={COMMAND_MENU_CONSTRAINTS}
+        currentWidth={commandMenuWidth}
+        onWidthChange={handleWidthChange}
+        onCollapse={closeCommandMenu}
+        gapWidth={isCommandMenuOpened ? GAP_WIDTH : 0}
+        cssVariableName={COMMAND_MENU_WIDTH_VAR}
+        onResizeStart={handleResizeStart}
+      />
 
       <StyledSidePanelWrapper
-        initial={false}
-        animate={{
-          width: isCommandMenuOpened ? COMMAND_MENU_SIDE_PANEL_WIDTH : 0,
-          marginLeft: isCommandMenuOpened ? theme.spacing(2) : 0,
-        }}
-        transition={{
-          duration: theme.animation.duration.normal,
-        }}
-        onAnimationStart={handleAnimationStart}
-        onAnimationComplete={handleAnimationComplete}
+        isOpen={isCommandMenuOpened}
+        isResizing={isResizing}
+        onTransitionEnd={handleTransitionEnd}
       >
-        <StyledSidePanel
-          initial={false}
-          transition={{
-            duration: theme.animation.duration.normal,
-          }}
-        >
+        <StyledSidePanel>
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
             {shouldShowContent && <CommandMenuRouter />}

@@ -1,5 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
+import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -222,7 +222,7 @@ export const WorkflowDiagramCanvasBase = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const setFlowViewport = useRecoilCallback(
-    () =>
+    ({ snapshot }) =>
       ({
         workflowDiagramFlowInitialized,
         isCommandMenuOpened,
@@ -260,12 +260,12 @@ export const WorkflowDiagramCanvasBase = ({
 
         let adjustedContainerWidth = baseContainerWidth;
 
+        const commandMenuWidth = getSnapshotValue(snapshot, commandMenuWidthState);
+
         if (!isInRightDrawer && isCommandMenuOpened) {
-          adjustedContainerWidth =
-            baseContainerWidth - COMMAND_MENU_SIDE_PANEL_WIDTH;
+          adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
         } else if (!isInRightDrawer && hasViewportBeenMoved) {
-          adjustedContainerWidth =
-            baseContainerWidth + COMMAND_MENU_SIDE_PANEL_WIDTH;
+          adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
         }
 
         const flowBounds = reactflow.getNodesBounds(nodes);
