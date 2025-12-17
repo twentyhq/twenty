@@ -1,9 +1,10 @@
-import { type FromTo } from 'twenty-shared/types';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataWorkspaceMigrationActionsRecord } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
+import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
@@ -15,6 +16,7 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
     [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
   };
   dependencyAllFlatEntityMaps?: Partial<AllFlatEntityMaps>;
+  additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps
 };
 
 export type OrchestratorFailureReport = {

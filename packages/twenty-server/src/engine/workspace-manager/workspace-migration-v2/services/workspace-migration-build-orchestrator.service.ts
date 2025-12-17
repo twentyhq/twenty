@@ -113,6 +113,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     buildOptions,
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
+    additionalCacheDataMaps,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -155,6 +156,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const objectResult =
         await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             buildOptions,
             // Note: That's a hacky way to allow validating object against field metadatas, not optimal
             dependencyOptimisticFlatEntityMaps: {
@@ -208,6 +210,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const fieldResult =
         await this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatFieldMetadataMaps,
             to: toFlatFieldMetadataMaps,
             buildOptions,
@@ -239,6 +242,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const indexResult =
         await this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatIndexMaps,
             to: toFlatIndexMaps,
             buildOptions,
@@ -272,6 +276,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const viewResult =
         await this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
                 optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
@@ -306,6 +311,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const viewFieldResult =
         await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatViewFieldMaps,
             to: toFlatViewFieldMaps,
             buildOptions,
@@ -341,6 +347,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const viewFilterResult =
         await this.workspaceMigrationV2ViewFilterActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatViewFilterMaps,
             to: toFlatViewFilterMaps,
             buildOptions,
@@ -374,6 +381,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const viewGroupResult =
         await this.workspaceMigrationV2ViewGroupActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatViewGroupMaps,
             to: toFlatViewGroupMaps,
             buildOptions,
@@ -410,6 +418,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const serverlessFunctionResult =
         await this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatServerlessFunctionMaps,
             to: toFlatServerlessFunctionMaps,
             buildOptions,
@@ -445,6 +454,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const databaseEventTriggerResult =
         await this.workspaceMigrationV2DatabaseEventTriggerActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatDatabaseEventTriggerMaps,
             to: toFlatDatabaseEventTriggerMaps,
             buildOptions,
@@ -481,6 +491,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const cronTriggerResult =
         await this.workspaceMigrationV2CronTriggerActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatCronTriggerMaps,
             to: toFlatCronTriggerMaps,
             buildOptions,
@@ -514,6 +525,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const routeTriggerResult =
         await this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatRouteTriggerMaps,
             to: toFlatRouteTriggerMaps,
             buildOptions,
@@ -548,6 +560,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const roleResult =
         await this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatRoleMaps,
             to: toFlatRoleMaps,
             buildOptions,
@@ -578,6 +591,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const roleTargetResult =
         await this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatRoleTargetMaps,
             to: toFlatRoleTargetMaps,
             buildOptions,
@@ -610,6 +624,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const agentResult =
         await this.workspaceMigrationV2AgentActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatAgentMaps,
             to: toFlatAgentMaps,
             buildOptions,
@@ -642,6 +657,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const pageLayoutResult =
         await this.workspaceMigrationV2PageLayoutActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatPageLayoutMaps,
             to: toFlatPageLayoutMaps,
             buildOptions,
@@ -675,6 +691,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const pageLayoutTabResult =
         await this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatPageLayoutTabMaps,
             to: toFlatPageLayoutTabMaps,
             buildOptions,
@@ -712,6 +729,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const pageLayoutWidgetResult =
         await this.workspaceMigrationV2PageLayoutWidgetActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatPageLayoutWidgetMaps,
             to: toFlatPageLayoutWidgetMaps,
             buildOptions,
