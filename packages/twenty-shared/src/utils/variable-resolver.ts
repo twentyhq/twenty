@@ -8,7 +8,7 @@ const isString = (value: any): value is string => {
   return typeof value === 'string';
 };
 
-const VARIABLE_PATTERN = RegExp('\\{\\{(.*?)\\}\\}', 'g');
+const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
 
 export const resolveInput = (
   unresolvedInput: unknown,
