@@ -75,21 +75,17 @@ export const CommandMenuSidePanel = () => {
 
   const shouldShowContent = isCommandMenuOpened || shouldRenderContent;
 
-  const handleAnimationStart = () => {
-    if (isCommandMenuOpened && !shouldRenderContent) {
-      setShouldRenderContent(true);
-    }
-    setTableWidthResizeIsActive(false);
-  };
-
   const handleTransitionEnd = () => {
-    if (!isCommandMenuOpened) {
+    if (isCommandMenuOpened) {
+      // Open animation completed - ensure content persists for close animation
+      setShouldRenderContent(true);
+    } else {
+      // Close animation completed
       setShouldRenderContent(false);
       if (isCommandMenuClosing) {
         commandMenuCloseAnimationCompleteCleanup();
       }
     }
-    setTableWidthResizeIsActive(true);
   };
 
   const handleModalContainerRef = useCallback(
@@ -129,7 +125,6 @@ export const CommandMenuSidePanel = () => {
       <StyledSidePanelWrapper
         isOpen={isCommandMenuOpened}
         isResizing={isResizing}
-        onTransitionStart={handleAnimationStart}
         onTransitionEnd={handleTransitionEnd}
       >
         <StyledSidePanel>
