@@ -6,6 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewFilterOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFilterOptimisticEffect';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewFilterMutationVariables,
@@ -71,6 +72,7 @@ export const usePersistViewFilterRecords = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
+            operationType: CrudOperationType.CREATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -132,6 +134,7 @@ export const usePersistViewFilterRecords = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
+            operationType: CrudOperationType.UPDATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -193,6 +196,7 @@ export const usePersistViewFilterRecords = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
+            operationType: CrudOperationType.DELETE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -244,6 +248,7 @@ export const usePersistViewFilterRecords = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
+            operationType: CrudOperationType.DESTROY,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });

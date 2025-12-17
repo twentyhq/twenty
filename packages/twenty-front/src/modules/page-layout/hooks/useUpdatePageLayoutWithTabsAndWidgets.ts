@@ -8,6 +8,7 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 
 export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   const [updatePageLayoutWithTabsAndWidgetsMutation] =
@@ -41,6 +42,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
           primaryMetadataName: 'pageLayout',
+          operationType: CrudOperationType.UPDATE,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });

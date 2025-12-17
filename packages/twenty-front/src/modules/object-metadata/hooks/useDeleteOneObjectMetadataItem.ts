@@ -7,6 +7,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 
 export const useDeleteOneObjectMetadataItem = () => {
   const [deleteOneObjectMetadataItemMutation] =
@@ -45,6 +46,7 @@ export const useDeleteOneObjectMetadataItem = () => {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
           primaryMetadataName: 'objectMetadata',
+          operationType: CrudOperationType.DELETE,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });
