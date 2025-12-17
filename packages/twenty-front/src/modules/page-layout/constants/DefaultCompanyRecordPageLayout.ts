@@ -48,7 +48,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-account-owner',
           pageLayoutTabId: 'company-tab-fields',
           title: 'Account Owner',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -71,7 +71,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-opportunities',
           pageLayoutTabId: 'company-tab-fields',
           title: 'Opportunities',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -94,7 +94,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-people',
           pageLayoutTabId: 'company-tab-fields',
           title: 'People',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -117,7 +117,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-name',
           pageLayoutTabId: 'company-tab-fields',
           title: 'Name',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -140,7 +140,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-employees',
           pageLayoutTabId: 'company-tab-fields',
           title: 'Employees',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -163,7 +163,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'company-widget-linkedin',
           pageLayoutTabId: 'company-tab-fields',
           title: 'LinkedIn',
-          type: 'FIELD' as WidgetType,
+          type: WidgetType.FIELD,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
