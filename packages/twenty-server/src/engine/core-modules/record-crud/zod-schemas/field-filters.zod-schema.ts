@@ -389,7 +389,9 @@ export const generateFieldFilterZodSchema = (
                 .string()
                 .email()
                 .optional()
-                .describe('Additional emails contains this email address'),
+                .describe(
+                  'Additional emails contains this email address (case-insensitive)',
+                ),
             })
             .optional()
             .describe('Filter by additional emails'),
