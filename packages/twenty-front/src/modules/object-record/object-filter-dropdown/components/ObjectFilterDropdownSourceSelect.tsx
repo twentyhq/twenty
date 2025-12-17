@@ -65,9 +65,10 @@ export const ObjectFilterDropdownSourceSelect = ({
       .filter((option) => newSelectedItemIds.includes(option.id))
       .map((option) => option.name);
 
+    const selectedCount = selectedItemNames.length;
     const filterDisplayValue =
       selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? t`${selectedItemNames.length} source types`
+        ? t`${selectedCount} source types`
         : selectedItemNames.join(', ');
 
     const newFilterValue =

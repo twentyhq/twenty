@@ -58,6 +58,8 @@ export const MobileBreadcrumb = ({
     ? previousLink.children
     : '';
 
+  const linkText = previousLink.children;
+
   return (
     <StyledWrapper className={className}>
       {shouldRedirectToSettings ? (
@@ -71,7 +73,7 @@ export const MobileBreadcrumb = ({
         <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledLink title={text} to={previousLink.href}>
-            {t`Back to ${previousLink.children}`}
+            {t`Back to ${linkText}`}
           </StyledLink>
         </>
       ) : (

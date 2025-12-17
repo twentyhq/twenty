@@ -25,6 +25,10 @@ export const HttpRequestExecutionResult = ({
     (httpRequestTestData.output.status !== undefined &&
       httpRequestTestData.output.status >= 400);
 
+  const headersCount = Object.keys(
+    httpRequestTestData.output.headers || {},
+  ).length;
+
   const status: ExecutionStatus = {
     isSuccess,
     isError,
@@ -43,9 +47,8 @@ export const HttpRequestExecutionResult = ({
         }`
       : t`Request Failed`,
     additionalInfo:
-      isSuccess &&
-      Object.keys(httpRequestTestData.output.headers || {}).length > 0
-        ? t`${Object.keys(httpRequestTestData.output.headers || {}).length} headers received`
+      isSuccess && headersCount > 0
+        ? t`${headersCount} headers received`
         : isError
           ? t`An error occurred`
           : undefined,

@@ -27,10 +27,12 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
     await dismissReconnectAccountBanner(accountToReconnect.id);
   };
 
+  const mailboxHandle = accountToReconnect.handle;
+
   return (
     <InformationBanner
       componentInstanceId={COMPONENT_INSTANCE_ID}
-      message={t`Sync lost with mailbox ${accountToReconnect.handle}. Please reconnect for updates:`}
+      message={t`Sync lost with mailbox ${mailboxHandle}. Please reconnect for updates:`}
       buttonTitle={t`Reconnect`}
       buttonIcon={IconRefresh}
       buttonOnClick={() =>

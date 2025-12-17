@@ -17,12 +17,15 @@ export const MergeSettingsTab = () => {
     useMergeRecordsSettings();
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
-  const priorityOptions = selectedRecords.map((_, index) => ({
-    value: index,
-    label: t`${getPositionWordLabel(index)} record holds priority`,
-    Icon: getPositionNumberIcon(index),
-    recordIndex: index,
-  }));
+  const priorityOptions = selectedRecords.map((_, index) => {
+    const positionLabel = getPositionWordLabel(index);
+    return {
+      value: index,
+      label: t`${positionLabel} record holds priority`,
+      Icon: getPositionNumberIcon(index),
+      recordIndex: index,
+    };
+  });
 
   const handleSelectionChange = (index: number) => {
     updatePriorityRecordIndex(index);

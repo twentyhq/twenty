@@ -251,6 +251,10 @@ export const IconPicker = ({
     iconPickerVisibleCount !== undefined &&
     iconPickerVisibleCount < totalMatchingIconsCount;
 
+  const iconAriaLabel = selectedIconKey
+    ? `(selected: ${selectedIconKey})`
+    : `(no icon selected)`;
+
   return (
     <div className={className}>
       <Dropdown
@@ -259,11 +263,7 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent || (
             <IconButton
-              ariaLabel={t`Click to select icon ${
-                selectedIconKey
-                  ? `(selected: ${selectedIconKey})`
-                  : `(no icon selected)`
-              }`}
+              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
               Icon={icon}
               variant={variant}

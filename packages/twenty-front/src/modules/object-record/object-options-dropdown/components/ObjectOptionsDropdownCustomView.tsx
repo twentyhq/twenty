@@ -76,6 +76,8 @@ export const ObjectOptionsDropdownCustomView = ({
     viewBarId: recordIndexId,
   });
 
+  const visibleFieldsCount = visibleBoardFields.length;
+
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
@@ -211,7 +213,7 @@ export const ObjectOptionsDropdownCustomView = ({
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={t`${visibleBoardFields.length} shown`}
+              contextualText={t`${visibleFieldsCount} shown`}
               contextualTextPosition="right"
               hasSubMenu
             />

@@ -158,6 +158,11 @@ const TimingTab = ({ debug }: TimingTabProps) => {
       ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
       : undefined;
 
+  const totalCost =
+    debug.totalCostInCredits !== undefined
+      ? formatNumber(debug.totalCostInCredits)
+      : undefined;
+
   return (
     <StyledTimingSection>
       <TimingRow
@@ -224,11 +229,7 @@ const TimingTab = ({ debug }: TimingTabProps) => {
       />
       <TimingRow
         label={t`Total cost`}
-        value={
-          debug.totalCostInCredits !== undefined
-            ? t`${formatNumber(debug.totalCostInCredits)} credits`
-            : undefined
-        }
+        value={totalCost !== undefined ? t`${totalCost} credits` : undefined}
       />
     </StyledTimingSection>
   );
@@ -303,9 +304,10 @@ const ContextTab = ({ debug, copyToClipboard }: ContextTabProps) => {
       </StyledJsonTreeContainer>
     );
   } catch {
+    const contextValue = debug.context;
     return (
       <StyledTimingLabel>
-        {t`Failed to parse context: ${debug.context}`}
+        {t`Failed to parse context: ${contextValue}`}
       </StyledTimingLabel>
     );
   }

@@ -127,6 +127,8 @@ export const AIChatContextUsageButton = () => {
   const formattedPercentage = percentage.toFixed(1);
   const totalCredits =
     agentChatUsage.inputCredits + agentChatUsage.outputCredits;
+  const inputCredits = agentChatUsage.inputCredits.toLocaleString();
+  const outputCredits = agentChatUsage.outputCredits.toLocaleString();
 
   return (
     <StyledContainer
@@ -167,14 +169,14 @@ export const AIChatContextUsageButton = () => {
               <StyledLabel>{t`Input`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.inputTokens)} •{' '}
-                {t`${agentChatUsage.inputCredits.toLocaleString()} credits`}
+                {t`${inputCredits} credits`}
               </StyledValue>
             </StyledRow>
             <StyledRow>
               <StyledLabel>{t`Output`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.outputTokens)} •{' '}
-                {t`${agentChatUsage.outputCredits.toLocaleString()} credits`}
+                {t`${outputCredits} credits`}
               </StyledValue>
             </StyledRow>
           </StyledBody>

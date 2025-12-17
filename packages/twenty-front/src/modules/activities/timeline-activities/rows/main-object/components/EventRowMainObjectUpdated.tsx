@@ -72,6 +72,9 @@ export const EventRowMainObjectUpdated = ({
     throw new Error('Cannot render update description without changes');
   }
 
+  const fieldCount = diffEntries.length;
+  const recordLabel = labelIdentifierValue;
+
   return (
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
@@ -89,9 +92,7 @@ export const EventRowMainObjectUpdated = ({
           )}
           {diffEntries.length > 1 && (
             <>
-              <span>
-                {t`${diffEntries.length} fields on ${labelIdentifierValue}`}
-              </span>
+              <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
               <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
             </>
           )}

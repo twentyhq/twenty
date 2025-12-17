@@ -181,9 +181,10 @@ export const SettingsObjectFieldItemTableRow = ({
     isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
+  const morphRelationCount = fieldMetadataItem.morphRelations?.length;
   const morphRelationLabel =
     fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
-      ? t`${fieldMetadataItem.morphRelations?.length} Objects`
+      ? t`${morphRelationCount} Objects`
       : undefined;
 
   const label = morphRelationLabel

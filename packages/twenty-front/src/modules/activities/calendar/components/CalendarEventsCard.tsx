@@ -97,6 +97,8 @@ export const CalendarEventsCard = () => {
     }
   };
 
+  const objectName = targetRecord.targetObjectNameSingular;
+
   if (firstQueryLoading) {
     return <SkeletonLoader />;
   }
@@ -114,7 +116,7 @@ export const CalendarEventsCard = () => {
             {t`No Events`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            {t`No events have been scheduled with this ${targetRecord.targetObjectNameSingular} yet.`}
+            {t`No events have been scheduled with this ${objectName} yet.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

@@ -63,9 +63,9 @@ export const MultipleRecordPickerMenuItemContent = ({
     });
   };
 
+  const labelSingular = objectMetadataItem.labelSingular;
   const displayText =
-    searchRecord.label?.trim() ||
-    t`Untitled ${objectMetadataItem.labelSingular}`;
+    searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
   const searchableObjectMetadataItems = useRecoilComponentValue(
     multipleRecordPickerSearchableObjectMetadataItemsComponentState,

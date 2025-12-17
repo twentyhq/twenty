@@ -101,6 +101,8 @@ export const Authorize = () => {
     }
   };
 
+  const appName = app?.name;
+
   return (
     <StyledContainer>
       <StyledCardWrapper>
@@ -120,7 +122,7 @@ export const Authorize = () => {
           <img src={app?.logo} alt="app-icon" height={40} width={40} />
         </StyledAppsContainer>
         <StyledText>
-          <Trans>{app?.name} wants to access your account</Trans>
+          <Trans>{appName} wants to access your account</Trans>
         </StyledText>
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>

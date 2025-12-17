@@ -69,8 +69,9 @@ export const SelectFieldInput = () => {
     dependencies: [onCancel, resetSelectedItem],
   });
 
+  const fieldLabel = fieldDefinition.label;
   const optionIds = [
-    t`No ${fieldDefinition.label}`,
+    t`No ${fieldLabel}`,
     ...filteredOptions.map((option) => option.value),
   ];
 

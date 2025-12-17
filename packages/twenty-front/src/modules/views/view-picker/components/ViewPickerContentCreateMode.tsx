@@ -149,6 +149,8 @@ export const ViewPickerContentCreateMode = () => {
     setViewPickerMode('list');
   };
 
+  const objectLabel = objectMetadataItem.labelPlural;
+
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -211,8 +213,7 @@ export const ViewPickerContentCreateMode = () => {
             {availableFieldsForKanban.length === 0 && (
               <StyledFieldAvailableContainer>
                 <Trans>
-                  Set up a Select field on {objectMetadataItem.labelPlural} to
-                  create a Kanban
+                  Set up a Select field on {objectLabel} to create a Kanban
                 </Trans>
               </StyledFieldAvailableContainer>
             )}
@@ -243,8 +244,7 @@ export const ViewPickerContentCreateMode = () => {
             {availableFieldsForCalendar.length === 0 && (
               <StyledFieldAvailableContainer>
                 <Trans>
-                  Set up a Date field on {objectMetadataItem.labelPlural} to
-                  create a Calendar
+                  Set up a Date field on {objectLabel} to create a Calendar
                 </Trans>
               </StyledFieldAvailableContainer>
             )}

@@ -98,8 +98,9 @@ export const SettingsAdminWorkspaceContent = ({
         );
       },
       onError: (error) => {
+        const errorMessage = error.message;
         enqueueErrorSnackBar({
-          message: t`Failed to impersonate user. ${error.message}`,
+          message: t`Failed to impersonate user. ${errorMessage}`,
         });
       },
     }).finally(() => {
@@ -128,8 +129,9 @@ export const SettingsAdminWorkspaceContent = ({
         if (isDefined(previousValue)) {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
+        const errorMessage = error.message;
         enqueueErrorSnackBar({
-          message: t`Failed to update feature flag. ${error.message}`,
+          message: t`Failed to update feature flag. ${errorMessage}`,
         });
       },
     });

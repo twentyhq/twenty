@@ -107,8 +107,10 @@ export const WorkflowEditTriggerCronForm = ({
                 try {
                   CronExpressionParser.parse(newPattern);
                 } catch (error) {
+                  const errorMessage =
+                    error instanceof Error ? error.message : 'Unknown error';
                   setErrorMessages({
-                    CUSTOM: t`Invalid cron pattern: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    CUSTOM: t`Invalid cron pattern: ${errorMessage}`,
                   });
                   return;
                 }

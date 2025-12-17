@@ -77,12 +77,14 @@ export const MorphRelationManyToOneFieldInput = () => {
     (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
   );
 
+  const fieldLabel = fieldDefinition.label;
+
   return (
     <SingleRecordPicker
       focusId={instanceId}
       componentInstanceId={instanceId}
       EmptyIcon={IconForbid}
-      emptyLabel={t`No ${fieldDefinition.label}`}
+      emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={objectNameSingulars}

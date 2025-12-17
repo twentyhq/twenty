@@ -87,8 +87,9 @@ export const WorkspaceInviteTeam = () => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({ emails: emailsList });
     if (isDefined(data) && data.sendInvitations.result.length > 0) {
+      const invitationCount = data.sendInvitations.result.length;
       enqueueSuccessSnackBar({
-        message: t`${data.sendInvitations.result.length} invitations sent`,
+        message: t`${invitationCount} invitations sent`,
         options: {
           duration: 2000,
         },

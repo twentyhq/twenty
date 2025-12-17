@@ -27,10 +27,12 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
     await dismissReconnectAccountBanner(accountToReconnect.id);
   };
 
+  const mailboxHandle = accountToReconnect.handle;
+
   return (
     <InformationBanner
       componentInstanceId={COMPONENT_INSTANCE_ID}
-      message={t`Please reconnect your mailbox ${accountToReconnect.handle} to update your email aliases:`}
+      message={t`Please reconnect your mailbox ${mailboxHandle} to update your email aliases:`}
       buttonTitle={t`Reconnect`}
       buttonIcon={IconRefresh}
       buttonOnClick={() =>

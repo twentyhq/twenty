@@ -17,8 +17,8 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { msg } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -36,8 +36,6 @@ const StyledLabel = styled.span`
 const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
-
-const DEFAULT_SELECTED_OPTION = { label: t`Select an option`, value: '' };
 
 const filterOptionsBySearch = <T extends { label: string }>(
   options: T[],
@@ -68,6 +66,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { _ } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
   const dropdownId = 'workflow-edit-trigger-record-type';
@@ -82,6 +81,11 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const isUpdateEvent = triggerEvent.event === 'updated';
   const isUpsertEvent = triggerEvent.event === 'upserted';
   const isFieldFilteringSupported = isUpdateEvent || isUpsertEvent;
+
+  const defaultSelectedOption = useMemo(
+    () => ({ label: _(msg`Select an option`), value: '' }),
+    [_],
+  );
 
   const regularObjects = objectMetadataItems
     .filter((item) => item.isActive && !item.isSystem)
@@ -102,7 +106,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const selectedOption =
     [...regularObjects, ...systemObjects].find(
       (option) => option.value === triggerEvent?.objectType,
-    ) || DEFAULT_SELECTED_OPTION;
+    ) || defaultSelectedOption;
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === selectedOption.value,

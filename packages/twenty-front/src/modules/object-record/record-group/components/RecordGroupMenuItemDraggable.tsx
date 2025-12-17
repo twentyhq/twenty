@@ -34,12 +34,13 @@ export const RecordGroupMenuItemDraggable = ({
   const isNoValue = recordGroup.type === RecordGroupDefinitionType.NoValue;
 
   const getIconButtons = (recordGroup: RecordGroupDefinition) => {
+    const groupValue = recordGroup.value;
     const iconButtons = [
       {
         Icon: recordGroup.isVisible ? IconEyeOff : IconEye,
         ariaLabel: recordGroup.isVisible
-          ? t`Hide group ${recordGroup.value}`
-          : t`Show group ${recordGroup.value}`,
+          ? t`Hide group ${groupValue}`
+          : t`Show group ${groupValue}`,
         dataTestId: recordGroup.isVisible
           ? `hide-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`
           : `show-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`,

@@ -28,15 +28,12 @@ export const ServerlessFunctionExecutionResult = ({
     serverlessFunctionTestData.output.status ===
     ServerlessFunctionExecutionStatus.ERROR;
 
+  const duration = serverlessFunctionTestData.output.duration;
   const status: ExecutionStatus = {
     isSuccess,
     isError,
-    successMessage: isSuccess
-      ? t`200 OK - ${serverlessFunctionTestData.output.duration}ms`
-      : undefined,
-    errorMessage: isError
-      ? t`500 Error - ${serverlessFunctionTestData.output.duration}ms`
-      : undefined,
+    successMessage: isSuccess ? t`200 OK - ${duration}ms` : undefined,
+    errorMessage: isError ? t`500 Error - ${duration}ms` : undefined,
   };
 
   return (
