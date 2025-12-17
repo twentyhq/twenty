@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { Trans } from '@lingui/react/macro';
 
 export enum ChipSize {
   Large = 'large',
@@ -168,7 +169,9 @@ export const Chip = ({
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
-        <StyledDiv>Untitled</StyledDiv>
+        <StyledDiv>
+          <Trans>Untitled</Trans>
+        </StyledDiv>
       ) : (
         ''
       )}

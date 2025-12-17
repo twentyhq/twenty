@@ -1,5 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
@@ -454,7 +455,7 @@ export const AnimatedButton = ({
           </StyledShortcutLabel>
         </>
       )}
-      {soon && <StyledSoonPill label="Soon" />}
+      {soon && <StyledSoonPill label={t`Soon`} />}
     </StyledButton>
   );
 };
