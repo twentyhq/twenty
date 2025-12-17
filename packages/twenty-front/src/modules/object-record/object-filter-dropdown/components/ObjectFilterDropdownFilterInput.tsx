@@ -99,10 +99,12 @@ export const ObjectFilterDropdownFilterInput = ({
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
         {TEXT_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownTextInput />
+          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
         )}
         {NUMBER_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownNumberInput />
+          <ObjectFilterDropdownNumberInput
+            filterDropdownId={filterDropdownId}
+          />
         )}
         {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
         {filterType === 'RELATION' && (
@@ -115,9 +117,17 @@ export const ObjectFilterDropdownFilterInput = ({
             />
           </>
         )}
-        {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}
-        {filterType === 'ADDRESS' && <ObjectFilterDropdownTextInput />}
-        {filterType === 'CURRENCY' && <ObjectFilterDropdownNumberInput />}
+        {filterType === 'ACTOR' && (
+          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+        )}
+        {filterType === 'ADDRESS' && (
+          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+        )}
+        {filterType === 'CURRENCY' && (
+          <ObjectFilterDropdownNumberInput
+            filterDropdownId={filterDropdownId}
+          />
+        )}
         {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
           <>
             <ObjectFilterDropdownSearchInput />
