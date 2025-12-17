@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import * as ical from 'node-ical';
 import {
   calendarMultiGet,
@@ -13,8 +12,8 @@ import {
   getBasicAuthHeaders,
   syncCollection,
 } from 'tsdav';
-import { isDefined } from 'twenty-shared/utils';
 
+import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
@@ -171,56 +170,6 @@ export class CalDAVClient {
     return false;
   }
 
-  /**
-   * Extracts the string value from an iCal property that may have parameters.
-   * Per RFC 5545, properties can have parameters like LANGUAGE=de-DE, which causes
-   * node-ical to return an object with `val` and `params` instead of a plain string.
-   *
-   * RFC 5545 Section 3.1.2 also allows multiple values in a single property.
-   *
-   * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.2 (Property Parameters)
-   * @see https://datatracker.ietf.org/doc/html/rfc5545#section-3.1.2 (Multiple Values)
-   */
-  private extractPropertyValue(
-    property:
-      | string
-      | { val?: string; params?: Record<string, unknown> }
-      | undefined,
-    defaultValue = '',
-  ): string {
-    if (!isDefined(property)) {
-      return defaultValue;
-    }
-
-    if (isNonEmptyString(property)) {
-      return property;
-    }
-
-    if (isDefined(property) && typeof property === 'object') {
-      if ('val' in property && isDefined(property.val)) {
-        return isNonEmptyString(property.val)
-          ? property.val
-          : String(property.val);
-      }
-
-      if (Array.isArray(property)) {
-        const values = property
-          .map((item) => {
-            if (isNonEmptyString(item)) return item;
-            if (isDefined(item) && typeof item === 'object' && item?.val)
-              return String(item.val);
-
-            return '';
-          })
-          .filter(Boolean);
-
-        return values.length > 0 ? values.join(', ') : defaultValue;
-      }
-    }
-
-    return defaultValue;
-  }
-
   private extractOrganizerFromEvent(
     event: ical.VEvent,
   ): FetchedCalendarEventParticipant | null {
@@ -321,10 +270,13 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
       const participants = this.extractParticipantsFromEvent(event);
 
-      const title = this.extractPropertyValue(event.summary, 'Untitled Event');
-      const description = this.extractPropertyValue(event.description);
-      const location = this.extractPropertyValue(event.location);
-      const conferenceLinkUrl = this.extractPropertyValue(event.url);
+      const title = icalDataExtractPropertyValue(
+        event.summary,
+        'Untitled Event',
+      );
+      const description = icalDataExtractPropertyValue(event.description);
+      const location = icalDataExtractPropertyValue(event.location);
+      const conferenceLinkUrl = icalDataExtractPropertyValue(event.url);
 
       return {
         id: objectUrl,
