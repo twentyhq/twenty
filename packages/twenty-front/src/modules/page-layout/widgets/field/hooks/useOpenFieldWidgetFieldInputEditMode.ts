@@ -169,13 +169,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const closeFieldInput = ({
-    fieldDefinition,
-    recordId,
-  }: {
-    fieldDefinition: FieldDefinition<FieldMetadata>;
-    recordId: string;
-  }) => {
+  const closeFieldInput = () => {
     removeFocusItemFromFocusStackById({
       focusId: instanceId,
     });
