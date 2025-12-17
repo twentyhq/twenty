@@ -40,7 +40,7 @@ export class FlatPageLayoutWidgetValidatorService {
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<FlatPageLayoutWidget>> {
     const isDashboardV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED];
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     const validationResult: FailedFlatEntityValidation<FlatPageLayoutWidget> = {
       type: 'update_page_layout_widget',
@@ -137,7 +137,7 @@ export class FlatPageLayoutWidgetValidatorService {
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<FlatPageLayoutWidget>> {
     const isDashboardV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED];
+      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
 
     const validationResult: FailedFlatEntityValidation<FlatPageLayoutWidget> = {
       type: 'create_page_layout_widget',

@@ -56,6 +56,9 @@ export const useMetadataErrorHandler = () => {
           classification;
 
         const targetErrors = extensions.errors[primaryMetadataName] || [];
+
+        const operationType = options.operationType.toLowerCase();
+
         if (targetErrors.length > 0) {
           targetErrors.forEach((entityError) => {
             entityError.errors.forEach((validationError) =>
@@ -76,8 +79,6 @@ export const useMetadataErrorHandler = () => {
             .map((metadataName) => TRANSLATED_METADATA_NAME[metadataName])
             .join(', ');
 
-          const operationType = options.operationType.toLowerCase();
-
           enqueueErrorSnackBar({
             message: t`Failed to ${operationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
           });
@@ -88,7 +89,7 @@ export const useMetadataErrorHandler = () => {
           relatedFailingMetadataNames.length === 0
         ) {
           enqueueErrorSnackBar({
-            message: t`Failed to create ${translatedMetadataName}. Please try again.`,
+            message: t`Failed to ${operationType} ${translatedMetadataName}. Please try again.`,
           });
         }
         break;
