@@ -13,15 +13,16 @@ const StyledRecordDetailSectionContainer = styled(Section)`
 const StyledHeader = styled.header<{
   isDropdownOpen?: boolean;
   areRecordsAvailable?: boolean;
+  ariaLabel?: string;
 }>`
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
   align-items: center;
-  justify-content: space-between;
   display: flex;
   height: 24px;
+  justify-content: space-between;
   margin-bottom: ${({ theme, areRecordsAvailable }) =>
     areRecordsAvailable && theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitle = styled.div`
@@ -51,6 +52,7 @@ type RecordDetailSectionContainerProps = {
   rightAdornment?: React.ReactNode;
   hideRightAdornmentOnMouseLeave?: boolean;
   areRecordsAvailable?: boolean;
+  dataTestId?: string;
 };
 
 export const RecordDetailSectionContainer = ({
@@ -60,6 +62,7 @@ export const RecordDetailSectionContainer = ({
   rightAdornment,
   hideRightAdornmentOnMouseLeave = true,
   areRecordsAvailable = false,
+  dataTestId,
 }: RecordDetailSectionContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
@@ -68,6 +71,7 @@ export const RecordDetailSectionContainer = ({
         areRecordsAvailable={areRecordsAvailable}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        data-testid={dataTestId}
       >
         <StyledTitle>
           <StyledTitleLabel>{title}</StyledTitleLabel>
