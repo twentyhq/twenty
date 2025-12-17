@@ -33,7 +33,7 @@ export const useGetSecondaryRecordTableCellButton = () => {
   }
 
   const mainActionOnClick =
-    fieldDefinition.metadata.settings?.clickAction ||
+    fieldDefinition.metadata.settings?.clickAction ??
     FieldMetadataSettingsOnClickAction.OPEN_LINK;
 
   const secondaryActionOnClick =
