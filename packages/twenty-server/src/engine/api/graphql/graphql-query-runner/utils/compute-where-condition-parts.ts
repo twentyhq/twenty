@@ -145,6 +145,11 @@ export const computeWhereConditionParts = ({
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'containsJsonb':
+      return {
+        sql: `"${objectNameSingular}"."${key}" @> :${key}${uuid}::jsonb`,
+        params: { [`${key}${uuid}`]: JSON.stringify([value]) },
+      };
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,

@@ -376,6 +376,23 @@ export const generateFieldFilterZodSchema = (
             })
             .optional()
             .describe('Filter by primary email'),
+          additionalEmails: z
+            .object({
+              like: z
+                .string()
+                .optional()
+                .describe('Additional emails case-sensitive pattern match'),
+              is: NullCheckEnum.optional().describe(
+                'Additional emails is null or not null',
+              ),
+              containsJsonb: z
+                .string()
+                .email()
+                .optional()
+                .describe('Additional emails contains this email address'),
+            })
+            .optional()
+            .describe('Filter by additional emails'),
         })
         .optional()
         .describe(`Filter by ${field.name} (emails field)`);

@@ -138,6 +138,7 @@ export type ArrayFilter = {
 export type RawJsonFilter = {
   like?: string;
   is?: IsFilter;
+  containsJsonb?: string;
 };
 
 export type RichTextV2LeafFilter = {
