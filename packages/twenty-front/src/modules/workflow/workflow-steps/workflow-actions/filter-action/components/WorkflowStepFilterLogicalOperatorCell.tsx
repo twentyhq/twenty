@@ -4,6 +4,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
@@ -31,11 +32,11 @@ type WorkflowStepFilterLogicalOperatorCellProps = {
 const STEP_FILTER_LOGICAL_OPERATOR_OPTIONS = [
   {
     value: StepLogicalOperator.AND,
-    label: 'And',
+    label: t`And`,
   },
   {
     value: StepLogicalOperator.OR,
-    label: 'Or',
+    label: t`Or`,
   },
 ];
 
@@ -61,7 +62,7 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText>Where</StyledText>
+        <StyledText>{t`Where`}</StyledText>
       ) : index === 1 ? (
         readonly ? (
           <Select

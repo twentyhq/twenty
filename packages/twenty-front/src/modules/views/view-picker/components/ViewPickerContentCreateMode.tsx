@@ -36,7 +36,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
 
@@ -210,8 +210,10 @@ export const ViewPickerContentCreateMode = () => {
             </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
               <StyledFieldAvailableContainer>
-                Set up a Select field on {objectMetadataItem.labelPlural} to
-                create a Kanban
+                <Trans>
+                  Set up a Select field on {objectMetadataItem.labelPlural} to
+                  create a Kanban
+                </Trans>
               </StyledFieldAvailableContainer>
             )}
           </>
@@ -240,8 +242,10 @@ export const ViewPickerContentCreateMode = () => {
             </ViewPickerSelectContainer>
             {availableFieldsForCalendar.length === 0 && (
               <StyledFieldAvailableContainer>
-                Set up a Date field on {objectMetadataItem.labelPlural} to
-                create a Calendar
+                <Trans>
+                  Set up a Date field on {objectMetadataItem.labelPlural} to
+                  create a Calendar
+                </Trans>
               </StyledFieldAvailableContainer>
             )}
           </>
