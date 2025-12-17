@@ -12,6 +12,7 @@ type DraggableItemProps = {
   isInsideScrollableContainer?: boolean;
   draggableComponentStyles?: React.CSSProperties;
   disableDraggingBackground?: boolean;
+  containerOffsetY?: number;
 };
 
 export const DraggableItem = ({
@@ -22,6 +23,7 @@ export const DraggableItem = ({
   isInsideScrollableContainer,
   draggableComponentStyles,
   disableDraggingBackground,
+  containerOffsetY: offsetY,
 }: DraggableItemProps) => {
   const theme = useTheme();
 
@@ -47,11 +49,17 @@ export const DraggableItem = ({
               ...draggableComponentStyles,
               ...draggableStyle,
               left: 'auto',
-              ...(isInsideScrollableContainer ? {} : { top: 'auto' }),
               transform: draggableStyle?.transform?.replace(
                 /\(-?\d+px,/,
                 '(0,',
               ),
+              ...(isInsideScrollableContainer &&
+              draggableStyle &&
+              'top' in draggableStyle
+                ? {
+                    top: `${draggableStyle.top - (offsetY ?? 0)}px`,
+                  }
+                : { top: 'auto' }),
               background:
                 !disableDraggingBackground && isDragging
                   ? theme.background.transparent.light
