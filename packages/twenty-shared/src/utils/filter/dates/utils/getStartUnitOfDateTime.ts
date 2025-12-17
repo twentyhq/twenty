@@ -3,7 +3,15 @@ import { type FirstDayOfTheWeek } from '@/utils/filter/dates/utils/firstDayOfWee
 import { getFirstDayOfTheWeekAsANumberForDateFNS } from '@/utils/filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
 import { isDefined } from '@/utils/validation';
-import { startOfDay, startOfHour, startOfMinute, startOfMonth, startOfSecond, startOfWeek, startOfYear } from 'date-fns';
+import {
+  startOfDay,
+  startOfHour,
+  startOfMinute,
+  startOfMonth,
+  startOfSecond,
+  startOfWeek,
+  startOfYear,
+} from 'date-fns';
 
 export const getStartUnitOfDateTime = (
   dateTime: Date,

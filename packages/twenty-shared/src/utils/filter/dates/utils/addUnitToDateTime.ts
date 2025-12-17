@@ -1,5 +1,13 @@
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
-import { addDays, addHours, addMinutes, addMonths, addSeconds, addWeeks, addYears } from 'date-fns';
+import {
+  addDays,
+  addHours,
+  addMinutes,
+  addMonths,
+  addSeconds,
+  addWeeks,
+  addYears,
+} from 'date-fns';
 
 export const addUnitToDateTime = (
   dateTime: Date,
