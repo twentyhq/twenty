@@ -4,6 +4,7 @@ import { ObjectFilterDropdownOptionSelect } from '@/object-record/object-filter-
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
+import { ObjectFilterDropdownWorkspaceMemberSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownWorkspaceMemberSelect';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { ViewFilterOperand } from 'twenty-shared/types';
@@ -17,6 +18,8 @@ import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/cons
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorWorkspaceMemberSubField';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
@@ -36,6 +39,11 @@ export const ObjectFilterDropdownFilterInput = ({
 
   const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
+    filterDropdownId,
+  );
+
+  const subFieldNameUsedInDropdown = useRecoilComponentValue(
+    subFieldNameUsedInDropdownComponentState,
     filterDropdownId,
   );
 
@@ -115,7 +123,21 @@ export const ObjectFilterDropdownFilterInput = ({
             />
           </>
         )}
-        {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}
+        {filterType === 'ACTOR' &&
+          (isFilterOnActorWorkspaceMemberSubField(
+            subFieldNameUsedInDropdown,
+          ) ? (
+            <>
+              <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
+              <ObjectFilterDropdownWorkspaceMemberSelect
+                recordFilterId={recordFilterId}
+                dropdownId={filterDropdownId}
+              />
+            </>
+          ) : (
+            <ObjectFilterDropdownTextInput />
+          ))}
         {filterType === 'ADDRESS' && <ObjectFilterDropdownTextInput />}
         {filterType === 'CURRENCY' && <ObjectFilterDropdownNumberInput />}
         {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
