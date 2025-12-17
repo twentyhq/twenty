@@ -1,6 +1,7 @@
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
@@ -81,7 +82,7 @@ export const SettingsServerlessFunctionTestTab = ({
         />
         {serverlessFunctionTestData.output.logs.length > 0 && (
           <StyledCodeEditorContainer>
-            <InputLabel>Logs</InputLabel>
+            <InputLabel>{t`Logs`}</InputLabel>
             <TextArea
               textAreaId={testLogsTextAreaId}
               value={isTesting ? '' : serverlessFunctionTestData.output.logs}

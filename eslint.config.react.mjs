@@ -157,6 +157,7 @@ export default [
             '^Text$', // clipboard data type
             '^(allow-|sandbox)', // iframe sandbox values
             '^Id$', // technical identifier suffix (e.g., fieldNameId)
+            '^(string|number|boolean|void|any|unknown|never|object)$', // TypeScript type keywords
             '^(Dark|Light)$', // color schemes
             '^Icon[A-Z]\\w*$', // Icon names like IconDefault, IconTable, IconSettings
             '^\\w*Icon$', // Icon names that end with Icon like FieldIcon

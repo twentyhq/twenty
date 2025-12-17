@@ -53,7 +53,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           onChange={(newKey) =>
             setEditedEnvVariable({ ...editedEnvVariable, key: newKey })
           }
-          placeholder="Name"
+          placeholder={t`Name`}
           fullWidth
         />
       </TableCell>

@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type ServerlessFunction } from '~/generated-metadata/graphql';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 
@@ -35,7 +36,7 @@ export const SettingsServerlessFunctionsTable = ({
     <Table>
       <StyledTableRow>
         <TableHeader>{t`Name`}</TableHeader>
-        <TableHeader>Runtime</TableHeader>
+        <TableHeader>{t`Runtime`}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       <StyledTableBody>

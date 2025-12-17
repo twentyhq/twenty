@@ -1,6 +1,7 @@
 import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ServerlessFunction } from '~/generated/graphql';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -98,7 +99,7 @@ export const SettingsServerlessFunctionTriggersTab = ({
                 <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
                 <StyledTableCell>
                   <Tag
-                    text={routeTrigger.isAuthRequired ? 'True' : 'False'}
+                    text={routeTrigger.isAuthRequired ? t`True` : t`False`}
                     color={routeTrigger.isAuthRequired ? 'green' : 'orange'}
                     weight="medium"
                   />
