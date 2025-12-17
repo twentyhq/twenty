@@ -145,7 +145,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     ],
   );
 
-  // Force network request (bypasses cache)
   const refetchRecords = useRecoilCallback(
     ({ set }) =>
       async () => {

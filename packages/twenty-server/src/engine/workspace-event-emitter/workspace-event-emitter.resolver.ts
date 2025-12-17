@@ -15,7 +15,7 @@ import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input'
 import { QuerySubscriptionInput } from 'src/engine/subscriptions/dtos/query-subscription.input';
 import { RefetchSignalDTO } from 'src/engine/subscriptions/dtos/refetch-signal.dto';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
-import { QueryParserService } from 'src/engine/subscriptions/services/query-parser.service';
+import { SubscriptionsService } from 'src/engine/subscriptions/services/subscriptions.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @Resolver()
@@ -25,7 +25,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 export class SubscriptionsResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
-    private readonly queryParserService: QueryParserService,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   @Subscription(() => OnDbEventDTO, {
@@ -63,22 +63,37 @@ export class SubscriptionsResolver {
 
   @Subscription(() => RefetchSignalDTO, {
     nullable: true,
-    resolve: function (
+    resolve: async function (
       this: SubscriptionsResolver,
       payload: { onDbEvent: OnDbEventDTO },
       args: { subscriptions: QuerySubscriptionInput[] },
-    ): RefetchSignalDTO | null {
-      const matchedSubscriptionIds = args.subscriptions
-        .filter((subscription) =>
-          this.queryMatchesEvent(subscription.query, payload.onDbEvent),
-        )
-        .map((subscription) => subscription.id);
+      context: { req: { workspace: { id: string } } },
+    ): Promise<RefetchSignalDTO | null> {
+      const workspaceId = context.req.workspace.id;
 
-      if (matchedSubscriptionIds.length === 0) {
+      const matchedSubscriptionIds = await Promise.all(
+        args.subscriptions.map(async (subscription) => {
+          const matches = await this.subscriptionsService.isQueryMatchingEvent(
+            subscription.query,
+            payload.onDbEvent,
+            workspaceId,
+          );
+
+          return matches ? subscription.id : null;
+        }),
+      );
+
+      const filteredIds = matchedSubscriptionIds.filter(
+        (id): id is string => id !== null,
+      );
+
+      if (filteredIds.length === 0) {
         return null;
       }
 
-      return { subscriptionIds: matchedSubscriptionIds };
+      return {
+        subscriptionIds: filteredIds,
+      };
     },
   })
   onRefetchSignal(
@@ -90,68 +105,5 @@ export class SubscriptionsResolver {
       channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
       workspaceId: workspace.id,
     });
-  }
-
-  private queryMatchesEvent(queryString: string, event: OnDbEventDTO): boolean {
-    const parsed = this.queryParserService.parseQueryForMatching(queryString);
-
-    if (!parsed.objectName) {
-      return false;
-    }
-
-    // Check if query targets the same object type
-    const queryObjectName = parsed.objectName.toLowerCase();
-    const eventObjectName = event.objectNameSingular.toLowerCase();
-    const normalizedQueryObjectName =
-      this.normalizePluralToSingular(queryObjectName);
-
-    const isObjectNameMatching =
-      queryObjectName === eventObjectName ||
-      normalizedQueryObjectName === eventObjectName;
-
-    if (!isObjectNameMatching) {
-      return false;
-    }
-
-    // If query targets a specific record, check if it matches
-    if (isDefined(parsed.recordId) && parsed.recordId !== event.record.id) {
-      return false;
-    }
-
-    // If event has updatedFields and query has specific fields, check overlap
-    if (
-      isDefined(event.updatedFields) &&
-      event.updatedFields.length > 0 &&
-      parsed.fields.length > 0
-    ) {
-      const hasFieldOverlap = parsed.fields.some((field) =>
-        event.updatedFields?.includes(field),
-      );
-
-      if (!hasFieldOverlap) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private normalizePluralToSingular(name: string): string {
-    // Handle common plural patterns
-    if (name === 'people') {
-      return 'person';
-    }
-
-    if (name.endsWith('ies')) {
-      // companies -> company, activities -> activity
-      return name.slice(0, -3) + 'y';
-    }
-
-    if (name.endsWith('s')) {
-      // tasks -> task, notes -> note
-      return name.slice(0, -1);
-    }
-
-    return name;
   }
 }
