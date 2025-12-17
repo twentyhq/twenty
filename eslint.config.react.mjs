@@ -184,6 +184,10 @@ export default [
             '^[ML][0-9 ]+$',
             // Database ordering values (technical, backend API)
             '^(Asc|Desc)Nulls(First|Last)$',
+            // Calendar response status values (backend enum values, not user-facing)
+            '^(Yes|No|Maybe)$',
+            // Email validation error prefixes (combined with dynamic content)
+            '^Invalid email(s)?:',
           ],
           ignoreNames: [
             // HTML/React attributes that shouldn't be translated
@@ -540,9 +544,15 @@ export default [
     },
   },
 
-  // Storybook files
+  // Storybook files and story-related files
   {
-    files: ['**/*.stories.ts', '**/*.stories.tsx', '**/*.stories.js', '**/*.stories.jsx'],
+    files: [
+      '**/*.stories.ts',
+      '**/*.stories.tsx',
+      '**/*.stories.js',
+      '**/*.stories.jsx',
+      '**/__stories__/**/*',
+    ],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
       'lingui/no-unlocalized-strings': 'off',
@@ -563,11 +573,59 @@ export default [
     },
   },
 
-  // Testing utilities - not user-facing
+  // Testing utilities and mock data - not user-facing
   {
     files: [
       '**/testing/**/*.tsx',
       '**/testing/**/*.ts',
+      '**/__mocks__/**/*',
+      '**/*mock*.ts',
+      '**/*Mock*.ts',
+      '**/perf/**/*',
+    ],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Constants files - technical values, not user-facing
+  {
+    files: [
+      '**/constants/**/*.ts',
+      '**/*.constants.ts',
+      '**/validation-schemas/**/*.ts',
+      '**/*Schema.ts',
+      '**/*-schema.ts',
+    ],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Utility files - technical/developer-facing
+  {
+    files: [
+      '**/utils/**/*.ts',
+      '**/*Utils.ts',
+      '**/*-utils.ts',
+      '**/*Util.ts',
+      '**/*-util.ts',
+      '**/errors/**/*.ts',
+      '**/*Error.ts',
+      '**/*-error.ts',
+    ],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Config and setup files - not user-facing
+  {
+    files: [
+      '**/*.config.ts',
+      '**/*.config.js',
+      '**/vite.config.ts',
+      '**/.storybook/**/*',
     ],
     rules: {
       'lingui/no-unlocalized-strings': 'off',

@@ -10,7 +10,6 @@ import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedA
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getSettingsPath } from 'twenty-shared/utils';

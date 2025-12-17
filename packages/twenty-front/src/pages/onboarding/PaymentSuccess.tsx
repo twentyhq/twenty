@@ -6,7 +6,6 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';

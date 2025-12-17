@@ -16,8 +16,8 @@ export const SettingsServerlessFunctionTabEnvironmentVariablesSection = () => {
         description={t`Accessible in your function via process.env.KEY`}
       />
       <Trans>
-        Environment variables are defined at application level for all functions.
-        Please check{' '}
+        Environment variables are defined at application level for all
+        functions. Please check{' '}
         <LinkChip
           label={t`application detail page`}
           to={getSettingsPath(

@@ -121,7 +121,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
-              // eslint-disable-next-line lingui/no-unlocalized-strings
+
               colorScheme: 'System',
             };
           }

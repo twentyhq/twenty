@@ -9,7 +9,6 @@ import { useSetRecoilState } from 'recoil';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';

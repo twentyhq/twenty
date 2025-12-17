@@ -43,8 +43,7 @@ export const DropdownMenuSearchInput = forwardRef<
   const { i18n } = useLingui();
   const { inputRef } = useInputFocusWithoutScrollOnMount();
   const ref = forwardedRef ?? inputRef;
-  const translatedPlaceholder =
-    placeholder ?? i18n._(defaultSearchPlaceholder);
+  const translatedPlaceholder = placeholder ?? i18n._(defaultSearchPlaceholder);
   return (
     <StyledDropdownMenuSearchInputContainer>
       <StyledInput

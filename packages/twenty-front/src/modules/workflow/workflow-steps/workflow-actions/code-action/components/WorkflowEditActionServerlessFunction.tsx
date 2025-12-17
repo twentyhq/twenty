@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -302,7 +301,11 @@ export const WorkflowEditActionServerlessFunction = ({
   };
 
   const tabs = [
-    { id: WorkflowServerlessFunctionTabId.CODE, title: t`Code`, Icon: IconCode },
+    {
+      id: WorkflowServerlessFunctionTabId.CODE,
+      title: t`Code`,
+      Icon: IconCode,
+    },
     {
       id: WorkflowServerlessFunctionTabId.TEST,
       title: t`Test`,
