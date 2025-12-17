@@ -190,25 +190,23 @@ describe('Standard field metadata update should succeed', () => {
     );
   });
 
-  it(
-    'Should deactivate and reactivate standard field successfully',
-    async () => {
-      const deletedAtField = opportunityObjectFields.find(
-        (field) => field.name === 'deletedAt',
-      );
+  it('Should deactivate and reactivate standard field successfully', async () => {
+    const deletedAtField = opportunityObjectFields.find(
+      (field) => field.name === 'deletedAt',
+    );
 
-      jestExpectToBeDefined(deletedAtField);
-      expect(deletedAtField.isActive).toBe(true);
+    jestExpectToBeDefined(deletedAtField);
+    expect(deletedAtField.isActive).toBe(true);
 
-      const { data: firstUpdateData } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: deletedAtField.id,
-          updatePayload: {
-            isActive: false,
-          },
+    const { data: firstUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: false,
         },
-        expectToFail: false,
-        gqlFields: `
+      },
+      expectToFail: false,
+      gqlFields: `
           id
           name
           label
@@ -224,19 +222,19 @@ describe('Standard field metadata update should succeed', () => {
             icon
           }
         `,
-      });
+    });
 
-      expect(firstUpdateData.updateOneField.isActive).toBe(false);
+    expect(firstUpdateData.updateOneField.isActive).toBe(false);
 
-      const { data: secondUpdateData } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: deletedAtField.id,
-          updatePayload: {
-            isActive: true,
-          },
+    const { data: secondUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: true,
         },
-        expectToFail: false,
-        gqlFields: `
+      },
+      expectToFail: false,
+      gqlFields: `
           id
           name
           label
@@ -252,11 +250,10 @@ describe('Standard field metadata update should succeed', () => {
             icon
           }
         `,
-      });
+    });
 
-      expect(secondUpdateData.updateOneField.isActive).toBe(true);
-    },
-  );
+    expect(secondUpdateData.updateOneField.isActive).toBe(true);
+  });
 });
 
 describe('Standard field isUnique update should succeed', () => {
