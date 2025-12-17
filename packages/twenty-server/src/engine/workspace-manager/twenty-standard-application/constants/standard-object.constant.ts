@@ -67,9 +67,6 @@ export const STANDARD_OBJECTS = {
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
     },
     indexes: {
-      authorIdIndex: {
-        universalIdentifier: 'a7c3e8f2-9b14-4d6a-8e5f-1c2d3b4a5e6f',
-      },
       taskIdIndex: {
         universalIdentifier: 'b8d4f9a3-0c25-4e7b-9f6a-2d3e4c5b6f70',
       },
@@ -1936,10 +1933,6 @@ export const STANDARD_OBJECTS = {
       accountOwnerForCompanies: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
-      },
-      authoredAttachments: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
       },
       connectedAccounts: {
         universalIdentifier:
