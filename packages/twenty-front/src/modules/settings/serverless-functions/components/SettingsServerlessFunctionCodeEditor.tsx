@@ -73,6 +73,7 @@ export const SettingsServerlessFunctionCodeEditor = ({
           declare namespace NodeJS {
             interface ProcessEnv {
               ${Object.keys(environmentVariables)
+                // eslint-disable-next-line lingui/no-unlocalized-strings
                 .map((key) => `${key}: string;`)
                 .join('\n')}
             }
