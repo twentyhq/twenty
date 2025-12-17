@@ -1,6 +1,7 @@
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
+import { RELATIVE_DATETIME_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnitSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import { t } from '@lingui/core/macro';
@@ -31,6 +32,7 @@ type RelativeDatePickerHeaderProps = {
   isFormField?: boolean;
   readonly?: boolean;
   unitDropdownWidth?: number;
+  allowIntraDayUnits?: boolean;
 };
 
 export const RelativeDatePickerHeader = ({
@@ -42,6 +44,7 @@ export const RelativeDatePickerHeader = ({
   onChange,
   readonly,
   unitDropdownWidth,
+  allowIntraDayUnits,
 }: RelativeDatePickerHeaderProps) => {
   const amountString = amount?.toString() ?? '';
 
@@ -51,7 +54,10 @@ export const RelativeDatePickerHeader = ({
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
   const isUnitPlural = amount && amount > 1 && direction !== 'THIS';
-  const unitSelectOptions = RELATIVE_DATE_UNITS_SELECT_OPTIONS.map((unit) => ({
+  const unitOptionsSource = allowIntraDayUnits
+    ? RELATIVE_DATETIME_UNITS_SELECT_OPTIONS
+    : RELATIVE_DATE_UNITS_SELECT_OPTIONS;
+  const unitSelectOptions = unitOptionsSource.map((unit) => ({
     ...unit,
     label: `${unit.label}${isUnitPlural ? 's' : ''}`,
   }));
