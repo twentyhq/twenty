@@ -44,7 +44,6 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -58,10 +57,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 
 @Injectable()
 export class DataArgProcessor {
-  constructor(
-    private readonly recordPositionService: RecordPositionService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly recordPositionService: RecordPositionService) {}
 
   async process({
     partialRecordInputs,
@@ -90,9 +86,21 @@ export class DataArgProcessor {
         flatObjectMetadata,
       );
 
+    const overriddenPositionRecords =
+      await this.recordPositionService.overridePositionOnRecords({
+        partialRecordInputs: partialRecordInputs,
+        workspaceId: workspace.id,
+        objectMetadata: {
+          isCustom: flatObjectMetadata.isCustom,
+          nameSingular: flatObjectMetadata.nameSingular,
+          fieldIdByName,
+        },
+        shouldBackfillPositionIfUndefined,
+      });
+
     const processedRecords: Partial<ObjectRecord>[] = [];
 
-    for (const record of partialRecordInputs) {
+    for (const record of overriddenPositionRecords) {
       const processedRecord: Partial<ObjectRecord> = {};
 
       for (const [key, value] of Object.entries(record)) {
@@ -139,19 +147,7 @@ export class DataArgProcessor {
       processedRecords.push(processedRecord);
     }
 
-    const overriddenPositionRecords =
-      await this.recordPositionService.overridePositionOnRecords({
-        partialRecordInputs: processedRecords,
-        workspaceId: workspace.id,
-        objectMetadata: {
-          isCustom: flatObjectMetadata.isCustom,
-          nameSingular: flatObjectMetadata.nameSingular,
-          fieldIdByName,
-        },
-        shouldBackfillPositionIfUndefined,
-      });
-
-    return overriddenPositionRecords;
+    return processedRecords;
   }
 
   private async processField(
