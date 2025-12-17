@@ -73,4 +73,3 @@ describe('getSubMenuOptions', () => {
     });
   });
 });
-

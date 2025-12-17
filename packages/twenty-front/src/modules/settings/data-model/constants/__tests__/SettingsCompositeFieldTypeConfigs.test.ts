@@ -79,4 +79,3 @@ describe('SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS', () => {
     });
   });
 });
-

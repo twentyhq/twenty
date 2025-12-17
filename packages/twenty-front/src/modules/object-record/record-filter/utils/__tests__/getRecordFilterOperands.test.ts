@@ -136,4 +136,3 @@ describe('getRecordFilterOperands', () => {
     });
   });
 });
-

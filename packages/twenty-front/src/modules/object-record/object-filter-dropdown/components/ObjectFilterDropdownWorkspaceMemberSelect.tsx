@@ -13,9 +13,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import {
-    arrayOfUuidOrVariableSchema,
-    isDefined,
-    jsonRelationFilterValueSchema,
+  arrayOfUuidOrVariableSchema,
+  isDefined,
+  jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 

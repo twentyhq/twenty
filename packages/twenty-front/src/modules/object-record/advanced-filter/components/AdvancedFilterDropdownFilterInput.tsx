@@ -34,6 +34,7 @@ export const AdvancedFilterDropdownFilterInput = ({
 }: AdvancedFilterDropdownFilterInputProps) => {
   const subFieldNameUsedInDropdown = useRecoilComponentValue(
     subFieldNameUsedInDropdownComponentState,
+    filterDropdownId,
   );
 
   const filterType = recordFilter.type;
