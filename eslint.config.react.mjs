@@ -173,8 +173,9 @@ export default [
             '^Bearer .*',
             // Allow object keys that are technical identifiers
             '^(topLeft|topRight|bottomLeft|bottomRight)$',
-            // Color schemes
+            // Color schemes and CSS media queries
             '^System$',
+            '^\\(prefers-color-scheme:',
             // GraphQL query names (used in refetchQueries)
             '^Get[A-Z]\\w*$',
             // React Context names (technical identifiers)
@@ -188,6 +189,25 @@ export default [
             '^(Yes|No|Maybe)$',
             // Email validation error prefixes (combined with dynamic content)
             '^Invalid email(s)?:',
+            // GraphQL type construction patterns
+            '.*FilterInput$',
+            '.*OrderByInput.*',
+            '^\\$filter.*',
+            '^\\$orderBy.*',
+            '^\\$after.*',
+            '^\\$before.*',
+            '^\\$first.*',
+            '^\\$last.*',
+            // Logger names (technical identifiers)
+            '^Twenty(-\\w+)?$',
+            // Cookie names and cookie string patterns
+            '^twenty_session_id$',
+            '^; domain=',
+            // Context names for createRequiredContext
+            '^[A-Z][a-zA-Z]+$',
+            // JSON-like filter patterns
+            '^%"type":',
+            '^%"objectNameSingular":',
           ],
           ignoreNames: [
             // HTML/React attributes that shouldn't be translated
@@ -461,6 +481,19 @@ export default [
             'onKeyUp',
             'onMouseEnter',
             'onMouseLeave',
+
+            // Logging functions (technical messages, not user-facing)
+            'logError',
+            'logDebug',
+            'logInfo',
+            'logWarn',
+            'loggerLink',
+
+            // Context creation (technical names)
+            'createRequiredContext',
+
+            // GraphQL refetch queries (technical identifiers)
+            'refetchQueries',
           ],
         },
       ],
@@ -597,6 +630,30 @@ export default [
       '**/*Schema.ts',
       '**/*-schema.ts',
     ],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Layout configuration files - titles are translated at consumption time
+  {
+    files: ['**/layouts/**/*.ts'],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // Service files - contain technical strings (logger names, HTTP headers, etc.)
+  {
+    files: ['**/services/**/*.ts'],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
+  // State files - contain technical default values
+  {
+    files: ['**/states/**/*.ts'],
     rules: {
       'lingui/no-unlocalized-strings': 'off',
     },

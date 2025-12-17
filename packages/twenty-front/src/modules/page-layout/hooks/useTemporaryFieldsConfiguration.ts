@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -7,6 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const useTemporaryFieldsConfiguration = (
   objectNameSingular: string,
 ): FieldsConfiguration | null => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -37,13 +39,13 @@ export const useTemporaryFieldsConfiguration = (
       sections: [
         {
           id: `${objectNameSingular}-section-general`,
-          title: 'General',
+          title: t`General`,
           position: 0,
           fields,
         },
       ],
     };
-  }, [objectMetadataItem, objectNameSingular]);
+  }, [objectMetadataItem, objectNameSingular, t]);
 
   return configuration;
 };
