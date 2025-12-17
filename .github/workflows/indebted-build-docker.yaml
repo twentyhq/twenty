@@ -53,8 +53,6 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.VERSION }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
-            NODE_OPTIONS=--max-old-space-size=8192
-            NX_DAEMON=false
             APP_VERSION=${{ steps.tag.outputs.VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
