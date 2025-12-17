@@ -48,49 +48,53 @@ export const CommandMenuPageLayoutTabSettings = () => {
   const currentIndex = tabsSorted.findIndex((t) => t.id === openTabId);
   if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
-  const disableMoveLeft = currentIndex <= 0;
-  const disableMoveRight = currentIndex >= tabsSorted.length - 1;
-  const disableDelete = tabsSorted.length <= 1;
+  const canMoveLeft = currentIndex > 0;
+  const canMoveRight = currentIndex < tabsSorted.length - 1;
+  const canDelete = tabsSorted.length > 1;
 
   const handleDelete = () => {
-    if (!disableDelete) {
-      deleteTab(tab.id);
-      setOpenTabId(null);
-      closeCommandMenu();
-    }
+    deleteTab(tab.id);
+    setOpenTabId(null);
+    closeCommandMenu();
   };
+
+  const selectableItemIds = [
+    ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
+    ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
+    TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE,
+    ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
+  ];
 
   return (
     <>
-      <CommandMenuList
-        commandGroups={[]}
-        selectableItemIds={Object.values(TAB_SETTINGS_SELECTABLE_ITEM_IDS)}
-      >
+      <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
         <CommandGroup heading={t`Settings`}>
-          <SelectableListItem
-            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-            onEnter={() => moveLeft(tab.id)}
-          >
-            <CommandMenuItem
-              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-              Icon={IconChevronLeft}
-              label={t`Move left`}
-              onClick={() => moveLeft(tab.id)}
-              disabled={disableMoveLeft}
-            />
-          </SelectableListItem>
-          <SelectableListItem
-            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-            onEnter={() => moveRight(tab.id)}
-          >
-            <CommandMenuItem
-              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-              Icon={IconChevronRight}
-              label={t`Move right`}
-              onClick={() => moveRight(tab.id)}
-              disabled={disableMoveRight}
-            />
-          </SelectableListItem>
+          {canMoveLeft && (
+            <SelectableListItem
+              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
+              onEnter={() => moveLeft(tab.id)}
+            >
+              <CommandMenuItem
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
+                Icon={IconChevronLeft}
+                label={t`Move left`}
+                onClick={() => moveLeft(tab.id)}
+              />
+            </SelectableListItem>
+          )}
+          {canMoveRight && (
+            <SelectableListItem
+              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
+              onEnter={() => moveRight(tab.id)}
+            >
+              <CommandMenuItem
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
+                Icon={IconChevronRight}
+                label={t`Move right`}
+                onClick={() => moveRight(tab.id)}
+              />
+            </SelectableListItem>
+          )}
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
             onEnter={() => duplicateTab(tab.id)}
@@ -102,18 +106,19 @@ export const CommandMenuPageLayoutTabSettings = () => {
               onClick={() => duplicateTab(tab.id)}
             />
           </SelectableListItem>
-          <SelectableListItem
-            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
-            onEnter={handleDelete}
-          >
-            <CommandMenuItem
-              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
-              Icon={IconTrash}
-              label={t`Delete`}
-              onClick={handleDelete}
-              disabled={disableDelete}
-            />
-          </SelectableListItem>
+          {canDelete && (
+            <SelectableListItem
+              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
+              onEnter={handleDelete}
+            >
+              <CommandMenuItem
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
+                Icon={IconTrash}
+                label={t`Delete`}
+                onClick={handleDelete}
+              />
+            </SelectableListItem>
+          )}
         </CommandGroup>
       </CommandMenuList>
     </>
