@@ -464,7 +464,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
             .workspaceMemberId,
         isImportable: true,
-        isFilterable: false,
+        isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
       {
