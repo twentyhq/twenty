@@ -94,6 +94,7 @@ export const SelectSheetStep = ({
       setPreviousStepState,
       setCurrentStepState,
       uploadStepHook,
+      t,
     ],
   );
 

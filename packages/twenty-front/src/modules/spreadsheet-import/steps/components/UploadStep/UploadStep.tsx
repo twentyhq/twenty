@@ -46,15 +46,15 @@ export const UploadStep = ({
       setUploadedFile(file);
       const isSingleSheet = workbook.SheetNames.length === 1;
       if (isSingleSheet) {
-      if (
-        maxRecords > 0 &&
-        exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
-      ) {
-        const maxRecordsString = maxRecords.toString();
-        onError(t`Too many records. Up to ${maxRecordsString} allowed`);
-        return;
-      }
-      try {
+        if (
+          maxRecords > 0 &&
+          exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
+        ) {
+          const maxRecordsString = maxRecords.toString();
+          onError(t`Too many records. Up to ${maxRecordsString} allowed`);
+          return;
+        }
+        try {
           const mappedWorkbook = await uploadStepHook(mapWorkbook(workbook));
 
           if (selectHeader) {

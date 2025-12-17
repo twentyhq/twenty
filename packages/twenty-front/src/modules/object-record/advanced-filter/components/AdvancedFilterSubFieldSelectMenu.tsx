@@ -113,6 +113,8 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     ...subFieldNames.map((subFieldName) => subFieldName),
   ];
 
+  const fieldLabel = fieldMetadataItemUsedInDropdown?.label;
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -147,7 +149,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                   handleSelectFilter(fieldMetadataItemUsedInDropdown);
                 }}
                 LeftIcon={getIcon(fieldMetadataItemUsedInDropdown.icon)}
-                text={t`Any ${fieldMetadataItemUsedInDropdown.label} field`}
+                text={t`Any ${fieldLabel} field`}
               />
             </SelectableListItem>
           )}

@@ -252,8 +252,8 @@ export const IconPicker = ({
     iconPickerVisibleCount < totalMatchingIconsCount;
 
   const iconAriaLabel = selectedIconKey
-    ? `(selected: ${selectedIconKey})`
-    : `(no icon selected)`;
+    ? t`(selected: ${selectedIconKey})`
+    : t`(no icon selected)`;
 
   return (
     <div className={className}>
