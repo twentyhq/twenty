@@ -1,18 +1,21 @@
-import { type BarChartConfiguration } from '~/generated/graphql';
+import {
+  type BarChartConfiguration,
+  type IframeConfiguration,
+} from '~/generated/graphql';
 import { isIframeConfiguration } from '../isIframeConfiguration';
 
 describe('isIframeConfiguration', () => {
   it('should return true for IframeConfiguration', () => {
     const configuration = {
-      __typename: 'IframeConfiguration' as const,
-    };
+      __typename: 'IframeConfiguration',
+    } as IframeConfiguration;
 
     expect(isIframeConfiguration(configuration)).toBe(true);
   });
 
   it('should return false for BarChartConfiguration', () => {
     const configuration = {
-      __typename: 'BarChartConfiguration' as const,
+      __typename: 'BarChartConfiguration',
     } as BarChartConfiguration;
 
     expect(isIframeConfiguration(configuration)).toBe(false);
