@@ -1,0 +1,171 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    # Run weekly on Sundays at midnight UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      specific_tag:
+        description: 'Specific upstream tag to sync (e.g., v1.13.9). Leave empty for latest.'
+        required: false
+
+jobs:
+  sync-upstream:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    outputs:
+      new_tag: ${{ steps.create-tag.outputs.new_tag }}
+      pr_created: ${{ steps.create-pr.outputs.pr_created }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/twentyhq/twenty.git || true
+
+      - name: Fetch upstream tags
+        run: |
+          git fetch upstream --tags
+
+      - name: Determine target tag
+        id: target
+        run: |
+          if [ -n "${{ github.event.inputs.specific_tag }}" ]; then
+            TARGET_TAG="${{ github.event.inputs.specific_tag }}"
+          else
+            # Get latest semver tag from upstream
+            TARGET_TAG=$(git tag -l 'v*' --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+          fi
+
+          echo "target_tag=$TARGET_TAG" >> $GITHUB_OUTPUT
+          echo "Target upstream tag: $TARGET_TAG"
+
+          # Check if we already have this version
+          INDEBTED_TAG="${TARGET_TAG}-indebted"
+          if git rev-parse "$INDEBTED_TAG" >/dev/null 2>&1; then
+            echo "already_synced=true" >> $GITHUB_OUTPUT
+            echo "Tag $INDEBTED_TAG already exists - already synced"
+          else
+            echo "already_synced=false" >> $GITHUB_OUTPUT
+            echo "Tag $INDEBTED_TAG does not exist - will sync"
+          fi
+
+      - name: Check for changes
+        if: steps.target.outputs.already_synced == 'false'
+        id: check
+        run: |
+          TARGET_TAG="${{ steps.target.outputs.target_tag }}"
+          COMMITS_DIFF=$(git rev-list --count HEAD...$TARGET_TAG 2>/dev/null || echo "0")
+          echo "commits_diff=$COMMITS_DIFF" >> $GITHUB_OUTPUT
+          echo "Commits different from $TARGET_TAG: $COMMITS_DIFF"
+
+      - name: Setup Node
+        if: steps.target.outputs.already_synced == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Enable Corepack
+        if: steps.target.outputs.already_synced == 'false'
+        run: corepack enable
+
+      - name: Create sync branch and merge
+        if: steps.target.outputs.already_synced == 'false'
+        id: merge
+        run: |
+          TARGET_TAG="${{ steps.target.outputs.target_tag }}"
+          BRANCH_NAME="sync-upstream-${TARGET_TAG}"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+          # Check if branch already exists
+          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+            echo "Branch $BRANCH_NAME already exists, deleting..."
+            git push origin --delete "$BRANCH_NAME" || true
+          fi
+
+          git checkout -b "$BRANCH_NAME"
+
+          # Attempt merge - fail if conflicts require manual resolution
+          if ! git merge "$TARGET_TAG" --no-edit -m "Merge upstream $TARGET_TAG"; then
+            echo "::error::Merge conflict detected. Resolve manually: git checkout -b $BRANCH_NAME && git merge $TARGET_TAG"
+            exit 1
+          fi
+
+          # Regenerate yarn.lock to apply our resolutions
+          echo "Regenerating yarn.lock with our resolutions..."
+          yarn install
+
+          # Commit yarn.lock changes if any
+          if ! git diff --quiet yarn.lock; then
+            git add yarn.lock
+            git commit -m "chore: regenerate yarn.lock with resolutions"
+          fi
+
+          git push origin "$BRANCH_NAME"
+          echo "merge_success=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.target.outputs.already_synced == 'false' && steps.merge.outputs.merge_success == 'true'
+        id: create-pr
+        run: |
+          TARGET_TAG="${{ steps.target.outputs.target_tag }}"
+          INDEBTED_TAG="${TARGET_TAG}-indebted"
+
+          PR_URL=$(gh pr create \
+            --title "Sync with upstream $TARGET_TAG" \
+            --body "## Automated sync from upstream
+
+          **Upstream tag:** \`$TARGET_TAG\`
+          **Our tag (after merge):** \`$INDEBTED_TAG\`
+
+          ### What this PR does
+          - Merges upstream tag \`$TARGET_TAG\` from \`twentyhq/twenty\`
+          - Regenerates \`yarn.lock\` to apply our security resolutions
+
+          ### After merging this PR
+          The \`create-release-tag\` workflow will automatically:
+          1. Create tag \`$INDEBTED_TAG\` on the merged commit
+          2. Trigger the Docker image build
+
+          ### Review checklist
+          - [ ] Review upstream changes for breaking changes
+          - [ ] Verify CI passes
+          - [ ] Merge when ready
+
+          ---
+          *This PR was automatically created by the sync-upstream workflow.*" \
+            --base main \
+            --head ${{ steps.merge.outputs.branch_name }})
+
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+          echo "Created PR: $PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.target.outputs.already_synced }}" == "true" ]; then
+            echo "✅ Already synced with ${{ steps.target.outputs.target_tag }}" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.create-pr.outputs.pr_created }}" == "true" ]; then
+            echo "✅ Created PR to sync ${{ steps.target.outputs.target_tag }}" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 ${{ steps.create-pr.outputs.pr_url }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No sync needed" >> $GITHUB_STEP_SUMMARY
+          fi
