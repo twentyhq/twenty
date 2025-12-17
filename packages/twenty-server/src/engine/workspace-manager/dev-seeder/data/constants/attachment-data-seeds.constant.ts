@@ -66,124 +66,104 @@ const FILE_NAME_VARIATIONS = [
   // Documents
   {
     name: 'Service Agreement.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'NDA Document.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Project Proposal.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Invoice Q1 2024.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Meeting Notes.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Report Final.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   {
     name: 'Contract Signed.pdf',
-
     fileCategory: 'TEXT_DOCUMENT',
     pathIndex: 0,
   },
   // Spreadsheets
   {
     name: 'Financial Forecast.xlsx',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Sales Report Q4.xlsx',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Team Roster.xlsx',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Expense Report.xlsx',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Inventory List.xlsx',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   {
     name: 'Data Export.csv',
-
     fileCategory: 'SPREADSHEET',
     pathIndex: 1,
   },
   // Presentations
   {
     name: 'Pitch Deck.pptx',
-
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Q4 Results.pptx',
-
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Roadmap 2024.pptx',
-
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Company Overview.pptx',
-
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   {
     name: 'Training Materials.pptx',
-
     fileCategory: 'PRESENTATION',
     pathIndex: 2,
   },
   // Images
   {
     name: 'Company Logo.png',
-
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
   {
     name: 'Product Photo.jpg',
-
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
@@ -191,7 +171,6 @@ const FILE_NAME_VARIATIONS = [
   { name: 'Wireframe.png', fileCategory: 'IMAGE', pathIndex: 3 },
   {
     name: 'Mockup Design.png',
-
     fileCategory: 'IMAGE',
     pathIndex: 3,
   },
@@ -199,13 +178,11 @@ const FILE_NAME_VARIATIONS = [
   // Archives
   {
     name: 'Project Files.zip',
-
     fileCategory: 'ARCHIVE',
     pathIndex: 4,
   },
   {
     name: 'Backup Data.zip',
-
     fileCategory: 'ARCHIVE',
     pathIndex: 4,
   },
