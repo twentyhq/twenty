@@ -9,6 +9,7 @@ import { useSetRecoilState } from 'recoil';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
@@ -54,13 +55,13 @@ export const SettingsPublicDomainsListCard = () => {
       RowRightComponent={({ item: publicDomain }) => (
         <>
           {!publicDomain.isValidated && (
-            <Status color="orange" text="Pending" />
+            <Status color="orange" text={t`Pending`} />
           )}
           <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
         </>
       )}
       hasFooter
-      footerButtonLabel="Add Public Domain"
+      footerButtonLabel={t`Add Public Domain`}
       onFooterButtonClick={() => {
         setSelectedPublicDomain(undefined);
         navigate(SettingsPath.PublicDomain);

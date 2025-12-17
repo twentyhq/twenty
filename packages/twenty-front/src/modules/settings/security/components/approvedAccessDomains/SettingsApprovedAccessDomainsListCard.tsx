@@ -10,6 +10,7 @@ import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedA
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -70,7 +71,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
         RowRightComponent={({ item: approvedAccessDomain }) => (
           <>
             {!approvedAccessDomain.isValidated && (
-              <Status color="orange" text="Pending" />
+              <Status color="orange" text={t`Pending`} />
             )}
             <SettingsSecurityApprovedAccessDomainRowDropdownMenu
               approvedAccessDomain={approvedAccessDomain}
@@ -78,7 +79,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
           </>
         )}
         hasFooter
-        footerButtonLabel="Add Approved Access Domain"
+        footerButtonLabel={t`Add Approved Access Domain`}
         onFooterButtonClick={() =>
           navigate(getSettingsPath(SettingsPath.NewApprovedAccessDomain))
         }
