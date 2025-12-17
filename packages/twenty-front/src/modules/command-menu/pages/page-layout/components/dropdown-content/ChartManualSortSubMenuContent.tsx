@@ -17,6 +17,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconChevronLeft, IconGripVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -53,7 +54,7 @@ export const ChartManualSortSubMenuContent = ({
   );
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) {
+    if (!isDefined(result.destination)) {
       return;
     }
 
