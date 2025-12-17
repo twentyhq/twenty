@@ -54,7 +54,7 @@ export const SettingsReleases = () => {
         <Section>
           <H2Title
             title={t`Early access`}
-            description={t`Try our upcoming features. Please note they are still in beta. We don't recommend using them for production use cases`}
+            description={t`Try our upcoming features. Note they are still in beta. Please bear with us and report any issues you find.`}
           />
           <SettingsLabContent />
         </Section>

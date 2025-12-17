@@ -7,27 +7,26 @@
  *                              |___/
  */
 
-export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
-export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
+export type { AvatarProps } from './avatar/components/Avatar';
 export { AvatarGroup } from './avatar/components/AvatarGroup';
+export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
 export { invalidAvatarUrlsState } from './avatar/components/states/isInvalidAvatarUrlState';
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
-export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
-export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
+export type { BannerVariant } from './banner/components/Banner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
-export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
+export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
-export type { CheckmarkProps } from './checkmark/components/Checkmark';
+export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
 export { Checkmark } from './checkmark/components/Checkmark';
-export type {
-  ColorSampleVariant,
-  ColorSampleProps,
-} from './color/components/ColorSample';
+export type { CheckmarkProps } from './checkmark/components/Checkmark';
 export { ColorSample } from './color/components/ColorSample';
+export type {
+  ColorSampleProps, ColorSampleVariant
+} from './color/components/ColorSample';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -63,7 +62,6 @@ export { IllustrationIconToggle } from './icon/components/IllustrationIconToggle
 export { IllustrationIconUid } from './icon/components/IllustrationIconUid';
 export { IllustrationIconUser } from './icon/components/IllustrationIconUser';
 export { IllustrationIconWrapper } from './icon/components/IllustrationIconWrapper';
-export type { TablerIconsProps } from './icon/components/TablerIcons';
 export {
   Icon123,
   IconAlertCircle,
@@ -446,34 +444,32 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
+  IconX
 } from './icon/components/TablerIcons';
+export type { TablerIconsProps } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
 export { iconsState } from './icon/states/iconsState';
 export type {
-  IconComponentProps,
-  IconComponent,
+  IconComponent, IconComponentProps
 } from './icon/types/IconComponent';
-export type { InfoAccent, InfoProps } from './info/components/Info';
 export { Info } from './info/components/Info';
+export type { InfoAccent, InfoProps } from './info/components/Info';
 export { Status } from './status/components/Status';
 export { HorizontalSeparator } from './text/components/HorizontalSeparator';
 export { SeparatorLineText } from './text/components/SeparatorLineText';
-export type { AppTooltipProps } from './tooltip/AppTooltip';
 export {
-  TooltipPosition,
-  TooltipDelay,
-  AppTooltip,
+  AppTooltip, TooltipDelay, TooltipPosition
 } from './tooltip/AppTooltip';
+export type { AppTooltipProps } from './tooltip/AppTooltip';
 export { OverflowingTextWithTooltip } from './tooltip/OverflowingTextWithTooltip';
-export { H1TitleFontColor, H1Title } from './typography/components/H1Title';
+export { H1Title, H1TitleFontColor } from './typography/components/H1Title';
 export { H2Title } from './typography/components/H2Title';
 export { H3Title } from './typography/components/H3Title';
-export type { LabelVariant } from './typography/components/Label';
 export { Label } from './typography/components/Label';
+export type { LabelVariant } from './typography/components/Label';
 export {
-  StyledTextContent,
-  StyledTextWrapper,
-  StyledText,
+  StyledText, StyledTextContent,
+  StyledTextWrapper
 } from './typography/components/StyledText';
+
