@@ -1,4 +1,4 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -145,11 +145,19 @@ export const computeWhereConditionParts = ({
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
-    case 'containsJsonb':
+    case 'containsJsonb': {
+      // Normalize to lowercase only for email fields (emails are stored lowercase)
+      const isEmailField =
+        fieldMetadataType === FieldMetadataType.EMAILS &&
+        subFieldKey === 'additionalEmails';
+      const normalizedValue =
+        isEmailField && typeof value === 'string' ? value.toLowerCase() : value;
+
       return {
         sql: `"${objectNameSingular}"."${key}" @> :${key}${uuid}::jsonb`,
-        params: { [`${key}${uuid}`]: JSON.stringify([value]) },
+        params: { [`${key}${uuid}`]: JSON.stringify([normalizedValue]) },
       };
+    }
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
