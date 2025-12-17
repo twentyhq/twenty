@@ -8,9 +8,9 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["nx run twenty-zapier:clean && tsc"]
+        "commands": ["tsc"]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["clean","^build"]
     },
     "format": {
       "executor": "nx:run-commands",
@@ -24,14 +24,17 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["NODE_ENV=test && nx run twenty-zapier:build && jest --testTimeout 10000 --rootDir ./lib/test"]
-      }
+      },
+      "dependsOn": ["build"]
     },
+    "typecheck": {},
     "validate": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["nx run twenty-zapier:build && zapier validate"]
-      }
+      },
+      "dependsOn": ["build"]
     },
     "versions": {
       "executor": "nx:run-commands",
@@ -45,7 +48,8 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["nx run twenty-zapier:clean && npx tsc --watch"]
-      }
+      },
+      "dependsOn": ["build"]
     },
     "clean": {
       "executor": "nx:run-commands",
@@ -59,9 +63,20 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "nx run twenty-zapier:build && cp -r ../twenty-shared/ node_modules/twenty-shared && zapier push --skip-npm-install"
+          "nx run twenty-zapier:build && zapier push --disable-dependency-detection"
         ]
-      }
+      },
+      "dependsOn": ["build"]
+    },
+    "promote": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "zapier promote"
+        ]
+      },
+      "dependsOn": ["build"]
     }
   }
 }
