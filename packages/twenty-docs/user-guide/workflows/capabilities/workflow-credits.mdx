@@ -1,12 +1,7 @@
 ---
 title: Workflow Credits
 description: Understand workflow credit consumption and management.
-image: /images/user-guide/workflows/workflow-credits.png
 ---
-
-<Frame>
-  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Workflow Credits" />
-</Frame>
 
 Workflow credits power your automations in Twenty. Understanding how they work helps you optimize costs and manage your automation budget effectively.
 
@@ -72,23 +67,8 @@ If you need more credits beyond your plan allocation:
 
 ## Best Practices
 
-### Efficient Workflow Design
-- **Start Simple**: Begin with basic actions and add complexity gradually
-- **Test in Draft**: Thoroughly test workflows before activation to avoid wasting credits on errors
-- **Minimize HTTP Requests**: Use efficient search criteria and combine operations where possible
 - **Batch Processing**: Use bulk operations and Iterator actions efficiently
-- **Error Handling**: Implement proper error handling to prevent unnecessary retries
 - **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
-
-### Action Optimization
-- Use basic internal operations when possible (lower credit consumption)
 - Optimize Code actions for efficiency
-- Consider manual triggers for non-urgent processes
 - Batch operations to reduce individual action calls
 
-### Credit Management
-- **Regular Monitoring**: Check your credit usage weekly in Settings → Billing
-- **Usage Tracking**: Keep track of consumption patterns to avoid unexpected overages
-- **Plan Accordingly**: Consider upgrading your plan if you consistently need more credits
-- **Workflow Review**: Regularly review high-consumption workflows and deactivate unused ones
-- **Strategic Planning**: Plan workflow deployment based on credit availability

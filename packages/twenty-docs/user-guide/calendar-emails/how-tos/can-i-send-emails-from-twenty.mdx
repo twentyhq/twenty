@@ -5,27 +5,39 @@ description: Information about sending emails directly from Twenty.
 
 ## Current Status
 
-At the moment, Twenty's email integration is designed to **sync and display** your email history. When you hit `Reply` at the bottom of a thread, you will be redirected directly in the relevant thread, in your mailbox. This is where you will be able to edit and send your message.
-Sending emails from Twenty will be available later in 2026.
+Twenty's email integration is designed to **sync and display** your email history. Emails cannot be composed or sent directly from Twenty's interface.
 
-If you need to have emails automatically be sent based on automations, you can configure this using workflows. Please see [here](/user-guide/workflows/how-tos/how-to-send-emails-from-workflows) how to set it up.
+When you view an email thread on a record page and click **Reply**, you'll be redirected to the original thread in your mailbox (Gmail, Outlook, etc.). This is where you compose and send your reply.
 
-If you need to send newsletters or sequences, it is recommended to set up a workfow to connect Twenty to a dedicated tool. Mass emails should not be sent from your mailbox to protect your domain reputation.
-
-## What You Can Do
+## What You Can Do Today
 
 - **View email history** on People, Companies, and Opportunities records
 - **Read full email threads** with contacts in your CRM
 - **Track communication context** alongside calendar events
 - **Auto-create contacts** from email interactions
+- **Reply via redirect** — click Reply to jump to your mailbox
 
-## How to Send Emails
+## Sending Emails via Workflows
 
-1. Use your native email client (Gmail, Outlook, etc.)
-2. Send the email as you normally would
-3. The email will automatically sync to Twenty within 5 minutes
-4. View the email thread on the relevant CRM records
+While you can't send emails manually from Twenty, you **can send emails automatically using Workflows**. This is useful for:
+- Automated follow-ups
+- Notifications to contacts
+- Triggered communications based on record changes
+
+Emails sent via workflows go through your connected mailbox account.
+
+→ Learn about the [Send Email action](/user-guide/workflows/capabilities/workflow-actions#send-email)
+
+## Email Sequences and Newsletters
+
+For email sequences and newsletters, we recommend using workflows to connect Twenty to a dedicated email marketing tool.
+
+<Warning>
+Mass emails should not be sent directly from your mailbox to protect your domain reputation. Use a dedicated tool for bulk communications.
+</Warning>
+
+→ See [How to send emails from workflows](/user-guide/workflows/how-tos/send-emails-from-workflows) for setup instructions
 
 ## Future Plans
 
-Email composition from within Twenty is on our roadmap. Join our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to share your use case and help prioritize this feature.
+Native email composition from within Twenty is on our roadmap. Join our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to share your use case and help prioritize this feature.

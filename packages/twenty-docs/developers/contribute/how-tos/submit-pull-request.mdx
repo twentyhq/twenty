@@ -1,0 +1,70 @@
+---
+title: Submit a Pull Request
+description: Learn how to contribute code to Twenty through pull requests.
+---
+
+## Overview
+
+Contributing to Twenty starts with a pull request (PR). This guide walks you through the process.
+
+## Before You Start
+
+1. Check [existing issues](https://github.com/twentyhq/twenty/issues) for related work
+2. For new features, open an issue first to discuss
+3. Review our [Code of Conduct](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+## Fork and Clone
+
+1. Fork the repository on GitHub
+2. Clone your fork:
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Add upstream remote:
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+## Create a Branch
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Use descriptive branch names:
+- `feature/add-export-button`
+- `fix/login-redirect-issue`
+- `docs/update-api-guide`
+
+## Make Your Changes
+
+1. Write clean, well-documented code
+2. Follow existing code style
+3. Add tests for new functionality
+4. Update documentation if needed
+
+## Submit Your PR
+
+1. Push your branch:
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Open a PR on GitHub
+3. Fill in the PR template
+4. Link related issues
+
+## PR Checklist
+
+- [ ] Code follows project style guidelines
+- [ ] Tests pass locally
+- [ ] Documentation is updated
+- [ ] PR description explains the changes
+
+## Related
+
+- [Local Setup](/developers/local-setup) — set up your development environment
+- [Bug Reports](/developers/bug-and-requests) — reporting issues
+

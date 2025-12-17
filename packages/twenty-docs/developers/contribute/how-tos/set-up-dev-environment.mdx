@@ -1,0 +1,70 @@
+---
+title: Set Up Development Environment
+description: Get your local development environment ready for contributing to Twenty.
+---
+
+## Overview
+
+This guide helps you set up a local development environment to contribute to Twenty.
+
+## Prerequisites
+
+- Node.js 18+
+- Yarn
+- Docker and Docker Compose
+- Git
+
+## Quick Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/twentyhq/twenty.git
+cd twenty
+```
+
+2. Install dependencies:
+```bash
+yarn install
+```
+
+3. Start infrastructure (database, redis):
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+4. Set up environment:
+```bash
+cp .env.example .env
+```
+
+5. Run database migrations:
+```bash
+yarn nx run twenty-server:database:reset
+```
+
+6. Start the development servers:
+```bash
+yarn nx run twenty-server:start
+yarn nx run twenty-front:start
+```
+
+## Access the App
+
+- Frontend: `http://localhost:3001`
+- API: `http://localhost:3000`
+- GraphQL Playground: `http://localhost:3000/graphql`
+
+## Common Commands
+
+| Command | Description |
+|---------|-------------|
+| `yarn nx run twenty-front:test` | Run frontend tests |
+| `yarn nx run twenty-server:test` | Run backend tests |
+| `yarn nx run twenty-front:lint` | Lint frontend code |
+| `yarn nx run twenty-server:lint` | Lint backend code |
+
+## Related
+
+- [Local Setup](/developers/local-setup) — detailed setup guide
+- [Frontend Development](/developers/frontend-development/storybook) — frontend contribution guide
+

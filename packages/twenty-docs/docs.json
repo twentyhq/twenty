@@ -41,16 +41,17 @@
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "user-guide/getting-started/what-is-twenty",
-                      "user-guide/getting-started/implementation-services"
+                      "user-guide/getting-started/capabilities/what-is-twenty",
+                      "user-guide/getting-started/capabilities/implementation-services",
+                      "user-guide/getting-started/capabilities/glossary"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/getting-started/create-workspace",
-                      "user-guide/getting-started/navigate-around-twenty",
-                      "user-guide/getting-started/configure-your-workspace"
+                      "user-guide/getting-started/how-tos/create-workspace",
+                      "user-guide/getting-started/how-tos/navigate-around-twenty",
+                      "user-guide/getting-started/how-tos/configure-your-workspace"
                     ]
                   }
                 ]
@@ -319,112 +320,150 @@
             "groups": [
               {
                 "group": "Developers",
-                "pages": []
+                "pages": [
+                  "developers/introduction"
+                ]
               },
               {
-                "group": "Getting Started",
-                "icon": "rocket",
+                "group": "Extend",
+                "icon": "plug",
                 "pages": [
-                  "developers/introduction",
-                  "developers/local-setup",
+                  "developers/extend/extend",
                   {
-                    "group": "Self-Hosting",
+                    "group": "Capabilities",
                     "pages": [
-                      "developers/self-hosting/docker-compose",
-                      "developers/self-hosting/setup",
-                      "developers/self-hosting/upgrade-guide",
-                      "developers/self-hosting/cloud-providers",
-                      "developers/self-hosting/troubleshooting"
+                      "developers/extend/capabilities/apis-overview",
+                      "developers/extend/capabilities/api",
+                      "developers/extend/capabilities/api-keys",
+                      "developers/extend/capabilities/webhooks",
+                      "developers/extend/capabilities/integrations"
                     ]
                   },
                   {
-                    "group": "API and Webhooks",
+                    "group": "How-Tos",
                     "pages": [
-                      "developers/api-and-webhooks/apis-overview",
-                      "developers/api-and-webhooks/api",
-                      "developers/api-and-webhooks/api-keys",
-                      "developers/api-and-webhooks/webhooks",
-                      "developers/api-and-webhooks/integrations"
+                      "developers/extend/how-tos/authenticate-with-api",
+                      "developers/extend/how-tos/make-first-api-call",
+                      "developers/extend/how-tos/set-up-webhooks"
                     ]
                   }
                 ]
               },
               {
-                "group": "Contributing",
-                "icon": "code-branch",
+                "group": "Self-Host",
+                "icon": "desktop",
                 "pages": [
-                  "developers/bug-and-requests",
+                  "developers/self-host/self-host",
                   {
-                    "group": "Frontend Development",
+                    "group": "Capabilities",
                     "pages": [
-                      "developers/frontend-development/storybook",
-                      {
-                        "group": "Twenty UI",
-                        "pages": [
-                          "twenty-ui/introduction",
-                          {
-                            "group": "Display",
-                            "pages": [
-                              "twenty-ui/display/checkmark",
-                              "twenty-ui/display/chip",
-                              "twenty-ui/display/icons",
-                              "twenty-ui/display/soon-pill",
-                              "twenty-ui/display/tag",
-                              "twenty-ui/display/app-tooltip"
-                            ]
-                          },
-                          {
-                            "group": "Feedback",
-                            "pages": [
-                              "twenty-ui/progress-bar"
-                            ]
-                          },
-                          {
-                            "group": "Input",
-                            "pages": [
-                              "twenty-ui/input/buttons",
-                              "twenty-ui/input/color-scheme",
-                              "twenty-ui/input/text",
-                              "twenty-ui/input/checkbox",
-                              "twenty-ui/input/icon-picker",
-                              "twenty-ui/input/image-input",
-                              "twenty-ui/input/radio",
-                              "twenty-ui/input/select",
-                              "twenty-ui/input/toggle",
-                              "twenty-ui/input/block-editor"
-                            ]
-                          },
-                          {
-                            "group": "Navigation",
-                            "pages": [
-                              "twenty-ui/navigation",
-                              "twenty-ui/navigation/breadcrumb",
-                              "twenty-ui/navigation/links",
-                              "twenty-ui/navigation/menu-item",
-                              "twenty-ui/navigation/navigation-bar",
-                              "twenty-ui/navigation/step-bar"
-                            ]
-                          }
-                        ]
-                      },
-                      "developers/frontend-development/frontend-commands",
-                      "developers/frontend-development/work-with-figma",
-                      "developers/frontend-development/best-practices-front",
-                      "developers/frontend-development/style-guide",
-                      "developers/frontend-development/folder-architecture-front",
-                      "developers/frontend-development/hotkeys"
+                      "developers/self-host/capabilities/docker-compose",
+                      "developers/self-host/capabilities/setup",
+                      "developers/self-host/capabilities/upgrade-guide",
+                      "developers/self-host/capabilities/cloud-providers",
+                      "developers/self-host/capabilities/troubleshooting"
                     ]
                   },
                   {
-                    "group": "Backend Development",
+                    "group": "How-Tos",
                     "pages": [
-                      "developers/backend-development/server-commands",
-                      "developers/backend-development/feature-flags",
-                      "developers/backend-development/folder-architecture-server",
-                      "developers/backend-development/zapier",
-                      "developers/backend-development/best-practices-server",
-                      "developers/backend-development/custom-objects",
-                      "developers/backend-development/queue"
+                      "developers/self-host/how-tos/deploy-with-docker",
+                      "developers/self-host/how-tos/configure-environment",
+                      "developers/self-host/how-tos/backup-your-data"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Contribute",
+                "icon": "github",
+                "pages": [
+                  "developers/contribute/contribute",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "developers/contribute/capabilities/local-setup",
+                      "developers/contribute/capabilities/bug-and-requests",
+                      {
+                        "group": "Frontend Development",
+                        "pages": [
+                          "developers/contribute/capabilities/frontend-development/storybook",
+                          {
+                            "group": "Twenty UI",
+                            "pages": [
+                              "twenty-ui/introduction",
+                              {
+                                "group": "Display",
+                                "pages": [
+                                  "twenty-ui/display/checkmark",
+                                  "twenty-ui/display/chip",
+                                  "twenty-ui/display/icons",
+                                  "twenty-ui/display/soon-pill",
+                                  "twenty-ui/display/tag",
+                                  "twenty-ui/display/app-tooltip"
+                                ]
+                              },
+                              {
+                                "group": "Feedback",
+                                "pages": [
+                                  "twenty-ui/progress-bar"
+                                ]
+                              },
+                              {
+                                "group": "Input",
+                                "pages": [
+                                  "twenty-ui/input/buttons",
+                                  "twenty-ui/input/color-scheme",
+                                  "twenty-ui/input/text",
+                                  "twenty-ui/input/checkbox",
+                                  "twenty-ui/input/icon-picker",
+                                  "twenty-ui/input/image-input",
+                                  "twenty-ui/input/radio",
+                                  "twenty-ui/input/select",
+                                  "twenty-ui/input/toggle",
+                                  "twenty-ui/input/block-editor"
+                                ]
+                              },
+                              {
+                                "group": "Navigation",
+                                "pages": [
+                                  "twenty-ui/navigation",
+                                  "twenty-ui/navigation/breadcrumb",
+                                  "twenty-ui/navigation/links",
+                                  "twenty-ui/navigation/menu-item",
+                                  "twenty-ui/navigation/navigation-bar",
+                                  "twenty-ui/navigation/step-bar"
+                                ]
+                              }
+                            ]
+                          },
+                          "developers/contribute/capabilities/frontend-development/frontend-commands",
+                          "developers/contribute/capabilities/frontend-development/work-with-figma",
+                          "developers/contribute/capabilities/frontend-development/best-practices-front",
+                          "developers/contribute/capabilities/frontend-development/style-guide",
+                          "developers/contribute/capabilities/frontend-development/folder-architecture-front",
+                          "developers/contribute/capabilities/frontend-development/hotkeys"
+                        ]
+                      },
+                      {
+                        "group": "Backend Development",
+                        "pages": [
+                          "developers/contribute/capabilities/backend-development/server-commands",
+                          "developers/contribute/capabilities/backend-development/feature-flags",
+                          "developers/contribute/capabilities/backend-development/folder-architecture-server",
+                          "developers/contribute/capabilities/backend-development/zapier",
+                          "developers/contribute/capabilities/backend-development/best-practices-server",
+                          "developers/contribute/capabilities/backend-development/custom-objects",
+                          "developers/contribute/capabilities/backend-development/queue"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "developers/contribute/how-tos/set-up-dev-environment",
+                      "developers/contribute/how-tos/submit-pull-request"
                     ]
                   }
                 ]

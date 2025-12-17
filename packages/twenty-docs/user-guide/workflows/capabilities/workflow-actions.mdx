@@ -8,6 +8,12 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Actions define what happens after a trigger fires. You can chain multiple actions together to build complex automations.
 
+<Tip>
+- Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
+- Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
+- Rename actions to make your workflow easier to understand
+</Tip>
+
 ## Record Actions
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}}/>
 
@@ -17,19 +23,23 @@ Adds a new record to a selected object.
 **Configuration**:
 - Select the target object
 - Fill out the required and optional fields
-- Use data from previous steps to populate fields
+- Use data from previous steps or input values manually to populate fields
 
 **Output**: The newly created record data is available for use in subsequent steps.
 
 ### Update Record
 Modifies an existing record in a selected object.
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}}/>
 
 **Configuration**:
 - Select the target object
-- Choose the specific record to update
+- Choose the specific record to update.
+  - You can either choose a fixed record, using the drop down menu displaying all available records.
+  - Or you can have the record dynamically selected, by designating a record found in a previous step, using teh `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
 - Select fields to modify and enter new values
 
 **Output**: The updated record data is available for use in subsequent steps.
+
 
 ### Delete Record
 Removes a record from a selected object.
@@ -54,14 +64,20 @@ Finds records within a selected object using filter conditions.
 **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
 </Note>
 
-**Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
+**Best Practice**: Use [branches](/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
 ### Upsert Record
 Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
 
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}}/>
+
 **Configuration**:
 - Select the target object
-- Define matching criteria (e.g., email for People, domain for Companies)
-- Fill out the field values
+- Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
+- Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+<Note>
+**Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+</Note>
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}}/>
 - Use data from previous steps to populate fields
 
 **How it works**:
@@ -74,7 +90,7 @@ Creates a new record or updates an existing one based on matching criteria. This
 ## Flow Actions
 
 ### Iterator
-Loops through an array of records returned from a previous step, allowing you to perform actions on each record individually.
+**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
 
 **Configuration**:
 - Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
@@ -84,7 +100,7 @@ Loops through an array of records returned from a previous step, allowing you to
 - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
 </Note>
 
-- Access Current Item Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
+- Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
 
 <VimeoEmbed videoId="1146577247" title="Video demonstration" />
 
@@ -97,7 +113,8 @@ Filters records based on specified conditions, allowing only records that meet t
 - Define filter conditions and criteria
 - Configure which records should pass through to subsequent steps
 <Note>
-**Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
+2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
 </Note>
 
 ### Delay
@@ -175,6 +192,14 @@ Prompts a form during workflow execution to collect user input. The responses ca
 **Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
 
 **How to fill the form**:
+- Trigger your manual workflow from the command menu `Cmd K`
+- Fill the form that is displayed in the side panel and click `Submit`.
+<Note>
+The fields canot be made mandatory.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+
 
 
 ## Integration Actions
@@ -183,21 +208,62 @@ Prompts a form during workflow execution to collect user input. The responses ca
 Runs custom JavaScript within your workflow.
 
 **Configuration**:
+- Access variables from previous steps. You can edit the variables names dynamically.
+<VimeoEmbed videoId="1147281795" title="Video demonstration" />
 - Write JavaScript code in the editor
-- Access variables from previous steps
 - Return variables for use in subsequent steps
 - Test code directly in the step
 
-**Access**: Manage API keys in Settings → API & Webhooks
+<Note>
+If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+</Note>
+
+#### Handling Arrays as Input
+
+When working with arrays in Code actions — common when processing data from external systems or preparing data for an [Iterator](/user-guide/workflows/capabilities/workflow-actions#iterator) — you may encounter arrays passed as strings or JSON rather than actual arrays.
+
+<Note>
+We're actively working on making array handling easier. For now, use the pattern below to ensure your input is properly formatted as an array.
+</Note>
+
+**Example: Forcing input to be treated as an array**
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  const toBool = (v: any) => v === true || v === "true";
+
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+      isActiveLast30d: toBool(user.isActiveLast30d),
+    })),
+  };
+};
+```
+
+**Key pattern**: The line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string and parses it, or uses it directly if it's already an array.
+
+<Tip>
+Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>
 
 ### HTTP Request
 Sends a request to an external API as part of your workflow.
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}}/>
+
 
 **Configuration**:
-- Enter the API endpoint URL
+- Enter the API endpoint URL. Using parameters from previous steps is possible.
 - Select HTTP method (GET, POST, PUT, PATCH, DELETE)
 - Add required headers and values
-- Include request body for POST/PUT/PATCH requests
 - Provide sample response for structure preview
 
 ## AI Actions
@@ -226,41 +292,3 @@ AI Agent actions consume workflow credits based on the AI model used. See [Workf
 <Note>
 AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/user-guide/permissions-access/capabilities/permissions) for details.
 </Note>
-
-## Using Outputs from Previous Steps
-
-Every action produces output data that subsequent steps can use. This is how you pass information through your workflow.
-
-### How to Reference Previous Step Data
-
-Use the variable picker or type variables directly:
-
-| Source | Syntax | Example |
-|--------|--------|---------|
-| **Trigger** | `{{trigger.object.field}}` | `{{trigger.object.email}}` |
-| **Search Results** | `{{searchRecords[0].field}}` | `{{searchRecords[0].name}}` |
-| **Created Record** | `{{createRecord.field}}` | `{{createRecord.id}}` |
-| **Code Output** | `{{code.variableName}}` | `{{code.calculatedValue}}` |
-| **Iterator** | `{{iterator.currentItem.field}}` | `{{iterator.currentItem.email}}` |
-
-### Tips for Data Flow
-- Hover over any input field to see available variables from previous steps
-- Use the variable picker (click the `{}` icon) to browse available data
-- Plan your action sequence to ensure data is available when needed
-
-## Action Best Practices
-
-### Data Flow
-- Reference data from previous steps using variables
-- Plan your action sequence to ensure data is available when needed
-- Use Search Records before Update/Delete to find the right records
-
-### Error Handling
-- Anticipate failure scenarios
-- Use branches to handle different outcomes
-- Test thoroughly before activation
-
-### Performance
-- Minimize the number of actions when possible
-- Use efficient search criteria
-- Batch operations where applicable

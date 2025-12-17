@@ -1,0 +1,63 @@
+---
+title: Make Your First API Call
+description: A quick start guide to querying Twenty's API.
+---
+
+## Overview
+
+This guide walks you through making your first API call to Twenty.
+
+## Prerequisites
+
+- A Twenty workspace
+- An API key ([create one here](/developers/extend/how-tos/authenticate-with-api))
+
+## REST API Example
+
+Fetch all companies:
+
+```bash
+curl -X GET "https://api.twenty.com/rest/companies" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+Create a new person:
+
+```bash
+curl -X POST "https://api.twenty.com/rest/people" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": {
+      "firstName": "Jane",
+      "lastName": "Doe"
+    },
+    "email": "jane@example.com"
+  }'
+```
+
+## GraphQL API Example
+
+Query companies with GraphQL:
+
+```graphql
+query {
+  companies(first: 10) {
+    edges {
+      node {
+        id
+        name
+        domainName
+      }
+    }
+  }
+}
+```
+
+## Next Steps
+
+- Explore the [API Reference](/developers/api-and-webhooks/api)
+- Set up [Webhooks](/developers/extend/how-tos/set-up-webhooks) for real-time updates
+- Review [rate limits and best practices](/developers/api-and-webhooks/apis-overview)
+

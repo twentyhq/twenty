@@ -1,0 +1,59 @@
+---
+title: Deploy with Docker
+description: Step-by-step guide to deploying Twenty with Docker Compose.
+---
+
+## Overview
+
+Docker Compose is the fastest way to get Twenty running on your own infrastructure.
+
+## Prerequisites
+
+- Docker and Docker Compose installed
+- At least 4GB RAM available
+- Ports 3000 and 5432 available
+
+## Quick Start
+
+1. Clone the repository:
+```bash
+git clone https://github.com/twentyhq/twenty.git
+cd twenty
+```
+
+2. Copy the environment file:
+```bash
+cp .env.example .env
+```
+
+3. Start the services:
+```bash
+docker-compose up -d
+```
+
+4. Access Twenty at `http://localhost:3000`
+
+## Configuration
+
+Edit your `.env` file to customize:
+- `APP_SECRET` — unique secret for your instance
+- `FRONT_BASE_URL` — your public URL
+- `POSTGRES_*` — database connection settings
+
+## Verify Installation
+
+Check that all services are running:
+```bash
+docker-compose ps
+```
+
+You should see:
+- `twenty-server` — API server
+- `twenty-front` — Frontend application
+- `twenty-postgres` — Database
+
+## Related
+
+- [Docker Compose](/developers/self-hosting/docker-compose) — full Docker documentation
+- [Environment Setup](/developers/self-hosting/setup) — configuration options
+

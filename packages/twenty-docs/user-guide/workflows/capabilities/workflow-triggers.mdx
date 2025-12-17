@@ -7,10 +7,9 @@ description: Learn about the different triggers that start your workflows.
 
 Workflows always start with a single trigger that defines when the automation should run.
 
-## Record Triggers
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}}/>
 
-### Record is Created
+## Record is Created
 Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
 
 **Configuration**: Select the object type to monitor for new records.
@@ -21,14 +20,14 @@ Starts the workflow when a new record is created in a selected object (People, C
 To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
 </Note>
 
-### Record is Updated
+## Record is Updated
 Starts the workflow when changes are made to an existing record.
 
 **Configuration**:
 - Select the object type
 - Optionally specify which fields to monitor for changes
 
-### Record is Updated or Created
+## Record is Updated or Created
 Starts the workflow when a record is either created or updated in a selected object.
 
 **Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
@@ -40,7 +39,7 @@ Starts the workflow when a record is either created or updated in a selected obj
 - Optionally specify which fields to monitor for changes
 - The workflow will trigger both on initial creation and any subsequent updates
 
-### Record is Deleted
+## Record is Deleted
 Starts the workflow when a record is removed from an object.
 
 **Configuration**: Select the object type to monitor for deletions.
@@ -78,7 +77,7 @@ This is more advanced, and best for people who want to optimize the number of wo
 - `Cmd+K` menu to find and launch manual workflows
 - Custom button in the top navbar (if configured)
 
-## Time-Based Trigger: on a schedule
+## Time-Based Trigger: On a Schedule
 
 Starts the workflow on a recurring basis you define.
 
@@ -90,9 +89,8 @@ Starts the workflow on a recurring basis you define.
 **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
 </Note>
 
-## External Trigger
+## External Trigger: Webhook
 
-### Webhook
 Starts the workflow when a GET or POST request is received from an external service.
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}}/>

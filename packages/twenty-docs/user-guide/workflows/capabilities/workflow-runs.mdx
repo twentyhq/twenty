@@ -8,15 +8,6 @@ image: /images/user-guide/workflows/workflow.png
 
 A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
 
-## Run Statuses
-
-| Status | Description |
-|--------|-------------|
-| **Running** | Workflow is currently executing |
-| **Completed** | Workflow finished successfully |
-| **Failed** | Workflow encountered an error and stopped |
-| **Waiting** | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
-
 ## Viewing Runs
 
 ### From the Workflow Editor
@@ -28,6 +19,15 @@ A **Run** is a record of a workflow execution. Every time a workflow is triggere
 1. Go to **Workflow Runs** in the sidebar
 2. View runs across all workflows
 3. Filter by status, workflow, or date
+
+## Run Statuses
+
+| Status | Description |
+|--------|-------------|
+| **Running** | Workflow is currently executing |
+| **Completed** | Workflow finished successfully |
+| **Failed** | Workflow encountered an error and stopped |
+| **Waiting** | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
 
 ## Run Details
 
@@ -45,7 +45,7 @@ Each run shows the progression through your workflow:
 1. See which steps completed successfully
 2. Identify where failures occurred
 3. View the data passed between steps
-4. Debug issues by examining step outputs
+4. Debug issues by examining step inputs and outputs
 
 ## Error Handling
 
@@ -68,10 +68,6 @@ If a run fails, you can:
 
 ## Performance Tips
 
-<Note>
-Large numbers of workflow runs can slow down page loading. If you notice performance issues, consider hiding the runs panel when not actively debugging.
-</Note>
-
 ### Managing Run History
 - Runs are retained for historical reference
 - Very old runs may be archived automatically
@@ -79,7 +75,6 @@ Large numbers of workflow runs can slow down page loading. If you notice perform
 
 ### Monitoring Best Practices
 - Check runs regularly after activating new workflows
-- Set up alerts for critical workflow failures
 - Review failed runs to identify patterns
 
 ## Related
