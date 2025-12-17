@@ -89,15 +89,17 @@ export const useResizablePanel = ({
         onCollapse();
       } else {
         const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const finalWidth = clampWidth(
-          startWidth + widthDelta,
-          constraints.min,
-          constraints.max,
-        );
+        const rawWidth = startWidth + widthDelta;
 
-        if (finalWidth < constraints.collapseThreshold) {
+        // Check collapse threshold before clamping
+        if (rawWidth < constraints.collapseThreshold) {
           onCollapse();
         } else {
+          const finalWidth = clampWidth(
+            rawWidth,
+            constraints.min,
+            constraints.max,
+          );
           onWidthChange(finalWidth);
         }
       }

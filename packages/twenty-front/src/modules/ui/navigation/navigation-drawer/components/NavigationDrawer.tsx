@@ -92,9 +92,11 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const handleCollapse = () => {
+  const handleCollapse = useCallback(() => {
     setIsNavigationDrawerExpanded(false);
-  };
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  }, [setIsNavigationDrawerExpanded, setTableWidthResizeIsActive]);
 
   const handleWidthChange = useCallback(
     (width: number) => {

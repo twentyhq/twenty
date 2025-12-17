@@ -5,7 +5,12 @@ export const localStorageEffect =
   ({ setSelf, onSet, node }) => {
     const savedValue = localStorage.getItem(key ?? node.key);
     if (savedValue != null) {
-      setSelf(JSON.parse(savedValue));
+      try {
+        setSelf(JSON.parse(savedValue));
+      } catch {
+        // Invalid JSON in localStorage, ignore and use default value
+        localStorage.removeItem(key ?? node.key);
+      }
     }
 
     onSet((newValue, _, isReset) => {

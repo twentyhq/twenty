@@ -109,6 +109,12 @@ export const CommandMenuSidePanel = () => {
     setTableWidthResizeIsActive(false);
   }, [setTableWidthResizeIsActive]);
 
+  const handleCollapse = useCallback(() => {
+    closeCommandMenu();
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  }, [closeCommandMenu, setTableWidthResizeIsActive]);
+
   return (
     <>
       <ResizablePanelGap
@@ -116,7 +122,7 @@ export const CommandMenuSidePanel = () => {
         constraints={COMMAND_MENU_CONSTRAINTS}
         currentWidth={commandMenuWidth}
         onWidthChange={handleWidthChange}
-        onCollapse={closeCommandMenu}
+        onCollapse={handleCollapse}
         gapWidth={isCommandMenuOpened ? GAP_WIDTH : 0}
         cssVariableName={COMMAND_MENU_WIDTH_VAR}
         onResizeStart={handleResizeStart}
