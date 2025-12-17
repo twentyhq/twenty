@@ -7,8 +7,8 @@ import { z } from 'zod';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
@@ -54,8 +54,8 @@ const validationSchema = z
           code: 'custom',
           message:
             invalidEmails.length > 1
-              ? i18n.t`Invalid emails: ${invalidEmailsList}`
-              : i18n.t`Invalid email: ${invalidEmailsList}`,
+              ? `Invalid emails: ${invalidEmailsList}`
+              : `Invalid email: ${invalidEmailsList}`,
         });
       }
     }),
@@ -123,7 +123,7 @@ export const WorkspaceInviteTeam = () => {
               return (
                 <SettingsTextInput
                   instanceId="workspace-invite-team-emails"
-                  placeholder={t`tim@apple.com, jony.ive@apple.dev`}
+                  placeholder="tim@apple.com, jony.ive@apple.dev"
                   value={value}
                   onChange={onChange}
                   error={error?.message}

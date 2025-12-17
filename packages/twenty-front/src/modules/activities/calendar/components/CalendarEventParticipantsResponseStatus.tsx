@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 
 import { CalendarEventParticipantsResponseStatusField } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatusField';
@@ -12,18 +11,18 @@ export const CalendarEventParticipantsResponseStatus = ({
   const groupedParticipants = groupBy(participants, (participant) => {
     switch (participant.responseStatus) {
       case 'ACCEPTED':
-        return t`Yes`;
+        return 'Yes';
       case 'DECLINED':
-        return t`No`;
+        return 'No';
       case 'NEEDS_ACTION':
       case 'TENTATIVE':
-        return t`Maybe`;
+        return 'Maybe';
       default:
         return '';
     }
   });
 
-  const responseStatusOrder = [t`Yes`, t`Maybe`, t`No`];
+  const responseStatusOrder: Array<'Yes' | 'Maybe' | 'No'> = ['Yes', 'Maybe', 'No'];
 
   return (
     <>

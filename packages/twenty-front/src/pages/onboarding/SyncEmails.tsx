@@ -17,7 +17,8 @@ import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAut
 import { PageFocusId } from '@/types/PageFocusId';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { Trans, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';

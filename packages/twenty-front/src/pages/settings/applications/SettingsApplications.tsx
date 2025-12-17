@@ -2,7 +2,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
-import { Trans, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
