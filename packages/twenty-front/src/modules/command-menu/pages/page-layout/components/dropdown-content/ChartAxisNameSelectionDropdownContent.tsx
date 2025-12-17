@@ -2,6 +2,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -17,10 +18,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
-  ) {
+  if (!isBarOrLineChartConfiguration(widgetInEditMode?.configuration)) {
     throw new Error('Invalid configuration type');
   }
 

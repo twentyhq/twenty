@@ -3,6 +3,8 @@ import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/h
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -28,15 +30,11 @@ const getCurrentDateGranularity = ({
 }) => {
   const defaultGranularity = ObjectRecordGroupByDateGranularity.DAY;
 
-  if (configuration?.__typename === 'PieChartConfiguration') {
+  if (isPieChartConfiguration(configuration)) {
     return configuration.dateGranularity || defaultGranularity;
   }
 
-  const isBarOrLineChart =
-    configuration?.__typename === 'BarChartConfiguration' ||
-    configuration?.__typename === 'LineChartConfiguration';
-
-  if (!isBarOrLineChart) {
+  if (!isBarOrLineChartConfiguration(configuration)) {
     return defaultGranularity;
   }
 
@@ -57,15 +55,14 @@ export const ChartDateGranularitySelectionDropdownContent = ({
 
   if (
     !isDefined(axis) &&
-    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
+    !isPieChartConfiguration(widgetInEditMode?.configuration)
   ) {
     throw new Error('Invalid configuration type');
   }
 
   if (
     isDefined(axis) &&
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    !isBarOrLineChartConfiguration(widgetInEditMode?.configuration)
   ) {
     throw new Error('Invalid configuration type');
   }

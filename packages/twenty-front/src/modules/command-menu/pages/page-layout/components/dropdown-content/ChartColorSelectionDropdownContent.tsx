@@ -4,6 +4,10 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isGaugeChartConfiguration } from '@/command-menu/pages/page-layout/utils/isGaugeChartConfiguration';
+import { isIframeConfiguration } from '@/command-menu/pages/page-layout/utils/isIframeConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -48,17 +52,16 @@ export const ChartColorSelectionDropdownContent = () => {
     return null;
   }
 
-  if (widgetInEditMode.configuration?.__typename === 'IframeConfiguration') {
+  if (isIframeConfiguration(widgetInEditMode.configuration)) {
     throw new Error('Invalid configuration type');
   }
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
 
   if (
-    configuration.__typename !== 'BarChartConfiguration' &&
-    configuration.__typename !== 'LineChartConfiguration' &&
-    configuration.__typename !== 'GaugeChartConfiguration' &&
-    configuration.__typename !== 'PieChartConfiguration'
+    !isBarOrLineChartConfiguration(configuration) &&
+    !isGaugeChartConfiguration(configuration) &&
+    !isPieChartConfiguration(configuration)
   ) {
     return null;
   }

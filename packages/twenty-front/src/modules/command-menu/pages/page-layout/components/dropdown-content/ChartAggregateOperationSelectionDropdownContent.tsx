@@ -3,6 +3,9 @@ import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/p
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isAggregateChartConfiguration } from '@/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
@@ -39,11 +42,9 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !==
-      'AggregateChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
+    !isBarOrLineChartConfiguration(widgetInEditMode?.configuration) &&
+    !isAggregateChartConfiguration(widgetInEditMode?.configuration) &&
+    !isPieChartConfiguration(widgetInEditMode?.configuration)
   ) {
     throw new Error('Invalid configuration type');
   }
