@@ -153,37 +153,39 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatObjectMetadataMaps;
 
       const objectResult =
-        this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild({
-          buildOptions,
-          // Note: That's a hacky way to allow validating object against field metadatas, not optimal
-          dependencyOptimisticFlatEntityMaps: {
-            flatFieldMetadataMaps: {
-              byId: {
-                ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
-                ...flatFieldMetadataMaps?.from.byId,
-                ...flatFieldMetadataMaps?.to.byId,
-              },
-              idByUniversalIdentifier: {
-                ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                  ?.idByUniversalIdentifier,
-                ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
-                ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
-              },
-              universalIdentifiersByApplicationId: {
-                ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                  ?.universalIdentifiersByApplicationId,
-                ...flatFieldMetadataMaps?.from
-                  .universalIdentifiersByApplicationId,
-                ...flatFieldMetadataMaps?.to
-                  .universalIdentifiersByApplicationId,
+        await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
+          {
+            buildOptions,
+            // Note: That's a hacky way to allow validating object against field metadatas, not optimal
+            dependencyOptimisticFlatEntityMaps: {
+              flatFieldMetadataMaps: {
+                byId: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
+                  ...flatFieldMetadataMaps?.from.byId,
+                  ...flatFieldMetadataMaps?.to.byId,
+                },
+                idByUniversalIdentifier: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.idByUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                },
+                universalIdentifiersByApplicationId: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.from
+                    .universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.to
+                    .universalIdentifiersByApplicationId,
+                },
               },
             },
+            ///
+            from: fromFlatObjectMetadataMaps,
+            to: toFlatObjectMetadataMaps,
+            workspaceId,
           },
-          ///
-          from: fromFlatObjectMetadataMaps,
-          to: toFlatObjectMetadataMaps,
-          workspaceId,
-        });
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -204,16 +206,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatFieldMetadataMaps, to: toFlatFieldMetadataMaps } =
         flatFieldMetadataMaps;
       const fieldResult =
-        this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuild({
-          from: fromFlatFieldMetadataMaps,
-          to: toFlatFieldMetadataMaps,
-          buildOptions,
-          dependencyOptimisticFlatEntityMaps: {
-            flatObjectMetadataMaps:
-              optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+        await this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatFieldMetadataMaps,
+            to: toFlatFieldMetadataMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
+            workspaceId,
           },
-          workspaceId,
-        });
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -233,18 +237,20 @@ export class WorkspaceMigrationBuildOrchestratorService {
     if (isDefined(flatIndexMaps)) {
       const { from: fromFlatIndexMaps, to: toFlatIndexMaps } = flatIndexMaps;
       const indexResult =
-        this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild({
-          from: fromFlatIndexMaps,
-          to: toFlatIndexMaps,
-          buildOptions,
-          dependencyOptimisticFlatEntityMaps: {
-            flatFieldMetadataMaps:
-              optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
-            flatObjectMetadataMaps:
-              optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+        await this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatIndexMaps,
+            to: toFlatIndexMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
+            workspaceId,
           },
-          workspaceId,
-        });
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -264,18 +270,20 @@ export class WorkspaceMigrationBuildOrchestratorService {
     if (isDefined(flatViewMaps)) {
       const { from: fromFlatViewMaps, to: toFlatViewMaps } = flatViewMaps;
       const viewResult =
-        this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild({
-          dependencyOptimisticFlatEntityMaps: {
-            flatObjectMetadataMaps:
-              optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
-            flatFieldMetadataMaps:
-              optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+        await this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild(
+          {
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+            },
+            from: fromFlatViewMaps,
+            to: toFlatViewMaps,
+            buildOptions,
+            workspaceId,
           },
-          from: fromFlatViewMaps,
-          to: toFlatViewMaps,
-          buildOptions,
-          workspaceId,
-        });
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -296,7 +304,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewFieldMaps, to: toFlatViewFieldMaps } =
         flatViewFieldMaps;
       const viewFieldResult =
-        this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
           {
             from: fromFlatViewFieldMaps,
             to: toFlatViewFieldMaps,
@@ -331,7 +339,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewFilterMaps, to: toFlatViewFilterMaps } =
         flatViewFilterMaps;
       const viewFilterResult =
-        this.workspaceMigrationV2ViewFilterActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2ViewFilterActionsBuilderService.validateAndBuild(
           {
             from: fromFlatViewFilterMaps,
             to: toFlatViewFilterMaps,
@@ -364,7 +372,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatViewGroupMaps, to: toFlatViewGroupMaps } =
         flatViewGroupMaps;
       const viewGroupResult =
-        this.workspaceMigrationV2ViewGroupActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2ViewGroupActionsBuilderService.validateAndBuild(
           {
             from: fromFlatViewGroupMaps,
             to: toFlatViewGroupMaps,
@@ -400,7 +408,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatServerlessFunctionMaps;
 
       const serverlessFunctionResult =
-        this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
           {
             from: fromFlatServerlessFunctionMaps,
             to: toFlatServerlessFunctionMaps,
@@ -435,7 +443,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatDatabaseEventTriggerMaps;
 
       const databaseEventTriggerResult =
-        this.workspaceMigrationV2DatabaseEventTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2DatabaseEventTriggerActionsBuilderService.validateAndBuild(
           {
             from: fromFlatDatabaseEventTriggerMaps,
             to: toFlatDatabaseEventTriggerMaps,
@@ -471,7 +479,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatCronTriggerMaps;
 
       const cronTriggerResult =
-        this.workspaceMigrationV2CronTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2CronTriggerActionsBuilderService.validateAndBuild(
           {
             from: fromFlatCronTriggerMaps,
             to: toFlatCronTriggerMaps,
@@ -504,7 +512,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatRouteTriggerMaps;
 
       const routeTriggerResult =
-        this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2RouteTriggerActionsBuilderService.validateAndBuild(
           {
             from: fromFlatRouteTriggerMaps,
             to: toFlatRouteTriggerMaps,
@@ -538,13 +546,15 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatRoleMaps, to: toFlatRoleMaps } = flatRoleMaps;
 
       const roleResult =
-        this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild({
-          from: fromFlatRoleMaps,
-          to: toFlatRoleMaps,
-          buildOptions,
-          dependencyOptimisticFlatEntityMaps: undefined,
-          workspaceId,
-        });
+        await this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatRoleMaps,
+            to: toFlatRoleMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -566,7 +576,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatRoleTargetMaps;
 
       const roleTargetResult =
-        this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
           {
             from: fromFlatRoleTargetMaps,
             to: toFlatRoleTargetMaps,
@@ -598,15 +608,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatAgentMaps, to: toFlatAgentMaps } = flatAgentMaps;
 
       const agentResult =
-        this.workspaceMigrationV2AgentActionsBuilderService.validateAndBuild({
-          from: fromFlatAgentMaps,
-          to: toFlatAgentMaps,
-          buildOptions,
-          dependencyOptimisticFlatEntityMaps: {
-            flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+        await this.workspaceMigrationV2AgentActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatAgentMaps,
+            to: toFlatAgentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+            },
+            workspaceId,
           },
-          workspaceId,
-        });
+        );
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -628,7 +640,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatPageLayoutMaps;
 
       const pageLayoutResult =
-        this.workspaceMigrationV2PageLayoutActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2PageLayoutActionsBuilderService.validateAndBuild(
           {
             from: fromFlatPageLayoutMaps,
             to: toFlatPageLayoutMaps,
@@ -661,7 +673,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatPageLayoutTabMaps;
 
       const pageLayoutTabResult =
-        this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(
           {
             from: fromFlatPageLayoutTabMaps,
             to: toFlatPageLayoutTabMaps,
@@ -698,7 +710,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } = flatPageLayoutWidgetMaps;
 
       const pageLayoutWidgetResult =
-        this.workspaceMigrationV2PageLayoutWidgetActionsBuilderService.validateAndBuild(
+        await this.workspaceMigrationV2PageLayoutWidgetActionsBuilderService.validateAndBuild(
           {
             from: fromFlatPageLayoutWidgetMaps,
             to: toFlatPageLayoutWidgetMaps,

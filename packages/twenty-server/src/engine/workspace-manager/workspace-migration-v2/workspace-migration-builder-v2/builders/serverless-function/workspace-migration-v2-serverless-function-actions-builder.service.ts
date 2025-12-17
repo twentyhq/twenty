@@ -24,11 +24,11 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     super(ALL_METADATA_NAME.serverlessFunction);
   }
 
-  public validateAndBuild(
+  public async validateAndBuild(
     args: ValidateAndBuildArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
   ): ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.serverlessFunction> {
     const { to: toFlatEntityMaps } = args;
-    const baseResult = super.validateAndBuild(args);
+    const baseResult = await super.validateAndBuild(args);
 
     if (baseResult.status === 'fail') {
       return baseResult;

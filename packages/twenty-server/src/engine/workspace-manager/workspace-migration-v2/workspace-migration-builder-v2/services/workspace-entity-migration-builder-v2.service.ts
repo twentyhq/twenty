@@ -35,9 +35,9 @@ export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   workspaceId: string;
 } & FromTo<MetadataFlatEntityMaps<T>>;
 
-export type ValidateAndBuildReturnType<T extends AllMetadataName> =
-  | SuccessfulFlatEntityValidateAndBuild<T>
-  | FailedFlatEntityValidateAndBuild<T>;
+export type ValidateAndBuildReturnType<T extends AllMetadataName> = Promise<
+  SuccessfulFlatEntityValidateAndBuild<T> | FailedFlatEntityValidateAndBuild<T>
+>;
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
   T extends AllMetadataName,
@@ -50,7 +50,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.metadataName = metadataName;
   }
 
-  public validateAndBuild({
+  public async validateAndBuild({
     buildOptions,
     dependencyOptimisticFlatEntityMaps: inputDependencyOptimisticFlatEntityMaps,
     from: fromFlatEntityMaps,
@@ -122,7 +122,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
       });
 
-      const validationResult = this.validateFlatEntityCreation({
+      const validationResult = await this.validateFlatEntityCreation({
         flatEntityToValidate: flatEntityToCreate,
         workspaceId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -185,7 +185,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMapsToMutate: remainingFlatEntityMapsToDelete,
       });
 
-      const validationResult = this.validateFlatEntityDeletion({
+      const validationResult = await this.validateFlatEntityDeletion({
         flatEntityToValidate: flatEntityToDelete,
         workspaceId,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToDelete,
@@ -229,7 +229,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
-      const validationResult = this.validateFlatEntityUpdate({
+      const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
         flatEntityId: flatEntityToUpdateId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -307,13 +307,19 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<T>,
-  ): FlatEntityValidationReturnType<T, 'created'>;
+  ):
+    | FlatEntityValidationReturnType<T, 'created'>
+    | Promise<FlatEntityValidationReturnType<T, 'created'>>;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<T>,
-  ): FlatEntityValidationReturnType<T, 'deleted'>;
+  ):
+    | FlatEntityValidationReturnType<T, 'deleted'>
+    | Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<T>,
-  ): FlatEntityValidationReturnType<T, 'updated'>;
+  ):
+    | FlatEntityValidationReturnType<T, 'updated'>
+    | Promise<FlatEntityValidationReturnType<T, 'updated'>>;
 }
