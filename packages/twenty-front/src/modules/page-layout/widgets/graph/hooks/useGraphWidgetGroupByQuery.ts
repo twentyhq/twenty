@@ -13,8 +13,8 @@ import { useMemo } from 'react';
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    type BarChartConfiguration,
-    type LineChartConfiguration,
+  type BarChartConfiguration,
+  type LineChartConfiguration,
 } from '~/generated/graphql';
 
 export const useGraphWidgetGroupByQuery = ({

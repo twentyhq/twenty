@@ -1,11 +1,11 @@
 import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
 import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import {
-    type BarChartConfiguration,
-    type GraphOrderBy,
-    type LineChartConfiguration,
-    type ObjectRecordGroupByDateGranularity,
-    type PieChartConfiguration,
+  type BarChartConfiguration,
+  type GraphOrderBy,
+  type LineChartConfiguration,
+  type ObjectRecordGroupByDateGranularity,
+  type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
 
 export type NormalizedChartConfigurationFields = {
