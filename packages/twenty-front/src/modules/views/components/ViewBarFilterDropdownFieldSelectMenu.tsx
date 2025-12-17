@@ -51,6 +51,14 @@ export const StyledInput = styled.input`
   }
 `;
 
+const ScrollableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+`;
+
 export const ViewBarFilterDropdownFieldSelectMenu = () => {
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
     useRecoilComponentState(objectFilterDropdownSearchInputComponentState);
@@ -112,10 +120,11 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         selectableListInstanceId={FILTER_FIELD_LIST_ID}
         focusId={VIEW_BAR_FILTER_DROPDOWN_ID}
       >
+      <ScrollableContainer>
         {shouldShowVisibleFields && (
           <>
             <DropdownMenuSectionLabel label={t`Visible fields`} />
-            <DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer scrollable={false}>
               {selectableVisibleFieldMetadataItems.map(
                 (visibleFieldMetadataItem) => (
                   <ViewBarFilterDropdownFieldSelectMenuItem
@@ -131,7 +140,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         {shouldShowHiddenFields && (
           <>
             <DropdownMenuSectionLabel label={t`Hidden fields`} />
-            <DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer scrollable={false}>
               {selectableHiddenFieldMetadataItems.map(
                 (hiddenFieldMetadataItem) => (
                   <ViewBarFilterDropdownFieldSelectMenuItem
@@ -145,6 +154,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         )}
         {hasSelectableItems && <DropdownMenuSeparator />}
         <ViewBarFilterDropdownBottomMenu />
+      </ScrollableContainer>
       </SelectableList>
     </DropdownContent>
   );
