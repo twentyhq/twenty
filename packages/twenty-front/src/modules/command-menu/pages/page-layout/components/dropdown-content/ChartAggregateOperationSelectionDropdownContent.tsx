@@ -25,7 +25,6 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { GraphType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -43,9 +42,11 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
 
   const configuration = widgetInEditMode?.configuration;
 
+  const isAggregateChart = isAggregateChartConfiguration(configuration);
+
   if (
     !isBarOrLineChartConfiguration(configuration) &&
-    !isAggregateChartConfiguration(configuration) &&
+    !isAggregateChart &&
     !isPieChartConfiguration(configuration)
   ) {
     throw new Error('Invalid configuration type');
@@ -63,11 +64,6 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  const isAggregateChart = configuration.graphType === GraphType.AGGREGATE;
-
-  const isAggregateOrGaugeChart =
-    isAggregateChart || configuration.graphType === GraphType.GAUGE;
-
   const availableAggregateOperations: AggregateChartOperation[] = selectedField
     ? isAggregateChart
       ? getAvailableAggregateOperationsForAggregateChart({
@@ -81,7 +77,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const filteredAggregateOperations = availableAggregateOperations.filter(
     (operation) => {
       return (
-        isAggregateOrGaugeChart ||
+        isAggregateChart ||
         (operation !== DateAggregateOperations.EARLIEST &&
           operation !== DateAggregateOperations.LATEST)
       );
