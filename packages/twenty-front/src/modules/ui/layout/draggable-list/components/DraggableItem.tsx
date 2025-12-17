@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 type DraggableItemProps = {
   draggableId: string;
@@ -53,11 +54,9 @@ export const DraggableItem = ({
                 /\(-?\d+px,/,
                 '(0,',
               ),
-              ...(isInsideScrollableContainer &&
-              draggableStyle &&
-              'top' in draggableStyle
+              ...(isInsideScrollableContainer
                 ? {
-                    top: `${draggableStyle.top - (offsetY ?? 0)}px`,
+                    top: `${(isDefined(draggableStyle) && 'top' in draggableStyle ? draggableStyle.top : 0) - (offsetY ?? 0)}px`,
                   }
                 : { top: 'auto' }),
               background:
