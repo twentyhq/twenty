@@ -1122,6 +1122,71 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
+      if (subFieldName === 'workspaceMemberId') {
+        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+          jsonRelationFilterValueSchema
+            .catch({
+              isCurrentWorkspaceMemberSelected: false,
+              selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+                recordFilter.value,
+              ),
+            })
+            .parse(recordFilter.value);
+
+        const workspaceMemberIds = isCurrentWorkspaceMemberSelected
+          ? [
+              ...selectedRecordIds,
+              filterValueDependencies?.currentWorkspaceMemberId,
+            ].filter(isDefined)
+          : selectedRecordIds;
+
+        if (!isDefined(workspaceMemberIds) || workspaceMemberIds.length === 0) {
+          return;
+        }
+
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                workspaceMemberId: {
+                  in: workspaceMemberIds,
+                } satisfies UUIDFilter,
+              },
+            };
+          case RecordFilterOperand.IS_NOT: {
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      workspaceMemberId: {
+                        in: workspaceMemberIds,
+                      } satisfies UUIDFilter,
+                    },
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    workspaceMemberId: {
+                      is: 'NULL',
+                    } satisfies UUIDFilter,
+                  },
+                },
+              ],
+            };
+          }
+          default: {
+            const fieldForRecordFilter = fieldMetadataItems.find(
+              (field) => field.id === recordFilter.fieldMetadataId,
+            );
+
+            throw new Error(
+              `Unknown operand ${recordFilter.operand} for ${fieldForRecordFilter?.label ?? ''} filter`,
+            );
+          }
+        }
+      }
+
       switch (recordFilter.operand) {
         case RecordFilterOperand.CONTAINS:
           return {

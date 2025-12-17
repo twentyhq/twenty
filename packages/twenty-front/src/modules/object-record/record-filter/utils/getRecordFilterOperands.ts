@@ -1,4 +1,5 @@
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
+import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorWorkspaceMemberSubField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import {
   FieldMetadataType,
@@ -195,6 +196,14 @@ export const getRecordFilterOperands = ({
       return FILTER_OPERANDS_MAP.SELECT;
     case 'ACTOR': {
       if (isFilterOnActorSourceSubField(subFieldName)) {
+        return [
+          RecordFilterOperand.IS,
+          RecordFilterOperand.IS_NOT,
+          ...emptyOperands,
+        ];
+      }
+
+      if (isFilterOnActorWorkspaceMemberSubField(subFieldName)) {
         return [
           RecordFilterOperand.IS,
           RecordFilterOperand.IS_NOT,
