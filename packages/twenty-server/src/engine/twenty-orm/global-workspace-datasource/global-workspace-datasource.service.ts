@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
@@ -13,8 +12,9 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class GlobalWorkspaceDataSourceService
   implements OnModuleInit, OnApplicationShutdown
 {
-  private readonly logger = new Logger(GlobalWorkspaceDataSourceService.name);
   private globalWorkspaceDataSource: GlobalWorkspaceDataSource | null = null;
+  private globalWorkapceDataSourceReplica: GlobalWorkspaceDataSource | null =
+    null;
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -47,6 +47,32 @@ export class GlobalWorkspaceDataSourceService
       this.workspaceEventEmitter,
     );
 
+    console.log('Pool config:', this.globalWorkspaceDataSource.driver.options);
+
+    this.globalWorkapceDataSourceReplica = new GlobalWorkspaceDataSource(
+      {
+        url: this.twentyConfigService.get('PG_DATABASE_URL_REPLICA'),
+        type: 'postgres',
+        logging: this.twentyConfigService.getLoggingConfig(),
+        entities: [],
+        ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
+          ? {
+              rejectUnauthorized: false,
+            }
+          : undefined,
+        poolSize: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
+        extra: {
+          query_timeout: 10000, // 10 seconds,
+          idleTimeoutMillis: this.twentyConfigService.get(
+            'PG_POOL_IDLE_TIMEOUT_MS',
+          ),
+          allowExitOnIdle: this.twentyConfigService.get(
+            'PG_POOL_ALLOW_EXIT_ON_IDLE',
+          ),
+        },
+      },
+      this.workspaceEventEmitter,
+    );
     await this.globalWorkspaceDataSource.initialize();
   }
 
@@ -58,6 +84,16 @@ export class GlobalWorkspaceDataSourceService
     }
 
     return this.globalWorkspaceDataSource;
+  }
+
+  public getGlobalWorkspaceDataSourceReplica(): GlobalWorkspaceDataSource {
+    if (!this.globalWorkapceDataSourceReplica) {
+      throw new Error(
+        'GlobalWorkspaceDataSourceReplica has not been initialized. Make sure the module has been initialized.',
+      );
+    }
+
+    return this.globalWorkapceDataSourceReplica;
   }
 
   async onApplicationShutdown(): Promise<void> {

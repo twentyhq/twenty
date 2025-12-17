@@ -836,6 +836,22 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description: 'Database connection URL',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsDefined()
+  @IsUrl({
+    protocols: ['postgres', 'postgresql'],
+    require_tld: false,
+    allow_underscores: true,
+    require_host: false,
+  })
+  PG_DATABASE_URL_REPLICA: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Allow connections to a database with self-signed certificates',
     isEnvOnly: true,
