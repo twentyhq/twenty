@@ -110,6 +110,16 @@ describe('computeInputFields', () => {
               defaultValue: null,
             },
           },
+          {
+            node: {
+              type: FieldMetadataType.BOOLEAN,
+              name: 'ICP',
+              label: 'ICP',
+              description: 'ICP',
+              isNullable: false,
+              defaultValue: false,
+            },
+          },
         ],
       },
     };
@@ -211,6 +221,15 @@ describe('computeInputFields', () => {
         label: 'Company id (foreign key)',
         type: 'string',
         helpText: 'Contact’s company id foreign key',
+        required: false,
+        list: false,
+        placeholder: undefined,
+      },
+      {
+        key: 'ICP',
+        label: 'ICP',
+        type: 'boolean',
+        helpText: 'ICP',
         required: false,
         list: false,
         placeholder: undefined,

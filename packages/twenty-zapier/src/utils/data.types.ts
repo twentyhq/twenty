@@ -8,7 +8,7 @@ export type NodeField = {
   label: string;
   description: string | null;
   isNullable: boolean;
-  defaultValue: object | null;
+  defaultValue: boolean | object | null;
   list?: boolean;
   placeholder?: string;
 };

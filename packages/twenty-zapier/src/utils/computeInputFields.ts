@@ -210,7 +210,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
 };
 
 const isFieldRequired = (nodeField: NodeField): boolean => {
-  return !nodeField.isNullable && !nodeField.defaultValue;
+  return !nodeField.isNullable && nodeField.defaultValue === null;
 };
 
 export const computeInputFields = (
