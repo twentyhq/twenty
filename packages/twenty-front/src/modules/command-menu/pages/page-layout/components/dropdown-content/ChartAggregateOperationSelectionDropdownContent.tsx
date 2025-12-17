@@ -41,16 +41,18 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
+  const configuration = widgetInEditMode?.configuration;
+
   if (
-    !isBarOrLineChartConfiguration(widgetInEditMode?.configuration) &&
-    !isAggregateChartConfiguration(widgetInEditMode?.configuration) &&
-    !isPieChartConfiguration(widgetInEditMode?.configuration)
+    !isBarOrLineChartConfiguration(configuration) &&
+    !isAggregateChartConfiguration(configuration) &&
+    !isPieChartConfiguration(configuration)
   ) {
     throw new Error('Invalid configuration type');
   }
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const selectedField = sourceObjectMetadataItem?.fields.find(
@@ -61,12 +63,10 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  const isAggregateChart =
-    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE;
+  const isAggregateChart = configuration.graphType === GraphType.AGGREGATE;
 
   const isAggregateOrGaugeChart =
-    isAggregateChart ||
-    widgetInEditMode.configuration.graphType === GraphType.GAUGE;
+    isAggregateChart || configuration.graphType === GraphType.GAUGE;
 
   const availableAggregateOperations: AggregateChartOperation[] = selectedField
     ? isAggregateChart

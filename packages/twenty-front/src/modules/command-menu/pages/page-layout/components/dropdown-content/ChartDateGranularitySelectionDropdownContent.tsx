@@ -4,6 +4,7 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isChartConfiguration } from '@/command-menu/pages/page-layout/utils/isChartConfiguration';
 import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -53,22 +54,22 @@ export const ChartDateGranularitySelectionDropdownContent = ({
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    !isDefined(axis) &&
-    !isPieChartConfiguration(widgetInEditMode?.configuration)
-  ) {
+  const configuration = widgetInEditMode?.configuration;
+
+  if (!isChartConfiguration(configuration)) {
     throw new Error('Invalid configuration type');
   }
 
-  if (
-    isDefined(axis) &&
-    !isBarOrLineChartConfiguration(widgetInEditMode?.configuration)
-  ) {
+  if (!isDefined(axis) && !isPieChartConfiguration(configuration)) {
+    throw new Error('Invalid configuration type');
+  }
+
+  if (isDefined(axis) && !isBarOrLineChartConfiguration(configuration)) {
     throw new Error('Invalid configuration type');
   }
 
   const currentDateGranularity = getCurrentDateGranularity({
-    configuration: widgetInEditMode?.configuration as ChartConfiguration,
+    configuration,
     axis: axis as 'primary' | 'secondary',
   });
 
