@@ -6,7 +6,7 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useTemporaryFieldConfiguration';
+import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetMorphRelation } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelation';
