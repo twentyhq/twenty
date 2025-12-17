@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -85,7 +86,7 @@ export const ViewPickerDropdown = () => {
             <IconList size={theme.icon.size.md} />
           )}
           <StyledViewName>
-            <OverflowingTextWithTooltip text={currentView?.name ?? 'All'} />
+            <OverflowingTextWithTooltip text={currentView?.name ?? t`All`} />
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}

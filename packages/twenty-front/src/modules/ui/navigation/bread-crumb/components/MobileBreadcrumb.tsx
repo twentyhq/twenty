@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -63,14 +64,14 @@ export const MobileBreadcrumb = ({
         <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledText onClick={handleBackToSettingsClick}>
-            Back to Settings
+            {t`Back to Settings`}
           </StyledText>
         </>
       ) : previousLink?.href ? (
         <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledLink title={text} to={previousLink.href}>
-            Back to {previousLink.children}
+            {t`Back to ${previousLink.children}`}
           </StyledLink>
         </>
       ) : (
