@@ -1,15 +1,9 @@
 # Base image for common dependencies
 FROM node:24-alpine AS common-deps
 
-# Memory optimization for CI/CD environments
-# Disable Nx daemon to save 500MB-1GB memory (minimal time impact in Docker builds)
-ARG NX_DAEMON=false
-# Reduce Node.js heap size to prevent OOM on memory-constrained agents
-# Can be overridden: --build-arg NODE_OPTIONS="--max-old-space-size=2048"
-ARG NODE_OPTIONS="--max-old-space-size=1792"
-
-ENV NX_DAEMON=${NX_DAEMON}
-ENV NODE_OPTIONS=${NODE_OPTIONS}
+# Optional: constrain Node.js heap for memory-limited CI environments
+# Pass --build-arg NODE_OPTIONS="--max-old-space-size=2048" to enable
+ARG NODE_OPTIONS
 
 WORKDIR /app
 
@@ -33,12 +27,7 @@ RUN yarn && yarn cache clean && npx nx reset
 # Build the back
 FROM common-deps AS twenty-server-build
 
-# Inherit memory optimization settings
-ARG NX_DAEMON=false
-ARG NODE_OPTIONS="--max-old-space-size=1792"
-
-ENV NX_DAEMON=${NX_DAEMON}
-ENV NODE_OPTIONS=${NODE_OPTIONS}
+ARG NODE_OPTIONS
 
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
@@ -50,15 +39,10 @@ RUN npx nx run twenty-server:build
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
 # Build the front
-FROM twenty-server-build AS twenty-front-build
+FROM common-deps AS twenty-front-build
 
-# Inherit memory optimization settings
-ARG NX_DAEMON=false
-ARG NODE_OPTIONS="--max-old-space-size=1792"
+ARG NODE_OPTIONS
 ARG REACT_APP_SERVER_BASE_URL
-
-ENV NX_DAEMON=${NX_DAEMON}
-ENV NODE_OPTIONS=${NODE_OPTIONS}
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
