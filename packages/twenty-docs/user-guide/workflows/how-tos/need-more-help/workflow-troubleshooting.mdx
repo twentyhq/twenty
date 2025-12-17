@@ -1,12 +1,8 @@
 ---
 title: Workflow Troubleshooting
 description: Common workflow issues and how to resolve them.
-image: /images/user-guide/workflows/workflow.png
 ---
 
-<Frame>
-  <img src="/images/user-guide/workflows/workflow.png" alt="Troubleshooting" />
-</Frame>
 
 ## Common Issues and Solutions
 
@@ -25,6 +21,25 @@ image: /images/user-guide/workflows/workflow.png
 - Test with the specific action you expect to trigger it
 - Review trigger configuration
 - Contact your admin about permissions
+
+### Workflow Triggers Too Early (Empty Fields)
+
+**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+
+**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+
+**When "Record is created" works well**:
+- Records created via API calls (fields are populated in a single request)
+- Records created via import
+- Automated record creation from other workflows
+
+**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+- The workflow triggers after the user has finished filling in and saving the fields
+- You get the complete data rather than empty values
+
+<Tip>
+If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+</Tip>
 
 ### Actions Failing
 

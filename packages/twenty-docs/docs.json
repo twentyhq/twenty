@@ -151,29 +151,48 @@
                       "user-guide/workflows/capabilities/workflow-branches",
                       "user-guide/workflows/capabilities/workflow-runs",
                       "user-guide/workflows/capabilities/workflow-versions",
-                      "user-guide/workflows/capabilities/workflow-credits"
+                      "user-guide/workflows/capabilities/workflow-credits",
+                      "user-guide/workflows/capabilities/use-branches-in-workflows",
+                      "user-guide/workflows/capabilities/use-iterator",
+                      "user-guide/workflows/capabilities/send-emails-from-workflows"
                     ]
                   },
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/workflows/how-tos/create-a-trigger-based-workflow",
-                      "user-guide/workflows/how-tos/set-up-a-webhook-trigger",
-                      "user-guide/workflows/how-tos/capture-webform-submissions",
-                      "user-guide/workflows/how-tos/use-branches-in-workflows",
-                      "user-guide/workflows/how-tos/use-iterator",
-                      "user-guide/workflows/how-tos/send-emails-from-workflows",
-                      "user-guide/workflows/how-tos/automatically-fill-fields-based-on-formulas",
-                      "user-guide/workflows/how-tos/copy-fields-from-one-object-to-another",
-                      "user-guide/workflows/how-tos/update-companies-and-create-tasks-when-deal-closed",
-                      "user-guide/workflows/how-tos/alert-manager-of-stale-opportunities",
-                      "user-guide/workflows/how-tos/calculate-expected-amount-with-workflows",
-                      "user-guide/workflows/how-tos/track-deal-velocity-with-workflows",
-                      "user-guide/workflows/how-tos/internal-automations",
-                      "user-guide/workflows/how-tos/external-tool-integration",
-                      "user-guide/workflows/how-tos/professional-services",
-                      "user-guide/workflows/how-tos/workflow-troubleshooting",
-                      "user-guide/workflows/how-tos/workflows-faq"
+                      {
+                        "group": "CRM Automations",
+                        "pages": [
+                          "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "user-guide/workflows/how-tos/crm-automations/formula-fields",
+                          "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
+                          "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
+                          "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                        ]
+                      },
+                      {
+                        "group": "Connect to Other Tools",
+                        "pages": [
+                          "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-form-submissions-in-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                        ]
+                      },
+                      {
+                        "group": "Advanced Configurations",
+                        "pages": [
+                          "user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
+                        ]
+                      },
+                      {
+                        "group": "Need More Help",
+                        "pages": [
+                          "user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
+                          "user-guide/workflows/how-tos/need-more-help/workflows-faq",
+                          "user-guide/workflows/how-tos/need-more-help/professional-services"
+                        ]
+                      }
                     ]
                   }
                 ]

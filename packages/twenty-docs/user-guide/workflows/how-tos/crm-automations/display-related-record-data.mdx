@@ -1,10 +1,9 @@
 ---
-title: Copy Fields from One Object to Another
-description: Sync field values between related objects using workflows.
-image: /images/user-guide/workflows/workflow.png
+title: Display Related Record Data
+description: Show data from related records (e.g., Company info on Opportunities) using workflows.
 ---
 
-Keep related records in sync by automatically copying field values from one object to another. This is useful until nested fields are natively available.
+Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
 
 ## Common Use Cases
 
@@ -13,13 +12,18 @@ Keep related records in sync by automatically copying field values from one obje
 | Company | Opportunity | Industry, Company Size, ARR |
 | Person | Opportunity | Email, Phone, Title |
 | Opportunity | Company | Last Deal Amount, Last Won Date |
-| Person | Task | Contact Email, Contact Phone |
 
 ## Basic Field Copy
 
 ### Example: Copy Contact Email to Opportunity
 
 **Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+
+### Prerequisite
+
+Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+- Contact Email (type: Email)
+- Contact Phone (type: Phone)
 
 ### Setup
 
@@ -63,25 +67,34 @@ Keep related records in sync by automatically copying field values from one obje
 
 ## Copy on Record Creation
 
-### Example: Pre-fill Task with Contact Info
+### Example: Pre-fill Opportunity with Company Data
 
-**Goal**: When creating a task linked to a person, copy their contact details.
+**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
+
+### Prerequisite
+
+Create the destination fields in **Settings → Data Model → Opportunities**:
+- Company Industry (type: Text)
+- Company Size (type: Number)
 
 ### Setup
 
-1. **Trigger**: Record is Created (Tasks)
-   - Filter: Related Person is not empty
+1. **Trigger**: Record is Created (Opportunities)
+   - Filter: Company is not empty
 
-2. **Search Records**: Get the linked person's details
-   - Object: People
-   - Filter: ID equals `{{trigger.object.relatedPerson.id}}`
+2. **Search Records**: Get the linked company's details
+   - Object: Companies
+   - Filter: ID equals `{{trigger.object.company.id}}`
 
 3. **Update Record**:
-   - Object: Tasks
+   - Object: Opportunities
    - Record: `{{trigger.object.id}}`
-   - Contact Email: `{{searchRecords[0].email}}`
-   - Contact Phone: `{{searchRecords[0].phone}}`
-   - Contact Company: `{{searchRecords[0].company.name}}`
+   - Company Industry: `{{searchRecords[0].industry}}`
+   - Company Size: `{{searchRecords[0].employees}}`
+
+<Note>
+**Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/developers/extend/capabilities/api) instead.
+</Note>
 
 ## Bidirectional Sync
 
@@ -148,5 +161,5 @@ export const main = async (params) => {
 
 ## Related
 
-- [Internal Automations](/user-guide/workflows/how-tos/internal-automations)
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
+- [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)

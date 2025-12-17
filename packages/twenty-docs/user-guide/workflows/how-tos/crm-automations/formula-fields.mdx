@@ -1,10 +1,9 @@
 ---
-title: Automatically Fill Fields Based on Formulas
-description: Calculate field values automatically using workflow code actions.
-image: /images/user-guide/workflows/workflow.png
+title: Formula Fields
+description: Create formula fields using workflows until native support is available.
 ---
 
-Use workflows to automatically calculate and populate field values based on formulas—from simple concatenations to complex business logic.
+Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
 
 ## Common Use Cases
 
@@ -12,8 +11,13 @@ Use workflows to automatically calculate and populate field values based on form
 |----------|-----------------|
 | **Full name** | First Name + " " + Last Name |
 | **Expected amount** | Amount × Probability |
+| **Days until due** | Due Date - Today |
 | **Days in stage** | Today - Stage Entry Date |
 | **Lead score** | Points based on multiple criteria |
+
+<Tip>
+For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/user-guide/views-pipelines/how-tos/track-time-in-stage).
+</Tip>
 
 ## Basic Formula: Concatenation
 
@@ -71,38 +75,38 @@ export const main = async (params) => {
 
 ## Date Formula: Days Calculation
 
-### Example: Days Since Last Contact
+### Example: Days Until Task Due
 
-**Goal**: Calculate how many days since the last interaction.
+**Goal**: Calculate how many days remain until a task's due date.
 
 ### Setup
 
-1. **Trigger**: On a Schedule (daily)
+1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
 
-2. **Search Records**: Find all people with a last contact date
-
-3. **Iterator**: Loop through each person
-
-4. **Code action** (inside iterator):
+2. **Code action**:
 
 ```javascript
 export const main = async (params) => {
-  const { lastContactDate } = params;
+  const { dueDate } = params;
 
-  if (!lastContactDate) {
-    return { daysSinceContact: null };
+  if (!dueDate) {
+    return { daysUntilDue: null };
   }
 
-  const lastContact = new Date(lastContactDate);
+  const due = new Date(dueDate);
   const today = new Date();
-  const diffTime = today - lastContact;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const diffTime = due - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  return { daysSinceContact: diffDays };
+  return { daysUntilDue: diffDays };
 };
 ```
 
-5. **Update Record**: Set Days Since Contact to `{{code.daysSinceContact}}`
+3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+
+<Note>
+Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+</Note>
 
 ## Conditional Formula: Lead Score
 

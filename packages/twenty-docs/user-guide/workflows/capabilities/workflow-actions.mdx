@@ -218,38 +218,9 @@ Runs custom JavaScript within your workflow.
 If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
 </Note>
 
-#### Handling Arrays as Input
-
-When working with arrays in Code actions — common when processing data from external systems or preparing data for an [Iterator](/user-guide/workflows/capabilities/workflow-actions#iterator) — you may encounter arrays passed as strings or JSON rather than actual arrays.
-
-<Note>
-We're actively working on making array handling easier. For now, use the pattern below to ensure your input is properly formatted as an array.
-</Note>
-
-**Example: Forcing input to be treated as an array**
-
-```javascript
-export const main = async (params: {
-  users: any;
-}): Promise<object> => {
-  const { users } = params;
-
-  // Handle input that may come as a string or an array
-  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
-
-  const toBool = (v: any) => v === true || v === "true";
-
-  return {
-    users: usersFormatted.map((user) => ({
-      ...user,
-      activityStatus: String(user.activityStatus).toUpperCase(),
-      isActiveLast30d: toBool(user.isActiveLast30d),
-    })),
-  };
-};
-```
-
-**Key pattern**: The line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string and parses it, or uses it directly if it's already an array.
+<Tip>
+**Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+</Tip>
 
 <Tip>
 Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.

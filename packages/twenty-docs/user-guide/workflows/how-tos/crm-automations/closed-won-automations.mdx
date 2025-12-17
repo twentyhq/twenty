@@ -1,7 +1,6 @@
 ---
-title: Update Companies and Create Tasks Once a Deal is Closed
+title: Closed Won Automations
 description: Automate post-win activities when opportunities close.
-image: /images/user-guide/workflows/workflow.png
 ---
 
 When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
@@ -60,13 +59,13 @@ Create a workflow that handles all post-win activities automatically.
 | Field | Value |
 |-------|-------|
 | **Object** | Tasks |
-| **Title** | Onboarding: {{trigger.object.name}} |
+| **Title** | `Onboarding: {{trigger.object.name}}` |
 | **Assignee** | Customer Success team member |
 | **Due Date** | 3 days from now |
 | **Priority** | High |
 | **Related Company** | `{{trigger.object.company.id}}` |
 | **Related Opportunity** | `{{trigger.object.id}}` |
-| **Description** | New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}} |
+| **Description** | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
 
 ### Step 6: Notify Customer Success
 
@@ -76,7 +75,7 @@ Create a workflow that handles all post-win activities automatically.
 | Field | Value |
 |-------|-------|
 | **To** | customer-success@yourcompany.com |
-| **Subject** | 🎉 New Customer: {{trigger.object.company.name}} |
+| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
 | **Body** | See example below |
 
 **Email body example**:
@@ -104,7 +103,7 @@ Let's give them a great start!
 | Field | Value |
 |-------|-------|
 | **To** | `{{trigger.object.owner.email}}` |
-| **Subject** | ✅ Deal Closed: {{trigger.object.name}} |
+| **Subject** | `✅ Deal Closed: {{trigger.object.name}}` |
 | **Body** | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
 
 ### Step 8: Test and Activate
@@ -150,11 +149,8 @@ Use **Iterator** to create each task from the array.
 
 ## Customization Ideas
 
-### Update External Systems
-Add **HTTP Request** to:
-- Create customer in billing system
-- Update CRM integration
-- Trigger provisioning in your product
+### Keep your other tools up-to-date
+- Create customer in billing system with an **HTTP Request**
 
 ### Conditional Actions
 Use **Filter** actions to:
@@ -170,6 +166,5 @@ Use **Code** action to format:
 
 ## Related
 
-- [Internal Automations](/user-guide/workflows/how-tos/internal-automations)
-- [How to Send Emails from Workflows](/user-guide/workflows/how-tos/how-to-send-emails-from-workflows)
-- [How to Create a Trigger-Based Workflow](/user-guide/workflows/how-tos/how-to-create-a-trigger-based-workflow)
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
+- [Send Emails from Workflows](/user-guide/workflows/capabilities/send-emails-from-workflows)
