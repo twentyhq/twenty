@@ -27,6 +27,7 @@
       },
       "dependsOn": ["build"]
     },
+    "typecheck": {},
     "validate": {
       "executor": "nx:run-commands",
       "options": {
@@ -62,7 +63,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "nx run twenty-shared:build && nx run twenty-zapier:build && cp -r ../twenty-shared/ node_modules/twenty-shared && zapier push --skip-npm-install"
+          "nx run twenty-zapier:build && zapier push --disable-dependency-detection"
         ]
       },
       "dependsOn": ["build"]
