@@ -29,6 +29,7 @@ export const config: FunctionConfig = {
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   timeoutSeconds: 5,
+  triggers: [],
 };
 
 `;

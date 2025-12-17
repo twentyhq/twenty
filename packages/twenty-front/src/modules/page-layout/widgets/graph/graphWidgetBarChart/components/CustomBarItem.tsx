@@ -1,6 +1,5 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
-import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
-import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -33,7 +32,9 @@ const StyledBarRect = styled(animated.rect)<{
 
   &:hover {
     filter: ${({ $isInteractive }) =>
-      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+      $isInteractive
+        ? `brightness(${BAR_CHART_CONSTANTS.HOVER_BRIGHTNESS})`
+        : 'none'};
   }
 `;
 
@@ -152,12 +153,12 @@ export const CustomBarItem = <D extends BarDatum>({
 
   const constrainedThicknessDimension = to(
     unconstrainedThicknessDimension,
-    (dimension) => Math.min(dimension, BAR_CHART_MAXIMUM_WIDTH),
+    (dimension) => Math.min(dimension, BAR_CHART_CONSTANTS.MAXIMUM_WIDTH),
   );
 
   const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
-    dimension > BAR_CHART_MAXIMUM_WIDTH
-      ? (dimension - BAR_CHART_MAXIMUM_WIDTH) / 2
+    dimension > BAR_CHART_CONSTANTS.MAXIMUM_WIDTH
+      ? (dimension - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2
       : 0,
   );
 

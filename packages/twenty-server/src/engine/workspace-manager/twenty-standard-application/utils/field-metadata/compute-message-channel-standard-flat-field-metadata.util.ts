@@ -501,6 +501,8 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'connectedAccount',
       label: 'Connected Account',
       description: 'Connected Account',
@@ -523,6 +525,8 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageChannelMessageAssociations',
       label: 'Message Channel Association',
       description: 'Messages from the channel.',
@@ -543,6 +547,8 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageFolders',
       label: 'Message Folders',
       description: 'Message Folders',

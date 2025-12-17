@@ -19,7 +19,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -27,7 +27,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -82,6 +82,16 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "cp .env.example .env"
+      }
+    },
+    "reset:env:e2e-testing-server": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.e2e-testing-server"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.e2e-testing-server .env"
       }
     },
     "command": {

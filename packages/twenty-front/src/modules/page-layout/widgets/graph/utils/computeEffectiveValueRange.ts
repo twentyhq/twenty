@@ -1,7 +1,5 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { isDefined } from 'twenty-shared/utils';
-
-const POSITIVE_RANGE_PADDING_RATIO = 0.1;
-const MINIMUM_POSITIVE_RANGE_PADDING = 1;
 
 type ComputeEffectiveValueRangeParams = {
   calculatedMinimum: number;
@@ -39,8 +37,9 @@ export const computeEffectiveValueRange = ({
       ? positiveRangePaddingTarget
       : positiveRangePaddingTarget +
         Math.max(
-          Math.abs(positiveRangePaddingTarget) * POSITIVE_RANGE_PADDING_RATIO,
-          MINIMUM_POSITIVE_RANGE_PADDING,
+          Math.abs(positiveRangePaddingTarget) *
+            COMMON_CHART_CONSTANTS.POSITIVE_RANGE_PADDING_RATIO,
+          COMMON_CHART_CONSTANTS.MINIMUM_POSITIVE_RANGE_PADDING,
         );
 
   let effectiveMinimumValue = baseMinimumValue;
@@ -49,7 +48,8 @@ export const computeEffectiveValueRange = ({
   if (!isDefined(rangeMax) && !isDefined(rangeMin)) {
     if (effectiveMinimumValue === effectiveMaximumValue) {
       effectiveMaximumValue =
-        effectiveMinimumValue + MINIMUM_POSITIVE_RANGE_PADDING;
+        effectiveMinimumValue +
+        COMMON_CHART_CONSTANTS.MINIMUM_POSITIVE_RANGE_PADDING;
     }
   }
 
