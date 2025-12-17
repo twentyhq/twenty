@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
 import styled from '@emotion/styled';
 import { forwardRef, type InputHTMLAttributes } from 'react';
@@ -32,17 +34,22 @@ const StyledInput = styled.input`
   }
 `;
 
+const defaultSearchPlaceholder = msg`Search`;
+
 export const DropdownMenuSearchInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
->(({ value, onChange, placeholder = 'Search', type }, forwardedRef) => {
+>(({ value, onChange, placeholder, type }, forwardedRef) => {
+  const { i18n } = useLingui();
   const { inputRef } = useInputFocusWithoutScrollOnMount();
   const ref = forwardedRef ?? inputRef;
+  const translatedPlaceholder =
+    placeholder ?? i18n._(defaultSearchPlaceholder);
   return (
     <StyledDropdownMenuSearchInputContainer>
       <StyledInput
         autoComplete="off"
-        {...{ onChange, placeholder, type, value }}
+        {...{ onChange, placeholder: translatedPlaceholder, type, value }}
         ref={ref}
       />
     </StyledDropdownMenuSearchInputContainer>

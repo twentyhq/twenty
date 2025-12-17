@@ -3,6 +3,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -45,7 +46,7 @@ export const RelativeDatePickerHeader = ({
   const amountString = amount?.toString() ?? '';
 
   const amountTextValue = direction === 'THIS' ? '' : amountString;
-  const amountInputPlaceholder = direction === 'THIS' ? '-' : 'Number';
+  const amountInputPlaceholder = direction === 'THIS' ? '-' : t`Number`;
 
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
