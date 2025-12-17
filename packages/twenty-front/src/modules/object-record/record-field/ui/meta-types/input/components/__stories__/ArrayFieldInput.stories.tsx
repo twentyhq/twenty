@@ -10,7 +10,9 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ArrayFieldInput } from '../ArrayFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks } =
@@ -100,6 +102,7 @@ const ArrayInputWithContext = ({
 const meta: Meta<typeof ArrayInputWithContext> = {
   title: 'UI/Input/ArrayFieldInput',
   component: ArrayInputWithContext,
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;

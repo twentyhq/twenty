@@ -153,7 +153,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   }}
                 >
                   <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? '(No name)'}
+                    text={availableWorkspace.displayName ?? t`(No name)`}
                     avatar={
                       <Avatar
                         placeholder={availableWorkspace.displayName || ''}

@@ -2,6 +2,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
+import { t } from '@lingui/core/macro';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -28,7 +29,7 @@ export const useVectorSearchFilterActions = () => {
       displayValue: value,
       operand: ViewFilterOperand.VECTOR_SEARCH,
       type: getFilterTypeFromFieldType(vectorSearchField.type),
-      label: 'Search',
+      label: t`Search`,
     };
 
     upsertRecordFilter(vectorSearchRecordFilter);

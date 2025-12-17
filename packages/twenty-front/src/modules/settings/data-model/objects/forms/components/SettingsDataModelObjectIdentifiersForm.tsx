@@ -93,7 +93,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
 
   const emptyOption: SelectOption<string | null> = {
     Icon: IconCircleOff,
-    label: 'None',
+    label: t`None`,
     value: null,
   };
 

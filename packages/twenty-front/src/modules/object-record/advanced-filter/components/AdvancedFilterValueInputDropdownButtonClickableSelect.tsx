@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
@@ -57,7 +58,7 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
 
   const placeholderText = isDefined(fieldMetadataItem)
     ? getAdvancedFilterInputPlaceholderText(fieldMetadataItem)
-    : 'Enter filter';
+    : t`Enter filter`;
 
   const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);
 

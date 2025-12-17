@@ -7,7 +7,7 @@ import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEma
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -59,6 +59,7 @@ export const EventCardMessage = ({
   messageId: string;
   authorFullName: string;
 }) => {
+  const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
 
@@ -142,7 +143,7 @@ export const EventCardMessage = ({
             {message.subject !==
             FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
               ? message.subject
-              : `Subject not shared`}
+              : t`Subject not shared`}
           </StyledEmailTitle>
           <StyledEmailParticipants>
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
