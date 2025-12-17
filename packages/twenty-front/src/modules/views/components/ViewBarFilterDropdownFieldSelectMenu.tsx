@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -89,63 +87,65 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => closeDropdown()}
-            Icon={IconX}
-          />
-        }
-      >
-        {t`Filter`}
-      </DropdownMenuHeader>
-      <StyledInput
-        value={objectFilterDropdownSearchInput}
-        autoFocus
-        placeholder={t`Search fields`}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          setObjectFilterDropdownSearchInput(event.target.value)
-        }
-      />
-      <SelectableList
-        selectableItemIdArray={selectableFieldMetadataItemIds}
-        selectableListInstanceId={FILTER_FIELD_LIST_ID}
-        focusId={VIEW_BAR_FILTER_DROPDOWN_ID}
-      >
-        {shouldShowVisibleFields && (
-          <>
-            <DropdownMenuSectionLabel label={t`Visible fields`} />
-            <DropdownMenuItemsContainer>
-              {selectableVisibleFieldMetadataItems.map(
-                (visibleFieldMetadataItem) => (
-                  <ViewBarFilterDropdownFieldSelectMenuItem
-                    key={visibleFieldMetadataItem.id}
-                    fieldMetadataItemToSelect={visibleFieldMetadataItem}
-                  />
-                ),
-              )}
-            </DropdownMenuItemsContainer>
-          </>
-        )}
-        {shouldShowSeparator && <DropdownMenuSeparator />}
-        {shouldShowHiddenFields && (
-          <>
-            <DropdownMenuSectionLabel label={t`Hidden fields`} />
-            <DropdownMenuItemsContainer>
-              {selectableHiddenFieldMetadataItems.map(
-                (hiddenFieldMetadataItem) => (
-                  <ViewBarFilterDropdownFieldSelectMenuItem
-                    key={hiddenFieldMetadataItem.id}
-                    fieldMetadataItemToSelect={hiddenFieldMetadataItem}
-                  />
-                ),
-              )}
-            </DropdownMenuItemsContainer>
-          </>
-        )}
-        {hasSelectableItems && <DropdownMenuSeparator />}
-        <ViewBarFilterDropdownBottomMenu />
-      </SelectableList>
+      <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent
+              onClick={() => closeDropdown()}
+              Icon={IconX}
+            />
+          }
+        >
+          {t`Filter`}
+        </DropdownMenuHeader>
+        <StyledInput
+          value={objectFilterDropdownSearchInput}
+          autoFocus
+          placeholder={t`Search fields`}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setObjectFilterDropdownSearchInput(event.target.value)
+          }
+        />
+        <SelectableList
+          selectableItemIdArray={selectableFieldMetadataItemIds}
+          selectableListInstanceId={FILTER_FIELD_LIST_ID}
+          focusId={VIEW_BAR_FILTER_DROPDOWN_ID}
+        >
+          {shouldShowVisibleFields && (
+            <>
+              <DropdownMenuSectionLabel label={t`Visible fields`} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {selectableVisibleFieldMetadataItems.map(
+                  (visibleFieldMetadataItem) => (
+                    <ViewBarFilterDropdownFieldSelectMenuItem
+                      key={visibleFieldMetadataItem.id}
+                      fieldMetadataItemToSelect={visibleFieldMetadataItem}
+                    />
+                  ),
+                )}
+              </div>
+            </>
+          )}
+          {shouldShowSeparator && <DropdownMenuSeparator />}
+          {shouldShowHiddenFields && (
+            <>
+              <DropdownMenuSectionLabel label={t`Hidden fields`} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {selectableHiddenFieldMetadataItems.map(
+                  (hiddenFieldMetadataItem) => (
+                    <ViewBarFilterDropdownFieldSelectMenuItem
+                      key={hiddenFieldMetadataItem.id}
+                      fieldMetadataItemToSelect={hiddenFieldMetadataItem}
+                    />
+                  ),
+                )}
+              </div>
+            </>
+          )}
+          {hasSelectableItems && <DropdownMenuSeparator />}
+          <ViewBarFilterDropdownBottomMenu />
+        </SelectableList>
+      </div>
     </DropdownContent>
   );
 };
