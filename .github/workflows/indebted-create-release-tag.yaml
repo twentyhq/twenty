@@ -1,0 +1,53 @@
+name: Create Release Tag
+
+# Triggers when a sync PR is merged to main
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  create-tag:
+    # Only run if PR was merged (not just closed) and is a sync PR
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'sync-upstream-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract version and create tag
+        id: tag
+        run: |
+          # Extract version from branch name: sync-upstream-v1.13.9 -> v1.13.9
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          UPSTREAM_TAG="${BRANCH#sync-upstream-}"
+          INDEBTED_TAG="${UPSTREAM_TAG}-indebted"
+
+          echo "upstream_tag=$UPSTREAM_TAG" >> $GITHUB_OUTPUT
+          echo "indebted_tag=$INDEBTED_TAG" >> $GITHUB_OUTPUT
+
+          echo "Creating tag: $INDEBTED_TAG"
+
+          # Create and push tag
+          git tag -a "$INDEBTED_TAG" -m "Release $INDEBTED_TAG (synced from upstream $UPSTREAM_TAG)"
+          git push origin "$INDEBTED_TAG"
+
+          echo "tag_created=true" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## Release Tag Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Created tag: \`${{ steps.tag.outputs.indebted_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This will trigger the Docker image build workflow." >> $GITHUB_STEP_SUMMARY
