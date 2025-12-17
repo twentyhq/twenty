@@ -5,6 +5,7 @@ import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filte
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const ObjectFilterDropdownTextInput = () => {
@@ -17,6 +18,8 @@ export const ObjectFilterDropdownTextInput = () => {
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
+
+  const { closeDropdown } = useCloseDropdown();
 
   const [hasFocused, setHasFocused] = useState(false);
 
@@ -47,6 +50,7 @@ export const ObjectFilterDropdownTextInput = () => {
         type="text"
         placeholder={fieldMetadataItemUsedInDropdown?.label}
         onChange={handleInputChange}
+        onEnter={closeDropdown}
       />
     </DropdownMenuItemsContainer>
   );
