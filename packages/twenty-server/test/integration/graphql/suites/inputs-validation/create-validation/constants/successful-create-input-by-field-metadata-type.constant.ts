@@ -475,4 +475,38 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.POSITION]: [
+    {
+      input: {
+        position: 1000,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.position === 1000;
+      },
+    },
+    {
+      input: {
+        position: 'last',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.position > 1000;
+      },
+    },
+    {
+      input: {
+        position: 'first',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.position < 1000;
+      },
+    },
+    {
+      input: {
+        position: undefined,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return typeof record.position === 'number';
+      },
+    },
+  ],
 };

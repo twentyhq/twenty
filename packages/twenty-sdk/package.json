@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

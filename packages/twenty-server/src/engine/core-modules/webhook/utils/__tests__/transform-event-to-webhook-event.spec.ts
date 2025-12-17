@@ -1,5 +1,6 @@
+import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+
 import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
-import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 
 describe('transformEventToWebhookEvent', () => {
   it('should transform event to webhook event', () => {

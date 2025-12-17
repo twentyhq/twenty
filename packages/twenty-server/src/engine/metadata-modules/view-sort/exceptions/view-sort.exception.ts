@@ -4,14 +4,16 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewSortException extends CustomException {
-  declare code: ViewSortExceptionCode;
+export class ViewSortException extends CustomException<ViewSortExceptionCode> {
   constructor(
     message: string,
     code: ViewSortExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view sort error occurred.`,
+    });
   }
 }
 

@@ -2,7 +2,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
-import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
@@ -59,7 +59,7 @@ export const GraphWidgetLineChartRenderer = ({
 
   const groupMode =
     hasGroupByOnSecondaryAxis &&
-    (configuration.isStacked ?? LINE_CHART_IS_STACKED_DEFAULT)
+    (configuration.isStacked ?? LINE_CHART_CONSTANTS.IS_STACKED_DEFAULT)
       ? 'stacked'
       : undefined;
 

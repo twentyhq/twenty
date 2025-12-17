@@ -84,6 +84,16 @@
         "command": "cp .env.example .env"
       }
     },
+    "reset:env:e2e-testing-server": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.e2e-testing-server"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.e2e-testing-server .env"
+      }
+    },
     "command": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

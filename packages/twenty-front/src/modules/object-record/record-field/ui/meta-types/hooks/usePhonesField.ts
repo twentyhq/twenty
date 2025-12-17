@@ -26,8 +26,7 @@ export const usePhonesField = () => {
     }),
   );
 
-  const { getLatestDraftValue, setDraftValue } =
-    useRecordFieldInput<FieldPhonesValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldPhonesValue>();
 
   const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
@@ -37,7 +36,6 @@ export const usePhonesField = () => {
     fieldDefinition,
     fieldValue,
     draftValue,
-    getLatestDraftValue,
     setDraftValue,
     setFieldValue,
   };

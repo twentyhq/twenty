@@ -26,8 +26,7 @@ export const useLinksField = () => {
     }),
   );
 
-  const { getLatestDraftValue, setDraftValue } =
-    useRecordFieldInput<FieldLinksValue>();
+  const { setDraftValue } = useRecordFieldInput<FieldLinksValue>();
 
   const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,
@@ -37,7 +36,6 @@ export const useLinksField = () => {
     fieldDefinition,
     fieldValue,
     draftValue,
-    getLatestDraftValue,
     setDraftValue,
     setFieldValue,
   };
