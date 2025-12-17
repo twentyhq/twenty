@@ -260,7 +260,10 @@ export const WorkflowDiagramCanvasBase = ({
 
         let adjustedContainerWidth = baseContainerWidth;
 
-        const commandMenuWidth = getSnapshotValue(snapshot, commandMenuWidthState);
+        const commandMenuWidth = getSnapshotValue(
+          snapshot,
+          commandMenuWidthState,
+        );
 
         if (!isInRightDrawer && isCommandMenuOpened) {
           adjustedContainerWidth = baseContainerWidth - commandMenuWidth;

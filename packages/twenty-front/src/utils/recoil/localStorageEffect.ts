@@ -14,4 +14,3 @@ export const localStorageEffect =
         : localStorage.setItem(key ?? node.key, JSON.stringify(newValue));
     });
   };
-

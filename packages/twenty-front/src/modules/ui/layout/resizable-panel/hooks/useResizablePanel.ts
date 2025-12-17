@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 
-import { RESIZE_DRAG_THRESHOLD_PX } from '../constants/ResizablePanelConstraints';
+import { RESIZE_DRAG_THRESHOLD_PX } from '../constants/ResizeDragThresholdPx';
 import {
   type ResizablePanelConstraints,
   type ResizablePanelSide,

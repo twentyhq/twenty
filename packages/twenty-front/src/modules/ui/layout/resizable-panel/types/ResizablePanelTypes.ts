@@ -6,4 +6,3 @@ export type ResizablePanelConstraints = {
   default: number;
   collapseThreshold: number;
 };
-

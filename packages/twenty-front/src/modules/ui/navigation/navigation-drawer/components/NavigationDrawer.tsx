@@ -5,10 +5,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
-import {
-  NAVIGATION_DRAWER_COLLAPSED_WIDTH,
-  NAVIGATION_DRAWER_CONSTRAINTS,
-} from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { isNavigationDrawerExpandedState } from '../../states/isNavigationDrawerExpanded';

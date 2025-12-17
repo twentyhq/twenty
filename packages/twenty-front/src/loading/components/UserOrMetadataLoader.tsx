@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';

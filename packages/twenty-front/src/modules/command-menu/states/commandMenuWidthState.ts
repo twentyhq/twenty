@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
 import { cssVariableEffect } from '~/utils/recoil/cssVariableEffect';
 import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 

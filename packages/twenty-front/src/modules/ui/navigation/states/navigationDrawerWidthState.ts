@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/ResizablePanelConstraints';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { cssVariableEffect } from '~/utils/recoil/cssVariableEffect';
 import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 

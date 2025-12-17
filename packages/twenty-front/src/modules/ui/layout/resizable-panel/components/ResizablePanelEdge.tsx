@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { RESIZE_EDGE_WIDTH_PX } from '../constants/ResizablePanelConstraints';
+import { RESIZE_EDGE_WIDTH_PX } from '../constants/ResizeEdgeWidthPx';
 import { useResizablePanel } from '../hooks/useResizablePanel';
 import {
   type ResizablePanelConstraints,
@@ -17,7 +17,8 @@ const StyledEdge = styled.div<StyledEdgeProps>`
   position: absolute;
   top: 0;
   bottom: 0;
-  ${({ side }) => (side === 'right' ? 'right' : 'left')}: -${RESIZE_EDGE_WIDTH_PX / 2}px;
+  ${({ side }) =>
+    side === 'right' ? 'right' : 'left'}: -${RESIZE_EDGE_WIDTH_PX / 2}px;
   width: ${RESIZE_EDGE_WIDTH_PX}px;
   cursor: col-resize;
   z-index: 100;
