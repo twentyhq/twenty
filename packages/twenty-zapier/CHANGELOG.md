@@ -1,3 +1,6 @@
+## 2.1.1
+* Add changelog
+
 ## 2.1.0
 * Fix some authentication issues
 * Remove position from input fields
