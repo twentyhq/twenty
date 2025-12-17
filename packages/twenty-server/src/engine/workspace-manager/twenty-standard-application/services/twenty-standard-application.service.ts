@@ -69,11 +69,11 @@ export class TwentyStandardApplicationService {
           workspaceId,
         },
       );
-    const fromTwentyStandardAllFlatEntityMaps =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
-      );
+    const { featureFlagsMap, ...fromTwentyStandardAllFlatEntityMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
+        'featureFlagsMap',
+      ]);
     const toTwentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
@@ -110,6 +110,9 @@ export class TwentyStandardApplicationService {
           },
           fromToAllFlatEntityMaps,
           workspaceId,
+          additionalCacheDataMaps: {
+            featureFlagsMap,
+          },
         },
       );
 
