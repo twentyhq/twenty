@@ -91,7 +91,6 @@ export const MemberPermissionsTab = ({
           workspaceMemberId: member.id,
           roleId: pendingRole.id,
         },
-        // eslint-disable-next-line lingui/no-unlocalized-strings
         refetchQueries: ['GetRoles'],
       });
       enqueueSuccessSnackBar({ message: t`Role updated successfully` });

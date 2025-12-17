@@ -7,8 +7,8 @@ import { z } from 'zod';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
-import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
@@ -27,8 +27,6 @@ const StyledLinkContainer = styled.div`
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
-const emailsAreInvalidMessage = msg`are invalid`;
-const emailIsInvalidMessage = msg`is invalid`;
 
 const validationSchema = z
   .object({
@@ -50,16 +48,16 @@ const validationSchema = z
           invalidEmails.push(email);
         }
       }
-        if (invalidEmails.length > 0) {
-          const invalidEmailsList = invalidEmails.join('", "');
-          ctx.addIssue({
-            code: 'custom',
-            message:
-              invalidEmails.length > 1
-                ? `Emails "${invalidEmailsList}" ${i18n._(emailsAreInvalidMessage)}`
-                : `Email "${invalidEmailsList}" ${i18n._(emailIsInvalidMessage)}`,
-          });
-        }
+      if (invalidEmails.length > 0) {
+        const invalidEmailsList = invalidEmails.join(', ');
+        ctx.addIssue({
+          code: 'custom',
+          message:
+            invalidEmails.length > 1
+              ? i18n.t`Invalid emails: ${invalidEmailsList}`
+              : i18n.t`Invalid email: ${invalidEmailsList}`,
+        });
+      }
     }),
   })
   .required();

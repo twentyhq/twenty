@@ -105,7 +105,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           dropdownId={dropDownId}
           clickableComponent={
             <LightIconButton
-              aria-label="Env Variable Options"
+              aria-label={t`Env Variable Options`}
               Icon={IconDotsVertical}
               accent="tertiary"
             />

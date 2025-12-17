@@ -5,4 +5,5 @@ type RightDrawerContextType = {
 };
 
 export const [RightDrawerProvider, useIsInRightDrawerOrThrow] =
+  // eslint-disable-next-line lingui/no-unlocalized-strings
   createRequiredContext<RightDrawerContextType>('RightDrawer');

@@ -74,7 +74,6 @@ export const SettingsAIMCP = () => {
             type: 'streamable-http',
             url: `${REACT_APP_SERVER_BASE_URL}${pathSuffix}`,
             headers: {
-              // eslint-disable-next-line lingui/no-unlocalized-strings
               Authorization: 'Bearer [API_KEY]',
             },
           },

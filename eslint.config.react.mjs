@@ -168,6 +168,22 @@ export default [
             '^(Group|CalendarView|CalendarDateField|Compact view)$',
             '^(Layout|Visibility|Fields|Delete view|Copy link to view|Create custom view)$',
             '^(GroupBy|Sort|HideEmptyGroups|HiddenGroups)$',
+            // HTTP headers and auth (technical, not user-facing)
+            '^Authorization$',
+            '^Bearer .*',
+            // Allow object keys that are technical identifiers
+            '^(topLeft|topRight|bottomLeft|bottomRight)$',
+            // Color schemes
+            '^System$',
+            // GraphQL query names (used in refetchQueries)
+            '^Get[A-Z]\\w*$',
+            // React Context names (technical identifiers)
+            '.*Context$',
+            // SVG paths (geometric coordinates, not translatable)
+            '^M[0-9 LML]+$',
+            '^[ML][0-9 ]+$',
+            // Database ordering values (technical, backend API)
+            '^(Asc|Desc)Nulls(First|Last)$',
           ],
           ignoreNames: [
             // HTML/React attributes that shouldn't be translated
@@ -304,6 +320,9 @@ export default [
             // Sort direction values (backend API)
             'orderBy',
             { regex: { pattern: '^(Asc|Desc)(NullsFirst|NullsLast)?$' } },
+
+            // HTTP headers (technical, not user-facing)
+            'Authorization',
           ],
           ignoreFunctions: [
             // Console and logging

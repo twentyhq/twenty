@@ -60,7 +60,6 @@ export const GraphQLPlayground = ({
         plugins={[explorer]}
         fetcher={fetcher}
         defaultHeaders={JSON.stringify({
-          // eslint-disable-next-line lingui/no-unlocalized-strings
           Authorization: `Bearer ${playgroundApiKey}`,
         })}
       />
