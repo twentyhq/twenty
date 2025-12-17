@@ -65,7 +65,11 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordGroupDefinitionsComponentSelector,
   );
 
-  const recordGroupValues = recordGroupDefinitions.map(
+  const visibleRecordGroupDefinitions = recordGroupDefinitions.filter(
+    (recordGroupDefinition) => recordGroupDefinition.isVisible,
+  );
+
+  const recordGroupValues = visibleRecordGroupDefinitions.map(
     (recordGroupDefinition) => recordGroupDefinition.value,
   );
 
@@ -83,7 +87,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordGroupOptionsFilter,
   ]);
 
-  const recordGroupsLimit = recordGroupDefinitions.length;
+  const recordGroupsLimit = visibleRecordGroupDefinitions.length;
 
   return {
     combinedFilters,

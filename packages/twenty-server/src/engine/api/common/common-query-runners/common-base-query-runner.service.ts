@@ -424,6 +424,8 @@ export abstract class CommonBaseQueryRunnerService<
       args,
     );
 
+    console.log('queryComplexity', queryComplexity);
+
     if (queryComplexity > maximumComplexity) {
       throw new CommonQueryRunnerException(
         `Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
