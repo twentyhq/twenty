@@ -248,9 +248,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return handleTokenRenewal(operation, forward);
                 }
                 case 'SCHEMA_VERSION_MISMATCH':
+                case 'GRAPHQL_VALIDATION_FAILED':
                 case 'NOT_FOUND':
                 case 'BAD_USER_INPUT':
-                case 'FORBIDDEN': {
+                case 'FORBIDDEN':
+                case 'METHOD_NOT_ALLOWED':
+                case 'TIMEOUT':
+                case 'CONFLICT':
+                case 'METADATA_VALIDATION_FAILED': {
                   return;
                 }
                 case 'USER_INPUT_ERROR': {
