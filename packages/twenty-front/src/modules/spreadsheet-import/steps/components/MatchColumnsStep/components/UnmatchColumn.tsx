@@ -6,7 +6,7 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import styled from '@emotion/styled';
-import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,10 +24,7 @@ const getExpandableContainerTitle = (
     'matchedOptions' in column &&
     column.matchedOptions?.filter((option) => !isDefined(option.value)).length;
 
-  return i18n._({
-    id: 'match-column-unmatched',
-    message: `Match ${fieldLabel} (${unmatchedCount} Unmatched)`,
-  });
+  return t`Match ${fieldLabel} (${unmatchedCount} Unmatched)`;
 };
 
 type UnmatchColumnProps = {
