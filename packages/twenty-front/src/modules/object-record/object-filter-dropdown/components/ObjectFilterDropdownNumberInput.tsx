@@ -2,10 +2,12 @@ import { type ChangeEvent, useCallback, useState } from 'react';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const ObjectFilterDropdownNumberInput = () => {
@@ -18,6 +20,10 @@ export const ObjectFilterDropdownNumberInput = () => {
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
+
+  const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ObjectFilterDropdownComponentInstanceContext,
+  );
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -50,7 +56,7 @@ export const ObjectFilterDropdownNumberInput = () => {
         type="number"
         placeholder={fieldMetadataItemUsedInDropdown?.label}
         onChange={handleInputChange}
-        onEnter={closeDropdown}
+        onEnter={() => closeDropdown(componentInstanceId)}
       />
     </DropdownMenuItemsContainer>
   );
