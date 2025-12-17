@@ -78,7 +78,7 @@ export const SettingsServerlessFunctionCodeEditor = ({
                 .join('\n')}
             }
           }
-  
+
           declare const process: {
             env: NodeJS.ProcessEnv;
           };

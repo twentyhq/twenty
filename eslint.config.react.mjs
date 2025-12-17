@@ -159,6 +159,8 @@ export default [
             '^Id$', // technical identifier suffix (e.g., fieldNameId)
             '^(string|number|boolean|void|any|unknown|never|object)$', // TypeScript type keywords
             '^(Dark|Light)$', // color schemes
+            '^translate\\(.*\\)$', // CSS transform strings
+            '^svg .*$', // CSS selectors
             '^Icon[A-Z]\\w*$', // Icon names like IconDefault, IconTable, IconSettings
             '^\\w*Icon$', // Icon names that end with Icon like FieldIcon
             '^%c.*$', // Console format strings

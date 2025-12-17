@@ -19,7 +19,7 @@ const getExpandableContainerTitle = (
     (field) => 'value' in column && field.key === column.value,
   )?.label;
 
-  return `Match ${fieldLabel} (${
+  return t`Match ${fieldLabel} (${
     'matchedOptions' in column &&
     column.matchedOptions?.filter((option) => !isDefined(option.value)).length
   } Unmatched)`;

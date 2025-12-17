@@ -70,7 +70,7 @@ export const SelectSheetStep = ({
           maxRecords,
         )
       ) {
-        onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+        onError(t`Too many records. Up to ${maxRecords.toString()} allowed`);
         return;
       }
       try {
