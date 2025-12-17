@@ -29,7 +29,13 @@ test('Login test', async ({ loginPage, page }) => {
       await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
       await page.waitForLoadState('networkidle');
       await loginPage.clickSignInButton();
+      await page.waitForLoadState('networkidle');
       await expect(page.getByText(/Welcome to .+/)).not.toBeVisible();
+      await expect(page.getByText('Choose a workspace')).toBeVisible();
+      await page.getByText('Apple', {exact: true}).click();
+      await page.waitForFunction(() => window.location.href.includes('verify'));
+      await page.waitForFunction(() => !window.location.href.includes('verify'));
+      process.env.LINK = page.url();
     },
   );
 
@@ -37,6 +43,5 @@ test('Login test', async ({ loginPage, page }) => {
     await page.context().storageState({
       path: path.resolve(__dirname, '..', '.auth', 'user.json'),
     });
-    process.env.LINK = page.url();
   });
 });
