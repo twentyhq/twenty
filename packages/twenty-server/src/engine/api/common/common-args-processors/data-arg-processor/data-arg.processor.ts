@@ -33,6 +33,7 @@ import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-pro
 import { validateMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util';
 import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util';
 import { validateNumericFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-numeric-field-or-throw.util';
+import { validateOverriddenPositionFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util';
 import { validatePhonesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util';
 import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
@@ -157,7 +158,7 @@ export class DataArgProcessor {
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
-        return value;
+        return validateOverriddenPositionFieldOrThrow(value, key);
       case FieldMetadataType.NUMERIC: {
         const validatedValue = validateNumericFieldOrThrow(value, key);
 
