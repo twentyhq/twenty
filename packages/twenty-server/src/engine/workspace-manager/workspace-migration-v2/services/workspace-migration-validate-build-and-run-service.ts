@@ -218,6 +218,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       fromToAllFlatEntityMaps,
       inferDeletionFromMissingEntities,
       dependencyAllFlatEntityMaps,
+      additionalCacheDataMaps,
     } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
       allFlatEntityOperationByMetadataName: allFlatEntities,
       workspaceId,
@@ -231,6 +232,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       fromToAllFlatEntityMaps,
       workspaceId,
       dependencyAllFlatEntityMaps,
+      additionalCacheDataMaps,
     });
   }
 }
