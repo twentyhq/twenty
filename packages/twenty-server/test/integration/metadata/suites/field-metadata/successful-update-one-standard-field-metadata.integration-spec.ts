@@ -333,8 +333,7 @@ describe('Standard field isUnique update should succeed', () => {
     });
   });
 
-  // TODO: Enable this test once isUnique set as editable on standard fields
-  it.failing('should set isUnique to true on standard field', async () => {
+  it('should set isUnique to true on standard field', async () => {
     jestExpectToBeDefined(nameFieldMetadata);
 
     const { data } = await updateOneFieldMetadata({
