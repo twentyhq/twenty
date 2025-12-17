@@ -74,6 +74,7 @@ export const SettingsAIMCP = () => {
             type: 'streamable-http',
             url: `${REACT_APP_SERVER_BASE_URL}${pathSuffix}`,
             headers: {
+              // eslint-disable-next-line lingui/no-unlocalized-strings
               Authorization: 'Bearer [API_KEY]',
             },
           },
@@ -86,13 +87,13 @@ export const SettingsAIMCP = () => {
 
   const options = [
     {
-      label: 'Core Schema',
+      label: t`Core Schema`,
       value: 'core-schema',
       Icon: IconDatabase,
       content: generateMcpContent('/mcp', 'twenty'),
     },
     {
-      label: 'Metadata Schema',
+      label: t`Metadata Schema`,
       value: 'metadata-schema',
       Icon: IconSitemap,
       content: generateMcpContent('/mcp/metadata', 'twenty-metadata'),

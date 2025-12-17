@@ -4,7 +4,7 @@ import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-d
 import { GET_ALL_EMAILING_DOMAINS } from '@/settings/emailing-domains/graphql/queries/getAllEmailingDomains';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useQuery } from '@apollo/client';
-import { Trans } from '@lingui/react/macro';
+import { Trans, t } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const SettingsEmailingDomainDetail = () => {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t`Loading...`}</div>;
   }
 
   if (isDefined(error) || !isDefined(emailingDomain)) {
