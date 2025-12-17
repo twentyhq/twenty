@@ -1,5 +1,5 @@
 import { computeInputFields } from '../../utils/computeInputFields';
-import { InputField } from '../../utils/data.types';
+import { type InputField } from '../../utils/data.types';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('computeInputFields', () => {
