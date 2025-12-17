@@ -247,6 +247,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   console.log('UNAUTHENTICATED, triggering token renewal');
                   return handleTokenRenewal(operation, forward);
                 }
+                case 'NOT_FOUND':
                 case 'BAD_USER_INPUT':
                 case 'FORBIDDEN': {
                   return;
