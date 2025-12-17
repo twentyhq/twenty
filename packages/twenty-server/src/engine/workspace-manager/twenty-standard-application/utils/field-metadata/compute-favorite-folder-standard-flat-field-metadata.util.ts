@@ -137,6 +137,8 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites in this folder',

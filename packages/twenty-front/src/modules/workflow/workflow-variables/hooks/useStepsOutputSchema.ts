@@ -57,6 +57,8 @@ export const useStepsOutputSchema = () => {
             type: step.type,
             icon: getActionIcon(step.type),
             outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
+            objectName: (step.settings?.input as { objectName?: string })
+              ?.objectName,
           };
 
           set(stepsOutputSchemaFamilyState(stepKey), stepOutputSchema);

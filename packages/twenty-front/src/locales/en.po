@@ -3664,6 +3664,7 @@ msgid "Email cannot be empty"
 msgstr "Email cannot be empty"
 
 #. js-lingui-id: UZQ5eW
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 msgid "Email copied to clipboard"
@@ -5762,6 +5763,7 @@ msgstr "Line Chart"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -7364,6 +7366,7 @@ msgid "Permissions · {objectLabelSingular}"
 msgstr "Permissions · {objectLabelSingular}"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "Phone number copied to clipboard"
@@ -10160,6 +10163,11 @@ msgstr "View all evaluations"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "View billing details"
+
+#. js-lingui-id: Mv1YVf
+#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+msgid "View existing record"
+msgstr "View existing record"
 
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
