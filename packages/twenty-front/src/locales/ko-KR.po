@@ -3669,6 +3669,7 @@ msgid "Email cannot be empty"
 msgstr "이메일은 비워 둘 수 없습니다"
 
 #. js-lingui-id: UZQ5eW
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 msgid "Email copied to clipboard"
@@ -5767,6 +5768,7 @@ msgstr "선형 차트"
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -7369,6 +7371,7 @@ msgid "Permissions · {objectLabelSingular}"
 msgstr "권한 · {objectLabelSingular}"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "전화번호가 클립보드에 복사되었습니다"
