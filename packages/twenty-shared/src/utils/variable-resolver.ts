@@ -10,6 +10,10 @@ const isString = (value: any): value is string => {
 
 const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
 
+// Pattern to match variableTag nodes in BlockNote/TipTap JSON strings
+const VARIABLE_TAG_PATTERN =
+  /\{"type":"variableTag","attrs":\{"variable":"(\{\{[^{}]+\}\})"\}\}/g;
+
 export const resolveInput = (
   unresolvedInput: unknown,
   context: Record<string, unknown>,
@@ -68,17 +72,31 @@ const resolveString = (
   input: string,
   context: Record<string, unknown>,
 ): string => {
-  const matchedTokens = input.match(VARIABLE_PATTERN);
+  const inputWithResolvedTags = input.replace(
+    VARIABLE_TAG_PATTERN,
+    (_, variable: string) => {
+      const resolvedValue = evalFromContext(variable, context);
+      const textValue = isNil(resolvedValue) ? '' : String(resolvedValue);
+      const escapedText = JSON.stringify(textValue).slice(1, -1);
+
+      return `{"type":"text","text":"${escapedText}"}`;
+    },
+  );
+
+  const matchedTokens = inputWithResolvedTags.match(VARIABLE_PATTERN);
 
   if (!matchedTokens || matchedTokens.length === 0) {
-    return input;
+    return inputWithResolvedTags;
   }
 
-  if (matchedTokens.length === 1 && matchedTokens[0] === input) {
-    return evalFromContext(input, context);
+  if (
+    matchedTokens.length === 1 &&
+    matchedTokens[0] === inputWithResolvedTags
+  ) {
+    return evalFromContext(inputWithResolvedTags, context);
   }
 
-  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
+  return inputWithResolvedTags.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
     return processedToken;
