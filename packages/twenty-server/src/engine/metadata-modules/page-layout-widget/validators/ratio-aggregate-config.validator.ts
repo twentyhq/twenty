@@ -5,7 +5,7 @@ import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('RatioAggregateConfig')
-export class RatioAggregateConfigEntity {
+export class RatioAggregateConfigValidator {
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
@@ -16,3 +16,4 @@ export class RatioAggregateConfigEntity {
   @IsNotEmpty()
   optionValue: string;
 }
+

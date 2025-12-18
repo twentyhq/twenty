@@ -1,22 +1,22 @@
-import { AggregateChartConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/aggregate-chart-configuration.entity';
-import { BarChartConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/bar-chart-configuration.entity';
-import { GaugeChartConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/gauge-chart-configuration.entity';
-import { IframeConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/iframe-configuration.entity';
-import { LineChartConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/line-chart-configuration.entity';
-import { PieChartConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/pie-chart-configuration.entity';
-import { StandaloneRichTextConfigurationEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/standalone-rich-text-configuration.entity';
+import { AggregateChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/aggregate-chart-configuration.validator';
+import { BarChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/bar-chart-configuration.validator';
+import { GaugeChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/gauge-chart-configuration.validator';
+import { IframeConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/iframe-configuration.validator';
+import { LineChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/line-chart-configuration.validator';
+import { PieChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/pie-chart-configuration.validator';
+import { StandaloneRichTextConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/standalone-rich-text-configuration.validator';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYPE =
   {
-    AGGREGATE_CHART: AggregateChartConfigurationEntity,
-    BAR_CHART: BarChartConfigurationEntity,
-    GAUGE_CHART: GaugeChartConfigurationEntity,
-    IFRAME: IframeConfigurationEntity,
-    LINE_CHART: LineChartConfigurationEntity,
-    PIE_CHART: PieChartConfigurationEntity,
-    STANDALONE_RICH_TEXT: StandaloneRichTextConfigurationEntity,
+    AGGREGATE_CHART: AggregateChartConfigurationValidator,
+    BAR_CHART: BarChartConfigurationValidator,
+    GAUGE_CHART: GaugeChartConfigurationValidator,
+    IFRAME: IframeConfigurationValidator,
+    LINE_CHART: LineChartConfigurationValidator,
+    PIE_CHART: PieChartConfigurationValidator,
+    STANDALONE_RICH_TEXT: StandaloneRichTextConfigurationValidator,
   } as const satisfies {
     [P in WidgetConfigurationType]: new () => PageLayoutWidgetConfigurationBase;
   };

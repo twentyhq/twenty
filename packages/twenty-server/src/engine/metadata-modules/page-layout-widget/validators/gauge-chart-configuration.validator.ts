@@ -24,7 +24,7 @@ import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('GaugeChartConfiguration')
-export class GaugeChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
+export class GaugeChartConfigurationValidator implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
   @IsIn([GraphType.GAUGE_CHART])
   @IsNotEmpty()
@@ -71,3 +71,4 @@ export class GaugeChartConfigurationEntity implements PageLayoutWidgetConfigurat
   @Max(7)
   firstDayOfTheWeek?: number;
 }
+
