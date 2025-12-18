@@ -5,6 +5,8 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -21,6 +23,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -47,6 +50,8 @@ export class WorkspaceManagerService {
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
   ) {}
 
   public async init({
@@ -76,11 +81,25 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
-    await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
-      {
+    const featureFlags =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    const isV2SyncEnabled =
+      featureFlags[FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED];
+
+    if (isV2SyncEnabled) {
+      await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+    } else {
+      await this.workspaceSyncMetadataService.synchronize({
         workspaceId,
-      },
-    );
+        dataSourceId: dataSourceMetadata.id,
+        featureFlags,
+      });
+    }
 
     const dataSourceMetadataCreationEnd = performance.now();
 
