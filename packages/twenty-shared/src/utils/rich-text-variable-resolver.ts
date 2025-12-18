@@ -31,9 +31,9 @@ const buildTextNodesWithLineBreaks = (text: string): string => {
 export const resolveRichTextVariables = (
   input: string | null | undefined,
   context: Record<string, unknown>,
-): string | null | undefined => {
+): string | undefined => {
   if (!isDefined(input)) {
-    return input;
+    return undefined;
   }
 
   return input.replace(
