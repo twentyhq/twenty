@@ -4,10 +4,8 @@ import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPoin
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 
 import { RESIZE_DRAG_THRESHOLD_PX } from '../constants/ResizeDragThresholdPx';
-import {
-  type ResizablePanelConstraints,
-  type ResizablePanelSide,
-} from '../types/ResizablePanelTypes';
+import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
+import { type ResizablePanelSide } from '../types/ResizablePanelSide';
 
 type UseResizablePanelProps = {
   side: ResizablePanelSide;

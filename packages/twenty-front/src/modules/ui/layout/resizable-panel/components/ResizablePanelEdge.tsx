@@ -2,10 +2,8 @@ import styled from '@emotion/styled';
 
 import { RESIZE_EDGE_WIDTH_PX } from '../constants/ResizeEdgeWidthPx';
 import { useResizablePanel } from '../hooks/useResizablePanel';
-import {
-  type ResizablePanelConstraints,
-  type ResizablePanelSide,
-} from '../types/ResizablePanelTypes';
+import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
+import { type ResizablePanelSide } from '../types/ResizablePanelSide';
 
 type StyledEdgeProps = {
   isActive: boolean;

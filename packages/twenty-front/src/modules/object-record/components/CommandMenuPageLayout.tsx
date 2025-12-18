@@ -18,8 +18,9 @@ const StyledLayout = styled.div`
 `;
 
 const StyledPageBody = styled(PageBody)`
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
+  width: 0;
   padding-bottom: 0;
   padding-right: 0;
 `;

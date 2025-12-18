@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
 
 import { useResizablePanel } from '../hooks/useResizablePanel';
-import {
-  type ResizablePanelConstraints,
-  type ResizablePanelSide,
-} from '../types/ResizablePanelTypes';
+import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
+import { type ResizablePanelSide } from '../types/ResizablePanelSide';
 
 const StyledGap = styled.div<{ gapWidth: number }>`
   cursor: col-resize;

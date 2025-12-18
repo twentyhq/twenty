@@ -36,7 +36,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: var(${COMMAND_MENU_WIDTH_VAR});
+  width: 100%;
   box-sizing: border-box;
 `;
 
