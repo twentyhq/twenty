@@ -28,7 +28,7 @@ export class PieChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.PIE;
+  graphType: GraphType.PIE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

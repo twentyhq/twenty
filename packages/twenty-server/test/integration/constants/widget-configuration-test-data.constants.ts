@@ -45,7 +45,7 @@ export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
@@ -55,7 +55,7 @@ export const TEST_NUMBER_CHART_CONFIG = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   displayDataLabel: false,
@@ -112,7 +112,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_LINE_CHART_CONFIG = {
-  graphType: GraphType.LINE,
+  graphType: GraphType.LINE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.AVG,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -129,7 +129,7 @@ export const TEST_LINE_CHART_CONFIG = {
 };
 
 export const TEST_LINE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.LINE,
+  graphType: GraphType.LINE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.MAX,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -139,7 +139,7 @@ export const TEST_LINE_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_PIE_CHART_CONFIG = {
-  graphType: GraphType.PIE,
+  graphType: GraphType.PIE_CHART,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.SUM,
@@ -161,7 +161,7 @@ export const TEST_PIE_CHART_CONFIG = {
 };
 
 export const TEST_PIE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.PIE,
+  graphType: GraphType.PIE_CHART,
   groupByFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.COUNT,
@@ -170,7 +170,7 @@ export const TEST_PIE_CHART_CONFIG_MINIMAL = {
 };
 
 export const TEST_GAUGE_CHART_CONFIG = {
-  graphType: GraphType.GAUGE,
+  graphType: GraphType.GAUGE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   description: 'Completion percentage',
@@ -187,7 +187,7 @@ export const TEST_GAUGE_CHART_CONFIG = {
 };
 
 export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.GAUGE,
+  graphType: GraphType.GAUGE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT_TRUE,
   displayDataLabel: false,
@@ -202,17 +202,17 @@ export const INVALID_IFRAME_CONFIG_EMPTY_URL = {
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_BAD_UUID = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
   aggregateFieldMetadataId: 'not-a-uuid',
   aggregateOperation: AggregateOperations.COUNT,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_INVALID_OPERATION = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: 'INVALID_OP' as any,
 };
@@ -246,7 +246,7 @@ export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
 };
 
 export const CONFIG_TYPE_MISMATCH_IFRAME_WITH_GRAPH = {
-  graphType: GraphType.AGGREGATE,
+  graphType: GraphType.AGGREGATE_CHART\,
   url: 'https://example.com',
 };
 

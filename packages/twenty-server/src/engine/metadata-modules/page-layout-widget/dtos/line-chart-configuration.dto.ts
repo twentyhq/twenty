@@ -30,7 +30,7 @@ export class LineChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.LINE;
+  graphType: GraphType.LINE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

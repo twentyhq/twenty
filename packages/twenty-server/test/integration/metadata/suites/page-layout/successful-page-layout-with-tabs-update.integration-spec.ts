@@ -16,7 +16,7 @@ import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 const MOCK_PIE_CHART_CONFIGURATION = {
-  graphType: GraphType.PIE,
+  graphType: GraphType.PIE_CHART,
   aggregateFieldMetadataId: '20202020-77d3-42ff-adc6-cffdad2792c7',
   aggregateOperation: AggregateOperations.COUNT,
   groupByFieldMetadataId: '20202020-a9fd-4071-9082-db4870ed2430',

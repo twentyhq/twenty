@@ -40,7 +40,7 @@ const validateGraphConfiguration = ({
     return null;
   }
 
-  if (graphType === GraphType.GAUGE && !isDashboardV2Enabled) {
+  if (graphType === GraphType.GAUGE_CHART && !isDashboardV2Enabled) {
     throw new Error(
       `Chart type ${graphType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
     );
@@ -69,7 +69,7 @@ const validateGraphConfiguration = ({
 
       return instance;
     }
-    case GraphType.LINE: {
+    case GraphType.LINE_CHART: {
       const instance = plainToInstance(
         LineChartConfigurationDTO,
         configuration,
@@ -93,7 +93,7 @@ const validateGraphConfiguration = ({
 
       return instance;
     }
-    case GraphType.PIE: {
+    case GraphType.PIE_CHART: {
       const instance = plainToInstance(PieChartConfigurationDTO, configuration);
 
       const errors = validateSync(instance, {
@@ -107,7 +107,7 @@ const validateGraphConfiguration = ({
 
       return instance;
     }
-    case GraphType.AGGREGATE: {
+    case GraphType.AGGREGATE_CHART\: {
       const instance = plainToInstance(
         AggregateChartConfigurationDTO,
         configuration,
@@ -124,7 +124,7 @@ const validateGraphConfiguration = ({
 
       return instance;
     }
-    case GraphType.GAUGE: {
+    case GraphType.GAUGE_CHART: {
       const instance = plainToInstance(
         GaugeChartConfigurationDTO,
         configuration,

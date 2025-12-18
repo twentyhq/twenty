@@ -26,7 +26,7 @@ export class GaugeChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.GAUGE;
+  graphType: GraphType.GAUGE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

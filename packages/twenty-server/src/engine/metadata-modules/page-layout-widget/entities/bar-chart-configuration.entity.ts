@@ -26,13 +26,14 @@ import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widge
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('BarChartConfiguration')
-export class BarChartConfigurationEntity {
+export class BarChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
-  @IsIn([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR])
+  @IsIn([GraphType.BAR_CHART])
   @IsNotEmpty()
-  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR;
+  configurationType: GraphType.BAR_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

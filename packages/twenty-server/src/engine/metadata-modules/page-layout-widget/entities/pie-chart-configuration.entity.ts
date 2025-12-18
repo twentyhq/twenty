@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -22,13 +23,14 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('PieChartConfiguration')
-export class PieChartConfigurationEntity {
+export class PieChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
-  @IsEnum(GraphType)
+  @IsIn([GraphType.PIE_CHART])
   @IsNotEmpty()
-  graphType: GraphType.PIE;
+  configurationType: GraphType.PIE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
