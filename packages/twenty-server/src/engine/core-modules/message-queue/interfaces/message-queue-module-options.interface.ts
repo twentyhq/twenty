@@ -12,7 +12,7 @@ export interface BullMQDriverFactoryOptions {
 
 export interface SyncDriverFactoryOptions {
   type: MessageQueueDriverType.SYNC;
-   
+
   options: Record<string, any>;
 }
 

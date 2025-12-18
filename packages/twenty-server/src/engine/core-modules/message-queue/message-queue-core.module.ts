@@ -61,7 +61,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
-       
+
       useFactory: async (...args: any[]) => {
         if (options.useFactory) {
           const config = await options.useFactory(...args);
