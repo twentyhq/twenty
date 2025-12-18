@@ -107,6 +107,13 @@ export class ViewFieldV2Service {
       );
     }
 
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
+
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -128,6 +135,13 @@ export class ViewFieldV2Service {
     workspaceId: string;
     updateViewFieldInput: UpdateViewFieldInput;
   }): Promise<ViewFieldDTO> {
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
+
     const { flatViewFieldMaps: existingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -163,6 +177,13 @@ export class ViewFieldV2Service {
         'Multiple validation errors occurred while updating view field',
       );
     }
+
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -222,6 +243,13 @@ export class ViewFieldV2Service {
         'Multiple validation errors occurred while deleting view field',
       );
     }
+
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
