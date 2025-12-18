@@ -10297,7 +10297,8 @@ msgstr "Μοιραστείτε αυτόν τον σύνδεσμο για να π
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Short"
-msgstr "\n"
+msgstr ""
+"\n"
 ""
 
 #. js-lingui-id: gWk8gY
@@ -11156,9 +11157,11 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα\n"
+msgstr ""
+"Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα\n"
 "            ολόκληρο τον λογαριασμό σας."
 
 #. js-lingui-id: bNY3MH
@@ -12197,9 +12200,11 @@ msgstr "Θα σας στείλουμε έναν σύνδεσμο για να ε�
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Περιμένουμε επιβεβαίωση από τον πάροχο πληρωμών μας (Stripe).\n"
+msgstr ""
+"Περιμένουμε επιβεβαίωση από τον πάροχο πληρωμών μας (Stripe).\n"
 "Παρακαλούμε δοκιμάστε ξανά σε λίγα δευτερόλεπτα, συγγνώμη."
 
 #. js-lingui-id: LnnVIT
