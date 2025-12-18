@@ -1,6 +1,7 @@
 export enum WidgetType {
   VIEW = 'VIEW',
   IFRAME = 'IFRAME',
+  FIELD = 'FIELD',
   FIELDS = 'FIELDS',
   GRAPH = 'GRAPH',
   STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT',

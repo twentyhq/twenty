@@ -20,7 +20,7 @@ import {
   TEST_PET_ID_3,
   TEST_PET_ID_4,
 } from 'test/integration/constants/test-pet-ids.constants';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { search } from 'test/integration/graphql/utils/search.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import {
@@ -113,6 +113,7 @@ describe('SearchResolver', () => {
   const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
   beforeAll(async () => {
+    // TODO refactor not a good practice, or should at least restore afterwards
     await deleteAllRecords('person');
     await deleteAllRecords('company');
     await deleteAllRecords('opportunity');
@@ -124,33 +125,28 @@ describe('SearchResolver', () => {
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
     await deleteAllRecords('_rocket');
+    ///
 
-    try {
-      await performCreateManyOperation(
-        'pet',
-        'pets',
-        OBJECT_MODEL_COMMON_FIELDS,
-        pets,
-      );
+    await createManyOperation({
+      objectMetadataSingularName: 'pet',
+      objectMetadataPluralName: 'pets',
+      gqlFields: OBJECT_MODEL_COMMON_FIELDS,
+      data: pets,
+    });
 
-      await performCreateManyOperation(
-        'person',
-        'people',
-        PERSON_GQL_FIELDS,
-        persons,
-      );
+    await createManyOperation({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: PERSON_GQL_FIELDS,
+      data: persons,
+    });
 
-      await performCreateManyOperation(
-        'company',
-        'companies',
-        COMPANY_GQL_FIELDS,
-        companies,
-      );
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      throw new Error('beforeAll failed');
-    }
+    await createManyOperation({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: COMPANY_GQL_FIELDS,
+      data: companies,
+    });
   });
 
   const testsUseCases: EachTestingContext<{
