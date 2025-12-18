@@ -22,6 +22,7 @@ export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
 export { CustomError } from './errors/CustomError';
+export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
@@ -33,25 +34,25 @@ export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGq
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
-export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
 export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
+export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
 export { getDateFromPlainDate } from './filter/dates/utils/getDateFromPlainDate';
 export { getEndUnitOfDateTime } from './filter/dates/utils/getEndUnitOfDateTime';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
 export { getPlainDateFromDate } from './filter/dates/utils/getPlainDateFromDate';
 export { getStartUnitOfDateTime } from './filter/dates/utils/getStartUnitOfDateTime';
 export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';
-export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
 export { relativeDateFilterDirectionSchema } from './filter/dates/utils/relativeDateFilterDirectionSchema';
-export type { RelativeDateFilter } from './filter/dates/utils/relativeDateFilterSchema';
+export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
 export { relativeDateFilterSchema } from './filter/dates/utils/relativeDateFilterSchema';
+export type { RelativeDateFilter } from './filter/dates/utils/relativeDateFilterSchema';
 export { relativeDateFilterStringifiedSchema } from './filter/dates/utils/relativeDateFilterStringifiedSchema';
-export type { RelativeDateFilterUnit } from './filter/dates/utils/relativeDateFilterUnitSchema';
 export { relativeDateFilterUnitSchema } from './filter/dates/utils/relativeDateFilterUnitSchema';
-export type { ResolvedDateFilterValue } from './filter/dates/utils/resolveDateFilter';
+export type { RelativeDateFilterUnit } from './filter/dates/utils/relativeDateFilterUnitSchema';
 export { resolveDateFilter } from './filter/dates/utils/resolveDateFilter';
-export type { ResolvedDateTimeFilterValue } from './filter/dates/utils/resolveDateTimeFilter';
+export type { ResolvedDateFilterValue } from './filter/dates/utils/resolveDateFilter';
 export { resolveDateTimeFilter } from './filter/dates/utils/resolveDateTimeFilter';
+export type { ResolvedDateTimeFilterValue } from './filter/dates/utils/resolveDateTimeFilter';
 export { resolveRelativeDateFilter } from './filter/dates/utils/resolveRelativeDateFilter';
 export { resolveRelativeDateFilterStringified } from './filter/dates/utils/resolveRelativeDateFilterStringified';
 export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelativeDateTimeFilter';
@@ -60,11 +61,11 @@ export { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } fro
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
+export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export type {
   RecordFilter,
-  RecordFilterGroup,
+  RecordFilterGroup
 } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
-export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
 export { computeTimezoneDifferenceInMinutes } from './filter/utils/computeTimezoneDifferenceInMinutes';
@@ -74,7 +75,7 @@ export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createA
 export {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
   convertLessThanOrEqualRatingToArrayOfRatingValues,
-  convertRatingToRatingValue,
+  convertRatingToRatingValue
 } from './filter/utils/fieldRatingConvertors';
 export { filterSelectOptionsOfFieldMetadataItem } from './filter/utils/filterSelectOptionsOfFieldMetadataItem';
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
@@ -84,16 +85,16 @@ export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export {
-  relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
+  relationFilterValueSchemaObject
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
-  sanitizeURL,
   getLogoUrlFromDomainName,
+  sanitizeURL
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { fastDeepEqual } from './json/fast-deep-equal';
@@ -102,25 +103,26 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { resolveRichTextVariables } from './rich-text-variable-resolver';
 export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { capitalize } from './strings/capitalize';
 export { uncapitalize } from './strings/uncapitalize';
-export type {
-  TipTapMarkType,
-  TipTapNodeType,
-  LinkMarkAttributes,
-  TipTapMark,
-} from './tiptap/tiptap-marks';
 export {
   TIPTAP_MARK_TYPES,
-  TIPTAP_NODE_TYPES,
   TIPTAP_MARKS_RENDER_ORDER,
+  TIPTAP_NODE_TYPES
 } from './tiptap/tiptap-marks';
-export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export type {
+  LinkMarkAttributes,
+  TipTapMark,
+  TipTapMarkType,
+  TipTapNodeType
+} from './tiptap/tiptap-marks';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
