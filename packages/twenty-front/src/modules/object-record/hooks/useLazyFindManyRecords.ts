@@ -58,7 +58,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const [findManyRecords, { data, error, fetchMore, refetch }] =
+  const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
         filter,
@@ -145,68 +145,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     ],
   );
 
-  const refetchRecords = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        if (!hasReadPermission) {
-          return {
-            records: null,
-            totalCount: 0,
-          };
-        }
-
-        const result = await refetch();
-
-        if (isDefined(result?.error)) {
-          handleFindManyRecordsError(result.error);
-        }
-
-        const hasNextPage =
-          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
-          false;
-
-        const lastCursor =
-          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ??
-          '';
-
-        set(hasNextPageFamilyState(queryIdentifier), hasNextPage);
-        set(cursorFamilyState(queryIdentifier), lastCursor);
-
-        const records = getRecordsFromRecordConnection({
-          recordConnection: {
-            edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
-            pageInfo: result?.data?.[objectMetadataItem.namePlural]
-              ?.pageInfo ?? {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-              endCursor: '',
-            },
-          },
-        });
-
-        const totalCount =
-          result?.data?.[objectMetadataItem.namePlural]?.totalCount ?? 0;
-
-        return {
-          records,
-          totalCount,
-        };
-      },
-    [
-      hasReadPermission,
-      refetch,
-      objectMetadataItem.namePlural,
-      queryIdentifier,
-      handleFindManyRecordsError,
-    ],
-  );
-
   return {
     findManyRecordsLazy,
     fetchMoreRecordsLazy,
     queryIdentifier,
-    findManyRecordsQuery,
-    refetchRecords,
   };
 };

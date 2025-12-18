@@ -9,6 +9,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
+import { SubscriptionInput } from 'src/engine/subscriptions/dtos/subscription.input';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 @Injectable()
@@ -41,14 +42,21 @@ export class SubscriptionsService {
     }
   }
 
-  public async isQueryMatchingEvent(
-    query: string,
+  public async isSubscriptionMatchingEvent(
+    subscription: SubscriptionInput,
     event: OnDbEventDTO,
     workspaceId: string,
   ): Promise<boolean> {
-    const objectName = this.parseQueryObjectName(query);
+    const objectName = this.parseQueryObjectName(subscription.query);
 
     if (!objectName) {
+      return false;
+    }
+
+    if (
+      subscription.selectedEventActions &&
+      !subscription.selectedEventActions.includes(event.action)
+    ) {
       return false;
     }
 

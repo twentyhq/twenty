@@ -14,22 +14,15 @@ export const useRecordIndexTableFetchMore = (objectNameSingular: string) => {
     objectMetadataItem,
   });
 
-  const {
-    fetchMoreRecordsLazy,
-    queryIdentifier,
-    findManyRecordsLazy,
-    findManyRecordsQuery,
-    refetchRecords,
-  } = useLazyFindManyRecords({
-    ...params,
-    recordGqlFields,
-  });
+  const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
+    useLazyFindManyRecords({
+      ...params,
+      recordGqlFields,
+    });
 
   return {
     findManyRecordsLazy,
     fetchMoreRecordsLazy,
     queryIdentifier,
-    findManyRecordsQuery,
-    refetchRecords,
   };
 };

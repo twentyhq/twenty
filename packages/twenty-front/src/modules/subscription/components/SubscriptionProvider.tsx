@@ -1,12 +1,11 @@
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { SseClientContext } from '@/subscription/contexts/SseClientContext';
-import { ON_REFETCH_SIGNAL } from '@/subscription/graphql/subscriptions/onRefetchSignal';
+import { ON_SUBSCRIPTION_MATCH } from '@/subscription/graphql/subscriptions/onSubscriptionMatch';
+import { useSseClient } from '@/subscription/hooks/useSseClient.util';
 import { subscriptionRegistryState } from '@/subscription/states/subscriptionRegistryState';
-import { createClient } from 'graphql-sse';
 import { print } from 'graphql';
 import { type ReactNode, useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { isDefined } from 'twenty-shared/utils';
 
 type SubscriptionProviderProps = {
   children: ReactNode;
@@ -15,30 +14,16 @@ type SubscriptionProviderProps = {
 export const SubscriptionProvider = ({
   children,
 }: SubscriptionProviderProps) => {
-  const tokenPair = getTokenPair();
-  const registry = useRecoilValue(subscriptionRegistryState);
+  const subscriptionRegistry = useRecoilValue(subscriptionRegistryState);
 
-  const sseClient = useMemo(() => {
-    const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
-
-    if (!token) {
-      return null;
-    }
-
-    return createClient({
-      url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }, [tokenPair?.accessOrWorkspaceAgnosticToken?.token]);
+  const { sseClient } = useSseClient();
 
   const subscriptions = useMemo(() => {
-    return Array.from(registry.values()).map((entry) => ({
+    return Array.from(subscriptionRegistry.values()).map((entry) => ({
       id: entry.id,
       query: entry.query,
     }));
-  }, [registry]);
+  }, [subscriptionRegistry]);
 
   useEffect(() => {
     if (!sseClient || subscriptions.length === 0) {
@@ -47,38 +32,41 @@ export const SubscriptionProvider = ({
 
     const unsubscribe = sseClient.subscribe(
       {
-        query: print(ON_REFETCH_SIGNAL),
+        query: print(ON_SUBSCRIPTION_MATCH),
         variables: { subscriptions },
       },
       {
         next: (value) => {
           const data = value.data as {
-            onRefetchSignal: { subscriptionIds: string[] };
+            onSubscriptionMatch: { subscriptions: { id: string }[] };
           } | null;
 
-          if (!data?.onRefetchSignal?.subscriptionIds) {
+          if (!data?.onSubscriptionMatch?.subscriptions) {
             return;
           }
 
-          for (const subscriptionId of data.onRefetchSignal.subscriptionIds) {
-            const entry = registry.get(subscriptionId);
-            entry?.onRefetch();
+          for (const subscription of data.onSubscriptionMatch.subscriptions) {
+            const entry = subscriptionRegistry.get(subscription.id);
+
+            if (!isDefined(entry)) {
+              continue;
+            }
+
+            entry.onRefetch();
           }
         },
         error: (error) => {
           // eslint-disable-next-line no-console
           console.error('Subscription error:', error);
         },
-        complete: () => {
-          // Connection closed
-        },
+        complete: () => {},
       },
     );
 
     return () => {
       unsubscribe();
     };
-  }, [sseClient, subscriptions, registry]);
+  }, [sseClient, subscriptions, subscriptionRegistry]);
 
   return (
     <SseClientContext.Provider value={sseClient}>
@@ -86,4 +74,3 @@ export const SubscriptionProvider = ({
     </SseClientContext.Provider>
   );
 };
-
