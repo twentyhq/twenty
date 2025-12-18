@@ -1,8 +1,8 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 describe('Page layout with tabs update should fail', () => {
   it('when updating a non-existent page layout', async () => {
@@ -29,7 +29,7 @@ describe('Page layout with tabs update should fail', () => {
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
                 gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-                configuration: null,
+                configuration: { configurationType: 'IFRAME' },
               },
             ],
           },

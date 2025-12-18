@@ -47,7 +47,7 @@ const aggregateChartConfigSchema = z.object({
 
 // Graph configuration schema for BAR charts
 const barChartConfigSchema = z.object({
-  graphType: z.enum([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR]),
+  graphType: z.literal(GraphType.BAR_CHART),
   aggregateFieldMetadataId: z
     .string()
     .uuid()

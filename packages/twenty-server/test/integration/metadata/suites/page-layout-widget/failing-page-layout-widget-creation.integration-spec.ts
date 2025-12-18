@@ -7,6 +7,7 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 describe('Page layout widget creation should fail', () => {
   let testPageLayoutId: string;
@@ -65,6 +66,10 @@ describe('Page layout widget creation should fail', () => {
       input: {
         title: 'Widget With Non-Existent Tab',
         pageLayoutTabId: faker.string.uuid(),
+        type: WidgetType.IFRAME,
+        configuration: {
+          configurationType: 'IFRAME',
+        },
         gridPosition: {
           row: 0,
           column: 0,
@@ -83,6 +88,10 @@ describe('Page layout widget creation should fail', () => {
       input: {
         title: 'Widget With Invalid Grid Position',
         pageLayoutTabId: testPageLayoutTabId,
+        type: WidgetType.IFRAME,
+        configuration: {
+          configurationType: 'IFRAME',
+        },
         gridPosition: {
           row: -1,
           column: 0,

@@ -99,6 +99,10 @@ describe('Page layout widget update should succeed', () => {
       input: {
         title: 'Original Widget Title',
         pageLayoutTabId: testPageLayoutTabId,
+        type: WidgetType.IFRAME,
+        configuration: {
+          configurationType: 'IFRAME',
+        },
         gridPosition: {
           row: 0,
           column: 0,

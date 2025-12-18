@@ -12,6 +12,8 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+
 type TestContext = {
   title: string;
   operation: 'soft-delete-restore' | 'hard-delete';
@@ -76,6 +78,10 @@ describe('Page layout widget deletion should succeed', () => {
         input: {
           title,
           pageLayoutTabId: testPageLayoutTabId,
+          type: WidgetType.IFRAME,
+          configuration: {
+            configurationType: 'IFRAME',
+          },
           gridPosition: {
             row: 0,
             column: 0,
