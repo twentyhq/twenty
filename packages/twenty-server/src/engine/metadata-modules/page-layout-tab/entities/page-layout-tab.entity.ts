@@ -11,7 +11,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
