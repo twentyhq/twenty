@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { parse } from 'path';
 
-import { isDefined } from 'twenty-shared/utils';
-import { HTTPMethod, Sources } from 'twenty-shared/types';
 import {
   ApplicationManifest,
   FieldManifest,
@@ -12,6 +10,8 @@ import {
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'twenty-shared/application';
+import { HTTPMethod, Sources } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -29,9 +29,14 @@ import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-e
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
@@ -39,11 +44,6 @@ import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverl
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -1172,20 +1172,22 @@ export class ApplicationSyncService {
     }
 
     const flatObjectMetadataMapsByApplicationId =
-      getFlatEntitiesByApplicationId(
-        existingFlatObjectMetadataMaps,
-        application.id,
-      );
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        applicationId: application.id,
+      });
 
-    const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
-      existingFlatIndexMetadataMaps,
-      application.id,
-    );
+    const flatIndexMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatIndexMetadataMaps,
+        applicationId: application.id,
+      });
 
-    const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
-      existingFlatFieldMetadataMaps,
-      application.id,
-    );
+    const flatFieldMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatFieldMetadataMaps,
+        applicationId: application.id,
+      });
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {

@@ -9,12 +9,14 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 
+export type FromToAllFlatEntityMaps = {
+  [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
+};
+
 export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationBuilderOptions;
-  fromToAllFlatEntityMaps: {
-    [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
-  };
+  fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
   dependencyAllFlatEntityMaps?: Partial<AllFlatEntityMaps>;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
 };

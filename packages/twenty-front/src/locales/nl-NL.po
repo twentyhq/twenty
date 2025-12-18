@@ -75,7 +75,6 @@ msgid ". The change will be applied the {beautifiedRenewDate}."
 msgstr ". De wijziging zal worden toegepast op {beautifiedRenewDate}."
 
 #. js-lingui-id: 4tCM3o
-#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 msgid "· {objectFilterDropdownSearchInput}"
 msgstr "· {objectFilterDropdownSearchInput}"
@@ -156,7 +155,7 @@ msgid "{0, plural, one {You do not have permission to access the {fieldsList} fi
 msgstr "{0, plural, one {U heeft geen toestemming om toegang te krijgen tot het {fieldsList} veld} other {U heeft geen toestemming om toegang te krijgen tot de {fieldsList} velden}}"
 
 #. js-lingui-id: qdQhzv
-#: src/modules/views/components/AdvancedFilterChip.tsx
+#: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} geavanceerde regel} other {{advancedFilterCount} geavanceerde regels}}"
 
@@ -3562,6 +3561,11 @@ msgstr "Standaardland"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Standaard landcode"
+
+#. js-lingui-id: 4HDpKr
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
+msgid "Default palette"
+msgstr ""
 
 #. js-lingui-id: CGhRMh
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -7775,6 +7779,11 @@ msgstr "Geen evenementen"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Er zijn nog geen evenementen gepland met deze {objectName}."
 
+#. js-lingui-id: h+tLhU
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "No field configured"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 msgid "No fields available"
@@ -7933,6 +7942,12 @@ msgstr "Geen gegevens gevonden"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No records matching the filter criteria were found."
 msgstr "Er zijn geen records gevonden die aan de filtercriteria voldoen."
+
+#. js-lingui-id: QmAM1h
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelation.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelation.tsx
+msgid "No related records"
+msgstr ""
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
@@ -8522,11 +8537,6 @@ msgstr "widget pagina-indeling"
 msgid "Page Not Found | Twenty"
 msgstr "Pagina niet gevonden | Twenty"
 
-#. js-lingui-id: ZyMBtl
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
-msgid "Palette"
-msgstr "Palet"
-
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
@@ -9112,7 +9122,7 @@ msgstr "Record"
 #. js-lingui-id: aGGOPJ
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Record (ID)"
-msgstr "Record (ID)"
+msgstr ""
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -9646,17 +9656,11 @@ msgid "Score"
 msgstr ""
 
 #. js-lingui-id: A1taO8
-#: src/modules/views/hooks/useVectorSearchFilterActions.ts
-#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
-#: src/modules/views/components/ViewBarFilterDropdownFilterInputMenuHeader.tsx
-#: src/modules/views/components/EditableFilterChipDropdownMenuHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInputHeader.tsx
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -9966,6 +9970,11 @@ msgstr "Selecteer een datum"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Selecteer een veld uit een vorige stap"
+
+#. js-lingui-id: xe2f5Y
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "Select a field to display in this widget"
+msgstr ""
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx

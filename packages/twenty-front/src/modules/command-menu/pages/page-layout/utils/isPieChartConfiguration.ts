@@ -1,3 +1,4 @@
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import {
   type PieChartConfiguration,
@@ -5,7 +6,12 @@ import {
 } from '~/generated/graphql';
 
 export const isPieChartConfiguration = (
-  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
+  configuration:
+    | WidgetConfiguration
+    | FieldConfiguration
+    | FieldsConfiguration
+    | null
+    | undefined,
 ): configuration is PieChartConfiguration => {
   return configuration?.__typename === 'PieChartConfiguration';
 };
