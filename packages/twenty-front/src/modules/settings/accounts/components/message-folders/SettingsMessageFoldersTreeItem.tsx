@@ -1,23 +1,24 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon';
-
+import { SettingsMessageFoldersBreadcrumb } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersBreadcrumb';
 import { type MessageFolderTreeNode } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { countNestedFolders } from '@/settings/accounts/components/message-folders/utils/countNestedFolders';
 import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName';
+import { isFolderTreePartiallySelected } from '@/settings/accounts/components/message-folders/utils/isFolderTreePartiallySelected';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 
 type SettingsMessageFoldersTreeItemProps = {
-  folderTreeNode: MessageFolderTreeNode;
-  onToggleFolder: (folder: MessageFolder) => void;
   depth?: number;
+  folderTreeNode: MessageFolderTreeNode;
   isLast?: boolean;
-  ancestorIsLastFlags?: boolean[];
+  onToggleFolder: (folder: MessageFolder) => void;
+  parentsIsLastList?: boolean[];
 };
 
 const BREADCRUMB_WIDTH = 24;
-const ICON_CENTER_OFFSET = 8;
 
 const StyledTreeItem = styled.li`
   position: relative;
@@ -30,81 +31,18 @@ const StyledNestedList = styled.ul`
 `;
 
 const StyledTreeItemContent = styled.div<{ depth: number }>`
-  display: flex;
   align-items: center;
-  height: 28px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
+  display: flex;
+  height: 28px;
+  padding-left: ${({ depth }) => depth * BREADCRUMB_WIDTH}px;
   transition: background-color
     ${({ theme }) => theme.animation.duration.instant}s;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding-left: ${({ depth }) => depth * BREADCRUMB_WIDTH}px;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
   }
-`;
-
-const StyledBreadcrumbOverlay = styled.div<{ depth: number }>`
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 28px;
-  width: ${({ depth }) => depth * BREADCRUMB_WIDTH}px;
-  pointer-events: none;
-`;
-
-const StyledAncestorLine = styled.div<{
-  showLine: boolean;
-  ancestorIndex: number;
-}>`
-  background: ${({ theme, showLine }) =>
-    showLine ? theme.border.color.strong : 'transparent'};
-  height: 28px;
-  left: ${({ ancestorIndex }) =>
-    ancestorIndex * BREADCRUMB_WIDTH + ICON_CENTER_OFFSET}px;
-  position: absolute;
-  top: 0;
-  width: 1px;
-`;
-
-const StyledBreadcrumbConnector = styled.div<{
-  depth: number;
-  isLast: boolean;
-}>`
-  position: absolute;
-  left: ${({ depth }) => (depth - 1) * BREADCRUMB_WIDTH + ICON_CENTER_OFFSET}px;
-  top: 0;
-  height: 28px;
-  width: ${BREADCRUMB_WIDTH - ICON_CENTER_OFFSET}px;
-`;
-
-const StyledVerticalLineTop = styled.div`
-  background: ${({ theme }) => theme.border.color.strong};
-  height: 12px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 1px;
-`;
-
-const StyledRoundedCorner = styled.div`
-  position: absolute;
-  left: 0;
-  top: 6px;
-  height: 8px;
-  width: 8px;
-  border-left: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-bottom-left-radius: 4px;
-`;
-
-const StyledVerticalLineBottom = styled.div`
-  background: ${({ theme }) => theme.border.color.strong};
-  height: 16px;
-  left: 0;
-  position: absolute;
-  top: 12px;
-  width: 1px;
 `;
 
 const StyledFolderContent = styled.div`
@@ -116,10 +54,10 @@ const StyledFolderContent = styled.div`
 `;
 
 const StyledFolderInfo = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
   flex: 1;
+  gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
 `;
 
@@ -147,16 +85,16 @@ const StyledChildCount = styled.span`
 `;
 
 const StyledExpandButton = styled.button`
+  align-items: center;
   background: none;
   border: none;
-  padding: 0;
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
   height: ${({ theme }) => theme.spacing(4)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  justify-content: center;
+  padding: 0;
+  width: ${({ theme }) => theme.spacing(4)};
 
   &:hover {
     color: ${({ theme }) => theme.font.color.primary};
@@ -168,74 +106,19 @@ const StyledCheckboxWrapper = styled.div`
   display: flex;
 `;
 
-const countTotalChildren = (node: MessageFolderTreeNode): number => {
-  let count = node.children.length;
-  for (const child of node.children) {
-    count += countTotalChildren(child);
-  }
-  return count;
-};
-
-const getIndeterminateState = (node: MessageFolderTreeNode): boolean => {
-  if (!node.hasChildren) return false;
-
-  const allSynced = checkAllSynced(node);
-  const noneSynced = checkNoneSynced(node);
-
-  return !allSynced && !noneSynced;
-};
-
-const checkAllSynced = (node: MessageFolderTreeNode): boolean => {
-  if (!node.folder.isSynced) return false;
-  return node.children.every((child) => checkAllSynced(child));
-};
-
-const checkNoneSynced = (node: MessageFolderTreeNode): boolean => {
-  if (node.folder.isSynced) return false;
-  return node.children.every((child) => checkNoneSynced(child));
-};
-
-type FolderBreadcrumbProps = {
-  depth: number;
-  isLast: boolean;
-  ancestorIsLastFlags: boolean[];
-};
-
-const FolderBreadcrumb = ({
-  depth,
-  isLast,
-  ancestorIsLastFlags,
-}: FolderBreadcrumbProps) => {
-  return (
-    <StyledBreadcrumbOverlay depth={depth}>
-      {ancestorIsLastFlags.map((ancestorIsLast, index) => (
-        <StyledAncestorLine
-          key={index}
-          showLine={!ancestorIsLast}
-          ancestorIndex={index}
-        />
-      ))}
-      <StyledBreadcrumbConnector depth={depth} isLast={isLast}>
-        <StyledVerticalLineTop />
-        <StyledRoundedCorner />
-        {!isLast && <StyledVerticalLineBottom />}
-      </StyledBreadcrumbConnector>
-    </StyledBreadcrumbOverlay>
-  );
-};
-
 export const SettingsMessageFoldersTreeItem = ({
-  folderTreeNode,
-  onToggleFolder,
   depth = 0,
+  folderTreeNode,
   isLast = false,
-  ancestorIsLastFlags = [],
+  onToggleFolder,
+  parentsIsLastList = [],
 }: SettingsMessageFoldersTreeItemProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { folder, children, hasChildren } = folderTreeNode;
 
-  const childCount = hasChildren ? countTotalChildren(folderTreeNode) : 0;
-  const isIndeterminate = getIndeterminateState(folderTreeNode);
+  const { children, folder, hasChildren } = folderTreeNode;
+  const childCount = hasChildren ? countNestedFolders(folderTreeNode) : 0;
+  const isIndeterminate =
+    hasChildren && isFolderTreePartiallySelected(folderTreeNode);
 
   const handleExpandToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -252,17 +135,17 @@ export const SettingsMessageFoldersTreeItem = ({
     e.stopPropagation();
   };
 
-  const newAncestorFlags =
-    depth > 0 ? [...ancestorIsLastFlags, isLast] : ancestorIsLastFlags;
+  const childParentsIsLastList =
+    depth > 0 ? [...parentsIsLastList, isLast] : parentsIsLastList;
 
   return (
     <StyledTreeItem>
       <StyledTreeItemContent depth={depth} onClick={handleRowClick}>
         {depth > 0 && (
-          <FolderBreadcrumb
+          <SettingsMessageFoldersBreadcrumb
             depth={depth}
             isLast={isLast}
-            ancestorIsLastFlags={ancestorIsLastFlags}
+            parentsIsLastList={parentsIsLastList}
           />
         )}
 
@@ -277,8 +160,8 @@ export const SettingsMessageFoldersTreeItem = ({
               <>
                 <StyledChildCount>{childCount}</StyledChildCount>
                 <StyledExpandButton
-                  onClick={handleExpandToggle}
                   aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
+                  onClick={handleExpandToggle}
                 >
                   {isExpanded ? (
                     <IconChevronUp size={16} />
@@ -306,11 +189,11 @@ export const SettingsMessageFoldersTreeItem = ({
           {children.map((child, index) => (
             <SettingsMessageFoldersTreeItem
               key={child.folder.id}
-              folderTreeNode={child}
-              onToggleFolder={onToggleFolder}
               depth={depth + 1}
+              folderTreeNode={child}
               isLast={index === children.length - 1}
-              ancestorIsLastFlags={newAncestorFlags}
+              onToggleFolder={onToggleFolder}
+              parentsIsLastList={childParentsIsLastList}
             />
           ))}
         </StyledNestedList>
