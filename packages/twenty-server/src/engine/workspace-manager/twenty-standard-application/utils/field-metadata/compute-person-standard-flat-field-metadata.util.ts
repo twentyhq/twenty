@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -11,6 +12,8 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export const buildPersonStandardFlatFieldMetadatas = ({
   now,
@@ -19,10 +22,10 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'person'>, 'context'>): Record<
-  AllStandardObjectFieldName<'person'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'person', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'person'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -56,7 +59,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -77,7 +80,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -97,7 +100,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -116,22 +119,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       label: 'Name',
       description: "Contact's name",
       icon: 'IconUser',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  email: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'email',
-      type: FieldMetadataType.TEXT,
-      label: 'Email',
-      description: "Contact's Email (deprecated)",
-      icon: 'IconMail',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -200,22 +187,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       label: 'Job Title',
       description: "Contact's job title",
       icon: 'IconBriefcase',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  phone: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'phone',
-      type: FieldMetadataType.TEXT,
-      label: 'Phone',
-      description: "Contact's phone number (deprecated)",
-      icon: 'IconPhone',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -304,6 +275,11 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -531,6 +507,12 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_PERSON,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

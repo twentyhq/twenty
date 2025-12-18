@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -7,6 +11,8 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_NOTES } from 'src/modules/note/standard-objects/note.workspace-entity';
 
 export const buildNoteStandardFlatFieldMetadatas = ({
   now,
@@ -15,7 +21,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'note'>, 'context'>): Record<
+}: Omit<CreateStandardFieldArgs<'note', FieldMetadataType>, 'context'>): Record<
   AllStandardObjectFieldName<'note'>,
   FlatFieldMetadata
 > => ({
@@ -52,7 +58,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -73,7 +79,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -93,7 +99,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -137,22 +143,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  body: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'body',
-      type: FieldMetadataType.TEXT,
-      label: 'Body (deprecated)',
-      description: 'Note body (deprecated - use bodyV2)',
-      icon: 'IconFilePencil',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   bodyV2: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -180,6 +170,11 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -197,6 +192,12 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_NOTES,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

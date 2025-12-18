@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -20,7 +21,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'calendarChannelEventAssociation'>,
+  CreateStandardFieldArgs<'calendarChannelEventAssociation', FieldMetadataType>,
   'context'
 >): Record<
   AllStandardObjectFieldName<'calendarChannelEventAssociation'>,
@@ -57,7 +58,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -76,7 +77,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -94,7 +95,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
