@@ -41,13 +41,13 @@ export class PageLayoutWidgetDTO {
   type: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  objectMetadataId: string | null;
+  objectMetadataId?: string;
 
   @Field(() => GridPositionDTO, { nullable: false })
   gridPosition: GridPositionDTO;
 
-  @Field(() => WidgetConfiguration, { nullable: true })
-  configuration: AllWidgetConfigurationTypeValidator | null;
+  @Field(() => WidgetConfiguration, { nullable: false })
+  configuration: AllWidgetConfigurationTypeValidator;
 
   @Field()
   createdAt: Date;
@@ -56,5 +56,5 @@ export class PageLayoutWidgetDTO {
   updatedAt: Date;
 
   @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+  deletedAt?: Date;
 }
