@@ -164,7 +164,10 @@ export const SettingsMessageFoldersTreeItem = ({
 
         <StyledFolderContent>
           <StyledFolderInfo>
-            <SettingsAccountsMessageFolderIcon folder={folder} />
+            <SettingsAccountsMessageFolderIcon
+              folder={folder}
+              isChildFolder={depth > 0}
+            />
             <StyledFolderName>{formatFolderName(folder.name)}</StyledFolderName>
           </StyledFolderInfo>
 
