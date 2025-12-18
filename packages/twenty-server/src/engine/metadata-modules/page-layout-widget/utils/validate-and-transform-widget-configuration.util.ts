@@ -6,7 +6,7 @@ import { transformRichTextV2Value } from 'src/engine/core-modules/record-transfo
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type.type';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { AggregateChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/aggregate-chart-configuration.validator';
 import { BarChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/bar-chart-configuration.validator';
 import { GaugeChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/gauge-chart-configuration.validator';
@@ -33,7 +33,7 @@ const validateGraphConfiguration = ({
 }: {
   configuration: Record<string, unknown>;
   isDashboardV2Enabled: boolean;
-}): AllWidgetConfigurationType | null => {
+}): AllPageLayoutWidgetConfiguration | null => {
   const configurationType = configuration.configurationType as GraphType;
 
   if (
@@ -156,7 +156,7 @@ const validateGraphConfiguration = ({
 
 const validateIframeConfiguration = (
   configuration: unknown,
-): AllWidgetConfigurationType | null => {
+): AllPageLayoutWidgetConfiguration | null => {
   const instance = plainToInstance(IframeConfigurationValidator, configuration);
 
   const errors = validateSync(instance, {
@@ -173,7 +173,7 @@ const validateIframeConfiguration = (
 
 const validateStandaloneRichTextConfiguration = async (
   configuration: unknown,
-): Promise<AllWidgetConfigurationType | null> => {
+): Promise<AllPageLayoutWidgetConfiguration | null> => {
   const instance = plainToInstance(
     StandaloneRichTextConfigurationValidator,
     configuration,
@@ -203,7 +203,7 @@ export const validateAndTransformWidgetConfiguration = async ({
   type: WidgetType;
   configuration: unknown;
   isDashboardV2Enabled: boolean;
-}): Promise<AllWidgetConfigurationType | null> => {
+}): Promise<AllPageLayoutWidgetConfiguration | null> => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }

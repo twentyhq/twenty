@@ -19,7 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { AllWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type.type';
+import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
@@ -79,7 +79,7 @@ export class PageLayoutWidgetEntity
   gridPosition: GridPosition;
 
   @Column({ type: 'jsonb', nullable: false })
-  configuration: AllWidgetConfigurationType;
+  configuration: AllPageLayoutWidgetConfiguration;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
