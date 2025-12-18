@@ -1,4 +1,4 @@
-import { FlatPageLayoutWidget } from "src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type";
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 
 export type SeederFlatPageLayoutWidget = Pick<
   FlatPageLayoutWidget,
