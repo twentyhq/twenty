@@ -25,6 +25,7 @@ import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('LineChartConfiguration')
@@ -34,7 +35,7 @@ export class LineChartConfigurationValidator
   @Field(() => GraphType)
   @IsIn([GraphType.LINE_CHART])
   @IsNotEmpty()
-  configurationType: GraphType.LINE_CHART;
+  configurationType: WidgetConfigurationType.LINE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

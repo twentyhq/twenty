@@ -26,6 +26,7 @@ import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widge
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('BarChartConfiguration')
@@ -35,7 +36,7 @@ export class BarChartConfigurationValidator
   @Field(() => GraphType)
   @IsIn([GraphType.BAR_CHART])
   @IsNotEmpty()
-  configurationType: GraphType.BAR_CHART;
+  configurationType: WidgetConfigurationType.BAR_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

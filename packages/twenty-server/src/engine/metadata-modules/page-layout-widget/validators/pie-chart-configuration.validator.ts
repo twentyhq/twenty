@@ -23,6 +23,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('PieChartConfiguration')
@@ -32,7 +33,7 @@ export class PieChartConfigurationValidator
   @Field(() => GraphType)
   @IsIn([GraphType.PIE_CHART])
   @IsNotEmpty()
-  configurationType: GraphType.PIE_CHART;
+  configurationType: WidgetConfigurationType.PIE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

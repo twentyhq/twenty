@@ -22,9 +22,10 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RatioAggregateConfigValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/ratio-aggregate-config.validator';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
+import { RatioAggregateConfigValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/ratio-aggregate-config.validator';
 
 @ObjectType('AggregateChartConfiguration')
 export class AggregateChartConfigurationValidator
@@ -33,7 +34,7 @@ export class AggregateChartConfigurationValidator
   @Field(() => GraphType)
   @IsIn([GraphType.AGGREGATE_CHART])
   @IsNotEmpty()
-  configurationType: GraphType.AGGREGATE_CHART;
+  configurationType: WidgetConfigurationType.AGGREGATE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
