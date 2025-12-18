@@ -1379,6 +1379,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable or disable workspace creation through v2 workspaceMigration',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_V2_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
