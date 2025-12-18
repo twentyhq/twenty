@@ -2,7 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import { IsIn, IsNotEmpty, ValidateNested } from 'class-validator';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
@@ -12,7 +11,7 @@ import { RichTextV2BodyValidator } from 'src/engine/metadata-modules/page-layout
 export class StandaloneRichTextConfigurationValidator
   implements PageLayoutWidgetConfigurationBase
 {
-  @Field(() => GraphType)
+  @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.STANDALONE_RICH_TEXT])
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT;

@@ -149,7 +149,7 @@ export type AggregateChartConfiguration = {
   __typename?: 'AggregateChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
@@ -351,7 +351,7 @@ export type BarChartConfiguration = {
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   displayLegend?: Maybe<Scalars['Boolean']>;
@@ -1473,7 +1473,7 @@ export type GaugeChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
@@ -1516,15 +1516,6 @@ export enum GraphOrderBy {
   VALUE_DESC = 'VALUE_DESC'
 }
 
-/** Type of graph widget */
-export enum GraphType {
-  AGGREGATE_CHART = 'AGGREGATE_CHART',
-  BAR_CHART = 'BAR_CHART',
-  GAUGE_CHART = 'GAUGE_CHART',
-  LINE_CHART = 'LINE_CHART',
-  PIE_CHART = 'PIE_CHART'
-}
-
 export type GridPosition = {
   __typename?: 'GridPosition';
   column: Scalars['Float'];
@@ -1563,7 +1554,7 @@ export enum IdentityProviderType {
 
 export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   url?: Maybe<Scalars['String']>;
 };
 
@@ -1717,7 +1708,7 @@ export type LineChartConfiguration = {
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   displayLegend?: Maybe<Scalars['Boolean']>;
@@ -3180,7 +3171,7 @@ export type PieChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -4037,7 +4028,7 @@ export type SignedFile = {
 export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextV2Body;
-  configurationType: GraphType;
+  configurationType: WidgetConfigurationType;
 };
 
 export type StandardOverrides = {
@@ -4774,6 +4765,16 @@ export type Webhook = {
 };
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
+
+export enum WidgetConfigurationType {
+  AGGREGATE_CHART = 'AGGREGATE_CHART',
+  BAR_CHART = 'BAR_CHART',
+  GAUGE_CHART = 'GAUGE_CHART',
+  IFRAME = 'IFRAME',
+  LINE_CHART = 'LINE_CHART',
+  PIE_CHART = 'PIE_CHART',
+  STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT'
+}
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',

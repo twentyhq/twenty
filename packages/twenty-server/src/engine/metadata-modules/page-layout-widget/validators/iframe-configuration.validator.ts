@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
@@ -10,7 +9,7 @@ import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/p
 export class IframeConfigurationValidator
   implements PageLayoutWidgetConfigurationBase
 {
-  @Field(() => GraphType)
+  @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.IFRAME])
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.IFRAME;

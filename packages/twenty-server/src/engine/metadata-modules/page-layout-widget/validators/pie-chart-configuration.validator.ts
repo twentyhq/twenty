@@ -22,7 +22,6 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
@@ -30,8 +29,8 @@ import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/p
 export class PieChartConfigurationValidator
   implements PageLayoutWidgetConfigurationBase
 {
-  @Field(() => GraphType)
-  @IsIn([GraphType.PIE_CHART])
+  @Field(() => WidgetConfigurationType)
+  @IsIn([WidgetConfigurationType.PIE_CHART])
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.PIE_CHART;
 
