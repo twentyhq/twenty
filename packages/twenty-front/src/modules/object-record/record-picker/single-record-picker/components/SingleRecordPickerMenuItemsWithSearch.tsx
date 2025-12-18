@@ -17,6 +17,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 
 export type SingleRecordPickerMenuItemsWithSearchProps = {
@@ -88,7 +89,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
                 <CreateNewButton
                   onClick={handleCreateNew}
                   LeftIcon={IconPlus}
-                  text="Add New"
+                  text={t`Add New`}
                 />
               </DropdownMenuItemsContainer>
               <DropdownMenuSeparator />
@@ -137,7 +138,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
                 <CreateNewButton
                   onClick={handleCreateNew}
                   LeftIcon={IconPlus}
-                  text="Add New"
+                  text={t`Add New`}
                 />
               </DropdownMenuItemsContainer>
             </>

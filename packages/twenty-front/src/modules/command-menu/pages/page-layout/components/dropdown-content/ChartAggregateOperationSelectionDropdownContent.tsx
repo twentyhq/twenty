@@ -3,6 +3,9 @@ import { ChartRatioAggregateOperationSelectableListItem } from '@/command-menu/p
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isAggregateChartConfiguration } from '@/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
@@ -22,7 +25,6 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { GraphType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -38,18 +40,20 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
+  const configuration = widgetInEditMode?.configuration;
+
+  const isAggregateChart = isAggregateChartConfiguration(configuration);
+
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !==
-      'AggregateChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
+    !isBarOrLineChartConfiguration(configuration) &&
+    !isAggregateChart &&
+    !isPieChartConfiguration(configuration)
   ) {
     throw new Error('Invalid configuration type');
   }
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const selectedField = sourceObjectMetadataItem?.fields.find(
@@ -59,13 +63,6 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
-
-  const isAggregateChart =
-    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE;
-
-  const isAggregateOrGaugeChart =
-    isAggregateChart ||
-    widgetInEditMode.configuration.graphType === GraphType.GAUGE;
 
   const availableAggregateOperations: AggregateChartOperation[] = selectedField
     ? isAggregateChart
@@ -80,7 +77,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const filteredAggregateOperations = availableAggregateOperations.filter(
     (operation) => {
       return (
-        isAggregateOrGaugeChart ||
+        isAggregateChart ||
         (operation !== DateAggregateOperations.EARLIEST &&
           operation !== DateAggregateOperations.LATEST)
       );

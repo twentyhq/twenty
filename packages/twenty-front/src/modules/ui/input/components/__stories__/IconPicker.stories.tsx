@@ -2,6 +2,7 @@ import { useArgs } from '@storybook/preview-api';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/utils/sleep';
 
@@ -27,7 +28,7 @@ const Render = (args: RenderProps) => {
 const meta: Meta<typeof IconPicker> = {
   title: 'UI/Input/IconPicker/IconPicker',
   component: IconPicker,
-  decorators: [IconsProviderDecorator, ComponentDecorator],
+  decorators: [I18nFrontDecorator, IconsProviderDecorator, ComponentDecorator],
   render: Render,
 };
 

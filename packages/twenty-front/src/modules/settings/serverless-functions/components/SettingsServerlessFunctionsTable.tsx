@@ -35,7 +35,7 @@ export const SettingsServerlessFunctionsTable = ({
     <Table>
       <StyledTableRow>
         <TableHeader>{t`Name`}</TableHeader>
-        <TableHeader>Runtime</TableHeader>
+        <TableHeader>{t`Runtime`}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       <StyledTableBody>

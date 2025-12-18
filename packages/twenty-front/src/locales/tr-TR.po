@@ -80,6 +80,22 @@ msgstr ". Değişiklik {beautifiedRenewDate} tarihinde uygulanacak."
 msgid "· {objectFilterDropdownSearchInput}"
 msgstr "· {objectFilterDropdownSearchInput}"
 
+#. js-lingui-id: L4H5SW
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "(no icon selected)"
+msgstr "(simge Seçilmedi)"
+
+#. js-lingui-id: 6Ux0ik
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem.tsx
+msgid "(No name)"
+msgstr "(Ad yok)"
+
+#. js-lingui-id: p35p2M
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "(selected: {selectedIconKey})"
+msgstr "(seçili: {selectedIconKey})"
+
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -144,10 +160,25 @@ msgstr "{0, plural, one {{fieldsList} alanına erişim izniniz yok} other {{fiel
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} gelişmiş kural} other {{advancedFilterCount} gelişmiş kurallar}}"
 
+#. js-lingui-id: WGnqk6
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "{agentDisplayName} role ({agentIdPrefix})"
+msgstr "{agentDisplayName} rolü ({agentIdPrefix})"
+
+#. js-lingui-id: lhr2m3
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "{agentLabel} Agent Role"
+msgstr "{agentLabel} Ajan Rolü"
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel}, {fieldLabel}'in"
+
+#. js-lingui-id: LTvJAf
+#: src/pages/auth/Authorize.tsx
+msgid "{appName} wants to access your account"
+msgstr "{appName} hesabınıza erişmek istiyor"
 
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
@@ -163,6 +194,16 @@ msgstr "{contextStoreNumberOfSelectedRecords} seçildi"
 msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr "{count, plural, one {Örn. {0}{1} için {count} ondalık} other {Örn. {2}{3} için {count} ondalıklar}}"
 
+#. js-lingui-id: aTq2js
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "{credits} Credits - ${price}"
+msgstr "{credits} kredi - ${price}"
+
+#. js-lingui-id: jsKQu8
+#: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
+msgid "{currentRank} of {totalCount} in {objectLabelPlural}"
+msgstr "{objectLabelPlural} içinde {totalCount} üzerinden {currentRank}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -174,10 +215,30 @@ msgstr "{days, plural, one {{days} gün} other {{days} günler}}"
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, one {{deletedCount} iş başarıyla silindi} other {{deletedCount} iş başarıyla silindi}}"
 
+#. js-lingui-id: 2Xxop4
+#: src/modules/billing/components/TrialCard.tsx
+msgid "{duration} days trial"
+msgstr "{duration} günlük deneme"
+
+#. js-lingui-id: JBSWmp
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "{eventAction} a related {eventObject}"
+msgstr "İlgili bir {eventObject} {eventAction}"
+
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} dosya yükleme başarısız oldu"
+
+#. js-lingui-id: bPZh8X
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
+msgid "{fieldCount} fields on {recordLabel}"
+msgstr "{recordLabel} üzerinde {fieldCount} alan"
+
+#. js-lingui-id: /9/Y5z
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "{fileName} upload rejected"
+msgstr "{fileName} yüklemesi reddedildi"
 
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -199,10 +260,25 @@ msgstr "{grantedBy, plural, one {{grantedBy} nesne için verildi} other {{grante
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} Grafiği"
 
+#. js-lingui-id: LB2Hw6
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "{headersCount} headers received"
+msgstr "{headersCount} başlık alındı"
+
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
 msgstr "{hours, plural, one {{hours} saat} other {{hours} saatler}}"
+
+#. js-lingui-id: jz0Rnl
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "{inputCredits} credits"
+msgstr "{inputCredits} kredi"
+
+#. js-lingui-id: Z4Vsx1
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx
+msgid "{invitationCount} invitations sent"
+msgstr "{invitationCount} davetiye gönderildi"
 
 #. js-lingui-id: j9A2IB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
@@ -224,10 +300,25 @@ msgstr "{jobCount, plural, one {Bunu sıradan kalıcı olarak kaldıracak. Bu i�
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Seçilen iş yeniden denenecek. Başından başlayarak yeniden yürütülecek.} other {Seçilen işler yeniden denenecek. Başından başlayarak yeniden yürütülecek.}}"
 
+#. js-lingui-id: Koe99p
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "{morphRelationCount} Objects"
+msgstr "{morphRelationCount} Nesne"
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr "{num, selectordinal, one {{num}'inci} other {{num}'inci}}"
+
+#. js-lingui-id: 7kYa/u
+#: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
+msgid "{objectLabelPlural} ({totalCount})"
+msgstr "{objectLabelPlural} ({totalCount})"
+
+#. js-lingui-id: h4Zpx/
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "{outputCredits} credits"
+msgstr "{outputCredits} kredi"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -238,6 +329,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "{permissionLabel} Permission removed"
 msgstr ""
+
+#. js-lingui-id: HpUf/k
+#: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
+msgid "{positionLabel} record holds priority"
+msgstr "{positionLabel} kaydı önceliklidir"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -275,10 +371,31 @@ msgstr "{selectedCount, plural, one {{selectedCount} İşi Sil} other {{selected
 msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {selectedCount} Jobs}}"
 msgstr "{selectedCount, plural, one {{selectedCount} İşi Yeniden Dene} other {{selectedCount} İşlerini Yeniden Dene}}"
 
+#. js-lingui-id: e5lBpY
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect.tsx
+msgid "{selectedCount} source types"
+msgstr "{selectedCount} kaynak türü"
+
+#. js-lingui-id: hvL8np
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+msgid "{serviceLabel} service is unreachable"
+msgstr "{serviceLabel} hizmetine ulaşılamıyor"
+
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. Takvim"
+
+#. js-lingui-id: A9Y2Sy
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "{totalCost} credits"
+msgstr "{totalCost} kredi"
+
+#. js-lingui-id: ITVweg
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+msgid "{visibleFieldsCount} shown"
+msgstr "{visibleFieldsCount} gösteriliyor"
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -296,6 +413,19 @@ msgstr "{workspaceMemberName} aşağıdaki rolden atılacak:"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
+
+#. js-lingui-id: Cx0xl3
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "0"
+msgstr "0"
+
+#. js-lingui-id: F5VNGT
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "0 */1 * * *"
+msgstr "0 */1 * * *"
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -355,6 +485,11 @@ msgstr "2. {objectLabelPlural} izinlerini ayarlayın"
 msgid "20,000 workflow node executions"
 msgstr "20.000 iş akışı düğüm çalıştırılması"
 
+#. js-lingui-id: 8aH7ml
+#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+msgid "200 OK - {duration}ms"
+msgstr "200 OK - {duration}ms"
+
 #. js-lingui-id: mwTnop
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h - {hour24Label}"
@@ -374,6 +509,11 @@ msgstr "2FA Yöntemi başarıyla silindi."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "2FA Yöntemi Sıfırlandı"
+
+#. js-lingui-id: 4lbHin
+#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+msgid "500 Error - {duration}ms"
+msgstr "500 Hata - {duration}ms"
 
 #. js-lingui-id: keUlu+
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -432,6 +572,7 @@ msgstr "İptal"
 
 #. js-lingui-id: uyJsf6
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -458,11 +599,17 @@ msgstr "Bu çalışma alanı hakkında"
 msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
 msgstr "Claude Desktop, Windsurf veya Cursor gibi en sevdiğiniz MCP istemcisinden çalışma alanı verilerinize erişin."
 
+#. js-lingui-id: u2Cycw
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+msgid "Accessible in your function via process.env.KEY"
+msgstr "İşlevinizde process.env.KEY aracılığıyla erişilebilir"
+
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Account"
 msgstr "Hesap"
@@ -483,6 +630,7 @@ msgid "Account Deletion"
 msgstr "Hesap Silme"
 
 #. js-lingui-id: bPwFdf
+#: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -490,6 +638,11 @@ msgstr "Hesap Silme"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Accounts"
 msgstr "Hesaplar"
+
+#. js-lingui-id: X5unbK
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "ACS Url"
+msgstr "ACS URL'si"
 
 #. js-lingui-id: GGcxJO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -499,13 +652,15 @@ msgstr "ACS URL panoya kopyalandı"
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Eylem"
 
 #. js-lingui-id: j6ogTf
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Action on click"
-msgstr ""
+msgstr "Tıklandığında yapılacak işlem"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -530,6 +685,7 @@ msgstr "Kullanıcıların bu nesne üzerinde gerçekleştirebileceği eylemler"
 #. js-lingui-id: FQBaXG
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -543,6 +699,7 @@ msgstr "İş Akışını Aktif Et"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
+#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -553,6 +710,11 @@ msgstr "Aktif"
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Ekip arkadaşlarınız ya da sizin tarafınızdan oluşturulan etkin API anahtarları."
+
+#. js-lingui-id: QHjErc
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
+msgid "Active Sync"
+msgstr "Aktif Eşitleme"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -565,11 +727,21 @@ msgstr "Ekle"
 msgid "Add \"{trimmedName}\" to options"
 msgstr "\"{trimmedName}\" seçeneğe ekle"
 
+#. js-lingui-id: 9CHcSG
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
+msgid "Add a {objectLabelSingular}"
+msgstr "Bir {objectLabelSingular} ekle"
+
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Add a node"
 msgstr "Bir düğüm ekle"
+
+#. js-lingui-id: eMc2xs
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
+msgid "Add a step"
+msgstr "Bir adım ekle"
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -581,11 +753,13 @@ msgstr "Bir Tetikleyici Ekle"
 #. js-lingui-id: MPPZ54
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Yeni hesap"
 
 #. js-lingui-id: HD0x5p
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "Onaylanmış Erişim Alanı Ekle"
@@ -597,6 +771,7 @@ msgid "Add Block"
 msgstr "Blok Ekle"
 
 #. js-lingui-id: 3O3+7h
+#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 msgid "Add Emailing Domain"
 msgstr "E-posta Gönderim Alanı Ekle"
@@ -620,11 +795,24 @@ msgstr "Dosya ekle"
 msgid "Add filter"
 msgstr "Filtreyi ekle"
 
+#. js-lingui-id: +NDti1
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
+msgid "Add filter rule"
+msgstr "Filtre kuralı ekle"
+
 #. js-lingui-id: kydAxA
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
 msgid "Add first filter"
 msgstr "İlk filtreyi ekle"
+
+#. js-lingui-id: //rVZt
+#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerFooter.tsx
+msgid "Add folder"
+msgstr "Klasör ekle"
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -636,6 +824,11 @@ msgstr "Formunuza girişleri ekleyin"
 msgid "Add item"
 msgstr "Öğe ekle"
 
+#. js-lingui-id: qgF8ew
+#: src/modules/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput.tsx
+msgid "Add Item"
+msgstr "Öğe ekle"
+
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -643,6 +836,9 @@ msgstr "Yeni ekle"
 
 #. js-lingui-id: ApsD9J
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
+#: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 msgid "Add New"
 msgstr "Yeni ekle"
 
@@ -690,13 +886,26 @@ msgstr ""
 
 #. js-lingui-id: wTsnV9
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 msgid "Add Public Domain"
 msgstr "Kamusal Alan Ekle"
 
 #. js-lingui-id: O8tK4v
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 msgid "Add rule"
 msgstr "Kural ekle"
+
+#. js-lingui-id: cLBcTT
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
+msgid "Add rule group"
+msgstr "Kural grubu ekle"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
@@ -705,6 +914,7 @@ msgid "Add sort"
 msgstr "Sıralama ekle"
 
 #. js-lingui-id: sgXUv+
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO Kimlik Sağlayıcısı Ekle"
@@ -783,12 +993,16 @@ msgid "Added to blocklist"
 msgstr "Kara Listeye Eklendi"
 
 #. js-lingui-id: hW/fMg
+#: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Address 1"
 msgstr "Adres 1"
 
 #. js-lingui-id: 5Um70B
+#: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Address 2"
 msgstr "Adres 2"
 
@@ -813,6 +1027,7 @@ msgid "Admin Panel"
 msgstr "Yönetim Paneli"
 
 #. js-lingui-id: sxkWRg
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
@@ -850,6 +1065,11 @@ msgstr "Gelişmiş:"
 msgid "Afrikaans"
 msgstr "Afrikaanca"
 
+#. js-lingui-id: NawEr2
+#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
+msgid "After"
+msgstr "Sonra"
+
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "After a set amount of time"
@@ -869,6 +1089,11 @@ msgstr "temsilci"
 msgid "Agent"
 msgstr "Temsilci"
 
+#. js-lingui-id: 6SbwJa
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Agent execution"
+msgstr "Ajan yürütmesi"
+
 #. js-lingui-id: WrQ+BN
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "Agent interactions will appear here once the agent is used in conversations"
@@ -883,6 +1108,11 @@ msgstr "Temsilci bulunamadı"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Agent roles"
 msgstr ""
+
+#. js-lingui-id: Nl33Ds
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Agent tokens"
+msgstr "Ajan belirteçleri"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -934,15 +1164,27 @@ msgstr "AI Modeli"
 msgid "AI Models"
 msgstr ""
 
+#. js-lingui-id: jwOWhc
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "AI request prep"
+msgstr "Yapay zeka istek hazırlığı"
+
 #. js-lingui-id: QwgquD
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "AI Response Schema"
 msgstr "AI Yanıt Şeması"
 
+#. js-lingui-id: Zdun41
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+msgid "Alert"
+msgstr "Uyarı"
+
 #. js-lingui-id: N40H+G
+#: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/activities/notes/components/NotesCard.tsx
@@ -960,6 +1202,11 @@ msgstr "Tüm ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Tüm Eylem Erişimi"
 
+#. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventRow.tsx
+msgid "All day"
+msgstr "Tüm gün"
+
 #. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
@@ -975,6 +1222,11 @@ msgstr "Tüm başarısız işler yeniden denendi"
 msgid "All fields"
 msgstr "Tüm alanlar"
 
+#. js-lingui-id: BKoJRa
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
+msgid "All Groups"
+msgstr "Tüm Gruplar"
+
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "All lines"
@@ -982,6 +1234,7 @@ msgstr "Tüm satırlar"
 
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "All Objects"
 msgstr "Tüm Nesneler"
 
@@ -989,6 +1242,16 @@ msgstr "Tüm Nesneler"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "Tüm roller"
+
+#. js-lingui-id: 9MrEDw
+#: src/pages/onboarding/PaymentSuccess.tsx
+msgid "All set!"
+msgstr "Her şey hazır!"
+
+#. js-lingui-id: p+lpde
+#: src/modules/activities/tasks/components/TaskGroups.tsx
+msgid "All tasks addressed. Maintain the momentum."
+msgstr "Tüm görevler ele alındı. İvmeyi koruyun."
 
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -1070,6 +1333,16 @@ msgstr "Dosyalar ve eklerin yüklenmesine izin ver"
 msgid "Allow users to sign in with an email and password."
 msgstr "Kullanıcıların e-posta ve şifre ile oturum açmasına izin ver."
 
+#. js-lingui-id: uprOiC
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Amber"
+msgstr "Kehribar"
+
+#. js-lingui-id: hehnjM
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Amount"
+msgstr "Miktar"
+
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "An error occurred"
@@ -1084,6 +1357,16 @@ msgstr "Kullanıcı varlığı kontrol edilirken bir hata oluştu"
 #: src/modules/ai/components/AIChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
 msgstr "Mesajınızı işlerken bir hata oluştu"
+
+#. js-lingui-id: g6Wfbf
+#: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
+msgid "An error occurred while removing the picture."
+msgstr "Resim kaldırılırken bir hata oluştu."
+
+#. js-lingui-id: kDx/lV
+#: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
+msgid "An error occurred while uploading the picture."
+msgstr "Resim yüklenirken bir hata oluştu."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -1138,6 +1421,16 @@ msgstr "Beklenmeyen bir hata oluştu"
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "ve"
+
+#. js-lingui-id: qVyNMm
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell.tsx
+msgid "And"
+msgstr "Ve"
+
+#. js-lingui-id: KYvJeB
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu.tsx
+msgid "Any {fieldLabel} field"
+msgstr "Herhangi bir {fieldLabel} alanı"
 
 #. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
@@ -1246,6 +1539,12 @@ msgstr "Kesme işareti ve nokta - {apostropheAndDotExample}"
 msgid "Appearance"
 msgstr "Görünüm"
 
+#. js-lingui-id: QsDjlD
+#: src/pages/onboarding/CreateWorkspace.tsx
+#: src/modules/settings/workspace/components/NameField.tsx
+msgid "Apple"
+msgstr "Apple"
+
 #. js-lingui-id: d7+zQ6
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Applicability"
@@ -1255,6 +1554,11 @@ msgstr "Geçerlilik"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Application agents"
 msgstr "Uygulama ajanları"
+
+#. js-lingui-id: bw50Pz
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+msgid "application detail page"
+msgstr "uygulama detay sayfası"
 
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1310,6 +1614,11 @@ msgstr "Arşiv dosyaları önizlenemez. İçeriğine erişmek için lütfen dosy
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
 msgstr ""
+
+#. js-lingui-id: RqYOrT
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
+msgid "Are you sure you want to delete this related {relationObjectMetadataNameSingular}?<0/>This action will break all its relationships with other objects."
+msgstr "Bu ilişkili {relationObjectMetadataNameSingular} öğesini silmek istediğinizden emin misiniz?<0/>Bu işlem, diğer nesnelerle olan tüm ilişkilerini koparacaktır."
 
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
@@ -1481,6 +1790,16 @@ msgstr "dakika {remainingValues} ve {lastValue} saatlerinde"
 msgid "at the top of the hour"
 msgstr "saatin başında"
 
+#. js-lingui-id: w/Sphq
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Attachments"
+msgstr "Ekler"
+
+#. js-lingui-id: kIuOL4
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "Auth"
+msgstr "Kimlik Doğrulama"
+
 #. js-lingui-id: DzqB0O
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Auth Required"
@@ -1561,6 +1880,11 @@ msgstr "Mevcutluk"
 msgid "Available"
 msgstr "Mevcut"
 
+#. js-lingui-id: oD38t2
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Available tools"
+msgstr "Kullanılabilir araçlar"
+
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -1579,15 +1903,35 @@ msgstr "Ekseni adı"
 msgid "Back"
 msgstr "Geri"
 
+#. js-lingui-id: VlP+1b
+#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
+msgid "Back to {linkText}"
+msgstr "{linkText}'e geri dön"
+
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "İçeriğe geri dön"
 
+#. js-lingui-id: OvBnOM
+#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
+msgid "Back to Settings"
+msgstr "Ayarlar'a geri dön"
+
+#. js-lingui-id: GtJbUa
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "Background"
+msgstr "Arka plan"
+
 #. js-lingui-id: Hv/jpu
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
-msgstr ""
+msgstr "Arka Plan Renkleri"
+
+#. js-lingui-id: EmSrGB
+#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
+msgid "Before"
+msgstr "Önce"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1627,6 +1971,21 @@ msgstr "Fatura aralığı"
 msgid "Blocklist"
 msgstr "Engellenmiş Liste"
 
+#. js-lingui-id: Zn5crm
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Blue"
+msgstr "Mavi"
+
+#. js-lingui-id: bGQplw
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Body"
+msgstr "İçerik"
+
+#. js-lingui-id: khA6nE
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Body Input"
+msgstr "Gövde Girişi"
+
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Book a Call"
@@ -1656,6 +2015,16 @@ msgstr "Her ikisi"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Brief explanation of this output field"
 msgstr "Bu çıktı alanının kısa açıklaması"
+
+#. js-lingui-id: CSDv65
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Bronze"
+msgstr "Bronz"
+
+#. js-lingui-id: JLxwQS
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Brown"
+msgstr "Kahverengi"
 
 #. js-lingui-id: VkwIHa
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -1718,6 +2087,11 @@ msgstr "Takvim"
 #: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
 msgid "Calendar Event"
 msgstr "Takvim etkinliği"
+
+#. js-lingui-id: xG4khu
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Calendar event not found"
+msgstr "Takvim etkinliği bulunamadı"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1934,6 +2308,11 @@ msgstr "Doğrulama kontrolü"
 msgid "Check your Emails"
 msgstr "E-postalarınızı kontrol edin"
 
+#. js-lingui-id: hXXBiE
+#: src/modules/settings/profile/hooks/useUpdateEmail.ts
+msgid "Check your inbox to verify your new email address."
+msgstr "Yeni e-posta adresinizi doğrulamak için gelen kutunuzu kontrol edin."
+
 #. js-lingui-id: SxwQE8
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Twenty team"
@@ -1982,17 +2361,17 @@ msgstr "Tarih değerini görüntülemek için kullanılan formatı seçin"
 #. js-lingui-id: CiPJbh
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click a link"
-msgstr ""
+msgstr "Bir bağlantıya tıkladığınızda ne olacağını seçin"
 
 #. js-lingui-id: D3MauW
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click a phone number"
-msgstr ""
+msgstr "Bir telefon numarasına tıkladığınızda ne olacağını seçin"
 
 #. js-lingui-id: QR1yAR
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click an email"
-msgstr ""
+msgstr "Bir e-posta adresine tıkladığınızda ne olacağını seçin"
 
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2005,7 +2384,10 @@ msgid "Choose your Trial"
 msgstr "Deneme Sürümünüzü Seçin"
 
 #. js-lingui-id: 3wV73y
+#: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "City"
 msgstr "Şehir"
 
@@ -2045,6 +2427,11 @@ msgstr "İlk widget1inizi eklemek için tıklayın"
 msgid "Click to see data"
 msgstr "Verileri görmek için tıklayın"
 
+#. js-lingui-id: QvOsdy
+#: src/modules/ui/input/components/IconPicker.tsx
+msgid "Click to select icon {iconAriaLabel}"
+msgstr "{iconAriaLabel} simgesini seçmek için tıklayın"
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
@@ -2065,15 +2452,21 @@ msgstr "Müşteri Ayarları"
 msgid "Close"
 msgstr "Kapat"
 
+#. js-lingui-id: uYADQM
+#: src/modules/information-banner/components/InformationBanner.tsx
+msgid "Close banner"
+msgstr "Afişi kapat"
+
 #. js-lingui-id: qYsAlX
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
 msgid "Close command menu"
 msgstr "Komut menüsünü kapat"
 
 #. js-lingui-id: EWPtMO
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Code"
-msgstr ""
+msgstr "Kod"
 
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
@@ -2098,6 +2491,11 @@ msgstr "Fonksiyonunu kodla"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Collapse"
 msgstr "Daralt"
+
+#. js-lingui-id: 086gvz
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
+msgid "Collapse folder"
+msgstr "Klasörü daralt"
 
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -2124,6 +2522,11 @@ msgstr "Eşleşmeyen sütunlar:"
 msgid "Command Icon"
 msgstr "Komut Simgesi"
 
+#. js-lingui-id: PUMdxH
+#: src/modules/command-menu/hooks/useCommandMenu.ts
+msgid "Command Menu"
+msgstr "Komut Menüsü"
+
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
@@ -2140,6 +2543,7 @@ msgid "Compact view"
 msgstr "Kompakt Görünüm"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "Şirketler"
@@ -2176,6 +2580,7 @@ msgstr "Yapılandırma Değişkenleri"
 
 #. js-lingui-id: ywFj2D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Configuration"
 msgstr "Yapılandırma"
 
@@ -2250,6 +2655,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "E-posta ve takvim ayarlarınızı yapılandırın."
 
 #. js-lingui-id: 7VpPHA
+#: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -2261,6 +2667,7 @@ msgstr "E-posta ve takvim ayarlarınızı yapılandırın."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/action-menu/actions/components/ActionModal.tsx
 msgid "Confirm"
 msgstr "Onayla"
 
@@ -2350,10 +2757,36 @@ msgstr "İletişim otomatik oluşturma"
 msgid "Contains"
 msgstr "İçerir"
 
+#. js-lingui-id: 4b3oEV
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Content"
+msgstr "İçerik"
+
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "Bağlam"
+
+#. js-lingui-id: 4FBXVy
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Context building (agent)"
+msgstr "Bağlam oluşturma (ajan)"
+
+#. js-lingui-id: lDDIEl
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Context building (routing)"
+msgstr "Bağlam oluşturma (yönlendirme)"
+
+#. js-lingui-id: gFkY/T
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Context records"
+msgstr "Bağlam kayıtları"
+
+#. js-lingui-id: atYgRD
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Context size"
+msgstr "Bağlam boyutu"
 
 #. js-lingui-id: xGVfLh
 #: src/pages/onboarding/SyncEmails.tsx
@@ -2384,10 +2817,22 @@ msgstr "Google ile Devam Et"
 msgid "Continue with Microsoft"
 msgstr "Microsoft ile devam et"
 
+#. js-lingui-id: lGbmpO
+#: src/pages/onboarding/SyncEmails.tsx
+msgid "Continue without sync"
+msgstr "Eşitlemeden devam et"
+
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Control which types of entities this role can be assigned to"
 msgstr "Bu rolün hangi türde varlıklara atanabileceğini kontrol edin."
+
+#. js-lingui-id: HRGl1X
+#: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/settings/members/components/MemberNameFields.tsx
+msgid "Cook"
+msgstr "Cook"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -2400,13 +2845,14 @@ msgstr "Panoya kopyalandı"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 msgid "Copy"
 msgstr "Kopyala"
 
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
-msgstr ""
+msgstr "Kodu kopyala"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2426,7 +2872,7 @@ msgstr "Bağlantıyı kopyala"
 #. js-lingui-id: VBIlvI
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Copy output"
-msgstr ""
+msgstr "Çıktıyı kopyala"
 
 #. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -2446,7 +2892,12 @@ msgstr "Bu anahtarı kopyalayın, çünkü tekrar görünür olmayacak"
 #. js-lingui-id: /4gGIX
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Panoya kopyala"
+
+#. js-lingui-id: RTxUjI
+#: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
+msgid "Copy to Clipboard"
+msgstr "Panoya kopyala"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -2459,6 +2910,11 @@ msgstr "Görünüm bağlantısını kopyala"
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Çekirdek"
+
+#. js-lingui-id: cfa2VJ
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "Core Schema"
+msgstr "Çekirdek Şema"
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -2524,9 +2980,16 @@ msgid "Count unique values"
 msgstr "Benzersiz değerleri say"
 
 #. js-lingui-id: JNCzPW
+#: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Country"
 msgstr "Ülke"
+
+#. js-lingui-id: j2OqfX
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Country Code"
+msgstr "Ülke Kodu"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
@@ -2585,6 +3048,11 @@ msgstr "Yeni kontrol paneli oluştur"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create new record"
 msgstr "Yeni kayıt oluştur"
+
+#. js-lingui-id: vY2Gfm
+#: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+msgid "Create new view"
+msgstr "Yeni görünüm oluştur"
 
 #. js-lingui-id: UDbEyl
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2660,6 +3128,12 @@ msgstr "Çalışma alanınızı oluşturun"
 msgid "Create, edit, and delete workspace views"
 msgstr "Çalışma alanı görünümlerini oluştur, düzenle ve sil"
 
+#. js-lingui-id: d+F6q9
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/activities/calendar/components/CalendarEventDetails.tsx
+msgid "Created"
+msgstr "Oluşturulan"
+
 #. js-lingui-id: 4fBuqE
 #: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
 msgid "Created {beautifiedCreatedAt}"
@@ -2695,6 +3169,11 @@ msgstr "Döneme göre krediler"
 msgid "Credits Used"
 msgstr "Kullanılan Krediler"
 
+#. js-lingui-id: e73uuf
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Crimson"
+msgstr "Kızıl"
+
 #. js-lingui-id: 6Oaeoc
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Cron"
@@ -2726,6 +3205,16 @@ msgstr "Kümülatif"
 msgid "currencies"
 msgstr "para birimleri"
 
+#. js-lingui-id: Q2lUR2
+#: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
+msgid "Currency"
+msgstr "Para Birimi"
+
+#. js-lingui-id: m0pL0h
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Currency Code"
+msgstr "Para Birimi Kodu"
+
 #. js-lingui-id: Hp1l6f
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 msgid "Current"
@@ -2749,6 +3238,7 @@ msgstr "Geçerli çalışma alanı üyesi bulunamadı."
 
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 msgid "Custom"
 msgstr "Özel"
@@ -2768,6 +3258,11 @@ msgstr "Özel alan adı güncellendi"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Custom objects"
 msgstr "Özel nesneler"
+
+#. js-lingui-id: BjGDEB
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+msgid "Custom View"
+msgstr "Özel Görünüm"
 
 #. js-lingui-id: qt+EaC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -2809,6 +3304,11 @@ msgstr "Bu kullanıcının görüntüleyebileceklerini ve gerçekleştirebilecek
 msgid "Customize your workspace security"
 msgstr "Çalışma alanınızın güvenliğini özelleştirin"
 
+#. js-lingui-id: fFwMZv
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Cyan"
+msgstr "Camgöbeği"
+
 #. js-lingui-id: w9VTXG
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Czech"
@@ -2849,6 +3349,7 @@ msgid "Dashboards"
 msgstr "Gösterge Panelleri"
 
 #. js-lingui-id: HKH+W+
+#: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 #: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Data"
@@ -3036,6 +3537,11 @@ msgstr "İş Akışını Devre Dışı Bırak"
 msgid "Deactivated"
 msgstr "Devre dışı bırakıldı"
 
+#. js-lingui-id: Iotuxe
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Debug Info"
+msgstr "Hata Ayıklama Bilgisi"
+
 #. js-lingui-id: dPDEh6
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Decide which Sub-address fields you want to display"
@@ -3043,6 +3549,7 @@ msgstr "Görüntülemek istediğiniz Alt-adres alanlarını seçin"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Default"
 msgstr "Varsayılan"
 
@@ -3115,6 +3622,7 @@ msgstr "sil"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOptionsDropdown.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
@@ -3126,13 +3634,18 @@ msgstr "sil"
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3155,6 +3668,11 @@ msgstr "{objectLabel} nesnesi silinsin mi?"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Delete {objectLabelPlural}"
 msgstr "{objectLabelPlural} Sil"
+
+#. js-lingui-id: znL6JX
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
+msgid "Delete {relationObjectTypeName}"
+msgstr "{relationObjectTypeName} Sil"
 
 #. js-lingui-id: ZDGm40
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -3206,6 +3724,16 @@ msgstr ""
 msgid "Delete field"
 msgstr "Alanı sil"
 
+#. js-lingui-id: 97QUV6
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+msgid "Delete Folder"
+msgstr "Klasörü Sil"
+
+#. js-lingui-id: k/RLDM
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterGroupOptionsDropdown.tsx
+msgid "Delete group"
+msgstr "Grubu sil"
+
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Delete node"
@@ -3220,6 +3748,11 @@ msgstr "Kayıtları Sil"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Delete Records on All Objects"
 msgstr "Tüm Nesnelerde Kayıtları Silin"
+
+#. js-lingui-id: HdeFi+
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
+msgid "Delete Related {relationObjectTypeName}"
+msgstr "İlişkili {relationObjectTypeName} öğesini sil"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -3287,6 +3820,12 @@ msgstr "Çalışma alanını Sil"
 msgid "Delete your whole workspace"
 msgstr "Tüm çalışma alanınızı silin"
 
+#. js-lingui-id: vGjmyl
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
+msgid "Deleted"
+msgstr "Silindi"
+
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
@@ -3318,9 +3857,11 @@ msgstr "AI'nın ne yapmasını istediğinizi tarif edin..."
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Description"
 msgstr "Açıklama"
 
@@ -3354,6 +3895,16 @@ msgstr "Kayıtları Yok Et"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Destroy Records on All Objects"
 msgstr "Tüm Nesnelerde Kayıtları Yok Edin"
+
+#. js-lingui-id: FOcBn3
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
+msgid "Detach"
+msgstr "Ayır"
+
+#. js-lingui-id: URmyfc
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Details"
+msgstr "Ayrıntılar"
 
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -3400,6 +3951,8 @@ msgstr "İçeri aktarmayın"
 #. js-lingui-id: TvY/XA
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Documentation"
 msgstr "Dokümantasyon"
 
@@ -3468,15 +4021,25 @@ msgstr "Noktalar ve virgül - {dotsAndCommaExample}"
 msgid "Downgrade"
 msgstr "Düşürme"
 
+#. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "Download"
+msgstr "İndir"
+
 #. js-lingui-id: qnTwse
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
-msgstr ""
+msgstr "{filename} dosyasını indir"
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
 msgstr "Dosyayı indir"
+
+#. js-lingui-id: IFNYKF
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Download File"
+msgstr "Dosyayı İndir"
 
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3487,6 +4050,11 @@ msgstr "Dosyaları İndir"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Download sample"
 msgstr "Örnek dosyayı indir"
+
+#. js-lingui-id: XKUtpI
+#: src/modules/activities/files/components/DropZone.tsx
+msgid "Drag and Drop Here"
+msgstr "Buraya sürükleyip bırakın"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3533,6 +4101,7 @@ msgstr "Flemenkçe"
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/ApiKeyNameInput.tsx
 msgid "E.g. backoffice integration"
 msgstr "Örn. backoffice entegrasyonu"
 
@@ -3556,6 +4125,11 @@ msgstr "En Erken"
 msgid "Earliest date"
 msgstr "En erken tarih"
 
+#. js-lingui-id: +hvIFU
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
+msgid "eddy@gmail.com, @apple.com"
+msgstr "eddy@gmail.com, @apple.com"
+
 #. js-lingui-id: ePK91l
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -3564,6 +4138,8 @@ msgstr "En erken tarih"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Düzenle"
@@ -3630,6 +4206,11 @@ msgstr ""
 msgid "Edit Records on All Objects"
 msgstr "Tüm Nesnelerdeki Kayıtları Düzenle"
 
+#. js-lingui-id: eMFB6/
+#: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
+msgid "Edit view"
+msgstr "Görünümü düzenle"
+
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Edit your subdomain name or set a custom domain."
@@ -3639,6 +4220,11 @@ msgstr "Alt alan adınızı düzenleyin veya özel bir domain ayarlayın."
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Editable Profile Fields"
 msgstr ""
+
+#. js-lingui-id: uBAxNB
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+msgid "Editor"
+msgstr "Düzenleyici"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3650,11 +4236,14 @@ msgstr "Sekizinci"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 msgid "Email"
 msgstr "E-posta"
 
@@ -3691,10 +4280,20 @@ msgstr "E-posta entegrasyonu"
 msgid "Email is required"
 msgstr "E-posta gerekli"
 
+#. js-lingui-id: pHx2eA
+#: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
+msgid "Email must be a valid email"
+msgstr "Geçerli bir e-posta adresi olmalıdır"
+
 #. js-lingui-id: QT/Wo7
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Email or domain is already in blocklist"
 msgstr "E-posta veya alan adı zaten engellenmişler listesinde"
+
+#. js-lingui-id: +VjrH/
+#: src/modules/command-menu/hooks/useOpenEmailThreadInCommandMenu.ts
+msgid "Email Thread"
+msgstr "E-posta Dizisi"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -3751,6 +4350,11 @@ msgstr "E-posta Alan Adları"
 msgid "Emails"
 msgstr "E-postalar"
 
+#. js-lingui-id: HtOaZO
+#: src/pages/onboarding/SyncEmails.tsx
+msgid "Emails and Calendar"
+msgstr "E-postalar ve Takvim"
+
 #. js-lingui-id: Ft+sR1
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
@@ -3760,6 +4364,11 @@ msgstr "Engellenenler listesindeki e-postalar yok sayılacaktır. “Hesaplar”
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
 msgstr "E-posta ayarları"
+
+#. js-lingui-id: n0+EqE
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx
+msgid "Emails should not be empty"
+msgstr "E-postalar boş olmamalı"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -3846,10 +4455,26 @@ msgstr "Parolanızla birlikte bir kod gerektirerek güvenliği artırır"
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "{withCreditCardTrialPeriodDuration} gün süresince ücretsiz deneme süresinin tadını çıkarın"
 
+#. js-lingui-id: T/N+2Z
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
+msgid "Enter a JSON object"
+msgstr "Bir JSON nesnesi girin"
+
+#. js-lingui-id: u2fAme
+#: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
+msgid "Enter a number"
+msgstr "Bir sayı girin"
+
 #. js-lingui-id: 20wg2g
 #: src/modules/ai/components/AIChatTab.tsx
 msgid "Enter a question..."
 msgstr "Bir soru girin..."
+
+#. js-lingui-id: 93ebCf
+#: src/modules/object-record/record-field/ui/form-types/components/FormUuidFieldInput.tsx
+msgid "Enter a UUID"
+msgstr "Bir UUID girin"
 
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -3872,10 +4497,25 @@ msgstr "Bir öğe girin"
 msgid "Enter array of items or variable expression"
 msgstr "Öğe dizisi veya değişken ifadesi girin"
 
+#. js-lingui-id: MJoxIi
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Enter email subject"
+msgstr "E-posta konusunu girin"
+
+#. js-lingui-id: 8Ao1Tl
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect.tsx
+msgid "Enter filter"
+msgstr "Filtre girin"
+
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "<0>Unicode</0> formatında girin"
+
+#. js-lingui-id: 9CjMQ7
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
+msgid "Enter JSON array"
+msgstr "Bir JSON dizisi girin"
 
 #. js-lingui-id: uV9utd
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -3909,6 +4549,27 @@ msgstr "1 ile 60 arasında bir sayı giriniz"
 msgid "Enter number greater than 1"
 msgstr "1'den büyük bir sayı giriniz"
 
+#. js-lingui-id: waLOUb
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Enter phone number"
+msgstr "Telefon numarası girin"
+
+#. js-lingui-id: l+91lo
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Enter receiver email"
+msgstr "Alıcı e-postasını girin"
+
+#. js-lingui-id: xCiJkz
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
+msgid "Enter test value"
+msgstr "Test değeri girin"
+
+#. js-lingui-id: Kr4638
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormTextFieldInput.tsx
+msgid "Enter text"
+msgstr "Metin girin"
+
 #. js-lingui-id: yZMXC2
 #: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
 msgid "Enter text or Type '/' for commands"
@@ -3938,18 +4599,39 @@ msgstr "Kullanıcı kimliği veya e-posta adresi girin"
 #. js-lingui-id: pubQie
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields.tsx
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownNumberInput.tsx
 msgid "Enter value"
 msgstr "Değer gir"
+
+#. js-lingui-id: OjkRLQ
+#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+msgid "Enter your API key"
+msgstr "API anahtarınızı girin"
 
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
 msgstr "Kurumsal"
 
+#. js-lingui-id: SLuq/l
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Entity ID"
+msgstr "Varlık Kimliği"
+
 #. js-lingui-id: 8PrrNJ
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID copied to clipboard"
 msgstr "Varlık Kimliği panoya kopyalandı"
+
+#. js-lingui-id: 3IeauL
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+msgid "Env Variable Options"
+msgstr "Ortam Değişkeni Seçenekleri"
 
 #. js-lingui-id: vPWtZ+
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -3961,10 +4643,20 @@ msgstr "Çevre değişkeni"
 msgid "Environment Variables"
 msgstr "Çevre Değişkenleri"
 
+#. js-lingui-id: AP93Bl
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+msgid "Environment variables are defined at application level for all functions. Please check <0/>."
+msgstr "Ortam değişkenleri, tüm işlevler için uygulama düzeyinde tanımlanır. Lütfen <0/> kontrol edin."
+
 #. js-lingui-id: BlLvRP
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Erasure of soft-deleted records"
 msgstr "Yumuşak silinmiş kayıtların silinmesi"
+
+#. js-lingui-id: SlfejT
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+msgid "Error"
+msgstr "Hata"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3986,6 +4678,21 @@ msgstr "SSO Kimlik Sağlayıcısını silerken hata"
 msgid "Error editing SSO Identity Provider"
 msgstr "SSO Kimlik Sağlayıcısı düzenlenirken hata"
 
+#. js-lingui-id: GsIfmO
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
+msgid "Error fetching worker metrics: {errorMessage}"
+msgstr "Worker metrikleri alınırken hata: {errorMessage}"
+
+#. js-lingui-id: GdBN5t
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "Error illustration"
+msgstr "Hata görseli"
+
+#. js-lingui-id: 9e/9KK
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Error loading calendar event"
+msgstr "Takvim etkinliği yüklenirken hata"
+
 #. js-lingui-id: 2GvilU
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Error loading message"
@@ -3995,6 +4702,11 @@ msgstr "Mesaj yüklenirken hata oluştu"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Error Message"
 msgstr "Hata Mesajı"
+
+#. js-lingui-id: bT/0cM
+#: src/modules/ui/field/display/components/PhonesDisplay.tsx
+msgid "Error parsing additional phones: {error}"
+msgstr "Ek telefonlar ayrıştırılırken hata: {error}"
 
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4081,6 +4793,11 @@ msgstr "Değerlendiriliyor"
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Evaluations"
 msgstr ""
+
+#. js-lingui-id: 0pC/y6
+#: src/modules/activities/calendar/components/CalendarEventDetails.tsx
+msgid "Event"
+msgstr "Etkinlik"
 
 #. js-lingui-id: poC90w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4191,6 +4908,11 @@ msgstr "Profesyonel olmayan e-postaları hariç tut"
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "E-posta senkronizasyonumdan aşağıdaki kişileri ve alan adlarını hariç tut. Dahili konuşmalar aktarılmayacak"
 
+#. js-lingui-id: YzI8cc
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
+msgid "Existing Field"
+msgstr "Mevcut Alan"
+
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -4225,10 +4947,25 @@ msgstr "Ayarları Kapat"
 msgid "Expand"
 msgstr "Genişlet"
 
+#. js-lingui-id: /QYKta
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
+msgid "Expand folder"
+msgstr "Klasörü genişlet"
+
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
 msgid "Expand to Full Screen"
 msgstr "Tam Ekrana Genişlet"
+
+#. js-lingui-id: iT7W4v
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "Expected Body"
+msgstr "Beklenen Gövde"
+
+#. js-lingui-id: qiUBKD
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "Expected Response Body"
+msgstr "Beklenen Yanıt Gövdesi"
 
 #. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -4287,6 +5024,16 @@ msgstr "{dateDiff} içinde sona eriyor"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export"
 msgstr "Dışa Aktar"
+
+#. js-lingui-id: Whzf47
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
+msgid "Export ({exportedCount})"
+msgstr "Dışa aktar ({exportedCount})"
+
+#. js-lingui-id: 85QrFr
+#: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
+msgid "Export ({percentageValue}%)"
+msgstr "Dışa aktar ({percentageValue}%)"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4378,6 +5125,11 @@ msgstr "Ekstra Kredi Kullanıldı"
 msgid "Failed"
 msgstr "Başarısız"
 
+#. js-lingui-id: tKcbYd
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
+msgid "Failed Jobs"
+msgstr "Başarısız İşler"
+
 #. js-lingui-id: fsNGMi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "Failed to create {translatedMetadataName}. Please try again."
@@ -4418,15 +5170,35 @@ msgstr ""
 msgid "Failed to get response"
 msgstr "Yanıt alınamadı"
 
+#. js-lingui-id: CUzkVp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Failed to impersonate user. {errorMessage}"
+msgstr "Kullanıcı adına işlem yapılamadı. {errorMessage}"
+
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Failed to load webhook"
 msgstr "Webhook yüklenemedi"
 
+#. js-lingui-id: TZV+Pv
+#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
+msgid "Failed to merge records. Please try again."
+msgstr "Kayıtlar birleştirilemedi. Lütfen tekrar deneyin."
+
+#. js-lingui-id: PnVGrE
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Failed to parse context: {contextValue}"
+msgstr "Bağlam ayrıştırılamadı: {contextValue}"
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
 msgstr "Geçersiz kılma kaldırılması başarısız oldu"
+
+#. js-lingui-id: T4nt+1
+#: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
+msgid "Failed to remove picture"
+msgstr "Resim kaldırılamadı"
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -4443,6 +5215,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Failed to update fast model"
 msgstr ""
+
+#. js-lingui-id: P1NmNz
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Failed to update feature flag. {errorMessage}"
+msgstr "Özellik bayrağı güncellenemedi. {errorMessage}"
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -4464,6 +5241,11 @@ msgstr ""
 msgid "Failed to update variable"
 msgstr "Değişken güncellenemedi"
 
+#. js-lingui-id: jU/HbX
+#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+msgid "Failed to upload \"{fileNameForError}\""
+msgstr "\"{fileNameForError}\" yüklenemedi"
+
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
@@ -4474,9 +5256,22 @@ msgstr "Dosya yükleme başarısız: {fileName}"
 msgid "Failed to upload image: "
 msgstr "Resim yüklenemedi: "
 
+#. js-lingui-id: Lx8/KQ
+#: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
+msgid "Failed to upload picture"
+msgstr "Resim yüklenemedi"
+
+#. js-lingui-id: K0joU5
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
+msgid "Failure Rate"
+msgstr "Başarısızlık Oranı"
+
 #. js-lingui-id: ocUvR+
+#: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
@@ -4513,6 +5308,7 @@ msgid "field"
 msgstr "alan"
 
 #. js-lingui-id: AXjA78
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
 msgstr "Alan"
@@ -4547,11 +5343,22 @@ msgstr "Alan tipi"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
+#: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Fields"
 msgstr "Alanlar"
+
+#. js-lingui-id: oy3EF7
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Fields (Optional)"
+msgstr "Alanlar (İsteğe bağlı)"
+
+#. js-lingui-id: Tnz22x
+#: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
+msgid "Fields conflicts"
+msgstr "Alan çakışmaları"
 
 #. js-lingui-id: 3w/aqw
 #: src/testing/mock-data/tableData.ts
@@ -4562,6 +5369,11 @@ msgstr "Alan Sayısı"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Fields Permissions"
 msgstr "Alan İzinleri"
+
+#. js-lingui-id: HrM5BL
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
+msgid "Fields to update"
+msgstr "Güncellenecek alanlar"
 
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -4578,6 +5390,11 @@ msgstr "Beşinci"
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Dosya \"{fileName}\" {maxUploadSize} boyutunu aşıyor"
 
+#. js-lingui-id: 0bK1RI
+#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+msgid "File \"{fileName}\" uploaded successfully"
+msgstr "\"{fileName}\" dosyası başarıyla yüklendi"
+
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -4591,6 +5408,11 @@ msgstr "Dosya \"{fileName}\" {maxUploadSize} boyutunu aşıyor"
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Filter"
 msgstr "Filtre"
+
+#. js-lingui-id: /VmB4B
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
+msgid "Filter group rule options"
+msgstr "Filtre grup kuralı seçenekleri"
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -4649,8 +5471,14 @@ msgstr "İlk 5 satır"
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 #: src/modules/settings/members/components/MemberNameFields.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormFullNameFieldInput.tsx
 msgid "First Name"
 msgstr "İsim"
+
+#. js-lingui-id: cgevMo
+#: src/pages/onboarding/CreateProfile.tsx
+msgid "First name can not be empty"
+msgstr "Ad boş olamaz"
 
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -4667,6 +5495,11 @@ msgstr "Klasörler"
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Parolanızı mı unuttunuz?"
+
+#. js-lingui-id: L/tgbO
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Form Data"
+msgstr "Form Verisi"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -4729,6 +5562,8 @@ msgstr "Gösterge Grafiği"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Genel"
 
@@ -4737,10 +5572,15 @@ msgstr "Genel"
 msgid "General - Settings"
 msgstr "Genel - Ayarlar"
 
+#. js-lingui-id: CjKOAP
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Generate Function Output"
+msgstr "İşlev Çıktısı Oluştur"
+
 #. js-lingui-id: wu9eMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
-msgstr ""
+msgstr "Oluşturulan dosyalar"
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4818,11 +5658,21 @@ msgstr "Görevlere Git"
 msgid "Go to Workflows"
 msgstr "İş Akışlarına Git"
 
+#. js-lingui-id: FYlHHU
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Gold"
+msgstr "Altın"
+
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: CQwSng
+#: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+msgid "Google OIDC"
+msgstr "Google OIDC"
 
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -4849,6 +5699,16 @@ msgstr "GraphQL"
 msgid "GraphQL API Playground"
 msgstr "GraphQL API Oyun Alanı"
 
+#. js-lingui-id: hT/xCE
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Grass"
+msgstr "Çimen"
+
+#. js-lingui-id: qS5//Q
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Gray"
+msgstr "Gri"
+
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
@@ -4859,8 +5719,14 @@ msgstr "Büyük veya eşit"
 msgid "Greek"
 msgstr "Yunanca"
 
+#. js-lingui-id: VmkjGB
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Green"
+msgstr "Yeşil"
+
 #. js-lingui-id: L8fEEm
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Group"
@@ -4893,6 +5759,21 @@ msgstr ""
 msgid "h3"
 msgstr ""
 
+#. js-lingui-id: HUk3sK
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "Header name"
+msgstr "Başlık adı"
+
+#. js-lingui-id: odaos8
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "Header value"
+msgstr "Başlık değeri"
+
+#. js-lingui-id: +XLjqi
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "Headers Input"
+msgstr "Başlık Girişi"
+
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4901,16 +5782,19 @@ msgid "heading"
 msgstr ""
 
 #. js-lingui-id: lXKZGw
+#: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 1"
 msgstr ""
 
 #. js-lingui-id: El7NbA
+#: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 2"
 msgstr ""
 
 #. js-lingui-id: SFN6dN
+#: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 3"
 msgstr ""
@@ -4927,6 +5811,13 @@ msgstr "Sağlık Durumu"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "İbranice"
+
+#. js-lingui-id: D+zLDD
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
+msgid "Hidden"
+msgstr "Gizli"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -4975,17 +5866,27 @@ msgstr "Silinmiş iş akışlarını gizle"
 #. js-lingui-id: MuEcPp
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Hide empty category"
-msgstr ""
+msgstr "Boş kategoriyi gizle"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Hide empty groups"
 msgstr "Boş grupları gizle"
 
+#. js-lingui-id: hjH2V9
+#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+msgid "Hide group {groupValue}"
+msgstr "{groupValue} grubunu gizle"
+
 #. js-lingui-id: wgmt7A
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Hide hidden groups"
 msgstr "Gizli grupları gizle"
+
+#. js-lingui-id: i0qMbr
+#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
+msgid "Home"
+msgstr "Ana sayfa"
 
 #. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5017,10 +5918,35 @@ msgstr "Sisteminizin durumu"
 msgid "Http"
 msgstr "Http"
 
+#. js-lingui-id: DUhAFW
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "HTTP method"
+msgstr "HTTP yöntemi"
+
+#. js-lingui-id: bHXYoC
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "HTTP Method"
+msgstr "HTTP Yöntemi"
+
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
 msgstr "HTTP İsteği"
+
+#. js-lingui-id: JyNsLE
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest.ts
+msgid "HTTP request failed"
+msgstr "HTTP isteği başarısız oldu"
+
+#. js-lingui-id: +ZytMR
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+msgid "https://api.example.com/endpoint"
+msgstr "https://api.example.com/endpoint"
+
+#. js-lingui-id: yhVtER
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "https://example.com/embed"
+msgstr "https://example.com/embed"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5178,6 +6104,16 @@ msgstr "Kayıtları İçe Aktar"
 msgid "Import workflows"
 msgstr "İş akışlarını içe aktar"
 
+#. js-lingui-id: 9eZDRo
+#: src/modules/settings/integrations/components/SettingsIntegrationPreview.tsx
+msgid "Import your tables as remote objects"
+msgstr "Tablolarınızı uzak nesneler olarak içe aktarın"
+
+#. js-lingui-id: wsKZ+v
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
+msgid "Imported data"
+msgstr "İçe aktarılan veriler"
+
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Importing"
@@ -5199,6 +6135,16 @@ msgstr "{dateDiff} sonra"
 msgid "Inactive"
 msgstr "Aktif Olmayan"
 
+#. js-lingui-id: d/HoE2
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+msgid "Inactive Field Options"
+msgstr "Etkin Olmayan Alan Seçenekleri"
+
+#. js-lingui-id: aNaNTH
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+msgid "Inactive Object Options"
+msgstr "Etkin Olmayan Nesne Seçenekleri"
+
 #. js-lingui-id: Gp4Yi6
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
@@ -5215,6 +6161,12 @@ msgstr "dizin"
 msgid "Indexes"
 msgstr "Dizinler"
 
+#. js-lingui-id: CE+M2e
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+msgid "Info"
+msgstr "Bilgi"
+
 #. js-lingui-id: 623chP
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Infos"
@@ -5224,6 +6176,9 @@ msgstr "Bilgiler"
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Input"
 msgstr "Girdi"
 
@@ -5261,7 +6216,6 @@ msgstr "AI için Talimatlar"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Entegrasyonlar"
 
@@ -5304,6 +6258,16 @@ msgstr "Geçersiz yetkilendirme sağlayıcısı"
 #: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
 msgid "Invalid cron expression"
 msgstr "Geçersiz cron deyimi"
+
+#. js-lingui-id: 3oTi9y
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid cron pattern: {errorMessage}"
+msgstr "Geçersiz cron deseni: {errorMessage}"
+
+#. js-lingui-id: jhbsV/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Geçersiz gün değeri '{newDay}'. 1'den büyük bir tamsayı olmalıdır"
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -5352,6 +6316,12 @@ msgstr "Geçersiz dakika değeri '{newMinute}'. 0 ile 59 arasında bir tamsayı 
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
 msgstr "Geçersiz dakika değeri '{newMinute}'. 1'den büyük bir tamsayı olmalıdır"
+
+#. js-lingui-id: WY8amq
+#: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
+msgid "Invalid number"
+msgstr "Geçersiz sayı"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -5404,6 +6374,11 @@ msgstr "Kullanıcı Davet Et"
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite your team"
 msgstr "Takımını davet et"
+
+#. js-lingui-id: CUvG5b
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Iris"
+msgstr "İris"
 
 #. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -5530,10 +6505,20 @@ msgstr "öğeler"
 msgid "Items to iterate over"
 msgstr "Yinelemek için öğeler"
 
+#. js-lingui-id: J6OYmT
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Jade"
+msgstr "Yeşim"
+
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "Japonca"
+
+#. js-lingui-id: FVzmEZ
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
+msgid "Job Actions"
+msgstr "İş Eylemleri"
 
 #. js-lingui-id: TH7loN
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -5579,9 +6564,20 @@ msgid "Kanban"
 msgstr "Kanban"
 
 #. js-lingui-id: 7sMeHQ
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Key"
 msgstr "Anahtar"
+
+#. js-lingui-id: VOAmkS
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Key/Value"
+msgstr "Anahtar/Değer"
+
+#. js-lingui-id: 77Emn0
+#: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuDialog.tsx
+msgid "Keyboard shortcuts"
+msgstr "Klavye kısayolları"
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5592,6 +6588,15 @@ msgstr "Korece"
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Lab"
 msgstr "Laboratuvar"
+
+#. js-lingui-id: 87a/t/
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
+msgid "Label"
+msgstr "Etiket"
 
 #. js-lingui-id: vXIe7J
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -5657,8 +6662,14 @@ msgstr ""
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormFullNameFieldInput.tsx
 msgid "Last Name"
 msgstr "Soyadı"
+
+#. js-lingui-id: PnMGfO
+#: src/pages/onboarding/CreateProfile.tsx
+msgid "Last name can not be empty"
+msgstr "Soyad boş olamaz"
 
 #. js-lingui-id: s0kiVA
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -5690,6 +6701,11 @@ msgstr "En son sürüm"
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Launch"
 msgstr "Başlat"
+
+#. js-lingui-id: 9BjbLR
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+msgid "Launch manually"
+msgstr "Manuel olarak başlat"
 
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -5740,6 +6756,11 @@ msgstr "Küçük veya eşit"
 msgid "Light"
 msgstr "Aydınlık"
 
+#. js-lingui-id: 9EqSGz
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Lime"
+msgstr "Limon yeşili"
+
 #. js-lingui-id: yRkqG9
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
@@ -5776,6 +6797,16 @@ msgstr "Çizgi Grafiği"
 msgid "Link copied to clipboard"
 msgstr "Link panoya kopyalandı"
 
+#. js-lingui-id: JYFFGu
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
+msgid "linked a calendar event with {labelIdentifierValue}"
+msgstr "{labelIdentifierValue} ile bir takvim etkinliğini ilişkilendirdi"
+
+#. js-lingui-id: fd8C68
+#: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
+msgid "linked an email with"
+msgstr "şununla bir e-postayı ilişkilendirdi"
+
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -5792,10 +6823,30 @@ msgstr "Listeleme"
 msgid "Listings"
 msgstr "Listeler"
 
+#. js-lingui-id: C5bVie
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "Live URL"
+msgstr "Canlı URL"
+
+#. js-lingui-id: yQ2kGp
+#: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore.tsx
+msgid "Load more"
+msgstr "Daha fazla yükle"
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
 msgstr "Veri dosyası (csv) yükleniyor ... "
+
+#. js-lingui-id: Zzca95
+#: src/modules/activities/files/components/AttachmentList.tsx
+msgid "Loading document viewer..."
+msgstr "Belge görüntüleyici yükleniyor..."
+
+#. js-lingui-id: qIaOZk
+#: src/modules/activities/emails/components/EmailLoader.tsx
+msgid "Loading emails"
+msgstr "E-postalar yükleniyor"
 
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -5809,6 +6860,8 @@ msgstr "Metrik verileri yükleniyor..."
 
 #. js-lingui-id: tVSmFT
 #: src/modules/ui/input/components/IconPicker.tsx
+#: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader.tsx
+#: src/modules/activities/components/CustomResolverFetchMoreLoader.tsx
 msgid "Loading more..."
 msgstr "Daha fazla yükleniyor..."
 
@@ -5817,10 +6870,17 @@ msgstr "Daha fazla yükleniyor..."
 msgid "Loading retention configuration..."
 msgstr "Yükleme yapılandırması yükleniyor..."
 
+#. js-lingui-id: 7YK6ap
+#: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
+msgid "Loading thread"
+msgstr "Dizi yükleniyor"
+
 #. js-lingui-id: Z3FXyt
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
@@ -5848,6 +6908,8 @@ msgstr "Çıkış yap"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Logs"
 msgstr "Günlükler"
@@ -5943,6 +7005,16 @@ msgstr "İş akışlarını yönet"
 msgid "Manage your internet accounts."
 msgstr "İnternet hesaplarınızı yönetin."
 
+#. js-lingui-id: bolPo/
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
+msgid "Managed serverless functions are not editable"
+msgstr "Yönetilen sunucusuz işlevler düzenlenemez"
+
+#. js-lingui-id: FCc+QF
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
+msgid "Match {fieldLabel} ({unmatchedCount} Unmatched)"
+msgstr "Eşleştir {fieldLabel} ({unmatchedCount} Eşleşmeyen)"
+
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Match Columns"
@@ -6036,6 +7108,7 @@ msgid "Members - Settings"
 msgstr "Üyeler - Ayarlar"
 
 #. js-lingui-id: UODtG8
+#: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge"
 msgstr "Birleştir"
@@ -6050,6 +7123,11 @@ msgstr "Birleştirme önizlemesi"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge records"
 msgstr "Kayıtları birleştir"
+
+#. js-lingui-id: LuriZ0
+#: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
+msgid "Merging..."
+msgstr "Birleştiriliyor..."
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -6089,6 +7167,11 @@ msgstr "Meta veri"
 msgid "Metadata file generation failed"
 msgstr "Metadata dosyası oluşturulamadı"
 
+#. js-lingui-id: 0BF9eC
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "Metadata Schema"
+msgstr "Meta Veri Şeması"
+
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
@@ -6117,6 +7200,11 @@ msgstr "Dk"
 msgid "Min range"
 msgstr "Minimum aralık"
 
+#. js-lingui-id: 5IrCQY
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Mint"
+msgstr "Nane"
+
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
@@ -6131,6 +7219,11 @@ msgstr "Dakikalar"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minutes between triggers"
 msgstr "Tetkikler arasındaki dakikalar"
+
+#. js-lingui-id: mibKsa
+#: src/modules/activities/tasks/components/TaskGroups.tsx
+msgid "Mission accomplished!"
+msgstr "Görev tamamlandı!"
 
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -6153,6 +7246,7 @@ msgid "month"
 msgstr "ay"
 
 #. js-lingui-id: HajiZl
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -6180,6 +7274,11 @@ msgstr ""
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Daha Fazla"
+
+#. js-lingui-id: JcD7qf
+#: src/modules/action-menu/components/RecordIndexActionMenuDropdown.tsx
+msgid "More actions"
+msgstr "Daha fazla işlem"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -6238,12 +7337,15 @@ msgstr "Listeye eklenmemiş görünümlerim"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -6256,6 +7358,8 @@ msgstr "Listeye eklenmemiş görünümlerim"
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Name"
@@ -6343,13 +7447,17 @@ msgid "Never"
 msgstr "Asla"
 
 #. js-lingui-id: O1Aswy
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never expires"
 msgstr "Asla sona ermez"
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/accounts/SettingsNewAccount.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 msgid "New"
 msgstr "Yeni"
 
@@ -6396,6 +7504,8 @@ msgstr "Yeni E-posta Alan Adı"
 
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "New Field"
 msgstr "Yeni Alan"
 
@@ -6444,6 +7554,11 @@ msgstr "Yeni SSO sağlayıcısı"
 msgid "New task"
 msgstr "Yeni görev"
 
+#. js-lingui-id: U1DAok
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "New Webhook"
+msgstr "Yeni Webhook"
+
 #. js-lingui-id: vam7Jz
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "New widget"
@@ -6475,10 +7590,40 @@ msgstr "Dokuzuncu"
 msgid "No"
 msgstr "Hayır"
 
+#. js-lingui-id: 7YGRoE
+#: src/modules/ui/input/components/SelectInput.tsx
+#: src/modules/ui/input/components/SelectInput.tsx
+#: src/modules/ui/input/components/SelectInput.tsx
+#: src/modules/ui/input/components/SelectInput.tsx
+msgid "No {clearLabel}"
+msgstr "{clearLabel} yok"
+
 #. js-lingui-id: xUXmJM
+#: src/modules/object-record/record-field/ui/meta-types/input/components/SelectFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/MorphRelationManyToOneFieldInput.tsx
 msgid "No {fieldLabel}"
 msgstr "No {fieldLabel}"
+
+#. js-lingui-id: fk2viA
+#: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
+msgid "No {label}"
+msgstr "{label} yok"
+
+#. js-lingui-id: 9CpMvJ
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
+msgid "No {objectLabelSingular} found"
+msgstr "Hiç {objectLabelSingular} bulunamadı"
+
+#. js-lingui-id: baVNgS
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
+msgid "No {objectNames}"
+msgstr "Hiç {objectNames} yok"
+
+#. js-lingui-id: aXFOuf
+#: src/modules/activities/timeline-activities/components/TimelineCard.tsx
+msgid "No activity yet"
+msgstr "Henüz etkinlik yok"
 
 #. js-lingui-id: f9b1sj
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -6515,6 +7660,11 @@ msgstr "Aramanızla eşleşen API anahtarı yok"
 msgid "No available fields to select"
 msgstr "Seçilecek uygun alan yok"
 
+#. js-lingui-id: V/RzSE
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "No body"
+msgstr "Gövde yok"
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
@@ -6530,10 +7680,24 @@ msgstr ""
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
 msgstr "Güncel filtrelerinizle eşleşen yapılandırma değişkeni yok. Filtrelerinizi veya arama ölçütlerinizi ayarlamaya çalışın."
 
+#. js-lingui-id: PlVbP6
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "No context was provided for this request"
+msgstr "Bu istek için bağlam sağlanmadı"
+
 #. js-lingui-id: 4BSfjK
+#: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
+#: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormCountrySelectInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput.tsx
 msgid "No country"
 msgstr "Ülke yok"
+
+#. js-lingui-id: kxH3HO
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "No currency"
+msgstr "Para birimi yok"
 
 #. js-lingui-id: plhHQt
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
@@ -6601,6 +7765,16 @@ msgstr ""
 msgid "No evaluations yet for this turn"
 msgstr ""
 
+#. js-lingui-id: l7y8S8
+#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+msgid "No Events"
+msgstr "Etkinlik Yok"
+
+#. js-lingui-id: wY82y3
+#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+msgid "No events have been scheduled with this {objectName} yet."
+msgstr "Bu {objectName} ile henüz hiçbir etkinlik planlanmadı."
+
 #. js-lingui-id: /hvarH
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 msgid "No fields available"
@@ -6621,6 +7795,16 @@ msgstr "Görüntülenecek alan yok"
 msgid "No Files"
 msgstr "Dosya Yok"
 
+#. js-lingui-id: pYblOw
+#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
+msgid "No folder"
+msgstr "Klasör yok"
+
+#. js-lingui-id: aywdyd
+#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
+msgid "No folders found"
+msgstr "Klasör bulunamadı"
+
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
@@ -6640,6 +7824,11 @@ msgstr "Ücretsiz iş akışı yürütmeleri kalmadı. Lütfen yöneticinizle il
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
 msgstr ""
+
+#. js-lingui-id: kkGPb1
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "No installed application. Please check our <0/>"
+msgstr "Yüklü uygulama yok. Lütfen <0/> bölümümüzü kontrol edin"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6699,6 +7888,11 @@ msgstr "Metrik verisi yok"
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Model yok. Lütfen iş yeri ayarlarında AI modellerini yapılandırın."
 
+#. js-lingui-id: 9VrTfZ
+#: src/modules/activities/notes/components/NotesCard.tsx
+msgid "No notes"
+msgstr "Not yok"
+
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 msgid "No option found"
@@ -6707,7 +7901,7 @@ msgstr "Seçenek bulunamadı"
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "No output"
-msgstr ""
+msgstr "Çıktı yok"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -6735,7 +7929,15 @@ msgstr "Bu iş akışını tetiklemek için bir kayda gerek yok"
 msgid "No records found"
 msgstr "Kayıt bulunamadı"
 
+#. js-lingui-id: FwUgy3
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
+msgid "No records matching the filter criteria were found."
+msgstr "Filtre kriterleriyle eşleşen kayıt bulunamadı."
+
 #. js-lingui-id: Ev2r9A
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
+#: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
@@ -6746,6 +7948,11 @@ msgstr "Sonuç Yok"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent.tsx
 msgid "No Results"
 msgstr "Sonuç Yok"
+
+#. js-lingui-id: AxPAXW
+#: src/modules/command-menu/components/CommandMenuList.tsx
+msgid "No results found"
+msgstr "Sonuç bulunamadı"
 
 #. js-lingui-id: FVzmGK
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -6767,6 +7974,16 @@ msgstr "Hatalı satır yok"
 msgid "No Select field"
 msgstr "Seçim alanı yok"
 
+#. js-lingui-id: wJwIUq
+#: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
+msgid "No value"
+msgstr "Değer yok"
+
+#. js-lingui-id: w4AWog
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
+msgid "No variables available"
+msgstr "Kullanılabilir değişken yok"
+
 #. js-lingui-id: A5XQ/A
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No variables found"
@@ -6782,7 +7999,20 @@ msgstr "Henüz iş akışı çalıştırması yok"
 msgid "No workflow versions yet"
 msgstr "Henüz iş akışı versiyonu yok"
 
+#. js-lingui-id: rPAZRd
+#: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
+msgid "No workspace selected"
+msgstr "Çalışma alanı seçilmedi"
+
+#. js-lingui-id: Ah7JCB
+#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
+msgid "Node"
+msgstr "Düğüm"
+
 #. js-lingui-id: EdQY6l
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6834,6 +8064,7 @@ msgstr "Belirlenmedi"
 
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
+#: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr "Paylaşılmadı"
@@ -6864,6 +8095,7 @@ msgid "number"
 msgstr "sayı"
 
 #. js-lingui-id: HptUxX
+#: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
@@ -6906,6 +8138,13 @@ msgstr "nesne"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Nesne"
@@ -6933,11 +8172,13 @@ msgstr "Nesne Düzeyi"
 
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
 msgstr "Nesneler"
@@ -7023,6 +8264,11 @@ msgstr "sadece hafta içi"
 msgid "On which object(s) should this trigger be available"
 msgstr "Bu tetiğin hangi nesnelerde kullanılabilir olması gerekiyor"
 
+#. js-lingui-id: VwbV6P
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
+msgid "Onboarding call"
+msgstr "Başlangıç görüşmesi"
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -7060,6 +8306,11 @@ msgstr "sadece {firstDay} ve {secondDay} günleri"
 msgid "only on {remainingDays} and {lastDay}"
 msgstr "sadece {remainingDays} ve {lastDay} günlerinde"
 
+#. js-lingui-id: saaSLd
+#: src/modules/activities/emails/components/EmailThreadNotShared.tsx
+msgid "Only the subject is shared"
+msgstr "Yalnızca konu paylaşılır"
+
 #. js-lingui-id: 50ETCF
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
@@ -7074,7 +8325,7 @@ msgstr "Aç"
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open as link"
-msgstr ""
+msgstr "Bağlantı olarak aç"
 
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
@@ -7107,10 +8358,20 @@ msgstr "Outlook'u Aç"
 msgid "Opened"
 msgstr "Açık"
 
+#. js-lingui-id: 8m1COB
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
+msgid "Operational"
+msgstr "Çalışır durumda"
+
 #. js-lingui-id: 4MyDFl
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Opportunities"
 msgstr "Fırsatlar"
+
+#. js-lingui-id: lVa1Xn
+#: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
+msgid "Option 1"
+msgstr "Seçenek 1"
 
 #. js-lingui-id: hY8F2i
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -7133,9 +8394,15 @@ msgid "or"
 msgstr "veya"
 
 #. js-lingui-id: ZAVklK
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Or"
 msgstr "Veya"
+
+#. js-lingui-id: 4OE5Sf
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Orange"
+msgstr "Turuncu"
 
 #. js-lingui-id: VWupWc
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7163,6 +8430,11 @@ msgstr "Kuruluş"
 msgid "Other"
 msgstr "Diğer"
 
+#. js-lingui-id: ggOXu2
+#: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx
+msgid "Other objects"
+msgstr "Diğer nesneler"
+
 #. js-lingui-id: 9LV44m
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Other security settings"
@@ -7174,16 +8446,36 @@ msgstr "Diğer güvenlik ayarları"
 msgid "Other workspaces"
 msgstr "Diğer çalışma alanları"
 
+#. js-lingui-id: NuKR0h
+#: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
+msgid "Others"
+msgstr "Diğerleri"
+
+#. js-lingui-id: HCBMeA
+#: src/modules/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm.ts
+msgid "OTP must be exactly 6 digits"
+msgstr "OTP tam olarak 6 haneli olmalıdır"
+
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
 msgstr "Ekibimiz, özel ihtiyaçlarınıza ve iş akışlarınıza uyan çalışma alanınızı kurmanız için size yardımcı olabilir."
 
+#. js-lingui-id: yL8XdR
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
+msgid "Outage"
+msgstr "Kesinti"
+
 #. js-lingui-id: gh06VD
+#: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
+#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/TerminalOutput.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Output"
-msgstr ""
+msgstr "Çıktı"
 
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -7194,6 +8486,11 @@ msgstr "Çıktı Alanı {fieldNumber}"
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Override Draft"
 msgstr "Taslağı Geçersiz Kıl"
+
+#. js-lingui-id: 6/dCYd
+#: src/pages/settings/data-model/SettingsObjectOverview.tsx
+msgid "Overview"
+msgstr "Genel Bakış"
 
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7220,19 +8517,31 @@ msgstr "sayfa düzeni sekmesi"
 msgid "page layout widget"
 msgstr "sayfa düzeni bileşeni"
 
-#. js-lingui-id: boJlGf
+#. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
-msgid "Page Not Found"
-msgstr "Sayfa Bulunamadı"
+msgid "Page Not Found | Twenty"
+msgstr "Sayfa Bulunamadı | Twenty"
+
+#. js-lingui-id: ZyMBtl
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
+msgid "Palette"
+msgstr "Palet"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
 msgstr ""
 
+#. js-lingui-id: bkQRMh
+#: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
+#: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
+msgid "Paragraph"
+msgstr "Paragraf"
+
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "Password"
 msgstr "Parola"
 
@@ -7245,6 +8554,12 @@ msgstr "Parola ayarlandı"
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been updated"
 msgstr "Parola güncellendi"
+
+#. js-lingui-id: 1oqxe6
+#: src/pages/auth/PasswordReset.tsx
+#: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
+msgid "Password must be min. 8 characters"
+msgstr "Parola en az 8 karakter olmalıdır"
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -7263,6 +8578,8 @@ msgstr "Yol"
 
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 msgid "Pending"
 msgstr "Beklemede"
 
@@ -7370,6 +8687,16 @@ msgstr "İzinler"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "İzinler · {objectLabelSingular}"
 
+#. js-lingui-id: zmwvG2
+#: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
+msgid "Phone"
+msgstr "Telefon"
+
+#. js-lingui-id: HF6C2L
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Phone Number"
+msgstr "Telefon Numarası"
+
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -7394,6 +8721,17 @@ msgstr "Resim"
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "Pasta Grafiği"
+
+#. js-lingui-id: 2FIjLb
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Pink"
+msgstr "Pembe"
+
+#. js-lingui-id: hx1ePY
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
+msgid "Placeholder"
+msgstr "Yer tutucu"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7424,6 +8762,11 @@ msgstr "Lütfen doğrulama bağlantısı için e-postanızı kontrol edin."
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Geçerli bir URL giriniz"
+
+#. js-lingui-id: qg68zg
+#: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
+msgid "Please reconnect your mailbox {mailboxHandle} to update your email aliases:"
+msgstr "E-posta takma adlarınızı güncellemek için lütfen {mailboxHandle} posta kutunuza yeniden bağlanın:"
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -7467,6 +8810,11 @@ msgstr "Bu webhook'u silmek istediğinizi onaylamak için \"evet\" yazın."
 msgid "Please type in your email to confirm."
 msgstr "Onaylamak için e-posta adresinizi giriniz."
 
+#. js-lingui-id: Ij2ljU
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Plum"
+msgstr "Erik"
+
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -7486,6 +8834,13 @@ msgstr "Portekizce — Brezilya"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Portuguese — Portugal"
 msgstr "Portekizce — Portekiz"
+
+#. js-lingui-id: ofTr89
+#: src/modules/ui/field/input/components/AddressInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+msgid "Post Code"
+msgstr "Posta Kodu"
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -7539,6 +8894,18 @@ msgstr "Fiyat güncellendi."
 msgid "Primary Email"
 msgstr "Birincil E-posta"
 
+#. js-lingui-id: yyeLdy
+#: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
+msgid "Primary Link Label"
+msgstr "Birincil Bağlantı Etiketi"
+
+#. js-lingui-id: K1pOLG
+#: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
+msgid "Primary Link URL"
+msgstr "Birincil Bağlantı URL'si"
+
 #. js-lingui-id: rW8PxS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Prioritized"
@@ -7562,6 +8929,7 @@ msgid "Pro"
 msgstr "Pro"
 
 #. js-lingui-id: k1ifdL
+#: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Processing..."
 msgstr "İşleniyor..."
@@ -7588,6 +8956,18 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Prompt"
 msgstr ""
+
+#. js-lingui-id: 56xUL1
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Property name"
+msgstr "Özellik adı"
+
+#. js-lingui-id: iKZkk1
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Property value"
+msgstr "Özellik değeri"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -7631,10 +9011,15 @@ msgstr "Genel alan adı başarıyla silindi"
 msgid "Public Domains"
 msgstr "Genel Alan Adları"
 
+#. js-lingui-id: mF9LxA
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Purple"
+msgstr "Mor"
+
 #. js-lingui-id: GUpZQM
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
-msgstr ""
+msgstr "Python Kod Çalıştırma"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -7672,6 +9057,11 @@ msgstr "Kuyruk: {queueName}"
 msgid "Quick model for routing decisions"
 msgstr ""
 
+#. js-lingui-id: z1U/Fh
+#: src/modules/ui/field/input/components/RatingInput.tsx
+msgid "Rating"
+msgstr "Puan"
+
 #. js-lingui-id: iaocTt
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
@@ -7679,6 +9069,11 @@ msgstr ""
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "Ratio"
 msgstr "Oran"
+
+#. js-lingui-id: kdLBDj
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
+msgid "Raw JSON"
+msgstr "Ham JSON"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7697,11 +9092,20 @@ msgstr "Son Olaylar (eskiden → yeniye)"
 
 #. js-lingui-id: gcoiFh
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
+#: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 msgid "Reconnect"
 msgstr "Yeniden Bağlan"
 
+#. js-lingui-id: hVS0gK
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
+msgid "record"
+msgstr "kayıt"
+
 #. js-lingui-id: w80YWM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 msgid "Record"
 msgstr "Kayıt"
 
@@ -7715,8 +9119,14 @@ msgstr "Kayıt (ID)"
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
 msgstr "Kayıt oluşturma durduruldu. {formattedCreatedRecordsCount} kayıt oluşturuldu."
 
+#. js-lingui-id: S2Kvcv
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
+msgid "Record filter rule options"
+msgstr "Kayıt filtre kuralı seçenekleri"
+
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Record image"
 msgstr "Kayıt görüntüsü"
 
@@ -7738,10 +9148,25 @@ msgstr "Kayıt Sayfası"
 msgid "Record Selection"
 msgstr "Kayıt Seçimi"
 
+#. js-lingui-id: C450zb
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Record text"
+msgstr "Kayıt metni"
+
+#. js-lingui-id: kvxD0C
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Record Type"
+msgstr "Kayıt Türü"
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
 msgstr "Kayıtlar"
+
+#. js-lingui-id: wRTiSD
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Red"
+msgstr "Kırmızı"
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -7769,10 +9194,20 @@ msgstr "Anahtarı yeniden oluştur"
 msgid "Regenerate Key"
 msgstr "Anahtar Yeniden Oluştur"
 
+#. js-lingui-id: h9AYFD
+#: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+msgid "Relation"
+msgstr "İlişki"
+
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "İlişki türü"
+
+#. js-lingui-id: g87L9j
+#: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
+msgid "Relations"
+msgstr "İlişkiler"
 
 #. js-lingui-id: HR+PwH
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -7789,11 +9224,13 @@ msgstr "Sürümler"
 #. js-lingui-id: HpK/8d
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
 #: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
 msgid "Reload"
 msgstr "Yeniden Yükle"
 
 #. js-lingui-id: qlAIQ1
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
 msgid "Remote"
 msgstr "Uzaktan"
@@ -7804,6 +9241,16 @@ msgstr "Uzaktan"
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Remove"
 msgstr "Kaldır"
+
+#. js-lingui-id: gleHgw
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+msgid "Remove {favoriteCount} favorite?"
+msgstr "{favoriteCount} favori kaldırılsın mı?"
+
+#. js-lingui-id: 1VQkMD
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+msgid "Remove {favoriteCount} favorites?"
+msgstr "{favoriteCount} favori kaldırılsın mı?"
 
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -7842,6 +9289,16 @@ msgstr "Üyeyi çalışma alanından kaldır"
 msgid "Remove option"
 msgstr "Seçeneği kaldır"
 
+#. js-lingui-id: SjxzXf
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
+msgid "Remove rule"
+msgstr "Kuralı kaldır"
+
+#. js-lingui-id: 4bfSPA
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
+msgid "Remove rule group"
+msgstr "Kural grubunu kaldır"
+
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove Sorting"
@@ -7851,6 +9308,17 @@ msgstr "Sıralamayı Kaldır"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Sıralamayı kaldır?"
+
+#. js-lingui-id: Kl3J3D
+#: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
+msgid "Remove variable"
+msgstr "Değişkeni kaldır"
+
+#. js-lingui-id: 2wxgft
+#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "Rename"
+msgstr "Yeniden adlandır"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7872,6 +9340,11 @@ msgstr "Cevapla"
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
 msgstr "Hepsine cevapla"
+
+#. js-lingui-id: /laZGZ
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "Request Failed"
+msgstr "İstek Başarısız"
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7911,6 +9384,11 @@ msgstr "Varsayılana Sıfırla"
 msgid "Reset variable"
 msgstr "Değişkeni sıfırla"
 
+#. js-lingui-id: ZlCDf+
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "Response"
+msgstr "Yanıt"
+
 #. js-lingui-id: WMdA7Y
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
 msgid "Response Format"
@@ -7934,6 +9412,7 @@ msgid "Restart Import"
 msgstr "İçe Aktarımı Yeniden Başlat"
 
 #. js-lingui-id: yKu/3Y
+#: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
@@ -7965,6 +9444,11 @@ msgstr "Kayıtları Geri Yükle"
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 msgid "Restore Records"
 msgstr "Kayıtları Geri Yükle"
+
+#. js-lingui-id: RD6AE9
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
+msgid "Result"
+msgstr "Sonuç"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
@@ -8000,8 +9484,9 @@ msgstr "Bu nesne için iptal edildi"
 
 #. js-lingui-id: NP5Nbf
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
-msgstr ""
+msgstr "Zengin Metin"
 
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -8049,6 +9534,7 @@ msgstr "Rol başarıyla güncellendi"
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8065,6 +9551,21 @@ msgstr "Romence"
 msgid "route trigger"
 msgstr "yönlendirme tetikleyici"
 
+#. js-lingui-id: Eb/I7b
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Routing decision"
+msgstr "Yönlendirme kararı"
+
+#. js-lingui-id: Sz0Ftu
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Routing tokens"
+msgstr "Yönlendirme belirteçleri"
+
+#. js-lingui-id: 7jTlsu
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Ruby"
+msgstr "Yakut"
+
 #. js-lingui-id: 3JjdaA
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Run"
@@ -8080,10 +9581,20 @@ msgstr "Bir iş akışı çalıştırın ve yürütmelerini görmek için buraya
 msgid "Run Function"
 msgstr "İşlevi Çalıştır"
 
+#. js-lingui-id: iXw832
+#: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
+msgid "Running function"
+msgstr "İşlev çalıştırılıyor"
+
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Running..."
-msgstr ""
+msgstr "Çalıştırılıyor..."
+
+#. js-lingui-id: eo1n1s
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
+msgid "Runtime"
+msgstr "Çalışma zamanı"
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8135,10 +9646,12 @@ msgid "Score"
 msgstr ""
 
 #. js-lingui-id: A1taO8
+#: src/modules/views/hooks/useVectorSearchFilterActions.ts
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFilterInputMenuHeader.tsx
 #: src/modules/views/components/EditableFilterChipDropdownMenuHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
+#: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -8178,6 +9691,11 @@ msgstr "Bir ekip üyesi ara..."
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Search a type"
 msgstr "Bir tür arayın"
+
+#. js-lingui-id: 4J+cf6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
+msgid "Search a variable"
+msgstr "Bir değişken arayın"
 
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -8428,6 +9946,22 @@ msgstr "İş akışını gör"
 msgid "See Workflows"
 msgstr "İş akışlarını gör"
 
+#. js-lingui-id: rG3WVm
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
+#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
+msgid "Select"
+msgstr "Seç"
+
+#. js-lingui-id: D1pVcW
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
+msgid "Select a {objectNameSingular}"
+msgstr "Bir {objectNameSingular} seçin"
+
+#. js-lingui-id: OMoA3j
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Select a date"
+msgstr "Bir tarih seçin"
+
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
@@ -8451,6 +9985,13 @@ msgid "Select Action"
 msgstr "Eylem Seç"
 
 #. js-lingui-id: hVPa4O
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Select an option"
 msgstr "Bir seçenek belirleyin"
@@ -8459,6 +10000,11 @@ msgstr "Bir seçenek belirleyin"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 msgid "Select column..."
 msgstr "Sütun seç..."
+
+#. js-lingui-id: PSqlgu
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
+msgid "Select fields to update"
+msgstr "Güncellenecek alanları seçin"
 
 #. js-lingui-id: J6WI1B
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -8480,15 +10026,42 @@ msgstr "Grup Seç"
 msgid "Select header row"
 msgstr "Başlık sırasını seç"
 
+#. js-lingui-id: qMpmkB
+#: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
+msgid "Select matching field"
+msgstr "Eşleşen alanı seçin"
+
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Select one or several standard objects to activate below"
 msgstr "Aktif etmek için aşağıda bir veya birkaç standart nesne seçin"
 
+#. js-lingui-id: lGxnQv
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect.tsx
+#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect.tsx
+msgid "Select operand"
+msgstr "Operand seçin"
+
+#. js-lingui-id: n0WCk8
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
+msgid "Select options"
+msgstr "Seçenekleri seçin"
+
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Source"
 msgstr "Kaynağı Seç"
+
+#. js-lingui-id: LHkEre
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+msgid "Select specific fields to listen to"
+msgstr "Dinlenecek belirli alanları seçin"
+
+#. js-lingui-id: 8+U1XJ
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
+msgid "Select Step"
+msgstr "Adım Seçin"
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -8509,6 +10082,11 @@ msgstr "Bu uç noktaya göndermek istediğiniz olayları seçin"
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Kullanılacak sayfayı seçin"
+
+#. js-lingui-id: tacknv
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
+msgid "Select Type"
+msgstr "Tür Seçin"
 
 #. js-lingui-id: iWf0Zj
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
@@ -8540,6 +10118,11 @@ msgstr "E-posta Gönder"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Bağlı hesaplar aracılığıyla e-posta gönder"
+
+#. js-lingui-id: asU5VT
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+msgid "Sending request..."
+msgstr "İstek gönderiliyor..."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8577,6 +10160,16 @@ msgstr "Uygulama tarafından oluşturulan sunucusuz fonksiyonlar"
 msgid "Service Provider Details"
 msgstr "Hizmet Sağlayıcı Bilgileri"
 
+#. js-lingui-id: 4FANIj
+#: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
+msgid "Set {placeholderForEmptyCell}"
+msgstr "{placeholderForEmptyCell} ayarla"
+
+#. js-lingui-id: EIFxcV
+#: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
+msgid "Set 3.21 for $3.21"
+msgstr "$3.21 için 3.21 ayarla"
+
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Set a default role for this workspace"
@@ -8586,6 +10179,11 @@ msgstr "Bu çalışma alanı için varsayılan bir rol ayarlayın"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Set as default"
 msgstr "Varsayılan olarak ayarla"
+
+#. js-lingui-id: ml98ku
+#: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+msgid "Set as Primary"
+msgstr "Birincil yap"
 
 #. js-lingui-id: V7fgiB
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -8618,6 +10216,16 @@ msgstr "Genel alan adınızın adını belirleyin ve DNS kayıtlarınızı yapı
 msgid "Set the name of your subdomain"
 msgstr "Alt alan adınızın adını belirleyin"
 
+#. js-lingui-id: tG3Y2G
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Set up a Date field on {objectLabel} to create a Calendar"
+msgstr "Bir Takvim oluşturmak için {objectLabel} üzerinde bir Tarih alanı ayarlayın"
+
+#. js-lingui-id: TaMNRO
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Set up a Select field on {objectLabel} to create a Kanban"
+msgstr "Bir Kanban oluşturmak için {objectLabel} üzerinde bir Seçim alanı ayarlayın"
+
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
@@ -8629,7 +10237,9 @@ msgid "Setting up your database..."
 msgstr "Veritabanınızı ayarlama..."
 
 #. js-lingui-id: Tz0i8g
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
@@ -8698,6 +10308,11 @@ msgstr "Bir alanın etiketi değiştirilirse API adı da değiştirilsin mi?"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Should changing an object's label also change the API?"
 msgstr "Bir nesnenin etiketini değiştirmek API'yı da değiştirmeli mi?"
+
+#. js-lingui-id: lSEpDc
+#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+msgid "Show group {groupValue}"
+msgstr "{groupValue} grubunu göster"
 
 #. js-lingui-id: 1OVrop
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -8776,6 +10391,11 @@ msgstr "Altıncı"
 msgid "Skip"
 msgstr "Atla"
 
+#. js-lingui-id: BIZl8w
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Sky"
+msgstr "Gökyüzü"
+
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
@@ -8837,8 +10457,18 @@ msgstr "Bazı"
 msgid "Some folders"
 msgstr "Bazı klasörler"
 
+#. js-lingui-id: yHwG3y
+#: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
+#: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
+#: src/modules/settings/components/SettingsCard.tsx
+msgid "Soon"
+msgstr "Yakında"
+
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
+#: src/modules/error-handler/components/AppPageErrorFallback.tsx
+#: src/modules/error-handler/components/AppFullScreenErrorFallback.tsx
+#: src/modules/error-handler/components/internal/AppErrorDisplay.tsx
 msgid "Sorry, something went wrong"
 msgstr "Üzgünüm, bir şeyler ters gitti"
 
@@ -8848,6 +10478,7 @@ msgstr "Üzgünüm, bir şeyler ters gitti"
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent.tsx
 msgid "Sort"
 msgstr "Sırala"
 
@@ -8916,6 +10547,7 @@ msgstr "Aşamalar"
 
 #. js-lingui-id: TJBHlP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Standard"
 msgstr "Standart"
 
@@ -8940,8 +10572,11 @@ msgid "Started verification process"
 msgstr "Doğrulama süreci başlatıldı"
 
 #. js-lingui-id: RS0o7b
+#: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "State"
 msgstr "Durum"
 
@@ -8952,6 +10587,16 @@ msgstr "Durum"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Durum"
+
+#. js-lingui-id: lATgy+
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterGroupOptionsDropdown.tsx
+msgid "Step filter group options"
+msgstr "Adım filtre grubu seçenekleri"
+
+#. js-lingui-id: GSWBES
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOptionsDropdown.tsx
+msgid "Step filter options"
+msgstr "Adım filtre seçenekleri"
 
 #. js-lingui-id: ygCKqB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
@@ -8968,6 +10613,16 @@ msgstr "Kişileştirmeyi durdur"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Stored in database"
 msgstr "Veritabanında saklanır"
+
+#. js-lingui-id: C9VfWO
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+msgid "Street address"
+msgstr "Sokak adresi"
+
+#. js-lingui-id: gMCO5J
+#: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+msgid "Street address 2"
+msgstr "Sokak adresi 2"
 
 #. js-lingui-id: UJNV7l
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
@@ -9005,6 +10660,11 @@ msgstr "Alt alan adı güncellendi"
 msgid "subheading"
 msgstr ""
 
+#. js-lingui-id: UJmAAK
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Subject"
+msgstr "Konu"
+
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -9018,6 +10678,7 @@ msgstr "Konu ve meta veri ekibinizle paylaşılacak."
 
 #. js-lingui-id: DvSvG9
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Subject not shared"
 msgstr "Konu paylaşılmadı"
 
@@ -9068,10 +10729,20 @@ msgstr "Abonelik yıllık olarak değiştirildi."
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
 msgstr "Abonelik, {beautifiedRenewDate} tarihinde Aylık olarak değiştirilecek."
 
+#. js-lingui-id: WB5mu5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription will be switched to {oppositPlan} Plan the {beautifiedRenewDate}."
+msgstr "Abonelik, {beautifiedRenewDate} tarihinde {oppositPlan} Planına geçirilecek."
+
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "subtitle"
 msgstr ""
+
+#. js-lingui-id: zzDlyQ
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+msgid "Success"
+msgstr "Başarılı"
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -9101,7 +10772,8 @@ msgstr "Pazar"
 
 #. js-lingui-id: XYLcNv
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/support/components/SupportButton.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Support"
 msgstr "Destek"
 
@@ -9145,6 +10817,11 @@ msgstr "E-posta ve takvim hesaplarını senkronize et"
 msgid "Sync failed"
 msgstr "Senkronizasyon hatası"
 
+#. js-lingui-id: ZS+BPb
+#: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
+msgid "Sync lost with mailbox {mailboxHandle}. Please reconnect for updates:"
+msgstr "{mailboxHandle} posta kutusuyla eşitleme kesildi. Güncellemeler için lütfen yeniden bağlanın:"
+
 #. js-lingui-id: L4+l7C
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync with Google"
@@ -9154,6 +10831,11 @@ msgstr "Google ile Senkronize Et"
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync with Outlook"
 msgstr "Outlook ile Senkronize Et"
+
+#. js-lingui-id: +9x4tK
+#: src/pages/onboarding/SyncEmails.tsx
+msgid "Sync your Emails and Calendar with Twenty. Choose your privacy settings."
+msgstr "E-postalarınızı ve Takviminizi Twenty ile eşitleyin. Gizlilik ayarlarınızı seçin."
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -9241,8 +10923,19 @@ msgstr "Sekme Ayarları"
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Table"
 msgstr "Tablo"
+
+#. js-lingui-id: R+s8S+
+#: src/modules/activities/tasks/components/TaskRow.tsx
+msgid "Task title"
+msgstr "Görev başlığı"
+
+#. js-lingui-id: pqXgqN
+#: src/modules/activities/notes/components/NoteTile.tsx
+msgid "Task Title"
+msgstr "Görev Başlığı"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -9261,7 +10954,10 @@ msgid "Terms of Service"
 msgstr "Kullanım Koşulları"
 
 #. js-lingui-id: NnH3pK
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -9284,6 +10980,7 @@ msgid "text"
 msgstr "metin"
 
 #. js-lingui-id: xeiujy
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Text"
@@ -9292,7 +10989,7 @@ msgstr "Metin"
 #. js-lingui-id: fq+5a1
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Text Colors"
-msgstr ""
+msgstr "Metin Renkleri"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
@@ -9411,6 +11108,11 @@ msgstr "sonra"
 msgid "There are no associated files with this record."
 msgstr "Bu kayıtla ilişkili dosya yok."
 
+#. js-lingui-id: 6g0c8y
+#: src/modules/activities/notes/components/NotesCard.tsx
+msgid "There are no associated notes with this record."
+msgstr "Bu kayıtla ilişkili not yok."
+
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "There are required columns that are not matched or ignored. Do you want to continue?"
@@ -9420,6 +11122,11 @@ msgstr "Eşleşmeyen veya göz ardı edilen zorunlu sütunlar var. Devam etmek i
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Hâlâ bazı satırlarda hata var. Hatalı satırlar gönderilirken göz ardı edilecektir."
+
+#. js-lingui-id: WQk7Cf
+#: src/modules/activities/timeline-activities/components/TimelineCard.tsx
+msgid "There is no activity associated with this record."
+msgstr "Bu kayıtla ilişkili etkinlik yok."
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
@@ -9473,6 +11180,21 @@ msgstr "Bu işlem geri alınamaz. Bu, bu üyeyi bu çalışma alanından kalıc�
 msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
 msgstr "Bu işlem geri alınamaz. Bu, üyeliğinizi bu çalışma alanından kalıcı olarak kaldıracak."
 
+#. js-lingui-id: o5vUsG
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
+msgstr "Bu işlem geri alınamaz. Bu, iki faktörlü kimlik doğrulama yöntemini kalıcı olarak sıfırlayacaktır. <0/> Onaylamak için lütfen e-postanızı yazın."
+
+#. js-lingui-id: XdFYs2
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+msgid "This action will delete this favorite folder and all {favoriteCount} favorites inside. Do you want to continue?"
+msgstr "Bu işlem bu favori klasörünü ve içindeki {favoriteCount} favorinin tümünü silecek. Devam etmek istiyor musunuz?"
+
+#. js-lingui-id: pFXbgz
+#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
+msgstr "Bu işlem bu favori klasörünü ve içindeki favoriyi silecek. Devam etmek istiyor musunuz?"
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -9487,6 +11209,16 @@ msgstr "Bu dosya türü önizlenemez. Görüntülemek için lütfen dosyayı ind
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "This is required to enable manual row reordering."
 msgstr "Bu, manuel satır sıralamayı etkinleştirmek için gereklidir."
+
+#. js-lingui-id: yLvOxg
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
+msgid "This key should be set through body input"
+msgstr "Bu anahtar, gövde girişi üzerinden ayarlanmalıdır"
+
+#. js-lingui-id: dWJTyU
+#: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
+msgid "This record has been deleted"
+msgstr "Bu kayıt silindi"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -9543,6 +11275,11 @@ msgstr "Bu işlem, {objectLabel} nesnesindeki bu alanı ve ona ait tüm verileri
 msgid "This will permanently delete the object and all its records. Type \"yes\" to confirm."
 msgstr "Bu işlem, nesneyi ve tüm kayıtlarını kalıcı olarak silecek. Onaylamak için \"evet\" yazın."
 
+#. js-lingui-id: qEODFi
+#: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
+msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
+msgstr "Bu, iki faktörlü kimlik doğrulama yöntemini kalıcı olarak silecektir.<0/>Çalışma alanınızda 2FA zorunlu olduğundan, silmeden sonra oturumunuz kapatılacak ve girişte yeniden yapılandırmanız istenecektir. <1/>Onaylamak için lütfen e-postanızı yazın."
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -9559,6 +11296,13 @@ msgstr "Temizle"
 msgid "Tidy up workflow"
 msgstr "İş akışını düzenle"
 
+#. js-lingui-id: umgyhx
+#: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/settings/members/components/MemberNameFields.tsx
+msgid "Tim"
+msgstr "Tim"
+
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -9572,6 +11316,7 @@ msgid "Time zone"
 msgstr "Zaman dilimi"
 
 #. js-lingui-id: cklVjM
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Zaman Çizelgesi"
@@ -9585,6 +11330,11 @@ msgstr "Zaman damgası"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Timestamp and participants will be shared with your team."
 msgstr "Zaman damgası ve katılımcılar ekibinizle paylaşılacak."
+
+#. js-lingui-id: y3HaQk
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Timing"
+msgstr "Zamanlama"
 
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -9614,15 +11364,61 @@ msgstr "Tüm nesne izinlerini değiştirin"
 msgid "Toggle all settings permissions"
 msgstr "Tüm ayar izinlerini değiştir"
 
+#. js-lingui-id: oK9ArN
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Tomato"
+msgstr "Domates"
+
 #. js-lingui-id: BRMXj0
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Yarın"
 
+#. js-lingui-id: WrMXsY
+#: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
+#: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
+msgid "Too many records. Up to {maxRecordsString} allowed"
+msgstr "Çok fazla kayıt. En fazla {maxRecordsString} kayda izin verilir"
+
+#. js-lingui-id: GnoLfm
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Tool calls made"
+msgstr "Gerçekleştirilen araç çağrıları"
+
+#. js-lingui-id: OvFVjH
+#: src/modules/ai/components/ToolStepRenderer.tsx
+msgid "Tool execution failed"
+msgstr "Araç yürütmesi başarısız oldu"
+
+#. js-lingui-id: YfW6FA
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Tool generation"
+msgstr "Araç oluşturma"
+
 #. js-lingui-id: 72c5Qo
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
+
+#. js-lingui-id: hg5QeV
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Total cost"
+msgstr "Toplam maliyet"
+
+#. js-lingui-id: ovXf5m
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Total credits"
+msgstr "Toplam kredi"
+
+#. js-lingui-id: v7vAuj
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
+msgid "Total Jobs"
+msgstr "Toplam İş"
+
+#. js-lingui-id: /kXBrK
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+msgid "Total time"
+msgstr "Toplam süre"
 
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -9647,6 +11443,8 @@ msgstr "Deneme süresi sona erdi. Lütfen fatura bilgilerinizi güncelleyin."
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Tetikleyici"
@@ -9673,6 +11471,11 @@ msgstr "Tetikleme aralığı"
 msgid "Trigger Type"
 msgstr "Tetikleyici Türü"
 
+#. js-lingui-id: 34nxyb
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+msgid "Triggers"
+msgstr "Tetikleyiciler"
+
 #. js-lingui-id: zk64Yo
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Triggers the function at regular intervals"
@@ -9684,8 +11487,11 @@ msgid "Triggers the function with Http request"
 msgstr "Http isteği ile fonksiyonu tetikler"
 
 #. js-lingui-id: c+xCSz
+#: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
@@ -9740,6 +11546,16 @@ msgstr ""
 msgid "Turn Not Found"
 msgstr ""
 
+#. js-lingui-id: EdHWDU
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Turquoise"
+msgstr "Turkuaz"
+
+#. js-lingui-id: JnaRPe
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
+msgid "Twenty fields"
+msgstr "Twenty alanları"
+
 #. js-lingui-id: YIjS4q
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
@@ -9772,6 +11588,7 @@ msgstr "İki faktörlü doğrulama kurulumu başarıyla tamamlandı!"
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Type"
@@ -9802,6 +11619,11 @@ msgstr ""
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Arka Uca Ulaşılamıyor"
+
+#. js-lingui-id: EUHN7i
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Undefined"
+msgstr "Tanımsız"
 
 #. js-lingui-id: o23uCL
 #: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
@@ -9866,9 +11688,20 @@ msgstr "Bilinmiyor"
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Unknown error"
 msgstr "Bilinmeyen hata"
+
+#. js-lingui-id: IU3aCs
+#: src/modules/ai/hooks/useBrowsingContext.ts
+msgid "Unknown field"
+msgstr "Bilinmeyen alan"
+
+#. js-lingui-id: +K1Lj4
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+msgid "Unknown file"
+msgstr "Bilinmeyen dosya"
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -9893,9 +11726,32 @@ msgid "Unordered list with bullets"
 msgstr ""
 
 #. js-lingui-id: wja8aL
+#: src/modules/ui/field/display/components/ArrayDisplay.tsx
+#: src/modules/ui/field/display/components/ActorDisplay.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/page-layout/components/PageLayoutRendererContent.tsx
+#: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
+#: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
+#: src/modules/object-record/components/RecordChip.tsx
+#: src/modules/object-record/components/RecordChip.tsx
+#: src/modules/command-menu/components/CommandMenuContextChip.tsx
+#: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
 msgstr "İsimsiz"
+
+#. js-lingui-id: RNLIa9
+#: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItemContent.tsx
+msgid "Untitled {labelSingular}"
+msgstr "İsimsiz {labelSingular}"
+
+#. js-lingui-id: RBz20h
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Untitled iFrame"
+msgstr "İsimsiz iFrame"
 
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
@@ -9940,6 +11796,16 @@ msgstr "Görünümü güncelle"
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Hesap yapılandırmanızı güncelleyin. Gerektiği şekilde IMAP, SMTP ve CalDAV'ın herhangi bir kombinasyonunu yapılandırın."
 
+#. js-lingui-id: x4Xp3c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
+msgid "updated"
+msgstr "güncellenmiş"
+
+#. js-lingui-id: +b7T3G
+#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+msgid "Updated"
+msgstr "Güncellenmiş"
+
 #. js-lingui-id: kwkhPe
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -9968,6 +11834,11 @@ msgstr "Dosya yükle"
 msgid "Upload File"
 msgstr "Dosya yükle"
 
+#. js-lingui-id: sCtyHQ
+#: src/modules/activities/files/components/DropZone.tsx
+msgid "Upload files"
+msgstr "Dosyaları yükle"
+
 #. js-lingui-id: HAKBY9
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
@@ -9979,6 +11850,7 @@ msgid "Upload the XML file with your connection infos"
 msgstr "XML dosyanızı bağlantı bilgilerinizle yükleyin"
 
 #. js-lingui-id: IagCbF
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "URL"
 msgstr "URL"
@@ -10014,6 +11886,7 @@ msgstr "API'mızı kullanın veya ilk {objectLabel} kaydınızı manuel olarak e
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -10065,8 +11938,11 @@ msgstr "Verileri doğrula"
 
 #. js-lingui-id: wMHvYH
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
@@ -10170,7 +12046,7 @@ msgstr "Fatura detaylarını görüntüle"
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
 msgid "View existing record"
-msgstr ""
+msgstr "Mevcut kaydı görüntüle"
 
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10214,6 +12090,11 @@ msgstr ""
 msgid "View type"
 msgstr "Görünüm tipi"
 
+#. js-lingui-id: eedtPL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Violet"
+msgstr "Menekşe"
+
 #. js-lingui-id: 2q/Q7x
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10256,7 +12137,12 @@ msgstr "Bekleyen Çocuklar"
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
-msgstr ""
+msgstr "Çıktı bekleniyor..."
+
+#. js-lingui-id: r6y+jM
+#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+msgid "Warning"
+msgstr "Uyarı"
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
@@ -10308,6 +12194,15 @@ msgstr "Yeni her olay için bu uç noktaya application/json formatında bir POST
 msgid "We will send your a link to verify domain ownership"
 msgstr "Alan sahipliğini doğrulamak için bağlantı göndereceğiz"
 
+#. js-lingui-id: X56YGk
+#: src/pages/onboarding/PaymentSuccess.tsx
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
+"Please try again in a few seconds, sorry."
+msgstr ""
+"Ödeme sağlayıcımızdan (Stripe) onay bekliyoruz.\n"
+"Lütfen birkaç saniye sonra tekrar deneyin, özür dileriz."
+
 #. js-lingui-id: LnnVIT
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Web Search"
@@ -10347,6 +12242,7 @@ msgid "Webhooks"
 msgstr "Web kancaları"
 
 #. js-lingui-id: zx4BuL
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -10380,10 +12276,32 @@ msgstr "API anahtarının ne zaman süresi dolacak."
 msgid "When the key will be disabled"
 msgstr "Anahtarın ne zaman devre dışı bırakılacağı"
 
+#. js-lingui-id: YvwwqC
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
+#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell.tsx
+msgid "Where"
+msgstr "Koşul"
+
 #. js-lingui-id: fANaAS
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Araç tipi"
+
+#. js-lingui-id: bB8dFW
+#: src/modules/billing/components/TrialCard.tsx
+msgid "With Credit Card"
+msgstr "Kredi kartı ile"
+
+#. js-lingui-id: p9B1Re
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Without calling code"
+msgstr "Arama kodu olmadan"
+
+#. js-lingui-id: 30aZb8
+#: src/modules/billing/components/TrialCard.tsx
+msgid "Without Credit Card"
+msgstr "Kredi kartsız"
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -10409,6 +12327,7 @@ msgstr "İş Akışları"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -10427,6 +12346,7 @@ msgstr "İş Akışları"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -10444,6 +12364,7 @@ msgstr "İş Akışları"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -10563,6 +12484,11 @@ msgstr "yıllık"
 msgid "years"
 msgstr "yıl"
 
+#. js-lingui-id: QyCqHT
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Yellow"
+msgstr "Sarı"
+
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
@@ -10650,6 +12576,11 @@ msgstr "Tüm eşlemelerinizi kaybedeceksiniz."
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Çalışma alanı alt alan adınızı değiştirmek üzeresiniz. Bu işlem, tüm kullanıcıların oturumunu kapatacaktır."
+
+#. js-lingui-id: nIF+FL
+#: src/pages/onboarding/PaymentSuccess.tsx
+msgid "Your account has been activated."
+msgstr "Hesabınız etkinleştirildi."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

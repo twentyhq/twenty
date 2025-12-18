@@ -83,6 +83,12 @@ export const MultiItemFieldInput = <T,>({
       ) {
         return;
       }
+      const { isValid } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid && isInputDisplayed) {
+        return;
+      }
+
       handleSubmitChanges();
       onClickOutside(items, event);
     },
@@ -168,21 +174,34 @@ export const MultiItemFieldInput = <T,>({
     setIsInputDisplayed(true);
   };
 
-  const handleAutoEnter = () => {
-    const sanitizedInput = inputValue.trim();
+  const handleEnter = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
 
-    const newItem = formatInput
-      ? formatInput(sanitizedInput)
-      : (sanitizedInput as unknown as T);
-
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onEnter(updatedItems);
+    handleSubmitChanges();
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      onEnter(updatedItems);
+    }
+    setIsInputDisplayed(false);
+    setIsAddingNewItem(false);
+    setInputValue('');
   };
 
   const handleSubmitChanges = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    onChange(updatedItems);
+  };
+
+  const validateInputAndComputeUpdatedItems = (): {
+    isValid: boolean;
+    updatedItems: T[];
+  } => {
     const sanitizedInput = inputValue.trim();
 
     const newItem = formatInput
@@ -190,17 +209,22 @@ export const MultiItemFieldInput = <T,>({
       : (sanitizedInput as unknown as T);
 
     if (sanitizedInput === '' && isAddingNewItem) {
-      return;
+      return { isValid: true, updatedItems: items };
     }
 
     if (sanitizedInput === '' && shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-      onEnter([newItem]);
-      return;
+      return {
+        isValid: true,
+        updatedItems: [],
+      };
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
-      return;
+      return {
+        isValid: true,
+        updatedItems: toSpliced(items, itemToEditIndex, 1),
+      };
     }
 
     if (validateInput !== undefined) {
@@ -208,17 +232,16 @@ export const MultiItemFieldInput = <T,>({
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
-        return;
+        return { isValid: false, updatedItems: items };
       }
     }
 
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onChange(updatedItems);
-    setIsAddingNewItem(false);
-    setIsInputDisplayed(false);
+    return {
+      isValid: true,
+      updatedItems: isAddingNewItem
+        ? [...items, newItem]
+        : toSpliced(items, itemToEditIndex, 1, newItem),
+    };
   };
 
   const handleSetPrimaryItem = (index: number) => {
@@ -281,23 +304,13 @@ export const MultiItemFieldInput = <T,>({
               ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
               : handleInputChange('');
           }}
-          onEnter={() => {
-            handleSubmitChanges();
-            if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-              handleAutoEnter();
-            }
-          }}
+          onEnter={handleEnter}
           hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton
                 Icon={isAddingNewItem ? IconPlus : IconCheck}
-                onClick={() => {
-                  handleSubmitChanges();
-                  if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-                    handleAutoEnter();
-                  }
-                }}
+                onClick={handleEnter}
               />
             ) : null
           }

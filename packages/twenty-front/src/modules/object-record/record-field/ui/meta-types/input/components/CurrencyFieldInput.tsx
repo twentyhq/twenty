@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -137,7 +138,7 @@ export const CurrencyFieldInput = () => {
       value={draftValue?.amount?.toString() ?? ''}
       currencyCode={currencyCode}
       autoFocus
-      placeholder="Currency"
+      placeholder={t`Currency`}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
