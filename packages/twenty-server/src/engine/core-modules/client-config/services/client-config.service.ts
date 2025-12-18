@@ -185,9 +185,6 @@ export class ClientConfigService {
       isConfigVariablesInDbEnabled: this.twentyConfigService.get(
         'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
       ),
-      isImapSmtpCaldavEnabled: this.twentyConfigService.get(
-        'IS_IMAP_SMTP_CALDAV_ENABLED',
-      ),
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,

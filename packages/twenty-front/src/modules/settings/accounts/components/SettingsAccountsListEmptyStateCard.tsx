@@ -4,7 +4,6 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -13,7 +12,6 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -40,10 +38,6 @@ export const SettingsAccountsListEmptyStateCard = () => {
     isMicrosoftCalendarEnabledState,
   );
 
-  const isImapSmtpCaldavFeatureFlagEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
-  );
-
   return (
     <StyledCardsContainer>
       {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
@@ -62,16 +56,14 @@ export const SettingsAccountsListEmptyStateCard = () => {
         />
       )}
 
-      {isImapSmtpCaldavFeatureFlagEnabled && (
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
-        >
-          <SettingsCard
-            Icon={<IconAt size={theme.icon.size.md} />}
-            title={t`Connect Account`}
-          />
-        </UndecoratedLink>
-      )}
+      <UndecoratedLink
+        to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
+      >
+        <SettingsCard
+          Icon={<IconAt size={theme.icon.size.md} />}
+          title={t`Connect Account`}
+        />
+      </UndecoratedLink>
     </StyledCardsContainer>
   );
 };
