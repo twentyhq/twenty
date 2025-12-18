@@ -10,10 +10,7 @@ import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layo
 import { type WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
-import {
-  PageLayoutWidgetException,
-  PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout/types/grid-position.type';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout/utils/validate-widget-grid-position.util';
@@ -202,40 +199,17 @@ export class FlatPageLayoutWidgetValidatorService {
     gridPosition: GridPosition | undefined;
     widgetTitle: string;
   }): FlatEntityValidationError[] {
-    const errors: FlatEntityValidationError[] = [];
-
     if (!isDefined(gridPosition)) {
-      errors.push({
-        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        message: t`Grid position is required`,
-        userFriendlyMessage: msg`Grid position is required`,
-      });
-
-      return errors;
-    }
-
-    try {
-      validateWidgetGridPosition(gridPosition, widgetTitle);
-    } catch (error) {
-      if (error instanceof PageLayoutWidgetException) {
-        errors.push({
-          code: error.code,
-          message: error.message,
-          userFriendlyMessage: msg`Invalid widget grid position`,
-        });
-      } else {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-
-        errors.push({
+      return [
+        {
           code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: t`Invalid grid position for widget "${widgetTitle}": ${errorMessage}`,
-          userFriendlyMessage: msg`Invalid widget grid position`,
-        });
-      }
+          message: t`Grid position is required`,
+          userFriendlyMessage: msg`Grid position is required`,
+        },
+      ];
     }
 
-    return errors;
+    return validateWidgetGridPosition(gridPosition, widgetTitle);
   }
 
   private async validateWidgetConfiguration({
