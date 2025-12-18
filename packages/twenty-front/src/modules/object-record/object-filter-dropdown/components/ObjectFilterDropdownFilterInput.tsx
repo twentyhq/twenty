@@ -30,12 +30,10 @@ export const ObjectFilterDropdownFilterInput = ({
 }: ObjectFilterDropdownFilterInputProps) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
-    filterDropdownId,
   );
 
   const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
-    filterDropdownId,
   );
 
   const isOperandWithFilterValue =

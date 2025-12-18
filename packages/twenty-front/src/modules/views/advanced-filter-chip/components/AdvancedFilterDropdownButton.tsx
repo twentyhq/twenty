@@ -4,7 +4,7 @@ import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-fi
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
+import { AdvancedFilterChip } from '@/views/advanced-filter-chip/components/AdvancedFilterChip';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { isDefined } from 'twenty-shared/utils';
 

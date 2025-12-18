@@ -9,7 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type ObjectFilterDropdownNumberInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
 };
 
 export const ObjectFilterDropdownNumberInput = ({
@@ -49,7 +49,7 @@ export const ObjectFilterDropdownNumberInput = ({
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuInput
-        instanceId="object-filter-dropdown-number-input"
+        instanceId={filterDropdownId}
         ref={handleInputRef}
         value={objectFilterDropdownFilterValue}
         autoFocus

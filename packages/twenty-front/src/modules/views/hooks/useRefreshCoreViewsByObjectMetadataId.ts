@@ -10,7 +10,6 @@ import { getFilterableFields } from '@/views/utils/getFilterableFields';
 
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { view } from 'framer-motion';
 import { useRecoilCallback } from 'recoil';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';

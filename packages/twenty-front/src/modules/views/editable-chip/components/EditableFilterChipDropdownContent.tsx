@@ -1,7 +1,7 @@
 import { ObjectFilterDropdownContentWrapper } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownContentWrapper';
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
-import { EditableFilterChipDropdownMenuHeader } from '@/views/components/EditableFilterChipDropdownMenuHeader';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { EditableFilterChipDropdownMenuHeader } from '@/views/editable-chip/components/EditableFilterChipDropdownMenuHeader';
+import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 
 type EditableFilterChipDropdownContentProps = {
   recordFilterId: string;
@@ -14,7 +14,7 @@ export const EditableFilterChipDropdownContent = ({
     <ObjectFilterDropdownContentWrapper>
       <EditableFilterChipDropdownMenuHeader />
       <ObjectFilterDropdownFilterInput
-        filterDropdownId={ViewBarFilterDropdownIds.EDITABLE_CHIP}
+        filterDropdownId={getEditableChipDropdownId({ recordFilterId })}
         recordFilterId={recordFilterId}
       />
     </ObjectFilterDropdownContentWrapper>

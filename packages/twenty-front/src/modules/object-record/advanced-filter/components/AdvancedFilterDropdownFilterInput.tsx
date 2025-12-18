@@ -65,7 +65,7 @@ export const AdvancedFilterDropdownFilterInput = ({
         (isActorSourceCompositeFilter ? (
           <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
         ) : (
-          <ObjectFilterDropdownTextInput />
+          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>

@@ -9,7 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type ObjectFilterDropdownTextInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
 };
 
 export const ObjectFilterDropdownTextInput = ({
@@ -18,7 +18,6 @@ export const ObjectFilterDropdownTextInput = ({
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
-  console.log('filterDropdownId', filterDropdownId);
 
   const { objectFilterDropdownFilterValue } =
     useObjectFilterDropdownFilterValue();
@@ -50,14 +49,17 @@ export const ObjectFilterDropdownTextInput = ({
   return (
     <DropdownMenuItemsContainer>
       <DropdownMenuInput
-        instanceId="object-filter-dropdown-text-input"
+        instanceId={filterDropdownId}
         ref={handleInputRef}
         value={objectFilterDropdownFilterValue ?? ''}
         autoFocus
         type="text"
         placeholder={fieldMetadataItemUsedInDropdown?.label}
         onChange={handleInputChange}
-        onEnter={() => closeDropdown(filterDropdownId)}
+        onEnter={() => {
+          closeDropdown(filterDropdownId);
+          console.log('closeDropdown', filterDropdownId);
+        }}
       />
     </DropdownMenuItemsContainer>
   );

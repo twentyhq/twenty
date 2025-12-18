@@ -4,6 +4,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,7 +23,10 @@ export const useSetEditableFilterChipDropdownStates = () => {
         if (isDefined(fieldMetadataItem)) {
           set(
             fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-              instanceId: recordFilter.id,
+              instanceId:
+                getEditableChipObjectFilterDropdownComponentInstanceId({
+                  recordFilterId: recordFilter.id,
+                }),
             }),
             fieldMetadataItem.id,
           );
@@ -30,21 +34,27 @@ export const useSetEditableFilterChipDropdownStates = () => {
 
         set(
           selectedOperandInDropdownComponentState.atomFamily({
-            instanceId: recordFilter.id,
+            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+              recordFilterId: recordFilter.id,
+            }),
           }),
           recordFilter.operand,
         );
 
         set(
           objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
-            instanceId: recordFilter.id,
+            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+              recordFilterId: recordFilter.id,
+            }),
           }),
           recordFilter,
         );
 
         set(
           subFieldNameUsedInDropdownComponentState.atomFamily({
-            instanceId: recordFilter.id,
+            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
+              recordFilterId: recordFilter.id,
+            }),
           }),
           recordFilter.subFieldName,
         );
