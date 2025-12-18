@@ -54,33 +54,6 @@ export class AiAgentRoleService {
     });
   }
 
-  public async assignStandardRoleToAgent({
-    workspaceId,
-    agentId,
-    standardRoleId,
-  }: {
-    workspaceId: string;
-    agentId: string;
-    standardRoleId: string;
-  }) {
-    const role = await this.roleRepository.findOne({
-      where: { standardId: standardRoleId, workspaceId },
-    });
-
-    if (!isDefined(role)) {
-      throw new AgentException(
-        `Standard role with standard ID ${standardRoleId} not found in workspace`,
-        AgentExceptionCode.ROLE_NOT_FOUND,
-      );
-    }
-
-    await this.assignRoleToAgent({
-      workspaceId,
-      agentId,
-      roleId: role.id,
-    });
-  }
-
   public async removeRoleFromAgent({
     workspaceId,
     agentId,
