@@ -41,7 +41,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
     if (skills.length === 0) {
       return {
         skills: [],
-        message: `No skills found with names: ${skillNames.join(', ')}. Available skills: workflow-building, data-manipulation, dashboard-building, metadata-building, research.`,
+        message: `No skills found with names: ${skillNames.join(', ')}. Available skills: workflow-building, data-manipulation, dashboard-building, metadata-building, research, code-interpreter, xlsx, pdf, docx, pptx.`,
       };
     }
 
@@ -51,7 +51,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
         label: skill.label,
         content: skill.content,
       })),
-      message: `Loaded ${skills.length} skill(s). Use the instructions above to guide your approach.`,
+      message: `Loaded ${skills.length} skill(s). Follow the instructions in the skill content.`,
     };
   },
 });

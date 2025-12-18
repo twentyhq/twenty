@@ -25,6 +25,10 @@ exports[`Successful User Sign Up (integration) should sign up, delete and signup
   "extensions": {
     "code": "UNAUTHENTICATED",
     "subCode": "USER_NOT_FOUND",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "User not found.",
+    },
   },
   "message": "User not found",
 }

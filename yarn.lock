@@ -4258,6 +4258,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bufbuild/protobuf@npm:^2.6.2":
+  version: 2.10.1
+  resolution: "@bufbuild/protobuf@npm:2.10.1"
+  checksum: 10c0/47fde36740663e8b45c8290dc9107780a579971fae9664ece6ed0da24add458b46492cc1ff4847db218ec918a9cdf76b8e74ab0b21d79912163f3c4cb0ceda22
+  languageName: node
+  linkType: hard
+
 "@bundled-es-modules/cookie@npm:^2.0.0":
   version: 2.0.1
   resolution: "@bundled-es-modules/cookie@npm:2.0.1"
@@ -4578,6 +4585,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@connectrpc/connect-web@npm:2.0.0-rc.3":
+  version: 2.0.0-rc.3
+  resolution: "@connectrpc/connect-web@npm:2.0.0-rc.3"
+  peerDependencies:
+    "@bufbuild/protobuf": ^2.2.0
+    "@connectrpc/connect": 2.0.0-rc.3
+  checksum: 10c0/32ee39a377b2a1c110a92427b9d60e5189e24261bbd8bf9e7b92d3cce67db49528a92fe0f158967746d9035d09b49f9f554075824e94dbd35dda658054a6ae62
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect@npm:2.0.0-rc.3":
+  version: 2.0.0-rc.3
+  resolution: "@connectrpc/connect@npm:2.0.0-rc.3"
+  peerDependencies:
+    "@bufbuild/protobuf": ^2.2.0
+  checksum: 10c0/96de3d73df3eca3681a026b3396d0344b2237ed6ea8f7e09e0f913a03fba3f5e07538c82ee13daa2257e7e0b158929b7cc60d49a946b57d94404efd1944af581
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -4712,6 +4738,15 @@ __metadata:
   version: 0.10.2
   resolution: "@drizzle-team/brocli@npm:0.10.2"
   checksum: 10c0/3d8b99d680f0b14fea32b45c59b938b6665e0840cc67f04801b1aa3c6747da3c7d01c00e321645034fa100abdba7e0c20ce07cf46fc2ca769ee4cafd97562484
+  languageName: node
+  linkType: hard
+
+"@e2b/code-interpreter@npm:^1.0.4":
+  version: 1.5.1
+  resolution: "@e2b/code-interpreter@npm:1.5.1"
+  dependencies:
+    e2b: "npm:^1.4.0"
+  checksum: 10c0/edb0aa6643749e91c2446aa5e124304066703cce2c41adb8647ad5a124340332f6f547758bf196c9a5400a171f1a295a13eb0946d4462d76b06106aed65913c2
   languageName: node
   linkType: hard
 
@@ -7591,14 +7626,14 @@ __metadata:
 
 "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=8f5028&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=971f26&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
     "@nestjs/graphql": ^12.0.0
     graphql: ^15.0.0 || ^16.0.0
     graphql-yoga: ^4.0.4
-  checksum: 10c0/503620747ab1e747ef61b21a794060f613dc86313f7452e86fcbef9ca722be262d83be0dc57e9add15172e0b6cfb6999fe5785419529e7c81663da5283b97169
+  checksum: 10c0/68ebaf195c93a6d31e22f91e5474cfb51675eac44a6c1a2ef7c856539e704dd9e7f8ea7cfd930a0ad37894edbcab6502b642f202d9f31f8f38b36c7d4d5add43
   languageName: node
   linkType: hard
 
@@ -25045,11 +25080,11 @@ __metadata:
   linkType: hard
 
 "@types/unzipper@npm:^0":
-  version: 0.10.10
-  resolution: "@types/unzipper@npm:0.10.10"
+  version: 0.10.11
+  resolution: "@types/unzipper@npm:0.10.11"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/10e9da33791be1087adb25adc2fe4d5ab267dae51fbcf7b1f10d0aca3130a13ef5fed994d7be45af8c465ff3946bc360a53eff6e5aab4eb9ac9489477535342f
+  checksum: 10c0/2ed949c2e6f7b22b2a91bde8a127265d1e3201baf1e8603e22836db58295170bdd1e25f4a4487c2daedab4a0340458f6adc0fa27f95429211f4dee261383a3b0
   languageName: node
   linkType: hard
 
@@ -30615,7 +30650,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compare-versions@npm:^6.1.1":
+"compare-versions@npm:^6.1.0, compare-versions@npm:^6.1.1":
   version: 6.1.1
   resolution: "compare-versions@npm:6.1.1"
   checksum: 10c0/415205c7627f9e4f358f571266422980c9fe2d99086be0c9a48008ef7c771f32b0fbe8e97a441ffedc3910872f917a0675fe0fe3c3b6d331cda6d8690be06338
@@ -33033,6 +33068,20 @@ __metadata:
   version: 0.1.5
   resolution: "duplexer3@npm:0.1.5"
   checksum: 10c0/02195030d61c4d6a2a34eca71639f2ea5e05cb963490e5bd9527623c2ac7f50c33842a34d14777ea9cbfd9bc2be5a84065560b897d9fabb99346058a5b86ca98
+  languageName: node
+  linkType: hard
+
+"e2b@npm:^1.4.0":
+  version: 1.13.2
+  resolution: "e2b@npm:1.13.2"
+  dependencies:
+    "@bufbuild/protobuf": "npm:^2.6.2"
+    "@connectrpc/connect": "npm:2.0.0-rc.3"
+    "@connectrpc/connect-web": "npm:2.0.0-rc.3"
+    compare-versions: "npm:^6.1.0"
+    openapi-fetch: "npm:^0.9.7"
+    platform: "npm:^1.3.6"
+  checksum: 10c0/5c6f6b15cf380331dae5561017bf4653aed38e7e7102542984997b2888390732c525a399aac06da5ad26bfe08cf99073b7174825c8f6d54a1b78a327456fccd6
   languageName: node
   linkType: hard
 
@@ -47052,10 +47101,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openapi-fetch@npm:^0.9.7":
+  version: 0.9.8
+  resolution: "openapi-fetch@npm:0.9.8"
+  dependencies:
+    openapi-typescript-helpers: "npm:^0.0.8"
+  checksum: 10c0/a96590c3df4f3e6800003f1128bafd50a01113073f00ea32a6e21e8c1ec38f3dc88141448569e52e791c58088fdbee61ea4fc44b6856cc24da2768fc43fddb82
+  languageName: node
+  linkType: hard
+
 "openapi-types@npm:12.1.3, openapi-types@npm:^12.0.0":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
   checksum: 10c0/4ad4eb91ea834c237edfa6ab31394e87e00c888fc2918009763389c00d02342345195d6f302d61c3fd807f17723cd48df29b47b538b68375b3827b3758cd520f
+  languageName: node
+  linkType: hard
+
+"openapi-typescript-helpers@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "openapi-typescript-helpers@npm:0.0.8"
+  checksum: 10c0/b31a326c67d65f947732e32126f79976ecc67597f911f7ed43ea9ea23b1e2df7a012026327b6e39df5897a70781f9c57f9fcdd86f8a05c0f67ab2b23ee5d708a
   languageName: node
   linkType: hard
 
@@ -48386,6 +48451,13 @@ __metadata:
   version: 1.2.0
   resolution: "planer@npm:1.2.0"
   checksum: 10c0/d2515294e772bbba1b26c0fa611590369f1ff510b11855eb55cb30e093286c888868020b9a62e41a46a4c5686def03f5c34fd91801fc9104404ffeb01ad46b78
+  languageName: node
+  linkType: hard
+
+"platform@npm:^1.3.6":
+  version: 1.3.6
+  resolution: "platform@npm:1.3.6"
+  checksum: 10c0/69f2eb692e15f1a343dd0d9347babd9ca933824c8673096be746ff66f99f2bdc909fadd8609076132e6ec768349080babb7362299f2a7f885b98f1254ae6224b
   languageName: node
   linkType: hard
 
@@ -56148,6 +56220,7 @@ __metadata:
     "@blocknote/server-util": "npm:^0.31.1"
     "@clickhouse/client": "npm:^1.11.0"
     "@dagrejs/dagre": "npm:^1.1.2"
+    "@e2b/code-interpreter": "npm:^1.0.4"
     "@envelop/core": "npm:4.0.3"
     "@envelop/on-resolve": "npm:4.1.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"

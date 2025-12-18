@@ -1,6 +1,7 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import {
   IconLoader,
   IconSquareRoundedCheck,
@@ -73,8 +74,8 @@ export const WorkflowStepExecutionResult = ({
   height = '100%',
   status,
   isTesting = false,
-  loadingMessage = 'Processing...',
-  idleMessage = 'Output',
+  loadingMessage = t`Processing...`,
+  idleMessage = t`Output`,
 }: WorkflowStepExecutionResultProps) => {
   const theme = useTheme();
 

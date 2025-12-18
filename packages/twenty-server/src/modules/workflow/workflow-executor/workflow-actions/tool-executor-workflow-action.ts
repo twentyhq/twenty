@@ -46,7 +46,9 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
 
     const toolInput = resolveInput(step.settings.input, context) as ToolInput;
 
-    const toolOutput = await tool.execute(toolInput, runInfo.workspaceId);
+    const toolOutput = await tool.execute(toolInput, {
+      workspaceId: runInfo.workspaceId,
+    });
 
     return {
       result: toolOutput.result as object,

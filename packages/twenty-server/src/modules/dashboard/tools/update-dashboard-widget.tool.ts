@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   gridPositionSchema,
   widgetConfigurationSchema,

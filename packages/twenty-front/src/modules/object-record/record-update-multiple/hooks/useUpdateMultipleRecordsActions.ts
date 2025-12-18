@@ -83,7 +83,7 @@ export const useUpdateMultipleRecordsActions = ({
         message:
           error instanceof Error
             ? error.message
-            : 'Failed to update records. Please try again.',
+            : t`Failed to update records. Please try again.`,
       });
     }
   };

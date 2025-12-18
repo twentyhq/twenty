@@ -1,6 +1,6 @@
-import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
+import type { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
-import { Schema } from '../utils/data.types';
+import { type Schema } from '../utils/data.types';
 
 export const requestSchema = async (
   z: ZObject,

@@ -35,6 +35,8 @@ import {
   computeMorphRelationFieldName,
   CustomError,
 } from 'twenty-shared/utils';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import {
   IconChevronDown,
   IconDotsVertical,
@@ -263,14 +265,14 @@ export const RecordDetailRelationRecordsListItem = ({
                 <DropdownMenuItemsContainer>
                   <MenuItem
                     LeftIcon={IconUnlink}
-                    text="Detach"
+                    text={t`Detach`}
                     onClick={handleDetach}
                   />
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
                       <MenuItem
                         LeftIcon={IconTrash}
-                        text="Delete"
+                        text={t`Delete`}
                         accent="danger"
                         onClick={handleDelete}
                       />
@@ -295,17 +297,17 @@ export const RecordDetailRelationRecordsListItem = ({
       {createPortal(
         <ConfirmationModal
           modalId={getDeleteRelationModalId(relationRecord.id)}
-          title={`Delete Related ${relationObjectTypeName}`}
+          title={t`Delete Related ${relationObjectTypeName}`}
           subtitle={
-            <>
+            <Trans>
               Are you sure you want to delete this related{' '}
               {relationObjectMetadataNameSingular}?
               <br />
               This action will break all its relationships with other objects.
-            </>
+            </Trans>
           }
           onConfirmClick={handleConfirmDelete}
-          confirmButtonText={`Delete ${relationObjectTypeName}`}
+          confirmButtonText={t`Delete ${relationObjectTypeName}`}
         />,
         document.body,
       )}

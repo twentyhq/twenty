@@ -230,8 +230,12 @@ export const Modal = ({
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
-  const effectiveContainer = ignoreContainer ? null : container;
-  const isInContainer = isDefined(effectiveContainer);
+  const effectiveContainer = ignoreContainer
+    ? isDefined(document)
+      ? document.body
+      : null
+    : container;
+  const isInContainer = isDefined(container) && !ignoreContainer;
 
   const theme = useTheme();
 

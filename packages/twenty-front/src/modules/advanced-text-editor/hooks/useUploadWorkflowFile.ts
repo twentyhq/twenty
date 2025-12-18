@@ -51,16 +51,18 @@ export const useUploadWorkflowFile = () => {
         createdAt: uploadedFile.createdAt,
       };
 
+      const fileName = file.name;
       enqueueSuccessSnackBar({
-        message: `File "${file.name}" uploaded successfully`,
+        message: t`File "${fileName}" uploaded successfully`,
       });
 
       return workflowFile;
     } catch (error) {
       logError(`Failed to upload workflow file "${file.name}": ${error}`);
 
+      const fileNameForError = file.name;
       enqueueErrorSnackBar({
-        message: `Failed to upload "${file.name}"`,
+        message: t`Failed to upload "${fileNameForError}"`,
       });
 
       return null;

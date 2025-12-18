@@ -12,7 +12,6 @@ import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuCl
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
@@ -72,7 +71,6 @@ export const useNavigateCommandMenu = () => {
 
         set(isCommandMenuOpenedState, true);
         set(hasUserSelectedCommandState, false);
-        set(isDragSelectionStartEnabledState, false);
       },
     [
       copyContextStoreStates,

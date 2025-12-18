@@ -54,15 +54,35 @@ msgstr "Một tài khoản đã kết nối"
 msgid "A dashboard"
 msgstr "Một bảng điều khiển"
 
+#. js-lingui-id: ixdsnM
+#: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
+msgid "A DNS manager error occurred."
+msgstr "Đã xảy ra lỗi trình quản lý DNS."
+
+#. js-lingui-id: Hjj8vT
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "A duplicate entry was detected."
+msgstr "Đã phát hiện mục trùng lặp."
+
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "A favorite that can be accessed from the left menu"
 msgstr "Một mục yêu thích có thể truy cập từ menu bên trái"
 
+#. js-lingui-id: othZF2
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "A field with this name already exists."
+msgstr "Một trường có tên này đã tồn tại."
+
 #. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "A Folder of favorites"
 msgstr "Một thư mục của các mục yêu thích"
+
+#. js-lingui-id: +aAI33
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "A function with this name already exists."
+msgstr "Một hàm có tên này đã tồn tại."
 
 #. js-lingui-id: sSGYmf
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
@@ -79,6 +99,16 @@ msgstr ""
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
 msgstr "Một tin nhắn đã gửi hoặc nhận thông qua một kênh nhắn tin (email, trò chuyện, v.v.)"
 
+#. js-lingui-id: Nh/ZZe
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A name conflict occurred."
+msgstr "Đã xảy ra xung đột tên."
+
+#. js-lingui-id: ChJFls
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "A network error occurred while accessing calendar."
+msgstr "Đã xảy ra lỗi mạng khi truy cập lịch."
+
 #. js-lingui-id: bufuBA
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "A note"
@@ -94,13 +124,34 @@ msgstr "Một mục tiêu ghi chú"
 msgid "A one to many relation field should never declare a join column"
 msgstr ""
 
+#. js-lingui-id: W6LTzL
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "A payment processing error occurred."
+msgstr "Đã xảy ra lỗi xử lý thanh toán."
+
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "A person"
 msgstr "Một người"
 
+#. js-lingui-id: sieBE7
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "A record with this relationship already exists."
+msgstr "Đã tồn tại bản ghi với mối quan hệ này."
+
+#. js-lingui-id: j7gCou
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "A record with this value already exists."
+msgstr "Đã tồn tại bản ghi với giá trị này."
+
+#. js-lingui-id: bx1He3
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "A required configuration is missing."
+msgstr "Thiếu cấu hình bắt buộc."
+
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "A role with this label already exists."
 msgstr "Vai trò có nhãn này đã tồn tại."
 
@@ -113,6 +164,52 @@ msgstr "Một nhiệm vụ"
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
 msgid "A task target"
 msgstr "Một mục tiêu nhiệm vụ"
+
+#. js-lingui-id: c1qcYo
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "A temporary error occurred. Please try again."
+msgstr "Đã xảy ra lỗi tạm thời. Vui lòng thử lại."
+
+#. js-lingui-id: reBsjo
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "A temporary network error occurred."
+msgstr "Đã xảy ra lỗi mạng tạm thời."
+
+#. js-lingui-id: WBtp3/
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "A user with this email already exists."
+msgstr "Đã tồn tại người dùng với email này."
+
+#. js-lingui-id: qqnpQ9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "A view error occurred."
+msgstr "Đã xảy ra lỗi chế độ xem."
+
+#. js-lingui-id: NsB3MF
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
+msgid "A view field error occurred."
+msgstr "Đã xảy ra lỗi trường chế độ xem."
+
+#. js-lingui-id: Rth998
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
+msgid "A view filter error occurred."
+msgstr "Đã xảy ra lỗi bộ lọc chế độ xem."
+
+#. js-lingui-id: 2rU/w8
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
+msgid "A view filter group error occurred."
+msgstr "Đã xảy ra lỗi nhóm bộ lọc chế độ xem."
+
+#. js-lingui-id: znJ6EA
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "A view group error occurred."
+msgstr "Đã xảy ra lỗi nhóm chế độ xem."
+
+#. js-lingui-id: gHC5sU
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "A view sort error occurred."
+msgstr "Đã xảy ra lỗi sắp xếp chế độ xem."
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -143,6 +240,11 @@ msgstr "Một thành viên không gian làm việc"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Access Token"
 msgstr "Token truy cập"
+
+#. js-lingui-id: Bk+qoW
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Access token not found."
+msgstr "Không tìm thấy mã thông báo truy cập."
 
 #. js-lingui-id: pd81Qb
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -196,6 +298,16 @@ msgstr "Địa chỉ của công ty"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Địa chỉ của công ty - không còn được sử dụng nữa, thay thế bằng trường địa chỉ mới"
 
+#. js-lingui-id: VmatbA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Admin role not found."
+msgstr "Không tìm thấy vai trò quản trị."
+
+#. js-lingui-id: kmAKx+
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Agent execution failed."
+msgstr "Thực thi tác nhân thất bại."
+
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
@@ -203,6 +315,11 @@ msgstr "Địa chỉ của công ty - không còn được sử dụng nữa, th
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
 msgid "Agent not found"
 msgstr "Không tìm thấy đại lý"
+
+#. js-lingui-id: UxwIFr
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Agent not found."
+msgstr "Không tìm thấy tác nhân."
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -213,6 +330,11 @@ msgstr "Tác nhân có tên \"{name}\" đã tồn tại"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Sự kiện được tổng hợp / lọc để hiển thị trên dòng thời gian"
+
+#. js-lingui-id: WG8+0x
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "AI agent step execution failed."
+msgstr "Thực thi bước của tác nhân AI thất bại."
 
 #. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
@@ -242,6 +364,11 @@ msgstr "Số tiền"
 msgid "An agent with this name already exists"
 msgstr "Một tác nhân có tên này đã tồn tại"
 
+#. js-lingui-id: Wnol69
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "An agent with this name already exists."
+msgstr "Một tác nhân có tên này đã tồn tại."
+
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
@@ -252,26 +379,131 @@ msgstr "Một tập tin đính kèm"
 msgid "An error occurred during messages import"
 msgstr "Đã xảy ra lỗi trong quá trình nhập tin nhắn"
 
+#. js-lingui-id: dhcf1B
+#: src/engine/workspace-manager/workspace-migration.exception.ts
+msgid "An error occurred during workspace migration."
+msgstr "Đã xảy ra lỗi trong quá trình di chuyển không gian làm việc."
+
+#. js-lingui-id: S7yZl9
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "An error occurred with two-factor authentication data."
+msgstr "Đã xảy ra lỗi với dữ liệu xác thực hai yếu tố."
+
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
 msgstr "Đã xảy ra lỗi."
 
+#. js-lingui-id: P/8dT5
+#: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
+msgid "An index metadata error occurred."
+msgstr "Đã xảy ra lỗi siêu dữ liệu chỉ mục."
+
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
 msgstr "Một chỉ mục phải chứa ít nhất một trường"
+
+#. js-lingui-id: SOp/Vw
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "An invitation has already been sent to this email."
+msgstr "Một lời mời đã được gửi tới email này."
+
+#. js-lingui-id: CQ5DXU
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "An object with this name already exists."
+msgstr "Đối tượng có tên này đã tồn tại."
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
 msgstr "Một cơ hội"
 
+#. js-lingui-id: Tstlpf
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "An unexpected billing error occurred."
+msgstr "Đã xảy ra lỗi thanh toán không mong muốn."
+
+#. js-lingui-id: acTNEg
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "An unexpected configuration error occurred."
+msgstr "Đã xảy ra lỗi cấu hình không mong muốn."
+
+#. js-lingui-id: W5A0Ly
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
+#: src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
+#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "An unexpected error occurred."
+msgstr "Đã xảy ra lỗi không mong muốn."
+
+#. js-lingui-id: ljwHbt
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "An unexpected workflow error occurred."
+msgstr "Đã xảy ra lỗi quy trình làm việc không mong muốn."
+
+#. js-lingui-id: q8ZbjA
+#: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "An unknown calendar error occurred."
+msgstr "Đã xảy ra lỗi lịch không xác định."
+
+#. js-lingui-id: EV/5J1
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "An unknown email error occurred."
+msgstr "Đã xảy ra lỗi email không xác định."
+
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Doanh Thu Định Kỳ Hàng Năm: Doanh thu thực tế hoặc ước tính hàng năm của công ty"
+
+#. js-lingui-id: fRWsMD
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "API key is not configured."
+msgstr "Chưa cấu hình khóa API."
+
+#. js-lingui-id: MyJhTw
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "API key not found."
+msgstr "Không tìm thấy khóa API."
+
+#. js-lingui-id: TLSelA
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "API key role configuration not found."
+msgstr "Không tìm thấy cấu hình vai trò khóa API."
+
+#. js-lingui-id: tGfHmi
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "API key role not found."
+msgstr "Không tìm thấy vai trò khóa API."
+
+#. js-lingui-id: ltvmAF
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application not found."
+msgstr "Không tìm thấy ứng dụng."
+
+#. js-lingui-id: 9qtW5o
+#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+msgid "Application variable not found."
+msgstr "Không tìm thấy biến ứng dụng."
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -288,6 +520,11 @@ msgstr "Miền truy cập được phê duyệt không khớp với miền email
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain has already been validated"
 msgstr "Miền truy cập đã được phê duyệt đã được xác thực"
+
+#. js-lingui-id: paHOg2
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Approved access domain not found."
+msgstr "Không tìm thấy miền truy cập được phê duyệt."
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -463,6 +700,12 @@ msgstr "Xác thực không được kích hoạt với nhà cung cấp này."
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Yêu cầu cung cấp thông tin xác thực để truy cập tính năng này. Vui lòng đăng nhập và thử lại."
 
+#. js-lingui-id: cgNV3G
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Authentication is required."
+msgstr "Yêu cầu xác thực."
+
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Author"
@@ -502,6 +745,41 @@ msgstr "Hình đại diện"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Avatar Url"
 msgstr "URL Hình Đại Diện"
+
+#. js-lingui-id: GVurVk
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Bad request."
+msgstr "Yêu cầu không hợp lệ."
+
+#. js-lingui-id: rkIGWa
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing customer not found."
+msgstr "Không tìm thấy khách hàng thanh toán."
+
+#. js-lingui-id: HVTHL6
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing meter not found."
+msgstr "Không tìm thấy đồng hồ tính phí."
+
+#. js-lingui-id: FNftTK
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing plan not found."
+msgstr "Không tìm thấy gói thanh toán."
+
+#. js-lingui-id: LI7tcn
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing price not found."
+msgstr "Không tìm thấy mức giá thanh toán."
+
+#. js-lingui-id: DDKhmc
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing product not found."
+msgstr "Không tìm thấy sản phẩm thanh toán."
+
+#. js-lingui-id: Je6GWV
+#: src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception.ts
+msgid "Billing subscription not found."
+msgstr "Không tìm thấy đăng ký thanh toán."
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -561,6 +839,11 @@ msgstr "Liên kết Sự kiện Kênh Lịch"
 msgid "Calendar Channel Event Associations"
 msgstr "Liên kết Sự kiện Kênh Lịch"
 
+#. js-lingui-id: bQS4UN
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar channel is misconfigured."
+msgstr "Kênh lịch được cấu hình sai."
+
 #. js-lingui-id: Znix/S
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -573,6 +856,11 @@ msgstr "Kênh Lịch"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar event"
 msgstr "Sự kiện Lịch"
+
+#. js-lingui-id: 1t3DGy
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar event not found."
+msgstr "Không tìm thấy sự kiện lịch."
 
 #. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -599,6 +887,16 @@ msgstr "Người tham gia sự kiện Lịch"
 msgid "Calendar events"
 msgstr "Các sự kiện Lịch"
 
+#. js-lingui-id: GtrALl
+#: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
+msgid "Calendar provider is not supported."
+msgstr "Nhà cung cấp lịch không được hỗ trợ."
+
+#. js-lingui-id: CnNFfU
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Calendar sync error."
+msgstr "Lỗi đồng bộ lịch."
+
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
@@ -613,6 +911,21 @@ msgstr "Không thể giả lập người dùng thông qua khóa API"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Không thể kích hoạt phiên bản không phải nháp hoặc không phải đã xuất bản lần cuối cùng"
+
+#. js-lingui-id: QYS2AB
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot add field permissions on system objects."
+msgstr "Không thể thêm quyền trường trên các đối tượng hệ thống."
+
+#. js-lingui-id: FxFlC4
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot add permissions on system objects."
+msgstr "Không thể thêm quyền trên các đối tượng hệ thống."
+
+#. js-lingui-id: 6kqLHf
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Cannot complete operation due to related records."
+msgstr "Không thể hoàn tất thao tác do các bản ghi liên quan."
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -635,6 +948,11 @@ msgstr "Không thể xóa tài khoản: bạn là quản trị viên duy nhất.
 msgid "Cannot delete standard agent"
 msgstr "Không thể xóa tác nhân tiêu chuẩn"
 
+#. js-lingui-id: /olFYI
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot delete the last admin user."
+msgstr "Không thể xóa người dùng quản trị cuối cùng."
+
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
@@ -655,10 +973,35 @@ msgstr "Không thể vô hiệu hóa phiên bản quy trình làm việc không 
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Không thể bật tính duy nhất do có giá trị trùng lặp hiện có. Vui lòng xem xét và sửa dữ liệu của bạn trước (bao gồm cả các bản ghi đã xóa mềm)."
 
+#. js-lingui-id: lDTqT7
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot give write permission on non-readable objects."
+msgstr "Không thể cấp quyền ghi cho các đối tượng không thể đọc."
+
+#. js-lingui-id: r4uEo5
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot give write permission without read permission."
+msgstr "Không thể cấp quyền ghi khi không có quyền đọc."
+
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Không thể có nhiều hơn một phiên bản quy trình làm việc đang hoạt động"
+
+#. js-lingui-id: Q0diyJ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot remove the last admin from the workspace."
+msgstr "Không thể loại bỏ quản trị viên cuối cùng khỏi không gian làm việc."
+
+#. js-lingui-id: wNJvot
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Cannot switch subscription interval."
+msgstr "Không thể chuyển đổi khoảng thời gian đăng ký."
+
+#. js-lingui-id: U/P/gT
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Cannot switch subscription plan."
+msgstr "Không thể chuyển đổi gói đăng ký."
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -692,10 +1035,20 @@ msgstr "Loại Kênh"
 msgid "City"
 msgstr "Thành phố"
 
+#. js-lingui-id: unYzAT
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Client not found."
+msgstr "Không tìm thấy client."
+
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Close date"
 msgstr "Ngày đóng"
+
+#. js-lingui-id: o21Tgt
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Code step execution failed."
+msgstr "Thực thi bước mã thất bại."
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -724,11 +1077,47 @@ msgstr "Công ty"
 msgid "Company record position"
 msgstr "Vị trí hồ sơ công ty"
 
+#. js-lingui-id: L1uQuF
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Composite type not found."
+msgstr "Không tìm thấy kiểu tổng hợp."
+
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Conference Solution"
 msgstr "Giải pháp Hội nghị"
+
+#. js-lingui-id: n8EtHV
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Configuration validation failed."
+msgstr "Xác thực cấu hình thất bại."
+
+#. js-lingui-id: g/dGHV
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Configuration variable not found."
+msgstr "Không tìm thấy biến cấu hình."
+
+#. js-lingui-id: xr7rlK
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Conflicting arguments provided."
+msgstr "Đã cung cấp các đối số xung đột."
+
+#. js-lingui-id: WtMHh6
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone calling code and country code."
+msgstr "Xung đột giữa mã gọi điện thoại và mã quốc gia."
+
+#. js-lingui-id: gP+fzj
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone calling code."
+msgstr "Mã gọi điện thoại bị xung đột."
+
+#. js-lingui-id: CmQEdn
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Conflicting phone country code."
+msgstr "Mã quốc gia điện thoại bị xung đột."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -743,6 +1132,11 @@ msgstr "Không được phép kết nối cho {connectFieldName} trên {objectMe
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Tài khoản Kết nối"
+
+#. js-lingui-id: /OJTzk
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Connected account not found."
+msgstr "Không tìm thấy tài khoản kết nối."
 
 #. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -878,6 +1272,11 @@ msgstr "Mẫu cron '{pattern}' không hợp lệ"
 msgid "Cron trigger already exists"
 msgstr "Trình kích hoạt Cron đã tồn tại"
 
+#. js-lingui-id: MAPqJt
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+msgid "Cron trigger already exists."
+msgstr "Trình kích hoạt Cron đã tồn tại."
+
 #. js-lingui-id: Ej90Yp
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -885,6 +1284,11 @@ msgstr "Trình kích hoạt Cron đã tồn tại"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger not found"
 msgstr "Không tìm thấy trình kích hoạt Cron"
+
+#. js-lingui-id: 4bnTs7
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+msgid "Cron trigger not found."
+msgstr "Không tìm thấy trình kích hoạt Cron."
 
 #. js-lingui-id: vz7B0E
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -896,6 +1300,21 @@ msgstr "Trình kích hoạt Cron có cùng ID đã tồn tại"
 msgid "Custom Connection Parameters"
 msgstr "Thông số Kết nối Tùy chỉnh"
 
+#. js-lingui-id: 8vxOU0
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Custom domain not found."
+msgstr "Không tìm thấy tên miền tùy chỉnh."
+
+#. js-lingui-id: zsYQk/
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Custom domains are disabled for this workspace."
+msgstr "Tên miền tùy chỉnh bị vô hiệu hoá cho không gian làm việc này."
+
+#. js-lingui-id: qHZppf
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Custom object is missing a label identifier field."
+msgstr "Đối tượng tuỳ chỉnh thiếu trường định danh nhãn."
+
 #. js-lingui-id: 7p5kLi
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -903,6 +1322,11 @@ msgstr "Thông số Kết nối Tùy chỉnh"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Bảng điều khiển"
+
+#. js-lingui-id: jlbLNx
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+msgid "Dashboard not found."
+msgstr "Không tìm thấy bảng điều khiển."
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -924,10 +1348,40 @@ msgstr "Tiêu đề Bảng điều khiển"
 msgid "Dashboards"
 msgstr "Bảng điều khiển"
 
+#. js-lingui-id: Gb2JdW
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Data not found."
+msgstr "Không tìm thấy dữ liệu."
+
+#. js-lingui-id: Bg/wIf
+#: src/engine/metadata-modules/data-source/data-source.exception.ts
+msgid "Data source not found."
+msgstr "Không tìm thấy nguồn dữ liệu."
+
+#. js-lingui-id: Bv/LBb
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Data structure is invalid."
+msgstr "Cấu trúc dữ liệu không hợp lệ."
+
+#. js-lingui-id: /sRN4g
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Data version mismatch. Please refresh and try again."
+msgstr "Phiên bản dữ liệu không khớp. Vui lòng làm mới và thử lại."
+
+#. js-lingui-id: NhQiQx
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Database configuration is disabled."
+msgstr "Cấu hình cơ sở dữ liệu bị vô hiệu hoá."
+
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger already exists"
 msgstr "Trình kích hoạt sự kiện cơ sở dữ liệu đã tồn tại"
+
+#. js-lingui-id: RjLvqZ
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Database event trigger already exists."
+msgstr "Trình kích hoạt sự kiện cơ sở dữ liệu đã tồn tại."
 
 #. js-lingui-id: iS6kjG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -936,6 +1390,11 @@ msgstr "Trình kích hoạt sự kiện cơ sở dữ liệu đã tồn tại"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger not found"
 msgstr "Trình kích hoạt sự kiện cơ sở dữ liệu không tìm thấy"
+
+#. js-lingui-id: mVe3iD
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Database event trigger not found."
+msgstr "Không tìm thấy trình kích hoạt sự kiện cơ sở dữ liệu."
 
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -956,6 +1415,11 @@ msgstr "Ngày hồ sơ đã bị xóa"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "Tháng Mười Hai"
+
+#. js-lingui-id: cgV4xo
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Default role not found."
+msgstr "Không tìm thấy vai trò mặc định."
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1060,7 +1524,23 @@ msgstr "Email đã được xác minh."
 msgid "Email can only be updated when you belong to a single workspace."
 msgstr ""
 
+#. js-lingui-id: MYgdAv
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Email domain configuration error."
+msgstr "Lỗi cấu hình tên miền email."
+
+#. js-lingui-id: Ik1o4d
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Email domain not found."
+msgstr "Không tìm thấy tên miền email."
+
+#. js-lingui-id: m9fD11
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Email is already verified."
+msgstr "Email đã được xác minh."
+
 #. js-lingui-id: xw6iqb
+#: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Email is not verified."
 msgstr "Email chưa được xác minh."
@@ -1071,6 +1551,27 @@ msgstr "Email chưa được xác minh."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Email is required"
 msgstr "Email là bắt buộc"
+
+#. js-lingui-id: Qof3ks
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Email is required."
+msgstr "Email là bắt buộc."
+
+#. js-lingui-id: y+BSWq
+#: src/engine/core-modules/user/user.exception.ts
+msgid "Email is unchanged."
+msgstr "Email không thay đổi."
+
+#. js-lingui-id: q87JH5
+#: src/engine/core-modules/user/user.exception.ts
+msgid "Email update is restricted to single workspace users."
+msgstr "Cập nhật email bị giới hạn cho người dùng một không gian làm việc duy nhất."
+
+#. js-lingui-id: PeMFTI
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Email verification is not required."
+msgstr "Không yêu cầu xác minh email."
 
 #. js-lingui-id: y8LSMh
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1087,16 +1588,55 @@ msgstr "Email"
 msgid "Employees"
 msgstr "Nhân viên"
 
+#. js-lingui-id: aVGG1u
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Empty field permissions are not allowed."
+msgstr "Không cho phép quyền trường trống."
+
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "End Date"
 msgstr "Ngày kết thúc"
 
+#. js-lingui-id: z1wQ2q
+#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
+msgid "Entity already exists."
+msgstr "Thực thể đã tồn tại."
+
+#. js-lingui-id: DAX1pY
+#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
+msgid "Entity data is malformed."
+msgstr "Dữ liệu thực thể không đúng định dạng."
+
+#. js-lingui-id: qpXqpa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Entity not found."
+msgstr "Không tìm thấy thực thể."
+
+#. js-lingui-id: jxgcg/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Enum operation failed."
+msgstr "Thao tác enum thất bại."
+
+#. js-lingui-id: AOk97Y
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Enum type not found."
+msgstr "Không tìm thấy kiểu enum."
+
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr "Biến môi trường CLOUDFLARE_API_KEY phải được định nghĩa để sử dụng tính năng này."
+
+#. js-lingui-id: SlfejT
+#: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
+#: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
+msgid "Error"
+msgstr "Lỗi"
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1107,6 +1647,11 @@ msgstr "Công ty tổ chức sự kiện"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
 msgstr "Bảng điều khiển sự kiện"
+
+#. js-lingui-id: NuQxIH
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Event data is corrupted."
+msgstr "Dữ liệu sự kiện bị hỏng."
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1223,25 +1768,70 @@ msgstr "Mong đợi các trường ràng buộc giống nhau được sử dụn
 msgid "External ID"
 msgstr "ID bên ngoài"
 
+#. js-lingui-id: AOxB/G
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Failed to connect to remote server."
+msgstr "Kết nối tới máy chủ từ xa thất bại."
+
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
 msgstr "Không thể tạo đánh giá. Vui lòng thử lại."
+
+#. js-lingui-id: M1ZSSL
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Failed to create function."
+msgstr "Tạo hàm thất bại."
+
+#. js-lingui-id: I71ur2
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to create record."
+msgstr "Tạo bản ghi thất bại."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "Không thể xóa các công việc. Vui lòng thử lại sau."
 
+#. js-lingui-id: MBdUff
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to delete record."
+msgstr "Xóa bản ghi thất bại."
+
+#. js-lingui-id: SkvO+5
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+msgid "Failed to duplicate dashboard."
+msgstr "Không thể nhân bản bảng điều khiển."
+
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to load queue jobs. Please try again later."
 msgstr "Không thể tải công việc hàng đợi. Vui lòng thử lại sau."
 
+#. js-lingui-id: /E7MoD
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Failed to record billing event."
+msgstr "Ghi lại sự kiện thanh toán thất bại."
+
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Không thể thử lại các công việc. Vui lòng thử lại sau."
+
+#. js-lingui-id: Cr+NSQ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Failed to update field permission."
+msgstr "Cập nhật quyền trường thất bại."
+
+#. js-lingui-id: nrcGtY
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to update record."
+msgstr "Cập nhật bản ghi thất bại."
+
+#. js-lingui-id: FiYPA2
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Failed to upsert record."
+msgstr "Thao tác upsert bản ghi thất bại."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1396,6 +1986,11 @@ msgstr "Ưa thích liên kết với Thành viên không gian làm việc"
 msgid "Favorites tied to the {label}"
 msgstr "Ưa thích gắn liền với {label}"
 
+#. js-lingui-id: Ai7knL
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Feature configuration not found."
+msgstr "Không tìm thấy cấu hình tính năng."
+
 #. js-lingui-id: 4lgLew
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
@@ -1452,6 +2047,13 @@ msgstr "Yêu cầu mã nhận dạng nhãn trường"
 msgid "Field metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu trường"
 
+#. js-lingui-id: JrAl/I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field metadata not found."
+msgstr "Không tìm thấy siêu dữ liệu trường."
+
 #. js-lingui-id: uTPwH1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field metadata to delete not found"
@@ -1467,6 +2069,18 @@ msgstr "Không tìm thấy siêu dữ liệu trường cần cập nhật"
 msgid "Field name is not synced with field label"
 msgstr "Tên trường không đồng bộ với nhãn trường"
 
+#. js-lingui-id: XJmtgE
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Field name is not synced with label."
+msgstr "Tên trường không đồng bộ với nhãn."
+
+#. js-lingui-id: Ts+YbB
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Field not found."
+msgstr "Không tìm thấy trường."
+
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
@@ -1476,6 +2090,11 @@ msgstr "Quyền hạn trường chỉ có thể được sử dụng để hạn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field referenced in index does not exist"
 msgstr "Trường được tham chiếu trong chỉ mục không tồn tại"
+
+#. js-lingui-id: ylQono
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field restrictions only apply to readable objects."
+msgstr "Giới hạn trường chỉ áp dụng cho các đối tượng có thể đọc."
 
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1506,6 +2125,11 @@ msgstr ""
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Field type TS_VECTOR is a system type and cannot be created manually."
 msgstr ""
+
+#. js-lingui-id: 5Buorv
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Field type validation error."
+msgstr "Lỗi xác thực kiểu trường."
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
@@ -1550,6 +2174,13 @@ msgstr "FieldMetadataId là cần thiết để tạo một sắp xếp xem."
 msgid "File category"
 msgstr "Danh mục tệp tin"
 
+#. js-lingui-id: weWV3g
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+#: src/engine/core-modules/file/file.exception.ts
+msgid "File not found."
+msgstr "Không tìm thấy tập tin."
+
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder for Message Channel"
@@ -1590,6 +2221,46 @@ msgstr "Thứ Sáu"
 msgid "Full path"
 msgstr "Đường dẫn đầy đủ"
 
+#. js-lingui-id: pouguB
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function code is unchanged."
+msgstr "Mã hàm không thay đổi."
+
+#. js-lingui-id: Ho3UAo
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function execution limit reached."
+msgstr "Đã đạt giới hạn thực thi hàm."
+
+#. js-lingui-id: mdxF/u
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function execution timed out."
+msgstr "Thực thi hàm hết thời gian chờ."
+
+#. js-lingui-id: IsdR/t
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function is currently building."
+msgstr "Hàm hiện đang được xây dựng."
+
+#. js-lingui-id: GhVI/u
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function is not ready."
+msgstr "Hàm chưa sẵn sàng."
+
+#. js-lingui-id: 2ACKTg
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function not found."
+msgstr "Không tìm thấy hàm."
+
+#. js-lingui-id: zKksGw
+#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+msgid "Function version not found."
+msgstr "Không tìm thấy phiên bản hàm."
+
+#. js-lingui-id: cvJ2e6
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Google API authentication is disabled."
+msgstr "Xác thực Google API bị vô hiệu hoá."
+
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
@@ -1614,6 +2285,11 @@ msgstr "Xử lý"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Handle Aliases"
 msgstr "Biệt danh Xử lý"
+
+#. js-lingui-id: CDiGGx
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Handle aliases are required."
+msgstr "Cần có bí danh handle."
 
 #. js-lingui-id: VehAU2
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -1641,6 +2317,11 @@ msgstr "ID"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Hồ sơ Khách hàng Lý tưởng: Chỉ ra liệu công ty có phải là khách hàng phù hợp và giá trị nhất đối với bạn"
+
+#. js-lingui-id: 6cVc+b
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Identity provider not found."
+msgstr "Không tìm thấy nhà cung cấp danh tính."
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1695,6 +2376,84 @@ msgstr "Chỉ mục với ID tương tự đã tồn tại"
 msgid "Index with same name already exists"
 msgstr "Chỉ mục với tên tương tự đã tồn tại"
 
+#. js-lingui-id: 9Lkkre
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Input exceeds maximum length."
+msgstr "Đầu vào vượt quá độ dài tối đa."
+
+#. js-lingui-id: nrH4HK
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Input is too short."
+msgstr "Đầu vào quá ngắn."
+
+#. js-lingui-id: 9sx+WQ
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Insufficient permissions for email domain."
+msgstr "Không đủ quyền đối với tên miền email."
+
+#. js-lingui-id: Bluaux
+#: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
+msgid "Insufficient permissions to access calendar."
+msgstr "Không đủ quyền để truy cập lịch."
+
+#. js-lingui-id: J1UlII
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Insufficient permissions."
+msgstr "Không đủ quyền."
+
+#. js-lingui-id: mYSErp
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid 'first' argument."
+msgstr "Đối số 'first' không hợp lệ."
+
+#. js-lingui-id: k0JXYM
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid 'last' argument."
+msgstr "Đối số 'last' không hợp lệ."
+
+#. js-lingui-id: pSjWxS
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Invalid action type."
+msgstr "Loại hành động không hợp lệ."
+
+#. js-lingui-id: D/IcuN
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Invalid agent input."
+msgstr "Đầu vào tác nhân không hợp lệ."
+
+#. js-lingui-id: hJpBT6
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid aggregate fields parameter."
+msgstr "Tham số trường tổng hợp không hợp lệ."
+
+#. js-lingui-id: KNrRpL
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Invalid argument provided."
+msgstr "Đối số được cung cấp không hợp lệ."
+
+#. js-lingui-id: Z5WSzG
+#: src/engine/core-modules/audit/audit.exception.ts
+msgid "Invalid audit input."
+msgstr "Đầu vào kiểm toán không hợp lệ."
+
+#. js-lingui-id: g/ne5t
+#: src/engine/core-modules/audit/audit.exception.ts
+msgid "Invalid audit type."
+msgstr "Loại kiểm toán không hợp lệ."
+
+#. js-lingui-id: kYec1W
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid authentication context."
+msgstr "Ngữ cảnh xác thực không hợp lệ."
+
+#. js-lingui-id: gxIicn
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Invalid authentication token."
+msgstr "Mã thông báo xác thực không hợp lệ."
+
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Invalid CALDAV credentials. Please check your username and password."
@@ -1710,15 +2469,103 @@ msgstr "Mã gọi không hợp lệ {callingCode}"
 msgid "Invalid Captcha, please try another device"
 msgstr "Mã Captcha không hợp lệ, vui lòng thử thiết bị khác"
 
+#. js-lingui-id: guEsvP
+#: src/engine/core-modules/captcha/captcha.exception.ts
+msgid "Invalid captcha. Please try again."
+msgstr "Captcha không hợp lệ. Vui lòng thử lại."
+
+#. js-lingui-id: z4W/Ky
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid composite type."
+msgstr "Kiểu tổng hợp không hợp lệ."
+
+#. js-lingui-id: jUt31O
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Invalid connected account ID."
+msgstr "ID tài khoản kết nối không hợp lệ."
+
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Mã quốc gia không hợp lệ {countryCode}"
 
+#. js-lingui-id: 0RwhuX
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid cursor provided."
+msgstr "Con trỏ được cung cấp không hợp lệ."
+
+#. js-lingui-id: egz9rA
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Invalid data format."
+msgstr "Định dạng dữ liệu không hợp lệ."
+
+#. js-lingui-id: 3o5vtu
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid data provided."
+msgstr "Dữ liệu được cung cấp không hợp lệ."
+
+#. js-lingui-id: 4xhvWm
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+msgid "Invalid database event trigger."
+msgstr "Trình kích hoạt sự kiện cơ sở dữ liệu không hợp lệ."
+
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid day value. Should be integer greater than 1"
 msgstr "Giá trị ngày không hợp lệ. Phải là số nguyên lớn hơn 1"
+
+#. js-lingui-id: i++4Wk
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid depth parameter."
+msgstr "Tham số độ sâu không hợp lệ."
+
+#. js-lingui-id: 4JreOU
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Invalid direction provided."
+msgstr "Hướng được cung cấp không hợp lệ."
+
+#. js-lingui-id: 9lqqpY
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Invalid email address."
+msgstr "Địa chỉ email không hợp lệ."
+
+#. js-lingui-id: YtFgT4
+#: src/engine/core-modules/feature-flag/feature-flag.exception.ts
+msgid "Invalid feature flag key."
+msgstr "Khóa cờ tính năng không hợp lệ."
+
+#. js-lingui-id: MaFFIW
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Invalid field input."
+msgstr "Đầu vào trường không hợp lệ."
+
+#. js-lingui-id: UcOaIa
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid field metadata."
+msgstr "Siêu dữ liệu trường không hợp lệ."
+
+#. js-lingui-id: d6DMa/
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+msgid "Invalid file ID."
+msgstr "ID tập tin không hợp lệ."
+
+#. js-lingui-id: 1yoHmO
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid filter parameter."
+msgstr "Tham số bộ lọc không hợp lệ."
+
+#. js-lingui-id: oxZTCD
+#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
+msgid "Invalid foreign table input."
+msgstr "Đầu vào bảng ngoại không hợp lệ."
+
+#. js-lingui-id: lPC0WB
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid group by parameter."
+msgstr "Tham số group by không hợp lệ."
 
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1730,6 +2577,42 @@ msgstr "Giá trị giờ không hợp lệ. Phải là số nguyên từ 0 đế
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer greater than 1"
 msgstr "Giá trị giờ không hợp lệ. Phải là số nguyên lớn hơn 1"
+
+#. js-lingui-id: 6WLJFQ
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Invalid identity provider type."
+msgstr "Loại nhà cung cấp danh tính không hợp lệ."
+
+#. js-lingui-id: t7SpQO
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Invalid input provided."
+msgstr "Đầu vào được cung cấp không hợp lệ."
+
+#. js-lingui-id: vw9FMn
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "Invalid invitation."
+msgstr "Lời mời không hợp lệ."
+
+#. js-lingui-id: 4MWDA2
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "Invalid issuer URL."
+msgstr "URL nhà phát hành không hợp lệ."
+
+#. js-lingui-id: tm//h9
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Invalid label format."
+msgstr "Định dạng nhãn không hợp lệ."
+
+#. js-lingui-id: Y8ap4e
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid limit parameter."
+msgstr "Tham số giới hạn không hợp lệ."
+
+#. js-lingui-id: 2VcEMI
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Invalid migration action."
+msgstr "Hành động di chuyển không hợp lệ."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1748,6 +2631,88 @@ msgstr "Giá trị phút không hợp lệ. Phải là số nguyên lớn hơn 1
 msgid "Invalid morph relation input"
 msgstr "Đầu vào mối quan hệ dạng lỗi không hợp lệ"
 
+#. js-lingui-id: 5ZHOkh
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "Invalid object input."
+msgstr "Đầu vào đối tượng không hợp lệ."
+
+#. js-lingui-id: t4AABW
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid order by parameter."
+msgstr "Tham số order by không hợp lệ."
+
+#. js-lingui-id: f7SWSg
+#: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
+msgid "Invalid order by with group by parameter."
+msgstr "Tham số order by với group by không hợp lệ."
+
+#. js-lingui-id: LM08/z
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Invalid page layout data."
+msgstr "Dữ liệu bố cục trang không hợp lệ."
+
+#. js-lingui-id: 5qj/ud
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
+msgid "Invalid page layout tab data."
+msgstr "Dữ liệu tab bố cục trang không hợp lệ."
+
+#. js-lingui-id: mgipnr
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
+msgid "Invalid page layout widget data."
+msgstr "Dữ liệu tiện ích bố cục trang không hợp lệ."
+
+#. js-lingui-id: HiaWGB
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+msgid "Invalid parameters provided."
+msgstr "Các tham số được cung cấp không hợp lệ."
+
+#. js-lingui-id: Pt2vVA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Invalid permission setting."
+msgstr "Thiết lập quyền không hợp lệ."
+
+#. js-lingui-id: 0D0YwP
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone calling code."
+msgstr "Mã gọi điện thoại không hợp lệ."
+
+#. js-lingui-id: P/5moy
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone country code."
+msgstr "Mã quốc gia điện thoại không hợp lệ."
+
+#. js-lingui-id: ZmVj5N
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid phone number."
+msgstr "Số điện thoại không hợp lệ."
+
+#. js-lingui-id: Hvv6QE
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Invalid post-hook payload."
+msgstr "Payload post-hook không hợp lệ."
+
+#. js-lingui-id: r+9b/a
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid price."
+msgstr "Giá không hợp lệ."
+
+#. js-lingui-id: tkzFzG
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid pricing tiers."
+msgstr "Các bậc giá không hợp lệ."
+
+#. js-lingui-id: 0Dexu8
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Invalid query input."
+msgstr "Đầu vào truy vấn không hợp lệ."
+
+#. js-lingui-id: XBYAgs
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Invalid refresh token."
+msgstr "Mã thông báo làm mới không hợp lệ."
+
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
@@ -1759,30 +2724,166 @@ msgstr "Tải trọng tạo quan hệ không hợp lệ"
 msgid "Invalid relation field target"
 msgstr ""
 
+#. js-lingui-id: JQ+mZ6
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Invalid remote server input."
+msgstr "Đầu vào máy chủ từ xa không hợp lệ."
+
+#. js-lingui-id: exysLG
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Invalid remote table input."
+msgstr "Đầu vào bảng từ xa không hợp lệ."
+
+#. js-lingui-id: lOyHVQ
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Invalid request."
+msgstr "Yêu cầu không hợp lệ."
+
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
 msgid "Invalid response format type"
 msgstr "Kiểu định dạng phản hồi không hợp lệ"
+
+#. js-lingui-id: hVbdKt
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Invalid role target data."
+msgstr "Dữ liệu mục tiêu vai trò không hợp lệ."
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
 msgstr "Loại cài đặt không hợp lệ trong kích hoạt cron"
 
+#. js-lingui-id: U3r7gv
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Invalid string format."
+msgstr "Định dạng chuỗi không hợp lệ."
+
+#. js-lingui-id: lpSAqb
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Invalid subdomain."
+msgstr "Tên miền phụ không hợp lệ."
+
+#. js-lingui-id: SFQl8b
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription interval."
+msgstr "Khoảng thời gian đăng ký không hợp lệ."
+
+#. js-lingui-id: Do5gvp
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription item."
+msgstr "Mục đăng ký không hợp lệ."
+
+#. js-lingui-id: mDAXg+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Invalid subscription."
+msgstr "Đăng ký không hợp lệ."
+
+#. js-lingui-id: LWhrAo
+#: src/engine/core-modules/webhook/webhook.exception.ts
+msgid "Invalid target URL."
+msgstr "URL đích không hợp lệ."
+
+#. js-lingui-id: w58bhw
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Invalid token type."
+msgstr "Loại mã thông báo không hợp lệ."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Loại kích hoạt không hợp lệ để kích hoạt quy trình làm việc"
+
+#. js-lingui-id: spfaiG
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid two-factor authentication configuration."
+msgstr "Cấu hình xác thực hai yếu tố không hợp lệ."
+
+#. js-lingui-id: SzaGv7
+#: src/engine/core-modules/record-transformer/record-transformer.exception.ts
+msgid "Invalid URL format."
+msgstr "Định dạng URL không hợp lệ."
 
 #. js-lingui-id: 1Iyic0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid uuid {id}"
 msgstr "uuid không hợp lệ {id}"
 
+#. js-lingui-id: RyBgV/
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Invalid validation token."
+msgstr "Mã thông báo xác thực không hợp lệ."
+
+#. js-lingui-id: I4caYo
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Invalid verification code."
+msgstr "Mã xác minh không hợp lệ."
+
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Mã xác minh không hợp lệ. Vui lòng thử lại."
+
+#. js-lingui-id: Ku4J80
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Invalid verification token."
+msgstr "Mã thông báo xác minh không hợp lệ."
+
+#. js-lingui-id: bznmUY
+#: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
+msgid "Invalid workflow edge request."
+msgstr "Yêu cầu cạnh quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: E7F6q9
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow input."
+msgstr "Đầu vào quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: aYt8SY
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow operation."
+msgstr "Thao tác quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: mNaQTB
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Invalid workflow run."
+msgstr "Lần chạy quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: dIxBwv
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow status."
+msgstr "Trạng thái quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: GRz5NM
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Invalid workflow step request."
+msgstr "Yêu cầu bước quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: 0NdYmj
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+msgid "Invalid workflow step type."
+msgstr "Loại bước quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: dw+g0N
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow trigger configuration."
+msgstr "Cấu hình trình kích hoạt quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: rEIcf+
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow trigger input."
+msgstr "Đầu vào trình kích hoạt quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: 8Dzcmh
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Invalid workflow version."
+msgstr "Phiên bản quy trình làm việc không hợp lệ."
+
+#. js-lingui-id: +WZMeN
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "Invitation is corrupted."
+msgstr "Lời mời bị hỏng."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1839,6 +2940,11 @@ msgstr "Tháng Một"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
 msgstr "Chức danh công việc"
+
+#. js-lingui-id: cCj4vg
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Join column name is required."
+msgstr "Tên cột join là bắt buộc."
 
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
@@ -1923,6 +3029,12 @@ msgstr "Nhãn không thể để trống"
 msgid "Label identifier field cannot be deactivated"
 msgstr "Trường định danh nhãn không thể bị vô hiệu hóa"
 
+#. js-lingui-id: Qx822J
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+msgid "Label identifier field not found."
+msgstr "Không tìm thấy trường định danh nhãn."
+
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
@@ -1942,6 +3054,11 @@ msgstr "Trường nhãn nhận dạng chế độ xem phải ở vị trí thấ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field has to be visible"
 msgstr "Trường nhãn nhận dạng chế độ xem phải được hiển thị"
+
+#. js-lingui-id: 6bWuI/
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Label is required."
+msgstr "Nhãn là bắt buộc."
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2044,6 +3161,16 @@ msgstr "Tháng Ba"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
 msgstr "Số lượng bản ghi tối đa để cập nhật hoặc chèn là {QUERY_MAX_RECORDS}."
+
+#. js-lingui-id: p0qTse
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Maximum query depth reached."
+msgstr "Đã đạt độ sâu truy vấn tối đa."
+
+#. js-lingui-id: vLHXAB
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Maximum records exceeded for upsert."
+msgstr "Vượt quá số lượng bản ghi tối đa cho thao tác upsert."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2219,15 +3346,56 @@ msgstr "Token truy cập nhà cung cấp dịch vụ nhắn tin"
 msgid "Messaging provider refresh token"
 msgstr "Token làm mới của nhà cung cấp dịch vụ nhắn tin"
 
+#. js-lingui-id: akOVAq
+#: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
+msgid "Metadata version not found."
+msgstr "Không tìm thấy phiên bản siêu dữ liệu."
+
+#. js-lingui-id: WFVrzW
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Microsoft API authentication is disabled."
+msgstr "Xác thực Microsoft API bị vô hiệu hoá."
+
+#. js-lingui-id: cuMeE3
+#: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
+msgid "Migration factory not found."
+msgstr "Không tìm thấy bộ tạo di chuyển."
+
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
 msgstr "Giá trị phút không được vượt quá 60. Đối với khoảng thời gian lớn hơn 60 phút, hãy sử dụng loại kích hoạt \"Giờ\" hoặc một biểu thức cron tùy chỉnh."
 
+#. js-lingui-id: lCnasH
+#: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+msgid "Missing decorator configuration."
+msgstr "Thiếu cấu hình decorator."
+
+#. js-lingui-id: u8IV9J
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Missing main alias target."
+msgstr "Thiếu mục tiêu bí danh chính."
+
+#. js-lingui-id: khQZlp
+#: src/engine/twenty-orm/exceptions/relation.exception.ts
+msgid "Missing relation join column."
+msgstr "Thiếu cột join của quan hệ."
+
+#. js-lingui-id: W5hpOP
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Missing request body."
+msgstr "Thiếu nội dung yêu cầu."
+
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Thiếu các trường bắt buộc: ít nhất một ràng buộc duy nhất phải được hoàn thành đủ cho '{connectFieldName}'."
+
+#. js-lingui-id: PIWoHs
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing required system field."
+msgstr "Thiếu trường hệ thống bắt buộc."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -2265,10 +3433,26 @@ msgstr "Trường quan hệ morph phải có một ID morph"
 msgid "Multi-select field default value must be an array"
 msgstr "Giá trị mặc định của trường chọn nhiều phải là một mảng"
 
+#. js-lingui-id: /81w6M
+#: src/engine/twenty-orm/exceptions/relation.exception.ts
+msgid "Multiple join columns found."
+msgstr "Tìm thấy nhiều cột join."
+
+#. js-lingui-id: ZEzn4X
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Multiple matching records found during upsert."
+msgstr "Tìm thấy nhiều bản ghi khớp trong quá trình upsert."
+
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Nhiều bản ghi được tìm thấy với các giá trị trường duy nhất giống nhau cho {conflictingFieldsValues}. Không thể xác định bản ghi nào cần cập nhật."
+
+#. js-lingui-id: B9dbXq
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Multiple subscriptions found where one was expected."
+msgstr "Tìm thấy nhiều đăng ký trong khi chỉ mong đợi một."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2301,6 +3485,11 @@ msgstr "Tên \"{name}\" không khả dụng vì đã được một trường kh
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
+#. js-lingui-id: Aam+mb
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Name is not synced with label."
+msgstr "Tên không đồng bộ với nhãn."
+
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
@@ -2321,6 +3510,11 @@ msgstr "Tên quá dài"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too short"
 msgstr "Tên quá ngắn"
+
+#. js-lingui-id: HKHHTk
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "Name must be in camelCase format."
+msgstr "Tên phải ở định dạng camelCase."
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -2350,10 +3544,20 @@ msgstr "Tên không đồng bộ với nhãn"
 msgid "New email must be different from current email"
 msgstr ""
 
+#. js-lingui-id: LnV8zi
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "No active subscription found."
+msgstr "Không tìm thấy đăng ký đang hoạt động."
+
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No event name provided in database event trigger"
 msgstr "Không có tên sự kiện nào được cung cấp trong kích hoạt sự kiện cơ sở dữ liệu"
+
+#. js-lingui-id: Xlzkd8
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "No foreign tables found."
+msgstr "Không tìm thấy bảng ngoại."
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -2369,6 +3573,21 @@ msgstr "Không có mẫu nào được cung cấp trong kích hoạt cron TÙY C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "No permissions are set for this role on the selected object. Please set object permissions first."
 msgstr "Chưa đặt quyền hạn cho vai trò này trên đối tượng đã chọn. Vui lòng cài đặt quyền hạn đối tượng trước."
+
+#. js-lingui-id: D2A/H0
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No permissions found in datasource."
+msgstr "Không tìm thấy quyền trong nguồn dữ liệu."
+
+#. js-lingui-id: NcwTz7
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "No records were affected."
+msgstr "Không có bản ghi nào bị ảnh hưởng."
+
+#. js-lingui-id: 5ZMHXg
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "No role found for this user in the workspace."
+msgstr "Không tìm thấy vai trò cho người dùng này trong không gian làm việc."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2503,6 +3722,11 @@ msgstr "Định dạng số"
 msgid "Number of employees in the company"
 msgstr "Số người làm việc trong công ty"
 
+#. js-lingui-id: 08qKzD
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "OAuth access was denied."
+msgstr "Truy cập OAuth đã bị từ chối."
+
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
@@ -2523,6 +3747,29 @@ msgstr "Nhãn đối tượng quá ngắn"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu đối tượng"
+
+#. js-lingui-id: rHce90
+#: src/modules/workflow/common/exceptions/workflow-common.exception.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Object metadata not found."
+msgstr "Không tìm thấy siêu dữ liệu đối tượng."
+
+#. js-lingui-id: AKqp4k
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+#: src/engine/core-modules/search/exceptions/search.exception.ts
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Object not found."
+msgstr "Không tìm thấy đối tượng."
+
+#. js-lingui-id: Qy6mMO
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Object permission not found."
+msgstr "Không tìm thấy quyền của đối tượng."
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2576,6 +3823,11 @@ msgstr "Tháng Mười"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Một hoặc nhiều đối tượng bạn đang cố gắng thiết lập quyền hạn không thể tìm thấy. Chúng có thể đã bị xóa."
+
+#. js-lingui-id: eYgzEd
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Only field restrictions are allowed."
+msgstr "Chỉ cho phép giới hạn trường."
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2727,6 +3979,12 @@ msgstr "Bố cục trang chưa bị xóa nên không thể khôi phục."
 msgid "Page layout not found"
 msgstr "Không tìm thấy bố cục trang"
 
+#. js-lingui-id: C4+axZ
+#: src/modules/dashboard/exceptions/dashboard.exception.ts
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Page layout not found."
+msgstr "Không tìm thấy bố cục trang."
+
 #. js-lingui-id: tR9faK
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
 msgid "Page layout tab is not deleted and cannot be restored"
@@ -2741,6 +3999,11 @@ msgstr "Thẻ bố cục trang chưa bị xóa nên không thể khôi phục."
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
 msgid "Page layout tab not found"
 msgstr "Không tìm thấy tab bố cục trang"
+
+#. js-lingui-id: pOITp3
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
+msgid "Page layout tab not found."
+msgstr "Không tìm thấy tab bố cục trang."
 
 #. js-lingui-id: CWtQfv
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
@@ -2791,6 +4054,11 @@ msgstr "Tiện ích bố cục trang đã tồn tại"
 #: src/engine/metadata-modules/flat-page-layout-widget/utils/from-restore-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util.ts
 msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Tiện ích bố cục trang chưa bị xóa nên không thể khôi phục."
+
+#. js-lingui-id: GcU04G
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
+msgid "Page layout widget not found."
+msgstr "Không tìm thấy tiện ích bố cục trang."
 
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
@@ -2863,6 +4131,11 @@ msgstr "Người"
 msgid "People linked to the company."
 msgstr "Người liên kết với công ty."
 
+#. js-lingui-id: vcvSI3
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Permission not found."
+msgstr "Không tìm thấy quyền."
+
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/task/standard-objects/task-target.workspace-entity.ts
@@ -2917,6 +4190,16 @@ msgstr "Vui lòng cung cấp thông tin kết nối để cấu hình tài kho�
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
 msgstr "Vui lòng chọn kiểu kết nối hợp lệ (IMAP, SMTP hoặc CalDAV) và thử lại."
+
+#. js-lingui-id: RAkwUZ
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Please use a company email domain."
+msgstr "Vui lòng sử dụng tên miền email công ty."
+
+#. js-lingui-id: f8ypJ4
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Please use single sign-on to authenticate."
+msgstr "Vui lòng sử dụng đăng nhập một lần để xác thực."
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2997,6 +4280,11 @@ msgstr "nhà cung cấp"
 msgid "Public domain already registered"
 msgstr "Công cộng đã được đăng ký"
 
+#. js-lingui-id: Vr4xfK
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "Public domain not found."
+msgstr "Không tìm thấy tên miền công cộng."
+
 #. js-lingui-id: Capzni
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
@@ -3012,10 +4300,47 @@ msgstr "Độ phức tạp truy vấn quá cao. Quan hệ một-nhiều không t
 msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
 msgstr "Độ phức tạp truy vấn quá cao. Vui lòng giảm số lượng các trường quan hệ được yêu cầu. Độ phức tạp truy vấn: {queryComplexity}. Độ phức tạp tối đa: {maximumComplexity}."
 
+#. js-lingui-id: 9QTny9
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+msgid "Query failed."
+msgstr "Truy vấn thất bại."
+
+#. js-lingui-id: 0bX5JL
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Query is too complex."
+msgstr "Truy vấn quá phức tạp."
+
+#. js-lingui-id: mn/6A3
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Query timed out."
+msgstr "Truy vấn hết thời gian chờ."
+
+#. js-lingui-id: 6H9kMC
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Query timed out. Please try again."
+msgstr "Truy vấn hết thời gian chờ. Vui lòng thử lại."
+
+#. js-lingui-id: xD2MTL
+#: src/engine/core-modules/throttler/throttler.exception.ts
+msgid "Rate limit reached. Please try again later."
+msgstr "Đã đạt giới hạn tốc độ. Vui lòng thử lại sau."
+
+#. js-lingui-id: 8G8dJM
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Raw SQL queries are not allowed."
+msgstr "Không cho phép truy vấn SQL thô."
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Nhận lúc"
+
+#. js-lingui-id: 4R+xJM
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Record not found."
+msgstr "Không tìm thấy bản ghi."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -3028,10 +4353,25 @@ msgstr "ID Sự kiện Định kỳ"
 msgid "Refresh Token"
 msgstr "Token Làm mới"
 
+#. js-lingui-id: 1GvzpH
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "Refresh token not found."
+msgstr "Không tìm thấy mã thông báo làm mới."
+
+#. js-lingui-id: 2dNwZB
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Related record not found."
+msgstr "Không tìm thấy bản ghi liên quan."
+
 #. js-lingui-id: 2LpFdR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Related user email address"
 msgstr "Địa chỉ email người dùng liên quan"
+
+#. js-lingui-id: 2LXGtF
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Relation configuration is invalid."
+msgstr "Cấu hình quan hệ không hợp lệ."
 
 #. js-lingui-id: +bFtT5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
@@ -3043,6 +4383,36 @@ msgstr "Yêu cầu tải trọng tạo quan hệ"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu mục tiêu của trường quan hệ"
+
+#. js-lingui-id: MvWdPg
+#: src/engine/twenty-orm/exceptions/relation.exception.ts
+msgid "Relation has join column on both sides."
+msgstr "Quan hệ có cột join ở cả hai phía."
+
+#. js-lingui-id: 83atrc
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "Relation is not enabled for this field."
+msgstr "Quan hệ không được bật cho trường này."
+
+#. js-lingui-id: oThEh8
+#: src/engine/twenty-orm/exceptions/relation.exception.ts
+msgid "Relation object not found."
+msgstr "Không tìm thấy đối tượng quan hệ."
+
+#. js-lingui-id: +v6IlP
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Relation settings not found."
+msgstr "Không tìm thấy thiết lập quan hệ."
+
+#. js-lingui-id: 8ZgNmg
+#: src/engine/twenty-orm/exceptions/relation.exception.ts
+msgid "Relation target field not found."
+msgstr "Không tìm thấy trường mục tiêu của quan hệ."
+
+#. js-lingui-id: I0e0Bm
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Relation target not found."
+msgstr "Không tìm thấy mục tiêu quan hệ."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -3063,10 +4433,35 @@ msgstr "Đối tượng từ xa chưa sẵn sàng cho sản xuất"
 msgid "Remote objects are not supported yet"
 msgstr "Đối tượng từ xa chưa được hỗ trợ"
 
+#. js-lingui-id: haIkpk
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Remote server already exists."
+msgstr "Máy chủ từ xa đã tồn tại."
+
+#. js-lingui-id: kcB/qR
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "Remote server not found."
+msgstr "Không tìm thấy máy chủ từ xa."
+
+#. js-lingui-id: QxXX+p
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Remote table already exists."
+msgstr "Bảng từ xa đã tồn tại."
+
+#. js-lingui-id: eaN14K
+#: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
+msgid "Remote table not found."
+msgstr "Không tìm thấy bảng từ xa."
+
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Yêu cầu đã hết hạn, vui lòng thử lại."
+
+#. js-lingui-id: sSkbaZ
+#: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
+msgid "Request timed out."
+msgstr "Yêu cầu hết thời gian chờ."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -3113,6 +4508,16 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
 
+#. js-lingui-id: ViBevc
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role cannot be assigned to this entity."
+msgstr "Không thể gán vai trò cho thực thể này."
+
+#. js-lingui-id: zeffu9
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Role must have at least one target."
+msgstr "Vai trò phải có ít nhất một mục tiêu."
+
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -3124,6 +4529,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role not found"
 msgstr ""
+
+#. js-lingui-id: /BTyf+
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Role not found."
+msgstr "Không tìm thấy vai trò."
+
+#. js-lingui-id: ctpIGF
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role target is missing identifier."
+msgstr "Mục tiêu vai trò thiếu định danh."
 
 #. js-lingui-id: oCyyzG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
@@ -3139,16 +4556,31 @@ msgstr ""
 msgid "Role target not found"
 msgstr ""
 
+#. js-lingui-id: gz6uii
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Role target not found."
+msgstr "Không tìm thấy mục tiêu vai trò."
+
 #. js-lingui-id: alYNOd
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this id already exists"
 msgstr ""
 
+#. js-lingui-id: Ub8R48
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Roles and permissions configuration not found."
+msgstr "Không tìm thấy cấu hình vai trò và quyền."
+
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
 msgstr "Tuyến đường đã tồn tại"
+
+#. js-lingui-id: AcyaP/
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route already exists."
+msgstr "Định tuyến đã tồn tại."
 
 #. js-lingui-id: ldQZkA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -3158,10 +4590,20 @@ msgstr "Tuyến đường đã tồn tại"
 msgid "Route not found"
 msgstr "Không tìm thấy tuyến đường"
 
+#. js-lingui-id: F35apa
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route not found."
+msgstr "Không tìm thấy định tuyến."
+
 #. js-lingui-id: NCQS+K
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route path already exists"
 msgstr "Đường dẫn tuyến đường đã tồn tại"
+
+#. js-lingui-id: mF5BSU
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Route path already exists."
+msgstr "Đường dẫn định tuyến đã tồn tại."
 
 #. js-lingui-id: v5H7VS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -3184,6 +4626,11 @@ msgstr "Lượt chạy"
 msgid "Saturday"
 msgstr "Thứ Bảy"
 
+#. js-lingui-id: r20Bqy
+#: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
+msgid "Schema enum operation failed."
+msgstr "Thao tác enum trên lược đồ thất bại."
+
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3205,6 +4652,11 @@ msgstr "Tháng Chín"
 msgid "Serverless function already exists"
 msgstr "Chức năng không máy chủ đã tồn tại"
 
+#. js-lingui-id: qqeQGz
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Serverless function execution failed."
+msgstr "Thực thi hàm không máy chủ thất bại."
+
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -3225,6 +4677,14 @@ msgstr "Chức năng không máy chủ đã tồn tại"
 msgid "Serverless function not found"
 msgstr "Không tìm thấy chức năng không máy chủ"
 
+#. js-lingui-id: 4oHY1L
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
+#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Serverless function not found."
+msgstr "Không tìm thấy hàm không máy chủ."
+
 #. js-lingui-id: jNhvmj
 #: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
 msgid "Serverless function to update not found"
@@ -3239,6 +4699,16 @@ msgstr "Chức năng không máy chủ có cùng ID đã tồn tại"
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "Cài đặt"
+
+#. js-lingui-id: e1k+No
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Sign up is disabled."
+msgstr "Đăng ký bị vô hiệu hoá."
+
+#. js-lingui-id: 4AomZC
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Single sign-on authentication failed."
+msgstr "Xác thực đăng nhập một lần thất bại."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -3260,10 +4730,25 @@ msgstr "Không thể tìm thấy một số tư cách thành viên không gian l
 msgid "Source object cannot be the target object"
 msgstr ""
 
+#. js-lingui-id: IP+RN5
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "SSO configuration error."
+msgstr "Lỗi cấu hình SSO."
+
+#. js-lingui-id: NflMcG
+#: src/engine/core-modules/sso/sso.exception.ts
+msgid "SSO is disabled."
+msgstr "SSO bị vô hiệu hoá."
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Giai đoạn"
+
+#. js-lingui-id: 7XNKWU
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "Standard agents cannot be modified."
+msgstr "Không thể sửa đổi các tác nhân chuẩn."
 
 #. js-lingui-id: dc5N0o
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -3317,11 +4802,36 @@ msgstr "'Trạng thái không thể được đặt thủ công.'"
 msgid "Step is not a form"
 msgstr "Bước không phải là một biểu mẫu"
 
+#. js-lingui-id: An2IAh
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Subdomain not found."
+msgstr "Không tìm thấy tên miền phụ."
+
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Chủ đề"
+
+#. js-lingui-id: x0Vn7k
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription is not in trial period."
+msgstr "Đăng ký không ở trong giai đoạn dùng thử."
+
+#. js-lingui-id: nnWIIb
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription item not found."
+msgstr "Không tìm thấy mục đăng ký."
+
+#. js-lingui-id: uo7UmH
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription not found."
+msgstr "Không tìm thấy đăng ký."
+
+#. js-lingui-id: VNohoc
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Subscription phase not found."
+msgstr "Không tìm thấy giai đoạn đăng ký."
 
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3363,6 +4873,11 @@ msgstr "Giai đoạn đồng bộ bắt đầu lúc"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Trạng thái đồng bộ"
+
+#. js-lingui-id: 8UWeLh
+#: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
+msgid "Tab not found for widget duplication."
+msgstr "Không tìm thấy tab cho việc nhân bản tiện ích."
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -3482,6 +4997,18 @@ msgstr "Người Mục tiêu Nhiệm vụ"
 msgid "TaskTarget task"
 msgstr "Nhiệm vụ Mục tiêu Nhiệm vụ"
 
+#. js-lingui-id: M10it4
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Test error"
+msgstr "Lỗi kiểm thử"
+
+#. js-lingui-id: J+cH9z
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Test user friendly message"
+msgstr "Thông báo thân thiện với người dùng để kiểm thử"
+
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3561,10 +5088,20 @@ msgstr "Ngày nhận tin nhắn"
 msgid "The default role cannot be deleted as it is required for the workspace to function properly."
 msgstr "Không thể xóa vai trò mặc định vì nó cần thiết để không gian làm việc hoạt động bình thường."
 
+#. js-lingui-id: 0biWRI
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "The default role cannot be deleted."
+msgstr "Không thể xóa vai trò mặc định."
+
 #. js-lingui-id: 6BBrjb
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Không thể tìm thấy vai trò mặc định cho không gian làm việc này. Vui lòng liên hệ bộ phận hỗ trợ để được trợ giúp."
+
+#. js-lingui-id: 22Peto
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "The domain does not match your email domain."
+msgstr "Tên miền không khớp với tên miền email của bạn."
 
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3671,15 +5208,111 @@ msgstr "Trạng thái phiên bản quy trình làm việc"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Có vấn đề với cài đặt kết nối của bạn. Vui lòng thử lại."
 
+#. js-lingui-id: Iy9pZw
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldLabel} value is already in use. Please check your data and try again."
+msgstr ""
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Khóa API này đã bị thu hồi và không thể sử dụng nữa."
 
+#. js-lingui-id: K02c+I
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has been revoked."
+msgstr "Khóa API này đã bị thu hồi."
+
+#. js-lingui-id: OLL1W0
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has expired."
+msgstr "Khóa API này đã hết hạn."
+
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Khóa API này đã hết thời gian sử dụng. Vui lòng tạo một khóa mới."
+
+#. js-lingui-id: 9J2vmW
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This API key has no role assigned."
+msgstr "Khóa API này chưa được gán vai trò."
+
+#. js-lingui-id: ADtO2E
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "This connection is not allowed."
+msgstr "Kết nối này không được phép."
+
+#. js-lingui-id: z7bcpf
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain has already been validated."
+msgstr "Tên miền này đã được xác thực."
+
+#. js-lingui-id: RQbcZC
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain has already been verified."
+msgstr "Tên miền này đã được xác minh."
+
+#. js-lingui-id: 3eKCDz
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is already registered as a custom domain."
+msgstr "Tên miền này đã được đăng ký làm tên miền tuỳ chỉnh."
+
+#. js-lingui-id: s6batt
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "This domain is already registered."
+msgstr "Tên miền này đã được đăng ký."
+
+#. js-lingui-id: 8sTsIR
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This domain is already taken."
+msgstr "Tên miền này đã được sử dụng."
+
+#. js-lingui-id: NcQ6eO
+#: src/engine/core-modules/user/user.exception.ts
+msgid "This email is already in use."
+msgstr "Email này đã được sử dụng."
+
+#. js-lingui-id: hsi+jf
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This feature is not enabled."
+msgstr "Tính năng này chưa được bật."
+
+#. js-lingui-id: Io3Xii
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "This feature is not implemented."
+msgstr "Tính năng này chưa được triển khai."
+
+#. js-lingui-id: MKqbeR
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This field cannot be modified."
+msgstr "Không thể sửa đổi trường này."
+
+#. js-lingui-id: AKIPVa
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This field name is not available."
+msgstr "Tên trường này không khả dụng."
+
+#. js-lingui-id: JwdaFV
+#: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
+msgid "This foreign table cannot be modified."
+msgstr "Không thể sửa đổi bảng ngoại này."
+
+#. js-lingui-id: 6Z/zIt
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This method is not allowed."
+msgstr "Phương thức này không được phép."
+
+#. js-lingui-id: /XKGep
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
+msgid "This name is a reserved keyword."
+msgstr "Tên này là từ khóa dành riêng."
+
+#. js-lingui-id: yIUmAs
+#: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
+msgid "This name is not available."
+msgstr "Tên này không khả dụng."
 
 #. js-lingui-id: gPBck6
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -3688,15 +5321,66 @@ msgstr "Khóa API này đã hết thời gian sử dụng. Vui lòng tạo một
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
 msgstr "Tên này đã được dành riêng. Hãy dùng tên khác, nếu không hệ thống sẽ thêm hậu tố \"Custom\"."
 
+#. js-lingui-id: R8zIJd
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "This object cannot be modified."
+msgstr "Không thể sửa đổi đối tượng này."
+
+#. js-lingui-id: 7ZdJO2
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "This operation is not allowed."
+msgstr "Thao tác này không được phép."
+
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "Hành động này không được phép. Vui lòng thử các cách khác hoặc liên hệ hỗ trợ nếu bạn cần trợ giúp."
 
+#. js-lingui-id: bEhTPN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "This operation is not supported."
+msgstr "Thao tác này không được hỗ trợ."
+
+#. js-lingui-id: Y5C3uK
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+msgid "This provider is not supported."
+msgstr "Nhà cung cấp này không được hỗ trợ."
+
+#. js-lingui-id: 8achGR
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This public domain is already registered."
+msgstr "Tên miền công cộng này đã được đăng ký."
+
 #. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Bản ghi này đã tồn tại. Vui lòng kiểm tra dữ liệu của bạn và thử lại."
+
+#. js-lingui-id: NxunhS
+#: src/engine/metadata-modules/remote-server/remote-server.exception.ts
+msgid "This remote server cannot be modified."
+msgstr "Không thể sửa đổi máy chủ từ xa này."
+
+#. js-lingui-id: rExecr
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+msgid "This role cannot be assigned to agents."
+msgstr "Không thể gán vai trò này cho các tác nhân."
+
+#. js-lingui-id: UP3ZAj
+#: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
+msgid "This role cannot be assigned to API keys."
+msgstr "Không thể gán vai trò này cho các khóa API."
+
+#. js-lingui-id: c68K+k
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This role cannot be assigned to users."
+msgstr "Không thể gán vai trò này cho người dùng."
+
+#. js-lingui-id: 2jnsqJ
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "This role cannot be edited."
+msgstr "Không thể chỉnh sửa vai trò này."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
@@ -3705,6 +5389,21 @@ msgstr "Bản ghi này đã tồn tại. Vui lòng kiểm tra dữ liệu của 
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Vai trò này không thể sửa đổi vì nó là vai trò hệ thống. Chỉ có thể chỉnh sửa vai trò tùy chỉnh."
+
+#. js-lingui-id: nFIPim
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This subdomain is already taken."
+msgstr "Tên miền phụ này đã được sử dụng."
+
+#. js-lingui-id: GEN5Cv
+#: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
+msgid "This user is already a member of the workspace."
+msgstr "Người dùng này đã là thành viên của không gian làm việc."
+
+#. js-lingui-id: LtsBYU
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "This variable can only be set via environment."
+msgstr "Biến này chỉ có thể được đặt thông qua môi trường."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3812,15 +5511,61 @@ msgstr "Hoạt động dòng thời gian"
 msgid "Title"
 msgstr "Tiêu đề"
 
+#. js-lingui-id: /ObxXq
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Too many admin candidates found."
+msgstr "Tìm thấy quá nhiều ứng viên quản trị."
+
+#. js-lingui-id: MYdvBz
+#: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
+msgid "Too many records affected."
+msgstr "Quá nhiều bản ghi bị ảnh hưởng."
+
+#. js-lingui-id: ExheIC
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Too many records to update at once."
+msgstr "Quá nhiều bản ghi cần cập nhật cùng lúc."
+
+#. js-lingui-id: M68C8m
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Too many requests. Please try again later."
+msgstr "Quá nhiều yêu cầu. Vui lòng thử lại sau."
+
 #. js-lingui-id: mfqtz7
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
 msgid "Too many workspace invitations sent. Please try again later."
 msgstr ""
 
+#. js-lingui-id: VD8J6l
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Trigger not found."
+msgstr "Không tìm thấy trình kích hoạt."
+
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Thứ Ba"
+
+#. js-lingui-id: T+yZIr
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Two-factor authentication is already set up."
+msgstr "Xác thực hai yếu tố đã được thiết lập."
+
+#. js-lingui-id: lNKrNc
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
+msgid "Two-factor authentication method not found."
+msgstr "Không tìm thấy phương thức xác thực hai yếu tố."
+
+#. js-lingui-id: 7Z7wx7
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Two-factor authentication setup is required."
+msgstr "Cần thiết lập xác thực hai yếu tố."
+
+#. js-lingui-id: VT9cmj
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Two-factor authentication verification is required."
+msgstr "Yêu cầu xác minh xác thực hai yếu tố."
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3838,6 +5583,26 @@ msgstr "Loại (không sử dụng nữa)"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Chỉ mục duy nhất không thể được tạo cho trường {fieldName} có loại {fieldType}"
 
+#. js-lingui-id: tEncxN
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Unknown operation."
+msgstr "Hoạt động không xác định."
+
+#. js-lingui-id: BIxgma
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Unknown permission required."
+msgstr "Yêu cầu quyền không xác định."
+
+#. js-lingui-id: Md/2jb
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
+msgid "Unsupported composite column type."
+msgstr "Loại cột tổng hợp không được hỗ trợ."
+
+#. js-lingui-id: 1r7kLp
+#: src/engine/core-modules/twenty-config/twenty-config.exception.ts
+msgid "Unsupported configuration type."
+msgstr "Loại cấu hình không được hỗ trợ."
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3848,11 +5613,21 @@ msgstr "Loại lịch trình cron không được hỗ trợ"
 msgid "Unsupported field metadata type {fieldType}"
 msgstr "Loại siêu dữ liệu trường không được hỗ trợ {fieldType}"
 
+#. js-lingui-id: 9BAEgY
+#: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
+msgid "Unsupported operator."
+msgstr "Toán tử không được hỗ trợ."
+
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Update DateTime"
 msgstr "Thời gian cập nhật"
+
+#. js-lingui-id: lHCFXi
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Update field restrictions only apply to updatable objects."
+msgstr "Giới hạn trường cập nhật chỉ áp dụng cho các đối tượng có thể cập nhật."
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -3863,6 +5638,11 @@ msgstr "Tên trường đã cập nhật không đồng bộ với nhãn"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User already exists"
 msgstr "Người dùng đã tồn tại"
+
+#. js-lingui-id: 9QHVZ2
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "User already has a role assigned."
+msgstr "Người dùng đã được gán một vai trò."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -3880,6 +5660,12 @@ msgstr "Người dùng không có quyền hạn."
 msgid "User Email"
 msgstr "Email người dùng"
 
+#. js-lingui-id: EHZMfR
+#: src/utils/__test__/custom-exception.spec.ts
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "User friendly error message"
+msgstr "Thông báo lỗi thân thiện với người dùng"
+
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
@@ -3896,6 +5682,13 @@ msgstr "Người dùng không phải là thành viên của không gian làm vi�
 msgid "User is not part of the workspace"
 msgstr "Người dùng không phải là một phần của không gian làm việc"
 
+#. js-lingui-id: siJgSI
+#: src/engine/core-modules/user/user.exception.ts
+#: src/engine/core-modules/sso/sso.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "User not found."
+msgstr "Không tìm thấy người dùng."
+
 #. js-lingui-id: g5Z6no
 #: src/engine/core-modules/admin-panel/admin-panel.service.ts
 msgid "User not found. Please check the email or ID."
@@ -3910,6 +5703,19 @@ msgstr "Múi giờ người dùng"
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Người dùng chưa được tạo với email/mật khẩu"
+
+#. js-lingui-id: lUEEso
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/core-modules/user-workspace/user-workspace.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "User workspace not found."
+msgstr "Không tìm thấy không gian làm việc của người dùng."
+
+#. js-lingui-id: 9mCrQp
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "User workspace role configuration not found."
+msgstr "Không tìm thấy cấu hình vai trò không gian làm việc của người dùng."
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3942,6 +5748,11 @@ msgstr "Thất bại xác thực cho 0 đối tượng và 0 trường"
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Giá trị phải ở dạng UPPER_CASE và theo snake_case \"{sanitizedValue}\""
 
+#. js-lingui-id: gj6Gxm
+#: src/engine/core-modules/email-verification/email-verification.exception.ts
+msgid "Verification token has expired."
+msgstr "Mã thông báo xác minh đã hết hạn."
+
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Version status"
@@ -3966,6 +5777,11 @@ msgstr "Các phiên bản"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
 msgstr "Chế độ xem đã tồn tại"
+
+#. js-lingui-id: kB0dDD
+#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+msgid "View already exists."
+msgstr "Chế độ xem đã tồn tại."
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -4121,6 +5937,11 @@ msgstr "Không tìm thấy metadata của trường tổng hợp kanban"
 msgid "View not found"
 msgstr "Không tìm thấy chế độ xem"
 
+#. js-lingui-id: yheEin
+#: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
+msgid "View not found."
+msgstr "Không tìm thấy chế độ xem."
+
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -4210,6 +6031,11 @@ msgstr "Chúng tôi không thể đăng nhập vào tài khoản email của b�
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Chúng tôi đã gặp sự cố khi kết nối với tài khoản email của bạn. Vui lòng kiểm tra cài đặt của bạn và thử lại."
 
+#. js-lingui-id: b8g3PG
+#: src/engine/core-modules/webhook/webhook.exception.ts
+msgid "Webhook not found."
+msgstr "Không tìm thấy webhook."
+
 #. js-lingui-id: VAcXNz
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
@@ -4238,6 +6064,11 @@ msgstr "Workflows"
 msgid "Workflow automated triggers linked to the workflow."
 msgstr "Các kích hoạt tự động của quy trình làm việc được liên kết với quy trình."
 
+#. js-lingui-id: KSK8fH
+#: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
+msgid "Workflow edge not found."
+msgstr "Không tìm thấy cạnh quy trình làm việc."
+
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
@@ -4247,6 +6078,11 @@ msgstr "Quy trình làm việc đã được liên kết với lần chạy."
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow record position"
 msgstr "Vị trí bản ghi quy trình"
+
+#. js-lingui-id: ysb9m+
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow root step not found."
+msgstr "Không tìm thấy bước gốc của quy trình làm việc."
 
 #. js-lingui-id: 5vIcqC
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4270,6 +6106,16 @@ msgstr "Lần chạy quy trình được xếp hàng lúc"
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Workflow run is not running"
 msgstr "Lần chạy workflow không đang chạy"
+
+#. js-lingui-id: AzylSS
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow run limit reached."
+msgstr "Đã đạt giới hạn lần chạy quy trình."
+
+#. js-lingui-id: daijCZ
+#: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
+msgid "Workflow run not found."
+msgstr "Không tìm thấy lần chạy quy trình."
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4302,6 +6148,17 @@ msgstr "Các lần chạy quy trình được liên kết với phiên bản."
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow runs linked to the workflow."
 msgstr "Các lần chạy quy trình được liên kết với quy trình."
+
+#. js-lingui-id: dD9Vpa
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+#: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
+msgid "Workflow step not found."
+msgstr "Không tìm thấy bước quy trình làm việc."
+
+#. js-lingui-id: wvR5lY
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "Workflow trigger not found."
+msgstr "Không tìm thấy trình kích hoạt quy trình làm việc."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -4384,6 +6241,11 @@ msgstr "Quy trình của PhiênBảnQuyTrình"
 msgid "Workspace creation is restricted to admins"
 msgstr "Việc tạo không gian làm việc bị hạn chế cho quản trị viên"
 
+#. js-lingui-id: oLh4c+
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Workspace ID and role mismatch."
+msgstr "ID không gian làm việc và vai trò không khớp."
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
@@ -4414,6 +6276,11 @@ msgstr "Ảnh đại diện thành viên không gian làm việc"
 msgid "Workspace member name"
 msgstr "Tên thành viên không gian làm việc"
 
+#. js-lingui-id: rnnLQA
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Workspace member not found."
+msgstr "Không tìm thấy thành viên không gian làm việc."
+
 #. js-lingui-id: NiUpuN
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace member position"
@@ -4423,6 +6290,32 @@ msgstr "Vị trí thành viên không gian làm việc"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Members"
 msgstr "Các Thành Viên Không Gian Làm Việc"
+
+#. js-lingui-id: eQwIyW
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace not found for customer event."
+msgstr "Không tìm thấy không gian làm việc cho sự kiện khách hàng."
+
+#. js-lingui-id: 5Io9Sh
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace not found for subscription event."
+msgstr "Không tìm thấy không gian làm việc cho sự kiện đăng ký."
+
+#. js-lingui-id: EhVOPs
+#: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/workspace/workspace.exception.ts
+#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Workspace not found."
+msgstr "Không tìm thấy không gian làm việc."
+
+#. js-lingui-id: 7wxAZI
+#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+msgid "Workspace schema not found."
+msgstr "Không tìm thấy lược đồ không gian làm việc."
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4503,10 +6396,20 @@ msgstr "Bạn không thể thiết lập quyền hạn trường trên đối t�
 msgid "You cannot set permissions on system objects as they are managed by the platform."
 msgstr "Bạn không thể thiết lập quyền hạn trên đối tượng hệ thống vì chúng được quản lý bởi nền tảng."
 
+#. js-lingui-id: bAPURS
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "You cannot update your own role."
+msgstr "Bạn không thể cập nhật vai trò của chính mình."
+
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền truy cập vào tính năng này. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
+
+#. js-lingui-id: nPwrik
+#: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
+msgid "You do not have permission to access this workflow."
+msgstr "Bạn không có quyền truy cập quy trình làm việc này."
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
@@ -4517,6 +6420,19 @@ msgstr "Bạn không có quyền xóa người dùng này khỏi không gian là
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền giả lập người dùng. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
+
+#. js-lingui-id: q5OVn+
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "You do not have permission to perform this action."
+msgstr "Bạn không có quyền thực hiện hành động này."
+
+#. js-lingui-id: C9jd/U
+#: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
+msgid "You do not have permission to perform this workflow action."
+msgstr "Bạn không có quyền thực hiện hành động quy trình làm việc này."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -4534,6 +6450,7 @@ msgid "You don't have permission to modify this view."
 msgstr "Bạn không có quyền sửa đổi chế độ xem này."
 
 #. js-lingui-id: z+7x/s
+#: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "'Bạn phải được xác thực để thực hiện hành động này.'"

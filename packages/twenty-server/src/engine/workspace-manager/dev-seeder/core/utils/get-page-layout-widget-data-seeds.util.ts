@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout/enums/axis-name-display.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
