@@ -10,7 +10,7 @@ import { type DestroyPageLayoutWidgetInput } from 'src/engine/metadata-modules/p
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const fromDestroyPageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
   destroyPageLayoutWidgetInput,

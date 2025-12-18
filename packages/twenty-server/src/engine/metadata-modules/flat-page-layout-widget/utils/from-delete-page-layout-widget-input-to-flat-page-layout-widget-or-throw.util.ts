@@ -10,7 +10,7 @@ import { type DeletePageLayoutWidgetInput } from 'src/engine/metadata-modules/pa
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
   deletePageLayoutWidgetInput: rawDeletePageLayoutWidgetInput,
