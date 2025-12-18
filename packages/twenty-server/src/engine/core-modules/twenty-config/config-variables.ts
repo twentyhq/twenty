@@ -841,7 +841,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
-  @IsDefined()
+  @IsOptional()
   @IsUrl({
     protocols: ['postgres', 'postgresql'],
     require_tld: false,
@@ -1465,6 +1465,24 @@ export class ConfigVariables {
   })
   @IsOptional()
   AWS_SES_ACCOUNT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for primary database queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for replica database queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
