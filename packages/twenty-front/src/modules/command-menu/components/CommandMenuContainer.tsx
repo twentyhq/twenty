@@ -8,6 +8,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilValue } from 'recoil';
 
 type CommandMenuContainerProps = {
@@ -39,16 +40,22 @@ export const CommandMenuContainer = ({
   );
 
   return (
-    <RecordComponentInstanceContextsWrapper componentInstanceId={recordIndexId}>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+    <ViewComponentInstanceContext.Provider
+      value={{ instanceId: recordIndexId }}
+    >
+      <RecordComponentInstanceContextsWrapper
+        componentInstanceId={recordIndexId}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <ContextStoreComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <AgentChatProvider>{children}</AgentChatProvider>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
-    </RecordComponentInstanceContextsWrapper>
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          >
+            <AgentChatProvider>{children}</AgentChatProvider>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordComponentInstanceContextsWrapper>
+    </ViewComponentInstanceContext.Provider>
   );
 };
