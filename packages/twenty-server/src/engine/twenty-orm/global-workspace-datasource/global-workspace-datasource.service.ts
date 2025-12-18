@@ -100,5 +100,9 @@ export class GlobalWorkspaceDataSourceService
       await this.globalWorkspaceDataSource.destroy();
       this.globalWorkspaceDataSource = null;
     }
+    if (this.globalWorkspaceDataSourceReplica) {
+      await this.globalWorkspaceDataSourceReplica.destroy();
+      this.globalWorkspaceDataSourceReplica = null;
+    }
   }
 }
