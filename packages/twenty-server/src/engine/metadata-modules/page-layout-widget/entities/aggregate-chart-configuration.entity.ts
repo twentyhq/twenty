@@ -29,9 +29,9 @@ import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/p
 @ObjectType('AggregateChartConfiguration')
 export class AggregateChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
-  @IsIn([GraphType.AGGREGATE_CHART\])
+  @IsIn([GraphType.AGGREGATE_CHART])
   @IsNotEmpty()
-  configurationType: GraphType.AGGREGATE_CHART\;
+  configurationType: GraphType.AGGREGATE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
