@@ -461,6 +461,13 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Twenty Apps",
+                "icon": "plug",
+                "pages": [
+                  "developers/twenty-apps/cli"
+                ]
               }
             ]
           }
