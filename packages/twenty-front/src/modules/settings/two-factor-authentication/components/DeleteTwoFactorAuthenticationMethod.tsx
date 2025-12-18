@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -103,7 +103,7 @@ export const DeleteTwoFactorAuthentication = () => {
         title={t`2FA Method Reset`}
         subtitle={
           isTwoFactorAuthenticationEnforced ? (
-            <>
+            <Trans>
               This will permanently delete your two factor authentication
               method.
               <br />
@@ -111,13 +111,13 @@ export const DeleteTwoFactorAuthentication = () => {
               after deletion and will be asked to configure it again upon login.{' '}
               <br />
               Please type in your email to confirm.
-            </>
+            </Trans>
           ) : (
-            <>
+            <Trans>
               This action cannot be undone. This will permanently reset your two
               factor authentication method. <br /> Please type in your email to
               confirm.
-            </>
+            </Trans>
           )
         }
         onConfirmClick={reset2FA}

@@ -14,5 +14,4 @@ export enum ViewFilterOperandDeprecated {
   IsInPast = 'isInPast',
   IsInFuture = 'isInFuture',
   IsToday = 'isToday',
-  VectorSearch = 'search',
 }

@@ -491,6 +491,7 @@ export const DateTimePicker = ({
                 amount={relativeDate?.amount}
                 unit={relativeDate?.unit ?? 'DAY'}
                 onChange={onRelativeDateChange}
+                allowIntraDayUnits={true}
               />
             ) : (
               <DateTimePickerHeader

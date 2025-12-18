@@ -40,7 +40,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
     'flat-maps:row-level-permission-predicate-group',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
-type AdditionalCacheDataMap = {
+export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   rolesPermissions: ObjectsPermissionsByRoleId;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
@@ -52,7 +52,7 @@ type AdditionalCacheDataMap = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
 };
 
-export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMap;
+export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMaps;
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 

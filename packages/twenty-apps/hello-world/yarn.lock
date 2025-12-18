@@ -1083,7 +1083,7 @@ __metadata:
   resolution: "hello-world@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    twenty-sdk: "npm:0.2.0"
+    twenty-sdk: "npm:0.2.1"
   languageName: unknown
   linkType: soft
 
@@ -1904,9 +1904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:0.2.0":
-  version: 0.2.0
-  resolution: "twenty-sdk@npm:0.2.0"
+"twenty-sdk@npm:0.2.1":
+  version: 0.2.1
+  resolution: "twenty-sdk@npm:0.2.1"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     axios: "npm:^1.6.0"

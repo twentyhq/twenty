@@ -2,6 +2,7 @@ import { ChartRatioOptionBooleanSelectableListItem } from '@/command-menu/pages/
 import { ChartRatioOptionSelectSelectableListItem } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionSelectSelectableListItem';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isAggregateChartConfiguration } from '@/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -41,10 +42,7 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  if (
-    widgetInEditMode?.configuration?.__typename !==
-    'AggregateChartConfiguration'
-  ) {
+  if (!isAggregateChartConfiguration(widgetInEditMode?.configuration)) {
     return null;
   }
 

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import {
   FileDeletionJob,
   type FileDeletionJobData,

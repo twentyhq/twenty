@@ -134,6 +134,8 @@ export const WorkflowStepFilterValueInput = ({
     variableType === FieldMetadataType.DATE_TIME ||
     variableType === FieldMetadataType.DATE;
 
+  const isDateTimeField = variableType === FieldMetadataType.DATE_TIME;
+
   const isRelativeDateFilter =
     isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE;
 
@@ -201,6 +203,7 @@ export const WorkflowStepFilterValueInput = ({
         defaultValue={relativeDateFilterValue}
         onChange={handleRelativeDateFilterChange}
         readonly={readonly}
+        isDateTimeField={isDateTimeField}
       />
     );
   }

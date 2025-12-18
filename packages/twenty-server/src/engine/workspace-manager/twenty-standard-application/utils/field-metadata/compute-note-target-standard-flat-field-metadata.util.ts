@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'noteTarget'>, 'context'>): Record<
-  AllStandardObjectFieldName<'noteTarget'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'noteTarget', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'noteTarget'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -56,7 +57,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -77,7 +78,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -97,7 +98,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,

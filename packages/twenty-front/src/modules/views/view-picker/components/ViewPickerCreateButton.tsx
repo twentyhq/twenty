@@ -94,6 +94,7 @@ export const ViewPickerCreateButton = () => {
       <Button
         title={t`Create`}
         onClick={handleCreateButtonClick}
+        ariaLabel={t`Create new view`}
         accent="blue"
         fullWidth
         size="small"
