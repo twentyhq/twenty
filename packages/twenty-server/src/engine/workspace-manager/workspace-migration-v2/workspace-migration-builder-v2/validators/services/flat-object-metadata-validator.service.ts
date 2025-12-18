@@ -65,6 +65,7 @@ export class FlatObjectMetadataValidatorService {
       ...validateFlatObjectMetadataNameAndLabels({
         optimisticFlatObjectMetadataMaps,
         flatObjectMetadataToValidate: updatedFlatObjectMetadata,
+        buildOptions,
       }),
     );
 
@@ -202,6 +203,7 @@ export class FlatObjectMetadataValidatorService {
       ...validateFlatObjectMetadataNameAndLabels({
         optimisticFlatObjectMetadataMaps,
         flatObjectMetadataToValidate,
+        buildOptions,
       }),
     );
 

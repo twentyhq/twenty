@@ -7,7 +7,7 @@ export const fromStandardRoleDefinitionToFlatRole = (
   standardRoleDefinition: StandardRoleDefinition,
   workspaceId: string,
 ): FlatRole => {
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
 
   return {
     ...standardRoleDefinition,

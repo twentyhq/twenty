@@ -38,7 +38,7 @@ const computeAgentFlatRoleTargetToUpdate = ({
   }
 
   const existingRoleTarget = flatRoleTargetByAgentIdMaps[flatAgent.id];
-  const updatedAt = new Date();
+  const updatedAt = new Date().toISOString();
 
   if (roleId === null) {
     if (isDefined(existingRoleTarget)) {

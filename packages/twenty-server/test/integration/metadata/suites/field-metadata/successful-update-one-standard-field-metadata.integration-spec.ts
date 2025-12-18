@@ -259,8 +259,7 @@ describe('Standard field metadata update should succeed', () => {
   );
 });
 
-// TODO: Enable this test once isUnique set as editable on standard fields
-xdescribe('Standard field isUnique update should succeed', () => {
+describe('Standard field isUnique update should succeed', () => {
   let nameFieldMetadata: FieldMetadataDTO | undefined;
   let customObjectId: string;
 
@@ -334,7 +333,8 @@ xdescribe('Standard field isUnique update should succeed', () => {
     });
   });
 
-  it('should set isUnique to true on standard field', async () => {
+  // TODO: Enable this test once isUnique set as editable on standard fields
+  it.failing('should set isUnique to true on standard field', async () => {
     jestExpectToBeDefined(nameFieldMetadata);
 
     const { data } = await updateOneFieldMetadata({

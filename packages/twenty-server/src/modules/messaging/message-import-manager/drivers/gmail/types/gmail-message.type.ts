@@ -1,3 +1,5 @@
+import { type MessageParticipantRole } from 'twenty-shared/types';
+
 export type GmailMessage = {
   historyId: string;
   externalId: string;
@@ -13,7 +15,7 @@ export type GmailMessage = {
 };
 
 export type Participant = {
-  role: 'from' | 'to' | 'cc' | 'bcc';
+  role: MessageParticipantRole;
   handle: string;
   displayName: string;
 };

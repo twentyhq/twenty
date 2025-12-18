@@ -22,7 +22,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
       ['aggregateOperation', 'fieldMetadataId', 'id', 'viewId'],
     );
 
-  const createdAt = new Date();
+  const createdAt = new Date().toISOString();
   const viewFieldId = createViewFieldInput.id ?? v4();
 
   return {

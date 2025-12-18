@@ -1,10 +1,10 @@
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -100,7 +100,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     label: relationCreationPayload.targetFieldLabel,
     name:
       targetFieldName ??
-      computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
+      computeMetadataNameFromLabel({
+        label: relationCreationPayload.targetFieldLabel,
+      }),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
