@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "נתוני פריסת עמוד לא תקינים."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "נתוני לשונית פריסת עמוד לא תקינים."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "נתוני ווידג'ט של פריסת עמוד לא תקינים."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "לשונית פריסת העמוד לא נמצאה"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "לשונית פריסת העמוד לא נמצאה."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "וידג'ט פריסת העמוד לא נמחק ולא ניתן לשחזרו"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "ווידג'ט פריסת עמוד לא נמצא."
 
