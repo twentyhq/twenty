@@ -83,18 +83,18 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #. js-lingui-id: L4H5SW
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "(no icon selected)"
-msgstr ""
+msgstr "(není vybrána žádná ikona)"
 
 #. js-lingui-id: 6Ux0ik
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem.tsx
 msgid "(No name)"
-msgstr ""
+msgstr "(Bez názvu)"
 
 #. js-lingui-id: p35p2M
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "(selected: {selectedIconKey})"
-msgstr ""
+msgstr "(vybráno: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -163,12 +163,12 @@ msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} pokročilé pra
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "{agentDisplayName} role ({agentIdPrefix})"
-msgstr ""
+msgstr "role {agentDisplayName} ({agentIdPrefix})"
 
 #. js-lingui-id: lhr2m3
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "{agentLabel} Agent Role"
-msgstr ""
+msgstr "Role agenta {agentLabel}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
@@ -178,7 +178,7 @@ msgstr "{aggregateLabel} z {fieldLabel}"
 #. js-lingui-id: LTvJAf
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} wants to access your account"
-msgstr ""
+msgstr "{appName} chce získat přístup k vašemu účtu"
 
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
@@ -197,12 +197,12 @@ msgstr "{count, plural, one {Např. {0}{1} pro {count} desetinné místo} few {N
 #. js-lingui-id: aTq2js
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{credits} Credits - ${price}"
-msgstr ""
+msgstr "{credits} kreditů - ${price}"
 
 #. js-lingui-id: jsKQu8
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{currentRank} of {totalCount} in {objectLabelPlural}"
-msgstr ""
+msgstr "{currentRank} z {totalCount} v {objectLabelPlural}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -218,12 +218,12 @@ msgstr "{deletedCount, plural, one {Úspěšně smazána {deletedCount} úloha} 
 #. js-lingui-id: 2Xxop4
 #: src/modules/billing/components/TrialCard.tsx
 msgid "{duration} days trial"
-msgstr ""
+msgstr "Zkušební verze na {duration} dní"
 
 #. js-lingui-id: JBSWmp
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "{eventAction} a related {eventObject}"
-msgstr ""
+msgstr "{eventAction} související {eventObject}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
@@ -233,12 +233,12 @@ msgstr "{failedCount} soubor(y) se nepodařilo nahrát"
 #. js-lingui-id: bPZh8X
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "{fieldCount} fields on {recordLabel}"
-msgstr ""
+msgstr "{fieldCount} polí u {recordLabel}"
 
 #. js-lingui-id: /9/Y5z
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "{fileName} upload rejected"
-msgstr ""
+msgstr "Nahrání {fileName} bylo odmítnuto"
 
 #. js-lingui-id: bv2QCV
 #: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -263,7 +263,7 @@ msgstr "Graf {graphTypeLabel}"
 #. js-lingui-id: LB2Hw6
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "{headersCount} headers received"
-msgstr ""
+msgstr "Přijato {headersCount} hlaviček"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -273,12 +273,12 @@ msgstr "{hours, plural, one {{hours} hodina} few {{hours} hodiny} many {{hours} 
 #. js-lingui-id: jz0Rnl
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "{inputCredits} credits"
-msgstr ""
+msgstr "{inputCredits} kreditů"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
-msgstr ""
+msgstr "Odesláno {invitationCount} pozvánek"
 
 #. js-lingui-id: j9A2IB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
@@ -303,7 +303,7 @@ msgstr "{jobCount, plural, one {Tato akce znovu spustí vybranou úlohu. Bude sp
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "{morphRelationCount} Objects"
-msgstr ""
+msgstr "{morphRelationCount} objektů"
 
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
@@ -313,12 +313,12 @@ msgstr "{num, selectordinal, one {{num}.} few {{num}.} many {{num}.} other {{num
 #. js-lingui-id: 7kYa/u
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{objectLabelPlural} ({totalCount})"
-msgstr ""
+msgstr "{objectLabelPlural} ({totalCount})"
 
 #. js-lingui-id: h4Zpx/
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "{outputCredits} credits"
-msgstr ""
+msgstr "{outputCredits} kreditů"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -333,7 +333,7 @@ msgstr ""
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 msgid "{positionLabel} record holds priority"
-msgstr ""
+msgstr "Záznam {positionLabel} má prioritu"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -374,12 +374,12 @@ msgstr "{selectedCount, plural, one {Opakovat {selectedCount} úlohu} few {Opako
 #. js-lingui-id: e5lBpY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect.tsx
 msgid "{selectedCount} source types"
-msgstr ""
+msgstr "{selectedCount} typů zdrojů"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 msgid "{serviceLabel} service is unreachable"
-msgstr ""
+msgstr "Služba {serviceLabel} je nedostupná"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -389,13 +389,13 @@ msgstr "{stepNumber}. Kalendář"
 #. js-lingui-id: A9Y2Sy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "{totalCost} credits"
-msgstr ""
+msgstr "{totalCost} kreditů"
 
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "{visibleFieldsCount} shown"
-msgstr ""
+msgstr "Zobrazeno {visibleFieldsCount}"
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -420,12 +420,12 @@ msgstr "••••••••"
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #. js-lingui-id: F5VNGT
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "0 */1 * * *"
-msgstr ""
+msgstr "0 */1 * * *"
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -488,7 +488,7 @@ msgstr "20 000 spuštění uzlu pracovního postupu"
 #. js-lingui-id: 8aH7ml
 #: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
 msgid "200 OK - {duration}ms"
-msgstr ""
+msgstr "200 OK - {duration}ms"
 
 #. js-lingui-id: mwTnop
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -513,7 +513,7 @@ msgstr "Resetování metody 2FA"
 #. js-lingui-id: 4lbHin
 #: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
 msgid "500 Error - {duration}ms"
-msgstr ""
+msgstr "Chyba 500 - {duration}ms"
 
 #. js-lingui-id: keUlu+
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -602,7 +602,7 @@ msgstr "Přistupujte ke svým pracovním datům z vašeho oblíbeného MCP klien
 #. js-lingui-id: u2Cycw
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "Accessible in your function via process.env.KEY"
-msgstr ""
+msgstr "Dostupné ve vaší funkci přes process.env.KEY"
 
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -642,7 +642,7 @@ msgstr "Účty"
 #. js-lingui-id: X5unbK
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "ACS Url"
-msgstr ""
+msgstr "ACS URL"
 
 #. js-lingui-id: GGcxJO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -660,7 +660,7 @@ msgstr "Akce"
 #. js-lingui-id: j6ogTf
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Action on click"
-msgstr ""
+msgstr "Akce při kliknutí"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -714,7 +714,7 @@ msgstr "Aktivní API klíče vytvořené vámi nebo vaším týmem."
 #. js-lingui-id: QHjErc
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
-msgstr ""
+msgstr "Aktivní synchronizace"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -730,7 +730,7 @@ msgstr "Přidat \"{trimmedName}\" do možností"
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "Add a {objectLabelSingular}"
-msgstr ""
+msgstr "Přidat {objectLabelSingular}"
 
 #. js-lingui-id: m3/V2n
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -741,7 +741,7 @@ msgstr "Přidat uzel"
 #. js-lingui-id: eMc2xs
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
-msgstr ""
+msgstr "Přidat krok"
 
 #. js-lingui-id: KKfos4
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
@@ -801,7 +801,7 @@ msgstr "Přidat filtr"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 msgid "Add filter rule"
-msgstr ""
+msgstr "Přidat pravidlo filtru"
 
 #. js-lingui-id: kydAxA
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton.tsx
@@ -812,7 +812,7 @@ msgstr "Přidat první filtr"
 #. js-lingui-id: //rVZt
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerFooter.tsx
 msgid "Add folder"
-msgstr ""
+msgstr "Přidat složku"
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -827,7 +827,7 @@ msgstr "Přidat položku"
 #. js-lingui-id: qgF8ew
 #: src/modules/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput.tsx
 msgid "Add Item"
-msgstr ""
+msgstr "Přidat položku"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -905,7 +905,7 @@ msgstr "Přidat pravidlo"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
-msgstr ""
+msgstr "Přidat skupinu pravidel"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
@@ -1068,7 +1068,7 @@ msgstr "Afrikánština"
 #. js-lingui-id: NawEr2
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "After"
-msgstr ""
+msgstr "Po"
 
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1092,7 +1092,7 @@ msgstr "Agent"
 #. js-lingui-id: 6SbwJa
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Agent execution"
-msgstr ""
+msgstr "Spuštění agenta"
 
 #. js-lingui-id: WrQ+BN
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -1112,7 +1112,7 @@ msgstr ""
 #. js-lingui-id: Nl33Ds
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Agent tokens"
-msgstr ""
+msgstr "Tokeny agenta"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -1167,7 +1167,7 @@ msgstr ""
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "AI request prep"
-msgstr ""
+msgstr "Příprava požadavku AI"
 
 #. js-lingui-id: QwgquD
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1177,7 +1177,7 @@ msgstr "Schéma odpovědi AI"
 #. js-lingui-id: Zdun41
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Alert"
-msgstr ""
+msgstr "Upozornění"
 
 #. js-lingui-id: N40H+G
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
@@ -1205,7 +1205,7 @@ msgstr "Přístup ke všem akcím"
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 msgid "All day"
-msgstr ""
+msgstr "Celý den"
 
 #. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1225,7 +1225,7 @@ msgstr "Všechna pole"
 #. js-lingui-id: BKoJRa
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "All Groups"
-msgstr ""
+msgstr "Všechny skupiny"
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -1246,12 +1246,12 @@ msgstr "Všechny role"
 #. js-lingui-id: 9MrEDw
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "All set!"
-msgstr ""
+msgstr "Vše hotovo!"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "All tasks addressed. Maintain the momentum."
-msgstr ""
+msgstr "Všechny úkoly vyřízeny. Udržujte tempo."
 
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -1336,12 +1336,12 @@ msgstr "Povolit uživatelům přihlášení pomocí e-mailu a hesla."
 #. js-lingui-id: uprOiC
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Amber"
-msgstr ""
+msgstr "Jantarová"
 
 #. js-lingui-id: hehnjM
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "Amount"
-msgstr ""
+msgstr "Částka"
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -1361,12 +1361,12 @@ msgstr "Při zpracování vaší zprávy došlo k chybě"
 #. js-lingui-id: g6Wfbf
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "An error occurred while removing the picture."
-msgstr ""
+msgstr "Při odstraňování obrázku došlo k chybě."
 
 #. js-lingui-id: kDx/lV
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "An error occurred while uploading the picture."
-msgstr ""
+msgstr "Při nahrávání obrázku došlo k chybě."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -1425,12 +1425,12 @@ msgstr "a"
 #. js-lingui-id: qVyNMm
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "And"
-msgstr ""
+msgstr "A"
 
 #. js-lingui-id: KYvJeB
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu.tsx
 msgid "Any {fieldLabel} field"
-msgstr ""
+msgstr "Libovolné pole {fieldLabel}"
 
 #. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
@@ -1543,7 +1543,7 @@ msgstr "Vzhled"
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
 msgid "Apple"
-msgstr ""
+msgstr "Apple"
 
 #. js-lingui-id: d7+zQ6
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -1558,7 +1558,7 @@ msgstr "Aplikační agenti"
 #. js-lingui-id: bw50Pz
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
-msgstr ""
+msgstr "stránka s podrobnostmi aplikace"
 
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1618,7 +1618,7 @@ msgstr ""
 #. js-lingui-id: RqYOrT
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Are you sure you want to delete this related {relationObjectMetadataNameSingular}?<0/>This action will break all its relationships with other objects."
-msgstr ""
+msgstr "Opravdu chcete smazat tento související objekt {relationObjectMetadataNameSingular}?<0/>Tato akce přeruší všechna jeho propojení s ostatními objekty."
 
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
@@ -1793,12 +1793,12 @@ msgstr "na začátku hodiny"
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Attachments"
-msgstr ""
+msgstr "Přílohy"
 
 #. js-lingui-id: kIuOL4
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "Auth"
-msgstr ""
+msgstr "Autentizace"
 
 #. js-lingui-id: DzqB0O
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
@@ -1883,7 +1883,7 @@ msgstr "Dostupný"
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Available tools"
-msgstr ""
+msgstr "Dostupné nástroje"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1906,7 +1906,7 @@ msgstr "Zpět"
 #. js-lingui-id: VlP+1b
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Back to {linkText}"
-msgstr ""
+msgstr "Zpět na {linkText}"
 
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
@@ -1916,22 +1916,22 @@ msgstr "Zpět k obsahu"
 #. js-lingui-id: OvBnOM
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Back to Settings"
-msgstr ""
+msgstr "Zpět do nastavení"
 
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
-msgstr ""
+msgstr "Pozadí"
 
 #. js-lingui-id: Hv/jpu
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Background Colors"
-msgstr ""
+msgstr "Barvy pozadí"
 
 #. js-lingui-id: EmSrGB
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
-msgstr ""
+msgstr "Před"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1974,17 +1974,17 @@ msgstr "Blacklist"
 #. js-lingui-id: Zn5crm
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Blue"
-msgstr ""
+msgstr "Modrá"
 
 #. js-lingui-id: bGQplw
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Body"
-msgstr ""
+msgstr "Text zprávy"
 
 #. js-lingui-id: khA6nE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
-msgstr ""
+msgstr "Vstup těla"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -2019,12 +2019,12 @@ msgstr "Stručné vysvětlení tohoto výstupního pole"
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Bronze"
-msgstr ""
+msgstr "Bronzová"
 
 #. js-lingui-id: JLxwQS
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
-msgstr ""
+msgstr "Hnědá"
 
 #. js-lingui-id: VkwIHa
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -2091,7 +2091,7 @@ msgstr "Událost v kalendáři"
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
-msgstr ""
+msgstr "Událost kalendáře nenalezena"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -2311,7 +2311,7 @@ msgstr "Zkontrolujte vaše emaily"
 #. js-lingui-id: hXXBiE
 #: src/modules/settings/profile/hooks/useUpdateEmail.ts
 msgid "Check your inbox to verify your new email address."
-msgstr ""
+msgstr "Zkontrolujte svou schránku a ověřte svou novou e-mailovou adresu."
 
 #. js-lingui-id: SxwQE8
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
@@ -2361,17 +2361,17 @@ msgstr "Vyberte formát použitý k zobrazení datumové hodnoty"
 #. js-lingui-id: CiPJbh
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click a link"
-msgstr ""
+msgstr "Vyberte, co se stane při kliknutí na odkaz"
 
 #. js-lingui-id: D3MauW
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click a phone number"
-msgstr ""
+msgstr "Vyberte, co se stane při kliknutí na telefonní číslo"
 
 #. js-lingui-id: QR1yAR
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
 msgid "Choose what happens when you click an email"
-msgstr ""
+msgstr "Vyberte, co se stane při kliknutí na e-mailovou adresu"
 
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2430,7 +2430,7 @@ msgstr "Klikněte pro zobrazení dat"
 #. js-lingui-id: QvOsdy
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Click to select icon {iconAriaLabel}"
-msgstr ""
+msgstr "Kliknutím vyberte ikonu {iconAriaLabel}"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2455,7 +2455,7 @@ msgstr "Zavřít"
 #. js-lingui-id: uYADQM
 #: src/modules/information-banner/components/InformationBanner.tsx
 msgid "Close banner"
-msgstr ""
+msgstr "Zavřít banner"
 
 #. js-lingui-id: qYsAlX
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
@@ -2466,7 +2466,7 @@ msgstr "Zavřít příkazové menu"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Code"
-msgstr ""
+msgstr "Kód"
 
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
@@ -2495,7 +2495,7 @@ msgstr "Sbalit"
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Collapse folder"
-msgstr ""
+msgstr "Sbalit složku"
 
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -2525,7 +2525,7 @@ msgstr "Ikona příkazu"
 #. js-lingui-id: PUMdxH
 #: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "Command Menu"
-msgstr ""
+msgstr "Nabídka příkazů"
 
 #. js-lingui-id: A9u+7N
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2760,7 +2760,7 @@ msgstr "Obsahuje"
 #. js-lingui-id: 4b3oEV
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Content"
-msgstr ""
+msgstr "Obsah"
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2771,22 +2771,22 @@ msgstr "Kontext"
 #. js-lingui-id: 4FBXVy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context building (agent)"
-msgstr ""
+msgstr "Sestavování kontextu (agent)"
 
 #. js-lingui-id: lDDIEl
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context building (routing)"
-msgstr ""
+msgstr "Sestavování kontextu (směrování)"
 
 #. js-lingui-id: gFkY/T
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context records"
-msgstr ""
+msgstr "Kontextové záznamy"
 
 #. js-lingui-id: atYgRD
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context size"
-msgstr ""
+msgstr "Velikost kontextu"
 
 #. js-lingui-id: xGVfLh
 #: src/pages/onboarding/SyncEmails.tsx
@@ -2820,7 +2820,7 @@ msgstr "Pokračovat s Microsoftem"
 #. js-lingui-id: lGbmpO
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue without sync"
-msgstr ""
+msgstr "Pokračovat bez synchronizace"
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -2832,7 +2832,7 @@ msgstr "Ovládat, ke kterým typům entit může být tato role přiřazena"
 #: src/modules/settings/profile/components/NameFields.tsx
 #: src/modules/settings/members/components/MemberNameFields.tsx
 msgid "Cook"
-msgstr ""
+msgstr "Cook"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -2852,7 +2852,7 @@ msgstr "Kopírovat"
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
-msgstr ""
+msgstr "Kopírovat kód"
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -2872,7 +2872,7 @@ msgstr "Kopírovat odkaz pro zobrazení"
 #. js-lingui-id: VBIlvI
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Copy output"
-msgstr ""
+msgstr "Kopírovat výstup"
 
 #. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -2892,12 +2892,12 @@ msgstr "Zkopírujte tento klíč, nebude již znovu viditelný"
 #. js-lingui-id: /4gGIX
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Zkopírovat do schránky"
 
 #. js-lingui-id: RTxUjI
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
-msgstr ""
+msgstr "Zkopírovat do schránky"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -2914,7 +2914,7 @@ msgstr "Jádro"
 #. js-lingui-id: cfa2VJ
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "Core Schema"
-msgstr ""
+msgstr "Základní schéma"
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -2989,7 +2989,7 @@ msgstr "Země"
 #. js-lingui-id: j2OqfX
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Country Code"
-msgstr ""
+msgstr "Kód země"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
@@ -3052,7 +3052,7 @@ msgstr "Vytvořit nový záznam"
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create new view"
-msgstr ""
+msgstr "Vytvořit nové zobrazení"
 
 #. js-lingui-id: UDbEyl
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -3132,7 +3132,7 @@ msgstr "Vytvářet, upravovat a mazat zobrazení pracoviště"
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Created"
-msgstr ""
+msgstr "Vytvořeno"
 
 #. js-lingui-id: 4fBuqE
 #: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
@@ -3172,7 +3172,7 @@ msgstr "Použité kredity"
 #. js-lingui-id: e73uuf
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Crimson"
-msgstr ""
+msgstr "Karmínová"
 
 #. js-lingui-id: 6Oaeoc
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
@@ -3208,12 +3208,12 @@ msgstr "měny"
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
 msgid "Currency"
-msgstr ""
+msgstr "Měna"
 
 #. js-lingui-id: m0pL0h
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "Currency Code"
-msgstr ""
+msgstr "Kód měny"
 
 #. js-lingui-id: Hp1l6f
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
@@ -3262,7 +3262,7 @@ msgstr "Vlastní objekty"
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
-msgstr ""
+msgstr "Vlastní zobrazení"
 
 #. js-lingui-id: qt+EaC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -3307,7 +3307,7 @@ msgstr "Přizpůsobit zabezpečení vašeho pracovního prostoru"
 #. js-lingui-id: fFwMZv
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Cyan"
-msgstr ""
+msgstr "Azurová"
 
 #. js-lingui-id: w9VTXG
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3540,7 +3540,7 @@ msgstr "Deaktivováno"
 #. js-lingui-id: Iotuxe
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Debug Info"
-msgstr ""
+msgstr "Ladicí informace"
 
 #. js-lingui-id: dPDEh6
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
@@ -3672,7 +3672,7 @@ msgstr "Smazat {objectLabelPlural}"
 #. js-lingui-id: znL6JX
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectTypeName}"
-msgstr ""
+msgstr "Smazat {relationObjectTypeName}"
 
 #. js-lingui-id: ZDGm40
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -3727,12 +3727,12 @@ msgstr "Smazat pole"
 #. js-lingui-id: 97QUV6
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Delete Folder"
-msgstr ""
+msgstr "Smazat složku"
 
 #. js-lingui-id: k/RLDM
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Delete group"
-msgstr ""
+msgstr "Smazat skupinu"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -3752,7 +3752,7 @@ msgstr "Smazat záznamy na všech objektech"
 #. js-lingui-id: HdeFi+
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete Related {relationObjectTypeName}"
-msgstr ""
+msgstr "Smazat související {relationObjectTypeName}"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -3824,7 +3824,7 @@ msgstr "Smazat celý pracovní prostor"
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 msgid "Deleted"
-msgstr ""
+msgstr "Smazáno"
 
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3899,12 +3899,12 @@ msgstr "Zničit záznamy na všech objektech"
 #. js-lingui-id: FOcBn3
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Detach"
-msgstr ""
+msgstr "Odpojit"
 
 #. js-lingui-id: URmyfc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
-msgstr ""
+msgstr "Podrobnosti"
 
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4024,12 +4024,12 @@ msgstr "Snížení úrovně"
 #. js-lingui-id: mzI/c+
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
-msgstr ""
+msgstr "Stáhnout"
 
 #. js-lingui-id: qnTwse
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
-msgstr ""
+msgstr "Stáhnout {filename}"
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -4039,7 +4039,7 @@ msgstr "Stáhnout soubor"
 #. js-lingui-id: IFNYKF
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Download File"
-msgstr ""
+msgstr "Stáhnout soubor"
 
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4054,7 +4054,7 @@ msgstr "Stáhnout ukázkový soubor"
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
 msgid "Drag and Drop Here"
-msgstr ""
+msgstr "Přetáhněte sem"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -4128,7 +4128,7 @@ msgstr "Nejstarší datum"
 #. js-lingui-id: +hvIFU
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "eddy@gmail.com, @apple.com"
-msgstr ""
+msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
@@ -4209,7 +4209,7 @@ msgstr "Upravit záznamy na všech objektech"
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
 msgid "Edit view"
-msgstr ""
+msgstr "Upravit zobrazení"
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -4224,7 +4224,7 @@ msgstr ""
 #. js-lingui-id: uBAxNB
 #: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 msgid "Editor"
-msgstr ""
+msgstr "Editor"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -4283,7 +4283,7 @@ msgstr "Email je vyžadován"
 #. js-lingui-id: pHx2eA
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
 msgid "Email must be a valid email"
-msgstr ""
+msgstr "E-mail musí být platný"
 
 #. js-lingui-id: QT/Wo7
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -4293,7 +4293,7 @@ msgstr "E-mail nebo doména již je v seznamu blokovaných"
 #. js-lingui-id: +VjrH/
 #: src/modules/command-menu/hooks/useOpenEmailThreadInCommandMenu.ts
 msgid "Email Thread"
-msgstr ""
+msgstr "E-mailové vlákno"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -4353,7 +4353,7 @@ msgstr "E-maily"
 #. js-lingui-id: HtOaZO
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Emails and Calendar"
-msgstr ""
+msgstr "E-maily a kalendář"
 
 #. js-lingui-id: Ft+sR1
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -4368,7 +4368,7 @@ msgstr "Nastavení e-mailů"
 #. js-lingui-id: n0+EqE
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Emails should not be empty"
-msgstr ""
+msgstr "E-maily nesmí být prázdné"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -4459,12 +4459,12 @@ msgstr "Užijte si {withCreditCardTrialPeriodDuration}-denní bezplatnou zkušeb
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
 msgid "Enter a JSON object"
-msgstr ""
+msgstr "Zadejte objekt JSON"
 
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 msgid "Enter a number"
-msgstr ""
+msgstr "Zadejte číslo"
 
 #. js-lingui-id: 20wg2g
 #: src/modules/ai/components/AIChatTab.tsx
@@ -4474,7 +4474,7 @@ msgstr "Zadejte otázku..."
 #. js-lingui-id: 93ebCf
 #: src/modules/object-record/record-field/ui/form-types/components/FormUuidFieldInput.tsx
 msgid "Enter a UUID"
-msgstr ""
+msgstr "Zadejte UUID"
 
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -4500,12 +4500,12 @@ msgstr "Zadejte pole položek nebo výraz proměnné"
 #. js-lingui-id: MJoxIi
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter email subject"
-msgstr ""
+msgstr "Zadejte předmět e-mailu"
 
 #. js-lingui-id: 8Ao1Tl
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect.tsx
 msgid "Enter filter"
-msgstr ""
+msgstr "Zadejte filtr"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -4515,7 +4515,7 @@ msgstr "Zadejte v <0>Unicode</0> formátu"
 #. js-lingui-id: 9CjMQ7
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Enter JSON array"
-msgstr ""
+msgstr "Zadejte pole JSON"
 
 #. js-lingui-id: uV9utd
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -4552,23 +4552,23 @@ msgstr "Zadejte číslo větší než 1"
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Enter phone number"
-msgstr ""
+msgstr "Zadejte telefonní číslo"
 
 #. js-lingui-id: l+91lo
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter receiver email"
-msgstr ""
+msgstr "Zadejte e-mail příjemce"
 
 #. js-lingui-id: xCiJkz
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
 msgid "Enter test value"
-msgstr ""
+msgstr "Zadejte testovací hodnotu"
 
 #. js-lingui-id: Kr4638
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormTextFieldInput.tsx
 msgid "Enter text"
-msgstr ""
+msgstr "Zadejte text"
 
 #. js-lingui-id: yZMXC2
 #: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
@@ -4610,7 +4610,7 @@ msgstr "Zadejte hodnotu"
 #. js-lingui-id: OjkRLQ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Enter your API key"
-msgstr ""
+msgstr "Zadejte svůj klíč API"
 
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -4620,7 +4620,7 @@ msgstr "Podnik"
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Entity ID"
-msgstr ""
+msgstr "ID entity"
 
 #. js-lingui-id: 8PrrNJ
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -4631,7 +4631,7 @@ msgstr "ID entita zkopírována do schránky"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 msgid "Env Variable Options"
-msgstr ""
+msgstr "Možnosti proměnných prostředí"
 
 #. js-lingui-id: vPWtZ+
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -4646,7 +4646,7 @@ msgstr "Proměnné prostředí"
 #. js-lingui-id: AP93Bl
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
 msgid "Environment variables are defined at application level for all functions. Please check <0/>."
-msgstr ""
+msgstr "Proměnné prostředí jsou definovány na úrovni aplikace pro všechny funkce. Zkontrolujte prosím <0/>."
 
 #. js-lingui-id: BlLvRP
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -4656,7 +4656,7 @@ msgstr "Vymazání soft-deleted záznamů"
 #. js-lingui-id: SlfejT
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4681,17 +4681,17 @@ msgstr "Chyba při úpravě poskytovatele identity SSO"
 #. js-lingui-id: GsIfmO
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Error fetching worker metrics: {errorMessage}"
-msgstr ""
+msgstr "Chyba při získávání metrik pracovníka: {errorMessage}"
 
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Error illustration"
-msgstr ""
+msgstr "Ilustrace chyby"
 
 #. js-lingui-id: 9e/9KK
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Error loading calendar event"
-msgstr ""
+msgstr "Chyba při načítání události kalendáře"
 
 #. js-lingui-id: 2GvilU
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -4706,7 +4706,7 @@ msgstr "Chybová zpráva"
 #. js-lingui-id: bT/0cM
 #: src/modules/ui/field/display/components/PhonesDisplay.tsx
 msgid "Error parsing additional phones: {error}"
-msgstr ""
+msgstr "Chyba při zpracování dalších telefonů: {error}"
 
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4797,7 +4797,7 @@ msgstr ""
 #. js-lingui-id: 0pC/y6
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Event"
-msgstr ""
+msgstr "Událost"
 
 #. js-lingui-id: poC90w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4911,7 +4911,7 @@ msgstr "Vyloučit následující lidi a domény z mé synchronizace emailů. Int
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 msgid "Existing Field"
-msgstr ""
+msgstr "Existující pole"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -4950,7 +4950,7 @@ msgstr "Rozbalit"
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
-msgstr ""
+msgstr "Rozbalit složku"
 
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
@@ -4960,12 +4960,12 @@ msgstr "Rozšířit na celou obrazovku"
 #. js-lingui-id: iT7W4v
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "Expected Body"
-msgstr ""
+msgstr "Očekávané tělo"
 
 #. js-lingui-id: qiUBKD
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Expected Response Body"
-msgstr ""
+msgstr "Očekávané tělo odpovědi"
 
 #. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -5028,12 +5028,12 @@ msgstr "Exportovat"
 #. js-lingui-id: Whzf47
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 msgid "Export ({exportedCount})"
-msgstr ""
+msgstr "Export ({exportedCount})"
 
 #. js-lingui-id: 85QrFr
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
 msgid "Export ({percentageValue}%)"
-msgstr ""
+msgstr "Export ({percentageValue}%)"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5128,7 +5128,7 @@ msgstr "Selhalo"
 #. js-lingui-id: tKcbYd
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Failed Jobs"
-msgstr ""
+msgstr "Neúspěšné úlohy"
 
 #. js-lingui-id: fsNGMi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -5173,7 +5173,7 @@ msgstr "Nepodařilo se získat odpověď"
 #. js-lingui-id: CUzkVp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Failed to impersonate user. {errorMessage}"
-msgstr ""
+msgstr "Nepodařilo se vydávat za uživatele. {errorMessage}"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -5183,12 +5183,12 @@ msgstr "Nepodařilo se načíst webhook"
 #. js-lingui-id: TZV+Pv
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Failed to merge records. Please try again."
-msgstr ""
+msgstr "Nepodařilo se sloučit záznamy. Zkuste to prosím znovu."
 
 #. js-lingui-id: PnVGrE
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
-msgstr ""
+msgstr "Nepodařilo se zpracovat kontext: {contextValue}"
 
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -5198,7 +5198,7 @@ msgstr "Nepodařilo se odstranit přepsání"
 #. js-lingui-id: T4nt+1
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to remove picture"
-msgstr ""
+msgstr "Nepodařilo se odstranit obrázek"
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -5219,7 +5219,7 @@ msgstr ""
 #. js-lingui-id: P1NmNz
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Failed to update feature flag. {errorMessage}"
-msgstr ""
+msgstr "Nepodařilo se aktualizovat příznak funkce. {errorMessage}"
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -5244,7 +5244,7 @@ msgstr "Nepodařilo se aktualizovat proměnnou"
 #. js-lingui-id: jU/HbX
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
-msgstr ""
+msgstr "Nepodařilo se nahrát \"{fileNameForError}\""
 
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
@@ -5259,12 +5259,12 @@ msgstr "Nelze nahrát obrázek: "
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
-msgstr ""
+msgstr "Nepodařilo se nahrát obrázek"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Failure Rate"
-msgstr ""
+msgstr "Míra selhání"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
@@ -5353,12 +5353,12 @@ msgstr "Pole"
 #. js-lingui-id: oy3EF7
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
-msgstr ""
+msgstr "Pole (volitelné)"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 msgid "Fields conflicts"
-msgstr ""
+msgstr "Konflikty polí"
 
 #. js-lingui-id: 3w/aqw
 #: src/testing/mock-data/tableData.ts
@@ -5373,7 +5373,7 @@ msgstr "Oprávnění k polím"
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
-msgstr ""
+msgstr "Pole k aktualizaci"
 
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -5393,7 +5393,7 @@ msgstr "Soubor \"{fileName}\" překračuje {maxUploadSize}"
 #. js-lingui-id: 0bK1RI
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
-msgstr ""
+msgstr "Soubor \"{fileName}\" byl úspěšně nahrán"
 
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
@@ -5412,7 +5412,7 @@ msgstr "Filtr"
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
-msgstr ""
+msgstr "Možnosti pravidel skupiny filtru"
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5478,7 +5478,7 @@ msgstr "Jméno"
 #. js-lingui-id: cgevMo
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "First name can not be empty"
-msgstr ""
+msgstr "Křestní jméno nesmí být prázdné"
 
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -5499,7 +5499,7 @@ msgstr "Zapomněli jste heslo?"
 #. js-lingui-id: L/tgbO
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Form Data"
-msgstr ""
+msgstr "Formulářová data"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -5575,12 +5575,12 @@ msgstr "Obecné - Nastavení"
 #. js-lingui-id: CjKOAP
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Generate Function Output"
-msgstr ""
+msgstr "Vygenerovat výstup funkce"
 
 #. js-lingui-id: wu9eMO
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
-msgstr ""
+msgstr "Vygenerované soubory"
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -5661,7 +5661,7 @@ msgstr "Přejít na pracovní postupy"
 #. js-lingui-id: FYlHHU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Gold"
-msgstr ""
+msgstr "Zlatá"
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5672,7 +5672,7 @@ msgstr "Google"
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Google OIDC"
-msgstr ""
+msgstr "Google OIDC"
 
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -5702,12 +5702,12 @@ msgstr "GraphQL API Hřiště"
 #. js-lingui-id: hT/xCE
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Grass"
-msgstr ""
+msgstr "Trávová"
 
 #. js-lingui-id: qS5//Q
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Gray"
-msgstr ""
+msgstr "Šedá"
 
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -5722,7 +5722,7 @@ msgstr "Řečtina"
 #. js-lingui-id: VmkjGB
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Green"
-msgstr ""
+msgstr "Zelená"
 
 #. js-lingui-id: L8fEEm
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -5762,17 +5762,17 @@ msgstr ""
 #. js-lingui-id: HUk3sK
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Header name"
-msgstr ""
+msgstr "Název hlavičky"
 
 #. js-lingui-id: odaos8
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Header value"
-msgstr ""
+msgstr "Hodnota hlavičky"
 
 #. js-lingui-id: +XLjqi
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Headers Input"
-msgstr ""
+msgstr "Vstup hlaviček"
 
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -5817,7 +5817,7 @@ msgstr "Hebrejština"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Hidden"
-msgstr ""
+msgstr "Skrytý"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -5866,7 +5866,7 @@ msgstr "Skryt smazané pracovní postupy"
 #. js-lingui-id: MuEcPp
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Hide empty category"
-msgstr ""
+msgstr "Skrýt prázdnou kategorii"
 
 #. js-lingui-id: HS8BG/
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -5876,7 +5876,7 @@ msgstr "Skrýt prázdné skupiny"
 #. js-lingui-id: hjH2V9
 #: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
 msgid "Hide group {groupValue}"
-msgstr ""
+msgstr "Skrýt skupinu {groupValue}"
 
 #. js-lingui-id: wgmt7A
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -5886,7 +5886,7 @@ msgstr "Skrýt skryté skupiny"
 #. js-lingui-id: i0qMbr
 #: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
 msgid "Home"
-msgstr ""
+msgstr "Domů"
 
 #. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5921,12 +5921,12 @@ msgstr "Http"
 #. js-lingui-id: DUhAFW
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "HTTP method"
-msgstr ""
+msgstr "Metoda HTTP"
 
 #. js-lingui-id: bHXYoC
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "HTTP Method"
-msgstr ""
+msgstr "Metoda HTTP"
 
 #. js-lingui-id: DvpBQM
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5936,17 +5936,17 @@ msgstr "HTTP požadavek"
 #. js-lingui-id: JyNsLE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest.ts
 msgid "HTTP request failed"
-msgstr ""
+msgstr "Požadavek HTTP selhal"
 
 #. js-lingui-id: +ZytMR
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "https://api.example.com/endpoint"
-msgstr ""
+msgstr "https://api.example.com/endpoint"
 
 #. js-lingui-id: yhVtER
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "https://example.com/embed"
-msgstr ""
+msgstr "https://example.com/embed"
 
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6107,12 +6107,12 @@ msgstr "Importovat pracovní postupy"
 #. js-lingui-id: 9eZDRo
 #: src/modules/settings/integrations/components/SettingsIntegrationPreview.tsx
 msgid "Import your tables as remote objects"
-msgstr ""
+msgstr "Importujte své tabulky jako vzdálené objekty"
 
 #. js-lingui-id: wsKZ+v
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Imported data"
-msgstr ""
+msgstr "Importovaná data"
 
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -6138,12 +6138,12 @@ msgstr "Neaktivní"
 #. js-lingui-id: d/HoE2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "Inactive Field Options"
-msgstr ""
+msgstr "Neaktivní možnosti pole"
 
 #. js-lingui-id: aNaNTH
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 msgid "Inactive Object Options"
-msgstr ""
+msgstr "Neaktivní možnosti objektu"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/activities/emails/components/EmailsCard.tsx
@@ -6165,7 +6165,7 @@ msgstr "Indexy"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Info"
-msgstr ""
+msgstr "Informace"
 
 #. js-lingui-id: 623chP
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -6262,12 +6262,12 @@ msgstr "Neplatný cron výraz"
 #. js-lingui-id: 3oTi9y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid cron pattern: {errorMessage}"
-msgstr ""
+msgstr "Neplatný vzor cronu: {errorMessage}"
 
 #. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
-msgstr ""
+msgstr "Neplatná hodnota dne '{newDay}'. Měla by být celé číslo větší než 1"
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -6321,7 +6321,7 @@ msgstr "Neplatná hodnota minuty '{newMinute}'. Měla by být celočíselná vě
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 msgid "Invalid number"
-msgstr ""
+msgstr "Neplatné číslo"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -6378,7 +6378,7 @@ msgstr "Pozvěte svůj tým"
 #. js-lingui-id: CUvG5b
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Iris"
-msgstr ""
+msgstr "Iris"
 
 #. js-lingui-id: W153SA
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6508,7 +6508,7 @@ msgstr "Položky k iterování"
 #. js-lingui-id: J6OYmT
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Jade"
-msgstr ""
+msgstr "Jadeitová"
 
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -6518,7 +6518,7 @@ msgstr "Japonština"
 #. js-lingui-id: FVzmEZ
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 msgid "Job Actions"
-msgstr ""
+msgstr "Akce úloh"
 
 #. js-lingui-id: TH7loN
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -6572,12 +6572,12 @@ msgstr "Klíč"
 #. js-lingui-id: VOAmkS
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Key/Value"
-msgstr ""
+msgstr "Klíč/Hodnota"
 
 #. js-lingui-id: 77Emn0
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuDialog.tsx
 msgid "Keyboard shortcuts"
-msgstr ""
+msgstr "Klávesové zkratky"
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -6596,7 +6596,7 @@ msgstr "Laboratoř"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 msgid "Label"
-msgstr ""
+msgstr "Štítek"
 
 #. js-lingui-id: vXIe7J
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -6669,7 +6669,7 @@ msgstr "Příjmení"
 #. js-lingui-id: PnMGfO
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Last name can not be empty"
-msgstr ""
+msgstr "Příjmení nesmí být prázdné"
 
 #. js-lingui-id: s0kiVA
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6705,7 +6705,7 @@ msgstr "Spustit"
 #. js-lingui-id: 9BjbLR
 #: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Launch manually"
-msgstr ""
+msgstr "Spustit ručně"
 
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -6759,7 +6759,7 @@ msgstr "Světlý"
 #. js-lingui-id: 9EqSGz
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Lime"
-msgstr ""
+msgstr "Limetková"
 
 #. js-lingui-id: yRkqG9
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -6800,12 +6800,12 @@ msgstr "Odkaz byl zkopírován do schránky"
 #. js-lingui-id: JYFFGu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
 msgid "linked a calendar event with {labelIdentifierValue}"
-msgstr ""
+msgstr "propojil(a) událost kalendáře s {labelIdentifierValue}"
 
 #. js-lingui-id: fd8C68
 #: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
 msgid "linked an email with"
-msgstr ""
+msgstr "propojil(a) e-mail s"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6826,12 +6826,12 @@ msgstr "Výpisy"
 #. js-lingui-id: C5bVie
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "Live URL"
-msgstr ""
+msgstr "Produkční URL"
 
 #. js-lingui-id: yQ2kGp
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore.tsx
 msgid "Load more"
-msgstr ""
+msgstr "Načíst další"
 
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -6841,12 +6841,12 @@ msgstr "Načítání csv ... "
 #. js-lingui-id: Zzca95
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "Loading document viewer..."
-msgstr ""
+msgstr "Načítání prohlížeče dokumentů..."
 
 #. js-lingui-id: qIaOZk
 #: src/modules/activities/emails/components/EmailLoader.tsx
 msgid "Loading emails"
-msgstr ""
+msgstr "Načítání e-mailů"
 
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6873,7 +6873,7 @@ msgstr "Načítám konfiguraci uložení..."
 #. js-lingui-id: 7YK6ap
 #: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
 msgid "Loading thread"
-msgstr ""
+msgstr "Načítání vlákna"
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -7008,12 +7008,12 @@ msgstr "Spravujte své internetové účty."
 #. js-lingui-id: bolPo/
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 msgid "Managed serverless functions are not editable"
-msgstr ""
+msgstr "Spravované bezserverové funkce není možné upravovat"
 
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Match {fieldLabel} ({unmatchedCount} Unmatched)"
-msgstr ""
+msgstr "Spárovat {fieldLabel} ({unmatchedCount} nespárováno)"
 
 #. js-lingui-id: gDLior
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -7127,7 +7127,7 @@ msgstr "Sloučit záznamy"
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
-msgstr ""
+msgstr "Slučování..."
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -7170,7 +7170,7 @@ msgstr "Generování souboru metadat selhalo"
 #. js-lingui-id: 0BF9eC
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "Metadata Schema"
-msgstr ""
+msgstr "Schéma metadat"
 
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7203,7 +7203,7 @@ msgstr "Minimální rozsah"
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Mint"
-msgstr ""
+msgstr "Mátová"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7223,7 +7223,7 @@ msgstr "Minuty mezi spouštěči"
 #. js-lingui-id: mibKsa
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "Mission accomplished!"
-msgstr ""
+msgstr "Mise splněna!"
 
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -7278,7 +7278,7 @@ msgstr "Více"
 #. js-lingui-id: JcD7qf
 #: src/modules/action-menu/components/RecordIndexActionMenuDropdown.tsx
 msgid "More actions"
-msgstr ""
+msgstr "Další akce"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -7557,7 +7557,7 @@ msgstr "Nový úkol"
 #. js-lingui-id: U1DAok
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "New Webhook"
-msgstr ""
+msgstr "Nový Webhook"
 
 #. js-lingui-id: vam7Jz
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
@@ -7596,7 +7596,7 @@ msgstr "Ne"
 #: src/modules/ui/input/components/SelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
 msgid "No {clearLabel}"
-msgstr ""
+msgstr "Žádné {clearLabel}"
 
 #. js-lingui-id: xUXmJM
 #: src/modules/object-record/record-field/ui/meta-types/input/components/SelectFieldInput.tsx
@@ -7608,22 +7608,22 @@ msgstr "Žádné {fieldLabel}"
 #. js-lingui-id: fk2viA
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No {label}"
-msgstr ""
+msgstr "Žádné {label}"
 
 #. js-lingui-id: 9CpMvJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No {objectLabelSingular} found"
-msgstr ""
+msgstr "Nenalezen žádný {objectLabelSingular}"
 
 #. js-lingui-id: baVNgS
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
 msgid "No {objectNames}"
-msgstr ""
+msgstr "Žádné {objectNames}"
 
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "No activity yet"
-msgstr ""
+msgstr "Zatím žádná aktivita"
 
 #. js-lingui-id: f9b1sj
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -7663,7 +7663,7 @@ msgstr "Žádná dostupná pole k výběru"
 #. js-lingui-id: V/RzSE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "No body"
-msgstr ""
+msgstr "Žádné tělo"
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -7683,7 +7683,7 @@ msgstr "Žádné konfigurační proměnné neodpovídají vašim současným fil
 #. js-lingui-id: PlVbP6
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "No context was provided for this request"
-msgstr ""
+msgstr "Pro tento požadavek nebyl poskytnut žádný kontext"
 
 #. js-lingui-id: 4BSfjK
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
@@ -7697,7 +7697,7 @@ msgstr "Žádná země"
 #. js-lingui-id: kxH3HO
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "No currency"
-msgstr ""
+msgstr "Žádná měna"
 
 #. js-lingui-id: plhHQt
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
@@ -7768,12 +7768,12 @@ msgstr ""
 #. js-lingui-id: l7y8S8
 #: src/modules/activities/calendar/components/CalendarEventsCard.tsx
 msgid "No Events"
-msgstr ""
+msgstr "Žádné události"
 
 #. js-lingui-id: wY82y3
 #: src/modules/activities/calendar/components/CalendarEventsCard.tsx
 msgid "No events have been scheduled with this {objectName} yet."
-msgstr ""
+msgstr "S tímto {objectName} zatím nejsou naplánovány žádné události."
 
 #. js-lingui-id: /hvarH
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
@@ -7798,12 +7798,12 @@ msgstr "Žádné soubory"
 #. js-lingui-id: pYblOw
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folder"
-msgstr ""
+msgstr "Žádná složka"
 
 #. js-lingui-id: aywdyd
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folders found"
-msgstr ""
+msgstr "Žádné složky nenalezeny"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
@@ -7828,7 +7828,7 @@ msgstr ""
 #. js-lingui-id: kkGPb1
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "No installed application. Please check our <0/>"
-msgstr ""
+msgstr "Žádná nainstalovaná aplikace. Podívejte se prosím na naše <0/>"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7891,7 +7891,7 @@ msgstr "Nejsou dostupné žádné modely. Prosím, nakonfigurujte AI modely v na
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "No notes"
-msgstr ""
+msgstr "Žádné poznámky"
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -7901,7 +7901,7 @@ msgstr "Žádná možnost nenalezena"
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "No output"
-msgstr ""
+msgstr "Žádný výstup"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -7932,7 +7932,7 @@ msgstr "Žádné záznamy nenalezeny"
 #. js-lingui-id: FwUgy3
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No records matching the filter criteria were found."
-msgstr ""
+msgstr "Nebyly nalezeny žádné záznamy odpovídající kritériím filtru."
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
@@ -7952,7 +7952,7 @@ msgstr "Žádné výsledky"
 #. js-lingui-id: AxPAXW
 #: src/modules/command-menu/components/CommandMenuList.tsx
 msgid "No results found"
-msgstr ""
+msgstr "Nenalezeny žádné výsledky"
 
 #. js-lingui-id: FVzmGK
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -7977,12 +7977,12 @@ msgstr "Žádné výběrové pole"
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
-msgstr ""
+msgstr "Žádná hodnota"
 
 #. js-lingui-id: w4AWog
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "No variables available"
-msgstr ""
+msgstr "Žádné proměnné nejsou k dispozici"
 
 #. js-lingui-id: A5XQ/A
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -8002,12 +8002,12 @@ msgstr "Zatím žádné verze workflow"
 #. js-lingui-id: rPAZRd
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
 msgid "No workspace selected"
-msgstr ""
+msgstr "Není vybrán žádný pracovní prostor"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 msgid "Node"
-msgstr ""
+msgstr "Uzel"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -8267,7 +8267,7 @@ msgstr "Na kterém objektu(y) by měl být tento spouštěč dostupný"
 #. js-lingui-id: VwbV6P
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Onboarding call"
-msgstr ""
+msgstr "Úvodní hovor"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -8309,7 +8309,7 @@ msgstr "pouze na {remainingDays} a {lastDay}"
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
-msgstr ""
+msgstr "Sdílen je pouze předmět"
 
 #. js-lingui-id: 50ETCF
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -8325,7 +8325,7 @@ msgstr "Otevřít"
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open as link"
-msgstr ""
+msgstr "Otevřít jako odkaz"
 
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
@@ -8361,7 +8361,7 @@ msgstr "Otevřený"
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Operational"
-msgstr ""
+msgstr "V provozu"
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8371,7 +8371,7 @@ msgstr "Příležitosti"
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
 msgid "Option 1"
-msgstr ""
+msgstr "Možnost 1"
 
 #. js-lingui-id: hY8F2i
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -8402,7 +8402,7 @@ msgstr "Nebo"
 #. js-lingui-id: 4OE5Sf
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Orange"
-msgstr ""
+msgstr "Oranžová"
 
 #. js-lingui-id: VWupWc
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -8433,7 +8433,7 @@ msgstr "Ostatní"
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx
 msgid "Other objects"
-msgstr ""
+msgstr "Další objekty"
 
 #. js-lingui-id: 9LV44m
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -8449,12 +8449,12 @@ msgstr "Jiné pracovní prostory"
 #. js-lingui-id: NuKR0h
 #: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
 msgid "Others"
-msgstr ""
+msgstr "Ostatní"
 
 #. js-lingui-id: HCBMeA
 #: src/modules/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm.ts
 msgid "OTP must be exactly 6 digits"
-msgstr ""
+msgstr "OTP musí mít přesně 6 číslic"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -8464,7 +8464,7 @@ msgstr "Náš tým vám může pomoci nastavit pracovní prostor tak, aby odpov�
 #. js-lingui-id: yL8XdR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
-msgstr ""
+msgstr "Výpadek"
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -8475,7 +8475,7 @@ msgstr ""
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Output"
-msgstr ""
+msgstr "Výstup"
 
 #. js-lingui-id: xvfn7l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -8490,7 +8490,7 @@ msgstr "Přepsat koncept"
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 msgid "Overview"
-msgstr ""
+msgstr "Přehled"
 
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -8520,12 +8520,12 @@ msgstr "widget Rozložení stránky"
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found | Twenty"
-msgstr ""
+msgstr "Stránka nenalezena | Twenty"
 
 #. js-lingui-id: ZyMBtl
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Palette"
-msgstr ""
+msgstr "Paleta"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -8536,7 +8536,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Paragraph"
-msgstr ""
+msgstr "Odstavec"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -8559,7 +8559,7 @@ msgstr "Heslo bylo aktualizováno"
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
 msgid "Password must be min. 8 characters"
-msgstr ""
+msgstr "Heslo musí mít alespoň 8 znaků"
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -8690,12 +8690,12 @@ msgstr "Oprávnění · {objectLabelSingular}"
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #. js-lingui-id: HF6C2L
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonní číslo"
 
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
@@ -8725,13 +8725,13 @@ msgstr "Koláčový graf"
 #. js-lingui-id: 2FIjLb
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Pink"
-msgstr ""
+msgstr "Růžová"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 msgid "Placeholder"
-msgstr ""
+msgstr "Zástupný text"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -8766,7 +8766,7 @@ msgstr "Prosím zadejte platnou URL"
 #. js-lingui-id: qg68zg
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 msgid "Please reconnect your mailbox {mailboxHandle} to update your email aliases:"
-msgstr ""
+msgstr "Prosím, znovu připojte svou schránku {mailboxHandle}, abyste aktualizovali své e-mailové aliasy:"
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -8813,7 +8813,7 @@ msgstr "Zadejte prosím svůj e-mail pro potvrzení."
 #. js-lingui-id: Ij2ljU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Plum"
-msgstr ""
+msgstr "Švestková"
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -8840,7 +8840,7 @@ msgstr "Portugalština — Portugalsko"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Post Code"
-msgstr ""
+msgstr "PSČ"
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -8898,13 +8898,13 @@ msgstr "Primární e-mail"
 #: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
 msgid "Primary Link Label"
-msgstr ""
+msgstr "Popisek primárního odkazu"
 
 #. js-lingui-id: K1pOLG
 #: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
 msgid "Primary Link URL"
-msgstr ""
+msgstr "URL primárního odkazu"
 
 #. js-lingui-id: rW8PxS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -8961,13 +8961,13 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Property name"
-msgstr ""
+msgstr "Název vlastnosti"
 
 #. js-lingui-id: iKZkk1
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Property value"
-msgstr ""
+msgstr "Hodnota vlastnosti"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -9014,12 +9014,12 @@ msgstr "Veřejné domény"
 #. js-lingui-id: mF9LxA
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Purple"
-msgstr ""
+msgstr "Fialová"
 
 #. js-lingui-id: GUpZQM
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
-msgstr ""
+msgstr "Provádění kódu v Pythonu"
 
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -9060,7 +9060,7 @@ msgstr ""
 #. js-lingui-id: z1U/Fh
 #: src/modules/ui/field/input/components/RatingInput.tsx
 msgid "Rating"
-msgstr ""
+msgstr "Hodnocení"
 
 #. js-lingui-id: iaocTt
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
@@ -9073,7 +9073,7 @@ msgstr "Poměr"
 #. js-lingui-id: kdLBDj
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Raw JSON"
-msgstr ""
+msgstr "Nezpracovaný JSON"
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -9100,7 +9100,7 @@ msgstr "Znovu připojit"
 #. js-lingui-id: hVS0gK
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 msgid "record"
-msgstr ""
+msgstr "záznam"
 
 #. js-lingui-id: w80YWM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -9122,7 +9122,7 @@ msgstr "Vytváření záznamů zastaveno. {formattedCreatedRecordsCount} záznam
 #. js-lingui-id: S2Kvcv
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
 msgid "Record filter rule options"
-msgstr ""
+msgstr "Možnosti pravidel filtru záznamu"
 
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
@@ -9151,12 +9151,12 @@ msgstr "Výběr záznamů"
 #. js-lingui-id: C450zb
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Record text"
-msgstr ""
+msgstr "Text záznamu"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Record Type"
-msgstr ""
+msgstr "Typ záznamu"
 
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
@@ -9166,7 +9166,7 @@ msgstr "Záznamy"
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Red"
-msgstr ""
+msgstr "Červená"
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -9197,7 +9197,7 @@ msgstr "Znovu vygenerujte klíč"
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Relation"
-msgstr ""
+msgstr "Vztah"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
@@ -9207,7 +9207,7 @@ msgstr "Typ vztahu"
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 msgid "Relations"
-msgstr ""
+msgstr "Vztahy"
 
 #. js-lingui-id: HR+PwH
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -9245,12 +9245,12 @@ msgstr "Odstranit"
 #. js-lingui-id: gleHgw
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Remove {favoriteCount} favorite?"
-msgstr ""
+msgstr "Odebrat {favoriteCount} oblíbenou položku?"
 
 #. js-lingui-id: 1VQkMD
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Remove {favoriteCount} favorites?"
-msgstr ""
+msgstr "Odebrat {favoriteCount} oblíbené položky?"
 
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -9292,12 +9292,12 @@ msgstr "Odstranit možnost"
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
 msgid "Remove rule"
-msgstr ""
+msgstr "Odstranit pravidlo"
 
 #. js-lingui-id: 4bfSPA
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
-msgstr ""
+msgstr "Odstranit skupinu pravidel"
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -9312,13 +9312,13 @@ msgstr "Odebrat třídění?"
 #. js-lingui-id: Kl3J3D
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Remove variable"
-msgstr ""
+msgstr "Odstranit proměnnou"
 
 #. js-lingui-id: 2wxgft
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
-msgstr ""
+msgstr "Přejmenovat"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -9344,7 +9344,7 @@ msgstr "Odpovědět všem"
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
-msgstr ""
+msgstr "Požadavek selhal"
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -9387,7 +9387,7 @@ msgstr "Obnovit proměnnou"
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Response"
-msgstr ""
+msgstr "Odpověď"
 
 #. js-lingui-id: WMdA7Y
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
@@ -9448,7 +9448,7 @@ msgstr "Obnovit záznamy"
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Result"
-msgstr ""
+msgstr "Výsledek"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
@@ -9486,7 +9486,7 @@ msgstr "Zrušeno pro tento objekt"
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
-msgstr ""
+msgstr "Formátovaný text"
 
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9554,17 +9554,17 @@ msgstr "spouštěč trasy"
 #. js-lingui-id: Eb/I7b
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing decision"
-msgstr ""
+msgstr "Rozhodnutí o směrování"
 
 #. js-lingui-id: Sz0Ftu
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing tokens"
-msgstr ""
+msgstr "Tokeny směrování"
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Ruby"
-msgstr ""
+msgstr "Rubínová"
 
 #. js-lingui-id: 3JjdaA
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -9584,17 +9584,17 @@ msgstr "Spustit funkci"
 #. js-lingui-id: iXw832
 #: src/modules/serverless-functions/components/ServerlessFunctionExecutionResult.tsx
 msgid "Running function"
-msgstr ""
+msgstr "Spouští se funkce"
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Running..."
-msgstr ""
+msgstr "Běží..."
 
 #. js-lingui-id: eo1n1s
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
 msgid "Runtime"
-msgstr ""
+msgstr "Runtime"
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9695,7 +9695,7 @@ msgstr "Hledat typ"
 #. js-lingui-id: 4J+cf6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Search a variable"
-msgstr ""
+msgstr "Hledat proměnnou"
 
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -9950,17 +9950,17 @@ msgstr "Zobrazit pracovní postupy"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
 msgid "Select"
-msgstr ""
+msgstr "Vybrat"
 
 #. js-lingui-id: D1pVcW
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
 msgid "Select a {objectNameSingular}"
-msgstr ""
+msgstr "Vyberte {objectNameSingular}"
 
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Select a date"
-msgstr ""
+msgstr "Vyberte datum"
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -10004,7 +10004,7 @@ msgstr "Vybrat sloupec..."
 #. js-lingui-id: PSqlgu
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Select fields to update"
-msgstr ""
+msgstr "Vyberte pole k aktualizaci"
 
 #. js-lingui-id: J6WI1B
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -10029,7 +10029,7 @@ msgstr "Vybrat řádek záhlaví"
 #. js-lingui-id: qMpmkB
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Select matching field"
-msgstr ""
+msgstr "Vyberte odpovídající pole"
 
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
@@ -10041,12 +10041,12 @@ msgstr "Vyberte jeden nebo několik standardních objektů pro aktivaci níže"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect.tsx
 msgid "Select operand"
-msgstr ""
+msgstr "Vyberte operand"
 
 #. js-lingui-id: n0WCk8
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
 msgid "Select options"
-msgstr ""
+msgstr "Vyberte možnosti"
 
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -10056,12 +10056,12 @@ msgstr "Vybrat zdroj"
 #. js-lingui-id: LHkEre
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Select specific fields to listen to"
-msgstr ""
+msgstr "Vyberte konkrétní pole, která chcete sledovat"
 
 #. js-lingui-id: 8+U1XJ
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Select Step"
-msgstr ""
+msgstr "Vyberte krok"
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -10086,7 +10086,7 @@ msgstr "Vyberte list k použití"
 #. js-lingui-id: tacknv
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 msgid "Select Type"
-msgstr ""
+msgstr "Vyberte typ"
 
 #. js-lingui-id: iWf0Zj
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
@@ -10122,7 +10122,7 @@ msgstr "Odesílat e-maily prostřednictvím připojených účtů"
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Sending request..."
-msgstr ""
+msgstr "Odesílání požadavku..."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -10163,12 +10163,12 @@ msgstr "Detaily poskytovatele služby"
 #. js-lingui-id: 4FANIj
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellDisplayContainer.tsx
 msgid "Set {placeholderForEmptyCell}"
-msgstr ""
+msgstr "Nastavit {placeholderForEmptyCell}"
 
 #. js-lingui-id: EIFxcV
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "Set 3.21 for $3.21"
-msgstr ""
+msgstr "Nastavit 3.21 pro $3.21"
 
 #. js-lingui-id: YZwx1e
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -10183,7 +10183,7 @@ msgstr "Nastavit jako výchozí"
 #. js-lingui-id: ml98ku
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 msgid "Set as Primary"
-msgstr ""
+msgstr "Nastavit jako primární"
 
 #. js-lingui-id: V7fgiB
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -10219,12 +10219,12 @@ msgstr "Nastavte název vaší subdomény"
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Set up a Date field on {objectLabel} to create a Calendar"
-msgstr ""
+msgstr "Nastavte u {objectLabel} pole Datum pro vytvoření kalendáře"
 
 #. js-lingui-id: TaMNRO
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Set up a Select field on {objectLabel} to create a Kanban"
-msgstr ""
+msgstr "Nastavte u {objectLabel} pole Výběr pro vytvoření Kanbanu"
 
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
@@ -10312,7 +10312,7 @@ msgstr "Měla by změna popisku objektu změnit také API?"
 #. js-lingui-id: lSEpDc
 #: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
 msgid "Show group {groupValue}"
-msgstr ""
+msgstr "Zobrazit skupinu {groupValue}"
 
 #. js-lingui-id: 1OVrop
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -10394,7 +10394,7 @@ msgstr "Přeskočit"
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
-msgstr ""
+msgstr "Nebesky modrá"
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10462,7 +10462,7 @@ msgstr "Některé složky"
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 msgid "Soon"
-msgstr ""
+msgstr "Brzy"
 
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -10591,12 +10591,12 @@ msgstr "Stav"
 #. js-lingui-id: lATgy+
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Step filter group options"
-msgstr ""
+msgstr "Možnosti skupiny filtru kroku"
 
 #. js-lingui-id: GSWBES
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterOptionsDropdown.tsx
 msgid "Step filter options"
-msgstr ""
+msgstr "Možnosti filtru kroku"
 
 #. js-lingui-id: ygCKqB
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
@@ -10617,12 +10617,12 @@ msgstr "Uloženo v databázi"
 #. js-lingui-id: C9VfWO
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Street address"
-msgstr ""
+msgstr "Ulice a číslo"
 
 #. js-lingui-id: gMCO5J
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Street address 2"
-msgstr ""
+msgstr "Ulice a číslo 2"
 
 #. js-lingui-id: UJNV7l
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
@@ -10663,7 +10663,7 @@ msgstr ""
 #. js-lingui-id: UJmAAK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Subject"
-msgstr ""
+msgstr "Předmět"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -10732,7 +10732,7 @@ msgstr "Předplatné bude převedeno na měsíční dne {beautifiedRenewDate}."
 #. js-lingui-id: WB5mu5
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switched to {oppositPlan} Plan the {beautifiedRenewDate}."
-msgstr ""
+msgstr "Předplatné bude přepnuto na tarif {oppositPlan} dne {beautifiedRenewDate}."
 
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10742,7 +10742,7 @@ msgstr ""
 #. js-lingui-id: zzDlyQ
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Success"
-msgstr ""
+msgstr "Úspěch"
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -10820,7 +10820,7 @@ msgstr "Synchronizace selhala"
 #. js-lingui-id: ZS+BPb
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 msgid "Sync lost with mailbox {mailboxHandle}. Please reconnect for updates:"
-msgstr ""
+msgstr "Ztracena synchronizace se schránkou {mailboxHandle}. Pro aktualizace ji prosím znovu připojte:"
 
 #. js-lingui-id: L4+l7C
 #: src/pages/onboarding/SyncEmails.tsx
@@ -10835,7 +10835,7 @@ msgstr "Synchronizovat s Outlook"
 #. js-lingui-id: +9x4tK
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync your Emails and Calendar with Twenty. Choose your privacy settings."
-msgstr ""
+msgstr "Synchronizujte své e-maily a kalendář s Twenty. Zvolte svá nastavení ochrany soukromí."
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -10930,12 +10930,12 @@ msgstr "Tabulka"
 #. js-lingui-id: R+s8S+
 #: src/modules/activities/tasks/components/TaskRow.tsx
 msgid "Task title"
-msgstr ""
+msgstr "Název úkolu"
 
 #. js-lingui-id: pqXgqN
 #: src/modules/activities/notes/components/NoteTile.tsx
 msgid "Task Title"
-msgstr ""
+msgstr "Název úkolu"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -10989,7 +10989,7 @@ msgstr "Text"
 #. js-lingui-id: fq+5a1
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu.tsx
 msgid "Text Colors"
-msgstr ""
+msgstr "Barvy textu"
 
 #. js-lingui-id: lyaiTc
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
@@ -11111,7 +11111,7 @@ msgstr "Tento záznam nemá žádné přidružené soubory."
 #. js-lingui-id: 6g0c8y
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "There are no associated notes with this record."
-msgstr ""
+msgstr "S tímto záznamem nejsou spojeny žádné poznámky."
 
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -11126,7 +11126,7 @@ msgstr "Stále existují některé řádky, které obsahují chyby. Řádky s ch
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "There is no activity associated with this record."
-msgstr ""
+msgstr "S tímto záznamem není spojena žádná aktivita."
 
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
@@ -11155,8 +11155,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Tato akce je nevratná. Tímto bude váš účet trvale smazán."
 
@@ -11183,17 +11182,17 @@ msgstr "Tato akce je nevratná. Tímto bude vaše členství v tomto pracovním 
 #. js-lingui-id: o5vUsG
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
-msgstr ""
+msgstr "Tuto akci nelze vrátit zpět. Tímto dojde k trvalému resetování vaší metody dvoufaktorového ověřování. <0/> Pro potvrzení zadejte svůj e-mail."
 
 #. js-lingui-id: XdFYs2
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "This action will delete this favorite folder and all {favoriteCount} favorites inside. Do you want to continue?"
-msgstr ""
+msgstr "Tato akce smaže tuto složku oblíbených a všech {favoriteCount} oblíbených položek uvnitř. Chcete pokračovat?"
 
 #. js-lingui-id: pFXbgz
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
-msgstr ""
+msgstr "Tato akce smaže tuto složku oblíbených a oblíbenou položku uvnitř. Chcete pokračovat?"
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -11213,12 +11212,12 @@ msgstr "To je nezbytné pro povolení ručního přeuspořádání řádků."
 #. js-lingui-id: yLvOxg
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
-msgstr ""
+msgstr "Tento klíč by měl být nastaven přes tělo požadavku"
 
 #. js-lingui-id: dWJTyU
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 msgid "This record has been deleted"
-msgstr ""
+msgstr "Tento záznam byl smazán"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -11278,7 +11277,7 @@ msgstr "Tímto trvale smažete objekt a všechny jeho záznamy. Pro potvrzení z
 #. js-lingui-id: qEODFi
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
-msgstr ""
+msgstr "Tímto bude vaše metoda dvoufaktorového ověřování trvale odstraněna.<0/>Protože je 2FA ve vašem pracovním prostoru povinné, po odstranění budete odhlášeni a při dalším přihlášení budete vyzváni k opětovné konfiguraci. <1/>Pro potvrzení zadejte svůj e-mail."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -11301,7 +11300,7 @@ msgstr "Upravit Workflows"
 #: src/modules/settings/profile/components/NameFields.tsx
 #: src/modules/settings/members/components/MemberNameFields.tsx
 msgid "Tim"
-msgstr ""
+msgstr "Tim"
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -11334,7 +11333,7 @@ msgstr "Časové razítko a účastníci budou sdíleni s vaším týmem."
 #. js-lingui-id: y3HaQk
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Timing"
-msgstr ""
+msgstr "Časování"
 
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11367,7 +11366,7 @@ msgstr "Přepnout všechna oprávnění nastavení"
 #. js-lingui-id: oK9ArN
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Tomato"
-msgstr ""
+msgstr "Rajčatová"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
@@ -11378,22 +11377,22 @@ msgstr "Zítra"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Too many records. Up to {maxRecordsString} allowed"
-msgstr ""
+msgstr "Příliš mnoho záznamů. Povolených je až {maxRecordsString}"
 
 #. js-lingui-id: GnoLfm
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Tool calls made"
-msgstr ""
+msgstr "Provedená volání nástrojů"
 
 #. js-lingui-id: OvFVjH
 #: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Tool execution failed"
-msgstr ""
+msgstr "Spuštění nástroje selhalo"
 
 #. js-lingui-id: YfW6FA
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Tool generation"
-msgstr ""
+msgstr "Generování nástrojů"
 
 #. js-lingui-id: 72c5Qo
 #: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
@@ -11403,22 +11402,22 @@ msgstr ""
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total cost"
-msgstr ""
+msgstr "Celkové náklady"
 
 #. js-lingui-id: ovXf5m
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Total credits"
-msgstr ""
+msgstr "Celkový počet kreditů"
 
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Total Jobs"
-msgstr ""
+msgstr "Celkový počet úloh"
 
 #. js-lingui-id: /kXBrK
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Total time"
-msgstr ""
+msgstr "Celkový čas"
 
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -11474,7 +11473,7 @@ msgstr "Typ spouštěče"
 #. js-lingui-id: 34nxyb
 #: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 msgid "Triggers"
-msgstr ""
+msgstr "Spouštěče"
 
 #. js-lingui-id: zk64Yo
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
@@ -11549,12 +11548,12 @@ msgstr ""
 #. js-lingui-id: EdHWDU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Turquoise"
-msgstr ""
+msgstr "Tyrkysová"
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
-msgstr ""
+msgstr "Pole Twenty"
 
 #. js-lingui-id: YIjS4q
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -11623,7 +11622,7 @@ msgstr "Nepodařilo se dosáhnout zadního konce"
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Undefined"
-msgstr ""
+msgstr "Nedefinováno"
 
 #. js-lingui-id: o23uCL
 #: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
@@ -11696,12 +11695,12 @@ msgstr "Neznámá chyba"
 #. js-lingui-id: IU3aCs
 #: src/modules/ai/hooks/useBrowsingContext.ts
 msgid "Unknown field"
-msgstr ""
+msgstr "Neznámé pole"
 
 #. js-lingui-id: +K1Lj4
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Unknown file"
-msgstr ""
+msgstr "Neznámý soubor"
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -11746,12 +11745,12 @@ msgstr "Nepojmenovaný"
 #. js-lingui-id: RNLIa9
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItemContent.tsx
 msgid "Untitled {labelSingular}"
-msgstr ""
+msgstr "Nepojmenovaný {labelSingular}"
 
 #. js-lingui-id: RBz20h
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Untitled iFrame"
-msgstr ""
+msgstr "Nepojmenované iFrame"
 
 #. js-lingui-id: xzOKup
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
@@ -11799,12 +11798,12 @@ msgstr "Aktualizujte konfiguraci vašeho účtu. Nastavte libovolnou kombinaci I
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "updated"
-msgstr ""
+msgstr "aktualizováno"
 
 #. js-lingui-id: +b7T3G
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Updated"
-msgstr ""
+msgstr "Aktualizováno"
 
 #. js-lingui-id: kwkhPe
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -11837,7 +11836,7 @@ msgstr "Nahrát soubor"
 #. js-lingui-id: sCtyHQ
 #: src/modules/activities/files/components/DropZone.tsx
 msgid "Upload files"
-msgstr ""
+msgstr "Nahrát soubory"
 
 #. js-lingui-id: HAKBY9
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -12046,7 +12045,7 @@ msgstr "Zobrazit detaily fakturace"
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
 msgid "View existing record"
-msgstr ""
+msgstr "Zobrazit existující záznam"
 
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -12093,7 +12092,7 @@ msgstr "Typ pohledu"
 #. js-lingui-id: eedtPL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Violet"
-msgstr ""
+msgstr "Fialková"
 
 #. js-lingui-id: 2q/Q7x
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -12137,12 +12136,12 @@ msgstr "Čekající potomci"
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
-msgstr ""
+msgstr "Čeká se na výstup..."
 
 #. js-lingui-id: r6y+jM
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Warning"
-msgstr ""
+msgstr "Varování"
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
@@ -12196,10 +12195,10 @@ msgstr "Pošleme vám odkaz pro ověření vlastnictví domény"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
+msgstr "Čekáme na potvrzení od našeho platebního poskytovatele (Stripe).\n"
+"Zkuste to prosím za pár sekund znovu."
 
 #. js-lingui-id: LnnVIT
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -12279,7 +12278,7 @@ msgstr "Kdy bude klíč deaktivován"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell.tsx
 msgid "Where"
-msgstr ""
+msgstr "Kde"
 
 #. js-lingui-id: fANaAS
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
@@ -12289,17 +12288,17 @@ msgstr "Typ widgetu"
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx
 msgid "With Credit Card"
-msgstr ""
+msgstr "S kreditní kartou"
 
 #. js-lingui-id: p9B1Re
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Without calling code"
-msgstr ""
+msgstr "Bez předvolby"
 
 #. js-lingui-id: 30aZb8
 #: src/modules/billing/components/TrialCard.tsx
 msgid "Without Credit Card"
-msgstr ""
+msgstr "Bez kreditní karty"
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -12485,7 +12484,7 @@ msgstr "let"
 #. js-lingui-id: QyCqHT
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Yellow"
-msgstr ""
+msgstr "Žlutá"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -12578,7 +12577,7 @@ msgstr "Chystáte se změnit subdoménu své pracovní oblasti. Tato akce odhlá
 #. js-lingui-id: nIF+FL
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Your account has been activated."
-msgstr ""
+msgstr "Váš účet byl aktivován."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
