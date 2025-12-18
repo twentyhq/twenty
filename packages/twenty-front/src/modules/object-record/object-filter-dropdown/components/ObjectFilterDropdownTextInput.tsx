@@ -18,6 +18,7 @@ export const ObjectFilterDropdownTextInput = ({
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
+  console.log('filterDropdownId', filterDropdownId);
 
   const { objectFilterDropdownFilterValue } =
     useObjectFilterDropdownFilterValue();

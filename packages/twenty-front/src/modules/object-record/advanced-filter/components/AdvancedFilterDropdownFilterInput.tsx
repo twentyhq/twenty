@@ -49,12 +49,8 @@ export const AdvancedFilterDropdownFilterInput = ({
           <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
         ))}
       {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
-      {filterType === 'DATE_TIME' && (
-        <ObjectFilterDropdownDateTimeInput instanceId={filterDropdownId} />
-      )}
-      {filterType === 'DATE' && (
-        <ObjectFilterDropdownDateInput instanceId={filterDropdownId} />
-      )}
+      {filterType === 'DATE_TIME' && <ObjectFilterDropdownDateTimeInput />}
+      {filterType === 'DATE' && <ObjectFilterDropdownDateInput />}
       {filterType === 'RELATION' && (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />

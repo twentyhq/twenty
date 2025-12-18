@@ -7,13 +7,13 @@ import { ViewBarFilterDropdownAnyFieldSearchInput } from '@/views/components/Vie
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { ViewBarFilterDropdownFilterInput } from '@/views/components/ViewBarFilterDropdownFilterInput';
 import { ViewBarFilterDropdownVectorSearchInput } from '@/views/components/ViewBarFilterDropdownVectorSearchInput';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 export const ViewBarFilterDropdownContent = () => {
   const [objectFilterDropdownFilterIsSelected] = useRecoilComponentState(
     objectFilterDropdownFilterIsSelectedComponentState,
-    VIEW_BAR_FILTER_DROPDOWN_ID,
+    ViewBarFilterDropdownIds.MAIN,
   );
 
   const objectFilterDropdownAnyFieldSearchIsSelected = useRecoilComponentValue(

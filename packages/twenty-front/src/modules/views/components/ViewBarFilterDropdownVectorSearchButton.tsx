@@ -1,7 +1,6 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -14,7 +13,6 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
 import { useSetVectorSearchInputValueFromExistingFilter } from '@/views/hooks/useSetVectorSearchInputValueFromExistingFilter';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
-import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 
 const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -23,9 +21,7 @@ const StyledSearchText = styled.span`
 
 export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
-  const [, setVectorSearchInputValue] = useRecoilComponentState(
-    vectorSearchInputComponentState,
-  );
+
   const { setVectorSearchInputValueFromExistingFilter } =
     useSetVectorSearchInputValueFromExistingFilter();
 

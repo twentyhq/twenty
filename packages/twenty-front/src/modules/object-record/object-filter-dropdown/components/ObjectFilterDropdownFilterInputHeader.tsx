@@ -6,7 +6,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewBarFilterDropdownFilterInputMenuHeader } from '@/views/components/ViewBarFilterDropdownFilterInputMenuHeader';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
@@ -30,7 +30,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
   )?.instanceId;
 
   const isInViewBarFilterDropdown =
-    dropdownInstanceId === VIEW_BAR_FILTER_DROPDOWN_ID;
+    dropdownInstanceId === ViewBarFilterDropdownIds.MAIN;
 
   const isVectorSearchFilter =
     selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;

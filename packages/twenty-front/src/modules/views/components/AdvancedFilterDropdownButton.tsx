@@ -5,7 +5,7 @@ import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-fil
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterDropdownButton = () => {
@@ -26,7 +26,7 @@ export const AdvancedFilterDropdownButton = () => {
 
   return (
     <Dropdown
-      dropdownId={ADVANCED_FILTER_DROPDOWN_ID}
+      dropdownId={ViewBarFilterDropdownIds.ADVANCED}
       clickableComponent={<AdvancedFilterChip />}
       dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
       dropdownOffset={{ y: 8, x: 0 }}

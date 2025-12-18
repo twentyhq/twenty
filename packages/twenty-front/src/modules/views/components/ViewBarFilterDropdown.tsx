@@ -1,6 +1,6 @@
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -49,7 +49,7 @@ export const ViewBarFilterDropdown = () => {
 
   return (
     <Dropdown
-      dropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
+      dropdownId={ViewBarFilterDropdownIds.MAIN}
       onClose={handleDropdownClose}
       onOpen={handleDropdownOpen}
       clickableComponent={<ViewBarFilterButton />}

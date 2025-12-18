@@ -2,7 +2,7 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { isVectorSearchFilter } from '@/views/utils/isVectorSearchFilter';
 import { useContext } from 'react';
@@ -35,7 +35,7 @@ export const useRemoveRecordFilter = () => {
         if (isVectorSearchFilter(filterToRemove)) {
           set(
             vectorSearchInputComponentState.atomFamily({
-              instanceId: VIEW_BAR_FILTER_DROPDOWN_ID,
+              instanceId: ViewBarFilterDropdownIds.MAIN,
             }),
             '',
           );

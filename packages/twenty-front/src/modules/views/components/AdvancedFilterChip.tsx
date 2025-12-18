@@ -12,7 +12,7 @@ import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-recor
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { plural } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,7 +49,7 @@ export const AdvancedFilterChip = () => {
     });
 
   const handleRemoveClick = () => {
-    closeDropdown(ADVANCED_FILTER_DROPDOWN_ID);
+    closeDropdown(ViewBarFilterDropdownIds.ADVANCED);
 
     const viewFilterGroupIds = currentRecordFilterGroups.map(
       (recordFilterGroup) => recordFilterGroup.id,
@@ -109,7 +109,7 @@ export const AdvancedFilterChip = () => {
 
   return (
     <SortOrFilterChip
-      testId={ADVANCED_FILTER_DROPDOWN_ID}
+      testId={ViewBarFilterDropdownIds.ADVANCED}
       labelKey={chipLabel}
       labelValue=""
       Icon={IconFilter}
