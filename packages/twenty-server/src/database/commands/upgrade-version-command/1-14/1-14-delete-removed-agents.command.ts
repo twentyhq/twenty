@@ -98,7 +98,7 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
       });
     } catch (error) {
       this.logger.error(
-        `Failed to delete workspace aagents \n ${JSON.stringify(error, null, 2)}`,
+        `Failed to delete workspace agents \n ${JSON.stringify(error, null, 2)}`,
       );
     }
 
