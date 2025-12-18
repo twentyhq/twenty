@@ -17,7 +17,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     }
     configuration {
       ... on BarChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
@@ -43,7 +43,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on LineChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
@@ -69,7 +69,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on PieChartConfiguration {
-        graphType
+        configurationType
         groupByFieldMetadataId
         aggregateFieldMetadataId
         aggregateOperation
@@ -86,7 +86,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on AggregateChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         label
@@ -104,7 +104,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         }
       }
       ... on GaugeChartConfiguration {
-        graphType
+        configurationType
         aggregateFieldMetadataId
         aggregateOperation
         displayDataLabel
