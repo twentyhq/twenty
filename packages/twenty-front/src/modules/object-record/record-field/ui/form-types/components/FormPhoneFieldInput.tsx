@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   FormCountryCodeSelectInput,
   type FormCountryCodeSelectInputUpdatedValue,
@@ -55,18 +56,18 @@ export const FormPhoneFieldInput = ({
       {label && <InputLabel>{label}</InputLabel>}
       <FormNestedFieldInputContainer>
         <FormCountryCodeSelectInput
-          label="Country Code"
+          label={t`Country Code`}
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode ?? ''}
           onChange={handleCountryChange}
           readonly={readonly}
         />
         <FormNumberFieldInput
-          label="Phone Number"
+          label={t`Phone Number`}
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}
           VariablePicker={VariablePicker}
-          placeholder="Enter phone number"
-          hint="Without calling code"
+          placeholder={t`Enter phone number`}
+          hint={t`Without calling code`}
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>

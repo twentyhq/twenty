@@ -1,5 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -77,6 +78,7 @@ const StyledPropertyBox = styled(PropertyBox)`
 export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
@@ -155,14 +157,14 @@ export const CalendarEventDetails = ({
         variant={ChipVariant.Highlighted}
         clickable={false}
         leftComponent={<IconCalendarEvent size={theme.icon.size.md} />}
-        label="Event"
+        label={t`Event`}
       />
       <StyledHeader>
         <StyledTitle canceled={calendarEvent.isCanceled}>
           {calendarEvent.title}
         </StyledTitle>
         <StyledCreatedAt>
-          Created{' '}
+          {t`Created`}{' '}
           {beautifyPastDateRelativeToNow(
             new Date(calendarEvent.externalCreatedAt),
           )}

@@ -29,7 +29,7 @@ export const getFieldMetadataCreationInputs = (
     [K in Exclude<
       | FieldMetadataTypesToTestForCreateInputValidation
       | FieldMetadataTypesToTestForFilterInputValidation,
-      'ACTOR'
+      'ACTOR' | 'POSITION'
     >]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
   } = {
     [FieldMetadataType.RICH_TEXT]: {

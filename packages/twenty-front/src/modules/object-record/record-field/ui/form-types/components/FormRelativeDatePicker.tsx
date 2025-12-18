@@ -15,12 +15,14 @@ export type FormRelativeDatePickerProps = {
   defaultValue?: string;
   onChange: (value: RelativeDateFilter) => void;
   readonly?: boolean;
+  isDateTimeField?: boolean;
 };
 
 export const FormRelativeDatePicker = ({
   defaultValue,
   onChange,
   readonly,
+  isDateTimeField,
 }: FormRelativeDatePickerProps) => {
   const instanceId = useId();
 
@@ -48,6 +50,7 @@ export const FormRelativeDatePicker = ({
       isFormField={true}
       readonly={readonly}
       unitDropdownWidth={150}
+      allowIntraDayUnits={isDateTimeField}
     />
   );
 };

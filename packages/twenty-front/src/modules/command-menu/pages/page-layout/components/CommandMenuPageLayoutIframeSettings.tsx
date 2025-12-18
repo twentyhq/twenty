@@ -77,7 +77,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
       <StyledContainer>
         <FormTextFieldInput
           label={t`URL to Embed`}
-          placeholder="https://example.com/embed"
+          placeholder={t`https://example.com/embed`}
           defaultValue={url}
           onChange={handleUrlChange}
           error={urlError}

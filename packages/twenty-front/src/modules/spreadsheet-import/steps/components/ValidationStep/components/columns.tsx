@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
@@ -90,7 +91,7 @@ export const generateColumns = (
       return (
         <StyledCheckboxContainer>
           <Checkbox
-            aria-label="Select"
+            aria-label={t`Select`}
             checked={isRowSelected}
             variant={CheckboxVariant.Tertiary}
             onChange={(event) => {

@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
 import { SettingsDevelopersWebhookNew } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -11,7 +12,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhookNew',
   component: SettingsDevelopersWebhookNew,
-  decorators: [PageDecorator],
+  decorators: [I18nFrontDecorator, PageDecorator],
   args: {
     routePath: '/settings/webhooks/new',
   },

@@ -50,7 +50,7 @@ export const SignInUpPasswordField = ({
               autoFocus
               value={value}
               type="password"
-              placeholder="Password"
+              placeholder={t`Password`}
               onBlur={onBlur}
               onChange={onChange}
               error={showErrors ? error?.message : undefined}
