@@ -6,7 +6,7 @@ export const pageLayoutTabEntityRelationProperties = [
   'pageLayout',
   'widgets',
   'application',
-] as const;
+] as const satisfies (keyof PageLayoutTabEntity)[];
 
 export type PageLayoutTabEntityRelationProperties =
   (typeof pageLayoutTabEntityRelationProperties)[number];
