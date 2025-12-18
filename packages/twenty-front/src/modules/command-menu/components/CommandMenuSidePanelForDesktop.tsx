@@ -53,7 +53,7 @@ const StyledModalContainer = styled.div`
 
 const GAP_WIDTH = 8;
 
-export const CommandMenuSidePanel = () => {
+export const CommandMenuSidePanelForDesktop = () => {
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const isCommandMenuClosing = useRecoilValue(isCommandMenuClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useRecoilState(
