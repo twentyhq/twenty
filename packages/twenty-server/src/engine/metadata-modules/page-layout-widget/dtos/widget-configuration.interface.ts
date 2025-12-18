@@ -8,7 +8,7 @@ import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layo
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.enum';
+import { WidgetConfigurationTypeDeprecated } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type-deprecated.enum';
 
 export const WidgetConfiguration = createUnionType({
   name: 'WidgetConfiguration',
@@ -29,7 +29,7 @@ export const WidgetConfiguration = createUnionType({
     }
 
     if (
-      configuration.configurationType === WidgetConfigurationType.CHART_CONFIG
+      configuration.configurationType === WidgetConfigurationTypeDeprecated.CHART_CONFIG
     ) {
       switch (configuration.graphType) {
         case GraphType.VERTICAL_BAR:
@@ -49,14 +49,14 @@ export const WidgetConfiguration = createUnionType({
     }
 
     if (
-      configuration.configurationType === WidgetConfigurationType.IFRAME_CONFIG
+      configuration.configurationType === WidgetConfigurationTypeDeprecated.IFRAME_CONFIG
     ) {
       return IframeConfigurationDTO;
     }
 
     if (
       configuration.configurationType ===
-      WidgetConfigurationType.STANDALONE_RICH_TEXT_CONFIG
+      WidgetConfigurationTypeDeprecated.STANDALONE_RICH_TEXT_CONFIG
     ) {
       return StandaloneRichTextConfigurationDTO;
     }
