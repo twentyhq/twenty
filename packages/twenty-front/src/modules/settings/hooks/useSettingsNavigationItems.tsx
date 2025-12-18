@@ -2,9 +2,11 @@ import { SettingsPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { billingState } from '@/client-config/states/billingState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
@@ -25,6 +27,7 @@ import {
   IconLock,
   IconMail,
   IconMessage,
+  IconPlug,
   IconRocket,
   IconServer,
   IconSettings,
@@ -32,7 +35,6 @@ import {
   IconUserCircle,
   IconUsers,
   IconWorld,
-  IconPlug,
 } from 'twenty-ui/display';
 import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
@@ -60,6 +62,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const billing = useRecoilValue(billingState);
   const { signOut } = useAuth();
   const supportChat = useRecoilValue(supportChatState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
@@ -214,7 +217,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Documentation`,
           onClick: () =>
             window.open(
-              'https://docs.twenty.com/user-guide/introduction',
+              getDocumentationUrl(currentWorkspaceMember?.locale),
               '_blank',
             ),
           Icon: IconHelpCircle,

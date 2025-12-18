@@ -31,21 +31,21 @@ export const SettingsNavigationDrawerItem = ({
   }
 
   if (isDefined(item.isAdvanced) && item.isAdvanced) {
-  return (
-    <AdvancedSettingsWrapper>
-      <NavigationDrawerItem
-        indentationLevel={item.indentationLevel}
-        subItemState={subItemState}
-        label={item.label}
-        to={href || undefined}
-        Icon={item.Icon}
-        active={isActive}
-        soon={item.soon}
-        isNew={item.isNew}
-        onClick={item.onClick}
-      />
-    </AdvancedSettingsWrapper>
-  );
+    return (
+      <AdvancedSettingsWrapper>
+        <NavigationDrawerItem
+          indentationLevel={item.indentationLevel}
+          subItemState={subItemState}
+          label={item.label}
+          to={href || undefined}
+          Icon={item.Icon}
+          active={isActive}
+          soon={item.soon}
+          isNew={item.isNew}
+          onClick={item.onClick}
+        />
+      </AdvancedSettingsWrapper>
+    );
   }
 
   return (

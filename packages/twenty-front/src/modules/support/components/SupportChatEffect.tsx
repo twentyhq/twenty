@@ -5,4 +5,3 @@ export const SupportChatEffect = () => {
 
   return null;
 };
-
