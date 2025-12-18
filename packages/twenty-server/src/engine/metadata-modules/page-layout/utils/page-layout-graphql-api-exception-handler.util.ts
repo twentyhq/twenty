@@ -8,7 +8,7 @@ import {
 import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
+} from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,

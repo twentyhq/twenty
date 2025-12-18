@@ -10,7 +10,7 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
+} from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 
 @Catch(PageLayoutTabException)
 export class PageLayoutTabRestApiExceptionFilter implements ExceptionFilter {

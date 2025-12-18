@@ -14,17 +14,17 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
-import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
-import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-tab.dto';
+import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
+import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
+import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import {
   generatePageLayoutTabExceptionMessage,
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
   PageLayoutTabExceptionMessageKey,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
-import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-tab-rest-api-exception.filter';
-import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
+} from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout-tab/filters/page-layout-tab-rest-api-exception.filter';
+import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
