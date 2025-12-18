@@ -53,7 +53,7 @@ export const useSaveCurrentViewFields = () => {
           }>(
             (
               { viewFieldsToCreate, viewFieldsToUpdate },
-              { __typename, id, ...viewFieldToCreateOrUpdate },
+              { __typename, id: _id, ...viewFieldToCreateOrUpdate },
             ) => {
               const createViewFieldInput: CreateViewFieldInput = {
                 ...viewFieldToCreateOrUpdate,

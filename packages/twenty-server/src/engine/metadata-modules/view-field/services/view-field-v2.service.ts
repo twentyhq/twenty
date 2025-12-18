@@ -36,6 +36,20 @@ export class ViewFieldV2Service {
     private readonly applicationService: ApplicationService,
   ) {}
 
+  /**
+   * Helper method to invalidate and recompute view field and view caches
+   */
+  private async invalidateAndRecomputeViewFieldMaps(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
+      },
+    );
+  }
+
   async createOne({
     createViewFieldInput,
     workspaceId,
@@ -107,12 +121,7 @@ export class ViewFieldV2Service {
       );
     }
 
-    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
-      },
-    );
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -135,12 +144,7 @@ export class ViewFieldV2Service {
     workspaceId: string;
     updateViewFieldInput: UpdateViewFieldInput;
   }): Promise<ViewFieldDTO> {
-    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
-      },
-    );
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
     const { flatViewFieldMaps: existingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -178,12 +182,7 @@ export class ViewFieldV2Service {
       );
     }
 
-    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
-      },
-    );
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -244,12 +243,7 @@ export class ViewFieldV2Service {
       );
     }
 
-    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
-      },
-    );
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -310,7 +304,22 @@ export class ViewFieldV2Service {
       );
     }
 
-    return fromFlatViewFieldToViewFieldDto(existingViewFieldToDelete);
+    await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
+
+    const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldMaps'],
+        },
+      );
+
+    return fromFlatViewFieldToViewFieldDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: existingViewFieldToDelete.id,
+        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
+      }),
+    );
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
