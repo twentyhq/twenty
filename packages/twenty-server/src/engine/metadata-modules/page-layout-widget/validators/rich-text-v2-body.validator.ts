@@ -15,4 +15,3 @@ export class RichTextV2BodyValidator implements RichTextV2Metadata {
   @IsOptional()
   markdown: string | null;
 }
-

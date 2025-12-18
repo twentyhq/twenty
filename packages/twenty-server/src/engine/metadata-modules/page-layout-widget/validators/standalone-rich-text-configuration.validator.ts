@@ -7,7 +7,9 @@ import { RichTextV2BodyValidator } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('StandaloneRichTextConfiguration')
-export class StandaloneRichTextConfigurationValidator implements PageLayoutWidgetConfigurationBase {
+export class StandaloneRichTextConfigurationValidator
+  implements PageLayoutWidgetConfigurationBase
+{
   @Field(() => String)
   @IsIn(['STANDALONE_RICH_TEXT'])
   @IsNotEmpty()
@@ -19,4 +21,3 @@ export class StandaloneRichTextConfigurationValidator implements PageLayoutWidge
   @IsNotEmpty()
   body: RichTextV2BodyValidator;
 }
-

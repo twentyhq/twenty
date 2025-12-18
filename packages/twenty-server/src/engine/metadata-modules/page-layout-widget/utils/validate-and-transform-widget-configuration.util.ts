@@ -13,7 +13,7 @@ import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
+import { type AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
 
 const formatValidationErrors = (errors: ValidationError[]): string => {
   return errors

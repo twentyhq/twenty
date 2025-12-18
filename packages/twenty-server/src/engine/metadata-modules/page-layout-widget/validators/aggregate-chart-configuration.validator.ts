@@ -27,7 +27,9 @@ import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('AggregateChartConfiguration')
-export class AggregateChartConfigurationValidator implements PageLayoutWidgetConfigurationBase {
+export class AggregateChartConfigurationValidator
+  implements PageLayoutWidgetConfigurationBase
+{
   @Field(() => GraphType)
   @IsIn([GraphType.AGGREGATE_CHART])
   @IsNotEmpty()
@@ -95,4 +97,3 @@ export class AggregateChartConfigurationValidator implements PageLayoutWidgetCon
   @IsOptional()
   ratioAggregateConfig?: RatioAggregateConfigValidator;
 }
-

@@ -29,7 +29,9 @@ import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('BarChartConfiguration')
-export class BarChartConfigurationValidator implements PageLayoutWidgetConfigurationBase {
+export class BarChartConfigurationValidator
+  implements PageLayoutWidgetConfigurationBase
+{
   @Field(() => GraphType)
   @IsIn([GraphType.BAR_CHART])
   @IsNotEmpty()
@@ -164,4 +166,3 @@ export class BarChartConfigurationValidator implements PageLayoutWidgetConfigura
   @Max(7)
   firstDayOfTheWeek?: number;
 }
-

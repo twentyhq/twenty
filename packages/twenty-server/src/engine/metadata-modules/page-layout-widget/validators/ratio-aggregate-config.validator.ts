@@ -16,4 +16,3 @@ export class RatioAggregateConfigValidator {
   @IsNotEmpty()
   optionValue: string;
 }
-
