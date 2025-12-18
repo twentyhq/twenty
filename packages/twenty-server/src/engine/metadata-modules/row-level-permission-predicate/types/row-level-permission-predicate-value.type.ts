@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type RelationPredicateValue = {
   isCurrentWorkspaceMemberSelected?: boolean;
   selectedRecordIds: string[];

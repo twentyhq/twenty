@@ -1,68 +1,48 @@
+/* @license Enterprise */
+
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  appendCommonExceptionCode,
+  CustomException,
+} from 'src/utils/custom-exception';
 
-export class RowLevelPermissionPredicateException extends CustomException {
-  declare code: RowLevelPermissionPredicateExceptionCode;
+export const RowLevelPermissionPredicateExceptionCode =
+  appendCommonExceptionCode({
+    ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND:
+      'ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND',
+    INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA:
+      'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA',
+    FIELD_METADATA_NOT_FOUND: 'FIELD_METADATA_NOT_FOUND',
+    OBJECT_METADATA_NOT_FOUND: 'OBJECT_METADATA_NOT_FOUND',
+    ROLE_NOT_FOUND: 'ROLE_NOT_FOUND',
+  } as const);
 
+const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
+  keyof typeof RowLevelPermissionPredicateExceptionCode,
+  MessageDescriptor
+> = {
+  ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND: msg`Row level permission predicate not found.`,
+  INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA: msg`Invalid row level permission predicate data.`,
+  FIELD_METADATA_NOT_FOUND: msg`Field metadata not found.`,
+  OBJECT_METADATA_NOT_FOUND: msg`Object metadata not found.`,
+  ROLE_NOT_FOUND: msg`Role not found.`,
+  INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
+};
+
+export class RowLevelPermissionPredicateException extends CustomException<
+  keyof typeof RowLevelPermissionPredicateExceptionCode
+> {
   constructor(
     message: string,
-    code: RowLevelPermissionPredicateExceptionCode,
+    code: keyof typeof RowLevelPermissionPredicateExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        rowLevelPermissionPredicateExceptionUserFriendlyMessages[code],
+    });
   }
 }
-
-export enum RowLevelPermissionPredicateExceptionCode {
-  ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND = 'ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND',
-  INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA = 'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA',
-  FIELD_METADATA_NOT_FOUND = 'FIELD_METADATA_NOT_FOUND',
-  OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
-  ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
-}
-
-export enum RowLevelPermissionPredicateExceptionMessageKey {
-  ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND = 'ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND',
-  INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA = 'INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA',
-  FIELD_METADATA_NOT_FOUND = 'FIELD_METADATA_NOT_FOUND',
-  OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
-  ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
-}
-
-export const generateRowLevelPermissionPredicateExceptionMessage = (
-  key: RowLevelPermissionPredicateExceptionMessageKey,
-  id?: string,
-) => {
-  switch (key) {
-    case RowLevelPermissionPredicateExceptionMessageKey.ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND:
-      return `Row level permission predicate${id ? ` (id: ${id})` : ''} not found`;
-    case RowLevelPermissionPredicateExceptionMessageKey.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA:
-      return `Invalid row level permission predicate data${id ? ` (id: ${id})` : ''}`;
-    case RowLevelPermissionPredicateExceptionMessageKey.FIELD_METADATA_NOT_FOUND:
-      return 'Field metadata not found';
-    case RowLevelPermissionPredicateExceptionMessageKey.OBJECT_METADATA_NOT_FOUND:
-      return 'Object metadata not found';
-    case RowLevelPermissionPredicateExceptionMessageKey.ROLE_NOT_FOUND:
-      return 'Role not found';
-    default:
-      assertUnreachable(key);
-  }
-};
-
-export const generateRowLevelPermissionPredicateUserFriendlyExceptionMessage = (
-  key: RowLevelPermissionPredicateExceptionMessageKey,
-): MessageDescriptor | undefined => {
-  switch (key) {
-    case RowLevelPermissionPredicateExceptionMessageKey.FIELD_METADATA_NOT_FOUND:
-      return msg`Field metadata not found`;
-    case RowLevelPermissionPredicateExceptionMessageKey.OBJECT_METADATA_NOT_FOUND:
-      return msg`Object metadata not found`;
-    case RowLevelPermissionPredicateExceptionMessageKey.ROLE_NOT_FOUND:
-      return msg`Role not found`;
-    default:
-      return undefined;
-  }
-};

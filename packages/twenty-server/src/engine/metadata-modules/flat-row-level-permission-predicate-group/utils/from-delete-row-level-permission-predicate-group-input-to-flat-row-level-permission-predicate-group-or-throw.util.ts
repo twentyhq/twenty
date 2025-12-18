@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { t } from '@lingui/core/macro';
 import {
   extractAndSanitizeObjectStringFields,

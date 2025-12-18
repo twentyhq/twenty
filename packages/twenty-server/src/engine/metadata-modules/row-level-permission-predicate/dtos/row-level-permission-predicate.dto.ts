@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';

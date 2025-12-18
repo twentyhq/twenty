@@ -1,5 +1,6 @@
+/* @license Enterprise */
+
 import {
-  FieldMetadataType,
   RecordFilterGroupLogicalOperator,
   type CompositeFieldSubFieldName,
   type PartialFieldMetadataItemOption,
@@ -15,6 +16,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -63,91 +65,81 @@ export const buildRowLevelPermissionRecordFilter = ({
 
   const fieldMetadataMapById = flatFieldMetadataMaps.byId;
 
-  const workspaceMember =
-    authContext.workspaceMember ??
-    (authContext.userWorkspace as unknown as Record<string, unknown>) ??
-    {};
+  const workspaceMember = authContext.workspaceMember;
 
-  const recordFilters = predicates.map((predicate) => {
-    const fieldMetadata = fieldMetadataMapById[predicate.fieldMetadataId];
+  const recordFilters = predicates
+    .map((predicate) => {
+      const fieldMetadata = fieldMetadataMapById[predicate.fieldMetadataId];
 
-    if (!isDefined(fieldMetadata)) {
-      throw new PermissionsException(
-        `Field metadata not found for row level predicate ${predicate.id}`,
-        PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
-    const workspaceMemberFieldMetadataId =
-      predicate.workspaceMemberFieldMetadataId;
-    let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
-
-    if (isDefined(workspaceMemberFieldMetadataId)) {
-      const workspaceMemberFieldMetadata =
-        fieldMetadataMapById[workspaceMemberFieldMetadataId];
-
-      if (!isDefined(workspaceMemberFieldMetadata)) {
+      if (!isDefined(fieldMetadata)) {
         throw new PermissionsException(
-          `Workspace member field metadata not found for row level predicate ${predicate.id}`,
+          `Field metadata not found for row level predicate ${predicate.id}`,
           PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
         );
       }
 
-      const workspaceMemberRecord = workspaceMember as Record<string, unknown>;
-      const rawWorkspaceMemberValue = workspaceMemberRecord
-        ? (workspaceMemberRecord[workspaceMemberFieldMetadata.name] as
-            | RowLevelPermissionPredicateValue
-            | Record<string, unknown>
-            | undefined)
-        : undefined;
+      const workspaceMemberFieldMetadataId =
+        predicate.workspaceMemberFieldMetadataId;
+      let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
 
-      const workspaceMemberSubFieldName = predicate.workspaceMemberSubFieldName;
+      if (isDefined(workspaceMemberFieldMetadataId)) {
+        const workspaceMemberFieldMetadata =
+          fieldMetadataMapById[workspaceMemberFieldMetadataId];
 
-      if (
-        isDefined(workspaceMemberSubFieldName) &&
-        rawWorkspaceMemberValue &&
-        typeof rawWorkspaceMemberValue === 'object'
-      ) {
-        predicateValue = (rawWorkspaceMemberValue as Record<string, unknown>)[
-          workspaceMemberSubFieldName
-        ] as RowLevelPermissionPredicateValue;
-      } else {
-        predicateValue =
-          rawWorkspaceMemberValue as RowLevelPermissionPredicateValue;
+        if (!isDefined(workspaceMemberFieldMetadata)) {
+          throw new PermissionsException(
+            `Workspace member field metadata not found for row level predicate ${predicate.id}`,
+            PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+          );
+        }
+
+        if (!isDefined(workspaceMember)) {
+          return null;
+        }
+
+        const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
+          ([key]) => key === workspaceMemberFieldMetadata.name,
+        )?.[1];
+
+        const workspaceMemberSubFieldName =
+          predicate.workspaceMemberSubFieldName;
+
+        if (
+          isDefined(workspaceMemberSubFieldName) &&
+          isDefined(rawWorkspaceMemberValue) &&
+          isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
+          typeof rawWorkspaceMemberValue === 'object'
+        ) {
+          predicateValue = rawWorkspaceMemberValue[workspaceMemberSubFieldName];
+        } else {
+          predicateValue = rawWorkspaceMemberValue;
+        }
+
+        if (!isDefined(predicateValue)) {
+          throw new PermissionsException(
+            `Workspace member data missing for field ${workspaceMemberFieldMetadata.name}`,
+            PermissionsExceptionCode.INVALID_ARG,
+          );
+        }
       }
 
-      if (!isDefined(predicateValue)) {
-        throw new PermissionsException(
-          `Workspace member data missing for field ${workspaceMemberFieldMetadata.name}`,
-          PermissionsExceptionCode.INVALID_ARG,
-        );
-      }
-    }
+      const effectiveSubFieldName = predicate.subFieldName as
+        | CompositeFieldSubFieldName
+        | undefined;
 
-    let effectiveSubFieldName = predicate.subFieldName as
-      | CompositeFieldSubFieldName
-      | undefined;
+      return {
+        id: predicate.id,
+        fieldMetadataId: predicate.fieldMetadataId,
+        value: convertViewFilterValueToString(predicateValue),
+        type: getFilterTypeFromFieldType(fieldMetadata.type),
+        operand: predicate.operand as unknown as RecordFilter['operand'],
+        recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
+        subFieldName: effectiveSubFieldName,
+      } satisfies RecordFilter;
+    })
+    .filter(isDefined);
 
-    if (
-      !effectiveSubFieldName &&
-      fieldMetadata.type === FieldMetadataType.ACTOR
-    ) {
-      effectiveSubFieldName = 'workspaceMemberId';
-    }
-
-    return {
-      id: predicate.id,
-      fieldMetadataId: predicate.fieldMetadataId,
-      value: convertViewFilterValueToString(predicateValue),
-      type: getFilterTypeFromFieldType(fieldMetadata.type),
-      operand: predicate.operand as unknown as RecordFilter['operand'],
-      recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
-      subFieldName: effectiveSubFieldName,
-    } satisfies RecordFilter;
-  });
-
-  const predicateGroupsById =
-    flatRowLevelPermissionPredicateGroupMaps.byId ?? {};
+  const predicateGroupsById = flatRowLevelPermissionPredicateGroupMaps.byId;
 
   const relevantGroupIds = new Set<string>();
 

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   Brackets,
   NotBrackets,
@@ -16,13 +18,7 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 
 type ApplyRowLevelPermissionPredicatesArgs<T extends ObjectLiteral> = {
-  queryBuilder:
-    | WorkspaceSelectQueryBuilder<T>
-    | {
-        where: WorkspaceSelectQueryBuilder<T>['where'];
-        andWhere: WorkspaceSelectQueryBuilder<T>['andWhere'];
-        expressionMap: WorkspaceSelectQueryBuilder<T>['expressionMap'];
-      };
+  queryBuilder: WorkspaceSelectQueryBuilder<T>;
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: AuthContext;
@@ -64,7 +60,7 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
   }
 
   applyObjectRecordFilterToQueryBuilder({
-    queryBuilder: queryBuilder as WorkspaceSelectQueryBuilder<T>,
+    queryBuilder,
     objectNameSingular: objectMetadata.nameSingular,
     recordFilter,
     fieldParser: new GraphqlQueryFilterFieldParser(

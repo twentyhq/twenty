@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';

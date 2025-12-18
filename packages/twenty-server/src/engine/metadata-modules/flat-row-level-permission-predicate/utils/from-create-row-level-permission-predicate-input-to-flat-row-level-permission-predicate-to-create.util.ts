@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 

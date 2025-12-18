@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   Column,
   CreateDateColumn,

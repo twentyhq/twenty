@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENTITY_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/row-level-permission-predicate-group-entity-relation-properties.constant';

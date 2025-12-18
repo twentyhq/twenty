@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { InputType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';

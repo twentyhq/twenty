@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -42,6 +44,7 @@ export class RowLevelPermissionPredicateGroupService {
       fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroupToCreate(
         {
           createRowLevelPermissionPredicateGroupInput,
+          workspaceId,
         },
       );
 
