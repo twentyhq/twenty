@@ -45,7 +45,7 @@ export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
@@ -55,7 +55,7 @@ export const TEST_NUMBER_CHART_CONFIG = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   displayDataLabel: false,
@@ -202,17 +202,17 @@ export const INVALID_IFRAME_CONFIG_EMPTY_URL = {
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_BAD_UUID = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
   aggregateFieldMetadataId: 'not-a-uuid',
   aggregateOperation: AggregateOperations.COUNT,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_INVALID_OPERATION = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: 'INVALID_OP' as any,
 };
@@ -246,7 +246,7 @@ export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
 };
 
 export const CONFIG_TYPE_MISMATCH_IFRAME_WITH_GRAPH = {
-  graphType: GraphType.AGGREGATE_CHART\,
+  graphType: GraphType.AGGREGATE_CHART,
   url: 'https://example.com',
 };
 

@@ -28,7 +28,7 @@ export const widgetTypeSchema = z.enum([
 
 // Graph configuration schema for AGGREGATE type (KPI numbers)
 const aggregateChartConfigSchema = z.object({
-  graphType: z.literal(GraphType.AGGREGATE_CHART\),
+  graphType: z.literal(GraphType.AGGREGATE_CHART),
   aggregateFieldMetadataId: z
     .string()
     .uuid()

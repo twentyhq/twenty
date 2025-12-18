@@ -20,7 +20,6 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
-import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
@@ -28,6 +27,7 @@ import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
@@ -73,13 +73,13 @@ export class PageLayoutWidgetService {
     configuration: Record<string, unknown>;
     workspaceId: string;
     titleForError: string;
-  }): Promise<WidgetConfigurationInterface> {
+  }): Promise<AllWidgetConfigurationTypeValidator> {
     const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
       workspaceId,
     );
 
-    let validatedConfig: WidgetConfigurationInterface | null = null;
+    let validatedConfig: AllWidgetConfigurationTypeValidator | null = null;
 
     try {
       validatedConfig = await validateAndTransformWidgetConfiguration({
@@ -271,7 +271,7 @@ export class PageLayoutWidgetService {
   private async getValidatedConfigurationForCreate(
     input: CreatePageLayoutWidgetInput,
     workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
+  ): Promise<AllWidgetConfigurationTypeValidator | null> {
     if (!input.configuration || !input.type) {
       return null;
     }
@@ -369,7 +369,7 @@ export class PageLayoutWidgetService {
     updateData: UpdatePageLayoutWidgetInput,
     existingWidget: FlatPageLayoutWidget,
     workspaceId: string,
-  ): Promise<WidgetConfigurationInterface | null> {
+  ): Promise<AllWidgetConfigurationTypeValidator | null> {
     if (!updateData.configuration) {
       return null;
     }

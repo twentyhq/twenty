@@ -2,17 +2,17 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsTimeZone,
-  IsUUID,
-  Max,
-  Min,
-  ValidateNested,
+    IsBoolean,
+    IsEnum,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsTimeZone,
+    IsUUID,
+    Max,
+    Min,
+    ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
@@ -29,7 +29,7 @@ export class AggregateChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.AGGREGATE_CHART\;
+  graphType: GraphType.AGGREGATE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
