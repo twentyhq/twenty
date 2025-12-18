@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('IframeConfiguration')

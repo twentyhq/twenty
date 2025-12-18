@@ -1,6 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
+
+import { type Expect } from 'twenty-shared/testing';
+
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
-import { Expect } from 'twenty-shared/testing';
 
 export enum WidgetConfigurationType {
   AGGREGATE_CHART = GraphType.AGGREGATE_CHART,

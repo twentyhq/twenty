@@ -30,7 +30,9 @@ describe('Page layout with tabs update should fail', () => {
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
                 gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-                configuration: { configurationType: WidgetConfigurationType.IFRAME },
+                configuration: {
+                  configurationType: WidgetConfigurationType.IFRAME,
+                },
               },
             ],
           },
