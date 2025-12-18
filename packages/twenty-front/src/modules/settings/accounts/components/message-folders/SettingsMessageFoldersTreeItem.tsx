@@ -30,6 +30,17 @@ const StyledNestedList = styled.ul`
   padding: 0;
 `;
 
+const StyledCollapsibleWrapper = styled.div<{ isExpanded: boolean }>`
+  display: grid;
+  grid-template-rows: ${({ isExpanded }) => (isExpanded ? '1fr' : '0fr')};
+  transition: grid-template-rows
+    ${({ theme }) => theme.animation.duration.fast}s ease-out;
+`;
+
+const StyledCollapsibleContent = styled.div`
+  overflow: hidden;
+`;
+
 const StyledTreeItemContent = styled.div<{ depth: number }>`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -184,19 +195,23 @@ export const SettingsMessageFoldersTreeItem = ({
         </StyledFolderContent>
       </StyledTreeItemContent>
 
-      {hasChildren && isExpanded && (
-        <StyledNestedList>
-          {children.map((child, index) => (
-            <SettingsMessageFoldersTreeItem
-              key={child.folder.id}
-              depth={depth + 1}
-              folderTreeNode={child}
-              isLast={index === children.length - 1}
-              onToggleFolder={onToggleFolder}
-              parentsIsLastList={childParentsIsLastList}
-            />
-          ))}
-        </StyledNestedList>
+      {hasChildren && (
+        <StyledCollapsibleWrapper isExpanded={isExpanded}>
+          <StyledCollapsibleContent>
+            <StyledNestedList>
+              {children.map((child, index) => (
+                <SettingsMessageFoldersTreeItem
+                  key={child.folder.id}
+                  depth={depth + 1}
+                  folderTreeNode={child}
+                  isLast={index === children.length - 1}
+                  onToggleFolder={onToggleFolder}
+                  parentsIsLastList={childParentsIsLastList}
+                />
+              ))}
+            </StyledNestedList>
+          </StyledCollapsibleContent>
+        </StyledCollapsibleWrapper>
       )}
     </StyledTreeItem>
   );
