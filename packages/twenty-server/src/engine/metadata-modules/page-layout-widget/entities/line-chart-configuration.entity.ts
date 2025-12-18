@@ -164,4 +164,3 @@ export class LineChartConfigurationEntity {
   @Max(7)
   firstDayOfTheWeek?: number;
 }
-

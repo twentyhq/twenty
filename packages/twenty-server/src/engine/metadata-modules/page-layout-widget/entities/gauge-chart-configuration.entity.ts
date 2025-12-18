@@ -69,4 +69,3 @@ export class GaugeChartConfigurationEntity {
   @Max(7)
   firstDayOfTheWeek?: number;
 }
-

@@ -112,4 +112,3 @@ export class PieChartConfigurationEntity {
   @Max(7)
   firstDayOfTheWeek?: number;
 }
-

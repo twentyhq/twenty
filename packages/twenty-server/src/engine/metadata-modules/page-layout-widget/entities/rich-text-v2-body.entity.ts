@@ -15,4 +15,3 @@ export class RichTextV2BodyEntity implements RichTextV2Metadata {
   @IsOptional()
   markdown: string | null;
 }
-

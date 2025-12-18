@@ -39,4 +39,3 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   exports: [PageLayoutTabService],
 })
 export class PageLayoutTabModule {}
-

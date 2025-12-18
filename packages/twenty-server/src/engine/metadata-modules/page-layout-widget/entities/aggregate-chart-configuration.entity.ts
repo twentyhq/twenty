@@ -93,4 +93,3 @@ export class AggregateChartConfigurationEntity {
   @IsOptional()
   ratioAggregateConfig?: RatioAggregateConfigEntity;
 }
-

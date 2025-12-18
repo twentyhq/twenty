@@ -10,4 +10,3 @@ export class IframeConfigurationEntity {
   @IsUrl()
   url?: string;
 }
-

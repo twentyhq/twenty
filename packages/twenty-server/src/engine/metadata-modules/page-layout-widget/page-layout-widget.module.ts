@@ -37,4 +37,3 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   exports: [PageLayoutWidgetService],
 })
 export class PageLayoutWidgetModule {}
-

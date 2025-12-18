@@ -13,4 +13,3 @@ export class StandaloneRichTextConfigurationEntity {
   @IsNotEmpty()
   body: RichTextV2BodyEntity;
 }
-

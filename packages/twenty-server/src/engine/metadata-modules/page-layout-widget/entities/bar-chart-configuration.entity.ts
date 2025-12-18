@@ -163,4 +163,3 @@ export class BarChartConfigurationEntity {
   @Max(7)
   firstDayOfTheWeek?: number;
 }
-

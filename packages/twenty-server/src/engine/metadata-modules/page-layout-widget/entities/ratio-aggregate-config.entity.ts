@@ -17,4 +17,3 @@ export class RatioAggregateConfigEntity {
   @IsNotEmpty()
   optionValue: string;
 }
-
