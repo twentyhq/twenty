@@ -78,8 +78,8 @@ export class PageLayoutWidgetEntity
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: GridPosition;
 
-  @Column({ type: 'jsonb', nullable: true })
-  configuration: WidgetConfigurationInterface | null;
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: WidgetConfigurationInterface;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
