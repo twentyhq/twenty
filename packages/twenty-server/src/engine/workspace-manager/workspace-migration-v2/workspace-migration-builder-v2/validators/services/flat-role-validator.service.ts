@@ -66,6 +66,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
+    buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<FlatRole> {
@@ -93,6 +94,7 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleIsEditable({
         flatRole: existingRole,
+        buildOptions,
       }),
     );
 
@@ -105,6 +107,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
+    buildOptions
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<FlatRole> {
@@ -131,6 +134,7 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleIsEditable({
         flatRole: fromFlatRole,
+        buildOptions
       }),
     );
 
