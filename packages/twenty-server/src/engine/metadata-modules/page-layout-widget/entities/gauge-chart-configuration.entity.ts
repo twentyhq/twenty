@@ -1,54 +1,71 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsTimeZone,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
-@Entity({ name: 'gaugeChartConfiguration', schema: 'core' })
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+
 @ObjectType('GaugeChartConfiguration')
 export class GaugeChartConfigurationEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({
-    type: 'enum',
-    enum: GraphType,
-    nullable: false,
-  })
+  @Field(() => GraphType)
+  @IsEnum(GraphType)
+  @IsNotEmpty()
   graphType: GraphType.GAUGE;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Column({
-    type: 'enum',
-    enum: AggregateOperations,
-    nullable: false,
-  })
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
+  @IsNotEmpty()
   aggregateOperation: AggregateOperations;
 
-  @Column({ nullable: true, type: 'boolean', default: false })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsBoolean()
+  @IsOptional()
   displayDataLabel?: boolean;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   color?: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   description?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
   filter?: ObjectRecordFilter;
 
-  @Column({ nullable: true, type: 'text', default: 'UTC' })
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
   timezone?: string;
 
-  @Column({ nullable: true, type: 'int', default: CalendarStartDay.MONDAY })
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
   firstDayOfTheWeek?: number;
 }

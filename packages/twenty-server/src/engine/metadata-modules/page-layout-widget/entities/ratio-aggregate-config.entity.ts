@@ -1,21 +1,18 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
-@Entity({ name: 'ratioAggregateConfig', schema: 'core' })
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('RatioAggregateConfig')
 export class RatioAggregateConfigEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  @IsNotEmpty()
   fieldMetadataId: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
   optionValue: string;
 }
-

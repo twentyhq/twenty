@@ -1,130 +1,165 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  IsBoolean,
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsTimeZone,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
+
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { CalendarStartDay } from 'twenty-shared/constants';
 
-@Entity({ name: 'barChartConfiguration', schema: 'core' })
 @ObjectType('BarChartConfiguration')
 export class BarChartConfigurationEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({
-    type: 'enum',
-    enum: GraphType,
-    nullable: false,
-  })
+  @Field(() => GraphType)
+  @IsIn([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR])
+  @IsNotEmpty()
   graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Column({
-    type: 'enum',
-    enum: AggregateOperations,
-    nullable: false,
-  })
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
+  @IsNotEmpty()
   aggregateOperation: AggregateOperations;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  @IsNotEmpty()
   primaryAxisGroupByFieldMetadataId: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   primaryAxisGroupBySubFieldName?: string;
 
-  @Column({
-    type: 'enum',
-    enum: ObjectRecordGroupByDateGranularity,
+  @Field(() => ObjectRecordGroupByDateGranularity, {
     nullable: true,
-    default: ObjectRecordGroupByDateGranularity.DAY,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
   })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
   primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
 
-  @Column({
-    type: 'enum',
-    enum: GraphOrderBy,
-    nullable: true,
-  })
+  @Field(() => GraphOrderBy, { nullable: true })
+  @IsEnum(GraphOrderBy)
+  @IsOptional()
   primaryAxisOrderBy?: GraphOrderBy;
 
-  @Column({ nullable: true, type: 'uuid' })
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
+  @IsOptional()
   secondaryAxisGroupByFieldMetadataId?: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   secondaryAxisGroupBySubFieldName?: string;
 
-  @Column({
-    type: 'enum',
-    enum: ObjectRecordGroupByDateGranularity,
+  @Field(() => ObjectRecordGroupByDateGranularity, {
     nullable: true,
-    default: ObjectRecordGroupByDateGranularity.DAY,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
   })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
   secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
 
-  @Column({
-    type: 'enum',
-    enum: GraphOrderBy,
-    nullable: true,
-  })
+  @Field(() => GraphOrderBy, { nullable: true })
+  @IsEnum(GraphOrderBy)
+  @IsOptional()
   secondaryAxisOrderBy?: GraphOrderBy;
 
-  @Column({ nullable: true, type: 'boolean' })
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
   omitNullValues?: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: AxisNameDisplay,
+  @Field(() => AxisNameDisplay, {
     nullable: true,
-    default: AxisNameDisplay.NONE,
+    defaultValue: AxisNameDisplay.NONE,
   })
+  @IsEnum(AxisNameDisplay)
+  @IsOptional()
   axisNameDisplay?: AxisNameDisplay;
 
-  @Column({ nullable: true, type: 'boolean', default: false })
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsBoolean()
+  @IsOptional()
   displayDataLabel?: boolean;
 
-  @Column({ nullable: true, type: 'boolean', default: true })
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
   displayLegend?: boolean;
 
-  @Column({ nullable: true, type: 'numeric' })
+  @Field(() => Number, { nullable: true })
+  @IsNumber()
+  @IsOptional()
   rangeMin?: number;
 
-  @Column({ nullable: true, type: 'numeric' })
+  @Field(() => Number, { nullable: true })
+  @IsNumber()
+  @IsOptional()
   rangeMax?: number;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   description?: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   color?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
   filter?: ObjectRecordFilter;
 
-  @Column({
-    type: 'enum',
-    enum: BarChartGroupMode,
+  @Field(() => BarChartGroupMode, {
     nullable: true,
   })
+  @IsEnum(BarChartGroupMode)
+  @IsOptional()
   groupMode?: BarChartGroupMode;
 
-  @Column({ nullable: true, type: 'boolean' })
+  @Field(() => Boolean, {
+    nullable: true,
+  })
+  @IsBoolean()
+  @IsOptional()
   isCumulative?: boolean;
 
-  @Column({ nullable: true, type: 'text', default: 'UTC' })
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
   timezone?: string;
 
-  @Column({ nullable: true, type: 'int', default: CalendarStartDay.MONDAY })
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
   firstDayOfTheWeek?: number;
 }

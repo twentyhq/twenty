@@ -1,18 +1,12 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
-@Entity({ name: 'iframeConfiguration', schema: 'core' })
 @ObjectType('IframeConfiguration')
 export class IframeConfigurationEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
   url?: string;
 }
-
