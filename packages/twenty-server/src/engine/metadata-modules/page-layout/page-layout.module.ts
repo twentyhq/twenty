@@ -10,19 +10,16 @@ import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-l
 import { FlatPageLayoutWidgetModule } from 'src/engine/metadata-modules/flat-page-layout-widget/flat-page-layout-widget.module';
 import { FlatPageLayoutModule } from 'src/engine/metadata-modules/flat-page-layout/flat-page-layout.module';
 import { PageLayoutTabController } from 'src/engine/metadata-modules/page-layout/controllers/page-layout-tab.controller';
-import { PageLayoutWidgetController } from 'src/engine/metadata-modules/page-layout/controllers/page-layout-widget.controller';
 import { PageLayoutController } from 'src/engine/metadata-modules/page-layout/controllers/page-layout.controller';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
-import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout-tab.resolver';
-import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout-widget.resolver';
 import { PageLayoutResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout.resolver';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
-import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { PageLayoutWidgetModule } from 'src/engine/metadata-modules/page-layout-widget/page-layout-widget.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -34,7 +31,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     TypeOrmModule.forFeature([
       PageLayoutEntity,
       PageLayoutTabEntity,
-      PageLayoutWidgetEntity,
       WorkspaceEntity,
     ]),
     TwentyORMModule,
@@ -48,27 +44,24 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     FlatPageLayoutTabModule,
     FlatPageLayoutWidgetModule,
     ApplicationModule,
+    PageLayoutWidgetModule,
   ],
   controllers: [
     PageLayoutController,
     PageLayoutTabController,
-    PageLayoutWidgetController,
   ],
   providers: [
     PageLayoutService,
     PageLayoutTabService,
-    PageLayoutWidgetService,
     PageLayoutDuplicationService,
     PageLayoutResolver,
     PageLayoutTabResolver,
-    PageLayoutWidgetResolver,
     PageLayoutUpdateService,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
   exports: [
     PageLayoutService,
     PageLayoutTabService,
-    PageLayoutWidgetService,
     PageLayoutDuplicationService,
   ],
 })

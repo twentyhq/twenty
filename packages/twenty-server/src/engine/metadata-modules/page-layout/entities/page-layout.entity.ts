@@ -1,81 +1,39 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
-@Entity({ name: 'pageLayout', schema: 'core' })
+registerEnumType(PageLayoutType, { name: 'PageLayoutType' });
+
 @ObjectType('PageLayout')
-@Index(
-  'IDX_PAGE_LAYOUT_WORKSPACE_ID_OBJECT_METADATA_ID',
-  ['workspaceId', 'objectMetadataId'],
-  { where: '"deletedAt" IS NULL' },
-)
-export class PageLayoutEntity
-  extends SyncableEntity
-  implements Required<PageLayoutEntity>
-{
-  @PrimaryGeneratedColumn('uuid')
+export class PageLayoutEntity {
+  @IDField(() => UUIDScalarType)
   id: string;
 
-  @Column({ nullable: false })
+  @Field({ nullable: false })
   name: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
-  @Column({
-    type: 'enum',
-    enum: Object.values(PageLayoutType),
+  @Field(() => PageLayoutType, {
     nullable: false,
-    default: PageLayoutType.RECORD_PAGE,
+    defaultValue: PageLayoutType.RECORD_PAGE,
   })
   type: PageLayoutType;
 
-  @Column({ nullable: true, type: 'uuid' })
-  objectMetadataId: string | null;
+  @Field(() => UUIDScalarType, { nullable: true })
+  objectMetadataId?: string | null;
 
-  @ManyToOne(() => ObjectMetadataEntity, {
-    onDelete: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'objectMetadataId' })
-  objectMetadata: Relation<ObjectMetadataEntity> | null;
+  @Field(() => [PageLayoutTabEntity], { nullable: true })
+  tabs?: PageLayoutTabEntity[] | null;
 
-  @OneToMany(() => PageLayoutTabEntity, (tab) => tab.pageLayout, {
-    cascade: true,
-  })
-  tabs: Relation<PageLayoutTabEntity[]>;
-
-  @CreateDateColumn({ type: 'timestamptz' })
+  @Field()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
+  @Field()
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date | null;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | null;
 }

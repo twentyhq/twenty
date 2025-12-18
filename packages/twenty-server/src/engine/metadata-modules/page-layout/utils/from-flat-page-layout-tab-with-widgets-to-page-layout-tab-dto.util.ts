@@ -1,7 +1,7 @@
 import { type FlatPageLayoutTabWithWidgets } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/reconstruct-flat-page-layout-tab-with-widgets.util';
 import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-tab.dto';
 import { fromFlatPageLayoutTabToPageLayoutTabDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-tab-to-page-layout-tab-dto.util';
-import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 
 export const fromFlatPageLayoutTabWithWidgetsToPageLayoutTabDto = (
   flatPageLayoutTabWithWidgets: FlatPageLayoutTabWithWidgets,
