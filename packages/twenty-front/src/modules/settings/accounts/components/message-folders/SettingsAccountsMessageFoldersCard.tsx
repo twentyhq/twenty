@@ -76,9 +76,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const { updateMessageFoldersSyncStatus } = useUpdateMessageFoldersSyncStatus({
-    messageChannelId: settingsAccountsSelectedMessageChannel?.id ?? '',
-  });
+  const { updateMessageFoldersSyncStatus } =
+    useUpdateMessageFoldersSyncStatus();
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
@@ -129,17 +128,17 @@ export const SettingsAccountsMessageFoldersCard = () => {
   };
 
   const handleToggleFolder = async (folderToToggle: MessageFolder) => {
-    const isSyncing = !folderToToggle.isSynced;
-    const folderIdsToToggle = computeFolderIdsForSyncToggle(
-      folderToToggle.id,
-      messageFolders,
-      isSyncing,
-    );
+    const isSynced = !folderToToggle.isSynced;
+    const folderIdsToToggle = computeFolderIdsForSyncToggle({
+      folderId: folderToToggle.id,
+      allFolders: messageFolders,
+      isSynced,
+    });
 
     try {
       await updateMessageFoldersSyncStatus({
         messageFolderIds: folderIdsToToggle,
-        isSynced: isSyncing,
+        isSynced,
       });
     } catch (error) {
       enqueueErrorSnackBar({
