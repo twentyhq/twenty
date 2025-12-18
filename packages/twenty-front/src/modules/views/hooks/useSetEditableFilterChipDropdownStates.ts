@@ -4,9 +4,6 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
-import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
-import { isVectorSearchFilter } from '@/views/utils/isVectorSearchFilter';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,26 +11,10 @@ export const useSetEditableFilterChipDropdownStates = () => {
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
-  const { vectorSearchField } =
-    useVectorSearchFieldInRecordIndexContextOrThrow();
-
   const setEditableFilterChipDropdownStates = useRecoilCallback(
     ({ set }) =>
       (recordFilter: RecordFilter) => {
-        const filterableFieldsWithVector = vectorSearchField
-          ? filterableFieldMetadataItems.concat(vectorSearchField)
-          : filterableFieldMetadataItems;
-
-        if (isVectorSearchFilter(recordFilter)) {
-          set(
-            vectorSearchInputComponentState.atomFamily({
-              instanceId: recordFilter.id,
-            }),
-            recordFilter.value,
-          );
-        }
-
-        const fieldMetadataItem = filterableFieldsWithVector.find(
+        const fieldMetadataItem = filterableFieldMetadataItems.find(
           (fieldMetadataItem) =>
             fieldMetadataItem.id === recordFilter.fieldMetadataId,
         );
@@ -68,7 +49,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           recordFilter.subFieldName,
         );
       },
-    [filterableFieldMetadataItems, vectorSearchField],
+    [filterableFieldMetadataItems],
   );
 
   return {

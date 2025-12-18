@@ -12,7 +12,6 @@ import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter
 import { ObjectFilterDropdownDateTimeInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateTimeInput';
 import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
-import { ObjectFilterDropdownVectorSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -53,13 +52,6 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.DOES_NOT_CONTAIN,
       ViewFilterOperand.IS_RELATIVE,
     ].includes(selectedOperandInDropdown);
-
-  const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
-
-  if (isVectorSearchFilter && isDefined(filterDropdownId)) {
-    return <ObjectFilterDropdownVectorSearchInput />;
-  }
 
   if (!isDefined(fieldMetadataItemUsedInDropdown)) {
     return null;

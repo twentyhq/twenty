@@ -1,11 +1,9 @@
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 
 export const EditableFilterChipDropdownMenuHeader = () => {
@@ -14,13 +12,6 @@ export const EditableFilterChipDropdownMenuHeader = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
-
-  const selectedOperandInDropdown = useRecoilComponentValue(
-    selectedOperandInDropdownComponentState,
-  );
-
-  const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -37,9 +28,7 @@ export const EditableFilterChipDropdownMenuHeader = () => {
         />
       }
     >
-      {isVectorSearchFilter
-        ? t`Search`
-        : fieldMetadataItemUsedInDropdown?.label}
+      {fieldMetadataItemUsedInDropdown?.label}
     </DropdownMenuHeader>
   );
 };

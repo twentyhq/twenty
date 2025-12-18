@@ -9,7 +9,6 @@ import { ViewBarFilterDropdownFilterInputMenuHeader } from '@/views/components/V
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 
 export const ObjectFilterDropdownFilterInputHeader = () => {
@@ -32,9 +31,6 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
   const isInViewBarFilterDropdown =
     dropdownInstanceId === ViewBarFilterDropdownIds.MAIN;
 
-  const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
-
   if (isInViewBarFilterDropdown) {
     return <ViewBarFilterDropdownFilterInputMenuHeader />;
   } else {
@@ -47,9 +43,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
           />
         }
       >
-        {isVectorSearchFilter
-          ? t`Search`
-          : fieldMetadataItemUsedInDropdown?.label}
+        {fieldMetadataItemUsedInDropdown?.label}
       </DropdownMenuHeader>
     );
   }
