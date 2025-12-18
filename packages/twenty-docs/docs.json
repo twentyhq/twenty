@@ -174,7 +174,7 @@
                         "group": "Connect to Other Tools",
                         "pages": [
                           "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
-                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-form-submissions-in-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                           "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
                           "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
                         ]

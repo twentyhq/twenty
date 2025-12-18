@@ -90,37 +90,6 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
 
 Once tested, click **Activate** to make the workflow live.
 
-## Common Webhook Sources
-
-### Website Contact Forms
-
-Connect your website form to Twenty:
-
-1. Set your form's action URL to the webhook URL
-2. Ensure form fields match your expected body structure
-3. Handle the response appropriately on your website
-
-### Typeform / Google Forms
-
-Use Zapier or Make to connect:
-1. Trigger: New form submission
-2. Action: Webhook POST to Twenty URL
-3. Map form fields to JSON body
-
-### Stripe Payments
-
-1. In Stripe Dashboard → Webhooks
-2. Add endpoint: your Twenty webhook URL
-3. Select events (e.g., `payment_intent.succeeded`)
-4. In Twenty, parse the Stripe event structure
-
-### Calendly Bookings
-
-1. In Calendly → Integrations → Webhooks
-2. Add your Twenty webhook URL
-3. Select event types (invitee created, etc.)
-4. Map booking data to create records
-
 ## Handling Different Data Structures
 
 ### Nested Data
@@ -150,33 +119,48 @@ If data includes arrays:
 }
 ```
 
-Use Iterator to loop through: `{{trigger.body.items}}`
+How you handle arrays depends on your use case:
 
-## Security Considerations
+**Unknown number of items → Use Iterator**
 
-<Note>
-Webhook URLs are unique but not secret. For sensitive integrations, consider:
-- Validating the source in a Code action
-- Checking for expected headers or signatures
-- Using IP allowlisting if your service supports it
-</Note>
+If you need to process each item in the array (e.g., create a record for each), add a **Code** action to parse the array, then use **Iterator**:
 
-## Best Practices
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
 
-### Data Validation
-- Add a Code action to validate incoming data
-- Check for required fields before creating records
-- Handle missing or malformed data gracefully
+Then use Iterator to loop through: `{{code.items}}`
 
-### Error Handling
-- Use filters to check data completeness
-- Log errors for debugging
-- Consider sending failure notifications
+**Known/specific fields → Extract to named fields**
 
-### Testing
-- Always test with realistic data before activation
-- Check workflow runs after going live
-- Monitor for unexpected data formats
+If the array contains specific fields you want to access individually (e.g., form answers where position 0 is always "first name", position 1 is always "last name"), add a **Code** action to extract them:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Now you can select `product.name` and `product.qty` individually in subsequent steps.
+
+<Tip>
+For more details on handling arrays, see [Handle Arrays in Code Actions](/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
 
 ## Related
 

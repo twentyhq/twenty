@@ -124,6 +124,20 @@ description: Frequently asked questions about workflows in Twenty.
     4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
+  <Accordion title="What's the maximum execution time for Code actions?">
+    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+
+    The maximum configurable timeout is **15 minutes** (900 seconds).
+
+    If your code exceeds this limit, the action will fail with a timeout error.
+
+    **Tips to avoid timeouts**:
+    - Break large operations into smaller chunks using Iterator
+    - Avoid heavy computations; use external services via HTTP Request for intensive processing
+    - Optimize your code to reduce execution time
+    - If you need longer processing, consider using scheduled workflows that process data in batches
+  </Accordion>
+
   <Accordion title="How do I read workflow runs?">
     Workflow runs show the execution history and help you debug issues.
 
