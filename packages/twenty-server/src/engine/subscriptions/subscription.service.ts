@@ -1,12 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
-
-import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { Injectable } from '@nestjs/common';
 
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
 export class SubscriptionService {
-  constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
+  constructor(private readonly redisClient: RedisClientService) {}
 
   private getSubscriptionChannel({
     channel,
@@ -25,7 +24,9 @@ export class SubscriptionService {
     channel: SubscriptionChannel;
     workspaceId: string;
   }) {
-    return this.pubSub.asyncIterator(
+    const client = this.redisClient.getPubSubClient();
+
+    return client.asyncIterator(
       this.getSubscriptionChannel({ channel, workspaceId }),
     );
   }
@@ -39,7 +40,9 @@ export class SubscriptionService {
     payload: T;
     workspaceId: string;
   }): Promise<void> {
-    await this.pubSub.publish(
+    const client = this.redisClient.getPubSubClient();
+
+    await client.publish(
       this.getSubscriptionChannel({ channel, workspaceId }),
       payload,
     );

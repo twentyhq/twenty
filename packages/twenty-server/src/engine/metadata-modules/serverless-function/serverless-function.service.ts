@@ -39,6 +39,7 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -163,7 +164,7 @@ export class ServerlessFunctionService {
     }
 
     await this.subscriptionService.publish({
-      channel: SUBSCRIPTION_CHANNEL.SERVERLESS_FUNCTION_LOGS_CHANNEL,
+      channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
       workspaceId,
       payload: {
         serverlessFunctionLogs: {

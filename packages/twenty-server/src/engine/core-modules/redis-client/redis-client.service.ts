@@ -10,7 +10,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
   private redisQueueClient: IORedis | null = null;
-  private pubSubRedisClient: RedisPubSub;
+  private redisPubSubClient: RedisPubSub | null = null;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -49,16 +49,16 @@ export class RedisClientService implements OnModuleDestroy {
   }
 
   getPubSubClient() {
-    if (!this.pubSubRedisClient) {
+    if (!this.redisPubSubClient) {
       const redisClient = this.getClient();
 
-      this.pubSubRedisClient = new RedisPubSub({
+      this.redisPubSubClient = new RedisPubSub({
         publisher: redisClient.duplicate(),
         subscriber: redisClient.duplicate(),
       });
     }
 
-    return this.pubSubRedisClient;
+    return this.redisPubSubClient;
   }
 
   async onModuleDestroy() {
@@ -69,6 +69,10 @@ export class RedisClientService implements OnModuleDestroy {
     if (isDefined(this.redisClient)) {
       await this.redisClient.quit();
       this.redisClient = null;
+    }
+    if (isDefined(this.redisPubSubClient)) {
+      await this.redisPubSubClient.close();
+      this.redisPubSubClient = null;
     }
   }
 }

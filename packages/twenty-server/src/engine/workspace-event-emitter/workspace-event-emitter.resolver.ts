@@ -13,6 +13,7 @@ import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input'
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -49,7 +50,7 @@ export class WorkspaceEventEmitterResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.subscriptionService.subscribe({
-      channel: SUBSCRIPTION_CHANNEL.DATABASE_EVENT_CHANNEL,
+      channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
       workspaceId: workspace.id,
     });
   }
