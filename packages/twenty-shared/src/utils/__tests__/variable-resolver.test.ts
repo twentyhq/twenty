@@ -1,4 +1,4 @@
-import { resolveInput } from './variable-resolver';
+import { resolveInput } from '../variable-resolver';
 
 describe('resolveInput', () => {
   const context = {

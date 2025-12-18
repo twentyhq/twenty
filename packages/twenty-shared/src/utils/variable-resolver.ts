@@ -1,24 +1,17 @@
-import Handlebars from 'handlebars';
+import { evalFromContext } from '@/utils/evalFromContext';
+import { isDefined } from '@/utils/validation';
 
-const isNil = (value: any): value is null | undefined => {
-  return value === null || value === undefined;
-};
-
-const isString = (value: any): value is string => {
+const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
 
 const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
 
-// Pattern to match variableTag nodes in BlockNote/TipTap JSON strings
-const VARIABLE_TAG_PATTERN =
-  /\{"type":"variableTag","attrs":\{"variable":"(\{\{[^{}]+\}\})"\}\}/g;
-
 export const resolveInput = (
   unresolvedInput: unknown,
   context: Record<string, unknown>,
 ): unknown => {
-  if (isNil(unresolvedInput)) {
+  if (!isDefined(unresolvedInput)) {
     return unresolvedInput;
   }
 
@@ -72,53 +65,19 @@ const resolveString = (
   input: string,
   context: Record<string, unknown>,
 ): string => {
-  const inputWithResolvedTags = input.replace(
-    VARIABLE_TAG_PATTERN,
-    (_, variable: string) => {
-      const resolvedValue = evalFromContext(variable, context);
-      const textValue = isNil(resolvedValue) ? '' : String(resolvedValue);
-      const escapedText = JSON.stringify(textValue).slice(1, -1);
-
-      return `{"type":"text","text":"${escapedText}"}`;
-    },
-  );
-
-  const matchedTokens = inputWithResolvedTags.match(VARIABLE_PATTERN);
+  const matchedTokens = input.match(VARIABLE_PATTERN);
 
   if (!matchedTokens || matchedTokens.length === 0) {
-    return inputWithResolvedTags;
+    return input;
   }
 
-  if (
-    matchedTokens.length === 1 &&
-    matchedTokens[0] === inputWithResolvedTags
-  ) {
-    return evalFromContext(inputWithResolvedTags, context);
+  if (matchedTokens.length === 1 && matchedTokens[0] === input) {
+    return evalFromContext(input, context);
   }
 
-  return inputWithResolvedTags.replace(VARIABLE_PATTERN, (matchedToken, _) => {
+  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
     return processedToken;
   });
-};
-
-const evalFromContext = (input: string, context: Record<string, unknown>) => {
-  try {
-    Handlebars.registerHelper('json', (input: string) => JSON.stringify(input));
-
-    const inputWithHelper = input
-      .replace('{{', '{{{ json ')
-      .replace('}}', ' }}}');
-
-    const inferredInput = Handlebars.compile(inputWithHelper)(context, {
-      helpers: {
-        json: (input: string) => JSON.stringify(input),
-      },
-    });
-
-    return JSON.parse(inferredInput);
-  } catch {
-    return undefined;
-  }
 };
