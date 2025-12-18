@@ -2,6 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -87,7 +88,10 @@ export class BlocklistItemDeleteMessagesJob {
         continue;
       }
 
-      const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+      const rolesToDelete = [
+        MessageParticipantRole.FROM,
+        MessageParticipantRole.TO,
+      ] as const;
 
       const messageChannels = await messageChannelRepository.find({
         select: {

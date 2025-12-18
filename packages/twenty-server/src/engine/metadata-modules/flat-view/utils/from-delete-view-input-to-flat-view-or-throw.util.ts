@@ -35,6 +35,6 @@ export const fromDeleteViewInputToFlatViewOrThrow = ({
 
   return {
     ...existingFlatViewToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };

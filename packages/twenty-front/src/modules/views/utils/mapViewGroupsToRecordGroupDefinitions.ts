@@ -42,6 +42,14 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
         (option) => option.value === viewGroup.fieldValue,
       );
 
+      if (
+        !selectedOption &&
+        isDefined(viewGroup.fieldValue) &&
+        viewGroup.fieldValue !== ''
+      ) {
+        return null;
+      }
+
       if (!selectedOption && selectFieldMetadataItem.isNullable === false) {
         return null;
       }

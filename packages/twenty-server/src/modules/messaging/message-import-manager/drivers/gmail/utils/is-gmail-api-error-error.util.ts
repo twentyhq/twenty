@@ -7,7 +7,7 @@ export const isGmailApiError = (error: unknown): error is GmailApiError => {
 
   if (
     !('code' in error) ||
-    typeof error.code !== 'string' ||
+    (typeof error.code !== 'number' && typeof error.code !== 'string') ||
     !('message' in error) ||
     typeof error.message !== 'string'
   ) {

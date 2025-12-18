@@ -179,7 +179,7 @@ export class ServerlessFunctionV2Service {
 
     const optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt = {
       ...existingFlatServerlessFunction,
-      deletedAt: new Date(),
+      deletedAt: new Date().toISOString(),
     };
 
     const validateAndBuildResult =

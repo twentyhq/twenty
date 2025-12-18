@@ -18,10 +18,12 @@ import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standar
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
   existingFlatFieldMetadata: FlatFieldMetadata;
+  isSystemBuild: boolean;
 };
 export const sanitizeRawUpdateFieldInput = ({
   existingFlatFieldMetadata,
   rawUpdateFieldInput,
+  isSystemBuild,
 }: SanitizeRawUpdateFieldInputArgs) => {
   const isStandardField = isStandardMetadata(existingFlatFieldMetadata);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
@@ -43,7 +45,7 @@ export const sanitizeRawUpdateFieldInput = ({
         ...option,
       }));
 
-  if (!isStandardField) {
+  if (!isStandardField || isSystemBuild) {
     return {
       updatedEditableFieldProperties,
       standardOverrides: null,
