@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 
 const StyledRecordDetailSectionContainer = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   padding-top: ${({ theme }) => theme.spacing(3)};
   padding-bottom: ${({ theme }) => theme.spacing(3)};
   width: auto;

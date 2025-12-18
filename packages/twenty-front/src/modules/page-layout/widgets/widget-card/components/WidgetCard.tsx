@@ -79,6 +79,7 @@ const StyledWidgetCard = styled.div<{
     if (variant === 'side-column' && !isEditable) {
       return css`
         background: ${theme.background.secondary};
+        border-bottom: 1px solid ${theme.border.color.light};
       `;
     }
 

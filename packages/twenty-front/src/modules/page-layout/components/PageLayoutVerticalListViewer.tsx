@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 const StyledVerticalListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
