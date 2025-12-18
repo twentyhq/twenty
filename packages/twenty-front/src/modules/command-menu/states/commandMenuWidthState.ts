@@ -1,7 +1,6 @@
 import { atom } from 'recoil';
 
 import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
-import { cssVariableEffect } from '~/utils/recoil/cssVariableEffect';
 import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 
 export const COMMAND_MENU_WIDTH_VAR = '--command-menu-width';
@@ -9,5 +8,5 @@ export const COMMAND_MENU_WIDTH_VAR = '--command-menu-width';
 export const commandMenuWidthState = atom<number>({
   key: 'commandMenuWidth',
   default: COMMAND_MENU_CONSTRAINTS.default,
-  effects: [localStorageEffect(), cssVariableEffect(COMMAND_MENU_WIDTH_VAR)],
+  effects: [localStorageEffect()],
 });

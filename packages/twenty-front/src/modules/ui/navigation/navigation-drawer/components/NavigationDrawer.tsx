@@ -14,6 +14,7 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '../../states/navigationDrawerWidthState';
+import { NavigationDrawerWidthEffect } from '../../components/NavigationDrawerWidthEffect';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -113,38 +114,41 @@ export const NavigationDrawer = ({
   }, [setTableWidthResizeIsActive]);
 
   return (
-    <StyledAnimatedContainer
-      className={className}
-      isExpanded={isNavigationDrawerExpanded}
-      isResizing={isResizing}
-    >
-      <StyledContainer
-        isSettings={isSettingsDrawer}
-        isMobile={isMobile}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleMouseLeave}
+    <>
+      <NavigationDrawerWidthEffect />
+      <StyledAnimatedContainer
+        className={className}
+        isExpanded={isNavigationDrawerExpanded}
+        isResizing={isResizing}
       >
-        {isSettingsDrawer && title ? (
-          !isMobile && <NavigationDrawerBackButton title={title} />
-        ) : (
-          <NavigationDrawerHeader showCollapseButton={isHovered} />
+        <StyledContainer
+          isSettings={isSettingsDrawer}
+          isMobile={isMobile}
+          onMouseEnter={handleHover}
+          onMouseLeave={handleMouseLeave}
+        >
+          {isSettingsDrawer && title ? (
+            !isMobile && <NavigationDrawerBackButton title={title} />
+          ) : (
+            <NavigationDrawerHeader showCollapseButton={isHovered} />
+          )}
+
+          {children}
+        </StyledContainer>
+
+        {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
+          <ResizablePanelEdge
+            side="right"
+            constraints={NAVIGATION_DRAWER_CONSTRAINTS}
+            currentWidth={navigationDrawerWidth}
+            onWidthChange={handleWidthChange}
+            onCollapse={handleCollapse}
+            showHandle={false}
+            cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
+            onResizeStart={handleResizeStart}
+          />
         )}
-
-        {children}
-      </StyledContainer>
-
-      {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
-        <ResizablePanelEdge
-          side="right"
-          constraints={NAVIGATION_DRAWER_CONSTRAINTS}
-          currentWidth={navigationDrawerWidth}
-          onWidthChange={handleWidthChange}
-          onCollapse={handleCollapse}
-          showHandle={false}
-          cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
-          onResizeStart={handleResizeStart}
-        />
-      )}
-    </StyledAnimatedContainer>
+      </StyledAnimatedContainer>
+    </>
   );
 };

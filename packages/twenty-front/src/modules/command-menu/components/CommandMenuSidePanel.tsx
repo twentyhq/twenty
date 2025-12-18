@@ -1,4 +1,5 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { CommandMenuWidthEffect } from '@/command-menu/components/CommandMenuWidthEffect';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import {
@@ -117,6 +118,7 @@ export const CommandMenuSidePanel = () => {
 
   return (
     <>
+      <CommandMenuWidthEffect />
       <ResizablePanelGap
         side="left"
         constraints={COMMAND_MENU_CONSTRAINTS}
