@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -20,7 +21,10 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'timelineActivity'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'timelineActivity', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'timelineActivity'>,
   FlatFieldMetadata
 > => ({
@@ -56,7 +60,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -75,7 +79,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -93,7 +97,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

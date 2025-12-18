@@ -17,7 +17,7 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -67,10 +67,12 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       }),
     );
 
-    await performCreateManyOperation('company', 'companies', `id`, [
-      company1,
-      company2,
-    ]);
+    await createManyOperation({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      gqlFields: 'id',
+      data: [company1, company2],
+    });
   });
 
   beforeEach(async () => {
