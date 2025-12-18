@@ -1,21 +1,17 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { IsOptional, IsString } from 'class-validator';
+import { type RichTextV2Metadata } from 'twenty-shared/types';
 
-@Entity({ name: 'richTextV2Body', schema: 'core' })
 @ObjectType('RichTextV2Body')
-export class RichTextV2BodyEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ nullable: true, type: 'text' })
+export class RichTextV2BodyEntity implements RichTextV2Metadata {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   blocknote?: string | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
   markdown: string | null;
 }
-

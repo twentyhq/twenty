@@ -1,29 +1,15 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-} from 'typeorm';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 
 import { RichTextV2BodyEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/rich-text-v2-body.entity';
 
-@Entity({ name: 'standaloneRichTextConfiguration', schema: 'core' })
 @ObjectType('StandaloneRichTextConfiguration')
 export class StandaloneRichTextConfigurationEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  bodyId: string;
-
-  @ManyToOne(() => RichTextV2BodyEntity, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'bodyId' })
-  body: Relation<RichTextV2BodyEntity>;
+  @Field(() => RichTextV2BodyEntity)
+  @ValidateNested()
+  @Type(() => RichTextV2BodyEntity)
+  @IsNotEmpty()
+  body: RichTextV2BodyEntity;
 }
