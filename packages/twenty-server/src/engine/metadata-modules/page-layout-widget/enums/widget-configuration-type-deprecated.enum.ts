@@ -1,4 +1,4 @@
-export enum WidgetConfigurationType {
+export enum WidgetConfigurationTypeDeprecated {
   CHART_CONFIG = 'CHART_CONFIG',
   IFRAME_CONFIG = 'IFRAME_CONFIG',
   STANDALONE_RICH_TEXT_CONFIG = 'STANDALONE_RICH_TEXT_CONFIG',
