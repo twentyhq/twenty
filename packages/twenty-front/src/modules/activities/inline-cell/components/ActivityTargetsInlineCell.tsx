@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -95,7 +96,7 @@ export const ActivityTargetsInlineCell = ({
                   }}
                 />
               ),
-              label: 'Relations',
+              label: t`Relations`,
               displayModeContent: (
                 <ActivityTargetChips
                   activityTargetObjectRecords={activityTargetObjectRecords}

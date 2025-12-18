@@ -1,5 +1,6 @@
 import { ApolloError } from '@apollo/client';
 
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -26,7 +27,7 @@ export const useUpdateEmail = () => {
       });
 
       enqueueInfoSnackBar({
-        message: 'Check your inbox to verify your new email address.',
+        message: t`Check your inbox to verify your new email address.`,
       });
     } catch (error) {
       if (error instanceof ApolloError) {

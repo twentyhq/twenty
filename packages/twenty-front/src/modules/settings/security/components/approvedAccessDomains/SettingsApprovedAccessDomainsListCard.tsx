@@ -70,7 +70,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
         RowRightComponent={({ item: approvedAccessDomain }) => (
           <>
             {!approvedAccessDomain.isValidated && (
-              <Status color="orange" text="Pending" />
+              <Status color="orange" text={t`Pending`} />
             )}
             <SettingsSecurityApprovedAccessDomainRowDropdownMenu
               approvedAccessDomain={approvedAccessDomain}
@@ -78,7 +78,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
           </>
         )}
         hasFooter
-        footerButtonLabel="Add Approved Access Domain"
+        footerButtonLabel={t`Add Approved Access Domain`}
         onFooterButtonClick={() =>
           navigate(getSettingsPath(SettingsPath.NewApprovedAccessDomain))
         }

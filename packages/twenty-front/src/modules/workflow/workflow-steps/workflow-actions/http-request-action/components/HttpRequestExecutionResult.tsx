@@ -25,6 +25,10 @@ export const HttpRequestExecutionResult = ({
     (httpRequestTestData.output.status !== undefined &&
       httpRequestTestData.output.status >= 400);
 
+  const headersCount = Object.keys(
+    httpRequestTestData.output.headers || {},
+  ).length;
+
   const status: ExecutionStatus = {
     isSuccess,
     isError,
@@ -41,11 +45,10 @@ export const HttpRequestExecutionResult = ({
             ? ` - ${httpRequestTestData.output.duration}ms`
             : ''
         }`
-      : 'Request Failed',
+      : t`Request Failed`,
     additionalInfo:
-      isSuccess &&
-      Object.keys(httpRequestTestData.output.headers || {}).length > 0
-        ? `${Object.keys(httpRequestTestData.output.headers || {}).length} headers received`
+      isSuccess && headersCount > 0
+        ? t`${headersCount} headers received`
         : isError
           ? t`An error occurred`
           : undefined,
@@ -58,8 +61,8 @@ export const HttpRequestExecutionResult = ({
       height="100%"
       status={status}
       isTesting={isTesting}
-      loadingMessage="Sending request..."
-      idleMessage="Response"
+      loadingMessage={t`Sending request...`}
+      idleMessage={t`Response`}
     />
   );
 };
