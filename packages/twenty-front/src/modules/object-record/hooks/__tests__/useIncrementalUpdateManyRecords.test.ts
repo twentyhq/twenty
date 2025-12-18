@@ -3,6 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
+import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { renderHook } from '@testing-library/react';
 import { useIncrementalUpdateManyRecords } from '../useIncrementalUpdateManyRecords';
 
@@ -16,6 +17,7 @@ jest.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
   }),
 }));
 jest.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
+jest.mock('@/object-record/utils/sanitizeRecordInput');
 
 const mockUseApolloCoreClient = jest.mocked(useApolloCoreClient);
 const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
@@ -26,6 +28,7 @@ const mockUseUpdateManyRecordsMutation = jest.mocked(
 const mockUseIncrementalFetchAndMutateRecords = jest.mocked(
   useIncrementalFetchAndMutateRecords,
 );
+const mockSanitizeRecordInput = jest.mocked(sanitizeRecordInput);
 
 describe('useIncrementalUpdateManyRecords', () => {
   const mockMutate = jest.fn();
@@ -61,6 +64,10 @@ describe('useIncrementalUpdateManyRecords', () => {
       updateProgress: mockUpdateProgress,
       cancel: jest.fn(),
     });
+
+    mockSanitizeRecordInput.mockImplementation(
+      ({ recordInput }) => recordInput,
+    );
   });
 
   it('should call incrementalFetchAndMutate and execute mutations', async () => {

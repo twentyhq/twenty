@@ -7,6 +7,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { sleep } from '~/utils/sleep';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
@@ -86,11 +87,20 @@ export const useIncrementalUpdateManyRecords = <
   const incrementalUpdateManyRecords = async (
     fieldsToUpdate: Partial<UpdatedObjectRecord>,
   ) => {
+    const sanitizedFieldsToUpdate = sanitizeRecordInput({
+      objectMetadataItem,
+      recordInput: fieldsToUpdate,
+    }) as Partial<UpdatedObjectRecord>;
+
     let totalUpdatedCount = 0;
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
-        await updateManyRecordsBatch(recordIds, fieldsToUpdate, abortSignal);
+        await updateManyRecordsBatch(
+          recordIds,
+          sanitizedFieldsToUpdate,
+          abortSignal,
+        );
 
         totalUpdatedCount += recordIds.length;
 
@@ -103,7 +113,7 @@ export const useIncrementalUpdateManyRecords = <
     registerObjectOperation(objectMetadataItem, {
       type: 'update-many',
       result: {
-        updateInputs: [fieldsToUpdate],
+        updateInputs: [sanitizedFieldsToUpdate],
       },
     });
 
