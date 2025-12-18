@@ -4,21 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-export const localStorageEffect =
-  <T>(key?: string): AtomEffect<T> =>
-  ({ setSelf, onSet, node }) => {
-    const savedValue = localStorage.getItem(key ?? node.key);
-    if (savedValue != null) {
-      setSelf(JSON.parse(savedValue));
-    }
-
-    onSet((newValue, _, isReset) => {
-      isReset
-        ? localStorage.removeItem(key ?? node.key)
-        : localStorage.setItem(key ?? node.key, JSON.stringify(newValue));
-    });
-  };
-
 const customCookieAttributeZodSchema = z.object({
   cookieAttributes: z.object({
     expires: z.union([z.number(), z.instanceof(Date)]).optional(),
@@ -28,7 +13,7 @@ const customCookieAttributeZodSchema = z.object({
   }),
 });
 
-export const isCustomCookiesAttributesValue = (
+const isCustomCookiesAttributesValue = (
   value: unknown,
 ): value is { cookieAttributes: Cookies.CookieAttributes } =>
   customCookieAttributeZodSchema.safeParse(value).success;
