@@ -1,9 +1,13 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -11,7 +15,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 export const buildColumnsToSelect = ({
   select,
@@ -156,10 +159,28 @@ const extractColumnNamesFromOrderBy = (
       isCompositeFieldMetadataType(fieldMetadata.type) &&
       isDefined(orderByValue)
     ) {
+      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
+
+      if (!compositeType) {
+        columnNames.push(fieldName);
+        continue;
+      }
+
       const subFieldNames = Object.keys(orderByValue);
 
       for (const subFieldName of subFieldNames) {
-        const columnName = `${fieldName}${pascalCase(subFieldName)}`;
+        const compositeProperty = compositeType.properties.find(
+          (property) => property.name === subFieldName,
+        );
+
+        if (!compositeProperty) {
+          continue;
+        }
+
+        const columnName = computeCompositeColumnName(
+          fieldName,
+          compositeProperty,
+        );
 
         columnNames.push(columnName);
       }
