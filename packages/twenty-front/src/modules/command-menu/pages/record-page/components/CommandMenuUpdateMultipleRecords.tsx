@@ -23,13 +23,13 @@ export const CommandMenuUpdateMultipleRecords = () => {
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
-    commandMenuPageInstanceId,
-  );
-
   if (!commandMenuPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
   }
+
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
+    commandMenuPageInstanceId,
+  );
 
   return (
     <StyledRightDrawerRecord isMobile={isMobile}>

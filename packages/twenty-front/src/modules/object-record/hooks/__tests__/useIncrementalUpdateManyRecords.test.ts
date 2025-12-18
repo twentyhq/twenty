@@ -95,7 +95,12 @@ describe('useIncrementalUpdateManyRecords', () => {
     expect(mockUpdateProgress).toHaveBeenCalledWith(2, 2);
     expect(mockRegisterObjectOperation).toHaveBeenCalledWith(
       expect.anything(),
-      { type: 'update-many' },
+      {
+        type: 'update-many',
+        result: {
+          updateInputs: [{ name: 'New Name' }],
+        },
+      },
     );
   });
 
