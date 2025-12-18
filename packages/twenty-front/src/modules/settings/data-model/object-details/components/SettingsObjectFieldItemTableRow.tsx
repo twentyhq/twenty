@@ -163,15 +163,15 @@ export const SettingsObjectFieldItemTableRow = ({
   const typeLabel =
     variant === 'field-type'
       ? isRemoteObjectField
-        ? 'Remote'
+        ? t`Remote`
         : fieldMetadataItem.isCustom
-          ? 'Custom'
-          : 'Standard'
+          ? t`Custom`
+          : t`Standard`
       : variant === 'identifier'
         ? isDefined(identifierType)
           ? identifierType === 'label'
-            ? 'Record text'
-            : 'Record image'
+            ? t`Record text`
+            : t`Record image`
           : ''
         : '';
 
@@ -181,9 +181,10 @@ export const SettingsObjectFieldItemTableRow = ({
     isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
+  const morphRelationCount = fieldMetadataItem.morphRelations?.length;
   const morphRelationLabel =
     fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
-      ? `${fieldMetadataItem.morphRelations?.length} Objects`
+      ? t`${morphRelationCount} Objects`
       : undefined;
 
   const label = morphRelationLabel

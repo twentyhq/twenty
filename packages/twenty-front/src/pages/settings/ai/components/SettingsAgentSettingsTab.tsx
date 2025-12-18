@@ -1,12 +1,17 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import {
+  useAiModelLabel,
+  useAiModelOptions,
+} from '@/ai/hooks/useAiModelOptions';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -61,7 +66,22 @@ export const SettingsAgentSettingsTab = ({
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const modelOptions = useAiModelOptions();
+  const aiModels = useRecoilValue(aiModelsState);
+  const activeModelOptions = useAiModelOptions();
+  const currentModelLabel = useAiModelLabel(formValues.modelId);
+
+  const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
+  const isCurrentModelDeprecated = currentModel?.deprecated === true;
+
+  const modelOptions = isCurrentModelDeprecated
+    ? [
+        {
+          value: formValues.modelId,
+          label: `${currentModelLabel} (deprecated)`,
+        },
+        ...activeModelOptions,
+      ]
+    : activeModelOptions;
 
   const noModelsAvailable = modelOptions.length === 0;
 

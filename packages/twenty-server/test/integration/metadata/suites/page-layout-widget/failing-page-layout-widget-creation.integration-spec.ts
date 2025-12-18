@@ -6,7 +6,7 @@ import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
-import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
+import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 
 describe('Page layout widget creation should fail', () => {
   let testPageLayoutId: string;

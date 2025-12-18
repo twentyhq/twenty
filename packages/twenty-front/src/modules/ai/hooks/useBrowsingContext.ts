@@ -8,6 +8,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
 
 export const useGetBrowsingContext = () => {
@@ -103,7 +104,7 @@ export const useGetBrowsingContext = () => {
             const fieldMetadataItem = objectMetadataItem.fields.find(
               (field) => field.id === filter.fieldMetadataId,
             );
-            const fieldLabel = fieldMetadataItem?.label ?? 'Unknown field';
+            const fieldLabel = fieldMetadataItem?.label ?? t`Unknown field`;
 
             return `${fieldLabel} ${filter.operand} "${filter.displayValue}"`;
           });

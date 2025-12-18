@@ -4,6 +4,7 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
 import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
+import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
@@ -21,13 +22,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { ToolProviderService } from './services/tool-provider.service';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule to avoid circular dependency:
-// ToolProviderModule -> WorkflowToolsModule -> WorkflowTriggerModule
-// -> WorkflowRunnerModule -> WorkflowExecutorModule -> AiAgentActionModule
-// -> AiAgentExecutionModule -> ToolProviderModule
-//
-// Instead, WorkflowToolWorkspaceService is an optional dependency that must be
-// provided by the importing module (e.g., AiChatModule imports WorkflowToolsModule).
+// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule to avoid
+// circular dependencies. Instead, they are @Global() modules that provide their tokens.
+// When imported anywhere in the app (e.g., AiChatModule), the tokens become available
+// globally to their respective providers via @Optional() injection.
 
 @Module({
   imports: [
@@ -45,6 +43,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   ],
   providers: [
     ActionToolProvider,
+    DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
     ViewToolProvider,
@@ -53,12 +52,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
+        dashboardProvider: DashboardToolProvider,
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
         actionProvider,
+        dashboardProvider,
         databaseProvider,
         metadataProvider,
         viewProvider,
@@ -66,6 +67,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
       ],
       inject: [
         ActionToolProvider,
+        DashboardToolProvider,
         DatabaseToolProvider,
         MetadataToolProvider,
         ViewToolProvider,

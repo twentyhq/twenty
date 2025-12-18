@@ -31,12 +31,15 @@ export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
   return result.data.createWebhook;
 };
 
-export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
+export const performUnsubscribe = async (
+  z: ZObject,
+  bundle: Bundle,
+): Promise<boolean> => {
   const data = { id: bundle.subscribeData?.id };
   const result = await requestDb(
     z,
     bundle,
-    `mutation deleteWebhook {deleteWebhook(${handleQueryParams(data)})}`,
+    `mutation deleteWebhook {deleteWebhook(input: {${handleQueryParams(data)}})}`,
     'metadata',
   );
   return result.data.deleteWebhook;

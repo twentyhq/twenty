@@ -1021,6 +1021,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-sse@npm:^2.5.4":
+  version: 2.6.0
+  resolution: "graphql-sse@npm:2.6.0"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 10c0/e05f0b5c8539d61e5ce34af8e0bb418c02bf922d6a7f9232a9abd53c77df5654684ca14f674ac771645c8fba9c37ce666c5d06f46eef54ea07e63653468065b0
+  languageName: node
+  linkType: hard
+
 "graphql@npm:^16.6.0, graphql@npm:^16.8.1":
   version: 16.12.0
   resolution: "graphql@npm:16.12.0"
@@ -1074,7 +1083,7 @@ __metadata:
   resolution: "hello-world@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    twenty-sdk: "npm:0.1.2"
+    twenty-sdk: "npm:0.2.1"
   languageName: unknown
   linkType: soft
 
@@ -1895,9 +1904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:0.1.2":
-  version: 0.1.2
-  resolution: "twenty-sdk@npm:0.1.2"
+"twenty-sdk@npm:0.2.1":
+  version: 0.2.1
+  resolution: "twenty-sdk@npm:0.2.1"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     axios: "npm:^1.6.0"
@@ -1907,6 +1916,7 @@ __metadata:
     dotenv: "npm:^16.4.0"
     fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
+    graphql-sse: "npm:^2.5.4"
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
@@ -1917,7 +1927,7 @@ __metadata:
     uuid: "npm:^13.0.0"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/18cb8c589b6d6c6e59d58c28eae333718d62df485d827ba41e99421ef9fb359c3f71fa42d80b1e5463d2140b68de084aee81bf541e70c0d04a246c332e2978e7
+  checksum: 10c0/5a4f4674129cc747e8e5091bf75025260db20087f76f1cee49896a073c8cf83b8c95e1dce3f2f2cbaaf9570aa1886c4c9a5585f0e61e0ee79552eab4d292fb4e
   languageName: node
   linkType: hard
 

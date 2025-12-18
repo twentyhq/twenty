@@ -18,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
+import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '../hooks/useAddressAutocomplete';
 import { useCountryUtils } from '../hooks/useCountryUtils';
@@ -309,7 +310,7 @@ export const AddressInput = ({
             autoFocus
             value={internalValue.addressStreet1 ?? ''}
             ref={inputRefs.addressStreet1}
-            label="Address 1"
+            label={t`Address 1`}
             fullWidth
             onChange={getChangeHandler('addressStreet1')}
             onFocus={getFocusHandler('addressStreet1')}
@@ -326,7 +327,7 @@ export const AddressInput = ({
         <TextInput
           value={internalValue.addressStreet2 ?? ''}
           ref={inputRefs.addressStreet2}
-          label="Address 2"
+          label={t`Address 2`}
           fullWidth
           onChange={getChangeHandler('addressStreet2')}
           onFocus={getFocusHandler('addressStreet2')}
@@ -338,7 +339,7 @@ export const AddressInput = ({
             <TextInput
               value={internalValue.addressCity ?? ''}
               ref={inputRefs.addressCity}
-              label="City"
+              label={t`City`}
               fullWidth
               onChange={getChangeHandler('addressCity')}
               onFocus={getFocusHandler('addressCity')}
@@ -355,7 +356,7 @@ export const AddressInput = ({
           <TextInput
             value={internalValue.addressState ?? ''}
             ref={inputRefs.addressState}
-            label="State"
+            label={t`State`}
             fullWidth
             onChange={getChangeHandler('addressState')}
             onFocus={getFocusHandler('addressState')}
@@ -367,7 +368,7 @@ export const AddressInput = ({
           <TextInput
             value={internalValue.addressPostcode ?? ''}
             ref={inputRefs.addressPostcode}
-            label="Post Code"
+            label={t`Post Code`}
             fullWidth
             onChange={getChangeHandler('addressPostcode')}
             onFocus={getFocusHandler('addressPostcode')}
@@ -375,7 +376,7 @@ export const AddressInput = ({
         )}
         {isFieldInputInSubFieldsAddress('addressCountry') && (
           <CountrySelect
-            label="Country"
+            label={t`Country`}
             onChange={getChangeHandler('addressCountry')}
             selectedCountryName={internalValue.addressCountry ?? ''}
           />

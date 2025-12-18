@@ -24,7 +24,7 @@ export const SettingsNavigationDrawerItem = ({
     end: item.matchSubPages === false,
   });
 
-  const isActive = !!matchResult && !hasActiveSubItem;
+  const isActive = !!item.path && !!matchResult && !hasActiveSubItem;
 
   if (isDefined(item.isHidden) && item.isHidden) {
     return null;
@@ -37,7 +37,7 @@ export const SettingsNavigationDrawerItem = ({
           indentationLevel={item.indentationLevel}
           subItemState={subItemState}
           label={item.label}
-          to={href}
+          to={href || undefined}
           Icon={item.Icon}
           active={isActive}
           soon={item.soon}
@@ -53,7 +53,7 @@ export const SettingsNavigationDrawerItem = ({
       indentationLevel={item.indentationLevel}
       subItemState={subItemState}
       label={item.label}
-      to={href}
+      to={href || undefined}
       Icon={item.Icon}
       active={isActive}
       soon={item.soon}

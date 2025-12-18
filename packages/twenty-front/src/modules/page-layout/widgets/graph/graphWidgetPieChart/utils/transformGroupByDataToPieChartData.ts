@@ -82,8 +82,14 @@ export const transformGroupByDataToPieChartData = ({
       ? (configuration.dateGranularity ?? undefined)
       : undefined;
 
+  const filteredResults = configuration.hideEmptyCategory
+    ? rawResults.filter((result) =>
+        isDefined(result.groupByDimensionValues?.[0]),
+      )
+    : rawResults;
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedResults = rawResults.slice(
+  const limitedResults = filteredResults.slice(
     0,
     PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
   );
@@ -122,7 +128,8 @@ export const transformGroupByDataToPieChartData = ({
   return {
     data,
     showLegend,
-    hasTooManyGroups: rawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+    hasTooManyGroups:
+      filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
     formattedToRawLookup,
   };
 };

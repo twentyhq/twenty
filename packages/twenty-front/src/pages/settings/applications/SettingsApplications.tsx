@@ -3,6 +3,7 @@ import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
@@ -33,13 +34,15 @@ export const SettingsApplications = () => {
             <SettingsApplicationsTable applications={applications} />
           ) : (
             <StyledNoApplicationContainer>
-              No installed application. Please check our{' '}
-              <LinkDisplay
-                value={{
-                  url: 'https://www.npmjs.com/package/twenty-cli',
-                  label: 'twenty-cli',
-                }}
-              />
+              <Trans>
+                No installed application. Please check our{' '}
+                <LinkDisplay
+                  value={{
+                    url: 'https://www.npmjs.com/package/twenty-cli',
+                    label: 'twenty-cli',
+                  }}
+                />
+              </Trans>
             </StyledNoApplicationContainer>
           )}
         </Section>

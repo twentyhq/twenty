@@ -14,7 +14,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'assignedToMe',
         viewGroupName: 'todo',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'TODO',
         position: 0,
@@ -26,7 +25,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'assignedToMe',
         viewGroupName: 'inProgress',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'IN_PROGRESS',
         position: 1,
@@ -38,7 +36,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'assignedToMe',
         viewGroupName: 'done',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'DONE',
         position: 2,
@@ -50,7 +47,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'assignedToMe',
         viewGroupName: 'empty',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: '',
         position: 3,
@@ -62,7 +58,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'byStatus',
         viewGroupName: 'todo',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'TODO',
         position: 0,
@@ -74,7 +69,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'byStatus',
         viewGroupName: 'inProgress',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'IN_PROGRESS',
         position: 1,
@@ -86,7 +80,6 @@ export const computeStandardTaskViewGroups = (
       context: {
         viewName: 'byStatus',
         viewGroupName: 'done',
-        fieldName: 'status',
         isVisible: true,
         fieldValue: 'DONE',
         position: 2,

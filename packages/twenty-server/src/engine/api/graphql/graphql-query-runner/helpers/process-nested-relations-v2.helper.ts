@@ -13,7 +13,7 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -22,7 +22,7 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -55,7 +55,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
+    workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedFields: Record<string, any>;
@@ -111,7 +111,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    workspaceDataSource: WorkspaceDataSource;
+    workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {

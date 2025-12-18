@@ -88,22 +88,24 @@ export class RouteTriggerService {
     request: Request;
     workspaceId: string;
   }) {
-    const { workspace } =
+    const authContext =
       await this.accessTokenService.validateTokenByRequest(request);
 
-    if (!isDefined(workspace)) {
+    if (!isDefined(authContext.workspace)) {
       throw new RouteTriggerException(
         'Workspace not found',
         RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 
-    if (workspace.id !== workspaceId) {
+    if (authContext.workspace.id !== workspaceId) {
       throw new RouteTriggerException(
         'You are not authorized',
         RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+
+    return authContext;
   }
 
   async handle({
@@ -137,12 +139,12 @@ export class RouteTriggerService {
     };
 
     const result =
-      await this.serverlessFunctionService.executeOneServerlessFunction(
-        routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
-        routeTriggerWithPathParams.routeTrigger.workspaceId,
-        executionParams,
-        'draft',
-      );
+      await this.serverlessFunctionService.executeOneServerlessFunction({
+        id: routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
+        workspaceId: routeTriggerWithPathParams.routeTrigger.workspaceId,
+        payload: executionParams,
+        version: 'draft',
+      });
 
     if (!isDefined(result)) {
       return result;

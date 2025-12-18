@@ -16,7 +16,7 @@ exports[`Agent deletion should fail should fail when attempting to delete a stan
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "dashboard-builder",
+            "name": "helper",
           },
           "status": "fail",
           "type": "delete_agent",
@@ -72,9 +72,9 @@ exports[`Agent deletion should fail when deleting a non-existent agent 1`] = `
   "extensions": {
     "code": "NOT_FOUND",
     "subCode": "AGENT_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Agent not found.",
   },
-  "message": "Agent not found",
+  "message": "Could not retrieve deleted agent",
   "name": "NotFoundError",
 }
 `;

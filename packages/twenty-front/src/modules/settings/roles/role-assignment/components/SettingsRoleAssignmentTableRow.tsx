@@ -3,6 +3,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -111,7 +112,7 @@ export const SettingsRoleAssignmentTableRow = ({
               dateFormat,
               localeCatalog: dateLocale.localeCatalog,
             })
-          : 'Never expires';
+          : t`Never expires`;
     }
   };
 

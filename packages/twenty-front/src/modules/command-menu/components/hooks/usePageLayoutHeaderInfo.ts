@@ -157,7 +157,6 @@ export const usePageLayoutHeaderInfo = ({
         widgetInEditMode: undefined,
       };
     }
-
     default:
       return null;
   }

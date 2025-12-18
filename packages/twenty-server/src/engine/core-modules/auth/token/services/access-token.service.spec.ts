@@ -265,10 +265,7 @@ describe('AccessTokenService', () => {
       const result = await service.validateTokenByRequest(mockRequest);
 
       expect(result).toEqual(mockAuthContext);
-      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
-        mockToken,
-        'ACCESS',
-      );
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken);
       expect(service['jwtStrategy'].validate).toHaveBeenCalledWith(
         mockDecodedToken,

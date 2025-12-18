@@ -10,9 +10,12 @@
 export type { ApplicationManifest } from './applicationManifestType';
 export type { Application } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
+export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
+export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export type { FieldManifest } from './fieldManifestType';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
+export type { RoleManifest } from './roleManifestType';
 export type {
   ServerlessFunctionManifest,
   DatabaseEventTrigger,
@@ -20,3 +23,4 @@ export type {
   RouteTrigger,
   ServerlessFunctionTriggerManifest,
 } from './serverlessFunctionManifestType';
+export type { SyncableEntityOptions } from './syncableEntityOptionsType';

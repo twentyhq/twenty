@@ -11,11 +11,12 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
+import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
+import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
@@ -524,6 +525,39 @@ export class ConfigVariables {
   @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
+    type: ConfigVariableType.STRING,
+    options: Object.values(CodeInterpreterDriverType),
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @CastToUpperSnakeCase()
+  CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
+    CodeInterpreterDriverType.DISABLED;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description: 'E2B API key for sandboxed code execution',
+    type: ConfigVariableType.STRING,
+    isSensitive: true,
+  })
+  @ValidateIf(
+    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E_2_B,
+  )
+  E2B_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description: 'Timeout in milliseconds for code execution (default: 300000)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  CODE_INTERPRETER_TIMEOUT_MS = 300_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ANALYTICS_CONFIG,
@@ -1111,20 +1145,21 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for speed-optimized operations (lightweight tasks, high throughput)',
+      'Comma-separated list of AI model IDs for speed-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_SPEED_MODEL_ID = 'gpt-4o-mini';
+  DEFAULT_AI_SPEED_MODEL_ID =
+    'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Default AI model ID for performance-optimized operations (complex reasoning, quality focus)',
+      'Comma-separated list of AI model IDs for performance-optimized operations, in priority order. The first available model will be used.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4o';
+  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4.1,claude-sonnet-4-5-20250929,grok-4';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

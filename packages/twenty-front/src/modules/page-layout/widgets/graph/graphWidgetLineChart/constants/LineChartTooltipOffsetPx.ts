@@ -1,1 +1,0 @@
-export const LINE_CHART_TOOLTIP_OFFSET_PX = 4;

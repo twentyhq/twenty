@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -21,6 +20,7 @@ import {
 } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
+import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
 
 @Injectable()
 export class MiddlewareService {
@@ -106,18 +106,6 @@ export class MiddlewareService {
         )
       : undefined;
 
-    if (metadataVersion === undefined && isDefined(data.workspace)) {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId: data.workspace.id,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-          'flatIndexMaps',
-        ],
-      });
-      throw new Error('Metadata cache version not found');
-    }
-
     const dataSourcesMetadata = data.workspace
       ? await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
           data.workspace.id,
@@ -128,7 +116,7 @@ export class MiddlewareService {
       throw new Error('No data sources found');
     }
 
-    this.bindDataToRequestObject(data, request, metadataVersion);
+    bindDataToRequestObject(data, request, metadataVersion);
   }
 
   public async hydrateGraphqlRequest(request: Request) {
@@ -147,33 +135,11 @@ export class MiddlewareService {
         )
       : undefined;
 
-    this.bindDataToRequestObject(data, request, metadataVersion);
+    bindDataToRequestObject(data, request, metadataVersion);
   }
 
   private hasErrorStatus(error: unknown): error is { status: number } {
     return isDefined((error as { status: number })?.status);
-  }
-
-  private bindDataToRequestObject(
-    data: AuthContext,
-    request: Request,
-    metadataVersion: number | undefined,
-  ) {
-    request.user = data.user;
-    request.apiKey = data.apiKey;
-    request.userWorkspace = data.userWorkspace;
-    request.workspace = data.workspace;
-    request.workspaceId = data.workspace?.id;
-    request.workspaceMetadataVersion = metadataVersion;
-    request.workspaceMemberId = data.workspaceMemberId;
-    request.userWorkspaceId = data.userWorkspaceId;
-    request.authProvider = data.authProvider;
-    request.impersonationContext = data.impersonationContext;
-
-    request.locale =
-      data.userWorkspace?.locale ??
-      (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
-      SOURCE_LOCALE;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

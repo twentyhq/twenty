@@ -6,6 +6,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import { Modal, type ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, type ButtonAccent } from 'twenty-ui/input';
@@ -57,6 +58,8 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
   }
 `;
 
+const defaultConfirmButtonText = msg`Confirm`;
+
 export const ConfirmationModal = ({
   modalId,
   title,
@@ -64,14 +67,16 @@ export const ConfirmationModal = ({
   subtitle,
   onConfirmClick,
   onClose,
-  confirmButtonText = 'Confirm',
+  confirmButtonText,
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
   modalVariant = 'primary',
 }: ConfirmationModalProps) => {
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
+  const translatedConfirmButtonText =
+    confirmButtonText ?? i18n._(defaultConfirmButtonText);
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
   const [isValidValue, setIsValidValue] = useState(!confirmationValue);
@@ -117,6 +122,7 @@ export const ConfirmationModal = ({
       padding="large"
       modalVariant={modalVariant}
       dataGloballyPreventClickOutside
+      ignoreContainer
     >
       <StyledCenteredTitle>
         <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
@@ -155,7 +161,7 @@ export const ConfirmationModal = ({
         onClick={handleConfirmClick}
         variant="secondary"
         accent={confirmButtonAccent}
-        title={confirmButtonText}
+        title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}
         fullWidth
         dataTestId="confirmation-modal-confirm-button"
