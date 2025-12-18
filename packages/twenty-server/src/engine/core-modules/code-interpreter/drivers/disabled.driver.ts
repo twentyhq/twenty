@@ -9,7 +9,7 @@ import {
 export class DisabledDriver implements CodeInterpreterDriver {
   constructor(private reason: string) {}
 
-  execute(
+  async execute(
     _code: string,
     _files?: InputFile[],
     _context?: ExecutionContext,
