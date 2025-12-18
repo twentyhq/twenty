@@ -5,15 +5,19 @@ import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { CustomError } from 'twenty-shared/utils';
+import { useRecoilValue } from 'recoil';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -25,7 +29,10 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
-  onEscape?: (newItemsValue: T[]) => void;
+  onEscape: (newItemsValue: T[]) => void;
+  onEnter: (newItemsValue: T[]) => void;
+  onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
+  onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string) => T;
@@ -39,8 +46,6 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
-  onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, values: any[]) => void;
   maxItemCount?: number;
 };
 
@@ -50,6 +55,8 @@ export const MultiItemFieldInput = <T,>({
   items,
   onChange,
   onEscape,
+  onEnter,
+  onError,
   placeholder,
   validateInput,
   formatInput,
@@ -58,36 +65,45 @@ export const MultiItemFieldInput = <T,>({
   fieldMetadataType,
   renderInput,
   onClickOutside,
-  onError,
   maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleEscape = () => {
-    onEscape?.(items);
-  };
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
+  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
+
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      handleSubmitInput();
-      onClickOutside?.(items, event);
+      if (
+        (isDefined(activeDropdownFocusId) &&
+          activeDropdownFocusId.startsWith(
+            MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX,
+          )) ||
+        activeDropdownFocusId === PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID
+      ) {
+        return;
+      }
+      const { isValid } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid && isInputDisplayed) {
+        return;
+      }
+
+      handleSubmitChanges();
+      onClickOutside(items, event);
     },
     listenerId: instanceId,
   });
 
-  useHotkeysOnFocusedElement({
-    focusId: instanceId,
-    keys: [Key.Escape],
-    callback: handleEscape,
-    dependencies: [handleEscape],
-  });
-
   const getItemValueAsString = (index: number): string => {
+    if (index >= items.length) {
+      return '';
+    }
+
     let item;
     switch (fieldMetadataType) {
       case FieldMetadataType.LINKS:
@@ -110,22 +126,26 @@ export const MultiItemFieldInput = <T,>({
     }
   };
 
-  const shouldAutoEditSingleItem = items.length === 1 && maxItemCount === 1;
+  const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
+  const shouldAutoEditFirstItemOnOpen =
+    items.length === 0 || maxItemCount === 1;
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(
-    shouldAutoEditSingleItem,
+    shouldAutoEditFirstItemOnOpen,
   );
-  const [inputValue, setInputValue] = useState(() =>
-    shouldAutoEditSingleItem ? getItemValueAsString(0) : '',
+
+  const [inputValue, setInputValue] = useState(
+    shouldAutoEditFirstItemOnOpen ? getItemValueAsString(0) : '',
   );
-  const [itemToEditIndex, setItemToEditIndex] = useState(
-    shouldAutoEditSingleItem ? 0 : -1,
-  );
+
+  const [itemToEditIndex, setItemToEditIndex] = useState(0);
+  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+
   const [errorData, setErrorData] = useState({
     isValid: true,
     errorMessage: '',
   });
-  const isAddingNewItem = itemToEditIndex === -1;
+
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
@@ -146,26 +166,69 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
-    setItemToEditIndex(-1);
+    setIsAddingNewItem(true);
+    setInputValue('');
     setIsInputDisplayed(true);
   };
 
   const handleEditButtonClick = (index: number) => {
-    setInputValue(getItemValueAsString(index));
     setItemToEditIndex(index);
+    setInputValue(getItemValueAsString(index));
+    setIsAddingNewItem(false);
     setIsInputDisplayed(true);
   };
 
-  const handleSubmitInput = () => {
+  const handleEnter = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    handleSubmitChanges();
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      onEnter(updatedItems);
+    }
+    setIsInputDisplayed(false);
+    setIsAddingNewItem(false);
+    setInputValue('');
+  };
+
+  const handleSubmitChanges = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    onChange(updatedItems);
+  };
+
+  const validateInputAndComputeUpdatedItems = (): {
+    isValid: boolean;
+    updatedItems: T[];
+  } => {
     const sanitizedInput = inputValue.trim();
 
+    const newItem = formatInput
+      ? formatInput(sanitizedInput)
+      : (sanitizedInput as unknown as T);
+
     if (sanitizedInput === '' && isAddingNewItem) {
-      return;
+      return { isValid: true, updatedItems: items };
+    }
+
+    if (sanitizedInput === '' && shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      return {
+        isValid: true,
+        updatedItems: [],
+      };
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
-      return;
+      return {
+        isValid: true,
+        updatedItems: toSpliced(items, itemToEditIndex, 1),
+      };
     }
 
     if (validateInput !== undefined) {
@@ -173,27 +236,16 @@ export const MultiItemFieldInput = <T,>({
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
-        return;
+        return { isValid: false, updatedItems: items };
       }
     }
 
-    const newItem = formatInput
-      ? formatInput(sanitizedInput)
-      : (sanitizedInput as unknown as T);
-
-    if (!isAddingNewItem && newItem === items[itemToEditIndex]) {
-      setIsInputDisplayed(false);
-      setInputValue('');
-      return;
-    }
-
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onChange(updatedItems);
-    setIsInputDisplayed(false);
-    setInputValue('');
+    return {
+      isValid: true,
+      updatedItems: isAddingNewItem
+        ? [...items, newItem]
+        : toSpliced(items, itemToEditIndex, 1, newItem),
+    };
   };
 
   const handleSetPrimaryItem = (index: number) => {
@@ -205,30 +257,43 @@ export const MultiItemFieldInput = <T,>({
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
     setIsInputDisplayed(false);
-    setInputValue('');
-    setItemToEditIndex(-1);
+    setIsAddingNewItem(false);
   };
+
+  const handleEscape = () => {
+    onEscape(items);
+  };
+
+  useHotkeysOnFocusedElement({
+    focusId: instanceId,
+    keys: [Key.Escape],
+    callback: handleEscape,
+    dependencies: [handleEscape],
+  });
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length && (!shouldAutoEditSingleItem || !isInputDisplayed) && (
-        <>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {items.map((item, index) =>
-              renderItem({
-                value: item,
-                index,
-                handleEdit: () => handleEditButtonClick(index),
-                handleSetPrimary: () => handleSetPrimaryItem(index),
-                handleDelete: () => handleDeleteItem(index),
-              }),
-            )}
-          </DropdownMenuItemsContainer>
-          {isInputDisplayed || !isLimitReached ? (
-            <DropdownMenuSeparator />
-          ) : null}
-        </>
-      )}
+      {!!items.length &&
+        (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed) && (
+          <>
+            <DropdownMenuItemsContainer hasMaxHeight>
+              {items.map((item, index) =>
+                renderItem({
+                  value: item,
+                  index,
+                  handleEdit: () => handleEditButtonClick(index),
+                  handleSetPrimary: () => handleSetPrimaryItem(index),
+                  handleDelete: () => {
+                    handleDeleteItem(index);
+                  },
+                }),
+              )}
+            </DropdownMenuItemsContainer>
+            {isInputDisplayed || !isLimitReached ? (
+              <DropdownMenuSeparator />
+            ) : null}
+          </>
+        )}
       {isInputDisplayed || !items.length ? (
         <MultiItemBaseInput
           instanceId={instanceId}
@@ -243,13 +308,13 @@ export const MultiItemFieldInput = <T,>({
               ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
               : handleInputChange('');
           }}
-          onEnter={handleSubmitInput}
+          onEnter={handleEnter}
           hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton
                 Icon={isAddingNewItem ? IconPlus : IconCheck}
-                onClick={handleSubmitInput}
+                onClick={handleEnter}
               />
             ) : null
           }

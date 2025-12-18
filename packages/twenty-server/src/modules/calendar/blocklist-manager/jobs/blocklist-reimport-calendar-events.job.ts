@@ -1,8 +1,8 @@
 import { Scope } from '@nestjs/common';
 
 import { Not } from 'typeorm';
+import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
 
-import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

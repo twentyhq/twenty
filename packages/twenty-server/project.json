@@ -84,6 +84,16 @@
         "command": "cp .env.example .env"
       }
     },
+    "reset:env:e2e-testing-server": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.e2e-testing-server"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.e2e-testing-server .env"
+      }
+    },
     "command": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
@@ -144,6 +154,22 @@
       "configurations": {
         "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
         "fix": {}
+      }
+    },
+    "lint:changed": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint",
+        "base": "main"
+      },
+      "configurations": {
+        "fix": {
+          "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint --fix"
+        },
+        "staged": {
+          "command": "git diff --cached --name-only --diff-filter=d | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint"
+        }
       }
     },
     "test": {},

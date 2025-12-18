@@ -1,6 +1,6 @@
+import { FieldMetadataType } from '../../types/FieldMetadataType';
 import { computeInputFields } from '../../utils/computeInputFields';
-import { InputField } from '../../utils/data.types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type InputField } from '../../utils/data.types';
 
 describe('computeInputFields', () => {
   test('should create Person input fields properly', () => {
@@ -110,6 +110,16 @@ describe('computeInputFields', () => {
               defaultValue: null,
             },
           },
+          {
+            node: {
+              type: FieldMetadataType.BOOLEAN,
+              name: 'ICP',
+              label: 'ICP',
+              description: 'ICP',
+              isNullable: false,
+              defaultValue: false,
+            },
+          },
         ],
       },
     };
@@ -211,6 +221,15 @@ describe('computeInputFields', () => {
         label: 'Company id (foreign key)',
         type: 'string',
         helpText: 'Contact’s company id foreign key',
+        required: false,
+        list: false,
+        placeholder: undefined,
+      },
+      {
+        key: 'ICP',
+        label: 'ICP',
+        type: 'boolean',
+        helpText: 'ICP',
         required: false,
         list: false,
         placeholder: undefined,

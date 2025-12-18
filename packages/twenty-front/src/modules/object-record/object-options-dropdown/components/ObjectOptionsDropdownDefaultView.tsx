@@ -35,6 +35,8 @@ export const ObjectOptionsDropdownDefaultView = () => {
     viewBarId: recordIndexId,
   });
 
+  const visibleFieldsCount = visibleBoardFields.length;
+
   const selectableItemIdArray = [
     'Fields',
     'Copy link to view',
@@ -86,7 +88,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={`${visibleBoardFields.length} shown`}
+              contextualText={t`${visibleFieldsCount} shown`}
               contextualTextPosition="right"
               hasSubMenu
             />

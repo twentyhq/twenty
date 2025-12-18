@@ -53,7 +53,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           onChange={(newKey) =>
             setEditedEnvVariable({ ...editedEnvVariable, key: newKey })
           }
-          placeholder="Name"
+          placeholder={t`Name`}
           fullWidth
         />
       </TableCell>
@@ -105,7 +105,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
           dropdownId={dropDownId}
           clickableComponent={
             <LightIconButton
-              aria-label="Env Variable Options"
+              aria-label={t`Env Variable Options`}
               Icon={IconDotsVertical}
               accent="tertiary"
             />

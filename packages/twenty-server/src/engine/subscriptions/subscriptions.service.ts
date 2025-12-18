@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
 import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';

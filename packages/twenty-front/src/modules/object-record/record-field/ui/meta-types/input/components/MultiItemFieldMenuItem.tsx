@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -51,35 +52,23 @@ export const MultiItemFieldMenuItem = <T,>({
     setIsHovered(false);
   };
 
-  const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleDeleteClick = () => {
     closeDropdown(dropdownId);
     setIsHovered(false);
     onDelete?.();
   };
 
-  const handleSetAsPrimaryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleSetAsPrimaryClick = () => {
     closeDropdown(dropdownId);
     onSetAsPrimary?.();
   };
 
-  const handleEditClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleEditClick = () => {
     closeDropdown(dropdownId);
     onEdit?.();
   };
 
-  const handleCopyClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
+  const handleCopyClick = () => {
     closeDropdown(dropdownId);
     onCopy?.(value);
   };
@@ -98,25 +87,25 @@ export const MultiItemFieldMenuItem = <T,>({
             {showSetAsPrimaryButton && (
               <MenuItem
                 LeftIcon={IconBookmarkPlus}
-                text="Set as Primary"
+                text={t`Set as Primary`}
                 onClick={handleSetAsPrimaryClick}
               />
             )}
             <MenuItem
               LeftIcon={IconPencil}
-              text="Edit"
+              text={t`Edit`}
               onClick={handleEditClick}
             />
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
-              text="Delete"
+              text={t`Delete`}
               onClick={handleDeleteClick}
             />
             {showCopyButton && (
               <MenuItem
                 LeftIcon={IconCopy}
-                text="Copy"
+                text={t`Copy`}
                 onClick={handleCopyClick}
               />
             )}

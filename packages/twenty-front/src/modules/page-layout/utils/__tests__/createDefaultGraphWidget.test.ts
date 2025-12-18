@@ -1,3 +1,4 @@
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -96,7 +97,7 @@ describe('createDefaultGraphWidget', () => {
       });
 
       expect(widget.configuration?.__typename).toBe('BarChartConfiguration');
-      if (widget.configuration?.__typename === 'BarChartConfiguration') {
+      if (isBarChartConfiguration(widget.configuration)) {
         expect(widget.configuration.graphType).toBe(GraphType.HORIZONTAL_BAR);
       }
     });
