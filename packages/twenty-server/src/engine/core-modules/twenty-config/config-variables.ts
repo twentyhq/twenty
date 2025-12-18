@@ -848,7 +848,7 @@ export class ConfigVariables {
     allow_underscores: true,
     require_host: false,
   })
-  PG_DATABASE_URL_REPLICA: string;
+  PG_DATABASE_REPLICA_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

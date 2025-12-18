@@ -4,6 +4,8 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
@@ -21,6 +23,7 @@ export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -36,9 +39,48 @@ export class GlobalWorkspaceOrmManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    _workspaceId: string,
+    workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>> {
+    return this.getRepositoryOrReadOnlyRepository(
+      workspaceId,
+      workspaceEntityOrObjectMetadataName,
+      permissionOptions,
+      false,
+    );
+  }
+
+  async getReadOnlyRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    workspaceEntity: Type<T>,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getReadOnlyRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    objectMetadataName: string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getReadOnlyRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>> {
+    return this.getRepositoryOrReadOnlyRepository(
+      workspaceId,
+      workspaceEntityOrObjectMetadataName,
+      permissionOptions,
+      true,
+    );
+  }
+
+  private async getRepositoryOrReadOnlyRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    permissionOptions?: RolePermissionConfig,
+    isReadOnly: boolean = false,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -50,7 +92,16 @@ export class GlobalWorkspaceOrmManager {
       );
     }
 
-    const globalDataSource = await this.getGlobalWorkspaceDataSource();
+    const isReadOnReplicaEnabledForWorkspace =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_READ_ON_REPLICA_ENABLED,
+        workspaceId,
+      );
+
+    const globalDataSource =
+      isReadOnly && isReadOnReplicaEnabledForWorkspace
+        ? await this.getGlobalWorkspaceDataSourceReplica()
+        : await this.getGlobalWorkspaceDataSource();
 
     return globalDataSource.getRepository<T>(
       objectMetadataName,
@@ -60,6 +111,10 @@ export class GlobalWorkspaceOrmManager {
 
   async getGlobalWorkspaceDataSource(): Promise<GlobalWorkspaceDataSource> {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
+  }
+
+  async getGlobalWorkspaceDataSourceReplica(): Promise<GlobalWorkspaceDataSource> {
+    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
   }
 
   async executeInWorkspaceContext<T>(

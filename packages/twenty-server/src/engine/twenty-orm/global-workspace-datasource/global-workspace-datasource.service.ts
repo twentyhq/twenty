@@ -13,7 +13,7 @@ export class GlobalWorkspaceDataSourceService
   implements OnModuleInit, OnApplicationShutdown
 {
   private globalWorkspaceDataSource: GlobalWorkspaceDataSource | null = null;
-  private globalWorkapceDataSourceReplica: GlobalWorkspaceDataSource | null =
+  private globalWorkspaceDataSourceReplica: GlobalWorkspaceDataSource | null =
     null;
 
   constructor(
@@ -47,11 +47,9 @@ export class GlobalWorkspaceDataSourceService
       this.workspaceEventEmitter,
     );
 
-    console.log('Pool config:', this.globalWorkspaceDataSource.driver.options);
-
-    this.globalWorkapceDataSourceReplica = new GlobalWorkspaceDataSource(
+    this.globalWorkspaceDataSourceReplica = new GlobalWorkspaceDataSource(
       {
-        url: this.twentyConfigService.get('PG_DATABASE_URL_REPLICA'),
+        url: this.twentyConfigService.get('PG_DATABASE_REPLICA_URL'),
         type: 'postgres',
         logging: this.twentyConfigService.getLoggingConfig(),
         entities: [],
@@ -74,6 +72,7 @@ export class GlobalWorkspaceDataSourceService
       this.workspaceEventEmitter,
     );
     await this.globalWorkspaceDataSource.initialize();
+    await this.globalWorkspaceDataSourceReplica.initialize();
   }
 
   public getGlobalWorkspaceDataSource(): GlobalWorkspaceDataSource {
@@ -87,13 +86,13 @@ export class GlobalWorkspaceDataSourceService
   }
 
   public getGlobalWorkspaceDataSourceReplica(): GlobalWorkspaceDataSource {
-    if (!this.globalWorkapceDataSourceReplica) {
+    if (!this.globalWorkspaceDataSourceReplica) {
       throw new Error(
         'GlobalWorkspaceDataSourceReplica has not been initialized. Make sure the module has been initialized.',
       );
     }
 
-    return this.globalWorkapceDataSourceReplica;
+    return this.globalWorkspaceDataSourceReplica;
   }
 
   async onApplicationShutdown(): Promise<void> {
