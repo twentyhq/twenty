@@ -7779,6 +7779,11 @@ msgstr "沒有事件"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "尚未針對此 {objectName} 排定任何事件。"
 
+#. js-lingui-id: h+tLhU
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "No field configured"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 msgid "No fields available"
@@ -7937,6 +7942,12 @@ msgstr "未找到記錄"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No records matching the filter criteria were found."
 msgstr "找不到符合篩選條件的記錄。"
+
+#. js-lingui-id: QmAM1h
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelation.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelation.tsx
+msgid "No related records"
+msgstr ""
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
@@ -9959,6 +9970,11 @@ msgstr "選取日期"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "從之前的步驟中選擇一個字段"
+
+#. js-lingui-id: xe2f5Y
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "Select a field to display in this widget"
+msgstr ""
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
