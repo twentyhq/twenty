@@ -24,28 +24,28 @@ export const SettingsNavigationDrawerItem = ({
     end: item.matchSubPages === false,
   });
 
-  const isActive = !!matchResult && !hasActiveSubItem;
+  const isActive = !!item.path && !!matchResult && !hasActiveSubItem;
 
   if (isDefined(item.isHidden) && item.isHidden) {
     return null;
   }
 
   if (isDefined(item.isAdvanced) && item.isAdvanced) {
-    return (
-      <AdvancedSettingsWrapper>
-        <NavigationDrawerItem
-          indentationLevel={item.indentationLevel}
-          subItemState={subItemState}
-          label={item.label}
-          to={href}
-          Icon={item.Icon}
-          active={isActive}
-          soon={item.soon}
-          isNew={item.isNew}
-          onClick={item.onClick}
-        />
-      </AdvancedSettingsWrapper>
-    );
+  return (
+    <AdvancedSettingsWrapper>
+      <NavigationDrawerItem
+        indentationLevel={item.indentationLevel}
+        subItemState={subItemState}
+        label={item.label}
+        to={href || undefined}
+        Icon={item.Icon}
+        active={isActive}
+        soon={item.soon}
+        isNew={item.isNew}
+        onClick={item.onClick}
+      />
+    </AdvancedSettingsWrapper>
+  );
   }
 
   return (
@@ -53,7 +53,7 @@ export const SettingsNavigationDrawerItem = ({
       indentationLevel={item.indentationLevel}
       subItemState={subItemState}
       label={item.label}
-      to={href}
+      to={href || undefined}
       Icon={item.Icon}
       active={isActive}
       soon={item.soon}
