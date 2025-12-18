@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -28,10 +28,11 @@ export const SidePanelSubPageNavigationHeader = ({
 }: SidePanelSubPageNavigationHeaderProps) => {
   return (
     <StyledContainer>
-      <LightIconButton
+      <IconButton
         onClick={onBackClick}
         Icon={IconChevronLeft}
-        accent="tertiary"
+        variant="tertiary"
+        size="small"
       />
       <StyledText>{title}</StyledText>
     </StyledContainer>
