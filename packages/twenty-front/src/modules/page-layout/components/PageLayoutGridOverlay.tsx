@@ -1,6 +1,6 @@
 import { type PageLayoutBreakpoint } from '@/page-layout/constants/PageLayoutBreakpoints';
 import { PAGE_LAYOUT_GRID_OVERLAY_Z_INDEX } from '@/page-layout/constants/PageLayoutGridOverlayZIndex';
-import { useClickToCreateWidget } from '@/page-layout/hooks/useClickToCreateWidget';
+import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
@@ -62,7 +62,7 @@ export const PageLayoutGridOverlay = () => {
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
-  const { clickToCreateWidget } = useClickToCreateWidget();
+  const { createWidgetFromClick } = useCreateWidgetFromClick();
 
   const numberOfRows = useMemo(() => {
     const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] || {
@@ -97,7 +97,7 @@ export const PageLayoutGridOverlay = () => {
               key={i}
               data-selectable-id={cellId}
               isSelected={pageLayoutSelectedCells.has(cellId)}
-              onClick={() => clickToCreateWidget(cellId)}
+              onClick={() => createWidgetFromClick(cellId)}
             />
           );
         },

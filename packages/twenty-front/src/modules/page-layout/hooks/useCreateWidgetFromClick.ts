@@ -6,7 +6,7 @@ import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoord
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
-export const useClickToCreateWidget = () => {
+export const useCreateWidgetFromClick = () => {
   const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
     pageLayoutDraggedAreaComponentState,
   );
@@ -17,7 +17,7 @@ export const useClickToCreateWidget = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const clickToCreateWidget = useRecoilCallback(
+  const createWidgetFromClick = useRecoilCallback(
     ({ set }) =>
       (cellId: string) => {
         const { col, row } = parseCellIdToCoordinates(cellId);
@@ -38,5 +38,5 @@ export const useClickToCreateWidget = () => {
     ],
   );
 
-  return { clickToCreateWidget };
+  return { createWidgetFromClick };
 };
