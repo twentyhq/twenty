@@ -27,7 +27,7 @@ import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
+import { AllWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-and-transform-widget-configuration.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
@@ -73,13 +73,13 @@ export class PageLayoutWidgetService {
     configuration: Record<string, unknown>;
     workspaceId: string;
     titleForError: string;
-  }): Promise<AllWidgetConfigurationTypeValidator> {
+  }): Promise<AllWidgetConfigurationType> {
     const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
       workspaceId,
     );
 
-    let validatedConfig: AllWidgetConfigurationTypeValidator | null = null;
+    let validatedConfig: AllWidgetConfigurationType | null = null;
 
     try {
       validatedConfig = await validateAndTransformWidgetConfiguration({
@@ -271,7 +271,7 @@ export class PageLayoutWidgetService {
   private async getValidatedConfigurationForCreate(
     input: CreatePageLayoutWidgetInput,
     workspaceId: string,
-  ): Promise<AllWidgetConfigurationTypeValidator | null> {
+  ): Promise<AllWidgetConfigurationType | null> {
     if (!input.configuration || !input.type) {
       return null;
     }
@@ -369,7 +369,7 @@ export class PageLayoutWidgetService {
     updateData: UpdatePageLayoutWidgetInput,
     existingWidget: FlatPageLayoutWidget,
     workspaceId: string,
-  ): Promise<AllWidgetConfigurationTypeValidator | null> {
+  ): Promise<AllWidgetConfigurationType | null> {
     if (!updateData.configuration) {
       return null;
     }

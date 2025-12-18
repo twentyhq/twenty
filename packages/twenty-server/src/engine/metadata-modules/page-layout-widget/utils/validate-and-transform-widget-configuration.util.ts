@@ -3,17 +3,17 @@ import { validateSync, type ValidationError } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
-import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
-import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
-import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
-import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
-import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
-import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
+import { type AllWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type.type';
+import { AggregateChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/aggregate-chart-configuration.validator';
+import { BarChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/bar-chart-configuration.validator';
+import { GaugeChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/gauge-chart-configuration.validator';
+import { IframeConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/iframe-configuration.validator';
+import { LineChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/line-chart-configuration.validator';
+import { PieChartConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/pie-chart-configuration.validator';
+import { StandaloneRichTextConfigurationValidator } from 'src/engine/metadata-modules/page-layout-widget/validators/standalone-rich-text-configuration.validator';
 
 const formatValidationErrors = (errors: ValidationError[]): string => {
   return errors
@@ -33,23 +33,28 @@ const validateGraphConfiguration = ({
 }: {
   configuration: Record<string, unknown>;
   isDashboardV2Enabled: boolean;
-}): AllWidgetConfigurationTypeValidator | null => {
-  const graphType = configuration.graphType as GraphType;
+}): AllWidgetConfigurationType | null => {
+  const configurationType = configuration.configurationType as GraphType;
 
-  if (!graphType || !Object.values(GraphType).includes(graphType)) {
+  if (
+    !configurationType ||
+    !Object.values(GraphType).includes(configurationType)
+  ) {
     return null;
   }
 
-  if (graphType === GraphType.GAUGE_CHART && !isDashboardV2Enabled) {
+  if (configurationType === GraphType.GAUGE_CHART && !isDashboardV2Enabled) {
     throw new Error(
-      `Chart type ${graphType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
+      `Chart type ${configurationType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
     );
   }
 
-  switch (graphType) {
-    case GraphType.VERTICAL_BAR:
-    case GraphType.HORIZONTAL_BAR: {
-      const instance = plainToInstance(BarChartConfigurationDTO, configuration);
+  switch (configurationType) {
+    case GraphType.BAR_CHART: {
+      const instance = plainToInstance(
+        BarChartConfigurationValidator,
+        configuration,
+      );
 
       const errors = validateSync(instance, {
         whitelist: true,
@@ -71,7 +76,7 @@ const validateGraphConfiguration = ({
     }
     case GraphType.LINE_CHART: {
       const instance = plainToInstance(
-        LineChartConfigurationDTO,
+        LineChartConfigurationValidator,
         configuration,
       );
 
@@ -94,7 +99,10 @@ const validateGraphConfiguration = ({
       return instance;
     }
     case GraphType.PIE_CHART: {
-      const instance = plainToInstance(PieChartConfigurationDTO, configuration);
+      const instance = plainToInstance(
+        PieChartConfigurationValidator,
+        configuration,
+      );
 
       const errors = validateSync(instance, {
         whitelist: true,
@@ -109,7 +117,7 @@ const validateGraphConfiguration = ({
     }
     case GraphType.AGGREGATE_CHART: {
       const instance = plainToInstance(
-        AggregateChartConfigurationDTO,
+        AggregateChartConfigurationValidator,
         configuration,
       );
 
@@ -126,7 +134,7 @@ const validateGraphConfiguration = ({
     }
     case GraphType.GAUGE_CHART: {
       const instance = plainToInstance(
-        GaugeChartConfigurationDTO,
+        GaugeChartConfigurationValidator,
         configuration,
       );
 
@@ -148,8 +156,8 @@ const validateGraphConfiguration = ({
 
 const validateIframeConfiguration = (
   configuration: unknown,
-): AllWidgetConfigurationTypeValidator | null => {
-  const instance = plainToInstance(IframeConfigurationDTO, configuration);
+): AllWidgetConfigurationType | null => {
+  const instance = plainToInstance(IframeConfigurationValidator, configuration);
 
   const errors = validateSync(instance, {
     whitelist: true,
@@ -165,9 +173,9 @@ const validateIframeConfiguration = (
 
 const validateStandaloneRichTextConfiguration = async (
   configuration: unknown,
-): Promise<AllWidgetConfigurationTypeValidator | null> => {
+): Promise<AllWidgetConfigurationType | null> => {
   const instance = plainToInstance(
-    StandaloneRichTextConfigurationDTO,
+    StandaloneRichTextConfigurationValidator,
     configuration,
   );
 
@@ -195,7 +203,7 @@ export const validateAndTransformWidgetConfiguration = async ({
   type: WidgetType;
   configuration: unknown;
   isDashboardV2Enabled: boolean;
-}): Promise<AllWidgetConfigurationTypeValidator | null> => {
+}): Promise<AllWidgetConfigurationType | null> => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }

@@ -13,6 +13,7 @@ import { v4 } from 'uuid';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { AllWidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 const MOCK_PIE_CHART_CONFIGURATION = {
@@ -49,9 +50,7 @@ type TestContext = {
         rowSpan: number;
         columnSpan: number;
       };
-      configuration:
-        | typeof MOCK_PIE_CHART_CONFIGURATION
-        | typeof MOCK_IFRAME_CONFIGURATION;
+      configuration: AllWidgetConfigurationType;
     }>;
   }>;
 };
