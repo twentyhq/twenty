@@ -51,6 +51,7 @@ const StyledTreeItemContent = styled.div<{ depth: number }>`
   padding-left: ${({ depth }) => depth * BREADCRUMB_WIDTH}px;
   transition: background-color
     ${({ theme }) => theme.animation.duration.instant}s;
+  user-select: none;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
