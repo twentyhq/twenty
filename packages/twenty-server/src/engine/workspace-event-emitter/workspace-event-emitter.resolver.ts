@@ -21,7 +21,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
-export class SubscriptionsResolver {
+export class WorkspaceEventEmitterResolver {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Subscription(() => OnDbEventDTO, {

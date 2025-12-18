@@ -3,7 +3,6 @@ import { Inject, Module, type OnModuleDestroy } from '@nestjs/common';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @Module({
@@ -18,7 +17,6 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
           subscriber: redisClientService.getClient().duplicate(),
         }),
     },
-    SubscriptionsResolver,
     SubscriptionService,
   ],
   exports: ['PUB_SUB', SubscriptionService],
