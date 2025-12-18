@@ -7781,6 +7781,11 @@ msgstr "Inga händelser"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Inga händelser har schemalagts med denna {objectName} ännu."
 
+#. js-lingui-id: h+tLhU
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "No field configured"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 msgid "No fields available"
@@ -7939,6 +7944,12 @@ msgstr "Inga poster hittades"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter.tsx
 msgid "No records matching the filter criteria were found."
 msgstr "Inga poster som matchar filterkriterierna hittades."
+
+#. js-lingui-id: QmAM1h
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelation.tsx
+#: src/modules/page-layout/widgets/field/components/FieldWidgetMorphRelation.tsx
+msgid "No related records"
+msgstr ""
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
@@ -9963,6 +9974,11 @@ msgstr "Välj ett datum"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Välj ett fält från ett tidigare steg"
+
+#. js-lingui-id: xe2f5Y
+#: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
+msgid "Select a field to display in this widget"
+msgstr ""
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
