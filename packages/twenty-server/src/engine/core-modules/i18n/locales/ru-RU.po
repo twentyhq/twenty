@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "Недопустимые данные макета страницы."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Недопустимые данные вкладки макета страницы."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Недопустимые данные виджета макета страницы."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "Вкладка макета страницы не найдена"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "Вкладка макета страницы не найдена."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Виджет макета страницы не удален и не может быть восстановлен"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Виджет макета страницы не найден."
 

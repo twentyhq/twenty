@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "잘못된 페이지 레이아웃 데이터입니다."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "잘못된 페이지 레이아웃 탭 데이터입니다."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "잘못된 페이지 레이아웃 위젯 데이터입니다."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "페이지 레이아웃 탭을 찾을 수 없습니다"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "페이지 레이아웃 탭을 찾을 수 없습니다."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "페이지 레이아웃 위젯이 삭제된 상태가 아니어서 복원할 수 없습니다."
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "페이지 레이아웃 위젯을 찾을 수 없음."
 

@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "Ogiltiga sidlayoutdata."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Ogiltiga data för sidlayoutflik."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Ogiltiga data för sidlayoutwidget."
 
@@ -4003,7 +4003,7 @@ msgid "Page layout tab not found"
 msgstr "Sidlayoutfliken hittades inte"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "Sidlayoutfliken hittades inte."
 
@@ -4058,7 +4058,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Sidlayoutwidgeten är inte borttagen och kan inte återställas"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Sidlayoutwidget hittades inte."
 

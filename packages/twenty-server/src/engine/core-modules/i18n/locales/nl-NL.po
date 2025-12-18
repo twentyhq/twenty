@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "Ongeldige paginalay-outgegevens."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Ongeldige gegevens voor paginalay-outtab."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Ongeldige gegevens voor paginalay-outwidget."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "Tabblad Pagina-indeling niet gevonden"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "Tabblad Pagina-indeling niet gevonden."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Paginalay-outwidget is niet verwijderd en kan niet worden hersteld"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Paginalay-outwidget niet gevonden."
 
