@@ -9,7 +9,6 @@ import {
 
 import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/flat-row-level-permission-predicate-editable-properties.constant';
 import { type UpdateRowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/update-row-level-permission-predicate.input';
-import { type RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
 import {
   RowLevelPermissionPredicateException,
   RowLevelPermissionPredicateExceptionCode,
@@ -48,16 +47,9 @@ export const fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES,
     );
 
-    const normalizedUpdate: Partial<FlatRowLevelPermissionPredicate> = {
-      ...sanitizedUpdate,
-      operand: sanitizedUpdate.operand as
-        | RowLevelPermissionPredicateOperand
-        | undefined,
-    };
-
     return mergeUpdateInExistingRecord({
       existing: existingFlatPredicate,
       properties: FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES,
-      update: normalizedUpdate,
+      update: sanitizedUpdate,
     });
   };

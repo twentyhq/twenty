@@ -9,7 +9,6 @@ import {
 
 import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate-group/constants/flat-row-level-permission-predicate-group-editable-properties.constant';
 import { type UpdateRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/update-row-level-permission-predicate-group.input';
-import { type RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
 import {
   RowLevelPermissionPredicateGroupException,
   RowLevelPermissionPredicateGroupExceptionCode,
@@ -48,16 +47,9 @@ export const fromUpdateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES,
     );
 
-    const normalizedUpdate: Partial<FlatRowLevelPermissionPredicateGroup> = {
-      ...sanitizedUpdate,
-      logicalOperator: sanitizedUpdate.logicalOperator as
-        | RowLevelPermissionPredicateGroupLogicalOperator
-        | undefined,
-    };
-
     return mergeUpdateInExistingRecord({
       existing: existingFlatPredicateGroup,
       properties: FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES,
-      update: normalizedUpdate,
+      update: sanitizedUpdate,
     });
   };

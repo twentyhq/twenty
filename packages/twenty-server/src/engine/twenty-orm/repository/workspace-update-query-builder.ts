@@ -95,7 +95,6 @@ export class WorkspaceUpdateQueryBuilder<
       if (this.manyInputs) {
         return this.executeMany();
       }
-      this.applyRowLevelPermissionPredicates();
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
@@ -174,6 +173,8 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.flatFieldMetadataMaps,
       );
 
+      this.applyRowLevelPermissionPredicates();
+
       const result = await super.execute();
 
       const after = await eventSelectQueryBuilder.getMany();
@@ -238,7 +239,6 @@ export class WorkspaceUpdateQueryBuilder<
 
   public async executeMany(): Promise<UpdateResult> {
     try {
-      this.applyRowLevelPermissionPredicates();
       for (const input of this.manyInputs) {
         const fakeExpressionMapToValidatePermissions = Object.assign(
           {},
@@ -326,6 +326,8 @@ export class WorkspaceUpdateQueryBuilder<
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
+
+        this.applyRowLevelPermissionPredicates();
 
         const result = await super.execute();
 
@@ -500,6 +502,10 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
     const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(

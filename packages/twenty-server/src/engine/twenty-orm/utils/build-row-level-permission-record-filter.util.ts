@@ -151,7 +151,7 @@ export const buildRowLevelPermissionRecordFilter = ({
         predicateGroupsById[predicate.rowLevelPermissionPredicateGroupId]
           ?.parentRowLevelPermissionPredicateGroupId;
 
-      while (isDefined(parentGroupId)) {
+      while (isDefined(parentGroupId) && !relevantGroupIds.has(parentGroupId)) {
         relevantGroupIds.add(parentGroupId);
         parentGroupId =
           predicateGroupsById[parentGroupId]

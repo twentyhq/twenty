@@ -4,7 +4,6 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import { type CreateRowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/create-row-level-permission-predicate-group.input';
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 
 export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroupToCreate =
@@ -45,8 +44,7 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
         createRowLevelPermissionPredicateGroupInput.parentRowLevelPermissionPredicateGroupId ??
         null,
       logicalOperator:
-        (createRowLevelPermissionPredicateGroupInput.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator) ??
-        RowLevelPermissionPredicateGroupLogicalOperator.AND,
+        createRowLevelPermissionPredicateGroupInput.logicalOperator,
       positionInRowLevelPermissionPredicateGroup:
         createRowLevelPermissionPredicateGroupInput.positionInRowLevelPermissionPredicateGroup ??
         null,

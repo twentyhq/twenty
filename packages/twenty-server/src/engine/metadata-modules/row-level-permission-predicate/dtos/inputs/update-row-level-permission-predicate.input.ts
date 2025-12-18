@@ -2,16 +2,21 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
+import { RowLevelPermissionPredicateOperand } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-operand';
+import { RowLevelPermissionPredicateValue } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-predicate-value.type';
+
 @InputType()
 export class UpdateRowLevelPermissionPredicateInput {
   @Field(() => String)
   id: string;
 
-  @Field(() => String, { nullable: true })
-  operand?: string;
+  @Field(() => RowLevelPermissionPredicateOperand, { nullable: true })
+  operand?: RowLevelPermissionPredicateOperand;
 
-  @Field(() => String, { nullable: true })
-  value?: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  value?: RowLevelPermissionPredicateValue;
 
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;

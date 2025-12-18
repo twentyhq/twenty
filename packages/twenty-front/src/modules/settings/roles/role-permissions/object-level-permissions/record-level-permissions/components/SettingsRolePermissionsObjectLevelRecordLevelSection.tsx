@@ -13,7 +13,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = () => {
     <Section>
       <H2Title
         title={t`Record-level`}
-        description={t`Ability to interact with this object's fields.`}
+        description={t`Ability to interact with specific records of this object.`}
       />
       <StyledEmptyState>{t`No record-level rules have been set yet.`}</StyledEmptyState>
     </Section>

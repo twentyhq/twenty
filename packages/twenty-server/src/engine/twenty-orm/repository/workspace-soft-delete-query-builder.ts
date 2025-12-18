@@ -190,6 +190,10 @@ export class WorkspaceSoftDeleteQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
     const mainAliasTarget = this.getMainAliasTarget();
 
     const objectMetadata = getObjectMetadataFromEntityTarget(

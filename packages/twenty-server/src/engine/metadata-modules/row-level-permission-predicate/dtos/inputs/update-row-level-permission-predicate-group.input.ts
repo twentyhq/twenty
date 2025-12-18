@@ -2,6 +2,8 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
+import { RowLevelPermissionPredicateGroupLogicalOperator } from 'src/engine/metadata-modules/row-level-permission-predicate/enums/row-level-permission-predicate-group-logical-operator.enum';
+
 @InputType()
 export class UpdateRowLevelPermissionPredicateGroupInput {
   @Field(() => String)
@@ -10,8 +12,10 @@ export class UpdateRowLevelPermissionPredicateGroupInput {
   @Field(() => String, { nullable: true })
   parentRowLevelPermissionPredicateGroupId?: string | null;
 
-  @Field(() => String, { nullable: true })
-  logicalOperator?: string;
+  @Field(() => RowLevelPermissionPredicateGroupLogicalOperator, {
+    nullable: true,
+  })
+  logicalOperator?: RowLevelPermissionPredicateGroupLogicalOperator;
 
   @Field(() => Number, { nullable: true })
   positionInRowLevelPermissionPredicateGroup?: number | null;
