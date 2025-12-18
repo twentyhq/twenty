@@ -15,6 +15,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/grid-position.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { AllWidgetConfigurationTypeValidator } from 'src/engine/metadata-modules/page-layout-widget/types/all-widget-configuration-type-validator.type';
 
 @InputType()
 export class UpdatePageLayoutWidgetWithIdInput {
@@ -52,5 +53,5 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
-  configuration: Record<string, unknown> | null;
+  configuration: AllWidgetConfigurationTypeValidator;
 }
