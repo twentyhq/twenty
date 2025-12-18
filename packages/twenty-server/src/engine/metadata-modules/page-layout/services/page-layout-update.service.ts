@@ -228,10 +228,13 @@ export class PageLayoutUpdateService {
 
     const tabsToUpdate: FlatPageLayoutTab[] = entitiesToUpdate.map(
       (tabInput) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabInput.id];
+        const existingTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: tabInput.id,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         return {
-          ...existingTab!,
+          ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
           updatedAt: now.toISOString(),
@@ -241,10 +244,13 @@ export class PageLayoutUpdateService {
 
     const tabsToRestoreAndUpdate: FlatPageLayoutTab[] =
       entitiesToRestoreAndUpdate.map((tabInput) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabInput.id];
+        const existingTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: tabInput.id,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         return {
-          ...existingTab!,
+          ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
           deletedAt: null,
@@ -385,10 +391,13 @@ export class PageLayoutUpdateService {
 
     const widgetsToUpdate: FlatPageLayoutWidget[] = entitiesToUpdate.map(
       (widgetInput) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetInput.id];
+        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: widgetInput.id,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         return {
-          ...existingWidget!,
+          ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
           title: widgetInput.title,
           type: widgetInput.type,
@@ -402,10 +411,13 @@ export class PageLayoutUpdateService {
 
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
       entitiesToRestoreAndUpdate.map((widgetInput) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetInput.id];
+        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: widgetInput.id,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         return {
-          ...existingWidget!,
+          ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
           title: widgetInput.title,
           type: widgetInput.type,
