@@ -6,7 +6,7 @@ export const pageLayoutEntityRelationProperties = [
   'objectMetadata',
   'tabs',
   'application',
-] as const;
+] as const satisfies (keyof PageLayoutEntity)[];
 
 export type PageLayoutEntityRelationProperties =
   (typeof pageLayoutEntityRelationProperties)[number];

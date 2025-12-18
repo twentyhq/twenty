@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   gridPositionSchema,

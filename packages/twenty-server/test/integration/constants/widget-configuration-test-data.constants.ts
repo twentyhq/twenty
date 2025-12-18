@@ -1,7 +1,7 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout/enums/axis-name-display.enum';
-import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
+import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';
