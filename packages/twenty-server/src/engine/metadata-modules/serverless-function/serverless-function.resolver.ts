@@ -1,10 +1,9 @@
-import { Inject, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -28,7 +27,10 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.dto';
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
-import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
+import {
+  SUBSCRIPTION_CHANNEL,
+  SubscriptionService,
+} from 'src/engine/subscriptions/subscription.service';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -43,8 +45,7 @@ export class ServerlessFunctionResolver {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
-    @Inject('PUB_SUB')
-    private readonly pubSub: RedisPubSub,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   @Query(() => ServerlessFunctionDTO)
@@ -226,7 +227,13 @@ export class ServerlessFunctionResolver {
       );
     },
   })
-  serverlessFunctionLogs(@Args('input') _: ServerlessFunctionLogsInput) {
-    return this.pubSub.asyncIterator(SERVERLESS_FUNCTION_LOGS_TRIGGER);
+  serverlessFunctionLogs(
+    @Args('input') _: ServerlessFunctionLogsInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.subscriptionService.subscribe({
+      channel: SUBSCRIPTION_CHANNEL.SERVERLESS_FUNCTION_LOGS_CHANNEL,
+      workspaceId: workspace.id,
+    });
   }
 }

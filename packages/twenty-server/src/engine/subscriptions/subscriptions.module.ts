@@ -19,7 +19,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
     },
     SubscriptionService,
   ],
-  exports: ['PUB_SUB', SubscriptionService],
+  exports: [SubscriptionService],
 })
 export class SubscriptionsModule implements OnModuleDestroy {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}

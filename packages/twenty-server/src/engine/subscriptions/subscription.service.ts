@@ -27,26 +27,24 @@ export class SubscriptionService {
   }: {
     channel: SUBSCRIPTION_CHANNEL;
     workspaceId: string;
-  }): Promise<void> {
+  }) {
     return this.pubSub.asyncIterator(
       this.getSubscriptionChannel({ channel, workspaceId }),
     );
   }
 
-  async publish({
+  async publish<T>({
     channel,
     payload,
     workspaceId,
   }: {
     channel: SUBSCRIPTION_CHANNEL;
-    payload: object;
+    payload: T;
     workspaceId: string;
   }): Promise<void> {
     await this.pubSub.publish(
       this.getSubscriptionChannel({ channel, workspaceId }),
-      {
-        [channel]: payload,
-      },
+      payload,
     );
   }
 }
