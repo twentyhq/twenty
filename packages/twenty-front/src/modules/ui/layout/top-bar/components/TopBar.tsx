@@ -10,9 +10,10 @@ type TopBarProps = {
 };
 
 const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
 
   flex-direction: column;
 `;
