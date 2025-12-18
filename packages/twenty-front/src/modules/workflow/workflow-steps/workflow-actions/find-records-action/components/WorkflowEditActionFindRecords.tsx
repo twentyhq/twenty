@@ -1,5 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -44,7 +46,7 @@ const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-const DEFAULT_SELECTED_OPTION = { label: 'Select an option', value: '' };
+const defaultSelectedOptionMessage = msg`Select an option`;
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -115,7 +117,7 @@ export const WorkflowEditActionFindRecords = ({
         label: selectedObjectMetadataItem?.labelPlural,
         value: selectedObjectMetadataItem?.nameSingular,
       }
-    : DEFAULT_SELECTED_OPTION;
+    : { label: i18n._(defaultSelectedOptionMessage), value: '' };
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -183,7 +185,7 @@ export const WorkflowEditActionFindRecords = ({
     <>
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
-          <StyledLabel>Object</StyledLabel>
+          <StyledLabel>{t`Object`}</StyledLabel>
           <Dropdown
             dropdownId={dropdownId}
             dropdownPlacement="bottom-start"

@@ -5,7 +5,6 @@ import { FavoritesFolderContent } from '@/favorites/components/FavoritesFolderCo
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavigationDrawerFixedItems';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
-import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
@@ -39,10 +38,6 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
           <MainNavigationDrawerScrollableItems />
         )}
       </NavigationDrawerScrollableContent>
-
-      <NavigationDrawerFixedContent>
-        <SupportDropdown />
-      </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
 };

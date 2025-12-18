@@ -38,9 +38,9 @@ export const SettingsApplicationDetails = () => {
     : applicationName;
 
   const tabs = [
-    { id: 'about', title: 'About', Icon: IconInfoCircle },
-    { id: 'settings', title: 'Settings', Icon: IconSettings },
-    { id: 'content', title: 'Content', Icon: IconBroadcast },
+    { id: 'about', title: t`About`, Icon: IconInfoCircle },
+    { id: 'settings', title: t`Settings`, Icon: IconSettings },
+    { id: 'content', title: t`Content`, Icon: IconBroadcast },
   ];
 
   const renderActiveTabContent = () => {

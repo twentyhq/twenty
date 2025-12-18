@@ -57,12 +57,12 @@ msgstr "Un tablou de bord"
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
 msgid "A DNS manager error occurred."
-msgstr ""
+msgstr "A apărut o eroare la managerul DNS."
 
 #. js-lingui-id: Hjj8vT
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A duplicate entry was detected."
-msgstr ""
+msgstr "A fost detectată o înregistrare duplicată."
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -72,7 +72,7 @@ msgstr "Un favorit ce poate fi accesat din meniul stâng"
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
-msgstr ""
+msgstr "Un câmp cu acest nume există deja."
 
 #. js-lingui-id: 6w8bHl
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -82,7 +82,7 @@ msgstr "Un dosar de favorite"
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "A function with this name already exists."
-msgstr ""
+msgstr "O funcție cu acest nume există deja."
 
 #. js-lingui-id: sSGYmf
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
@@ -102,12 +102,12 @@ msgstr "Un mesaj trimis sau primit printr-un canal de mesagerie (email, chat, et
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
-msgstr ""
+msgstr "A apărut un conflict de nume."
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
-msgstr ""
+msgstr "A apărut o eroare de rețea la accesarea calendarului."
 
 #. js-lingui-id: bufuBA
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -127,7 +127,7 @@ msgstr ""
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "A payment processing error occurred."
-msgstr ""
+msgstr "A apărut o eroare la procesarea plății."
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -137,17 +137,17 @@ msgstr "O persoană"
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A record with this relationship already exists."
-msgstr ""
+msgstr "O înregistrare cu această relație există deja."
 
 #. js-lingui-id: j7gCou
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "A record with this value already exists."
-msgstr ""
+msgstr "O înregistrare cu această valoare există deja."
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A required configuration is missing."
-msgstr ""
+msgstr "Lipsește o configurație necesară."
 
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
@@ -169,47 +169,47 @@ msgstr "O destinație sarcină"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
-msgstr ""
+msgstr "A apărut o eroare temporară. Vă rugăm să încercați din nou."
 
 #. js-lingui-id: reBsjo
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
-msgstr ""
+msgstr "A apărut o eroare temporară de rețea."
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
-msgstr ""
+msgstr "Un utilizator cu această adresă de e-mail există deja."
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "A view error occurred."
-msgstr ""
+msgstr "A apărut o eroare a vizualizării."
 
 #. js-lingui-id: NsB3MF
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "A view field error occurred."
-msgstr ""
+msgstr "A apărut o eroare la câmpul vizualizării."
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
-msgstr ""
+msgstr "A apărut o eroare a filtrului de vizualizare."
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "A view filter group error occurred."
-msgstr ""
+msgstr "A apărut o eroare a grupului de filtre de vizualizare."
 
 #. js-lingui-id: znJ6EA
 #: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "A view group error occurred."
-msgstr ""
+msgstr "A apărut o eroare a grupului de vizualizare."
 
 #. js-lingui-id: gHC5sU
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "A view sort error occurred."
-msgstr ""
+msgstr "A apărut o eroare la sortarea vizualizării."
 
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -244,7 +244,7 @@ msgstr "Token de acces"
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
-msgstr ""
+msgstr "Tokenul de acces nu a fost găsit."
 
 #. js-lingui-id: pd81Qb
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -301,12 +301,12 @@ msgstr "Adresa companiei - depreciată în favoarea câmpului adresă nou"
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Admin role not found."
-msgstr ""
+msgstr "Rolul de administrator nu a fost găsit."
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Agent execution failed."
-msgstr ""
+msgstr "Execuția agentului a eșuat."
 
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
@@ -319,7 +319,7 @@ msgstr "Agentul nu a fost găsit"
 #. js-lingui-id: UxwIFr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Agent not found."
-msgstr ""
+msgstr "Agentul nu a fost găsit."
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -334,7 +334,7 @@ msgstr "Eveniment agregat / filtrat ce trebuie afișat pe cronologie"
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "AI agent step execution failed."
-msgstr ""
+msgstr "Execuția pasului agentului AI a eșuat."
 
 #. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
@@ -367,7 +367,7 @@ msgstr "Un agent cu acest nume există deja"
 #. js-lingui-id: Wnol69
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "An agent with this name already exists."
-msgstr ""
+msgstr "Un agent cu acest nume există deja."
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -382,12 +382,12 @@ msgstr "A apărut o eroare în timpul importului mesajelor"
 #. js-lingui-id: dhcf1B
 #: src/engine/workspace-manager/workspace-migration.exception.ts
 msgid "An error occurred during workspace migration."
-msgstr ""
+msgstr "A apărut o eroare în timpul migrării spațiului de lucru."
 
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
-msgstr ""
+msgstr "A apărut o eroare la datele de autentificare în doi pași."
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
@@ -398,7 +398,7 @@ msgstr "A apărut o eroare."
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
-msgstr ""
+msgstr "A apărut o eroare la metadatele indexului."
 
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -408,12 +408,12 @@ msgstr "Un index trebuie să conțină cel puțin un câmp"
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
-msgstr ""
+msgstr "O invitație a fost deja trimisă la această adresă de e-mail."
 
 #. js-lingui-id: CQ5DXU
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "An object with this name already exists."
-msgstr ""
+msgstr "Un obiect cu acest nume deja există."
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -423,12 +423,12 @@ msgstr "O oportunitate"
 #. js-lingui-id: Tstlpf
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "An unexpected billing error occurred."
-msgstr ""
+msgstr "A apărut o eroare neașteptată de facturare."
 
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "An unexpected configuration error occurred."
-msgstr ""
+msgstr "A apărut o eroare neașteptată de configurare."
 
 #. js-lingui-id: W5A0Ly
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
@@ -450,24 +450,24 @@ msgstr ""
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "A apărut o eroare neașteptată."
 
 #. js-lingui-id: ljwHbt
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "An unexpected workflow error occurred."
-msgstr ""
+msgstr "A apărut o eroare neașteptată în fluxul de lucru."
 
 #. js-lingui-id: q8ZbjA
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "An unknown calendar error occurred."
-msgstr ""
+msgstr "A apărut o eroare necunoscută în calendar."
 
 #. js-lingui-id: EV/5J1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "An unknown email error occurred."
-msgstr ""
+msgstr "A apărut o eroare necunoscută legată de e-mail."
 
 #. js-lingui-id: JKWicb
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -477,33 +477,33 @@ msgstr "Venituri Recurente Anuale: Venitul anual real sau estimat al companiei"
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "API key is not configured."
-msgstr ""
+msgstr "Cheia API nu este configurată."
 
 #. js-lingui-id: MyJhTw
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "API key not found."
-msgstr ""
+msgstr "Cheia API nu a fost găsită."
 
 #. js-lingui-id: TLSelA
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "API key role configuration not found."
-msgstr ""
+msgstr "Configurația rolului pentru cheia API nu a fost găsită."
 
 #. js-lingui-id: tGfHmi
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "API key role not found."
-msgstr ""
+msgstr "Rolul cheii API nu a fost găsit."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
-msgstr ""
+msgstr "Aplicația nu a fost găsită."
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/applicationVariable/application-variable.exception.ts
 msgid "Application variable not found."
-msgstr ""
+msgstr "Variabila aplicației nu a fost găsită."
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -524,7 +524,7 @@ msgstr "Domeniul de acces aprobat a fost deja validat"
 #. js-lingui-id: paHOg2
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Approved access domain not found."
-msgstr ""
+msgstr "Domeniul de acces aprobat nu a fost găsit."
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -704,7 +704,7 @@ msgstr "Este necesară autentificarea pentru a accesa această funcție. Vă rug
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
-msgstr ""
+msgstr "Autentificarea este necesară."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -749,37 +749,37 @@ msgstr "URL avatar"
 #. js-lingui-id: GVurVk
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Bad request."
-msgstr ""
+msgstr "Cerere nevalidă."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing customer not found."
-msgstr ""
+msgstr "Clientul de facturare nu a fost găsit."
 
 #. js-lingui-id: HVTHL6
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing meter not found."
-msgstr ""
+msgstr "Contorul de facturare nu a fost găsit."
 
 #. js-lingui-id: FNftTK
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing plan not found."
-msgstr ""
+msgstr "Planul de facturare nu a fost găsit."
 
 #. js-lingui-id: LI7tcn
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing price not found."
-msgstr ""
+msgstr "Prețul de facturare nu a fost găsit."
 
 #. js-lingui-id: DDKhmc
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing product not found."
-msgstr ""
+msgstr "Produsul de facturare nu a fost găsit."
 
 #. js-lingui-id: Je6GWV
 #: src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception.ts
 msgid "Billing subscription not found."
-msgstr ""
+msgstr "Abonamentul de facturare nu a fost găsit."
 
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -842,7 +842,7 @@ msgstr "Asocieri Evenimente Canal Calendar"
 #. js-lingui-id: bQS4UN
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar channel is misconfigured."
-msgstr ""
+msgstr "Canalul calendarului este configurat greșit."
 
 #. js-lingui-id: Znix/S
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -860,7 +860,7 @@ msgstr "Eveniment de calendar"
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar event not found."
-msgstr ""
+msgstr "Evenimentul din calendar nu a fost găsit."
 
 #. js-lingui-id: N2kMfO
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -890,12 +890,12 @@ msgstr "Evenimente de calendar"
 #. js-lingui-id: GtrALl
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "Calendar provider is not supported."
-msgstr ""
+msgstr "Furnizorul de calendar nu este acceptat."
 
 #. js-lingui-id: CnNFfU
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar sync error."
-msgstr ""
+msgstr "Eroare la sincronizarea calendarului."
 
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
@@ -915,17 +915,17 @@ msgstr "Nu se poate activa o versiune care nu este schiță sau ultima publicat�
 #. js-lingui-id: QYS2AB
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
-msgstr ""
+msgstr "Nu se pot adăuga permisiuni de câmp pe obiectele de sistem."
 
 #. js-lingui-id: FxFlC4
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
-msgstr ""
+msgstr "Nu se pot adăuga permisiuni pe obiectele de sistem."
 
 #. js-lingui-id: 6kqLHf
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Cannot complete operation due to related records."
-msgstr ""
+msgstr "Operațiunea nu poate fi finalizată din cauza înregistrărilor asociate."
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -951,7 +951,7 @@ msgstr "Nu se poate șterge agentul standard"
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
-msgstr ""
+msgstr "Nu se poate șterge ultimul utilizator administrator."
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
@@ -976,12 +976,12 @@ msgstr "Nu se poate activa caracterul unic din cauza valorilor duplicate existen
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
-msgstr ""
+msgstr "Nu se pot acorda permisiuni de scriere pentru obiecte care nu sunt lizibile."
 
 #. js-lingui-id: r4uEo5
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
-msgstr ""
+msgstr "Nu se pot acorda permisiuni de scriere fără permisiuni de citire."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -991,17 +991,17 @@ msgstr "Nu se poate avea mai mult de o versiune activă de flux de lucru"
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
-msgstr ""
+msgstr "Nu se poate elimina ultimul administrator din spațiul de lucru."
 
 #. js-lingui-id: wNJvot
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription interval."
-msgstr ""
+msgstr "Nu se poate schimba intervalul abonamentului."
 
 #. js-lingui-id: U/P/gT
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
-msgstr ""
+msgstr "Nu se poate schimba planul de abonament."
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
@@ -1038,7 +1038,7 @@ msgstr "Oraș"
 #. js-lingui-id: unYzAT
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Client not found."
-msgstr ""
+msgstr "Clientul nu a fost găsit."
 
 #. js-lingui-id: NRF7pg
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1048,7 +1048,7 @@ msgstr "Data închiderii"
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Code step execution failed."
-msgstr ""
+msgstr "Execuția pasului de cod a eșuat."
 
 #. js-lingui-id: 96YB1a
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1080,7 +1080,7 @@ msgstr "Poziția înregistrării companiei"
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Composite type not found."
-msgstr ""
+msgstr "Tipul compus nu a fost găsit."
 
 #. js-lingui-id: AgktVC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1091,33 +1091,33 @@ msgstr "Soluție de conferințe"
 #. js-lingui-id: n8EtHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration validation failed."
-msgstr ""
+msgstr "Validarea configurației a eșuat."
 
 #. js-lingui-id: g/dGHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Configuration variable not found."
-msgstr ""
+msgstr "Variabila de configurare nu a fost găsită."
 
 #. js-lingui-id: xr7rlK
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Conflicting arguments provided."
-msgstr ""
+msgstr "Au fost furnizate argumente conflictuale."
 
 #. js-lingui-id: WtMHh6
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone calling code and country code."
-msgstr ""
+msgstr "Codul de apel telefonic și codul de țară sunt în conflict."
 
 #. js-lingui-id: gP+fzj
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone calling code."
-msgstr ""
+msgstr "Codul de apel telefonic este în conflict."
 
 #. js-lingui-id: CmQEdn
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone country code."
-msgstr ""
+msgstr "Codul de țară pentru telefon este în conflict."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -1136,7 +1136,7 @@ msgstr "Cont conectat"
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Connected account not found."
-msgstr ""
+msgstr "Contul conectat nu a fost găsit."
 
 #. js-lingui-id: 9TzudL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1275,7 +1275,7 @@ msgstr "Declanșatorul Cron există deja"
 #. js-lingui-id: MAPqJt
 #: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
 msgid "Cron trigger already exists."
-msgstr ""
+msgstr "Declanșatorul Cron există deja."
 
 #. js-lingui-id: Ej90Yp
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -1288,7 +1288,7 @@ msgstr "Declanșatorul Cron nu a fost găsit"
 #. js-lingui-id: 4bnTs7
 #: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
 msgid "Cron trigger not found."
-msgstr ""
+msgstr "Declanșatorul Cron nu a fost găsit."
 
 #. js-lingui-id: vz7B0E
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -1303,17 +1303,17 @@ msgstr "Parametri personalizați de conectare"
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domain not found."
-msgstr ""
+msgstr "Domeniul personalizat nu a fost găsit."
 
 #. js-lingui-id: zsYQk/
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domains are disabled for this workspace."
-msgstr ""
+msgstr "Domeniile personalizate sunt dezactivate pentru acest spațiu de lucru."
 
 #. js-lingui-id: qHZppf
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
-msgstr ""
+msgstr "Obiectului personalizat îi lipsește un câmp identificator de etichetă."
 
 #. js-lingui-id: 7p5kLi
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1326,7 +1326,7 @@ msgstr "Tablou de bord"
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Dashboard not found."
-msgstr ""
+msgstr "Tabloul de bord nu a fost găsit."
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -1351,27 +1351,27 @@ msgstr "Tablouri de Bord"
 #. js-lingui-id: Gb2JdW
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Data not found."
-msgstr ""
+msgstr "Datele nu au fost găsite."
 
 #. js-lingui-id: Bg/wIf
 #: src/engine/metadata-modules/data-source/data-source.exception.ts
 msgid "Data source not found."
-msgstr ""
+msgstr "Sursa de date nu a fost găsită."
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
-msgstr ""
+msgstr "Structura datelor este nevalidă."
 
 #. js-lingui-id: /sRN4g
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data version mismatch. Please refresh and try again."
-msgstr ""
+msgstr "Versiunea datelor nu corespunde. Vă rugăm să reîmprospătați și să încercați din nou."
 
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
-msgstr ""
+msgstr "Configurarea bazei de date este dezactivată."
 
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -1381,7 +1381,7 @@ msgstr "Declanșatorul de evenimente al bazei de date există deja"
 #. js-lingui-id: RjLvqZ
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
 msgid "Database event trigger already exists."
-msgstr ""
+msgstr "Declanșatorul de evenimente al bazei de date există deja."
 
 #. js-lingui-id: iS6kjG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -1394,7 +1394,7 @@ msgstr "Declanșatorul evenimentului bazei de date nu a fost găsit"
 #. js-lingui-id: mVe3iD
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
 msgid "Database event trigger not found."
-msgstr ""
+msgstr "Declanșatorul de evenimente al bazei de date nu a fost găsit."
 
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -1419,7 +1419,7 @@ msgstr "Decembrie"
 #. js-lingui-id: cgV4xo
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Default role not found."
-msgstr ""
+msgstr "Rolul implicit nu a fost găsit."
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -1527,17 +1527,17 @@ msgstr ""
 #. js-lingui-id: MYgdAv
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Email domain configuration error."
-msgstr ""
+msgstr "Eroare de configurare a domeniului de e-mail."
 
 #. js-lingui-id: Ik1o4d
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Email domain not found."
-msgstr ""
+msgstr "Domeniul de e-mail nu a fost găsit."
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email is already verified."
-msgstr ""
+msgstr "E-mailul a fost deja verificat."
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1556,22 +1556,22 @@ msgstr "Emailul este necesar"
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email is required."
-msgstr ""
+msgstr "Emailul este necesar."
 
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email is unchanged."
-msgstr ""
+msgstr "E-mailul nu s-a schimbat."
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
-msgstr ""
+msgstr "Actualizarea e-mailului este restricționată la utilizatorii care folosesc un singur spațiu de lucru."
 
 #. js-lingui-id: PeMFTI
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email verification is not required."
-msgstr ""
+msgstr "Verificarea e-mailului nu este necesară."
 
 #. js-lingui-id: y8LSMh
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1591,7 +1591,7 @@ msgstr "Angajați"
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
-msgstr ""
+msgstr "Permisiunile de câmp goale nu sunt permise."
 
 #. js-lingui-id: VFv2ZC
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1602,30 +1602,30 @@ msgstr "Data sfârșit"
 #. js-lingui-id: z1wQ2q
 #: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 msgid "Entity already exists."
-msgstr ""
+msgstr "Entitatea există deja."
 
 #. js-lingui-id: DAX1pY
 #: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 msgid "Entity data is malformed."
-msgstr ""
+msgstr "Datele entității au un format greșit."
 
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Entity not found."
-msgstr ""
+msgstr "Entitatea nu a fost găsită."
 
 #. js-lingui-id: jxgcg/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Enum operation failed."
-msgstr ""
+msgstr "Operațiunea enum a eșuat."
 
 #. js-lingui-id: AOk97Y
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Enum type not found."
-msgstr ""
+msgstr "Tipul enum nu a fost găsit."
 
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
@@ -1636,7 +1636,7 @@ msgstr "Variabila de mediu CLOUDFLARE_API_KEY trebuie să fie definită pentru a
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 msgid "Error"
-msgstr ""
+msgstr "Eroare"
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1651,7 +1651,7 @@ msgstr "Tablou de bord al evenimentului"
 #. js-lingui-id: NuQxIH
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Event data is corrupted."
-msgstr ""
+msgstr "Datele evenimentului sunt corupte."
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1771,7 +1771,7 @@ msgstr "ID extern"
 #. js-lingui-id: AOxB/G
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "Failed to connect to remote server."
-msgstr ""
+msgstr "Conectarea la serverul la distanță a eșuat."
 
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
@@ -1781,12 +1781,12 @@ msgstr "Nu s-a putut crea evaluarea. Vă rugăm să încercați din nou."
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Failed to create function."
-msgstr ""
+msgstr "Crearea funcției a eșuat."
 
 #. js-lingui-id: I71ur2
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to create record."
-msgstr ""
+msgstr "Crearea înregistrării a eșuat."
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1796,12 +1796,12 @@ msgstr "Nu s-a reușit ștergerea slujbelor. Vă rugăm să încercați din nou 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
-msgstr ""
+msgstr "Ștergerea înregistrării a eșuat."
 
 #. js-lingui-id: SkvO+5
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Failed to duplicate dashboard."
-msgstr ""
+msgstr "Duplicarea tabloului de bord a eșuat."
 
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1811,7 +1811,7 @@ msgstr "Nu s-a reușit încărcarea slujbelor din coadă. Vă rugăm să încerc
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
-msgstr ""
+msgstr "Înregistrarea evenimentului de facturare a eșuat."
 
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1821,17 +1821,17 @@ msgstr "Nu s-a reușit reîncercarea slujbelor. Vă rugăm să încercați din n
 #. js-lingui-id: Cr+NSQ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
-msgstr ""
+msgstr "Actualizarea permisiunii de câmp a eșuat."
 
 #. js-lingui-id: nrcGtY
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to update record."
-msgstr ""
+msgstr "Actualizarea înregistrării a eșuat."
 
 #. js-lingui-id: FiYPA2
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to upsert record."
-msgstr ""
+msgstr "Operațiunea de upsert a înregistrării a eșuat."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1989,7 +1989,7 @@ msgstr "Favorite asociate cu {label}"
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Feature configuration not found."
-msgstr ""
+msgstr "Configurația funcționalității nu a fost găsită."
 
 #. js-lingui-id: 4lgLew
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2052,7 +2052,7 @@ msgstr "Metadatele câmpului nu au fost găsite"
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field metadata not found."
-msgstr ""
+msgstr "Metadatele câmpului nu au fost găsite."
 
 #. js-lingui-id: uTPwH1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2072,14 +2072,14 @@ msgstr "Numele câmpului nu este sincronizat cu eticheta câmpului"
 #. js-lingui-id: XJmtgE
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field name is not synced with label."
-msgstr ""
+msgstr "Numele câmpului nu este sincronizat cu eticheta."
 
 #. js-lingui-id: Ts+YbB
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Field not found."
-msgstr ""
+msgstr "Câmpul nu a fost găsit."
 
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2094,7 +2094,7 @@ msgstr "Câmpul referit în index nu există"
 #. js-lingui-id: ylQono
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
-msgstr ""
+msgstr "Restricțiile de câmp se aplică doar obiectelor lizibile."
 
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2129,7 +2129,7 @@ msgstr ""
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
-msgstr ""
+msgstr "Eroare de validare a tipului de câmp."
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
@@ -2179,7 +2179,7 @@ msgstr "Categorie fișier"
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "File not found."
-msgstr ""
+msgstr "Fișierul nu a fost găsit."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2224,42 +2224,42 @@ msgstr "Calea completă"
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function code is unchanged."
-msgstr ""
+msgstr "Codul funcției nu s-a schimbat."
 
 #. js-lingui-id: Ho3UAo
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function execution limit reached."
-msgstr ""
+msgstr "Limita de execuție a funcției a fost atinsă."
 
 #. js-lingui-id: mdxF/u
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function execution timed out."
-msgstr ""
+msgstr "Timpul de execuție al funcției a expirat."
 
 #. js-lingui-id: IsdR/t
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function is currently building."
-msgstr ""
+msgstr "Funcția este în curs de construire."
 
 #. js-lingui-id: GhVI/u
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function is not ready."
-msgstr ""
+msgstr "Funcția nu este gata."
 
 #. js-lingui-id: 2ACKTg
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function not found."
-msgstr ""
+msgstr "Funcția nu a fost găsită."
 
 #. js-lingui-id: zKksGw
 #: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
 msgid "Function version not found."
-msgstr ""
+msgstr "Versiunea funcției nu a fost găsită."
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."
-msgstr ""
+msgstr "Autentificarea prin Google API este dezactivată."
 
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2289,7 +2289,7 @@ msgstr "Pseudonime Identificator"
 #. js-lingui-id: CDiGGx
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
-msgstr ""
+msgstr "Sunt necesare aliasuri pentru handle."
 
 #. js-lingui-id: VehAU2
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2321,7 +2321,7 @@ msgstr "Profilul Clientului Ideal: Indică dacă compania este cel mai potrivit 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Identity provider not found."
-msgstr ""
+msgstr "Furnizorul de identitate nu a fost găsit."
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2379,80 +2379,80 @@ msgstr "Indexul cu același nume există deja"
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input exceeds maximum length."
-msgstr ""
+msgstr "Intrarea depășește lungimea maximă."
 
 #. js-lingui-id: nrH4HK
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Input is too short."
-msgstr ""
+msgstr "Intrarea este prea scurtă."
 
 #. js-lingui-id: 9sx+WQ
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Insufficient permissions for email domain."
-msgstr ""
+msgstr "Permisiuni insuficiente pentru domeniul de e-mail."
 
 #. js-lingui-id: Bluaux
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Insufficient permissions to access calendar."
-msgstr ""
+msgstr "Permisiuni insuficiente pentru accesarea calendarului."
 
 #. js-lingui-id: J1UlII
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Insufficient permissions."
-msgstr ""
+msgstr "Permisiuni insuficiente."
 
 #. js-lingui-id: mYSErp
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid 'first' argument."
-msgstr ""
+msgstr "Argumentul 'first' este invalid."
 
 #. js-lingui-id: k0JXYM
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid 'last' argument."
-msgstr ""
+msgstr "Argumentul 'last' este invalid."
 
 #. js-lingui-id: pSjWxS
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Invalid action type."
-msgstr ""
+msgstr "Tip de acțiune invalid."
 
 #. js-lingui-id: D/IcuN
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Invalid agent input."
-msgstr ""
+msgstr "Intrare invalidă pentru agent."
 
 #. js-lingui-id: hJpBT6
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
-msgstr ""
+msgstr "Parametru invalid pentru câmpurile de agregare."
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
-msgstr ""
+msgstr "A fost furnizat un argument invalid."
 
 #. js-lingui-id: Z5WSzG
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit input."
-msgstr ""
+msgstr "Intrare invalidă pentru audit."
 
 #. js-lingui-id: g/ne5t
 #: src/engine/core-modules/audit/audit.exception.ts
 msgid "Invalid audit type."
-msgstr ""
+msgstr "Tip de audit invalid."
 
 #. js-lingui-id: kYec1W
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid authentication context."
-msgstr ""
+msgstr "Context de autentificare invalid."
 
 #. js-lingui-id: gxIicn
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid authentication token."
-msgstr ""
+msgstr "Token de autentificare invalid."
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -2472,17 +2472,17 @@ msgstr "Captcha invalid, vă rugăm să încercați de pe un alt dispozitiv"
 #. js-lingui-id: guEsvP
 #: src/engine/core-modules/captcha/captcha.exception.ts
 msgid "Invalid captcha. Please try again."
-msgstr ""
+msgstr "Captcha invalidă. Vă rugăm să încercați din nou."
 
 #. js-lingui-id: z4W/Ky
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid composite type."
-msgstr ""
+msgstr "Tip compus invalid."
 
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid connected account ID."
-msgstr ""
+msgstr "ID de cont conectat invalid."
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2493,23 +2493,23 @@ msgstr "Cod de țară invalid {countryCode}"
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid cursor provided."
-msgstr ""
+msgstr "A fost furnizat un cursor invalid."
 
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
-msgstr ""
+msgstr "Format de date invalid."
 
 #. js-lingui-id: 3o5vtu
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid data provided."
-msgstr ""
+msgstr "Au fost furnizate date invalide."
 
 #. js-lingui-id: 4xhvWm
 #: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
 msgid "Invalid database event trigger."
-msgstr ""
+msgstr "Declanșator de eveniment al bazei de date invalid."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2519,53 +2519,53 @@ msgstr "Valoare zi invalidă. Ar trebui să fie un număr întreg mai mare de 1"
 #. js-lingui-id: i++4Wk
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid depth parameter."
-msgstr ""
+msgstr "Parametru de adâncime invalid."
 
 #. js-lingui-id: 4JreOU
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Invalid direction provided."
-msgstr ""
+msgstr "A fost furnizată o direcție invalidă."
 
 #. js-lingui-id: 9lqqpY
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid email address."
-msgstr ""
+msgstr "Adresă de e-mail invalidă."
 
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
-msgstr ""
+msgstr "Cheie invalidă pentru feature flag."
 
 #. js-lingui-id: MaFFIW
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
-msgstr ""
+msgstr "Intrare invalidă pentru câmp."
 
 #. js-lingui-id: UcOaIa
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid field metadata."
-msgstr ""
+msgstr "Metadate de câmp invalide."
 
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 msgid "Invalid file ID."
-msgstr ""
+msgstr "ID de fișier invalid."
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid filter parameter."
-msgstr ""
+msgstr "Parametru de filtrare invalid."
 
 #. js-lingui-id: oxZTCD
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
 msgid "Invalid foreign table input."
-msgstr ""
+msgstr "Intrare invalidă pentru tabelul extern."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
-msgstr ""
+msgstr "Parametru invalid pentru group by."
 
 #. js-lingui-id: MBpeQ6
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2581,38 +2581,38 @@ msgstr "Valoare oră invalidă. Ar trebui să fie un număr întreg mai mare de 
 #. js-lingui-id: 6WLJFQ
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
-msgstr ""
+msgstr "Tip invalid de furnizor de identitate."
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Invalid input provided."
-msgstr ""
+msgstr "A fost furnizată o intrare invalidă."
 
 #. js-lingui-id: vw9FMn
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "Invalid invitation."
-msgstr ""
+msgstr "Invitație invalidă."
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid issuer URL."
-msgstr ""
+msgstr "URL al emitentului invalid."
 
 #. js-lingui-id: tm//h9
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid label format."
-msgstr ""
+msgstr "Format de etichetă invalid."
 
 #. js-lingui-id: Y8ap4e
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
-msgstr ""
+msgstr "Parametru limită invalid."
 
 #. js-lingui-id: 2VcEMI
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Invalid migration action."
-msgstr ""
+msgstr "Acțiune de migrare invalidă."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2634,84 +2634,84 @@ msgstr "Intrare nevalidă pentru relația morfică"
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid object input."
-msgstr ""
+msgstr "Intrare invalidă pentru obiect."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by parameter."
-msgstr ""
+msgstr "Parametru invalid pentru order by."
 
 #. js-lingui-id: f7SWSg
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
-msgstr ""
+msgstr "Parametru invalid pentru order by cu group by."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Invalid page layout data."
-msgstr ""
+msgstr "Date invalide pentru layout-ul paginii."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
-msgstr ""
+msgstr "Date invalide pentru fila layout-ului paginii."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
-msgstr ""
+msgstr "Date invalide pentru widgetul layout-ului paginii."
 
 #. js-lingui-id: HiaWGB
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
 msgid "Invalid parameters provided."
-msgstr ""
+msgstr "Au fost furnizați parametri invalizi."
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
-msgstr ""
+msgstr "Setare de permisiune invalidă."
 
 #. js-lingui-id: 0D0YwP
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone calling code."
-msgstr ""
+msgstr "Cod de apelare telefonic invalid."
 
 #. js-lingui-id: P/5moy
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone country code."
-msgstr ""
+msgstr "Cod de țară telefonic invalid."
 
 #. js-lingui-id: ZmVj5N
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
-msgstr ""
+msgstr "Număr de telefon invalid."
 
 #. js-lingui-id: Hvv6QE
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Invalid post-hook payload."
-msgstr ""
+msgstr "Payload post-hook invalid."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid price."
-msgstr ""
+msgstr "Preț invalid."
 
 #. js-lingui-id: tkzFzG
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid pricing tiers."
-msgstr ""
+msgstr "Niveluri de preț invalide."
 
 #. js-lingui-id: 0Dexu8
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Invalid query input."
-msgstr ""
+msgstr "Intrare invalidă pentru interogare."
 
 #. js-lingui-id: XBYAgs
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
-msgstr ""
+msgstr "Token de reîmprospătare invalid."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -2727,17 +2727,17 @@ msgstr ""
 #. js-lingui-id: JQ+mZ6
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "Invalid remote server input."
-msgstr ""
+msgstr "Intrare invalidă pentru serverul la distanță."
 
 #. js-lingui-id: exysLG
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "Invalid remote table input."
-msgstr ""
+msgstr "Intrare invalidă pentru tabelul la distanță."
 
 #. js-lingui-id: lOyHVQ
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Invalid request."
-msgstr ""
+msgstr "Cerere invalidă."
 
 #. js-lingui-id: m4y7mj
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -2747,7 +2747,7 @@ msgstr "Tipul formatului de răspuns este invalid"
 #. js-lingui-id: hVbdKt
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Invalid role target data."
-msgstr ""
+msgstr "Date invalide pentru ținta rolului."
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2757,38 +2757,38 @@ msgstr "Tip de configurare invalid introdus în declanșator cron"
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid string format."
-msgstr ""
+msgstr "Format de șir invalid."
 
 #. js-lingui-id: lpSAqb
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Invalid subdomain."
-msgstr ""
+msgstr "Subdomeniu invalid."
 
 #. js-lingui-id: SFQl8b
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid subscription interval."
-msgstr ""
+msgstr "Interval de abonament invalid."
 
 #. js-lingui-id: Do5gvp
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid subscription item."
-msgstr ""
+msgstr "Element de abonament invalid."
 
 #. js-lingui-id: mDAXg+
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Invalid subscription."
-msgstr ""
+msgstr "Abonament invalid."
 
 #. js-lingui-id: LWhrAo
 #: src/engine/core-modules/webhook/webhook.exception.ts
 msgid "Invalid target URL."
-msgstr ""
+msgstr "URL țintă invalid."
 
 #. js-lingui-id: w58bhw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid token type."
-msgstr ""
+msgstr "Tip de token invalid."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2798,12 +2798,12 @@ msgstr "Tip de declanșator invalid pentru activarea declanșatorului fluxului d
 #. js-lingui-id: spfaiG
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Invalid two-factor authentication configuration."
-msgstr ""
+msgstr "Configurație invalidă pentru autentificarea în doi pași."
 
 #. js-lingui-id: SzaGv7
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid URL format."
-msgstr ""
+msgstr "Format de URL invalid."
 
 #. js-lingui-id: 1Iyic0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -2813,12 +2813,12 @@ msgstr "UUID invalid {id}"
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Invalid validation token."
-msgstr ""
+msgstr "Token de validare invalid."
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Invalid verification code."
-msgstr ""
+msgstr "Cod de verificare invalid."
 
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
@@ -2828,62 +2828,62 @@ msgstr "Cod de verificare nevalid. Te rugăm să încerci din nou."
 #. js-lingui-id: Ku4J80
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid verification token."
-msgstr ""
+msgstr "Token de verificare invalid."
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Invalid workflow edge request."
-msgstr ""
+msgstr "Cerere invalidă pentru muchia fluxului de lucru."
 
 #. js-lingui-id: E7F6q9
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Invalid workflow input."
-msgstr ""
+msgstr "Intrare invalidă pentru fluxul de lucru."
 
 #. js-lingui-id: aYt8SY
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Invalid workflow operation."
-msgstr ""
+msgstr "Operațiune invalidă în fluxul de lucru."
 
 #. js-lingui-id: mNaQTB
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Invalid workflow run."
-msgstr ""
+msgstr "Rulare invalidă a fluxului de lucru."
 
 #. js-lingui-id: dIxBwv
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow status."
-msgstr ""
+msgstr "Stare invalidă a fluxului de lucru."
 
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Invalid workflow step request."
-msgstr ""
+msgstr "Cerere invalidă pentru pasul fluxului de lucru."
 
 #. js-lingui-id: 0NdYmj
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Invalid workflow step type."
-msgstr ""
+msgstr "Tip invalid de pas al fluxului de lucru."
 
 #. js-lingui-id: dw+g0N
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow trigger configuration."
-msgstr ""
+msgstr "Configurație invalidă pentru declanșatorul fluxului de lucru."
 
 #. js-lingui-id: rEIcf+
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow trigger input."
-msgstr ""
+msgstr "Intrare invalidă pentru declanșatorul fluxului de lucru."
 
 #. js-lingui-id: 8Dzcmh
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
-msgstr ""
+msgstr "Versiune invalidă a fluxului de lucru."
 
 #. js-lingui-id: +WZMeN
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "Invitation is corrupted."
-msgstr ""
+msgstr "Invitația este coruptă."
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2944,7 +2944,7 @@ msgstr "Titlu Funcție"
 #. js-lingui-id: cCj4vg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Join column name is required."
-msgstr ""
+msgstr "Numele coloanei de îmbinare este necesar."
 
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
@@ -3033,7 +3033,7 @@ msgstr "Câmpul identificator etichetă nu poate fi dezactivat"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "Label identifier field not found."
-msgstr ""
+msgstr "Câmpul identificator al etichetei nu a fost găsit."
 
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
@@ -3058,7 +3058,7 @@ msgstr "Câmpul etichetei de identificare trebuie să fie vizibil"
 #. js-lingui-id: 6bWuI/
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Label is required."
-msgstr ""
+msgstr "Eticheta este necesară."
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3165,12 +3165,12 @@ msgstr "Numărul maxim de înregistrări de actualizat este {QUERY_MAX_RECORDS}.
 #. js-lingui-id: p0qTse
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Maximum query depth reached."
-msgstr ""
+msgstr "Adâncimea maximă a interogării a fost atinsă."
 
 #. js-lingui-id: vLHXAB
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Maximum records exceeded for upsert."
-msgstr ""
+msgstr "Numărul maxim de înregistrări pentru upsert a fost depășit."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3349,17 +3349,17 @@ msgstr "Token de reîmprospătare al furnizorului de mesagerie"
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
 msgid "Metadata version not found."
-msgstr ""
+msgstr "Versiunea metadatelor nu a fost găsită."
 
 #. js-lingui-id: WFVrzW
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Microsoft API authentication is disabled."
-msgstr ""
+msgstr "Autentificarea prin Microsoft API este dezactivată."
 
 #. js-lingui-id: cuMeE3
 #: src/engine/metadata-modules/workspace-migration/workspace-migration.exception.ts
 msgid "Migration factory not found."
-msgstr ""
+msgstr "Factory de migrare nu a fost găsită."
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3369,22 +3369,22 @@ msgstr ""
 #. js-lingui-id: lCnasH
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
 msgid "Missing decorator configuration."
-msgstr ""
+msgstr "Lipsește configurația pentru decorator."
 
 #. js-lingui-id: u8IV9J
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Missing main alias target."
-msgstr ""
+msgstr "Lipsește ținta aliasului principal."
 
 #. js-lingui-id: khQZlp
 #: src/engine/twenty-orm/exceptions/relation.exception.ts
 msgid "Missing relation join column."
-msgstr ""
+msgstr "Lipsește coloana de îmbinare a relației."
 
 #. js-lingui-id: W5hpOP
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Missing request body."
-msgstr ""
+msgstr "Lipsește corpul cererii."
 
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -3395,7 +3395,7 @@ msgstr "Câmpuri obligatorii lipsă: cel puțin o constrângere unică trebuie s
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Missing required system field."
-msgstr ""
+msgstr "Lipsește un câmp de sistem obligatoriu."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3436,13 +3436,13 @@ msgstr "Valoarea implicită a câmpului cu selecție multiplă trebuie să fie o
 #. js-lingui-id: /81w6M
 #: src/engine/twenty-orm/exceptions/relation.exception.ts
 msgid "Multiple join columns found."
-msgstr ""
+msgstr "Au fost găsite multiple coloane de îmbinare."
 
 #. js-lingui-id: ZEzn4X
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Multiple matching records found during upsert."
-msgstr ""
+msgstr "Au fost găsite mai multe înregistrări care se potrivesc în timpul upsert-ului."
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
@@ -3452,7 +3452,7 @@ msgstr "Au fost găsite mai multe înregistrări cu aceleași valori unice ale c
 #. js-lingui-id: B9dbXq
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Multiple subscriptions found where one was expected."
-msgstr ""
+msgstr "Au fost găsite mai multe abonamente unde era așteptat unul singur."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3488,7 +3488,7 @@ msgstr ""
 #. js-lingui-id: Aam+mb
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name is not synced with label."
-msgstr ""
+msgstr "Numele nu este sincronizat cu eticheta."
 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -3514,7 +3514,7 @@ msgstr "Numele este prea scurt"
 #. js-lingui-id: HKHHTk
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name must be in camelCase format."
-msgstr ""
+msgstr "Numele trebuie să fie în format camelCase."
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -3547,7 +3547,7 @@ msgstr ""
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "No active subscription found."
-msgstr ""
+msgstr "Nu a fost găsit niciun abonament activ."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3557,7 +3557,7 @@ msgstr "Niciun nume de eveniment nu a fost furnizat în declanșatorul eveniment
 #. js-lingui-id: Xlzkd8
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "No foreign tables found."
-msgstr ""
+msgstr "Nu au fost găsite tabele externe."
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -3577,17 +3577,17 @@ msgstr "Nu sunt setate permisiuni pentru acest rol pe obiectul selectat. Vă rug
 #. js-lingui-id: D2A/H0
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
-msgstr ""
+msgstr "Nu au fost găsite permisiuni în sursa de date."
 
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "No records were affected."
-msgstr ""
+msgstr "Nu a fost afectată nicio înregistrare."
 
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
-msgstr ""
+msgstr "Nu a fost găsit niciun rol pentru acest utilizator în spațiul de lucru."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3725,7 +3725,7 @@ msgstr "Numărul de angajați în companie"
 #. js-lingui-id: 08qKzD
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
-msgstr ""
+msgstr "Accesul OAuth a fost refuzat."
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -3754,7 +3754,7 @@ msgstr "Metadatele obiectului nu au fost găsite"
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object metadata not found."
-msgstr ""
+msgstr "Metadatele obiectului nu au fost găsite."
 
 #. js-lingui-id: AKqp4k
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -3764,12 +3764,12 @@ msgstr ""
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Object not found."
-msgstr ""
+msgstr "Obiectul nu a fost găsit."
 
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object permission not found."
-msgstr ""
+msgstr "Permisiunea pe obiect nu a fost găsită."
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -3827,7 +3827,7 @@ msgstr "Unul sau mai multe obiecte pentru care încercați să setați permisiun
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
-msgstr ""
+msgstr "Sunt permise doar restricțiile de câmp."
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -3983,7 +3983,7 @@ msgstr "Aspectul paginii nu a fost găsit"
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Page layout not found."
-msgstr ""
+msgstr "Aspectul paginii nu a fost găsit."
 
 #. js-lingui-id: tR9faK
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-restore-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
@@ -4001,9 +4001,9 @@ msgid "Page layout tab not found"
 msgstr "Fila de aspect a paginii nu a fost găsită"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
-msgstr ""
+msgstr "Fila de aspect a paginii nu a fost găsită."
 
 #. js-lingui-id: CWtQfv
 #: src/engine/metadata-modules/flat-page-layout-tab/utils/from-delete-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util.ts
@@ -4056,9 +4056,9 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Widgetul de dispunere a paginii nu a fost șters și nu poate fi restaurat"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
-msgstr ""
+msgstr "Widgetul layout-ului paginii nu a fost găsit."
 
 #. js-lingui-id: 7QlaTN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-widget-validator.service.ts
@@ -4134,7 +4134,7 @@ msgstr "Persoanele legate de companie."
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Permission not found."
-msgstr ""
+msgstr "Permisiunea nu a fost găsită."
 
 #. js-lingui-id: OZdaTZ
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -4194,12 +4194,12 @@ msgstr "Vă rugăm să selectați un tip de conexiune valid (IMAP, SMTP sau CalD
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Please use a company email domain."
-msgstr ""
+msgstr "Vă rugăm să utilizați un domeniu de e-mail al companiei."
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Please use single sign-on to authenticate."
-msgstr ""
+msgstr "Vă rugăm să folosiți autentificarea SSO."
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4283,7 +4283,7 @@ msgstr "Domeniul public este deja înregistrat"
 #. js-lingui-id: Vr4xfK
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "Public domain not found."
-msgstr ""
+msgstr "Domeniul public nu a fost găsit."
 
 #. js-lingui-id: Capzni
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -4303,32 +4303,32 @@ msgstr "Complexitatea interogării este prea mare. Vă rugăm să reduceți num�
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Query failed."
-msgstr ""
+msgstr "Interogarea a eșuat."
 
 #. js-lingui-id: 0bX5JL
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Query is too complex."
-msgstr ""
+msgstr "Interogarea este prea complexă."
 
 #. js-lingui-id: mn/6A3
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Query timed out."
-msgstr ""
+msgstr "Timpul pentru interogare a expirat."
 
 #. js-lingui-id: 6H9kMC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Query timed out. Please try again."
-msgstr ""
+msgstr "Timpul pentru interogare a expirat. Vă rugăm să încercați din nou."
 
 #. js-lingui-id: xD2MTL
 #: src/engine/core-modules/throttler/throttler.exception.ts
 msgid "Rate limit reached. Please try again later."
-msgstr ""
+msgstr "Limita de rată a fost atinsă. Vă rugăm să încercați mai târziu."
 
 #. js-lingui-id: 8G8dJM
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
-msgstr ""
+msgstr "Interogările SQL brute nu sunt permise."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -4340,7 +4340,7 @@ msgstr "Primit la"
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Record not found."
-msgstr ""
+msgstr "Înregistrarea nu a fost găsită."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -4356,12 +4356,12 @@ msgstr "Token reîmprospătare"
 #. js-lingui-id: 1GvzpH
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
-msgstr ""
+msgstr "Tokenul de reîmprospătare nu a fost găsit."
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
-msgstr ""
+msgstr "Înregistrarea asociată nu a fost găsită."
 
 #. js-lingui-id: 2LpFdR
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -4371,7 +4371,7 @@ msgstr "Adresa de email a utilizatorului asociat"
 #. js-lingui-id: 2LXGtF
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation configuration is invalid."
-msgstr ""
+msgstr "Configurația relației este invalidă."
 
 #. js-lingui-id: +bFtT5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
@@ -4387,32 +4387,32 @@ msgstr "Metadatele țintă ale câmpului de relație nu au fost găsite"
 #. js-lingui-id: MvWdPg
 #: src/engine/twenty-orm/exceptions/relation.exception.ts
 msgid "Relation has join column on both sides."
-msgstr ""
+msgstr "Relația are coloană de îmbinare pe ambele părți."
 
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
-msgstr ""
+msgstr "Relația nu este activată pentru acest câmp."
 
 #. js-lingui-id: oThEh8
 #: src/engine/twenty-orm/exceptions/relation.exception.ts
 msgid "Relation object not found."
-msgstr ""
+msgstr "Obiectul relației nu a fost găsit."
 
 #. js-lingui-id: +v6IlP
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Relation settings not found."
-msgstr ""
+msgstr "Setările relației nu au fost găsite."
 
 #. js-lingui-id: 8ZgNmg
 #: src/engine/twenty-orm/exceptions/relation.exception.ts
 msgid "Relation target field not found."
-msgstr ""
+msgstr "Câmpul țintă al relației nu a fost găsit."
 
 #. js-lingui-id: I0e0Bm
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Relation target not found."
-msgstr ""
+msgstr "Ținta relației nu a fost găsită."
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -4436,22 +4436,22 @@ msgstr "Obiectele la distanță nu sunt încă suportate"
 #. js-lingui-id: haIkpk
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "Remote server already exists."
-msgstr ""
+msgstr "Serverul la distanță există deja."
 
 #. js-lingui-id: kcB/qR
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "Remote server not found."
-msgstr ""
+msgstr "Serverul la distanță nu a fost găsit."
 
 #. js-lingui-id: QxXX+p
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "Remote table already exists."
-msgstr ""
+msgstr "Tabelul la distanță există deja."
 
 #. js-lingui-id: eaN14K
 #: src/engine/metadata-modules/remote-server/remote-table/remote-table.exception.ts
 msgid "Remote table not found."
-msgstr ""
+msgstr "Tabelul la distanță nu a fost găsit."
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -4461,7 +4461,7 @@ msgstr "Cererea a expirat, vă rugăm să încercați din nou."
 #. js-lingui-id: sSkbaZ
 #: src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception.ts
 msgid "Request timed out."
-msgstr ""
+msgstr "Timpul cererii a expirat."
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -4511,12 +4511,12 @@ msgstr ""
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
-msgstr ""
+msgstr "Rolul nu poate fi atribuit acestei entități."
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
-msgstr ""
+msgstr "Rolul trebuie să aibă cel puțin o țintă."
 
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
@@ -4535,12 +4535,12 @@ msgstr ""
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Role not found."
-msgstr ""
+msgstr "Rolul nu a fost găsit."
 
 #. js-lingui-id: ctpIGF
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role target is missing identifier."
-msgstr ""
+msgstr "Țintei rolului îi lipsește identificatorul."
 
 #. js-lingui-id: oCyyzG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
@@ -4559,7 +4559,7 @@ msgstr ""
 #. js-lingui-id: gz6uii
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role target not found."
-msgstr ""
+msgstr "Ținta rolului nu a fost găsită."
 
 #. js-lingui-id: alYNOd
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
@@ -4570,7 +4570,7 @@ msgstr ""
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Roles and permissions configuration not found."
-msgstr ""
+msgstr "Configurația rolurilor și permisiunilor nu a fost găsită."
 
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -4580,7 +4580,7 @@ msgstr "Ruta există deja"
 #. js-lingui-id: AcyaP/
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route already exists."
-msgstr ""
+msgstr "Ruta există deja."
 
 #. js-lingui-id: ldQZkA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -4593,7 +4593,7 @@ msgstr "Ruta nu a fost găsită"
 #. js-lingui-id: F35apa
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route not found."
-msgstr ""
+msgstr "Ruta nu a fost găsită."
 
 #. js-lingui-id: NCQS+K
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -4603,7 +4603,7 @@ msgstr "Calea rutei există deja"
 #. js-lingui-id: mF5BSU
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route path already exists."
-msgstr ""
+msgstr "Calea rutei există deja."
 
 #. js-lingui-id: v5H7VS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -4629,7 +4629,7 @@ msgstr "Sâmbătă"
 #. js-lingui-id: r20Bqy
 #: src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception.ts
 msgid "Schema enum operation failed."
-msgstr ""
+msgstr "Operațiunea enum pe schemă a eșuat."
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -4655,7 +4655,7 @@ msgstr "Funcție serverless există deja"
 #. js-lingui-id: qqeQGz
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Serverless function execution failed."
-msgstr ""
+msgstr "Execuția funcției serverless a eșuat."
 
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -4683,7 +4683,7 @@ msgstr "Funcție serverless nu a fost găsită"
 #: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Serverless function not found."
-msgstr ""
+msgstr "Funcția serverless nu a fost găsită."
 
 #. js-lingui-id: jNhvmj
 #: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
@@ -4703,12 +4703,12 @@ msgstr "Setări"
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Sign up is disabled."
-msgstr ""
+msgstr "Înregistrarea este dezactivată."
 
 #. js-lingui-id: 4AomZC
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Single sign-on authentication failed."
-msgstr ""
+msgstr "Autentificarea SSO a eșuat."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -4733,12 +4733,12 @@ msgstr ""
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO configuration error."
-msgstr ""
+msgstr "Eroare de configurare SSO."
 
 #. js-lingui-id: NflMcG
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO is disabled."
-msgstr ""
+msgstr "SSO este dezactivat."
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -4748,7 +4748,7 @@ msgstr "Etapă"
 #. js-lingui-id: 7XNKWU
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "Standard agents cannot be modified."
-msgstr ""
+msgstr "Agenții standard nu pot fi modificați."
 
 #. js-lingui-id: dc5N0o
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -4805,7 +4805,7 @@ msgstr "Pasul nu este un formular"
 #. js-lingui-id: An2IAh
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Subdomain not found."
-msgstr ""
+msgstr "Subdomeniul nu a fost găsit."
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -4816,22 +4816,22 @@ msgstr "Subiect"
 #. js-lingui-id: x0Vn7k
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Subscription is not in trial period."
-msgstr ""
+msgstr "Abonamentul nu este în perioada de probă."
 
 #. js-lingui-id: nnWIIb
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Subscription item not found."
-msgstr ""
+msgstr "Elementul abonamentului nu a fost găsit."
 
 #. js-lingui-id: uo7UmH
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Subscription not found."
-msgstr ""
+msgstr "Abonamentul nu a fost găsit."
 
 #. js-lingui-id: VNohoc
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Subscription phase not found."
-msgstr ""
+msgstr "Faza abonamentului nu a fost găsită."
 
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4877,7 +4877,7 @@ msgstr "Starea sincronizării"
 #. js-lingui-id: 8UWeLh
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Tab not found for widget duplication."
-msgstr ""
+msgstr "Fila nu a fost găsită pentru duplicarea widgetului."
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -5002,12 +5002,12 @@ msgstr "Sarcina țintă sarcină"
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Test error"
-msgstr ""
+msgstr "Eroare de test"
 
 #. js-lingui-id: J+cH9z
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Test user friendly message"
-msgstr ""
+msgstr "Mesaj de test prietenos pentru utilizator"
 
 #. js-lingui-id: xeiujy
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -5091,7 +5091,7 @@ msgstr "Rolul implicit nu poate fi șters deoarece este necesar pentru funcțion
 #. js-lingui-id: 0biWRI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
-msgstr ""
+msgstr "Rolul implicit nu poate fi șters."
 
 #. js-lingui-id: 6BBrjb
 #: src/engine/metadata-modules/role/role.service.ts
@@ -5101,7 +5101,7 @@ msgstr "Rolul implicit pentru acest spațiu de lucru nu a putut fi găsit. Vă r
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "The domain does not match your email domain."
-msgstr ""
+msgstr "Domeniul nu corespunde domeniului dumneavoastră de e-mail."
 
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -5221,12 +5221,12 @@ msgstr "Această cheie API a fost revocată și nu mai poate fi utilizată."
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
-msgstr ""
+msgstr "Această cheie API a fost revocată."
 
 #. js-lingui-id: OLL1W0
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has expired."
-msgstr ""
+msgstr "Această cheie API a expirat."
 
 #. js-lingui-id: Jmzgho
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -5236,83 +5236,83 @@ msgstr "Această cheie API a expirat. Vă rugăm să creați una nouă."
 #. js-lingui-id: 9J2vmW
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
-msgstr ""
+msgstr "Această cheie API nu are niciun rol atribuit."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
-msgstr ""
+msgstr "Această conexiune nu este permisă."
 
 #. js-lingui-id: z7bcpf
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "This domain has already been validated."
-msgstr ""
+msgstr "Acest domeniu a fost deja validat."
 
 #. js-lingui-id: RQbcZC
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "This domain has already been verified."
-msgstr ""
+msgstr "Acest domeniu a fost deja verificat."
 
 #. js-lingui-id: 3eKCDz
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is already registered as a custom domain."
-msgstr ""
+msgstr "Acest domeniu este deja înregistrat ca domeniu personalizat."
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "This domain is already registered."
-msgstr ""
+msgstr "Acest domeniu este deja înregistrat."
 
 #. js-lingui-id: 8sTsIR
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
-msgstr ""
+msgstr "Acest domeniu este deja luat."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
-msgstr ""
+msgstr "Acest e-mail este deja utilizat."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
-msgstr ""
+msgstr "Această funcționalitate nu este activată."
 
 #. js-lingui-id: Io3Xii
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "This feature is not implemented."
-msgstr ""
+msgstr "Această funcționalitate nu este implementată."
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
-msgstr ""
+msgstr "Acest câmp nu poate fi modificat."
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field name is not available."
-msgstr ""
+msgstr "Acest nume de câmp nu este disponibil."
 
 #. js-lingui-id: JwdaFV
 #: src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception.ts
 msgid "This foreign table cannot be modified."
-msgstr ""
+msgstr "Acest tabel extern nu poate fi modificat."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
-msgstr ""
+msgstr "Această metodă nu este permisă."
 
 #. js-lingui-id: /XKGep
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This name is a reserved keyword."
-msgstr ""
+msgstr "Acest nume este un cuvânt cheie rezervat."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "This name is not available."
-msgstr ""
+msgstr "Acest nume nu este disponibil."
 
 #. js-lingui-id: gPBck6
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -5324,12 +5324,12 @@ msgstr "Acest nume este rezervat. Utilizați un alt nume sau sistemul va adăuga
 #. js-lingui-id: R8zIJd
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "This object cannot be modified."
-msgstr ""
+msgstr "Acest obiect nu poate fi modificat."
 
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
-msgstr ""
+msgstr "Această operațiune nu este permisă."
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
@@ -5339,17 +5339,17 @@ msgstr ""
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "This operation is not supported."
-msgstr ""
+msgstr "Această operațiune nu este acceptată."
 
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
-msgstr ""
+msgstr "Acest furnizor nu este acceptat."
 
 #. js-lingui-id: 8achGR
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This public domain is already registered."
-msgstr ""
+msgstr "Acest domeniu public este deja înregistrat."
 
 #. js-lingui-id: TjUnO1
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
@@ -5360,27 +5360,27 @@ msgstr ""
 #. js-lingui-id: NxunhS
 #: src/engine/metadata-modules/remote-server/remote-server.exception.ts
 msgid "This remote server cannot be modified."
-msgstr ""
+msgstr "Acest server la distanță nu poate fi modificat."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
 msgid "This role cannot be assigned to agents."
-msgstr ""
+msgstr "Acest rol nu poate fi atribuit agenților."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This role cannot be assigned to API keys."
-msgstr ""
+msgstr "Acest rol nu poate fi atribuit cheilor API."
 
 #. js-lingui-id: c68K+k
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
-msgstr ""
+msgstr "Acest rol nu poate fi atribuit utilizatorilor."
 
 #. js-lingui-id: 2jnsqJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
-msgstr ""
+msgstr "Acest rol nu poate fi editat."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
@@ -5393,17 +5393,17 @@ msgstr ""
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
-msgstr ""
+msgstr "Acest subdomeniu este deja luat."
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
-msgstr ""
+msgstr "Acest utilizator este deja membru al spațiului de lucru."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
-msgstr ""
+msgstr "Această variabilă poate fi setată doar prin variabilele de mediu."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -5514,23 +5514,23 @@ msgstr "Titlu"
 #. js-lingui-id: /ObxXq
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
-msgstr ""
+msgstr "Au fost găsiți prea mulți candidați administratori."
 
 #. js-lingui-id: MYdvBz
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Too many records affected."
-msgstr ""
+msgstr "Prea multe înregistrări au fost afectate."
 
 #. js-lingui-id: ExheIC
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
 msgid "Too many records to update at once."
-msgstr ""
+msgstr "Prea multe înregistrări de actualizat deodată."
 
 #. js-lingui-id: M68C8m
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Too many requests. Please try again later."
-msgstr ""
+msgstr "Prea multe cereri. Vă rugăm să încercați mai târziu."
 
 #. js-lingui-id: mfqtz7
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
@@ -5540,7 +5540,7 @@ msgstr ""
 #. js-lingui-id: VD8J6l
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Trigger not found."
-msgstr ""
+msgstr "Declanșatorul nu a fost găsit."
 
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -5550,22 +5550,22 @@ msgstr "marți"
 #. js-lingui-id: T+yZIr
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Two-factor authentication is already set up."
-msgstr ""
+msgstr "Autentificarea în doi pași este deja configurată."
 
 #. js-lingui-id: lNKrNc
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Two-factor authentication method not found."
-msgstr ""
+msgstr "Metoda de autentificare în doi pași nu a fost găsită."
 
 #. js-lingui-id: 7Z7wx7
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Two-factor authentication setup is required."
-msgstr ""
+msgstr "Configurarea autentificării în doi pași este necesară."
 
 #. js-lingui-id: VT9cmj
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Two-factor authentication verification is required."
-msgstr ""
+msgstr "Verificarea autentificării în doi pași este necesară."
 
 #. js-lingui-id: +zy2Nq
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -5586,22 +5586,22 @@ msgstr "Indexul unic nu poate fi creat pentru câmpul {fieldName} de tipul {fiel
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Unknown operation."
-msgstr ""
+msgstr "Operațiune necunoscută."
 
 #. js-lingui-id: BIxgma
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Unknown permission required."
-msgstr ""
+msgstr "Este necesară o permisiune necunoscută."
 
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception.ts
 msgid "Unsupported composite column type."
-msgstr ""
+msgstr "Tip de coloană compusă neacceptat."
 
 #. js-lingui-id: 1r7kLp
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Unsupported configuration type."
-msgstr ""
+msgstr "Tip de configurație neacceptat."
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -5616,7 +5616,7 @@ msgstr "Tipul de metadate al câmpului nu este suportat {fieldType}"
 #. js-lingui-id: 9BAEgY
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
 msgid "Unsupported operator."
-msgstr ""
+msgstr "Operator neacceptat."
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -5627,7 +5627,7 @@ msgstr "Data și ora actualizării"
 #. js-lingui-id: lHCFXi
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
-msgstr ""
+msgstr "Restricțiile de actualizare a câmpurilor se aplică doar obiectelor actualizabile."
 
 #. js-lingui-id: r5C2wB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -5642,7 +5642,7 @@ msgstr "Utilizatorul deja există"
 #. js-lingui-id: 9QHVZ2
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
-msgstr ""
+msgstr "Utilizatorului i-a fost deja atribuit un rol."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -5664,7 +5664,7 @@ msgstr "Emailul utilizatorului"
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "User friendly error message"
-msgstr ""
+msgstr "Mesaj de eroare prietenos pentru utilizator"
 
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -5687,7 +5687,7 @@ msgstr "Utilizatorul nu face parte din spațiul de lucru"
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "User not found."
-msgstr ""
+msgstr "Utilizatorul nu a fost găsit."
 
 #. js-lingui-id: g5Z6no
 #: src/engine/core-modules/admin-panel/admin-panel.service.ts
@@ -5710,12 +5710,12 @@ msgstr "Utilizatorul nu a fost creat cu email/parolă"
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "User workspace not found."
-msgstr ""
+msgstr "Spațiul de lucru al utilizatorului nu a fost găsit."
 
 #. js-lingui-id: 9mCrQp
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "User workspace role configuration not found."
-msgstr ""
+msgstr "Configurația rolului în spațiul de lucru al utilizatorului nu a fost găsită."
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -5751,7 +5751,7 @@ msgstr "Valoarea trebuie să fie în UPPER_CASE și să urmeze snake_case \"{san
 #. js-lingui-id: gj6Gxm
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Verification token has expired."
-msgstr ""
+msgstr "Tokenul de verificare a expirat."
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -5781,7 +5781,7 @@ msgstr "Vizualizarea există deja"
 #. js-lingui-id: kB0dDD
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View already exists."
-msgstr ""
+msgstr "Vizualizarea există deja."
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -5940,7 +5940,7 @@ msgstr "Vizualizarea nu a fost găsită"
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
-msgstr ""
+msgstr "Vizualizarea nu a fost găsită."
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -6034,7 +6034,7 @@ msgstr "Am întâmpinat o problemă la conectarea la contul dvs. de e-mail. Vă 
 #. js-lingui-id: b8g3PG
 #: src/engine/core-modules/webhook/webhook.exception.ts
 msgid "Webhook not found."
-msgstr ""
+msgstr "Webhook-ul nu a fost găsit."
 
 #. js-lingui-id: VAcXNz
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6067,7 +6067,7 @@ msgstr "Declanșatoare automate ale fluxului de lucru legate de fluxul de lucru.
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Workflow edge not found."
-msgstr ""
+msgstr "Muchia workflow-ului nu a fost găsită."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6082,7 +6082,7 @@ msgstr "Poziția înregistrării workflow-ului"
 #. js-lingui-id: ysb9m+
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow root step not found."
-msgstr ""
+msgstr "Pasul rădăcină al workflow-ului nu a fost găsit."
 
 #. js-lingui-id: 5vIcqC
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6110,12 +6110,12 @@ msgstr "Execuția fluxului de lucru nu este în desfășurare"
 #. js-lingui-id: AzylSS
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow run limit reached."
-msgstr ""
+msgstr "Limita de rulări ale workflow-ului a fost atinsă."
 
 #. js-lingui-id: daijCZ
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
 msgid "Workflow run not found."
-msgstr ""
+msgstr "Rularea workflow-ului nu a fost găsită."
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6153,12 +6153,12 @@ msgstr "Execuțiile Workflow asociate workflow-ului."
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Workflow step not found."
-msgstr ""
+msgstr "Pasul workflow-ului nu a fost găsit."
 
 #. js-lingui-id: wvR5lY
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow trigger not found."
-msgstr ""
+msgstr "Declanșatorul workflow-ului nu a fost găsit."
 
 #. js-lingui-id: lTXctu
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -6244,7 +6244,7 @@ msgstr "Crearea spațiilor de lucru este restricționată la administratori"
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
-msgstr ""
+msgstr "Nepotrivire între ID-ul spațiului de lucru și rol."
 
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -6279,7 +6279,7 @@ msgstr "Numele membrului spațiului de lucru"
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
-msgstr ""
+msgstr "Membrul spațiului de lucru nu a fost găsit."
 
 #. js-lingui-id: NiUpuN
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -6294,12 +6294,12 @@ msgstr "Membri ai Spațiului de Lucru"
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace not found for customer event."
-msgstr ""
+msgstr "Spațiul de lucru nu a fost găsit pentru evenimentul clientului."
 
 #. js-lingui-id: 5Io9Sh
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Workspace not found for subscription event."
-msgstr ""
+msgstr "Spațiul de lucru nu a fost găsit pentru evenimentul abonamentului."
 
 #. js-lingui-id: EhVOPs
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
@@ -6310,12 +6310,12 @@ msgstr ""
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Workspace not found."
-msgstr ""
+msgstr "Spațiul de lucru nu a fost găsit."
 
 #. js-lingui-id: 7wxAZI
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Workspace schema not found."
-msgstr ""
+msgstr "Schema spațiului de lucru nu a fost găsită."
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -6399,7 +6399,7 @@ msgstr "Nu puteți seta permisiuni pe obiecte de sistem, deoarece sunt gestionat
 #. js-lingui-id: bAPURS
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
-msgstr ""
+msgstr "Nu vă puteți actualiza propriul rol."
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
@@ -6409,7 +6409,7 @@ msgstr "Nu aveți permisiunea de a accesa această funcție. Vă rugăm să cont
 #. js-lingui-id: nPwrik
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "You do not have permission to access this workflow."
-msgstr ""
+msgstr "Nu aveți permisiunea de a accesa acest workflow."
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
@@ -6427,12 +6427,12 @@ msgstr "Nu aveți permisiunea de a impersona utilizatori. Vă rugăm să contact
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "You do not have permission to perform this action."
-msgstr ""
+msgstr "Nu aveți permisiunea de a efectua această acțiune."
 
 #. js-lingui-id: C9jd/U
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
-msgstr ""
+msgstr "Nu aveți permisiunea de a efectua această acțiune de workflow."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts

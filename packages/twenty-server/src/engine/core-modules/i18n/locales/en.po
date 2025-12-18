@@ -2647,12 +2647,12 @@ msgid "Invalid page layout data."
 msgstr "Invalid page layout data."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Invalid page layout tab data."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Invalid page layout widget data."
 
@@ -3996,7 +3996,7 @@ msgid "Page layout tab not found"
 msgstr "Page layout tab not found"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "Page layout tab not found."
 
@@ -4051,7 +4051,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Page layout widget is not deleted and cannot be restored"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Page layout widget not found."
 

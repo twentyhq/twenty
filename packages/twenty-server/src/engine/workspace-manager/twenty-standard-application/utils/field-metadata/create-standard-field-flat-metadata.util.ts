@@ -1,7 +1,8 @@
 import {
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
-  type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
@@ -13,12 +14,13 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardFieldArgs<
-  O extends AllStandardObjectName = AllStandardObjectName,
+  O extends AllStandardObjectName,
+  T extends FieldMetadataType,
 > = StandardBuilderArgs<'fieldMetadata'> & {
   objectName: O;
   context: {
     fieldName: AllStandardObjectFieldName<O>;
-    type: Exclude<FieldMetadataType, typeof FieldMetadataType.RELATION>;
+    type: T;
     label: string;
     description: string;
     icon: string;
@@ -26,8 +28,8 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIReadOnly?: boolean;
-    defaultValue?: FieldMetadataDefaultValueForAnyType;
-    settings?: Record<string, unknown> | null;
+    defaultValue?: FieldMetadataDefaultValue<T>;
+    settings?: FieldMetadataSettings<T>;
     options?:
       | FieldMetadataDefaultOption[]
       | FieldMetadataComplexOption[]
@@ -37,6 +39,7 @@ export type CreateStandardFieldArgs<
 
 export const createStandardFieldFlatMetadata = <
   O extends AllStandardObjectName,
+  T extends FieldMetadataType,
 >({
   objectName,
   workspaceId,
@@ -50,14 +53,14 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIReadOnly = false,
-    defaultValue = null,
-    settings = null,
+    defaultValue,
+    settings,
     options: fieldOptions = null,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
-}: CreateStandardFieldArgs<O>): FlatFieldMetadata => {
+}: CreateStandardFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
   const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
@@ -67,7 +70,7 @@ export const createStandardFieldFlatMetadata = <
   return {
     id: fieldIds[fieldName].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: null,
+    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
@@ -84,8 +87,8 @@ export const createStandardFieldFlatMetadata = <
     isUIReadOnly,
     isLabelSyncedWithName: false,
     standardOverrides: null,
-    defaultValue,
-    settings,
+    defaultValue: defaultValue ?? null,
+    settings: settings ?? null,
     options: fieldOptions?.map((option) => ({ ...option, id: v4() })) ?? null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,

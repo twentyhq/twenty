@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'attachment'>, 'context'>): Record<
-  AllStandardObjectFieldName<'attachment'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'attachment', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'attachment'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -56,7 +57,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -77,7 +78,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -97,7 +98,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -132,22 +133,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Full path',
       description: 'Attachment full path',
       icon: 'IconLink',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  type: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'type',
-      type: FieldMetadataType.TEXT,
-      label: 'Type (deprecated)',
-      description: 'Attachment type (deprecated - use fileCategory)',
-      icon: 'IconList',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -208,6 +193,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -216,30 +206,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   }),
 
   // Relation fields
-  author: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'author',
-      label: 'Author',
-      description: 'Attachment author (deprecated - use createdBy)',
-      icon: 'IconCircleUser',
-      isNullable: true,
-      targetObjectName: 'workspaceMember',
-      targetFieldName: 'authoredAttachments',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'authorId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   task: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -11,10 +11,6 @@ type CommandMenuItemTextInputProps = {
 
 const StyledRightAlignedTextInput = styled(TextInput)`
   input {
-    :focus {
-      color: ${({ theme }) => theme.font.color.primary};
-    }
-    color: ${({ theme }) => theme.font.color.tertiary};
     text-align: right;
   }
 `;

@@ -52,6 +52,7 @@ export const useEndPageLayoutDragSelection = (
 
             navigatePageLayoutCommandMenu({
               commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+              resetNavigationStack: true,
             });
           }
         }

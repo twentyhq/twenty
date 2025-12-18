@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { type ReactNode } from 'react';
+import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
@@ -97,7 +98,7 @@ export const SettingsCard = ({
           <StyledIconContainer>{Icon}</StyledIconContainer>
           <StyledTitle disabled={disabled}>
             {title}
-            {soon && <Pill label="Soon" />}
+            {soon && <Pill label={t`Soon`} />}
           </StyledTitle>
           {Status && Status}
           <StyledIconChevronRight size={theme.icon.size.sm} />

@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { findOrThrow, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -92,6 +92,18 @@ export class BillingPortalWorkspaceService {
         billingPricesPerPlan,
         successUrlPath,
       });
+
+    if (
+      isNonEmptyArray(customer?.billingSubscriptions) &&
+      customer.billingSubscriptions.some(
+        (subscription) => subscription.status !== SubscriptionStatus.Canceled,
+      )
+    ) {
+      throw new BillingException(
+        'Customer already has a non-canceled billing subscription',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
 
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({

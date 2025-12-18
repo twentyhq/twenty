@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -41,7 +42,7 @@ export const FormFullNameFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
-          label="First Name"
+          label={t`First Name`}
           defaultValue={defaultValue?.firstName}
           onChange={handleFirstNameChange}
           placeholder={
@@ -51,7 +52,7 @@ export const FormFullNameFieldInput = ({
           VariablePicker={VariablePicker}
         />
         <FormTextFieldInput
-          label="Last Name"
+          label={t`Last Name`}
           defaultValue={defaultValue?.lastName}
           onChange={handleLastNameChange}
           placeholder={

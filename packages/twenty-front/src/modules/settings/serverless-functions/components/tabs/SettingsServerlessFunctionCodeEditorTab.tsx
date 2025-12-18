@@ -67,7 +67,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
           options={{
             readOnly: true,
             readOnlyMessage: {
-              value: 'Managed serverless functions are not editable',
+              value: t`Managed serverless functions are not editable`,
             },
           }}
         />

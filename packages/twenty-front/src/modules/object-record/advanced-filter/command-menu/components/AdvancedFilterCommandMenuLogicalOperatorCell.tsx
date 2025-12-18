@@ -7,6 +7,7 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -38,7 +39,7 @@ export const AdvancedFilterCommandMenuLogicalOperatorCell = ({
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText>Where</StyledText>
+        <StyledText>{t`Where`}</StyledText>
       ) : index === 1 ? (
         readonly ? (
           <Select
