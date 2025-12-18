@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
+import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
