@@ -9108,11 +9108,6 @@ msgstr "rekord"
 msgid "Record"
 msgstr "Rekord"
 
-#. js-lingui-id: aGGOPJ
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
-msgid "Record (ID)"
-msgstr "Rekord (ID)"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."

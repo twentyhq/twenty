@@ -9108,11 +9108,6 @@ msgstr "기록"
 msgid "Record"
 msgstr "기록"
 
-#. js-lingui-id: aGGOPJ
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
-msgid "Record (ID)"
-msgstr "레코드(ID)"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
