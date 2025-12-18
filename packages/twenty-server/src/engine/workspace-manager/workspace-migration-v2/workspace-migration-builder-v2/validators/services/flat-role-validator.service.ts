@@ -107,7 +107,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
-    buildOptions
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<FlatRole> {
@@ -134,7 +134,7 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleIsEditable({
         flatRole: fromFlatRole,
-        buildOptions
+        buildOptions,
       }),
     );
 
