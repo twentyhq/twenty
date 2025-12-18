@@ -537,7 +537,7 @@ export class ConfigVariables {
   @IsOptional()
   @CastToUpperSnakeCase()
   CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
-    CodeInterpreterDriverType.LOCAL;
+    CodeInterpreterDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
