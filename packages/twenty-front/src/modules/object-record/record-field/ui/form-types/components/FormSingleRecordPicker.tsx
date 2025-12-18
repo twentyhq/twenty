@@ -20,7 +20,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui/display';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -201,12 +201,6 @@ export const FormSingleRecordPicker = ({
                   onRemove={handleUnlinkVariable}
                   disabled={disabled}
                 />
-                <StyledIconButton>
-                  <IconChevronDown
-                    size={theme.icon.size.md}
-                    color={theme.font.color.light}
-                  />
-                </StyledIconButton>
               </StyledFormSelectContainer>
             }
             dropdownComponents={
