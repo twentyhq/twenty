@@ -1,4 +1,6 @@
 import { type PageLayoutBreakpoint } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PAGE_LAYOUT_GRID_OVERLAY_Z_INDEX } from '@/page-layout/constants/PageLayoutGridOverlayZIndex';
+import { useClickToCreateWidget } from '@/page-layout/hooks/useClickToCreateWidget';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
@@ -26,7 +28,7 @@ const StyledGridOverlay = styled.div<{
   gap: ${({ theme }) => theme.spacing(2)};
   pointer-events: ${({ isDragSelecting }) =>
     isDragSelecting ? 'auto' : 'none'};
-  z-index: 0;
+  z-index: ${PAGE_LAYOUT_GRID_OVERLAY_Z_INDEX};
 `;
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
@@ -36,6 +38,7 @@ const StyledGridCell = styled.div<{ isSelected?: boolean }>`
     ${({ theme, isSelected }) =>
       isSelected ? theme.color.blue7 : theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -58,6 +61,8 @@ export const PageLayoutGridOverlay = () => {
   );
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+
+  const { clickToCreateWidget } = useClickToCreateWidget();
 
   const numberOfRows = useMemo(() => {
     const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] || {
@@ -92,6 +97,7 @@ export const PageLayoutGridOverlay = () => {
               key={i}
               data-selectable-id={cellId}
               isSelected={pageLayoutSelectedCells.has(cellId)}
+              onClick={() => clickToCreateWidget(cellId)}
             />
           );
         },
