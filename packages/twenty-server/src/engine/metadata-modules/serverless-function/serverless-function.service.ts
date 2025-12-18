@@ -38,10 +38,7 @@ import {
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import {
-  SUBSCRIPTION_CHANNEL,
-  SubscriptionService,
-} from 'src/engine/subscriptions/subscription.service';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 

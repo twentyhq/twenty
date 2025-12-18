@@ -27,10 +27,8 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { ServerlessFunctionLogsDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.dto';
 import { ServerlessFunctionLogsInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-logs.input';
-import {
-  SUBSCRIPTION_CHANNEL,
-  SubscriptionService,
-} from 'src/engine/subscriptions/subscription.service';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -232,7 +230,7 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.subscriptionService.subscribe({
-      channel: SUBSCRIPTION_CHANNEL.SERVERLESS_FUNCTION_LOGS_CHANNEL,
+      channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
       workspaceId: workspace.id,
     });
   }

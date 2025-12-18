@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-export enum SUBSCRIPTION_CHANNEL {
-  DATABASE_EVENT_CHANNEL = 'DATABASE_EVENT_CHANNEL',
-  SERVERLESS_FUNCTION_LOGS_CHANNEL = 'SERVERLESS_FUNCTION_LOGS_CHANNEL',
-}
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 
 @Injectable()
 export class SubscriptionService {
@@ -15,7 +12,7 @@ export class SubscriptionService {
     channel,
     workspaceId,
   }: {
-    channel: SUBSCRIPTION_CHANNEL;
+    channel: SubscriptionChannel;
     workspaceId: string;
   }) {
     return `${channel}:${workspaceId}`;
@@ -25,7 +22,7 @@ export class SubscriptionService {
     channel,
     workspaceId,
   }: {
-    channel: SUBSCRIPTION_CHANNEL;
+    channel: SubscriptionChannel;
     workspaceId: string;
   }) {
     return this.pubSub.asyncIterator(
@@ -38,7 +35,7 @@ export class SubscriptionService {
     payload,
     workspaceId,
   }: {
-    channel: SUBSCRIPTION_CHANNEL;
+    channel: SubscriptionChannel;
     payload: T;
     workspaceId: string;
   }): Promise<void> {

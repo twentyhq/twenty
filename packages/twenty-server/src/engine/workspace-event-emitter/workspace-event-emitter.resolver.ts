@@ -10,10 +10,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
-import {
-  SUBSCRIPTION_CHANNEL,
-  SubscriptionService,
-} from 'src/engine/subscriptions/subscription.service';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
