@@ -109,11 +109,7 @@ export const LightIconButton = ({
       active={active}
       title={title}
     >
-      {Icon && (
-        <Icon
-          size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
-        />
-      )}
+      {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>
   );
 };
