@@ -1,7 +1,6 @@
-import { Inject, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Resolver, Subscription } from '@nestjs/graphql';
 
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -11,14 +10,19 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
-import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
+import {
+  SUBSCRIPTION_CHANNEL,
+  SubscriptionService,
+} from 'src/engine/subscriptions/subscription.service';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class SubscriptionsResolver {
-  constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
+  constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Subscription(() => OnDbEventDTO, {
     filter: (
@@ -43,7 +47,13 @@ export class SubscriptionsResolver {
       );
     },
   })
-  onDbEvent(@Args('input') _: OnDbEventInput) {
-    return this.pubSub.asyncIterator(ON_DB_EVENT_TRIGGER);
+  onDbEvent(
+    @Args('input') _: OnDbEventInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.subscriptionService.subscribe({
+      channel: SUBSCRIPTION_CHANNEL.DATABASE_EVENT_CHANNEL,
+      workspaceId: workspace.id,
+    });
   }
 }
