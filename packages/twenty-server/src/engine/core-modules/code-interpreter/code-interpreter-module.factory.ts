@@ -49,6 +49,15 @@ export const codeInterpreterModuleFactory = async (
         },
       };
     }
+    case CodeInterpreterDriverType.DISABLED: {
+      return {
+        type: CodeInterpreterDriverType.DISABLED,
+        options: {
+          reason:
+            'Code interpreter is disabled. Set CODE_INTERPRETER_TYPE to LOCAL (development only) or E2B to enable it.',
+        },
+      };
+    }
     default:
       throw new Error(
         `Invalid code interpreter driver type (${driverType}), check your .env file`,
