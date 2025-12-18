@@ -3562,6 +3562,11 @@ msgstr "מדינת ברירת המחדל"
 msgid "Default Country Code"
 msgstr "קוד מדינה ברירת מחדל"
 
+#. js-lingui-id: 4HDpKr
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
+msgid "Default palette"
+msgstr ""
+
 #. js-lingui-id: CGhRMh
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Default Role"
@@ -8520,11 +8525,6 @@ msgstr "יישומון פריסת עמוד"
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found | Twenty"
 msgstr "הדף לא נמצא | Twenty"
-
-#. js-lingui-id: ZyMBtl
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
-msgid "Palette"
-msgstr "לוח צבעים"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
