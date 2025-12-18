@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { EditableFilterChip } from '@/views/components/EditableFilterChip';
+import { EditableFilterChip } from '@/views/editable-chip/components/EditableFilterChip';
 
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { EditableFilterChipDropdownContent } from '@/views/components/EditableFilterChipDropdownContent';
-import { EditableRelationFilterChip } from '@/views/components/EditableRelationFilterChip';
-import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
+import { EditableFilterChipDropdownContent } from '@/views/editable-chip/components/EditableFilterChipDropdownContent';
+import { EditableRelationFilterChip } from '@/views/editable-chip/components/EditableRelationFilterChip';
+import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
 type EditableFilterDropdownButtonProps = {
@@ -19,19 +19,17 @@ type EditableFilterDropdownButtonProps = {
 export const EditableFilterDropdownButton = ({
   recordFilter,
 }: EditableFilterDropdownButtonProps) => {
-  const dropdownId = recordFilter.id;
-
   const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const handleRemove = () => {
-    closeDropdown(dropdownId);
+    closeDropdown(
+      getEditableChipDropdownId({ recordFilterId: recordFilter.id }),
+    );
 
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
-
-  const { clearVectorSearchInput } = useClearVectorSearchInput();
 
   const onFilterDropdownClose = useCallback(() => {
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
@@ -39,9 +37,7 @@ export const EditableFilterDropdownButton = ({
     if (recordFilterIsEmpty) {
       removeRecordFilter({ recordFilterId: recordFilter.id });
     }
-
-    clearVectorSearchInput();
-  }, [recordFilter, removeRecordFilter, clearVectorSearchInput]);
+  }, [recordFilter, removeRecordFilter]);
 
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
@@ -53,7 +49,9 @@ export const EditableFilterDropdownButton = ({
   return (
     <>
       <Dropdown
-        dropdownId={recordFilter.id}
+        dropdownId={getEditableChipDropdownId({
+          recordFilterId: recordFilter.id,
+        })}
         clickableComponent={
           recordFilter.type === 'RELATION' ? (
             <EditableRelationFilterChip
