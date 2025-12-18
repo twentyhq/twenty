@@ -14,6 +14,11 @@ export const getSubMenuOptions = (subMenu: FilterableFieldType | null) => {
           icon: 'IconId',
           type: 'ACTOR',
         },
+        {
+          name: 'Workspace Member',
+          icon: 'IconUser',
+          type: 'WORKSPACE_MEMBER',
+        },
       ];
     default:
       return [];
