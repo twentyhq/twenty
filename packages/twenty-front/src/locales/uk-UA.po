@@ -11155,9 +11155,11 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr "Цю дію не можна відмінити. Це назавжди видалить ваш\n"
+msgstr ""
+"Цю дію не можна відмінити. Це назавжди видалить ваш\n"
 "            весь обліковий запис."
 
 #. js-lingui-id: bNY3MH
@@ -12196,9 +12198,11 @@ msgstr "Ми надішлемо вам посилання для перевір�
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Ми чекаємо підтвердження від нашого платіжного провайдера (Stripe).\n"
+msgstr ""
+"Ми чекаємо підтвердження від нашого платіжного провайдера (Stripe).\n"
 "Будь ласка, спробуйте ще раз за кілька секунд."
 
 #. js-lingui-id: LnnVIT

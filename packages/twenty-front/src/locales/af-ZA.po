@@ -11155,7 +11155,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Hierdie aksie kan nie ongedaan gemaak word nie. Dit sal jou hele rekening permanent uitvee."
 
@@ -12195,9 +12196,11 @@ msgstr "Ons sal jou 'n skakel stuur om domeinbesit te verifieer"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Ons wag vir 'n bevestiging van ons betalingsverskaffer (Stripe).\n"
+msgstr ""
+"Ons wag vir 'n bevestiging van ons betalingsverskaffer (Stripe).\n"
 "Probeer asseblief oor 'n paar sekondes weer, jammer."
 
 #. js-lingui-id: LnnVIT

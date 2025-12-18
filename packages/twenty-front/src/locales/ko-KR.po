@@ -11155,7 +11155,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 계정 전체가 영구적으로 삭제됩니다."
 
@@ -12195,9 +12196,11 @@ msgstr "도메인 소유권을 확인하기 위해 링크를 보내드립니다"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "결제 제공업체(Stripe)의 확인을 기다리고 있습니다.\n"
+msgstr ""
+"결제 제공업체(Stripe)의 확인을 기다리고 있습니다.\n"
 "잠시 후 다시 시도해 주세요. 불편을 드려 죄송합니다."
 
 #. js-lingui-id: LnnVIT
