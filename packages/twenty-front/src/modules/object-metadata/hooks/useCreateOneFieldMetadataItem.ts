@@ -10,6 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 
 export const useCreateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
@@ -52,6 +53,7 @@ export const useCreateOneFieldMetadataItem = () => {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
+          operationType: CrudOperationType.CREATE,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });

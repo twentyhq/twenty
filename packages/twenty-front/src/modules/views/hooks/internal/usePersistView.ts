@@ -6,6 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
@@ -72,6 +73,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.CREATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -110,6 +112,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.UPDATE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });
@@ -143,6 +146,7 @@ export const usePersistView = () => {
         if (error instanceof ApolloError) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
+            operationType: CrudOperationType.DELETE,
           });
         } else {
           enqueueErrorSnackBar({ message: t`An error occurred.` });

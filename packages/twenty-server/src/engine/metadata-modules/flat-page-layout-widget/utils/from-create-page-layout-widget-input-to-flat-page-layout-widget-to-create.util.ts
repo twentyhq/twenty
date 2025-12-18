@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
 export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
@@ -25,6 +26,12 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
 
   const createdAt = new Date().toISOString();
   const pageLayoutWidgetId = v4();
+
+  const configuration = await validateAndTransformWidgetConfiguration({
+    type: createPageLayoutWidgetInput.type,
+    configuration: createPageLayoutWidgetInput.configuration,
+    isDashboardV2Enabled: false,
+  });
 
   return {
     id: pageLayoutWidgetId,

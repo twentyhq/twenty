@@ -19,14 +19,16 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     super(ALL_METADATA_NAME.pageLayoutWidget);
   }
 
-  protected validateFlatEntityCreation(
+  protected async validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'created'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayoutWidget,
+      'created'
+    >
   > {
     const validationResult =
-      this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetCreation(
+      await this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetCreation(
         args,
       );
 
@@ -75,16 +77,18 @@ export class WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService extends W
     };
   }
 
-  protected validateFlatEntityUpdate(
+  protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.pageLayoutWidget
     >,
-  ): FlatEntityValidationReturnType<
-    typeof ALL_METADATA_NAME.pageLayoutWidget,
-    'updated'
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.pageLayoutWidget,
+      'updated'
+    >
   > {
     const validationResult =
-      this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetUpdate(
+      await this.flatPageLayoutWidgetValidatorService.validateFlatPageLayoutWidgetUpdate(
         args,
       );
 

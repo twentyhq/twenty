@@ -1,11 +1,13 @@
+import { msg } from '@lingui/core/macro';
+
 import { WIDGET_GRID_MAX_COLUMNS } from 'src/engine/metadata-modules/page-layout/constants/widget-grid-max-columns.constant';
 import { WIDGET_GRID_MAX_ROWS } from 'src/engine/metadata-modules/page-layout/constants/widget-grid-max-rows.constant';
 import {
-  PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 type GridPosition = {
   row: number;
@@ -17,54 +19,62 @@ type GridPosition = {
 export const validateWidgetGridPosition = (
   gridPosition: GridPosition,
   widgetTitle: string,
-): void => {
+): FlatEntityValidationError[] => {
+  const errors: FlatEntityValidationError[] = [];
+
   const { row, column, rowSpan, columnSpan } = gridPosition;
 
   if (column >= WIDGET_GRID_MAX_COLUMNS) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: generatePageLayoutWidgetExceptionMessage(
         PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
         widgetTitle,
         undefined,
         `column ${column} exceeds grid width (max column is ${WIDGET_GRID_MAX_COLUMNS - 1})`,
       ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
+      userFriendlyMessage: msg`Widget extends beyond grid width`,
+    });
   }
 
   if (column + columnSpan > WIDGET_GRID_MAX_COLUMNS) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: generatePageLayoutWidgetExceptionMessage(
         PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
         widgetTitle,
         undefined,
         `widget extends beyond grid width (column ${column} + columnSpan ${columnSpan} > ${WIDGET_GRID_MAX_COLUMNS})`,
       ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
+      userFriendlyMessage: msg`Widget extends beyond grid width`,
+    });
   }
 
   if (row >= WIDGET_GRID_MAX_ROWS) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: generatePageLayoutWidgetExceptionMessage(
         PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
         widgetTitle,
         undefined,
         `row ${row} exceeds maximum allowed rows (${WIDGET_GRID_MAX_ROWS})`,
       ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
+      userFriendlyMessage: msg`Widget row exceeds grid height`,
+    });
   }
 
   if (row + rowSpan > WIDGET_GRID_MAX_ROWS) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: generatePageLayoutWidgetExceptionMessage(
         PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
         widgetTitle,
         undefined,
         `widget extends beyond grid height (row ${row} + rowSpan ${rowSpan} > ${WIDGET_GRID_MAX_ROWS})`,
       ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
+      userFriendlyMessage: msg`Widget extends beyond grid height`,
+    });
   }
+
+  return errors;
 };

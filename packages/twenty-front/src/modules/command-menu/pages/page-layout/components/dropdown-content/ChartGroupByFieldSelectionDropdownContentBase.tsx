@@ -101,6 +101,13 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
 
   const { getIcon } = useIcons();
 
+  const isSecondaryAxisGroupBy =
+    fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
+
+  const selectableItemIdArray = isSecondaryAxisGroupBy
+    ? ['none', ...availableFieldMetadataItems.map((item) => item.id)]
+    : availableFieldMetadataItems.map((item) => item.id);
+
   if (!isDefined(sourceObjectMetadataItem)) {
     return null;
   }
@@ -227,19 +234,18 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={[
-            'none',
-            ...availableFieldMetadataItems.map((item) => item.id),
-          ]}
+          selectableItemIdArray={selectableItemIdArray}
         >
-          <SelectableListItem itemId="none" onEnter={handleSelectNone}>
-            <MenuItemSelect
-              text={t`None`}
-              selected={!isDefined(currentGroupByFieldMetadataId)}
-              focused={selectedItemId === 'none'}
-              onClick={handleSelectNone}
-            />
-          </SelectableListItem>
+          {isSecondaryAxisGroupBy && (
+            <SelectableListItem itemId="none" onEnter={handleSelectNone}>
+              <MenuItemSelect
+                text={t`None`}
+                selected={!isDefined(currentGroupByFieldMetadataId)}
+                focused={selectedItemId === 'none'}
+                onClick={handleSelectNone}
+              />
+            </SelectableListItem>
+          )}
 
           {availableFieldMetadataItems.map((fieldMetadataItem) => (
             <SelectableListItem

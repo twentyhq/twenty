@@ -10,6 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CrudOperationType } from 'twenty-shared/types';
 
 // TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneObjectMetadataItem = () => {
@@ -55,6 +56,7 @@ export const useUpdateOneObjectMetadataItem = () => {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
           primaryMetadataName: 'objectMetadata',
+          operationType: CrudOperationType.UPDATE,
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });
