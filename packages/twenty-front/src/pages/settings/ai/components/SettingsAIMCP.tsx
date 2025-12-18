@@ -86,13 +86,13 @@ export const SettingsAIMCP = () => {
 
   const options = [
     {
-      label: 'Core Schema',
+      label: t`Core Schema`,
       value: 'core-schema',
       Icon: IconDatabase,
       content: generateMcpContent('/mcp', 'twenty'),
     },
     {
-      label: 'Metadata Schema',
+      label: t`Metadata Schema`,
       value: 'metadata-schema',
       Icon: IconSitemap,
       content: generateMcpContent('/mcp/metadata', 'twenty-metadata'),

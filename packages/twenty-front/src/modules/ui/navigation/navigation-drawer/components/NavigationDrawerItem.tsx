@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -362,13 +363,13 @@ export const NavigationDrawerItem = ({
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label="Soon" />
+              <Pill label={t`Soon`} />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
           {isNew && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label="New" />
+              <Pill label={t`New`} />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 

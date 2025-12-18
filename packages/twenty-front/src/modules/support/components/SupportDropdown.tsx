@@ -4,6 +4,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { t } from '@lingui/core/macro';
 import { IconHelpCircle, IconMessage } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -32,12 +33,12 @@ export const SupportDropdown = () => {
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <MenuItem
-              text="Talk to us"
+              text={t`Talk to us`}
               LeftIcon={IconMessage}
               onClick={handleTalkToUs}
             />
             <MenuItem
-              text="Documentation"
+              text={t`Documentation`}
               LeftIcon={IconHelpCircle}
               onClick={handleUserGuide}
             />

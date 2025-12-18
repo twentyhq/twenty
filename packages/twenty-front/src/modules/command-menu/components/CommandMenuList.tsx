@@ -10,6 +10,7 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useSetRecoilState } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
@@ -93,7 +94,7 @@ export const CommandMenuList = ({
               ) : null,
             )}
             {noResults && !loading && (
-              <StyledEmpty>No results found</StyledEmpty>
+              <StyledEmpty>{t`No results found`}</StyledEmpty>
             )}
           </SelectableList>
         </StyledInnerList>

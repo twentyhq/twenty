@@ -69,8 +69,5 @@ export const ActionDisplay = ({
     );
   }
 
-  return assertUnreachable(
-    displayType,
-    `Unsupported display type: ${displayType}`,
-  );
+  return assertUnreachable(displayType, 'Unsupported display type');
 };
