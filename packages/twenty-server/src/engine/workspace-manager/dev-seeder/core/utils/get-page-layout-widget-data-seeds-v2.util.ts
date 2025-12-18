@@ -6,7 +6,7 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
@@ -66,7 +66,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
           configuration: {
-            configurationType: GraphType.LINE_CHART,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
@@ -95,7 +95,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
           configuration: {
-            configurationType: GraphType.LINE_CHART,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataId: companyCreatedAtFieldId,
@@ -124,7 +124,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
           configuration: {
-            configurationType: GraphType.PIE_CHART,
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             groupByFieldMetadataId: companyNameFieldId,
@@ -152,7 +152,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
           configuration: {
-            configurationType: GraphType.GAUGE_CHART,
+            configurationType: WidgetConfigurationType.GAUGE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
@@ -178,7 +178,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.PIE_CHART,
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             groupByFieldMetadataId: companyLinkedinLinkFieldId,
@@ -206,7 +206,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.PIE_CHART,
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             groupByFieldMetadataId: personJobTitleFieldId,

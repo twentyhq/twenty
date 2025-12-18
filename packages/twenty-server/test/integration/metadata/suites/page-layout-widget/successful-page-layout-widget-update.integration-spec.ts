@@ -11,6 +11,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 type TestContext = {
@@ -101,7 +102,7 @@ describe('Page layout widget update should succeed', () => {
         pageLayoutTabId: testPageLayoutTabId,
         type: WidgetType.IFRAME,
         configuration: {
-          configurationType: 'IFRAME',
+          configurationType: WidgetConfigurationType.IFRAME,
         },
         gridPosition: {
           row: 0,

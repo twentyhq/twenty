@@ -7,7 +7,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
@@ -82,7 +82,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
@@ -106,7 +106,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -132,7 +132,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.BAR_CHART,
+            configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
@@ -163,7 +163,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
           configuration: {
-            configurationType: GraphType.BAR_CHART,
+            configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataId: rocketCreatedAtFieldId,
@@ -191,7 +191,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: opportunityIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -217,7 +217,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -243,7 +243,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
           configuration: {
-            configurationType: GraphType.BAR_CHART,
+            configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
@@ -277,7 +277,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
@@ -301,7 +301,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -324,7 +324,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -348,7 +348,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.BAR_CHART,
+            configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataId: personCityFieldId,
@@ -378,7 +378,7 @@ export const getPageLayoutWidgetDataSeeds = (
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
           configuration: {
-            configurationType: GraphType.AGGREGATE_CHART,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: taskIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,

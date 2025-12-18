@@ -7,6 +7,7 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 describe('Page layout widget creation should fail', () => {
@@ -68,7 +69,7 @@ describe('Page layout widget creation should fail', () => {
         pageLayoutTabId: faker.string.uuid(),
         type: WidgetType.IFRAME,
         configuration: {
-          configurationType: 'IFRAME',
+          configurationType: WidgetConfigurationType.IFRAME,
         },
         gridPosition: {
           row: 0,
@@ -90,7 +91,7 @@ describe('Page layout widget creation should fail', () => {
         pageLayoutTabId: testPageLayoutTabId,
         type: WidgetType.IFRAME,
         configuration: {
-          configurationType: 'IFRAME',
+          configurationType: WidgetConfigurationType.IFRAME,
         },
         gridPosition: {
           row: -1,
