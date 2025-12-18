@@ -106,7 +106,7 @@ export class AppModule {
     // Maybe we don't need to conditionaly register the explorer, because we're creating a jobs module
     // that will expose classes that are only used in the queue worker
     /*
-    if (process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.Sync) {
+    if (process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.SYNC) {
       modules.push(MessageQueueModule.registerExplorer());
     }
     */

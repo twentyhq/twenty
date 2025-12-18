@@ -1,18 +1,18 @@
 import { type BullMQDriverOptions } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 
 export enum MessageQueueDriverType {
-  BullMQ = 'bull-mq',
-  Sync = 'sync',
+  BULL_MQ = 'BULL_MQ',
+  SYNC = 'SYNC',
 }
 
 export interface BullMQDriverFactoryOptions {
-  type: MessageQueueDriverType.BullMQ;
+  type: MessageQueueDriverType.BULL_MQ;
   options: BullMQDriverOptions;
 }
 
 export interface SyncDriverFactoryOptions {
-  type: MessageQueueDriverType.Sync;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type: MessageQueueDriverType.SYNC;
+   
   options: Record<string, any>;
 }
 

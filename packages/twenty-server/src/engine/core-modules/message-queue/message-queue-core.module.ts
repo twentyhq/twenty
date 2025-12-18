@@ -61,7 +61,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       useFactory: async (...args: any[]) => {
         if (options.useFactory) {
           const config = await options.useFactory(...args);
@@ -93,10 +93,10 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
   static async createDriver({ type, options }: typeof OPTIONS_TYPE) {
     switch (type) {
-      case MessageQueueDriverType.BullMQ: {
+      case MessageQueueDriverType.BULL_MQ: {
         return new BullMQDriver(options);
       }
-      case MessageQueueDriverType.Sync: {
+      case MessageQueueDriverType.SYNC: {
         return new SyncDriver();
       }
       default: {

@@ -1,4 +1,4 @@
 export enum MeterDriver {
-  OpenTelemetry = 'opentelemetry',
-  Console = 'console',
+  OPEN_TELEMETRY = 'OPEN_TELEMETRY',
+  CONSOLE = 'CONSOLE',
 }

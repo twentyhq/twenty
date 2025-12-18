@@ -731,7 +731,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.METERING,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
-    options: ['OpenTelemetry', 'Console'],
+    options: ['OPEN_TELEMETRY', 'CONSOLE'],
     isEnvOnly: true,
   })
   @CastToMeterDriverArray()

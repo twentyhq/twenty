@@ -51,7 +51,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 
 const meterProvider = new MeterProvider({
   readers: [
-    ...(meterDrivers.includes(MeterDriver.Console)
+    ...(meterDrivers.includes(MeterDriver.CONSOLE)
       ? [
           new PeriodicExportingMetricReader({
             exporter: new ConsoleMetricExporter(),
@@ -59,7 +59,7 @@ const meterProvider = new MeterProvider({
           }),
         ]
       : []),
-    ...(meterDrivers.includes(MeterDriver.OpenTelemetry)
+    ...(meterDrivers.includes(MeterDriver.OPEN_TELEMETRY)
       ? [
           new PeriodicExportingMetricReader({
             exporter: new OTLPMetricExporter({

@@ -15,12 +15,12 @@ export const messageQueueModuleFactory = async (
   _twentyConfigService: TwentyConfigService,
   redisClientService: RedisClientService,
 ): Promise<MessageQueueModuleOptions> => {
-  const driverType = MessageQueueDriverType.BullMQ;
+  const driverType = MessageQueueDriverType.BULL_MQ;
 
   switch (driverType) {
-    case MessageQueueDriverType.BullMQ: {
+    case MessageQueueDriverType.BULL_MQ: {
       return {
-        type: MessageQueueDriverType.BullMQ,
+        type: MessageQueueDriverType.BULL_MQ,
         options: {
           connection: redisClientService.getQueueClient(),
         },
