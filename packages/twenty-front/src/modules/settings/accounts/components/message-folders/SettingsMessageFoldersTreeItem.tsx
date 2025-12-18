@@ -62,6 +62,8 @@ const StyledFolderContent = styled.div`
   flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFolderInfo = styled.div`
