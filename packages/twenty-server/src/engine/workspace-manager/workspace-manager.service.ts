@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -20,6 +21,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -83,6 +85,10 @@ export class WorkspaceManagerService {
 
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+    const twentyStandardApplication =
+      await this.applicationService.createTwentyStandardApplication({
+        workspaceId,
+      });
 
     const isV2SyncEnabled =
       featureFlags[FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED];
@@ -125,6 +131,10 @@ export class WorkspaceManagerService {
     await this.prefillWorkspaceWithStandardObjectsRecords({
       dataSourceMetadata,
       workspaceId,
+      featureFlags,
+      twentyStandardFlatApplication: fromApplicationEntityToFlatApplication(
+        twentyStandardApplication,
+      ),
     });
 
     const prefillStandardObjectsEnd = performance.now();
@@ -137,9 +147,13 @@ export class WorkspaceManagerService {
   private async prefillWorkspaceWithStandardObjectsRecords({
     dataSourceMetadata,
     workspaceId,
+    featureFlags,
+    twentyStandardFlatApplication,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
+    featureFlags: Record<string, boolean>;
+    twentyStandardFlatApplication: FlatApplication;
   }) {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -155,6 +169,16 @@ export class WorkspaceManagerService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     );
+
+    await prefillCoreViews({
+      twentyStandardFlatApplication,
+      coreDataSource: this.coreDataSource,
+      workspaceId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      workspaceSchemaName: dataSourceMetadata.schema,
+      featureFlags,
+    });
   }
 
   // TODO investigate why some entities are not on cascade delete
