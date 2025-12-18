@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "Μη έγκυρα δεδομένα διάταξης σελίδας."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Μη έγκυρα δεδομένα καρτέλας διάταξης σελίδας."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Μη έγκυρα δεδομένα widget διάταξης σελίδας."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "Δεν βρέθηκε η καρτέλα διάταξης σελίδας"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "Δεν βρέθηκε η καρτέλα διάταξης σελίδας."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "Το widget διάταξης σελίδας δεν έχει διαγραφεί και δεν είναι δυνατή η επαναφορά του."
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Το widget διάταξης σελίδας δεν βρέθηκε."
 

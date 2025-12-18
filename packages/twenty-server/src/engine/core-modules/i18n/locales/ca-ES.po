@@ -2652,12 +2652,12 @@ msgid "Invalid page layout data."
 msgstr "Dades de disposició de pàgina no vàlides."
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr "Dades de pestanya de la disposició de pàgina no vàlides."
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr "Dades del giny de la disposició de pàgina no vàlides."
 
@@ -4001,7 +4001,7 @@ msgid "Page layout tab not found"
 msgstr "No s'ha trobat la pestanya de disposició de pàgina"
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr "No s'ha trobat la pestanya de disposició de pàgina."
 
@@ -4056,7 +4056,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr "El giny de disposició de pàgina no està suprimit i no es pot restaurar"
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr "Giny de la disposició de pàgina no trobat."
 
