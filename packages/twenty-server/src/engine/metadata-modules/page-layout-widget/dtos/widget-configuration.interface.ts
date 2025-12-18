@@ -21,7 +21,7 @@ export const WidgetConfiguration = createUnionType({
     IframeConfigurationDTO,
     StandaloneRichTextConfigurationDTO,
   ],
-  resolveType(configuration: Record<string, unknown>) {
+  resolveType(configuration: ) {
     if (!('configurationType' in configuration)) {
       throw new Error(
         'Widget configuration missing configurationType discriminator. This indicates a validation bug or data corruption.',
@@ -32,16 +32,15 @@ export const WidgetConfiguration = createUnionType({
       configuration.configurationType === WidgetConfigurationTypeDeprecated.CHART_CONFIG
     ) {
       switch (configuration.graphType) {
-        case GraphType.VERTICAL_BAR:
-        case GraphType.HORIZONTAL_BAR:
+        case GraphType.BAR_CHART:
           return BarChartConfigurationDTO;
-        case GraphType.LINE:
+        case GraphType.LINE_CHART:
           return LineChartConfigurationDTO;
-        case GraphType.PIE:
+        case GraphType.PIE_CHART:
           return PieChartConfigurationDTO;
-        case GraphType.AGGREGATE:
+        case GraphType.AGGREGATE_CHART:
           return AggregateChartConfigurationDTO;
-        case GraphType.GAUGE:
+        case GraphType.GAUGE_CHART:
           return GaugeChartConfigurationDTO;
         default:
           throw new Error(`Unknown graph type: ${configuration.graphType}`);

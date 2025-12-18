@@ -29,7 +29,7 @@ export class AggregateChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.AGGREGATE;
+  graphType: GraphType.AGGREGATE_CHART\;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

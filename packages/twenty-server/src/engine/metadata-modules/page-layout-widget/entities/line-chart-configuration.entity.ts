@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -24,13 +25,14 @@ import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('LineChartConfiguration')
-export class LineChartConfigurationEntity {
+export class LineChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
-  @IsEnum(GraphType)
+  @IsIn([GraphType.LINE_CHART])
   @IsNotEmpty()
-  graphType: GraphType.LINE;
+  configurationType: GraphType.LINE_CHART;
 
   @Field(() => UUIDScalarType)
   @IsUUID()

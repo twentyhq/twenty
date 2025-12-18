@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -23,13 +24,14 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RatioAggregateConfigEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/ratio-aggregate-config.entity';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('AggregateChartConfiguration')
-export class AggregateChartConfigurationEntity {
+export class AggregateChartConfigurationEntity implements PageLayoutWidgetConfigurationBase {
   @Field(() => GraphType)
-  @IsEnum(GraphType)
+  @IsIn([GraphType.AGGREGATE_CHART\])
   @IsNotEmpty()
-  graphType: GraphType.AGGREGATE;
+  configurationType: GraphType.AGGREGATE_CHART\;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
