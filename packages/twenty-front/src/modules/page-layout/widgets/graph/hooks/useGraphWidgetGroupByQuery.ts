@@ -1,4 +1,4 @@
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -57,7 +57,10 @@ export const useGraphWidgetGroupByQuery = ({
     throw new Error('Aggregate operation not found');
   }
 
-  const groupByQueryVariables = isPieChartConfiguration(configuration)
+  const groupByQueryVariables = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  )
     ? generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem,
         objectMetadataItems,

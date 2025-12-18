@@ -3,8 +3,7 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -111,8 +110,18 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           graphType === GraphType.HORIZONTAL_BAR ||
           graphType === GraphType.LINE;
         const wasBarOrLineChart =
-          isBarOrLineChartConfiguration(currentConfiguration);
-        const wasPieChart = isPieChartConfiguration(currentConfiguration);
+          isWidgetConfigurationOfType(
+            currentConfiguration,
+            'BarChartConfiguration',
+          ) ||
+          isWidgetConfigurationOfType(
+            currentConfiguration,
+            'LineChartConfiguration',
+          );
+        const wasPieChart = isWidgetConfigurationOfType(
+          currentConfiguration,
+          'PieChartConfiguration',
+        );
 
         if (isPieChart && wasBarOrLineChart) {
           configToUpdate = {
