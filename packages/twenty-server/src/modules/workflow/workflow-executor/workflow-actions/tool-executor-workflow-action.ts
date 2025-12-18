@@ -53,10 +53,7 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       if (sendEmailInput.body) {
         toolInput = {
           ...sendEmailInput,
-          body: resolveRichTextVariables(
-            sendEmailInput.body,
-            context,
-          ),
+          body: resolveRichTextVariables(sendEmailInput.body, context),
         };
       }
     }

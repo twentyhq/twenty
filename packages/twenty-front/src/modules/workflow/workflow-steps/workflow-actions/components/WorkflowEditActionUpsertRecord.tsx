@@ -268,7 +268,7 @@ export const WorkflowEditActionUpsertRecord = ({
               <FormSingleRecordPicker
                 key="id"
                 testId="workflow-upsert-record-id"
-                label="Record (ID)"
+                label={t`Record (ID)`}
                 onChange={(recordId) => {
                   handleFieldChange('id', recordId);
                 }}
