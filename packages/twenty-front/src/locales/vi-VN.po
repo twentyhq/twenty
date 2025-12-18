@@ -9108,11 +9108,6 @@ msgstr "bản ghi"
 msgid "Record"
 msgstr "Ghi lại"
 
-#. js-lingui-id: aGGOPJ
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
-msgid "Record (ID)"
-msgstr "Bản ghi (ID)"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
