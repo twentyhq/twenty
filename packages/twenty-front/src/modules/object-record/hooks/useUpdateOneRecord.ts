@@ -118,12 +118,15 @@ export const useUpdateOneRecord = <
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
-        objectMetadataItem,
-        objectMetadataItems,
-        record: optimisticRecordInput,
-        depth: 1,
-      });
+      const recordGqlFields = {
+        ...computedRecordGqlFields,
+        ...generateDepthRecordGqlFieldsFromRecord({
+          objectMetadataItem,
+          objectMetadataItems,
+          record: optimisticRecordInput,
+          depth: 1,
+        }),
+      };
 
       updateRecordFromCache({
         objectMetadataItems,
