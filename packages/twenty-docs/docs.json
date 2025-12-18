@@ -351,19 +351,9 @@
                   {
                     "group": "Capabilities",
                     "pages": [
-                      "developers/extend/capabilities/apis-overview",
-                      "developers/extend/capabilities/api",
-                      "developers/extend/capabilities/api-keys",
+                      "developers/extend/capabilities/apis",
                       "developers/extend/capabilities/webhooks",
-                      "developers/extend/capabilities/integrations"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "developers/extend/how-tos/authenticate-with-api",
-                      "developers/extend/how-tos/make-first-api-call",
-                      "developers/extend/how-tos/set-up-webhooks"
+                      "developers/extend/capabilities/apps"
                     ]
                   }
                 ]
@@ -381,14 +371,6 @@
                       "developers/self-host/capabilities/upgrade-guide",
                       "developers/self-host/capabilities/cloud-providers",
                       "developers/self-host/capabilities/troubleshooting"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "developers/self-host/how-tos/deploy-with-docker",
-                      "developers/self-host/how-tos/configure-environment",
-                      "developers/self-host/how-tos/backup-your-data"
                     ]
                   }
                 ]
@@ -476,13 +458,6 @@
                           "developers/contribute/capabilities/backend-development/queue"
                         ]
                       }
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "developers/contribute/how-tos/set-up-dev-environment",
-                      "developers/contribute/how-tos/submit-pull-request"
                     ]
                   }
                 ]

@@ -1,10 +1,7 @@
 ---
 title: Troubleshooting
-image: /images/user-guide/what-is-twenty/20.png
 ---
-<Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
-</Frame>
+
 
 ## Troubleshooting
 
@@ -71,25 +68,25 @@ This should work out of the box with the eslint extension installed. If this doe
 
 In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
-**If it does not work:**  
+**If it does not work:**
 Run only the services you need, instead of `npx nx start`. For instance, if you work on the server, run only `npx nx worker twenty-server`
 
-**If it does not work:**  
+**If it does not work:**
 If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
 Workaround is to execute below command in terminal or add it in .bashrc profile to get setup automatically:
 
-`export NODE_OPTIONS="--max-old-space-size=8192"`  
+`export NODE_OPTIONS="--max-old-space-size=8192"`
 
 The --max-old-space-size=8192 flag sets an upper limit of 8GB for the Node.js heap; usage scales with application demand.
 Reference: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**  
-Investigate which processes are taking you most of your machine RAM. At Twenty, we noticed that some VScode extensions were taking a lot of RAM so we temporarily disable them. 
+**If it does not work:**
+Investigate which processes are taking you most of your machine RAM. At Twenty, we noticed that some VScode extensions were taking a lot of RAM so we temporarily disable them.
 
-**If it does not work:**  
+**If it does not work:**
 Restart your machine helps to clean up ghost processes.
 
 #### While running `npx nx start` there are weird [0] and [1] in logs
@@ -97,16 +94,16 @@ Restart your machine helps to clean up ghost processes.
 That's expected as command `npx nx start` is running more commands under the hood
 
 #### No emails are sent
-Most of the time, it's because the `worker` is not running in the background. Try to run 
+Most of the time, it's because the `worker` is not running in the background. Try to run
 ```
 npx nx worker twenty-server
 ```
 
 #### Cannot connect my Microsoft 365 account
 
-Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).  
+Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
-If you have an error code `AADSTS50020`, it probably means that you are using a personal Microsoft account. This is not supported yet. More info [here](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist) 
+If you have an error code `AADSTS50020`, it probably means that you are using a personal Microsoft account. This is not supported yet. More info [here](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
 #### While running `yarn` warnings appear in console
 
@@ -181,7 +178,7 @@ If you can't log in after setup:
     docker compose up -d
     ```
 
-Note the database:reset command will completely erase your database and recreate it from scratch. 
+Note the database:reset command will completely erase your database and recreate it from scratch.
 
 #### Connection Issues Behind a Reverse Proxy
 

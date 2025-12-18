@@ -1,14 +1,11 @@
 ---
 title: Style Guide
-image: /images/user-guide/notes/notes_header.png
 ---
-<Frame>
-  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
-</Frame>
+
 
 This document includes the rules to follow when writing code.
 
-The goal here is to have a consistent codebase, which is easy to read and easy to maintain. 
+The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
 
 For this, it's better to be a bit more verbose than to be too concise.
 
@@ -71,11 +68,11 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
  *      component's props
  *    - This method doesn't automatically include the children prop. If
  *      you want to include it, you have to specify it in OwnProps.
- */ 
+ */
 type EmailFieldProps = {
   value: string;
 };
@@ -100,7 +97,7 @@ const MyComponent = (props: OwnProps) => {
 ```tsx
 /* ✅ - Good, Explicitly lists all props
  *    - Enhances readability and maintainability
- */ 
+ */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
 };
@@ -111,7 +108,7 @@ Rationale:
 - It helps to prevent tight coupling between components via their props.
 - Linting tools make it easier to identify misspelled or unused props when you list props explicitly.
 
-## JavaScript 
+## JavaScript
 
 ### Use nullish-coalescing operator `??`
 
@@ -126,7 +123,7 @@ const value = process.env.MY_VALUE ?? 'default';
 ### Use optional chaining `?.`
 
 ```tsx
-// ❌ Bad 
+// ❌ Bad
 onClick && onClick();
 
 // ✅ Good
@@ -155,7 +152,7 @@ type MyType = {
 
 [String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, specially with code completion.
 
-You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums). 
+You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
 // ❌ Bad, utilizes an enum
@@ -180,7 +177,7 @@ You should use enums that GraphQL codegen generates.
 
 It's also better to use an enum when using an internal library, so the internal library doesn't have to expose a string literal type that is not related to the internal API.
 
-Example: 
+Example:
 
 ```TSX
 const {
@@ -263,7 +260,7 @@ const StyledButton = styled.button`
 ```
 ## Enforcing No-Type Imports
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code. 
+Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
 
 ```tsx
 // ❌ Bad

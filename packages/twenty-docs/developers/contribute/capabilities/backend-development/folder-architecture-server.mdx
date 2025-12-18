@@ -1,18 +1,15 @@
 ---
 title: Folder Architecture
 info: A detailed look into our server folder architecture
-image: /images/user-guide/fields/field.png
 ---
-<Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
-</Frame>
+
 
 The backend directory structure is as follows:
 
 ```
 server
   └───ability
-  └───constants 
+  └───constants
   └───core
   └───database
   └───decorators
@@ -29,19 +26,19 @@ server
 
 Defines permissions and includes handlers for each entity.
 
-## Decorators 
+## Decorators
 
-Defines custom decorators in NestJS for added functionality. 
+Defines custom decorators in NestJS for added functionality.
 
 See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
 
 ## Filters
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints. 
+Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
 
 ## Guards
 
-See [guards](https://docs.nestjs.com/guards) for more details. 
+See [guards](https://docs.nestjs.com/guards) for more details.
 
 ## Health
 
@@ -53,15 +50,15 @@ Defines custom objects and makes available a GraphQL API (graphql/metadata).
 
 ## Workspace
 
-Generates and serves custom GraphQL schema based on the metadata. 
+Generates and serves custom GraphQL schema based on the metadata.
 
-### Workspace Directory Structure 
+### Workspace Directory Structure
 
 ```
 workspace
 
   └───workspace-schema-builder
-    └───factories 
+    └───factories
     └───graphql-types
     └───database
     └───interfaces
@@ -77,28 +74,28 @@ workspace
     └───interfaces
   └───workspace-query-runner
     └───interfaces
-    └───utils 
+    └───utils
   └───workspace-datasource
   └───workspace-manager
   └───workspace-migration-runner
-  └───utils 
-  └───workspace.module.ts   
-  └───workspace.factory.spec.ts    
-  └───workspace.factory.ts      
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
 ```
 
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements. 
+The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
 
 This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
 
 ### Workspace Schema builder
 
-Generates the GraphQL schema, and includes:  
+Generates the GraphQL schema, and includes:
 
-#### Factories: 
+#### Factories:
 
-Specialised constructors to generate GraphQL-related constructs.  
+Specialised constructors to generate GraphQL-related constructs.
 - The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
 - The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
 
@@ -114,17 +111,17 @@ Contains the blueprints for GraphQL entities, and includes both predefined and c
 
 Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
 
-#### Storage 
+#### Storage
 
 Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
 
-### Workspace Resolver Builder 
+### Workspace Resolver Builder
 
 Creates resolver functions for querying and mutating the GraphQL schema.
 
 Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
 
-### Workspace Query Runner 
+### Workspace Query Runner
 
 Runs the generated queries on the database and parses the result.
 

@@ -1,10 +1,7 @@
 ---
 title: Hotkeys
-image: /images/user-guide/table-views/table.png
 ---
-<Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
-</Frame>
+
 
 ## Introduction
 
@@ -38,7 +35,7 @@ The second use case can happen recursively : a dropdown in a modal for example.
 
 ### Listening to hotkeys in a page
 
-Example : 
+Example :
 
 ```tsx
 const PageListeningEnter = () => {
@@ -129,7 +126,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts. 
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
 Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
@@ -162,7 +159,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Recoil state that is shared across the application : 
+Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
