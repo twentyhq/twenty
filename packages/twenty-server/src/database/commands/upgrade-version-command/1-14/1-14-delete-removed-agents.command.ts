@@ -100,6 +100,8 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
       this.logger.error(
         `Failed to delete workspace agents \n ${JSON.stringify(error, null, 2)}`,
       );
+
+      throw error;
     }
 
     this.logger.log(
@@ -144,6 +146,8 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
       this.logger.error(
         `Failed to delete workspace roles \n ${JSON.stringify(error, null, 2)}`,
       );
+
+      throw error;
     }
 
     this.logger.log(
