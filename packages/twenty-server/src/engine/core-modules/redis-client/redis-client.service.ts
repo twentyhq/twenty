@@ -2,6 +2,7 @@ import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
 import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -9,6 +10,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
   private redisQueueClient: IORedis | null = null;
+  private pubSubRedisClient: RedisPubSub;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -44,6 +46,19 @@ export class RedisClientService implements OnModuleDestroy {
     }
 
     return this.redisClient;
+  }
+
+  getPubSubClient() {
+    if (!this.pubSubRedisClient) {
+      const redisClient = this.getClient();
+
+      this.pubSubRedisClient = new RedisPubSub({
+        publisher: redisClient.duplicate(),
+        subscriber: redisClient.duplicate(),
+      });
+    }
+
+    return this.pubSubRedisClient;
   }
 
   async onModuleDestroy() {

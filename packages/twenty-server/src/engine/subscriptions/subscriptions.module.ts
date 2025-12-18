@@ -12,10 +12,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
       inject: [RedisClientService],
 
       useFactory: (redisClientService: RedisClientService) =>
-        new RedisPubSub({
-          publisher: redisClientService.getClient().duplicate(),
-          subscriber: redisClientService.getClient().duplicate(),
-        }),
+        redisClientService.getPubSubClient(),
     },
     SubscriptionService,
   ],
