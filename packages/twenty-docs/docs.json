@@ -3542,5 +3542,455 @@
       "twitter": "https://twitter.com/twentycrm",
       "discord": "https://discord.gg/cx5n4Jzs57"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/developers/local-setup",
+      "destination": "/developers/contribute/capabilities/local-setup"
+    },
+    {
+      "source": "/developers/self-hosting",
+      "destination": "/developers/self-host/self-host"
+    },
+    {
+      "source": "/developers/self-hosting/docker-compose",
+      "destination": "/developers/self-host/capabilities/docker-compose"
+    },
+    {
+      "source": "/developers/self-hosting/setup",
+      "destination": "/developers/self-host/capabilities/setup"
+    },
+    {
+      "source": "/developers/self-hosting/upgrade-guide",
+      "destination": "/developers/self-host/capabilities/upgrade-guide"
+    },
+    {
+      "source": "/developers/self-hosting/cloud-providers",
+      "destination": "/developers/self-host/capabilities/cloud-providers"
+    },
+    {
+      "source": "/developers/self-hosting/troubleshooting",
+      "destination": "/developers/self-host/capabilities/troubleshooting"
+    },
+    {
+      "source": "/developers/api-and-webhooks",
+      "destination": "/developers/extend/extend"
+    },
+    {
+      "source": "/developers/api-and-webhooks/apis-overview",
+      "destination": "/developers/extend/capabilities/apis"
+    },
+    {
+      "source": "/developers/api-and-webhooks/api",
+      "destination": "/developers/extend/capabilities/apis"
+    },
+    {
+      "source": "/developers/api-and-webhooks/api-keys",
+      "destination": "/developers/extend/capabilities/apis"
+    },
+    {
+      "source": "/developers/api-and-webhooks/webhooks",
+      "destination": "/developers/extend/capabilities/webhooks"
+    },
+    {
+      "source": "/developers/api-and-webhooks/integrations",
+      "destination": "/developers/extend/capabilities/apis"
+    },
+    {
+      "source": "/developers/bugs-and-requests",
+      "destination": "/developers/contribute/capabilities/bug-and-requests"
+    },
+    {
+      "source": "/developers/frontend-development",
+      "destination": "/developers/contribute/contribute"
+    },
+    {
+      "source": "/developers/frontend-development/frontend-commands",
+      "destination": "/developers/contribute/capabilities/frontend-development/frontend-commands"
+    },
+    {
+      "source": "/developers/frontend-development/best-practices-front",
+      "destination": "/developers/contribute/capabilities/frontend-development/best-practices-front"
+    },
+    {
+      "source": "/developers/frontend-development/folder-architecture-front",
+      "destination": "/developers/contribute/capabilities/frontend-development/folder-architecture-front"
+    },
+    {
+      "source": "/developers/frontend-development/hotkeys",
+      "destination": "/developers/contribute/capabilities/frontend-development/hotkeys"
+    },
+    {
+      "source": "/developers/frontend-development/storybook",
+      "destination": "/developers/contribute/capabilities/frontend-development/storybook"
+    },
+    {
+      "source": "/developers/frontend-development/style-guide",
+      "destination": "/developers/contribute/capabilities/frontend-development/style-guide"
+    },
+    {
+      "source": "/developers/frontend-development/work-with-figma",
+      "destination": "/developers/contribute/capabilities/frontend-development/work-with-figma"
+    },
+    {
+      "source": "/developers/backend-development",
+      "destination": "/developers/contribute/contribute"
+    },
+    {
+      "source": "/developers/backend-development/server-commands",
+      "destination": "/developers/contribute/capabilities/backend-development/server-commands"
+    },
+    {
+      "source": "/developers/backend-development/best-practices-server",
+      "destination": "/developers/contribute/capabilities/backend-development/best-practices-server"
+    },
+    {
+      "source": "/developers/backend-development/custom-objects",
+      "destination": "/developers/contribute/capabilities/backend-development/custom-objects"
+    },
+    {
+      "source": "/developers/backend-development/feature-flags",
+      "destination": "/developers/contribute/capabilities/backend-development/feature-flags"
+    },
+    {
+      "source": "/developers/backend-development/folder-architecture-server",
+      "destination": "/developers/contribute/capabilities/backend-development/folder-architecture-server"
+    },
+    {
+      "source": "/developers/backend-development/queue",
+      "destination": "/developers/contribute/capabilities/backend-development/queue"
+    },
+    {
+      "source": "/developers/backend-development/zapier",
+      "destination": "/developers/contribute/capabilities/backend-development/zapier"
+    },
+    {
+      "source": "/user-guide/getting-started/what-is-twenty",
+      "destination": "/user-guide/getting-started/capabilities/what-is-twenty"
+    },
+    {
+      "source": "/user-guide/getting-started/implementation-services",
+      "destination": "/user-guide/getting-started/capabilities/implementation-services"
+    },
+    {
+      "source": "/user-guide/getting-started/glossary",
+      "destination": "/user-guide/getting-started/capabilities/glossary"
+    },
+    {
+      "source": "/user-guide/getting-started/create-workspace",
+      "destination": "/user-guide/getting-started/how-tos/create-workspace"
+    },
+    {
+      "source": "/user-guide/getting-started/navigate-around-twenty",
+      "destination": "/user-guide/getting-started/how-tos/navigate-around-twenty"
+    },
+    {
+      "source": "/user-guide/getting-started/configure-your-workspace",
+      "destination": "/user-guide/getting-started/how-tos/configure-your-workspace"
+    },
+    {
+      "source": "/user-guide/data-model/objects",
+      "destination": "/user-guide/data-model/capabilities/objects"
+    },
+    {
+      "source": "/user-guide/data-model/fields",
+      "destination": "/user-guide/data-model/capabilities/fields"
+    },
+    {
+      "source": "/user-guide/data-model/relation-fields",
+      "destination": "/user-guide/data-model/capabilities/relation-fields"
+    },
+    {
+      "source": "/user-guide/data-model/create-custom-objects",
+      "destination": "/user-guide/data-model/how-tos/create-custom-objects"
+    },
+    {
+      "source": "/user-guide/data-model/create-custom-fields",
+      "destination": "/user-guide/data-model/how-tos/create-custom-fields"
+    },
+    {
+      "source": "/user-guide/data-model/create-relation-fields",
+      "destination": "/user-guide/data-model/how-tos/create-relation-fields"
+    },
+    {
+      "source": "/user-guide/data-model/customize-your-data-model",
+      "destination": "/user-guide/data-model/how-tos/customize-your-data-model"
+    },
+    {
+      "source": "/user-guide/data-model/data-model-faq",
+      "destination": "/user-guide/data-model/how-tos/data-model-faq"
+    },
+    {
+      "source": "/user-guide/data-migration/file-formats",
+      "destination": "/user-guide/data-migration/capabilities/file-formats"
+    },
+    {
+      "source": "/user-guide/data-migration/field-mapping",
+      "destination": "/user-guide/data-migration/capabilities/field-mapping"
+    },
+    {
+      "source": "/user-guide/data-migration/uniqueness-constraints",
+      "destination": "/user-guide/data-migration/capabilities/uniqueness-constraints"
+    },
+    {
+      "source": "/user-guide/data-migration/import-relations",
+      "destination": "/user-guide/data-migration/capabilities/import-relations"
+    },
+    {
+      "source": "/user-guide/data-migration/error-handling",
+      "destination": "/user-guide/data-migration/capabilities/error-handling"
+    },
+    {
+      "source": "/user-guide/data-migration/prepare-your-csv-files",
+      "destination": "/user-guide/data-migration/how-tos/prepare-your-csv-files"
+    },
+    {
+      "source": "/user-guide/data-migration/import-companies-via-csv",
+      "destination": "/user-guide/data-migration/how-tos/import-companies-via-csv"
+    },
+    {
+      "source": "/user-guide/data-migration/import-contacts-via-csv",
+      "destination": "/user-guide/data-migration/how-tos/import-contacts-via-csv"
+    },
+    {
+      "source": "/user-guide/data-migration/import-relations-between-objects-via-csv",
+      "destination": "/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv"
+    },
+    {
+      "source": "/user-guide/data-migration/update-existing-records-via-import",
+      "destination": "/user-guide/data-migration/how-tos/update-existing-records-via-import"
+    },
+    {
+      "source": "/user-guide/data-migration/fix-import-errors",
+      "destination": "/user-guide/data-migration/how-tos/fix-import-errors"
+    },
+    {
+      "source": "/user-guide/data-migration/export-your-data",
+      "destination": "/user-guide/data-migration/how-tos/export-your-data"
+    },
+    {
+      "source": "/user-guide/data-migration/import-data-via-api",
+      "destination": "/user-guide/data-migration/how-tos/import-data-via-api"
+    },
+    {
+      "source": "/user-guide/data-migration/migrating-from-other-crms",
+      "destination": "/user-guide/data-migration/how-tos/migrating-from-other-crms"
+    },
+    {
+      "source": "/user-guide/data-migration/migrating-from-self-hosted-to-cloud",
+      "destination": "/user-guide/data-migration/how-tos/migrating-from-self-hosted-to-cloud"
+    },
+    {
+      "source": "/user-guide/calendar-emails/mailbox",
+      "destination": "/user-guide/calendar-emails/capabilities/mailbox"
+    },
+    {
+      "source": "/user-guide/calendar-emails/calendar",
+      "destination": "/user-guide/calendar-emails/capabilities/calendar"
+    },
+    {
+      "source": "/user-guide/calendar-emails/connect-several-mailboxes-per-user",
+      "destination": "/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user"
+    },
+    {
+      "source": "/user-guide/calendar-emails/limit-emails-imported",
+      "destination": "/user-guide/calendar-emails/how-tos/limit-emails-imported"
+    },
+    {
+      "source": "/user-guide/calendar-emails/can-i-track-email-activity-on-all-objects",
+      "destination": "/user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects"
+    },
+    {
+      "source": "/user-guide/calendar-emails/can-i-send-emails-from-twenty",
+      "destination": "/user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty"
+    },
+    {
+      "source": "/user-guide/calendar-emails/can-i-book-meetings-from-twenty",
+      "destination": "/user-guide/calendar-emails/how-tos/can-i-book-meetings-from-twenty"
+    },
+    {
+      "source": "/user-guide/calendar-emails/i-dont-see-emails-on-records",
+      "destination": "/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-triggers",
+      "destination": "/user-guide/workflows/capabilities/workflow-triggers"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-actions",
+      "destination": "/user-guide/workflows/capabilities/workflow-actions"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-branches",
+      "destination": "/user-guide/workflows/capabilities/workflow-branches"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-runs",
+      "destination": "/user-guide/workflows/capabilities/workflow-runs"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-versions",
+      "destination": "/user-guide/workflows/capabilities/workflow-versions"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-credits",
+      "destination": "/user-guide/workflows/capabilities/workflow-credits"
+    },
+    {
+      "source": "/user-guide/workflows/use-branches-in-workflows",
+      "destination": "/user-guide/workflows/capabilities/use-branches-in-workflows"
+    },
+    {
+      "source": "/user-guide/workflows/use-iterator",
+      "destination": "/user-guide/workflows/capabilities/use-iterator"
+    },
+    {
+      "source": "/user-guide/workflows/send-emails-from-workflows",
+      "destination": "/user-guide/workflows/capabilities/send-emails-from-workflows"
+    },
+    {
+      "source": "/user-guide/workflows/workflow-troubleshooting",
+      "destination": "/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting"
+    },
+    {
+      "source": "/user-guide/workflows/workflows-faq",
+      "destination": "/user-guide/workflows/how-tos/need-more-help/workflows-faq"
+    },
+    {
+      "source": "/user-guide/workflows/professional-services",
+      "destination": "/user-guide/workflows/how-tos/need-more-help/professional-services"
+    },
+    {
+      "source": "/user-guide/ai/ai-chatbot",
+      "destination": "/user-guide/ai/capabilities/ai-chatbot"
+    },
+    {
+      "source": "/user-guide/ai/ai-agents",
+      "destination": "/user-guide/ai/capabilities/ai-agents"
+    },
+    {
+      "source": "/user-guide/ai/permissions-access-control",
+      "destination": "/user-guide/ai/capabilities/permissions-access-control"
+    },
+    {
+      "source": "/user-guide/ai/ai-faq",
+      "destination": "/user-guide/ai/how-tos/ai-faq"
+    },
+    {
+      "source": "/user-guide/views-pipelines/table-views",
+      "destination": "/user-guide/views-pipelines/capabilities/table-views"
+    },
+    {
+      "source": "/user-guide/views-pipelines/kanban-views",
+      "destination": "/user-guide/views-pipelines/capabilities/kanban-views"
+    },
+    {
+      "source": "/user-guide/views-pipelines/calendar-view",
+      "destination": "/user-guide/views-pipelines/capabilities/calendar-view"
+    },
+    {
+      "source": "/user-guide/views-pipelines/filters-and-sorting",
+      "destination": "/user-guide/views-pipelines/capabilities/filters-and-sorting"
+    },
+    {
+      "source": "/user-guide/views-pipelines/fields-and-columns",
+      "destination": "/user-guide/views-pipelines/capabilities/fields-and-columns"
+    },
+    {
+      "source": "/user-guide/views-pipelines/view-settings",
+      "destination": "/user-guide/views-pipelines/capabilities/view-settings"
+    },
+    {
+      "source": "/user-guide/views-pipelines/create-a-table-view-with-grouping",
+      "destination": "/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping"
+    },
+    {
+      "source": "/user-guide/views-pipelines/create-a-kanban-view-for-projects",
+      "destination": "/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects"
+    },
+    {
+      "source": "/user-guide/views-pipelines/create-a-calendar-view-for-tasks-due",
+      "destination": "/user-guide/views-pipelines/how-tos/create-a-calendar-view-for-tasks-due"
+    },
+    {
+      "source": "/user-guide/views-pipelines/restrict-access-to-your-view",
+      "destination": "/user-guide/views-pipelines/how-tos/restrict-access-to-your-view"
+    },
+    {
+      "source": "/user-guide/views-pipelines/set-up-a-sales-pipeline",
+      "destination": "/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline"
+    },
+    {
+      "source": "/user-guide/views-pipelines/show-expected-amount-in-pipeline",
+      "destination": "/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline"
+    },
+    {
+      "source": "/user-guide/views-pipelines/track-time-in-stage",
+      "destination": "/user-guide/views-pipelines/how-tos/track-time-in-stage"
+    },
+    {
+      "source": "/user-guide/dashboards/dashboards",
+      "destination": "/user-guide/dashboards/capabilities/dashboards"
+    },
+    {
+      "source": "/user-guide/dashboards/widgets",
+      "destination": "/user-guide/dashboards/capabilities/widgets"
+    },
+    {
+      "source": "/user-guide/dashboards/dashboards-faq",
+      "destination": "/user-guide/dashboards/how-tos/dashboards-faq"
+    },
+    {
+      "source": "/user-guide/permissions-access/permissions",
+      "destination": "/user-guide/permissions-access/capabilities/permissions"
+    },
+    {
+      "source": "/user-guide/permissions-access/sso-configuration",
+      "destination": "/user-guide/permissions-access/capabilities/sso-configuration"
+    },
+    {
+      "source": "/user-guide/permissions-access/permissions-faq",
+      "destination": "/user-guide/permissions-access/how-tos/permissions-faq"
+    },
+    {
+      "source": "/user-guide/billing/pricing-plans",
+      "destination": "/user-guide/billing/capabilities/pricing-plans"
+    },
+    {
+      "source": "/user-guide/billing/workflow-credits",
+      "destination": "/user-guide/billing/capabilities/workflow-credits"
+    },
+    {
+      "source": "/user-guide/billing/billing-faq",
+      "destination": "/user-guide/billing/how-tos/billing-faq"
+    },
+    {
+      "source": "/user-guide/settings/workspace-settings",
+      "destination": "/user-guide/settings/capabilities/workspace-settings"
+    },
+    {
+      "source": "/user-guide/settings/member-management",
+      "destination": "/user-guide/settings/capabilities/member-management"
+    },
+    {
+      "source": "/user-guide/settings/profile-settings",
+      "destination": "/user-guide/settings/capabilities/profile-settings"
+    },
+    {
+      "source": "/user-guide/settings/experience-settings",
+      "destination": "/user-guide/settings/capabilities/experience-settings"
+    },
+    {
+      "source": "/user-guide/settings/domains-settings",
+      "destination": "/user-guide/settings/capabilities/domains-settings"
+    },
+    {
+      "source": "/user-guide/settings/releases-settings",
+      "destination": "/user-guide/settings/capabilities/releases-settings"
+    },
+    {
+      "source": "/user-guide/settings/settings-faq",
+      "destination": "/user-guide/settings/how-tos/settings-faq"
+    }
+  ]
 }
