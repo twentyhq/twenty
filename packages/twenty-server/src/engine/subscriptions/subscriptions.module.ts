@@ -4,7 +4,6 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
-import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.service';
 
 @Module({
   providers: [
@@ -19,9 +18,8 @@ import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.ser
         }),
     },
     SubscriptionsResolver,
-    SubscriptionsService,
   ],
-  exports: ['PUB_SUB', SubscriptionsService],
+  exports: ['PUB_SUB'],
 })
 export class SubscriptionsModule implements OnModuleDestroy {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}

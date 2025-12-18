@@ -8,7 +8,7 @@ import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/ut
 import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
 
 @Injectable()
-export class SubscriptionsService {
+export class WorkspaceEventEmitterService {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
   async publish(
