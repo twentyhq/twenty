@@ -36,9 +36,6 @@ export class ViewFieldV2Service {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  /**
-   * Helper method to invalidate and recompute view field and view caches
-   */
   private async invalidateAndRecomputeViewFieldMaps(
     workspaceId: string,
   ): Promise<void> {
@@ -304,22 +301,13 @@ export class ViewFieldV2Service {
       );
     }
 
+    const viewFieldDto = fromFlatViewFieldToViewFieldDto(
+      existingViewFieldToDelete,
+    );
+
     await this.invalidateAndRecomputeViewFieldMaps(workspaceId);
 
-    const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
-        },
-      );
-
-    return fromFlatViewFieldToViewFieldDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: existingViewFieldToDelete.id,
-        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
-      }),
-    );
+    return viewFieldDto;
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
