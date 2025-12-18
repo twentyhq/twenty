@@ -51,10 +51,13 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       const sendEmailInput = toolInput as WorkflowSendEmailActionInput;
 
       if (sendEmailInput.body) {
-        sendEmailInput.body = resolveRichTextVariables(
-          sendEmailInput.body,
-          context,
-        );
+        toolInput = {
+          ...sendEmailInput,
+          body: resolveRichTextVariables(
+            sendEmailInput.body,
+            context,
+          ),
+        };
       }
     }
 
