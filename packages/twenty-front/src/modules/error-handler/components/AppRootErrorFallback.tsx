@@ -109,11 +109,11 @@ export const AppRootErrorFallback = ({
           <StyledImageContainer>
             <StyledBackgroundImage
               src="/images/placeholders/background/error_index_bg.png"
-              alt="Background"
+              alt={t`Background`}
             />
             <StyledInnerImage
               src="/images/placeholders/moving-image/error_index.png"
-              alt="Inner"
+              alt={t`Error illustration`}
             />
           </StyledImageContainer>
           <StyledEmptyTextContainer>
@@ -124,7 +124,7 @@ export const AppRootErrorFallback = ({
           </StyledEmptyTextContainer>
           <StyledButton onClick={resetErrorBoundary}>
             <StyledIcon size={16} />
-            Reload
+            {t`Reload`}
           </StyledButton>
         </StyledEmptyContainer>
       </StyledPanel>

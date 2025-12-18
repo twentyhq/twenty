@@ -10,7 +10,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 type TestContext = {
   input: {

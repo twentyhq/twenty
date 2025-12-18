@@ -102,6 +102,7 @@ describe('useEndPageLayoutDragSelection', () => {
 
     expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
       commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      resetNavigationStack: true,
     });
   });
 

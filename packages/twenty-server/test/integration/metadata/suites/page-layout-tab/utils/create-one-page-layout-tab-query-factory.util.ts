@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
+import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 
 export type CreateOnePageLayoutTabFactoryInput = CreatePageLayoutTabInput;
 

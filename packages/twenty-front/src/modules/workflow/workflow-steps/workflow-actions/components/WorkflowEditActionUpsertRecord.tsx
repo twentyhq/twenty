@@ -219,11 +219,11 @@ export const WorkflowEditActionUpsertRecord = ({
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-upsert-record-object-name"
-          label="Object"
+          label={t`Object`}
           fullWidth
           disabled={isFormDisabled}
           value={formData.objectName}
-          emptyOption={{ label: 'Select an option', value: '' }}
+          emptyOption={{ label: t`Select an option`, value: '' }}
           options={availableMetadata}
           onChange={(updatedObjectName) => {
             const newFormData: UpsertRecordFormData = {
@@ -268,7 +268,7 @@ export const WorkflowEditActionUpsertRecord = ({
               <FormSingleRecordPicker
                 key="id"
                 testId="workflow-upsert-record-id"
-                label={t`Record (ID)`}
+                label="Record (ID)"
                 onChange={(recordId) => {
                   handleFieldChange('id', recordId);
                 }}

@@ -17,6 +17,7 @@ import { evaluateTabVisibility } from '@/object-record/record-show/utils/evaluat
 import { type RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconHome, useIcons } from 'twenty-ui/display';
@@ -40,6 +41,7 @@ export const useRecordShowContainerTabs = (
   isInRightDrawer: boolean,
   objectMetadataItem: ObjectMetadataItem,
 ): { layout: RecordLayout; tabs: SingleTabProps[] } => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -109,7 +111,7 @@ export const useRecordShowContainerTabs = (
               ...acc,
               {
                 id: 'home',
-                title: 'Home',
+                title: t`Home`,
                 Icon: IconHome,
                 cards: [
                   ...(tab.hide ? [] : tab.cards),

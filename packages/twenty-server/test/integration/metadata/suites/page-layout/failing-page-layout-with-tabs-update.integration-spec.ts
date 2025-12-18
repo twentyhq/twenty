@@ -2,7 +2,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 describe('Page layout with tabs update should fail', () => {
   it('when updating a non-existent page layout', async () => {

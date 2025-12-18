@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
+import { type UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 
 export type UpdateOnePageLayoutTabFactoryInput = {
   id: string;

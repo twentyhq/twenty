@@ -21,7 +21,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/display';
 
@@ -110,7 +110,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
       <SelectableList
         selectableItemIdArray={selectableFieldMetadataItemIds}
         selectableListInstanceId={FILTER_FIELD_LIST_ID}
-        focusId={VIEW_BAR_FILTER_DROPDOWN_ID}
+        focusId={ViewBarFilterDropdownIds.MAIN}
       >
         {shouldShowVisibleFields && (
           <>

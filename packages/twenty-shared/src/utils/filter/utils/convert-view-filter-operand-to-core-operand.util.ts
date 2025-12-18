@@ -19,7 +19,6 @@ const operandMapping: Record<string, ViewFilterOperand> = {
   [ViewFilterOperandDeprecated.IsInPast]: ViewFilterOperand.IS_IN_PAST,
   [ViewFilterOperandDeprecated.IsInFuture]: ViewFilterOperand.IS_IN_FUTURE,
   [ViewFilterOperandDeprecated.IsToday]: ViewFilterOperand.IS_TODAY,
-  [ViewFilterOperandDeprecated.VectorSearch]: ViewFilterOperand.VECTOR_SEARCH,
   [ViewFilterOperand.IS]: ViewFilterOperand.IS,
   [ViewFilterOperand.IS_NOT_NULL]: ViewFilterOperand.IS_NOT_NULL,
   [ViewFilterOperand.IS_NOT]: ViewFilterOperand.IS_NOT,

@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
@@ -24,25 +25,31 @@ import {
 } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
+const StyledIconContainer = styled.span`
+  display: flex;
+  flex-shrink: 0;
+`;
+
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
   color: ${({ theme }) => theme.grayScale.gray8};
-  display: inline-flex;
+  display: flex;
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing(1)};
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledViewName = styled.span`
   margin-left: ${({ theme }) => theme.spacing(1)};
-  display: inline-block;
   max-width: 130px;
+  min-width: 0;
+  overflow: hidden;
   @media (max-width: 375px) {
     max-width: 90px;
   }
   @media (min-width: 376px) and (max-width: ${MOBILE_VIEWPORT}px) {
     max-width: 110px;
   }
-  vertical-align: middle;
 `;
 
 export const ViewPickerDropdown = () => {
@@ -79,13 +86,15 @@ export const ViewPickerDropdown = () => {
       onClickOutside={handleClickOutside}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
-          {currentView && CurrentViewIcon ? (
-            <CurrentViewIcon size={theme.icon.size.md} />
-          ) : (
-            <IconList size={theme.icon.size.md} />
-          )}
+          <StyledIconContainer>
+            {currentView && CurrentViewIcon ? (
+              <CurrentViewIcon size={theme.icon.size.md} />
+            ) : (
+              <IconList size={theme.icon.size.md} />
+            )}
+          </StyledIconContainer>
           <StyledViewName>
-            <OverflowingTextWithTooltip text={currentView?.name ?? 'All'} />
+            <OverflowingTextWithTooltip text={currentView?.name ?? t`All`} />
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
