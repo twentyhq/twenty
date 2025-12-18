@@ -9,6 +9,7 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
 
+// TODO: we shouldn't guess in which parent we are, this should be splitted in two components, one for each case
 export const ObjectFilterDropdownFilterInputHeader = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
