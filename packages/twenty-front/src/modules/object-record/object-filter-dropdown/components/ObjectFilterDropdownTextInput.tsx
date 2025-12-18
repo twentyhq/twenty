@@ -58,7 +58,6 @@ export const ObjectFilterDropdownTextInput = ({
         onChange={handleInputChange}
         onEnter={() => {
           closeDropdown(filterDropdownId);
-          console.log('closeDropdown', filterDropdownId);
         }}
       />
     </DropdownMenuItemsContainer>
