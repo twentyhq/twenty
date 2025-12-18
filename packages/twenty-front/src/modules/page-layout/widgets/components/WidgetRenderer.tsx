@@ -66,8 +66,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
-  const showHeader =
-    layoutMode !== 'canvas' && !isInPinnedTab && !hideRichTextHeader;
+  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({

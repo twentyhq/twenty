@@ -6,10 +6,16 @@ import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/
 import { isGaugeChartConfiguration } from '@/command-menu/pages/page-layout/utils/isGaugeChartConfiguration';
 import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
 import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 
 export const isChartConfiguration = (
-  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
+  configuration:
+    | WidgetConfiguration
+    | FieldConfiguration
+    | FieldsConfiguration
+    | null
+    | undefined,
 ): configuration is ChartConfiguration => {
   return (
     isBarChartConfiguration(configuration) ||
