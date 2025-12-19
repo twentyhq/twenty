@@ -1,12 +1,14 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import styled from '@emotion/styled';
-import { useState } from 'react';
-
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { useUpdateMultipleRecordsActions } from '../hooks/useUpdateMultipleRecordsActions';
+
 const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,6 +41,8 @@ export const UpdateMultipleRecordsContainer = ({
     },
   );
 
+  const { t } = useLingui();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { closeCommandMenu } = useCommandMenu();
 
   const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>(
@@ -46,8 +50,22 @@ export const UpdateMultipleRecordsContainer = ({
   );
 
   const handleUpdate = async () => {
-    await updateRecords(fieldUpdates);
-    closeCommandMenu();
+    try {
+      const count = await updateRecords(fieldUpdates);
+      if (count !== undefined) {
+        enqueueSuccessSnackBar({
+          message: t`Successfully updated ${count} records`,
+        });
+        closeCommandMenu();
+      }
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message:
+          error instanceof Error
+            ? error.message
+            : t`Failed to update records. Please try again.`,
+      });
+    }
   };
 
   const handleCancel = () => {

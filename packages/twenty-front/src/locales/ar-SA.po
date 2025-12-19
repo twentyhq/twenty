@@ -5242,7 +5242,7 @@ msgid "Failed to update price."
 msgstr "فشل في تحديث السعر."
 
 #. js-lingui-id: J7vly7
-#: src/modules/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions.ts
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Failed to update records. Please try again."
 msgstr ""
 
@@ -10775,7 +10775,7 @@ msgid "Successfully merged {recordCount} records"
 msgstr "تم دمج {recordCount} من السجلات بنجاح"
 
 #. js-lingui-id: zsDoFr
-#: src/modules/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions.ts
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Successfully updated {count} records"
 msgstr ""
 

@@ -1,7 +1,6 @@
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { renderHook } from '@testing-library/react';
 
@@ -12,19 +11,7 @@ jest.mock('@/context-store/utils/computeContextStoreFilters');
 jest.mock('@/object-record/hooks/useIncrementalUpdateManyRecords');
 jest.mock('@/object-record/record-filter/hooks/useFilterValueDependencies');
 jest.mock('@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow');
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
 jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
-const mockLinguiReturn = {
-  i18n: { _: (id: any) => id },
-  t: () => 'success message',
-};
-jest.mock('@lingui/react/macro', () => ({
-  useLingui: () => mockLinguiReturn,
-  t: () => 'success message',
-}));
-jest.mock('@lingui/react', () => ({
-  useLingui: () => mockLinguiReturn,
-}));
 
 const mockComputeContextStoreFilters = jest.mocked(computeContextStoreFilters);
 const mockUseIncrementalUpdateManyRecords = jest.mocked(
@@ -34,13 +21,10 @@ const mockUseFilterValueDependencies = jest.mocked(useFilterValueDependencies);
 const mockUseContextStoreObjectMetadataItemOrThrow = jest.mocked(
   useContextStoreObjectMetadataItemOrThrow,
 );
-const mockUseSnackBar = jest.mocked(useSnackBar);
 const mockUseRecoilComponentValue = jest.mocked(useRecoilComponentValue);
 
 describe('useUpdateMultipleRecordsActions', () => {
   const mockIncrementalUpdateManyRecords = jest.fn();
-  const mockEnqueueSuccessSnackBar = jest.fn();
-  const mockEnqueueErrorSnackBar = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -51,11 +35,6 @@ describe('useUpdateMultipleRecordsActions', () => {
       isProcessing: false,
       progress: { processedRecordCount: 5 },
       cancel: jest.fn(),
-    } as any);
-
-    mockUseSnackBar.mockReturnValue({
-      enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
     } as any);
 
     mockUseContextStoreObjectMetadataItemOrThrow.mockReturnValue({
@@ -71,7 +50,7 @@ describe('useUpdateMultipleRecordsActions', () => {
     mockComputeContextStoreFilters.mockReturnValue('mock-filter' as any);
   });
 
-  it('should call incrementalUpdateManyRecords and show success snackbar', async () => {
+  it('should call incrementalUpdateManyRecords and return the count', async () => {
     const { result } = renderHook(() =>
       useUpdateMultipleRecordsActions({
         objectNameSingular: 'company',
@@ -79,17 +58,15 @@ describe('useUpdateMultipleRecordsActions', () => {
       }),
     );
 
-    await result.current.updateRecords({ name: 'New Name' });
+    const count = await result.current.updateRecords({ name: 'New Name' });
 
     expect(mockIncrementalUpdateManyRecords).toHaveBeenCalledWith({
       name: 'New Name',
     });
-
-    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
-    expect(mockEnqueueSuccessSnackBar).toHaveBeenCalled();
+    expect(count).toBe(5);
   });
 
-  it('should handle errors and show error snackbar', async () => {
+  it('should throw error when update fails', async () => {
     mockIncrementalUpdateManyRecords.mockRejectedValue(
       new Error('Update failed'),
     );
@@ -101,14 +78,12 @@ describe('useUpdateMultipleRecordsActions', () => {
       }),
     );
 
-    await result.current.updateRecords({ name: 'New Name' });
-
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith(
-      expect.objectContaining({ message: 'Update failed' }),
-    );
+    await expect(
+      result.current.updateRecords({ name: 'New Name' }),
+    ).rejects.toThrow('Update failed');
   });
 
-  it('should ignore AbortError', async () => {
+  it('should ignore AbortError and return undefined', async () => {
     const error: any = new Error('Aborted');
     error.name = 'AbortError';
     mockIncrementalUpdateManyRecords.mockRejectedValue(error);
@@ -120,9 +95,8 @@ describe('useUpdateMultipleRecordsActions', () => {
       }),
     );
 
-    await result.current.updateRecords({ name: 'New Name' });
+    const count = await result.current.updateRecords({ name: 'New Name' });
 
-    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
-    expect(mockEnqueueSuccessSnackBar).not.toHaveBeenCalled();
+    expect(count).toBeUndefined();
   });
 });
