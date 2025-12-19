@@ -12,7 +12,9 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;
@@ -28,7 +30,23 @@ describe('Successful user and workspace creation', () => {
     });
   });
 
-  it.only('should sign up a new user and create a new workspace successfully', async () => {
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED,
+      value: true,
+    });
+  });
+
+  it('should sign up a new user and create a new workspace successfully', async () => {
     const uniqueEmail = `test-${randomUUID()}@example.com`;
 
     const { data } = await signUp({

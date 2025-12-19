@@ -257,12 +257,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspace.id,
     );
 
-    await this.featureFlagService.upsertWorkspaceFeatureFlag({
-      workspaceId: workspace.id,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED,
-      value: isV2SyncEnabled,
-    });
-
     await this.workspaceManagerService.init({
       workspace,
       userId: user.id,
