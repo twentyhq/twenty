@@ -24,9 +24,9 @@ export const RelativeDateUpdateEffect = ({
 
     let intervalMs: number;
     if (minutesDiff < 60) {
-      intervalMs = 60000;
+      intervalMs = 1000;
     } else if (minutesDiff < 1440) {
-      intervalMs = 600000;
+      intervalMs = 60000;
     } else {
       intervalMs = 3600000;
     }
