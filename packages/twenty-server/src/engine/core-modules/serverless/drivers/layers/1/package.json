@@ -37,7 +37,7 @@
     "lodash.pickby": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^7.0.11",
     "sharp": "^0.33.5",
     "uuid": "^10.0.0",
     "winston": "^3.14.2"
