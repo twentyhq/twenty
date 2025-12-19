@@ -5,7 +5,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,7 +16,6 @@ import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-fla
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 @Entity('role')
-@Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
 export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
