@@ -8,7 +8,7 @@ import {
   type PieChartConfiguration,
   type StandaloneRichTextConfiguration,
   type WidgetConfiguration,
-  WidgetConfigurationType,
+  type WidgetConfigurationType,
 } from '~/generated/graphql';
 
 type WidgetConfigurationTypenameMap = {

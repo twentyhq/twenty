@@ -5,6 +5,7 @@ import { convertAggregateOperationForDateField } from '@/command-menu/pages/page
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -74,17 +75,19 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           throw new Error('Widget configuration not found in draft state');
         }
 
-        const currentConfiguration =
-          widgetInDraft.configuration as ChartConfiguration;
+        const currentConfiguration = widgetInDraft.configuration;
 
-        let configToUpdate: Partial<ChartConfiguration> = {
+        if (!isWidgetConfigurationOfTypeGraph(currentConfiguration)) {
+          throw new Error('Widget configuration is not a chart configuration');
+        }
+
+        let configToUpdate = {
           __typename:
             GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[
               currentConfiguration.configurationType
             ],
-          configurationType: widget.configuration.configurationType,
-          graphType,
-        };
+          configurationType: currentConfiguration.configurationType,
+        } as Partial<ChartConfiguration>;
 
         if (
           graphType !== GraphType.AGGREGATE &&
@@ -168,7 +171,6 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       objectMetadataItems,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
-      widget.configuration.configurationType,
       widget.objectMetadataId,
     ],
   );
