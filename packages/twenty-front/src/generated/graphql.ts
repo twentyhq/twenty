@@ -3933,7 +3933,7 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Array<Scalars['String']>;
+  id: Scalars['String'];
 };
 
 export type SubscriptionMatches = {
@@ -4912,7 +4912,7 @@ export type OnSubscriptionMatchSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', subscriptions: Array<{ __typename?: 'SubscriptionMatch', id: Array<string> }> } | null };
+export type OnSubscriptionMatchSubscription = { __typename?: 'Subscription', onSubscriptionMatch?: { __typename?: 'SubscriptionMatches', subscriptions: Array<{ __typename?: 'SubscriptionMatch', id: string }> } | null };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 

@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('SubscriptionMatch')
 export class SubscriptionMatchDTO {
-  @Field(() => [String])
+  @Field(() => String)
   id: string;
 }
 

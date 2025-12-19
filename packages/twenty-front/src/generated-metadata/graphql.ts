@@ -4096,7 +4096,7 @@ export enum SubscriptionInterval {
 
 export type SubscriptionMatch = {
   __typename?: 'SubscriptionMatch';
-  id: Array<Scalars['String']>;
+  id: Scalars['String'];
 };
 
 export type SubscriptionMatches = {

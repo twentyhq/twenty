@@ -15,18 +15,14 @@ import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input'
 import { SubscriptionMatchesDTO } from 'src/engine/subscriptions/dtos/subscription-matches.dto';
 import { SubscriptionInput } from 'src/engine/subscriptions/dtos/subscription.input';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
-import { SubscriptionsService } from 'src/engine/subscriptions/services/subscriptions.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
-export class SubscriptionsResolver {
-  constructor(
-    private readonly subscriptionService: SubscriptionService,
-    private readonly subscriptionsService: SubscriptionsService,
-  ) {}
+export class WorkspaceEventEmitterResolver {
+  constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Subscription(() => OnDbEventDTO, {
     filter: (
@@ -64,7 +60,7 @@ export class SubscriptionsResolver {
   @Subscription(() => SubscriptionMatchesDTO, {
     nullable: true,
     resolve: async function (
-      this: SubscriptionsResolver,
+      this: WorkspaceEventEmitterResolver,
       payload: { onDbEvent: OnDbEventDTO },
       args: { subscriptions: SubscriptionInput[] },
       context: { req: { workspace: { id: string } } },
@@ -74,7 +70,7 @@ export class SubscriptionsResolver {
       const matchedSubscriptionIds = await Promise.all(
         args.subscriptions.map(async (subscription) => {
           const matches =
-            await this.subscriptionsService.isSubscriptionMatchingEvent(
+            await this.subscriptionService.isSubscriptionMatchingEvent(
               subscription,
               payload.onDbEvent,
               workspaceId,
