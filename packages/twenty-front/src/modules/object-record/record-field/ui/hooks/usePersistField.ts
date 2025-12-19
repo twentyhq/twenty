@@ -202,11 +202,13 @@ export const usePersistField = ({
               },
             });
 
-            upsertRecordsInStore([
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
-            ]);
+            upsertRecordsInStore({
+              partialRecords: [
+                getRecordFromRecordNode({
+                  recordNode: newRecord,
+                }),
+              ],
+            });
             return;
           }
 
@@ -223,11 +225,13 @@ export const usePersistField = ({
               },
             });
 
-            upsertRecordsInStore([
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
-            ]);
+            upsertRecordsInStore({
+              partialRecords: [
+                getRecordFromRecordNode({
+                  recordNode: newRecord,
+                }),
+              ],
+            });
             return;
           }
 
