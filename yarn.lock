@@ -9726,6 +9726,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jrmdayn/googleapis-batcher@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@jrmdayn/googleapis-batcher@npm:0.10.1"
+  dependencies:
+    dataloader: "npm:^2.2.1"
+    debug: "npm:^4.3.4"
+    handlebars: "npm:^4.7.7"
+    next-line: "npm:^1.1.0"
+    node-fetch: "npm:2"
+  peerDependencies:
+    gaxios: ">= 5"
+    googleapis: ">= 109"
+  checksum: 10c0/ffc61154fa03227c3c865cc44f33d545a50b66804c87e3d93b28afe9d297fd6ac91bd55205d0d414aba6f907840ca2f22ec5531617fd09c184811e6eba388ab1
+  languageName: node
+  linkType: hard
+
 "@js-sdsl/ordered-map@npm:^4.4.2":
   version: 4.4.2
   resolution: "@js-sdsl/ordered-map@npm:4.4.2"
@@ -32098,6 +32114,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dataloader@npm:^2.2.1":
+  version: 2.2.3
+  resolution: "dataloader@npm:2.2.3"
+  checksum: 10c0/9b9a056fbc863ca86da87d59e053e871e263b4966aa4d55e40d61a65e96815fae5530ca220629064ca5f8e3000c0c4ec93292e170c38ff393fb34256b4d7c1aa
+  languageName: node
+  linkType: hard
+
 "date-fns-tz@npm:^2.0.0":
   version: 2.0.1
   resolution: "date-fns-tz@npm:2.0.1"
@@ -37595,7 +37618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:*, handlebars@npm:^4.7.8":
+"handlebars@npm:*, handlebars@npm:^4.7.7, handlebars@npm:^4.7.8":
   version: 4.7.8
   resolution: "handlebars@npm:4.7.8"
   dependencies:
@@ -45952,6 +45975,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-line@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "next-line@npm:1.1.0"
+  checksum: 10c0/c17aed62e7af05e612cb852d601298f8bef47822231f06fb68c4a8ae7b272c2d49923eefcff56082f173da36a1b1cbd00dad11b05559957d268c38daab2e721b
+  languageName: node
+  linkType: hard
+
 "next-mdx-remote-client@npm:^1.0.3":
   version: 1.1.4
   resolution: "next-mdx-remote-client@npm:1.1.4"
@@ -46255,6 +46285,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:2, node-fetch@npm:2.7.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9, node-fetch@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "node-fetch@npm:2.7.0"
+  dependencies:
+    whatwg-url: "npm:^5.0.0"
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: 10c0/b55786b6028208e6fbe594ccccc213cab67a72899c9234eb59dba51062a299ea853210fcf526998eaa2867b0963ad72338824450905679ff0fa304b8c5093ae8
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
@@ -46266,20 +46310,6 @@ __metadata:
     encoding:
       optional: true
   checksum: 10c0/fcae80f5ac52fbf5012f5e19df2bd3915e67d3b3ad51cb5942943df2238d32ba15890fecabd0e166876a9f98a581ab50f3f10eb942b09405c49ef8da36b826c7
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:2.7.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9, node-fetch@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "node-fetch@npm:2.7.0"
-  dependencies:
-    whatwg-url: "npm:^5.0.0"
-  peerDependencies:
-    encoding: ^0.1.0
-  peerDependenciesMeta:
-    encoding:
-      optional: true
-  checksum: 10c0/b55786b6028208e6fbe594ccccc213cab67a72899c9234eb59dba51062a299ea853210fcf526998eaa2867b0963ad72338824450905679ff0fa304b8c5093ae8
   languageName: node
   linkType: hard
 
@@ -56494,6 +56524,7 @@ __metadata:
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/utils": "npm:9.2.1"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
+    "@jrmdayn/googleapis-batcher": "npm:^0.10.1"
     "@lingui/cli": "npm:^5.1.2"
     "@lingui/conf": "npm:5.1.2"
     "@lingui/core": "npm:^5.1.2"
