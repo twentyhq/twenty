@@ -1,4 +1,4 @@
-name: Build Twenty Docker Image
+name: "InDebted: Build Twenty Docker Image"
 
 on:
   push:
