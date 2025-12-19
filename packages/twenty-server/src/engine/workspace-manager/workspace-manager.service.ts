@@ -85,6 +85,7 @@ export class WorkspaceManagerService {
 
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
     const twentyStandardApplication =
       await this.applicationService.createTwentyStandardApplication({
         workspaceId,
@@ -105,6 +106,23 @@ export class WorkspaceManagerService {
         dataSourceId: dataSourceMetadata.id,
         featureFlags,
       });
+
+      const prefillStandardObjectsStart = performance.now();
+
+      await this.prefillWorkspaceWithStandardObjectsRecords({
+        dataSourceMetadata,
+        workspaceId,
+        featureFlags,
+        twentyStandardFlatApplication: fromApplicationEntityToFlatApplication(
+          twentyStandardApplication,
+        ),
+      });
+
+      const prefillStandardObjectsEnd = performance.now();
+
+      this.logger.log(
+        `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
+      );
     }
 
     const dataSourceMetadataCreationEnd = performance.now();
@@ -125,23 +143,6 @@ export class WorkspaceManagerService {
       userId,
       workspaceCustomFlatApplication,
     });
-
-    const prefillStandardObjectsStart = performance.now();
-
-    await this.prefillWorkspaceWithStandardObjectsRecords({
-      dataSourceMetadata,
-      workspaceId,
-      featureFlags,
-      twentyStandardFlatApplication: fromApplicationEntityToFlatApplication(
-        twentyStandardApplication,
-      ),
-    });
-
-    const prefillStandardObjectsEnd = performance.now();
-
-    this.logger.log(
-      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
-    );
   }
 
   private async prefillWorkspaceWithStandardObjectsRecords({
