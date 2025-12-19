@@ -4561,18 +4561,18 @@ export type UpdateRouteTriggerInputUpdates = {
 
 export type UpdateRowLevelPermissionPredicateGroupInput = {
   id: Scalars['String'];
-  logicalOperator?: InputMaybe<Scalars['String']>;
+  logicalOperator?: InputMaybe<RowLevelPermissionPredicateGroupLogicalOperator>;
   parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateRowLevelPermissionPredicateInput = {
   id: Scalars['String'];
-  operand?: InputMaybe<Scalars['String']>;
+  operand?: InputMaybe<RowLevelPermissionPredicateOperand>;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
   rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['String']>;
   subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['JSON']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
 };
