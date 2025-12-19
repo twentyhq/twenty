@@ -139,7 +139,7 @@ export const useCreateNewIndexRecord = ({
           }
         }
 
-        upsertRecordsInStore([createdRecord]);
+        upsertRecordsInStore({ partialRecords: [createdRecord] });
 
         return createdRecord;
       },

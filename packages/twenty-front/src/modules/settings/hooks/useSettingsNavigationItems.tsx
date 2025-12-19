@@ -202,8 +202,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Releases`,
-          path: SettingsPath.Releases,
+          label: t`Updates`,
+          path: SettingsPath.Updates,
           Icon: IconRocket,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },

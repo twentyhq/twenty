@@ -340,9 +340,9 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
   })),
 );
 
-const SettingsReleases = lazy(() =>
-  import('~/pages/settings/releases/SettingsReleases').then((module) => ({
-    default: module.SettingsReleases,
+const SettingsUpdates = lazy(() =>
+  import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
+    default: module.SettingsUpdates,
   })),
 );
 
@@ -625,7 +625,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
+        <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
       </Route>
     </Routes>
   </Suspense>

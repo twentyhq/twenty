@@ -2276,11 +2276,6 @@ msgstr "Αλλαγή σε Επαγγελματικό Πρόγραμμα;"
 msgid "Change to Yearly?"
 msgstr "Αλλαγή σε ετήσια;"
 
-#. js-lingui-id: CWe7wB
-#: src/pages/settings/releases/SettingsReleases.tsx
-msgid "Changelog"
-msgstr "Αλλαγές Καταγραφής"
-
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 #: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
@@ -2296,6 +2291,11 @@ msgstr "Συνομιλία"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Chat with AI agents and use AI features"
 msgstr "Συνομιλήστε με πράκτορες AI και χρησιμοποιήστε λειτουργίες AI"
+
+#. js-lingui-id: xK2nU3
+#: src/pages/settings/updates/SettingsUpdates.tsx
+msgid "Check out our latest releases"
+msgstr ""
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -4128,6 +4128,11 @@ msgstr "Νωρίτερο"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Earliest date"
 msgstr "Νωρίτερη ημερομηνία"
+
+#. js-lingui-id: VR9WbL
+#: src/pages/settings/updates/SettingsUpdates.tsx
+msgid "Early access"
+msgstr ""
 
 #. js-lingui-id: +hvIFU
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -6588,11 +6593,6 @@ msgstr "Συντομεύσεις πληκτρολογίου"
 msgid "Korean"
 msgstr "Κορεατικά"
 
-#. js-lingui-id: zrpwCd
-#: src/pages/settings/releases/SettingsReleases.tsx
-msgid "Lab"
-msgstr "Εργαστήριο"
-
 #. js-lingui-id: 87a/t/
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
@@ -8436,8 +8436,8 @@ msgid "Organization"
 msgstr "Οργανωτικός"
 
 #. js-lingui-id: /IX/7x
+#: src/pages/settings/updates/SettingsUpdates.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -9085,6 +9085,11 @@ msgstr "Αναλογία"
 msgid "Raw JSON"
 msgstr "Ακατέργαστο JSON"
 
+#. js-lingui-id: 549d7o
+#: src/pages/settings/updates/SettingsUpdates.tsx
+msgid "Read changelog"
+msgstr ""
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -9225,9 +9230,7 @@ msgid "Relative"
 msgstr "Σχετικό"
 
 #. js-lingui-id: 5icoS1
-#: src/pages/settings/releases/SettingsReleases.tsx
-#: src/pages/settings/releases/SettingsReleases.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/updates/SettingsUpdates.tsx
 msgid "Releases"
 msgstr "Ενημερώσεις"
 
@@ -11516,6 +11519,11 @@ msgstr "Αληθής"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "Δοκιμάστε τις REST ή GraphQL API πλατφόρμες μας."
 
+#. js-lingui-id: 3WWUB9
+#: src/pages/settings/updates/SettingsUpdates.tsx
+msgid "Try our upcoming features. Note they are still in beta. Please bear with us and report any issues you find."
+msgstr ""
+
 #. js-lingui-id: LQdi+H
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Try with another email"
@@ -11818,6 +11826,13 @@ msgstr "ενημερώθηκε"
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Updated"
 msgstr "Ενημερώθηκε"
+
+#. js-lingui-id: qIrtcK
+#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Updates"
+msgstr ""
 
 #. js-lingui-id: kwkhPe
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx

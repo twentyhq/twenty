@@ -26,7 +26,7 @@ export enum SettingsPath {
   NewApprovedAccessDomain = 'domains/approved-access-domain/new',
   NewEmailingDomain = 'domains/emailing-domain/new',
   EmailingDomainDetail = 'domains/emailing-domain/:domainId',
-  Releases = 'releases',
+  Updates = 'updates',
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
