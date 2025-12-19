@@ -11,7 +11,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetMorphRelation } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelation';
 import { FieldWidgetRelation } from '@/page-layout/widgets/field/components/FieldWidgetRelation';
-import { FieldWidgetComponentInstanceContext } from '@/page-layout/widgets/field/states/contexts/FieldWidgetComponentInstanceContext';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -70,42 +69,34 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   if (isPrefetchLoading) {
     return (
-      <FieldWidgetComponentInstanceContext.Provider
-        value={{ instanceId: widget.id }}
-      >
-        <RightDrawerProvider value={{ isInRightDrawer }}>
-          <StyledContainer>
-            <PropertyBoxSkeletonLoader />
-          </StyledContainer>
-        </RightDrawerProvider>
-      </FieldWidgetComponentInstanceContext.Provider>
+      <RightDrawerProvider value={{ isInRightDrawer }}>
+        <StyledContainer>
+          <PropertyBoxSkeletonLoader />
+        </StyledContainer>
+      </RightDrawerProvider>
     );
   }
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (
-      <FieldWidgetComponentInstanceContext.Provider
-        value={{ instanceId: widget.id }}
-      >
-        <RightDrawerProvider value={{ isInRightDrawer }}>
-          <StyledContainer>
-            <AnimatedPlaceholderEmptyContainer
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-            >
-              <AnimatedPlaceholder type="noRecord" />
-              <AnimatedPlaceholderEmptyTextContainer>
-                <AnimatedPlaceholderEmptyTitle>
-                  {t`No field configured`}
-                </AnimatedPlaceholderEmptyTitle>
-                <AnimatedPlaceholderEmptySubTitle>
-                  {t`Select a field to display in this widget`}
-                </AnimatedPlaceholderEmptySubTitle>
-              </AnimatedPlaceholderEmptyTextContainer>
-            </AnimatedPlaceholderEmptyContainer>
-          </StyledContainer>
-        </RightDrawerProvider>
-      </FieldWidgetComponentInstanceContext.Provider>
+      <RightDrawerProvider value={{ isInRightDrawer }}>
+        <StyledContainer>
+          <AnimatedPlaceholderEmptyContainer
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+          >
+            <AnimatedPlaceholder type="noRecord" />
+            <AnimatedPlaceholderEmptyTextContainer>
+              <AnimatedPlaceholderEmptyTitle>
+                {t`No field configured`}
+              </AnimatedPlaceholderEmptyTitle>
+              <AnimatedPlaceholderEmptySubTitle>
+                {t`Select a field to display in this widget`}
+              </AnimatedPlaceholderEmptySubTitle>
+            </AnimatedPlaceholderEmptyTextContainer>
+          </AnimatedPlaceholderEmptyContainer>
+        </StyledContainer>
+      </RightDrawerProvider>
     );
   }
 
@@ -119,43 +110,31 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
   if (isFieldMorphRelation(fieldDefinition)) {
     return (
-      <FieldWidgetComponentInstanceContext.Provider
-        value={{ instanceId: widget.id }}
-      >
-        <FieldWidgetMorphRelation
-          fieldMetadata={fieldDefinition.metadata}
-          recordId={targetRecord.id}
-          isInRightDrawer={isInRightDrawer}
-        />
-      </FieldWidgetComponentInstanceContext.Provider>
+      <FieldWidgetMorphRelation
+        fieldDefinition={fieldDefinition}
+        recordId={targetRecord.id}
+        isInRightDrawer={isInRightDrawer}
+      />
     );
   }
 
   if (isFieldRelation(fieldDefinition)) {
     return (
-      <FieldWidgetComponentInstanceContext.Provider
-        value={{ instanceId: widget.id }}
-      >
-        <FieldWidgetRelation
-          fieldMetadata={fieldDefinition.metadata}
-          relationValue={record}
-          isInRightDrawer={isInRightDrawer}
-        />
-      </FieldWidgetComponentInstanceContext.Provider>
+      <FieldWidgetRelation
+        fieldDefinition={fieldDefinition}
+        relationValue={record}
+        isInRightDrawer={isInRightDrawer}
+      />
     );
   }
 
   return (
-    <FieldWidgetComponentInstanceContext.Provider
-      value={{ instanceId: widget.id }}
-    >
-      <FieldWidgetDisplay
-        fieldDefinition={fieldDefinition}
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-        recordId={targetRecord.id}
-        isInRightDrawer={isInRightDrawer}
-      />
-    </FieldWidgetComponentInstanceContext.Provider>
+    <FieldWidgetDisplay
+      fieldDefinition={fieldDefinition}
+      fieldMetadataItem={fieldMetadataItem}
+      objectMetadataItem={objectMetadataItem}
+      recordId={targetRecord.id}
+      isInRightDrawer={isInRightDrawer}
+    />
   );
 };
