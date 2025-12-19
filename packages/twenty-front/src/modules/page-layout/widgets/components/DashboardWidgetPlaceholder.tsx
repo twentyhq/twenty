@@ -38,6 +38,7 @@ export const DashboardWidgetPlaceholder = () => {
     }
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      resetNavigationStack: true,
     });
   };
 
