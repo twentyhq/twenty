@@ -6,17 +6,19 @@ import {
   AggregateOperations,
   AxisNameDisplay,
   GraphOrderBy,
-  GraphType,
+  type WidgetConfiguration,
+  WidgetConfigurationType,
 } from '~/generated/graphql';
 import { extractFieldMetadataIdsFromWidget } from '../extractFieldMetadataIdsFromWidget';
 
 const createMockWidget = (
-  overrides: Partial<PageLayoutWidget>,
+  overrides: Partial<Omit<PageLayoutWidget, 'configuration'>> & {
+    configuration: WidgetConfiguration;
+  },
 ): PageLayoutWidget => ({
   id: 'widget-1',
   type: WidgetType.GRAPH,
   title: 'Test',
-  configuration: null,
   objectMetadataId: null,
   gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
   pageLayoutTabId: 'tab-1',
@@ -31,16 +33,9 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       type: WidgetType.IFRAME,
       configuration: {
         __typename: 'IframeConfiguration' as const,
+        configurationType: WidgetConfigurationType.IFRAME,
         url: 'https://example.com',
       },
-    });
-
-    expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([]);
-  });
-
-  it('should return empty array for widget without configuration', () => {
-    const widget = createMockWidget({
-      configuration: null,
     });
 
     expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([]);
@@ -50,7 +45,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataId: 'field-2',
@@ -72,7 +67,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataId: 'field-2',
@@ -96,7 +91,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'LineChartConfiguration' as const,
-        graphType: GraphType.LINE,
+        configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisGroupByFieldMetadataId: 'field-2',
@@ -118,7 +113,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'PieChartConfiguration' as const,
-        graphType: GraphType.PIE,
+        configurationType: WidgetConfigurationType.PIE_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
         groupByFieldMetadataId: 'field-2',
@@ -139,7 +134,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'AggregateChartConfiguration' as const,
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.AVG,
         displayDataLabel: false,
@@ -157,7 +152,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'GaugeChartConfiguration' as const,
-        graphType: GraphType.GAUGE,
+        configurationType: WidgetConfigurationType.GAUGE_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
@@ -175,7 +170,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataId: 'field-2',

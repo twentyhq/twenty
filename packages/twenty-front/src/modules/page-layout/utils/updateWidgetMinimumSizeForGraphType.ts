@@ -4,12 +4,17 @@ import { type Layouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 import { type WidgetConfigurationType } from '~/generated/graphql';
 
-export const updateWidgetMinimumSizeForGraphType = (
-  configurationType: WidgetConfigurationType,
-  widgetId: string,
-  tabId: string,
-  currentLayouts: Record<string, Layouts>,
-): Record<string, Layouts> => {
+export const updateWidgetMinimumSizeForGraphType = ({
+  configurationType,
+  widgetId,
+  tabId,
+  currentLayouts,
+}: {
+  configurationType: WidgetConfigurationType;
+  widgetId: string;
+  tabId: string;
+  currentLayouts: Record<string, Layouts>;
+}): Record<string, Layouts> => {
   const minimumSize = getWidgetSize(configurationType, 'minimum');
   const currentTabLayouts = currentLayouts[tabId];
 

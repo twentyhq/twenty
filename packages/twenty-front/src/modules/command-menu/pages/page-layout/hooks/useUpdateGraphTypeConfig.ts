@@ -144,12 +144,12 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
             .getLoadable(pageLayoutCurrentLayoutsState)
             .getValue();
 
-          const updatedLayouts = updateWidgetMinimumSizeForGraphType(
-            graphType,
-            currentlyEditingWidgetId,
-            activeTabId,
+          const updatedLayouts = updateWidgetMinimumSizeForGraphType({
+            configurationType: widget.configuration.configurationType,
+            widgetId: currentlyEditingWidgetId,
+            tabId: activeTabId,
             currentLayouts,
-          );
+          });
 
           set(pageLayoutCurrentLayoutsState, updatedLayouts);
         }

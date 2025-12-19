@@ -1,5 +1,5 @@
 import { type Layouts } from 'react-grid-layout';
-import { GraphType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated/graphql';
 import { getWidgetSize } from '../getWidgetSize';
 import { updateLayoutItemConstraints } from '../updateLayoutItemConstraints';
 import { updateWidgetMinimumSizeForGraphType } from '../updateWidgetMinimumSizeForGraphType';
@@ -29,14 +29,17 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
     (updateLayoutItemConstraints as jest.Mock).mockReturnValue(updatedLayouts);
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.PIE,
-      'widget-1',
-      'tab-1',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      widgetId: 'widget-1',
+      tabId: 'tab-1',
+      currentLayouts: mockLayouts,
+    });
 
-    expect(getWidgetSize).toHaveBeenCalledWith(GraphType.PIE, 'minimum');
+    expect(getWidgetSize).toHaveBeenCalledWith(
+      WidgetConfigurationType.PIE_CHART,
+      'minimum',
+    );
     expect(updateLayoutItemConstraints).toHaveBeenCalledWith(
       mockLayouts['tab-1'],
       'widget-1',
@@ -57,15 +60,14 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
 
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.VERTICAL_BAR,
-      'widget-2',
-      'non-existent-tab',
-      mockLayouts,
-    );
-
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.BAR_CHART,
+      widgetId: 'widget-2',
+      tabId: 'non-existent-tab',
+      currentLayouts: mockLayouts,
+    });
     expect(getWidgetSize).toHaveBeenCalledWith(
-      GraphType.VERTICAL_BAR,
+      WidgetConfigurationType.BAR_CHART,
       'minimum',
     );
     expect(updateLayoutItemConstraints).not.toHaveBeenCalled();
@@ -79,16 +81,15 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       },
     };
 
-    const graphTypes = [
-      GraphType.AGGREGATE,
-      GraphType.GAUGE,
-      GraphType.PIE,
-      GraphType.VERTICAL_BAR,
-      GraphType.HORIZONTAL_BAR,
-      GraphType.LINE,
+    const configurationTypes = [
+      WidgetConfigurationType.AGGREGATE_CHART,
+      WidgetConfigurationType.GAUGE_CHART,
+      WidgetConfigurationType.PIE_CHART,
+      WidgetConfigurationType.BAR_CHART,
+      WidgetConfigurationType.LINE_CHART,
     ];
 
-    graphTypes.forEach((graphType, index) => {
+    configurationTypes.forEach((configurationType, index) => {
       const mockSize = { w: index + 2, h: index + 1 };
       (getWidgetSize as jest.Mock).mockReturnValue(mockSize);
       (updateLayoutItemConstraints as jest.Mock).mockReturnValue({
@@ -105,14 +106,14 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
         ],
       });
 
-      const result = updateWidgetMinimumSizeForGraphType(
-        graphType,
-        'widget-1',
-        'tab-1',
-        mockLayouts,
-      );
+      const result = updateWidgetMinimumSizeForGraphType({
+        configurationType,
+        widgetId: 'widget-1',
+        tabId: 'tab-1',
+        currentLayouts: mockLayouts,
+      });
 
-      expect(getWidgetSize).toHaveBeenCalledWith(graphType, 'minimum');
+      expect(getWidgetSize).toHaveBeenCalledWith(configurationType, 'minimum');
       expect(updateLayoutItemConstraints).toHaveBeenCalledWith(
         mockLayouts['tab-1'],
         'widget-1',
@@ -144,12 +145,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       updatedTab2Layouts,
     );
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.LINE,
-      'widget-2',
-      'tab-2',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.LINE_CHART,
+      widgetId: 'widget-2',
+      tabId: 'tab-2',
+      currentLayouts: mockLayouts,
+    });
 
     expect(result).toEqual({
       'tab-1': mockLayouts['tab-1'],
@@ -163,12 +164,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
 
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.PIE,
-      'widget-1',
-      'tab-1',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      widgetId: 'widget-1',
+      tabId: 'tab-1',
+      currentLayouts: mockLayouts,
+    });
 
     expect(updateLayoutItemConstraints).not.toHaveBeenCalled();
     expect(result).toEqual({});
@@ -190,12 +191,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
     (updateLayoutItemConstraints as jest.Mock).mockReturnValue(updatedLayouts);
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.GAUGE,
-      'widget-1',
-      'tab-1',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.GAUGE_CHART,
+      widgetId: 'widget-1',
+      tabId: 'tab-1',
+      currentLayouts: mockLayouts,
+    });
 
     expect(result['tab-1']).toEqual(updatedLayouts);
   });
@@ -214,12 +215,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       unchangedLayouts,
     );
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.PIE,
-      'widget-non-existent',
-      'tab-1',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      widgetId: 'widget-non-existent',
+      tabId: 'tab-1',
+      currentLayouts: mockLayouts,
+    });
 
     expect(updateLayoutItemConstraints).toHaveBeenCalledWith(
       mockLayouts['tab-1'],
@@ -247,12 +248,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       ],
     });
 
-    updateWidgetMinimumSizeForGraphType(
-      GraphType.HORIZONTAL_BAR,
-      'widget-2',
-      'tab-1',
-      mockLayouts,
-    );
+    updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.BAR_CHART,
+      widgetId: 'widget-2',
+      tabId: 'tab-1',
+      currentLayouts: mockLayouts,
+    });
 
     expect(updateLayoutItemConstraints).toHaveBeenCalledWith(
       mockLayouts['tab-1'],
@@ -271,12 +272,12 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
 
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
 
-    const result = updateWidgetMinimumSizeForGraphType(
-      GraphType.PIE,
-      'widget-1',
-      'tab-2',
-      mockLayouts,
-    );
+    const result = updateWidgetMinimumSizeForGraphType({
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      widgetId: 'widget-1',
+      tabId: 'tab-2',
+      currentLayouts: mockLayouts,
+    });
 
     expect(updateLayoutItemConstraints).not.toHaveBeenCalled();
     expect(result).toEqual(mockLayouts);
