@@ -500,6 +500,14 @@ export default [
     },
   },
 
+  // Disable lingui rule for email templates
+  {
+    files: ['**/*.email.tsx', '**/twenty-emails/**/*.tsx', '**/twenty-emails/**/*style.ts'],
+    rules: {
+      'lingui/no-unlocalized-strings': 'off',
+    },
+  },
+
   // TypeScript specific configuration
   {
     files: ['**/*.{ts,tsx}'],
