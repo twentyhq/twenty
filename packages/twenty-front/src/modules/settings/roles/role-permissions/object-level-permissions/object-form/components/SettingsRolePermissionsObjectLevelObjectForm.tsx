@@ -12,7 +12,10 @@ import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { FeatureFlagKey, useFindOneAgentQuery } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  useFindOneAgentQuery,
+} from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
   roleId: string;
@@ -40,7 +43,8 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   });
 
   const featureFlagsMap = useFeatureFlagsMap();
-  const isRowLevelPermissionPredicatesEnabled = featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
+  const isRowLevelPermissionPredicatesEnabled =
+    featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
