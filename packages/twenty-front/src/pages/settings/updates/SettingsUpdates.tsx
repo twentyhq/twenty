@@ -62,4 +62,3 @@ export const SettingsUpdates = () => {
     </SubMenuTopBarContainer>
   );
 };
-
