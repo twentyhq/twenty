@@ -6,12 +6,10 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { ALL_METADATA_RELATION_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations-properties.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import {
-  ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  RouteTriggerEntity,
-} from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -41,9 +39,12 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceCacheProv
 
     for (const routeTriggerEntity of routeTriggers) {
       const flatRouteTrigger = {
-        ...removePropertiesFromRecord(routeTriggerEntity, [
-          ...ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES,
-        ]),
+        ...removePropertiesFromRecord(
+          routeTriggerEntity,
+          Object.keys(
+            ALL_METADATA_RELATION_PROPERTIES.routeTrigger,
+          ) as (keyof typeof ALL_METADATA_RELATION_PROPERTIES.routeTrigger)[],
+        ),
         createdAt: routeTriggerEntity.createdAt.toISOString(),
         updatedAt: routeTriggerEntity.updatedAt.toISOString(),
         universalIdentifier:

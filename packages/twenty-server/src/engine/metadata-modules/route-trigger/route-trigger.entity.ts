@@ -13,12 +13,7 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { RouteTriggerEntityRelationProperties } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-
-export const ROUTE_TRIGGER_ENTITY_RELATION_PROPERTIES = [
-  'serverlessFunction',
-] as const satisfies readonly RouteTriggerEntityRelationProperties[];
 
 @Entity({ name: 'routeTrigger', schema: 'core' })
 @Unique('IDX_ROUTE_TRIGGER_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
