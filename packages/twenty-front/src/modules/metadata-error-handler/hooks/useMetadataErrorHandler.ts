@@ -29,6 +29,8 @@ export const useMetadataErrorHandler = () => {
     pageLayout: t`page layout`,
     pageLayoutTab: t`page layout tab`,
     pageLayoutWidget: t`page layout widget`,
+    rowLevelPermissionPredicate: t`row level permission predicate`,
+    rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(
