@@ -37,48 +37,9 @@ export class GlobalWorkspaceOrmManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
+    _workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>> {
-    return this.getRepositoryOrReadOnlyRepository(
-      workspaceId,
-      workspaceEntityOrObjectMetadataName,
-      permissionOptions,
-      false,
-    );
-  }
-
-  async getReadOnlyRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    workspaceEntity: Type<T>,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
-
-  async getReadOnlyRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    objectMetadataName: string,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
-
-  async getReadOnlyRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    workspaceEntityOrObjectMetadataName: Type<T> | string,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>> {
-    return this.getRepositoryOrReadOnlyRepository(
-      workspaceId,
-      workspaceEntityOrObjectMetadataName,
-      permissionOptions,
-      true,
-    );
-  }
-
-  private async getRepositoryOrReadOnlyRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    workspaceEntityOrObjectMetadataName: Type<T> | string,
-    permissionOptions?: RolePermissionConfig,
-    isReadOnly: boolean = false,
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
@@ -90,13 +51,7 @@ export class GlobalWorkspaceOrmManager {
       );
     }
 
-    const isReadOnReplicaEnabledForWorkspace =
-      await this.isReadOnReplicaEnabled(workspaceId);
-
-    const globalDataSource =
-      isReadOnly && isReadOnReplicaEnabledForWorkspace
-        ? await this.getGlobalWorkspaceDataSourceReplica()
-        : await this.getGlobalWorkspaceDataSource();
+    const globalDataSource = await this.getGlobalWorkspaceDataSource();
 
     return globalDataSource.getRepository<T>(
       objectMetadataName,

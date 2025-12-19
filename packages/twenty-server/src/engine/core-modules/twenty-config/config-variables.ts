@@ -1470,6 +1470,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Timeout in milliseconds for primary database queries',
     type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
   })
   @CastToPositiveNumber()
   @IsOptional()
@@ -1479,6 +1480,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Timeout in milliseconds for replica database queries',
     type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
   })
   @CastToPositiveNumber()
   @IsOptional()

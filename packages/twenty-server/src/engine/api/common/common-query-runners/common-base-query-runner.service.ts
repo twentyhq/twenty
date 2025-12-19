@@ -343,23 +343,15 @@ export abstract class CommonBaseQueryRunnerService<
         workspaceId,
       );
 
-    const repository =
-      this.isReadOnly && isReadOnReplicaEnabled
-        ? await this.globalWorkspaceOrmManager.getReadOnlyRepository(
-            workspaceId,
-            queryRunnerContext.flatObjectMetadata.nameSingular,
-            rolePermissionConfig,
-          )
-        : await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            queryRunnerContext.flatObjectMetadata.nameSingular,
-            rolePermissionConfig,
-          );
-
     const globalWorkspaceDataSource =
       this.isReadOnly && isReadOnReplicaEnabled
         ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
         : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const repository = globalWorkspaceDataSource.getRepository(
+      queryRunnerContext.flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+    );
 
     return {
       ...queryRunnerContext,

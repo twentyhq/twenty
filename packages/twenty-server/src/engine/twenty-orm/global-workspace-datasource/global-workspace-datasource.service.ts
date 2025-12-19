@@ -89,7 +89,7 @@ export class GlobalWorkspaceDataSourceService
   }
 
   public getGlobalWorkspaceDataSource(): GlobalWorkspaceDataSource {
-    if (!this.globalWorkspaceDataSource) {
+    if (!isDefined(this.globalWorkspaceDataSource)) {
       throw new Error(
         'GlobalWorkspaceDataSource has not been initialized. Make sure the module has been initialized.',
       );
@@ -99,7 +99,7 @@ export class GlobalWorkspaceDataSourceService
   }
 
   public getGlobalWorkspaceDataSourceReplica(): GlobalWorkspaceDataSource {
-    if (!this.globalWorkspaceDataSourceReplica) {
+    if (!isDefined(this.globalWorkspaceDataSourceReplica)) {
       return this.getGlobalWorkspaceDataSource();
     }
 
