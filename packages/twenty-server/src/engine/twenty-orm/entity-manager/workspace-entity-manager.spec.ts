@@ -225,6 +225,7 @@ describe('WorkspaceEntityManager', () => {
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
+        IS_READ_ON_REPLICA_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {

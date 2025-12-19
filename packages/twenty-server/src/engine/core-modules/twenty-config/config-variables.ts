@@ -836,6 +836,22 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description: 'Database connection URL',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({
+    protocols: ['postgres', 'postgresql'],
+    require_tld: false,
+    allow_underscores: true,
+    require_host: false,
+  })
+  PG_DATABASE_REPLICA_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Allow connections to a database with self-signed certificates',
     isEnvOnly: true,
@@ -1449,6 +1465,26 @@ export class ConfigVariables {
   })
   @IsOptional()
   AWS_SES_ACCOUNT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for primary database queries',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for replica database queries',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
