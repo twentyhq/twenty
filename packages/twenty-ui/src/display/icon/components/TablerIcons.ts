@@ -357,6 +357,7 @@ export {
   IconTimeDuration60,
   IconTimelineEvent,
   IconTool,
+  IconTransform,
   IconTrash,
   IconTrashOff,
   IconTrashX,
