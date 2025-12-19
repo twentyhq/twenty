@@ -53,9 +53,11 @@ export class CreateMessageChannelService {
             'messageChannel',
           );
 
-        const newMessageChannel = await messageChannelRepository.save(
+        const newMessageChannelId = v4();
+
+        await messageChannelRepository.insert(
           {
-            id: v4(),
+            id: newMessageChannelId,
             connectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
@@ -66,12 +68,11 @@ export class CreateMessageChannelService {
             pendingGroupEmailsAction:
               MessageChannelPendingGroupEmailsAction.NONE,
           },
-          {},
           manager,
         );
 
         const createdMessageChannel = await messageChannelRepository.findOne({
-          where: { id: newMessageChannel.id },
+          where: { id: newMessageChannelId },
           relations: ['connectedAccount', 'messageFolders'],
         });
 
@@ -79,12 +80,12 @@ export class CreateMessageChannelService {
           throw new Error('Message channel not found');
         }
 
-        await this.syncMessageFoldersService.syncMessageFolders(
-          createdMessageChannel,
+        await this.syncMessageFoldersService.syncMessageFolders({
+          messageChannel: createdMessageChannel,
           workspaceId,
-        );
+        });
 
-        return newMessageChannel.id;
+        return newMessageChannelId;
       },
     );
   }

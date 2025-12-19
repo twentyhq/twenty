@@ -124,10 +124,10 @@ export class MessagingMessageListFetchService {
           };
 
           const messageFolders =
-            await this.syncMessageFoldersService.syncMessageFolders(
-              messageChannelWithFreshTokens,
+            await this.syncMessageFoldersService.syncMessageFolders({
+              messageChannel: messageChannelWithFreshTokens,
               workspaceId,
-            );
+            });
 
           const messageFoldersToSync = (
             messageChannelWithFreshTokens.messageFolderImportPolicy ===

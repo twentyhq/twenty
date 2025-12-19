@@ -12,6 +12,7 @@ import {
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageFolderPendingSyncAction,
@@ -30,10 +31,22 @@ export class SyncMessageFoldersService {
     private readonly imapGetAllFoldersService: ImapGetAllFoldersService,
   ) {}
 
-  async syncMessageFolders(
-    messageChannel: MessageChannelWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<MessageFolder[]> {
+  async syncMessageFolders({
+    messageChannel,
+    workspaceId,
+  }: {
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'id' | 'messageFolderImportPolicy'
+    > & {
+      connectedAccount: Pick<
+        ConnectedAccountWorkspaceEntity,
+        'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+      >;
+      messageFolders: MessageFolder[];
+    };
+    workspaceId: string;
+  }): Promise<MessageFolder[]> {
     const discoveredFolders = await this.discoverAllFolders(
       messageChannel.connectedAccount,
       messageChannel,

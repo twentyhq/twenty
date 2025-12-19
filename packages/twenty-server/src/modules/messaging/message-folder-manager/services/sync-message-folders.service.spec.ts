@@ -6,6 +6,12 @@ import { type DiscoveredMessageFolder } from 'src/modules/messaging/message-fold
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
+  MessageChannelVisibility,
+  MessageFolderImportPolicy,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
   MessageFolderPendingSyncAction,
   type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -33,14 +39,22 @@ const createMockMessageChannel = (
   } = {},
 ) => ({
   id: 'channel-123',
-  messageFolderImportPolicy: 'ALL',
+  handle: 'test@gmail.com',
+  type: MessageChannelType.EMAIL,
+  messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
   connectedAccount: {
     id: 'account-456',
+    handle: 'test@gmail.com',
     provider: overrides.provider ?? ConnectedAccountProvider.GOOGLE,
     accessToken: 'mock-access-token',
     refreshToken: 'mock-refresh-token',
   },
   messageFolders: overrides.messageFolders ?? [],
+  visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+  isContactAutoCreationEnabled: false,
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.NONE,
+  excludeNonProfessionalEmails: false,
+  excludeGroupEmails: false,
 });
 
 const createMockDiscoveredFolder = (
@@ -170,10 +184,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        const result = await service.syncMessageFolders(
-          messageChannel as never,
+        const result = await service.syncMessageFolders({
+          messageChannel,
           workspaceId,
-        );
+        });
 
         expect(mockRepository.save).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -217,7 +231,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        await service.syncMessageFolders(messageChannel as never, workspaceId);
+        await service.syncMessageFolders({
+          messageChannel,
+          workspaceId,
+        });
 
         expect(mockRepository.save).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -253,10 +270,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        const result = await service.syncMessageFolders(
-          messageChannel as never,
+        const result = await service.syncMessageFolders({
+          messageChannel,
           workspaceId,
-        );
+        });
 
         expect(mockRepository.updateMany).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -297,7 +314,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        await service.syncMessageFolders(messageChannel as never, workspaceId);
+        await service.syncMessageFolders({
+          messageChannel,
+          workspaceId,
+        });
 
         expect(mockRepository.updateMany).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -336,7 +356,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        await service.syncMessageFolders(messageChannel as never, workspaceId);
+        await service.syncMessageFolders({
+          messageChannel,
+          workspaceId,
+        });
 
         expect(mockRepository.updateMany).not.toHaveBeenCalled();
       });
@@ -370,10 +393,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        const result = await service.syncMessageFolders(
-          messageChannel as never,
+        const result = await service.syncMessageFolders({
+          messageChannel: messageChannel,
           workspaceId,
-        );
+        });
 
         expect(mockRepository.updateMany).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -437,10 +460,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        const result = await service.syncMessageFolders(
-          messageChannel as never,
+        const result = await service.syncMessageFolders({
+          messageChannel,
           workspaceId,
-        );
+        });
 
         expect(mockRepository.updateMany).toHaveBeenCalledWith(
           expect.arrayContaining([
@@ -500,10 +523,10 @@ describe('SyncMessageFoldersService', () => {
           discoveredFolders,
         );
 
-        const result = await service.syncMessageFolders(
-          messageChannel as never,
+        const result = await service.syncMessageFolders({
+          messageChannel,
           workspaceId,
-        );
+        });
 
         expect(result).toContainEqual(
           expect.objectContaining({
