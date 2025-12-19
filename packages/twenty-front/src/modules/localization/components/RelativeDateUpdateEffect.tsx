@@ -1,11 +1,24 @@
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { differenceInMinutes } from 'date-fns';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RelativeDateUpdateEffectProps = {
   displayFormat?: FieldDateDisplayFormat;
   dateValue?: string | null;
   onTick: () => void;
+};
+
+const getIntervalMs = (targetDate: Date, now: Date): number => {
+  const minutesDiff = Math.abs(differenceInMinutes(now, targetDate));
+
+  if (minutesDiff < 60) {
+    return 1000;
+  } else if (minutesDiff < 1440) {
+    return 60000;
+  } else {
+    return 3600000;
+  }
 };
 
 export const RelativeDateUpdateEffect = ({
@@ -19,23 +32,25 @@ export const RelativeDateUpdateEffect = ({
     }
 
     const targetDate = new Date(dateValue);
-    const now = new Date();
-    const minutesDiff = Math.abs(differenceInMinutes(now, targetDate));
+    let timeoutId: NodeJS.Timeout | null = null;
 
-    let intervalMs: number;
-    if (minutesDiff < 60) {
-      intervalMs = 1000;
-    } else if (minutesDiff < 1440) {
-      intervalMs = 60000;
-    } else {
-      intervalMs = 3600000;
-    }
+    const scheduleNextTick = () => {
+      const now = new Date();
+      const intervalMs = getIntervalMs(targetDate, now);
 
-    const interval = setInterval(() => {
-      onTick();
-    }, intervalMs);
+      timeoutId = setTimeout(() => {
+        onTick();
+        scheduleNextTick();
+      }, intervalMs);
+    };
 
-    return () => clearInterval(interval);
+    scheduleNextTick();
+
+    return () => {
+      if (isDefined(timeoutId)) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [displayFormat, dateValue, onTick]);
 
   return <></>;
