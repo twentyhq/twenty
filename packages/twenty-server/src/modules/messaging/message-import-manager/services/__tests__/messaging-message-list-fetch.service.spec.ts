@@ -7,7 +7,10 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  type MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -64,7 +67,8 @@ describe('MessagingMessageListFetchService', () => {
         handleAliases: '',
       },
       syncCursor: 'google-sync-cursor',
-    } as MessageChannelWorkspaceEntity;
+      messageFolders: [],
+    } as unknown as MessageChannelWorkspaceEntity;
   });
 
   beforeEach(async () => {
@@ -248,7 +252,16 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: SyncMessageFoldersService,
           useValue: {
-            syncMessageFolders: jest.fn().mockResolvedValue(undefined),
+            syncMessageFolders: jest.fn().mockResolvedValue([
+              {
+                id: 'inbox-folder-id',
+                name: 'inbox',
+                syncCursor: 'inbox-sync-cursor',
+                messageChannelId: 'microsoft-message-channel-id',
+                isSynced: true,
+                pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+              },
+            ]),
           },
         },
         {
@@ -323,6 +336,7 @@ describe('MessagingMessageListFetchService', () => {
           syncCursor: 'inbox-sync-cursor',
           messageChannelId: 'microsoft-message-channel-id',
           isSynced: true,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     );
@@ -384,6 +398,7 @@ describe('MessagingMessageListFetchService', () => {
           syncCursor: 'inbox-sync-cursor',
           messageChannelId: 'microsoft-message-channel-id',
           isSynced: true,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     );
