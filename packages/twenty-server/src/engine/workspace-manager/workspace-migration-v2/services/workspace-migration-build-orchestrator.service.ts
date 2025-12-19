@@ -420,16 +420,16 @@ export class WorkspaceMigrationBuildOrchestratorService {
         from: fromFlatRowLevelPermissionPredicateGroupMaps,
         to: toFlatRowLevelPermissionPredicateGroupMaps,
       } = flatRowLevelPermissionPredicateGroupMaps;
-
-      const predicateGroupResult =
-        this.workspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService.validateAndBuild(
+      const rowLevelPermissionPredicateGroupResult =
+        await this.workspaceMigrationV2RowLevelPermissionPredicateGroupActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatRowLevelPermissionPredicateGroupMaps,
             to: toFlatRowLevelPermissionPredicateGroupMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
-            } as typeof optimisticAllFlatEntityMaps,
+            },
             workspaceId,
           },
         );
@@ -438,17 +438,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
         {
           allFlatEntityMaps: optimisticAllFlatEntityMaps,
           flatEntityMapsAndRelatedFlatEntityMaps:
-            predicateGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+            rowLevelPermissionPredicateGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         },
       );
 
-      if (predicateGroupResult.status === 'fail') {
+      if (rowLevelPermissionPredicateGroupResult.status === 'fail') {
         orchestratorFailureReport.rowLevelPermissionPredicateGroup.push(
-          ...predicateGroupResult.errors,
+          ...rowLevelPermissionPredicateGroupResult.errors,
         );
       } else {
         orchestratorActionsReport.rowLevelPermissionPredicateGroup =
-          predicateGroupResult.actions;
+          rowLevelPermissionPredicateGroupResult.actions;
       }
     }
 
@@ -457,10 +457,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
         from: fromFlatRowLevelPermissionPredicateMaps,
         to: toFlatRowLevelPermissionPredicateMaps,
       } = flatRowLevelPermissionPredicateMaps;
-
-      const predicateResult =
-        this.workspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService.validateAndBuild(
+      const rowLevelPermissionPredicateResult =
+        await this.workspaceMigrationV2RowLevelPermissionPredicateActionsBuilderService.validateAndBuild(
           {
+            additionalCacheDataMaps,
             from: fromFlatRowLevelPermissionPredicateMaps,
             to: toFlatRowLevelPermissionPredicateMaps,
             buildOptions,
@@ -472,7 +472,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
               flatRowLevelPermissionPredicateGroupMaps:
                 optimisticAllFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
               flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
-            } as typeof optimisticAllFlatEntityMaps,
+            },
             workspaceId,
           },
         );
@@ -481,17 +481,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
         {
           allFlatEntityMaps: optimisticAllFlatEntityMaps,
           flatEntityMapsAndRelatedFlatEntityMaps:
-            predicateResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+            rowLevelPermissionPredicateResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         },
       );
 
-      if (predicateResult.status === 'fail') {
+      if (rowLevelPermissionPredicateResult.status === 'fail') {
         orchestratorFailureReport.rowLevelPermissionPredicate.push(
-          ...predicateResult.errors,
+          ...rowLevelPermissionPredicateResult.errors,
         );
       } else {
         orchestratorActionsReport.rowLevelPermissionPredicate =
-          predicateResult.actions;
+          rowLevelPermissionPredicateResult.actions;
       }
     }
 
