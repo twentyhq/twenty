@@ -1,10 +1,10 @@
-import { ExtractEntityManyToOneRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-relation-properties.type';
-import { ExtractEntityOneToManyRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-relation-properties.type';
+import { ExtractEntityManyToOneSyncableEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-syncable-entity-relation-properties.type';
+import { ExtractEntityOneToManySyncableEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-syncabl-entity-relation-properties.type';
 
 export type ExtractEntityRelatedSyncableEntityProperties<
   T,
 > =
-  | ExtractEntityManyToOneRelationProperties<T>
-  | ExtractEntityOneToManyRelationProperties<T>;
+  | ExtractEntityManyToOneSyncableEntityRelationProperties<T>
+  | ExtractEntityOneToManySyncableEntityRelationProperties<T>;
 
 
