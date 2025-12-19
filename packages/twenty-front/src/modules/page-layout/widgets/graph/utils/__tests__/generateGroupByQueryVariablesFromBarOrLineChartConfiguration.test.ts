@@ -7,8 +7,8 @@ import {
 import {
   AggregateOperations,
   type BarChartConfiguration,
-  GraphType,
   type LineChartConfiguration,
+  WidgetConfigurationType,
 } from '~/generated/graphql';
 
 describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
@@ -47,7 +47,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       __typename: 'BarChartConfiguration',
       aggregateFieldMetadataId: 'aggregate-field',
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.VERTICAL_BAR,
+      configurationType: WidgetConfigurationType.BAR_CHART,
       primaryAxisGroupByFieldMetadataId: 'field-1',
       ...overrides,
     }) as BarChartConfiguration;
@@ -59,7 +59,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       __typename: 'LineChartConfiguration',
       aggregateFieldMetadataId: 'aggregate-field',
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.LINE,
+      configurationType: WidgetConfigurationType.LINE_CHART,
       primaryAxisGroupByFieldMetadataId: 'field-1',
       ...overrides,
     }) as LineChartConfiguration;
@@ -72,7 +72,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.VERTICAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-1',
               primaryAxisGroupBySubFieldName: null,
             }),
@@ -87,7 +87,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.VERTICAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-1',
               primaryAxisGroupBySubFieldName: null,
               secondaryAxisGroupByFieldMetadataId: 'field-2',
@@ -104,7 +104,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.VERTICAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-4',
               primaryAxisGroupBySubFieldName: 'firstName',
             }),
@@ -119,7 +119,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.VERTICAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-3',
               primaryAxisGroupBySubFieldName: null,
               primaryAxisDateGranularity: 'MONTH' as any,
@@ -137,7 +137,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.HORIZONTAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-1',
               primaryAxisGroupBySubFieldName: null,
             }),
@@ -152,7 +152,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             objectMetadataItem: mockObjectMetadataItem,
             objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
-              graphType: GraphType.HORIZONTAL_BAR,
+              configurationType: WidgetConfigurationType.BAR_CHART,
               primaryAxisGroupByFieldMetadataId: 'field-1',
               secondaryAxisGroupByFieldMetadataId: 'field-2',
             }),
@@ -195,7 +195,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem,
           objectMetadataItems: [objectMetadataItem, targetObjectMetadata],
           chartConfiguration: buildBarChartConfiguration({
-            graphType: GraphType.VERTICAL_BAR,
+            configurationType: WidgetConfigurationType.BAR_CHART,
             primaryAxisGroupByFieldMetadataId: relationField.id,
             primaryAxisGroupBySubFieldName: 'createdAt',
           }),
@@ -241,7 +241,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem,
           objectMetadataItems: [objectMetadataItem, targetObjectMetadata],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: relationField.id,
             primaryAxisGroupBySubFieldName: 'createdAt',
           }),
@@ -262,7 +262,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem: mockObjectMetadataItem,
           objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: 'field-1',
             primaryAxisGroupBySubFieldName: null,
           }),
@@ -277,7 +277,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem: mockObjectMetadataItem,
           objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: 'field-1',
             primaryAxisGroupBySubFieldName: null,
             secondaryAxisGroupByFieldMetadataId: 'field-2',
@@ -294,7 +294,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem: mockObjectMetadataItem,
           objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: 'field-3',
             primaryAxisGroupBySubFieldName: null,
             primaryAxisDateGranularity: 'MONTH' as any,
@@ -310,7 +310,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem: mockObjectMetadataItem,
           objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: 'field-4',
             primaryAxisGroupBySubFieldName: 'firstName',
           }),
@@ -325,7 +325,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
           objectMetadataItem: mockObjectMetadataItem,
           objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
-            graphType: GraphType.LINE,
+            configurationType: WidgetConfigurationType.LINE_CHART,
             primaryAxisGroupByFieldMetadataId: 'field-1',
             secondaryAxisGroupByFieldMetadataId: 'field-2',
           }),

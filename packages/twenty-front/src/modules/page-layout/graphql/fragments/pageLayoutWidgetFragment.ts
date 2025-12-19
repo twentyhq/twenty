@@ -38,6 +38,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
         groupMode
+        layout
         isCumulative
         timezone
         firstDayOfTheWeek

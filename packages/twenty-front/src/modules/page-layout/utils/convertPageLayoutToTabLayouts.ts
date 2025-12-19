@@ -1,7 +1,7 @@
 import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { type TabLayouts } from '@/page-layout/types/tab-layouts';
+import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';

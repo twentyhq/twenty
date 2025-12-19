@@ -21,6 +21,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     description
     filter
     groupMode
+    layout
     isCumulative
     timezone
     firstDayOfTheWeek

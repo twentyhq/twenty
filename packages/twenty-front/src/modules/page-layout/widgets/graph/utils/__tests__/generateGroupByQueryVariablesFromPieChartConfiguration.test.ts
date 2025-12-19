@@ -1,12 +1,12 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '../generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
@@ -45,7 +45,7 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: 'aggregate-field',
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: 'field-1',
       ...overrides,
     }) as PieChartConfiguration;

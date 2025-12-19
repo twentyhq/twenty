@@ -359,6 +359,7 @@ export type BarChartConfiguration = {
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   groupMode?: Maybe<BarChartGroupMode>;
   isCumulative?: Maybe<Scalars['Boolean']>;
+  layout?: Maybe<BarChartLayout>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
@@ -377,6 +378,12 @@ export type BarChartConfiguration = {
 export enum BarChartGroupMode {
   GROUPED = 'GROUPED',
   STACKED = 'STACKED'
+}
+
+/** Layout orientation for bar charts */
+export enum BarChartLayout {
+  HORIZONTAL = 'HORIZONTAL',
+  VERTICAL = 'VERTICAL'
 }
 
 export type Billing = {

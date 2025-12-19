@@ -4,8 +4,9 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
+  BarChartLayout,
   GraphOrderBy,
-  GraphType,
+  WidgetConfigurationType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 import { transformTwoDimensionalGroupByToBarChartData } from '../transformTwoDimensionalGroupByToBarChartData';
@@ -41,7 +42,8 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
 
   const mockConfiguration: BarChartConfiguration = {
     __typename: 'BarChartConfiguration',
-    graphType: GraphType.VERTICAL_BAR,
+    configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.VERTICAL,
     aggregateFieldMetadataId: 'field-aggregate',
     aggregateOperation: AggregateOperations.SUM,
     primaryAxisGroupByFieldMetadataId: 'field-x',

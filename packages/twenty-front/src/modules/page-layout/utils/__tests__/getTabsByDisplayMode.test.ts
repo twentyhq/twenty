@@ -1,4 +1,4 @@
-import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { PageLayoutType } from '~/generated/graphql';
 import { getTabsByDisplayMode } from '../getTabsByDisplayMode';

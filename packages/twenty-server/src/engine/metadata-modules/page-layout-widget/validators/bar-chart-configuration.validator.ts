@@ -23,6 +23,7 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -147,6 +148,14 @@ export class BarChartConfigurationValidator
   @IsEnum(BarChartGroupMode)
   @IsOptional()
   groupMode?: BarChartGroupMode;
+
+  @Field(() => BarChartLayout, {
+    nullable: true,
+    defaultValue: BarChartLayout.VERTICAL,
+  })
+  @IsEnum(BarChartLayout)
+  @IsOptional()
+  layout?: BarChartLayout;
 
   @Field(() => Boolean, {
     nullable: true,

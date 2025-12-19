@@ -1,6 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
@@ -8,7 +7,10 @@ import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/us
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
-import { type BarChartConfiguration } from '~/generated/graphql';
+import {
+  type BarChartConfiguration,
+  type BarChartLayout,
+} from '~/generated/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;

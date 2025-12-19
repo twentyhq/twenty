@@ -4,7 +4,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import {
   AggregateOperations,
   FieldMetadataType,
-  GraphType,
+  WidgetConfigurationType,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
 import { transformOneDimensionalGroupByToLineChartData } from '../transformOneDimensionalGroupByToLineChartData';
@@ -43,7 +43,7 @@ describe('transformOneDimensionalGroupByToLineChartData', () => {
   ): LineChartConfiguration =>
     ({
       __typename: 'LineChartConfiguration',
-      graphType: GraphType.LINE,
+      configurationType: WidgetConfigurationType.LINE_CHART,
       aggregateFieldMetadataId: 'amount-field',
       aggregateOperation: AggregateOperations.SUM,
       primaryAxisGroupByFieldMetadataId: 'stage-field',

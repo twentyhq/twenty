@@ -4,7 +4,6 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
@@ -16,9 +15,9 @@ import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { GraphType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
+  BarChartLayout,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 
@@ -113,7 +112,7 @@ export const transformGroupByDataToBarChartData = ({
       : undefined;
 
   const layout =
-    configuration.graphType === GraphType.HORIZONTAL_BAR
+    configuration.layout === BarChartLayout.HORIZONTAL
       ? BarChartLayout.HORIZONTAL
       : BarChartLayout.VERTICAL;
 

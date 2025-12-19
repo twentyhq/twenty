@@ -1,7 +1,7 @@
 import {
+  useApolloClient,
   type ApolloClient,
   type NormalizedCacheObject,
-  useApolloClient,
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -32,15 +32,13 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import {
-  GraphOrderBy,
-  GraphType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
   AxisNameDisplay,
+  BarChartLayout,
   PageLayoutType,
+  WidgetConfigurationType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -224,7 +222,7 @@ export const WithNumberChart: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -259,7 +257,7 @@ export const WithGaugeChart: Story = {
       },
       configuration: {
         __typename: 'GaugeChartConfiguration',
-        graphType: GraphType.GAUGE,
+        configurationType: WidgetConfigurationType.GAUGE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: false,
@@ -294,7 +292,8 @@ export const WithBarChart: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -332,7 +331,7 @@ export const SmallWidget: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -374,7 +373,8 @@ export const MediumWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -419,7 +419,8 @@ export const LargeWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -464,7 +465,7 @@ export const WideWidget: Story = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -506,7 +507,7 @@ export const TallWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
@@ -551,7 +552,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       },
       configuration: {
         __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,

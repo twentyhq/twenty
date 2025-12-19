@@ -4,9 +4,11 @@ import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/
 import {
   AggregateOperations,
   FieldMetadataType,
-  GraphType,
 } from '~/generated-metadata/graphql';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import {
+  WidgetConfigurationType,
+  type PieChartConfiguration,
+} from '~/generated/graphql';
 
 jest.mock(
   '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues',
@@ -47,7 +49,7 @@ describe('transformGroupByDataToPieChartData', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: aggregateField.id,
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: groupByField.id,
       displayLegend: true,
     } as PieChartConfiguration;
@@ -114,7 +116,7 @@ describe('transformGroupByDataToPieChartData', () => {
       __typename: 'PieChartConfiguration',
       aggregateFieldMetadataId: aggregateField.id,
       aggregateOperation: AggregateOperations.COUNT,
-      graphType: GraphType.PIE,
+      configurationType: WidgetConfigurationType.PIE_CHART,
       groupByFieldMetadataId: groupByField.id,
       displayLegend: false,
       color: 'red',

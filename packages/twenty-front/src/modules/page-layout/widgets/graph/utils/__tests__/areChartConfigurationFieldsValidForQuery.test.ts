@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
-  GraphType,
+  WidgetConfigurationType,
   type AggregateChartConfiguration,
 } from '~/generated/graphql';
 
@@ -34,7 +34,7 @@ describe('areChartConfigurationFieldsValidForQuery', () => {
     optionValue: string;
   }): AggregateChartConfiguration => ({
     __typename: 'AggregateChartConfiguration',
-    graphType: GraphType.AGGREGATE,
+    configurationType: WidgetConfigurationType.AGGREGATE_CHART,
     aggregateFieldMetadataId: 'aggregate-field',
     aggregateOperation: AggregateOperations.COUNT,
     ratioAggregateConfig: ratioAggregateConfig ?? null,

@@ -1,4 +1,4 @@
-import { type TabLayouts } from '@/page-layout/types/tab-layouts';
+import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { getEmptyTabLayout } from '../getEmptyTabLayout';
 
 describe('getEmptyTabLayout', () => {

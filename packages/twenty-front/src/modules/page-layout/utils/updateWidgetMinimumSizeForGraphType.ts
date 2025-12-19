@@ -1,16 +1,16 @@
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
-import { type GraphType } from '~/generated/graphql';
 import { type Layouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
+import { type WidgetConfigurationType } from '~/generated/graphql';
 
 export const updateWidgetMinimumSizeForGraphType = (
-  graphType: GraphType,
+  configurationType: WidgetConfigurationType,
   widgetId: string,
   tabId: string,
   currentLayouts: Record<string, Layouts>,
 ): Record<string, Layouts> => {
-  const minimumSize = getWidgetSize(graphType, 'minimum');
+  const minimumSize = getWidgetSize(configurationType, 'minimum');
   const currentTabLayouts = currentLayouts[tabId];
 
   if (!isDefined(currentTabLayouts)) {

@@ -1,14 +1,39 @@
-import { GraphType } from '~/generated/graphql';
+import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
+import {
+  BarChartLayout,
+  WidgetConfigurationType,
+  type BarChartConfiguration,
+  type WidgetConfiguration,
+} from '~/generated/graphql';
 
-export const getWidgetTitle = (graphType: GraphType, index: number): string => {
-  const baseNames: Record<GraphType, string> = {
-    [GraphType.AGGREGATE]: 'Number',
-    [GraphType.GAUGE]: 'Gauge',
-    [GraphType.PIE]: 'Pie Chart',
-    [GraphType.VERTICAL_BAR]: 'Vertical Bar Chart',
-    [GraphType.HORIZONTAL_BAR]: 'Horizontal Bar Chart',
-    [GraphType.LINE]: 'Line Chart',
-  };
-
-  return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
+export const getWidgetTitle = (
+  configuration: WidgetConfiguration,
+  index: number,
+): string => {
+  switch (configuration.configurationType) {
+    case WidgetConfigurationType.AGGREGATE_CHART:
+      return `${t`Aggregate Chart`} ${index + 1}`;
+    case WidgetConfigurationType.GAUGE_CHART:
+      return `${t`Gauge Chart`} ${index + 1}`;
+    case WidgetConfigurationType.PIE_CHART:
+      return `${t`Pie Chart`} ${index + 1}`;
+    case WidgetConfigurationType.BAR_CHART:
+      if (
+        (configuration as BarChartConfiguration).layout ===
+        BarChartLayout.VERTICAL
+      ) {
+        return `${t`Vertical Bar Chart`} ${index + 1}`;
+      } else {
+        return `${t`Horizontal Bar Chart`} ${index + 1}`;
+      }
+    case WidgetConfigurationType.LINE_CHART:
+      return `${t`Line Chart`} ${index + 1}`;
+    case WidgetConfigurationType.IFRAME:
+      return `${t`Iframe`} ${index + 1}`;
+    case WidgetConfigurationType.STANDALONE_RICH_TEXT:
+      return `${t`Rich Text`} ${index + 1}`;
+    default:
+      assertUnreachable(configuration.configurationType);
+  }
 };

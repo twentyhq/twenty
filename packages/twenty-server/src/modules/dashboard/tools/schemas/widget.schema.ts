@@ -63,6 +63,11 @@ const barChartConfigSchema = z.object({
     .optional(),
   displayDataLabel: z.boolean().optional().default(false),
   displayLegend: z.boolean().optional().default(true),
+  layout: z
+    .enum(['VERTICAL', 'HORIZONTAL'])
+    .optional()
+    .default('VERTICAL')
+    .describe('Layout orientation for bar charts'),
   filter: z.record(z.string(), z.unknown()).optional(),
 });
 

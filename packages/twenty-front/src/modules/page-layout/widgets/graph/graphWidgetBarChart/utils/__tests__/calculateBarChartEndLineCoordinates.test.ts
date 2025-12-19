@@ -1,5 +1,5 @@
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { BarChartLayout } from '~/generated/graphql';
 import { calculateBarChartEndLineCoordinates } from '../calculateBarChartEndLineCoordinates';
 describe('calculateBarChartEndLineCoordinates', () => {
   const createMockBar = (
