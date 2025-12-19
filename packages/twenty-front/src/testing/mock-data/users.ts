@@ -94,6 +94,7 @@ export const mockCurrentWorkspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
+  allowRequests: true,
   fastModel: DEFAULT_FAST_MODEL,
   smartModel: DEFAULT_SMART_MODEL,
   routerModel: 'auto',

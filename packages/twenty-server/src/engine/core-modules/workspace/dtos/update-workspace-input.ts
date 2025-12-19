@@ -114,4 +114,9 @@ export class UpdateWorkspaceInput {
   @IsString({ each: true })
   @IsOptional()
   editableProfileFields?: string[];
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  allowRequests?: boolean;
 }

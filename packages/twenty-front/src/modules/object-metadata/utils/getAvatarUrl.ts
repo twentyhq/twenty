@@ -10,6 +10,8 @@ import {
   getLogoUrlFromDomainName,
   isDefined,
 } from 'twenty-shared/utils';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilState } from 'recoil';
 
 export const getAvatarUrl = (
   objectNameSingular: string,
@@ -20,7 +22,13 @@ export const getAvatarUrl = (
     return record.avatarUrl ?? undefined;
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.Company) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+
+  if (
+    objectNameSingular === CoreObjectNameSingular.Company &&
+    currentWorkspace?.allowRequests === true
+  ) {
     return getLogoUrlFromDomainName(
       getCompanyDomainName(record as Company) ?? '',
     );
