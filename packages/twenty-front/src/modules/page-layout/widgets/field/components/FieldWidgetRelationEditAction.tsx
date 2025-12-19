@@ -1,7 +1,10 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type GenericFieldContextType,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
   type FieldInputEvent,
@@ -58,7 +61,7 @@ export const FieldWidgetRelationEditAction = ({
     fieldDefinition,
     isLabelIdentifier: false,
     isRecordFieldReadOnly: false,
-  };
+  } satisfies GenericFieldContextType;
 
   const isMorphRelation = isFieldMorphRelation(fieldDefinition);
 
