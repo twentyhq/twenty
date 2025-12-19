@@ -81,7 +81,7 @@ export const EventCardMessage = ({
       },
     },
     onCompleted: (data) => {
-      upsertRecordsInStore([data]);
+      upsertRecordsInStore({ partialRecords: [data] });
     },
   });
 

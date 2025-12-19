@@ -202,11 +202,16 @@ export const usePersistField = ({
               },
             });
 
-            upsertRecordsInStore([
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
-            ]);
+            upsertRecordsInStore({
+              partialRecords: [
+                getRecordFromRecordNode({
+                  recordNode: newRecord,
+                }),
+              ],
+              recordGqlFields: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]: true,
+              },
+            });
             return;
           }
 
@@ -223,11 +228,13 @@ export const usePersistField = ({
               },
             });
 
-            upsertRecordsInStore([
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
-            ]);
+            upsertRecordsInStore({
+              partialRecords: [
+                getRecordFromRecordNode({
+                  recordNode: newRecord,
+                }),
+              ],
+            });
             return;
           }
 
