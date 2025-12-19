@@ -104,9 +104,6 @@ describe('useIncrementalUpdateManyRecords', () => {
       expect.anything(),
       {
         type: 'update-many',
-        result: {
-          updateInputs: [{ name: 'New Name' }],
-        },
       },
     );
   });

@@ -68,14 +68,8 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
           return;
         }
 
-        if (
-          lastObjectOperation.data.type === 'update-one' ||
-          lastObjectOperation.data.type === 'update-many'
-        ) {
-          const updateInput =
-            lastObjectOperation.data.type === 'update-one'
-              ? lastObjectOperation.data.result.updateInput
-              : lastObjectOperation.data.result.updateInputs[0];
+        if (lastObjectOperation.data.type === 'update-one') {
+          const updateInput = lastObjectOperation.data.result.updateInput;
 
           const updatedFieldNames = Object.keys(updateInput ?? {}) ?? [];
 

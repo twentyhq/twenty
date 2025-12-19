@@ -112,9 +112,6 @@ export const useIncrementalUpdateManyRecords = <
 
     registerObjectOperation(objectMetadataItem, {
       type: 'update-many',
-      result: {
-        updateInputs: [sanitizedFieldsToUpdate],
-      },
     });
 
     return totalUpdatedCount;

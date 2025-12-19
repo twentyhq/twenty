@@ -8,12 +8,6 @@ export type ObjectOperationData =
       };
     }
   | {
-      type: 'update-many';
-      result: {
-        updateInputs: any[];
-      };
-    }
-  | {
       type:
         | 'create-one'
         | 'create-many'
@@ -23,7 +17,8 @@ export type ObjectOperationData =
         | 'delete-many'
         | 'restore-one'
         | 'restore-many'
-        | 'merge-records';
+        | 'merge-records'
+        | 'update-many';
     };
 
 export type ObjectOperation = {
