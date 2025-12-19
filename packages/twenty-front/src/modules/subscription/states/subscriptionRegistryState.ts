@@ -12,4 +12,3 @@ export const subscriptionRegistryState = createState<
   key: 'subscriptionRegistryState',
   defaultValue: new Map(),
 });
-
