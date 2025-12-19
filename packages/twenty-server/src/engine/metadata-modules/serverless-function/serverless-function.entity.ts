@@ -19,7 +19,6 @@ import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/enti
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
-import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -30,12 +29,6 @@ export enum ServerlessFunctionRuntime {
 
 export const DEFAULT_HANDLER_PATH = 'src/index.ts';
 export const DEFAULT_HANDLER_NAME = 'main';
-
-export const SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES = [
-  'cronTriggers',
-  'databaseEventTriggers',
-  'routeTriggers',
-] as const satisfies readonly ServerlessFunctionEntityRelationProperties[];
 
 @Entity('serverlessFunction')
 @Index('IDX_SERVERLESS_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
