@@ -119,7 +119,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       {showHeader && (
         <WidgetCardHeader
           widgetId={widget.id}
-          widget={widget}
           isInEditMode={isPageLayoutInEditMode}
           isResizing={isResizing}
           title={widget.title}
