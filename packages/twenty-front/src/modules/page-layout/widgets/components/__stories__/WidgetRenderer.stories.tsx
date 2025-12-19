@@ -32,6 +32,7 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -75,6 +76,20 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 
+// Widget ID constants for stories
+const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
+const WIDGET_ID_GAUGE_CHART = 'widget-gauge-chart';
+const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
+const WIDGET_ID_SMALL = 'widget-small';
+const WIDGET_ID_MEDIUM = 'widget-medium';
+const WIDGET_ID_LARGE = 'widget-large';
+const WIDGET_ID_WIDE = 'widget-wide';
+const WIDGET_ID_TALL = 'widget-tall';
+const WIDGET_ID_MANY_TO_ONE_RELATION = 'widget-relation-field';
+const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
+const WIDGET_ID_CATALOG = 'catalog-widget';
+const TAB_ID_OVERVIEW = 'tab-overview';
+
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
   id: TEST_PERSON_RECORD_ID,
@@ -117,6 +132,33 @@ const mockCompanyRecord: ObjectRecord = {
     userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
   },
 };
+
+// Helper function to create a page layout with a widget
+const createPageLayoutWithWidget = (
+  widget: PageLayoutWidget,
+  pageLayoutType: PageLayoutType = PageLayoutType.DASHBOARD,
+): PageLayout => ({
+  id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+  name: 'Mock Page Layout',
+  type: pageLayoutType,
+  objectMetadataId: companyObjectMetadataItem.id,
+  tabs: [
+    {
+      __typename: 'PageLayoutTab',
+      id: TAB_ID_OVERVIEW,
+      title: 'Overview',
+      position: 0,
+      pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      widgets: [widget],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    },
+  ],
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  deletedAt: null,
+});
 
 const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: companyObjectMetadataItem,
@@ -194,70 +236,14 @@ const meta: Meta<typeof WidgetRenderer> = {
   decorators: [
     I18nFrontDecorator,
     ChipGeneratorsDecorator,
-    (Story) => {
-      const initializeState = (snapshot: MutableSnapshot) => {
-        snapshot.set(
-          objectMetadataItemsState,
-          generatedMockObjectMetadataItems,
-        );
-        snapshot.set(shouldAppBeLoadingState, false);
-        snapshot.set(
-          pageLayoutPersistedComponentState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          }),
-          {
-            id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-            name: 'Mock Page Layout',
-            type: PageLayoutType.DASHBOARD,
-            objectMetadataId: companyObjectMetadataItem.id,
-            tabs: [],
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z',
-            deletedAt: null,
-          },
-        );
-      };
-
-      return (
-        <MemoryRouter>
-          <JestMetadataAndApolloMocksWrapper>
-            <CoreClientProviderWrapper>
-              <PageLayoutTestWrapper initializeState={initializeState}>
-                <LayoutRenderingProvider
-                  value={{
-                    isInRightDrawer: false,
-                    layoutType: PageLayoutType.DASHBOARD,
-                    targetRecordIdentifier: {
-                      id: companyObjectMetadataItem.id,
-                      targetObjectNameSingular:
-                        companyObjectMetadataItem.nameSingular,
-                    },
-                  }}
-                >
-                  <PageLayoutContentProvider
-                    value={{
-                      layoutMode: 'grid',
-                      tabId: 'fields',
-                    }}
-                  >
-                    <Story />
-                  </PageLayoutContentProvider>
-                </LayoutRenderingProvider>
-              </PageLayoutTestWrapper>
-            </CoreClientProviderWrapper>
-          </JestMetadataAndApolloMocksWrapper>
-        </MemoryRouter>
-      );
-    },
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
   ],
   parameters: {
     layout: 'centered',
-  },
-  argTypes: {
-    widget: {
-      control: 'object',
-      description: 'Widget',
-    },
   },
 };
 
@@ -265,11 +251,11 @@ export default meta;
 type Story = StoryObj<typeof WidgetRenderer>;
 
 export const WithNumberChart: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_NUMBER_CHART,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Sales Pipeline',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -290,21 +276,71 @@ export const WithNumberChart: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '100px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_NUMBER_CHART,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const WithGaugeChart: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-2',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_GAUGE_CHART,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Conversion Rate',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -325,21 +361,71 @@ export const WithGaugeChart: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '400px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_GAUGE_CHART,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '300px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const WithBarChart: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-3',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_BAR_CHART,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Monthly Trends',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -363,21 +449,78 @@ export const WithBarChart: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '500px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_BAR_CHART,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const SmallWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a 2x2 grid cell widget',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-4',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_SMALL,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Small Widget (2x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -398,28 +541,78 @@ export const SmallWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '100px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_SMALL,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Simulates a 2x2 grid cell widget',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const MediumWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a 4x3 grid cell widget',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-5',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_MEDIUM,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Medium Widget (4x3 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -443,28 +636,78 @@ export const MediumWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', height: '250px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_MEDIUM,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Simulates a 4x3 grid cell widget',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '400px', height: '250px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const LargeWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a 6x4 grid cell widget',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-6',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_LARGE,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Large Widget (6x4 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -488,28 +731,78 @@ export const LargeWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_LARGE,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Simulates a 6x4 grid cell widget',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '600px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const WideWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a wide 8x2 grid cell widget',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-7',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_WIDE,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Wide Widget (8x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -530,28 +823,78 @@ export const WideWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '800px', height: '200px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_WIDE,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Simulates a wide 8x2 grid cell widget',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '800px', height: '200px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const TallWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a tall 3x6 grid cell widget',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-8',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_TALL,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Tall Widget (3x6 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -575,28 +918,79 @@ export const TallWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(widget);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '500px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'grid',
+                    tabId: TAB_ID_OVERVIEW,
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_TALL,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Simulates a tall 3x6 grid cell widget',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
-    </div>
-  ),
 };
 
 export const WithManyToOneRelationFieldWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A MANY_TO_ONE relation field widget in readonly mode displaying the Account Owner relation.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-relation-field',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_MANY_TO_ONE_RELATION,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -615,34 +1009,26 @@ export const WithManyToOneRelationFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'A MANY_TO_ONE relation field widget in readonly mode displaying the Account Owner relation.',
-      },
-    },
-  },
-  render: (args) => {
+    };
+
     const initializeState = (snapshot: MutableSnapshot) => {
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
         }),
-        {
-          id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          name: 'Mock Page Layout',
-          type: PageLayoutType.RECORD_PAGE,
-          objectMetadataId: companyObjectMetadataItem.id,
-          tabs: [],
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          deletedAt: null,
-        },
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
       );
       snapshot.set(
         isPageLayoutInEditModeComponentState.atomFamily({
@@ -684,10 +1070,16 @@ export const WithManyToOneRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: 'vertical-list',
-                    tabId: 'fields',
+                    tabId: TAB_ID_OVERVIEW,
                   }}
                 >
-                  <WidgetRenderer widget={args.widget} />
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_MANY_TO_ONE_RELATION,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
                 </PageLayoutContentProvider>
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
@@ -699,11 +1091,19 @@ export const WithManyToOneRelationFieldWidget: Story = {
 };
 
 export const WithOneToManyRelationFieldWidget: Story = {
-  args: {
-    widget: {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A ONE_TO_MANY relation field widget in readonly mode displaying the People relation.',
+      },
+    },
+  },
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
-      id: 'widget-one-to-many-relation-field',
-      pageLayoutTabId: 'tab-overview',
+      id: WIDGET_ID_ONE_TO_MANY_RELATION,
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -722,34 +1122,26 @@ export const WithOneToManyRelationFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'A ONE_TO_MANY relation field widget in readonly mode displaying the People relation.',
-      },
-    },
-  },
-  render: (args) => {
+    };
+
     const initializeState = (snapshot: MutableSnapshot) => {
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        PageLayoutType.RECORD_PAGE,
+      );
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
         }),
-        {
-          id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          name: 'Mock Page Layout',
-          type: PageLayoutType.RECORD_PAGE,
-          objectMetadataId: companyObjectMetadataItem.id,
-          tabs: [],
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          deletedAt: null,
-        },
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
       );
       snapshot.set(
         isPageLayoutInEditModeComponentState.atomFamily({
@@ -783,10 +1175,16 @@ export const WithOneToManyRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: 'vertical-list',
-                    tabId: 'fields',
+                    tabId: TAB_ID_OVERVIEW,
                   }}
                 >
-                  <WidgetRenderer widget={args.widget} />
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_ONE_TO_MANY_RELATION,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
                 </PageLayoutContentProvider>
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>
@@ -798,33 +1196,6 @@ export const WithOneToManyRelationFieldWidget: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
-  args: {
-    widget: {
-      __typename: 'PageLayoutWidget',
-      id: 'catalog-widget',
-      pageLayoutTabId: 'tab-overview',
-      type: WidgetType.GRAPH,
-      title: 'Widget name',
-      objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
-        row: 0,
-        column: 0,
-        rowSpan: 2,
-        columnSpan: 3,
-      },
-      configuration: {
-        __typename: 'AggregateChartConfiguration',
-        graphType: GraphType.AGGREGATE,
-        aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: idField.id,
-        displayDataLabel: true,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-      deletedAt: null,
-    } as PageLayoutWidget,
-  },
   parameters: {
     catalog: {
       dimensions: [
@@ -896,6 +1267,33 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           ? ('grid' as const)
           : ('grid' as const);
 
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: WIDGET_ID_CATALOG,
+      pageLayoutTabId:
+        variant === 'side-column' ? 'pinned-tab' : TAB_ID_OVERVIEW,
+      type: WidgetType.GRAPH,
+      title: 'Widget name',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
     const initializeState = (snapshot: MutableSnapshot) => {
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(shouldAppBeLoadingState, false);
@@ -904,7 +1302,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         snapshot.set(
           widgetCardHoveredComponentFamilyState.atomFamily({
             instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-            familyKey: args.widget.id,
+            familyKey: widget.id,
           }),
           true,
         );
@@ -915,7 +1313,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           pageLayoutEditingWidgetIdComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
           }),
-          args.widget.id,
+          widget.id,
         );
       }
 
@@ -924,7 +1322,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           pageLayoutDraggingWidgetIdComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
           }),
-          args.widget.id,
+          widget.id,
         );
       }
 
@@ -974,7 +1372,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                   title: 'Pinned Tab',
                   position: 0,
                   pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                  widgets: [args.widget],
+                  widgets: [widget],
                   createdAt: '2024-01-01T00:00:00Z',
                   updatedAt: '2024-01-01T00:00:00Z',
                   deletedAt: null,
@@ -985,13 +1383,25 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                   title: 'Other Tab',
                   position: 1,
                   pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                  widgets: [args.widget],
+                  widgets: [],
                   createdAt: '2024-01-01T00:00:00Z',
                   updatedAt: '2024-01-01T00:00:00Z',
                   deletedAt: null,
                 },
               ]
-            : [],
+            : [
+                {
+                  __typename: 'PageLayoutTab',
+                  id: TAB_ID_OVERVIEW,
+                  title: 'Overview',
+                  position: 0,
+                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                  widgets: [widget],
+                  createdAt: '2024-01-01T00:00:00Z',
+                  updatedAt: '2024-01-01T00:00:00Z',
+                  deletedAt: null,
+                },
+              ],
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
         deletedAt: null,
@@ -1041,10 +1451,19 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode,
-                    tabId: variant === 'side-column' ? 'pinned-tab' : 'fields',
+                    tabId:
+                      variant === 'side-column'
+                        ? 'pinned-tab'
+                        : TAB_ID_OVERVIEW,
                   }}
                 >
-                  <WidgetRenderer widget={args.widget} />
+                  <WidgetComponentInstanceContext.Provider
+                    value={{
+                      instanceId: WIDGET_ID_CATALOG,
+                    }}
+                  >
+                    <WidgetRenderer widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
                 </PageLayoutContentProvider>
               </LayoutRenderingProvider>
             </PageLayoutTestWrapper>

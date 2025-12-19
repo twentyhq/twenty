@@ -9,7 +9,10 @@ export const useCurrentWidget = (): PageLayoutWidget => {
     WidgetComponentInstanceContext,
   );
 
-  assertIsDefinedOrThrow(widgetComponentInstanceId);
+  assertIsDefinedOrThrow(
+    widgetComponentInstanceId,
+    new Error('Widget Component Instance ID is not defined'),
+  );
 
   const { currentPageLayout } = useCurrentPageLayout();
 
@@ -17,7 +20,7 @@ export const useCurrentWidget = (): PageLayoutWidget => {
     ?.flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === widgetComponentInstanceId.instanceId);
 
-  assertIsDefinedOrThrow(widget);
+  assertIsDefinedOrThrow(widget, new Error('Current widget is not defined'));
 
   return widget;
 };
