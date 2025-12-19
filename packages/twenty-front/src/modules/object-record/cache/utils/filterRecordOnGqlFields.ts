@@ -1,7 +1,8 @@
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isNonEmptyArray } from '@apollo/client/utilities';
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-
 export const filterRecordOnGqlFields = ({
   record,
   recordGqlFields,
@@ -22,12 +23,7 @@ export const filterRecordOnGqlFields = ({
           return [key, value];
         }
 
-        // gqlFieldValue is a nested RecordGqlFields object
-        if (!isDefined(value)) {
-          return [key, value];
-        }
-
-        if (Array.isArray(value)) {
+        if (isNonEmptyArray(value)) {
           return [
             key,
             value.map((item) => {
@@ -43,7 +39,7 @@ export const filterRecordOnGqlFields = ({
           ];
         }
 
-        if (typeof value === 'object') {
+        if (isObject(value)) {
           return [
             key,
             filterRecordOnGqlFields({

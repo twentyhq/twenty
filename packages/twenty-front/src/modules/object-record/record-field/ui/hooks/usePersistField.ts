@@ -208,6 +208,9 @@ export const usePersistField = ({
                   recordNode: newRecord,
                 }),
               ],
+              recordGqlFields: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]: true,
+              },
             });
             return;
           }

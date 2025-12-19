@@ -67,21 +67,20 @@ describe('filterRecordOnGqlFields', () => {
     });
   });
 
-  it('should handle nested objects with nested RecordGqlFields', () => {
+  it('should handle composite fields with RecordGqlFields', () => {
     const record = {
       id: '1',
       __typename: 'Person',
-      name: {
+      fullName: {
         firstName: 'John',
         lastName: 'Doe',
-        middleName: 'William',
       },
       email: 'john@example.com',
     };
 
     const recordGqlFields = {
       id: true,
-      name: {
+      fullName: {
         firstName: true,
         lastName: true,
       },
@@ -91,7 +90,7 @@ describe('filterRecordOnGqlFields', () => {
 
     expect(result).toEqual({
       id: '1',
-      name: {
+      fullName: {
         firstName: 'John',
         lastName: 'Doe',
       },
@@ -179,27 +178,41 @@ describe('filterRecordOnGqlFields', () => {
   it('should handle deeply nested structures', () => {
     const record = {
       id: '1',
-      __typename: 'Company',
-      address: {
-        city: 'New York',
-        country: {
-          name: 'USA',
-          code: 'US',
-          continent: {
-            name: 'North America',
-            code: 'NA',
+      __typename: 'Person',
+      company: {
+        id: '2',
+        taskTargets: [
+          {
+            id: '3',
+            task: {
+              id: '4',
+              title: 'Task 1',
+              assignee: {
+                id: '6',
+                name: 'Assignee 1',
+              },
+            },
+            targetCompany: {
+              id: '5',
+              name: 'Company 1',
+            },
           },
-        },
+        ],
       },
     };
 
     const recordGqlFields = {
       id: true,
-      address: {
-        city: true,
-        country: {
-          name: true,
-          continent: {
+      company: {
+        id: true,
+        taskTargets: {
+          id: true,
+          task: {
+            id: true,
+            title: true,
+          },
+          targetCompany: {
+            id: true,
             name: true,
           },
         },
@@ -210,14 +223,21 @@ describe('filterRecordOnGqlFields', () => {
 
     expect(result).toEqual({
       id: '1',
-      address: {
-        city: 'New York',
-        country: {
-          name: 'USA',
-          continent: {
-            name: 'North America',
+      company: {
+        id: '2',
+        taskTargets: [
+          {
+            id: '3',
+            task: {
+              id: '4',
+              title: 'Task 1',
+            },
+            targetCompany: {
+              id: '5',
+              name: 'Company 1',
+            },
           },
-        },
+        ],
       },
     });
   });
