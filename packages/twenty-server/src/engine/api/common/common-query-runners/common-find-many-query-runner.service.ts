@@ -43,6 +43,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   CommonFindManyOutput
 > {
   protected readonly operationName = CommonQueryNames.FIND_MANY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
