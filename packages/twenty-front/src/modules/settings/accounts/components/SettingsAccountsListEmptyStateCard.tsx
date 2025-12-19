@@ -1,5 +1,6 @@
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
@@ -38,6 +39,8 @@ export const SettingsAccountsListEmptyStateCard = () => {
     isMicrosoftCalendarEnabledState,
   );
 
+  const isImapSmtpCaldavEnabled = useRecoilValue(isImapSmtpCaldavEnabledState);
+
   return (
     <StyledCardsContainer>
       {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
@@ -56,14 +59,16 @@ export const SettingsAccountsListEmptyStateCard = () => {
         />
       )}
 
-      <UndecoratedLink
-        to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
-      >
-        <SettingsCard
-          Icon={<IconAt size={theme.icon.size.md} />}
-          title={t`Connect Account`}
-        />
-      </UndecoratedLink>
+      {isImapSmtpCaldavEnabled && (
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.NewImapSmtpCaldavConnection)}
+        >
+          <SettingsCard
+            Icon={<IconAt size={theme.icon.size.md} />}
+            title={t`Connect Account`}
+          />
+        </UndecoratedLink>
+      )}
     </StyledCardsContainer>
   );
 };

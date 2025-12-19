@@ -15,6 +15,7 @@ import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailing
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -102,6 +103,9 @@ export const useClientConfig = (): UseClientConfigResult => {
     calendarBookingPageIdState,
   );
 
+  const setIsImapSmtpCaldavEnabled = useSetRecoilState(
+    isImapSmtpCaldavEnabledState,
+  );
   const setIsEmailingDomainsEnabled = useSetRecoilState(
     isEmailingDomainsEnabledState,
   );
@@ -178,6 +182,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       }));
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
+      setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainsEnabled(clientConfig?.isEmailingDomainsEnabled);
     } catch (err) {
       const error =
@@ -209,6 +214,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsConfigVariablesInDbEnabled,
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,
+    setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
     setIsEmailingDomainsEnabled,
     setLabPublicFeatureFlags,
