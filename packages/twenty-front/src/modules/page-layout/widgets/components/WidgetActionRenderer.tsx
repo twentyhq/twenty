@@ -4,23 +4,20 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow, CustomError } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';
+import { useCurrentWidget } from '../hooks/useCurrentWidget';
 
 type WidgetActionRendererProps = {
-  widget: PageLayoutWidget;
   action: WidgetAction;
 };
 
-export const WidgetActionRenderer = ({
-  widget,
-  action,
-}: WidgetActionRendererProps) => {
+export const WidgetActionRenderer = ({ action }: WidgetActionRendererProps) => {
+  const widget = useCurrentWidget();
   const targetRecord = useTargetRecord();
 
   const { objectMetadataItem } = useObjectMetadataItem({

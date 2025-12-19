@@ -98,11 +98,7 @@ export const WidgetCardHeader = ({
         {isNonEmptyArray(actions) && (
           <StyledActionsContainer>
             {actions.map((action) => (
-              <WidgetActionRenderer
-                key={action.id}
-                widget={widget}
-                action={action}
-              />
+              <WidgetActionRenderer key={action.id} action={action} />
             ))}
           </StyledActionsContainer>
         )}
