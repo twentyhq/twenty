@@ -14,7 +14,7 @@ export type SyncableFlatEntity = NonNullableProperties<
   applicationId: string | null;
 };
 
-export type FlatEntityFrom<TEntity extends SyncableEntity> = Omit<
+export type FlatEntityFrom<TEntity> = Omit<
   TEntity,
   | ExtractEntityRelatedSyncableEntityProperties<TEntity>
   | 'application'
