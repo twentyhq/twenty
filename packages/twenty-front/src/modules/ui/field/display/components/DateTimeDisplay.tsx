@@ -4,7 +4,7 @@ import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/compon
 import { UserContext } from '@/users/contexts/UserContext';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
@@ -27,6 +27,10 @@ export const DateTimeDisplay = ({
   const dateLocale = useRecoilValue(dateLocaleState);
   const [, setTick] = useState(0);
 
+  const handleTick = useCallback(() => {
+    setTick((prev) => prev + 1);
+  }, []);
+
   const formattedDate = formatDateTimeString({
     value,
     timeZone,
@@ -40,7 +44,7 @@ export const DateTimeDisplay = ({
     <>
       <RelativeDateUpdateEffect
         displayFormat={dateFieldSettings?.displayFormat}
-        onTick={() => setTick((prev) => prev + 1)}
+        onTick={handleTick}
         dateValue={value}
       />
       <EllipsisDisplay>
