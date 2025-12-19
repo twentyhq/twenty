@@ -71,7 +71,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions: ColorOption[] = [
     {
       id: 'auto',
-      name: 'Palette',
+      name: 'Default palette',
       colorName: 'auto',
     },
     ...MAIN_COLOR_NAMES.map((colorName) => ({

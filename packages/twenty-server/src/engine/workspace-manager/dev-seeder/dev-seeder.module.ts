@@ -24,7 +24,8 @@ import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/da
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
-import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -41,11 +42,12 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     ApplicationModule,
     FeatureFlagModule,
     FileStorageModule,
-    WorkspaceSyncMetadataModule,
     TypeOrmModule.forFeature([WorkspaceEntity, ObjectMetadataEntity]),
     ObjectPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
+    WorkspaceMigrationV2Module,
+    TwentyStandardApplicationModule,
   ],
   exports: [DevSeederService],
   providers: [

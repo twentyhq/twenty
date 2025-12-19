@@ -32,6 +32,7 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -86,6 +87,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly featureFlagService: FeatureFlagService;
 
   protected abstract readonly operationName: CommonQueryNames;
+
+  protected readonly isReadOnly: boolean = false;
 
   public async execute(
     args: CommonInput<Args>,
@@ -334,14 +337,21 @@ export abstract class CommonBaseQueryRunnerService<
       intersectionOf: [roleId],
     };
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
+    const isReadOnReplicaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_READ_ON_REPLICA_ENABLED,
+        workspaceId,
+      );
+
+    const globalWorkspaceDataSource =
+      this.isReadOnly && isReadOnReplicaEnabled
+        ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
+        : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const repository = globalWorkspaceDataSource.getRepository(
       queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
     );
-
-    const globalWorkspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     return {
       ...queryRunnerContext,

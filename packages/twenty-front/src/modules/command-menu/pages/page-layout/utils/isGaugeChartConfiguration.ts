@@ -1,3 +1,4 @@
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import {
   type GaugeChartConfiguration,
@@ -5,7 +6,12 @@ import {
 } from '~/generated/graphql';
 
 export const isGaugeChartConfiguration = (
-  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
+  configuration:
+    | WidgetConfiguration
+    | FieldConfiguration
+    | FieldsConfiguration
+    | null
+    | undefined,
 ): configuration is GaugeChartConfiguration => {
   return configuration?.__typename === 'GaugeChartConfiguration';
 };

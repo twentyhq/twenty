@@ -90,11 +90,19 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
 
     const agentIds = agentsToDelete.map((agent) => agent.id);
 
-    await this.agentService.deleteManyAgents({
-      ids: agentIds,
-      workspaceId,
-      isSystemBuild: true,
-    });
+    try {
+      await this.agentService.deleteManyAgents({
+        ids: agentIds,
+        workspaceId,
+        isSystemBuild: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete workspace agents \n ${JSON.stringify(error, null, 2)}`,
+      );
+
+      throw error;
+    }
 
     this.logger.log(
       `Deleted ${agentsToDelete.length} removed agent(s): ${agentNames}`,
@@ -128,11 +136,19 @@ export class DeleteRemovedAgentsCommand extends ActiveOrSuspendedWorkspacesMigra
 
     const roleIds = rolesToDelete.map((role) => role.id);
 
-    await this.roleService.deleteManyRoles({
-      ids: roleIds,
-      workspaceId,
-      isSystemBuild: true,
-    });
+    try {
+      await this.roleService.deleteManyRoles({
+        ids: roleIds,
+        workspaceId,
+        isSystemBuild: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete workspace roles \n ${JSON.stringify(error, null, 2)}`,
+      );
+
+      throw error;
+    }
 
     this.logger.log(
       `Deleted ${rolesToDelete.length} removed role(s): ${roleLabels}`,
