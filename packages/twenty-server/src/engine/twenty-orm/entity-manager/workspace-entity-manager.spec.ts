@@ -232,7 +232,6 @@ describe('WorkspaceEntityManager', () => {
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
         IS_APPLICATION_ENABLED: false,
-        IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
