@@ -4,6 +4,7 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -15,6 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type WidgetConfiguration } from '~/generated/graphql';
 
 type ChartDateGranularitySelectionDropdownContentProps = {
   axis?: 'primary' | 'secondary';
@@ -51,7 +53,7 @@ const getCurrentDateGranularity = ({
 };
 
 const isChartConfiguration = (
-  configuration: unknown,
+  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
 ): configuration is ChartConfiguration => {
   return (
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||

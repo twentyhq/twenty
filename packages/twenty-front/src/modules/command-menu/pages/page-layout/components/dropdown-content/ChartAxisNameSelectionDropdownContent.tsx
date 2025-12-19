@@ -18,22 +18,17 @@ export const ChartAxisNameSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
+  const configuration = widgetInEditMode?.configuration;
+
   const isBarOrLineChart =
-    isWidgetConfigurationOfType(
-      widgetInEditMode?.configuration,
-      'BarChartConfiguration',
-    ) ||
-    isWidgetConfigurationOfType(
-      widgetInEditMode?.configuration,
-      'LineChartConfiguration',
-    );
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isBarOrLineChart) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentAxisNameDisplay =
-    widgetInEditMode.configuration.axisNameDisplay;
+  const currentAxisNameDisplay = configuration.axisNameDisplay;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,

@@ -19,10 +19,11 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
+import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
+import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { GraphType } from '~/generated/graphql';
 
 const StyledCommandMenuContainer = styled.div`
   display: flex;
@@ -41,7 +42,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   assertChartWidgetOrThrow(widget);
 
   const configuration = widget.configuration;
-  const currentGraphType = configuration?.graphType;
 
   const { getChartSettingsValues } = useChartSettingsValues({
     objectMetadataId: widget.objectMetadataId,
@@ -79,6 +79,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       setHasWidgetTooManyGroups(false);
     }
   };
+
+  const currentGraphType = getCurrentGraphTypeFromConfig(configuration);
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
@@ -160,7 +162,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             <CommandGroup key={group.heading.id} heading={t(group.heading)}>
               {shouldShowBanner && hasWidgetTooManyGroups && (
                 <ChartLimitInfoBanner
-                  graphType={currentGraphType}
+                  widgetConfigurationType={configuration.configurationType}
                   isPrimaryAxisDate={isPrimaryAxisDate}
                   primaryAxisDateGranularity={primaryAxisDateGranularity}
                 />
