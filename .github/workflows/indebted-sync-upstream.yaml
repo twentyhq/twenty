@@ -1,4 +1,4 @@
-name: Sync Upstream
+name: "InDebted: Sync Upstream"
 
 on:
   schedule:
@@ -18,8 +18,8 @@ jobs:
       pull-requests: write
 
     outputs:
-      new_tag: ${{ steps.create-tag.outputs.new_tag }}
       pr_created: ${{ steps.create-pr.outputs.pr_created }}
+      pr_url: ${{ steps.create-pr.outputs.pr_url }}
 
     steps:
       - name: Generate GitHub App token
@@ -134,14 +134,6 @@ jobs:
           INDEBTED_TAG="${TARGET_TAG}-indebted"
           BRANCH_NAME="${{ steps.merge.outputs.branch_name }}"
 
-          # Debug: check token permissions
-          echo "Checking token permissions..."
-          curl -s -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }} | jq '.permissions'
-
-          # Try creating PR via REST API for better error details
-          echo "Creating PR via API..."
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
