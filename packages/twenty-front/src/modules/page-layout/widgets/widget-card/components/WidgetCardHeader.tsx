@@ -1,4 +1,7 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetActionRenderer';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -13,11 +16,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
   widgetId: string;
+  widget: PageLayoutWidget;
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
+  actions?: WidgetAction[];
   className?: string;
   isResizing?: boolean;
 };
@@ -45,6 +50,12 @@ const StyledRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
+const StyledActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledIconButtonContainer = styled(motion.div)`
   display: flex;
   align-items: center;
@@ -53,12 +64,14 @@ const StyledIconButtonContainer = styled(motion.div)`
 
 export const WidgetCardHeader = ({
   widgetId,
+  widget,
   isEmpty = false,
   isInEditMode = false,
   isResizing = false,
   title,
   onRemove,
   forbiddenDisplay,
+  actions,
   className,
 }: WidgetCardHeaderProps) => {
   const theme = useTheme();
@@ -82,6 +95,17 @@ export const WidgetCardHeader = ({
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
       <StyledRightContainer>
+        {actions && actions.length > 0 && (
+          <StyledActionsContainer>
+            {actions.map((action) => (
+              <WidgetActionRenderer
+                key={action.id}
+                widget={widget}
+                action={action}
+              />
+            ))}
+          </StyledActionsContainer>
+        )}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>
           {!isResizing &&

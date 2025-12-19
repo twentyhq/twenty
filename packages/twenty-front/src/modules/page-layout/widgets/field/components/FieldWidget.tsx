@@ -123,7 +123,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         value={{ instanceId: widget.id }}
       >
         <FieldWidgetMorphRelation
-          fieldMetadata={fieldDefinition.metadata}
+          fieldDefinition={fieldDefinition}
           recordId={targetRecord.id}
           isInRightDrawer={isInRightDrawer}
         />
@@ -137,7 +137,8 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         value={{ instanceId: widget.id }}
       >
         <FieldWidgetRelation
-          fieldMetadata={fieldDefinition.metadata}
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
           relationValue={record}
           isInRightDrawer={isInRightDrawer}
         />
