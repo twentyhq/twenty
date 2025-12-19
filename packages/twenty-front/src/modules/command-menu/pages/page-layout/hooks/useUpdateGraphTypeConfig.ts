@@ -1,5 +1,6 @@
-import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
+import { GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphConfigurationTypeToConfigTypename';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
@@ -15,7 +16,6 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { GraphType } from '~/generated/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
@@ -77,8 +77,12 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         const currentConfiguration =
           widgetInDraft.configuration as ChartConfiguration;
 
-        let configToUpdate: Record<string, any> = {
-          __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
+        let configToUpdate: Partial<ChartConfiguration> = {
+          __typename:
+            GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[
+              currentConfiguration.configurationType
+            ],
+          configurationType: widget.configuration.configurationType,
           graphType,
         };
 
@@ -109,6 +113,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           graphType === GraphType.VERTICAL_BAR ||
           graphType === GraphType.HORIZONTAL_BAR ||
           graphType === GraphType.LINE;
+
         const wasBarOrLineChart =
           isWidgetConfigurationOfType(
             currentConfiguration,
@@ -118,6 +123,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
             currentConfiguration,
             'LineChartConfiguration',
           );
+
         const wasPieChart = isWidgetConfigurationOfType(
           currentConfiguration,
           'PieChartConfiguration',
@@ -145,7 +151,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
             .getValue();
 
           const updatedLayouts = updateWidgetMinimumSizeForGraphType({
-            configurationType: widget.configuration.configurationType,
+            configurationType: currentConfiguration.configurationType,
             widgetId: currentlyEditingWidgetId,
             tabId: activeTabId,
             currentLayouts,
@@ -162,6 +168,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       objectMetadataItems,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
+      widget.configuration.configurationType,
       widget.objectMetadataId,
     ],
   );

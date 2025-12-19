@@ -13,6 +13,7 @@ import {
   FieldMetadataType,
   GraphOrderBy,
   GraphType,
+  WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '../useChartSettingsValues';
 
@@ -554,12 +555,12 @@ describe('useChartSettingsValues', () => {
 
       const verticalConfig = buildBarChartConfiguration({
         ...baseConfig,
-        graphType: GraphType.VERTICAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
       });
 
       const horizontalConfig = buildBarChartConfiguration({
         ...baseConfig,
-        graphType: GraphType.HORIZONTAL_BAR,
+        configurationType: WidgetConfigurationType.BAR_CHART,
       });
 
       const { result: verticalResult } =
