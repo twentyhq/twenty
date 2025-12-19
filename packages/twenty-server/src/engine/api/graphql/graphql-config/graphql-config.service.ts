@@ -7,7 +7,7 @@ import {
   type YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
-import { GraphQLError, GraphQLSchema } from 'graphql';
+import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   type GraphQLSchemaWithContext,
