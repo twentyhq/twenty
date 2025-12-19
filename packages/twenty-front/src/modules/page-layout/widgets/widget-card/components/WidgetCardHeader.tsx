@@ -12,7 +12,7 @@ import { IconButton } from 'twenty-ui/input';
 
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
   widgetId: string;
@@ -95,7 +95,7 @@ export const WidgetCardHeader = ({
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
       <StyledRightContainer>
-        {actions && actions.length > 0 && (
+        {isNonEmptyArray(actions) && (
           <StyledActionsContainer>
             {actions.map((action) => (
               <WidgetActionRenderer
