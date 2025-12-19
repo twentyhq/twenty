@@ -17,6 +17,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { BarChartLayout } from '~/generated/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
@@ -112,10 +113,11 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         }
 
         const isPieChart = graphType === GraphType.PIE;
+        const isVerticalBarChart = graphType === GraphType.VERTICAL_BAR;
+        const isHorizontalBarChart = graphType === GraphType.HORIZONTAL_BAR;
+        const isLineChart = graphType === GraphType.LINE;
         const isBarOrLineChart =
-          graphType === GraphType.VERTICAL_BAR ||
-          graphType === GraphType.HORIZONTAL_BAR ||
-          graphType === GraphType.LINE;
+          isVerticalBarChart || isHorizontalBarChart || isLineChart;
 
         const wasBarOrLineChart =
           isWidgetConfigurationOfType(
@@ -143,6 +145,20 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           configToUpdate = {
             ...configToUpdate,
             ...convertPieChartConfigToBarOrLineChart(currentConfiguration),
+          };
+        }
+
+        if (isHorizontalBarChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            layout: BarChartLayout.HORIZONTAL,
+          };
+        }
+
+        if (isVerticalBarChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            layout: BarChartLayout.VERTICAL,
           };
         }
 
