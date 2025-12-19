@@ -17,6 +17,7 @@ import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/w
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
+  FromToAllFlatEntityMaps,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
@@ -116,7 +117,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allFlatEntityOperationByMetadataName,
     workspaceId,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
-    fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'];
+    fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
@@ -130,8 +131,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
     });
 
-    const fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'] =
-      {};
+    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const allMetadataNameToCompare = Object.keys(
@@ -171,35 +171,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     };
   }
 
-  public async validateBuildAndRunWorkspaceMigration({
-    allFlatEntityOperationByMetadataName: allFlatEntities,
-    workspaceId,
-    isSystemBuild = false,
-  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
-    WorkspaceMigrationOrchestratorFailedResult | undefined
-  > {
-    const {
-      fromToAllFlatEntityMaps,
-      inferDeletionFromMissingEntities,
-      dependencyAllFlatEntityMaps,
-      additionalCacheDataMaps,
-    } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
-      allFlatEntityOperationByMetadataName: allFlatEntities,
-      workspaceId,
-    });
-
+  public async validateBuildAndRunWorkspaceMigrationFromTo(
+    args: WorkspaceMigrationOrchestratorBuildArgs,
+  ) {
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
-        .buildWorkspaceMigration({
-          buildOptions: {
-            isSystemBuild,
-            inferDeletionFromMissingEntities,
-          },
-          fromToAllFlatEntityMaps,
-          workspaceId,
-          dependencyAllFlatEntityMaps,
-          additionalCacheDataMaps,
-        })
+        .buildWorkspaceMigration(args)
         .catch((error) => {
           this.logger.error(error);
           throw new WorkspaceMigrationV2Exception(
@@ -228,5 +205,34 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           error.message,
         );
       });
+  }
+
+  public async validateBuildAndRunWorkspaceMigration({
+    allFlatEntityOperationByMetadataName: allFlatEntities,
+    workspaceId,
+    isSystemBuild = false,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    WorkspaceMigrationOrchestratorFailedResult | undefined
+  > {
+    const {
+      fromToAllFlatEntityMaps,
+      inferDeletionFromMissingEntities,
+      dependencyAllFlatEntityMaps,
+      additionalCacheDataMaps,
+    } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
+      allFlatEntityOperationByMetadataName: allFlatEntities,
+      workspaceId,
+    });
+
+    return await this.validateBuildAndRunWorkspaceMigrationFromTo({
+      buildOptions: {
+        isSystemBuild,
+        inferDeletionFromMissingEntities,
+      },
+      fromToAllFlatEntityMaps,
+      workspaceId,
+      dependencyAllFlatEntityMaps,
+      additionalCacheDataMaps,
+    });
   }
 }

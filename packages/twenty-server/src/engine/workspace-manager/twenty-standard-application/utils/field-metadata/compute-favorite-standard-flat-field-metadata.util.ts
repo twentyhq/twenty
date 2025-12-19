@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'favorite'>, 'context'>): Record<
-  AllStandardObjectFieldName<'favorite'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'favorite', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'favorite'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -55,7 +56,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -74,7 +75,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -92,7 +93,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -119,11 +120,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  view: createStandardFieldFlatMetadata({
+  viewId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'view',
+      fieldName: 'viewId',
       type: FieldMetadataType.UUID,
       label: 'ViewId',
       description: 'ViewId',

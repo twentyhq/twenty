@@ -91,15 +91,15 @@ export const RecordCalendarTopBar = () => {
           selectSizeVariant="small"
           options={[
             {
-              label: 'Month',
+              label: t`Month`,
               value: ViewCalendarLayout.MONTH,
             },
             {
-              label: 'Week',
+              label: t`Week`,
               value: ViewCalendarLayout.WEEK,
             },
             {
-              label: 'Timeline',
+              label: t`Timeline`,
               value: ViewCalendarLayout.DAY,
             },
           ]}

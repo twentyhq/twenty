@@ -98,7 +98,7 @@ export const SettingsServerlessFunctionTriggersTab = ({
                 <StyledTableCell>{routeTrigger.httpMethod}</StyledTableCell>
                 <StyledTableCell>
                   <Tag
-                    text={routeTrigger.isAuthRequired ? 'True' : 'False'}
+                    text={routeTrigger.isAuthRequired ? t`True` : t`False`}
                     color={routeTrigger.isAuthRequired ? 'green' : 'orange'}
                     weight="medium"
                   />

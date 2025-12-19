@@ -1,6 +1,7 @@
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
 import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';
@@ -121,12 +122,15 @@ const StyledActionButton = styled.div`
   padding-left: ${({ theme }) => theme.spacing(6)};
 `;
 
-const defaultAriaLabelByVariant: Record<SnackBarVariant, string> = {
-  [SnackBarVariant.Default]: 'Alert',
-  [SnackBarVariant.Error]: 'Error',
-  [SnackBarVariant.Info]: 'Info',
-  [SnackBarVariant.Success]: 'Success',
-  [SnackBarVariant.Warning]: 'Warning',
+const defaultAriaLabelByVariant: Record<
+  SnackBarVariant,
+  ReturnType<typeof msg>
+> = {
+  [SnackBarVariant.Default]: msg`Alert`,
+  [SnackBarVariant.Error]: msg`Error`,
+  [SnackBarVariant.Info]: msg`Info`,
+  [SnackBarVariant.Success]: msg`Success`,
+  [SnackBarVariant.Warning]: msg`Warning`,
 };
 
 export const SnackBar = ({
@@ -146,7 +150,7 @@ export const SnackBar = ({
   variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
   const theme = useTheme();
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
       autoPlay: isUndefined(overrideProgressValue),
@@ -162,7 +166,7 @@ export const SnackBar = ({
       return iconComponent;
     }
 
-    const ariaLabel = defaultAriaLabelByVariant[variant];
+    const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
     const color = theme.snackBar[variant].color;
     const size = theme.icon.size.md;
 
@@ -188,7 +192,7 @@ export const SnackBar = ({
           <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
         );
     }
-  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant]);
+  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant, i18n]);
 
   const handleMouseEnter = () => {
     if (progressAnimation?.state === 'running') {
@@ -211,7 +215,7 @@ export const SnackBar = ({
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      title={sanitizedMessage ?? defaultAriaLabelByVariant[variant]}
+      title={sanitizedMessage ?? i18n._(defaultAriaLabelByVariant[variant])}
       className={className}
       id={id}
       role={role}

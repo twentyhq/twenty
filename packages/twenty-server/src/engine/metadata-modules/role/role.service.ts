@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -86,10 +86,10 @@ export class RoleService {
         },
       );
 
-    const flatRoleEntity = getFlatEntityByUniversalIdentifier(
-      flatRoleMaps,
+    const flatRoleEntity = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatRoleMaps,
       universalIdentifier,
-    );
+    });
 
     return isDefined(flatRoleEntity)
       ? fromFlatRoleToRoleDto(flatRoleEntity)

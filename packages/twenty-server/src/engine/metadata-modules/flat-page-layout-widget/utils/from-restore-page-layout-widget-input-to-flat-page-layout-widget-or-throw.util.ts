@@ -9,7 +9,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export type RestorePageLayoutWidgetInput = {
   id: string;

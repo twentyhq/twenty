@@ -104,7 +104,6 @@ const meta: Meta<typeof CommandMenu> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentWithRouterDecorator,
-    I18nFrontDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

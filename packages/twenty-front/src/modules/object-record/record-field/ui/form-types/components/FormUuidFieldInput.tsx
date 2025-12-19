@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -101,7 +102,7 @@ export const FormUuidFieldInput = ({
           {draftValue.type === 'static' ? (
             <StyledInput
               instanceId={instanceId}
-              placeholder={placeholder ?? 'Enter a UUID'}
+              placeholder={placeholder ?? t`Enter a UUID`}
               value={draftValue.value}
               copyButton={false}
               disabled={readonly}

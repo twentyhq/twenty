@@ -3,6 +3,9 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
+import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -27,11 +30,11 @@ export const ChartSortBySelectionDropdownContent = () => {
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'PieChartConfiguration'
-  ) {
+  const isPieChart = isPieChartConfiguration(configuration);
+  const isLineChart = isLineChartConfiguration(configuration);
+  const isBarChart = isBarChartConfiguration(configuration);
+
+  if (!isBarChart && !isLineChart && !isPieChart) {
     throw new Error('Invalid configuration type');
   }
 
@@ -61,10 +64,6 @@ export const ChartSortBySelectionDropdownContent = () => {
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
-
-  const isPieChart = configuration.__typename === 'PieChartConfiguration';
-  const isLineChart = configuration.__typename === 'LineChartConfiguration';
-  const isBarChart = configuration.__typename === 'BarChartConfiguration';
 
   let currentOrderBy: GraphOrderBy | undefined;
   let groupByFieldMetadataId: string | undefined;

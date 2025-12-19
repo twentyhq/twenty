@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon';
 
@@ -127,7 +128,7 @@ export const SettingsMessageFoldersTreeItem = ({
           <StyledExpandButton
             isExpanded={isExpanded}
             onClick={handleExpandToggle}
-            aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
+            aria-label={isExpanded ? t`Collapse folder` : t`Expand folder`}
           >
             <IconChevronRight size={16} />
           </StyledExpandButton>

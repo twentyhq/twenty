@@ -133,7 +133,6 @@ export const PageHeader = ({
             )}
           </StyledTopBarIconStyledTitleContainer>
         </StyledLeftContainer>
-
         <StyledPageActionContainer
           data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
         >

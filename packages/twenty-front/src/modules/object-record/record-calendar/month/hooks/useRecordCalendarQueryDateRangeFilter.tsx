@@ -7,6 +7,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import {
   combineFilters,
@@ -56,7 +57,7 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     value: `${firstDayOfFirstWeek.toISOString()}`,
     operand: RecordFilterOperand.IS_AFTER,
     type: 'DATE',
-    label: 'After',
+    label: t`After`,
     displayValue: `${firstDayOfFirstWeek.toISOString()}`,
   };
 
@@ -66,7 +67,7 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     value: `${lastDayOfLastWeek.toISOString()}`,
     operand: RecordFilterOperand.IS_BEFORE,
     type: 'DATE',
-    label: 'Before',
+    label: t`Before`,
     displayValue: `${lastDayOfLastWeek.toISOString()}`,
   };
 

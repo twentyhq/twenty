@@ -59,7 +59,7 @@ export const usePerformMergePreview = ({
         });
 
         setMergePreviewRecord(transformPreviewRecord);
-        upsertRecordsInStore([transformPreviewRecord]);
+        upsertRecordsInStore({ partialRecords: [transformPreviewRecord] });
       } catch {
         setMergePreviewRecord(null);
       } finally {
