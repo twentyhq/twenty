@@ -58,7 +58,6 @@ export const DashboardWidgetPlaceholder = () => {
         isResizing={false}
         title={t`Add Widget`}
         isEmpty
-        widget={undefined}
       />
       <AnimatedPlaceholderEmptyContainer
         // eslint-disable-next-line react/jsx-props-no-spreading

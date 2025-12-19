@@ -1,4 +1,3 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetActionRenderer';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
@@ -16,7 +15,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
   widgetId: string;
-  widget: PageLayoutWidget;
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
@@ -64,7 +62,6 @@ const StyledIconButtonContainer = styled(motion.div)`
 
 export const WidgetCardHeader = ({
   widgetId,
-  widget,
   isEmpty = false,
   isInEditMode = false,
   isResizing = false,
