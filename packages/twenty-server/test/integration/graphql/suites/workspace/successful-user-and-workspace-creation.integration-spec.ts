@@ -28,7 +28,7 @@ describe('Successful user and workspace creation', () => {
     });
   });
 
-  it.only('should sign up a new user and create a new workspace successfully', async () => {
+  it('should sign up a new user and create a new workspace successfully', async () => {
     const uniqueEmail = `test-${randomUUID()}@example.com`;
 
     const { data } = await signUp({
