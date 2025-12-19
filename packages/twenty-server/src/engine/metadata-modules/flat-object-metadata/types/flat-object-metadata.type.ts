@@ -1,7 +1,9 @@
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
-import { type MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
+import { type ExtractEntityRelatedSyncableEntityProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-entity-related-syncable-entity-properties.type';
+
+type ObjectMetadataRelationProperties =
+  ExtractEntityRelatedSyncableEntityProperties<ObjectMetadataEntity>;
 
 export const objectMetadataEntityRelationProperties = [
   'fields',
@@ -13,11 +15,6 @@ export const objectMetadataEntityRelationProperties = [
   'fieldPermissions',
   'views',
 ] as const satisfies ObjectMetadataRelationProperties[];
-
-type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
-  ObjectMetadataEntity,
-  MetadataEntitiesRelationTarget
->;
 
 export type FlatObjectMetadata = FlatEntityFrom<
   ObjectMetadataEntity,
