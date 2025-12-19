@@ -48,6 +48,7 @@ const createMockMessageChannel = (
     provider: overrides.provider ?? ConnectedAccountProvider.GOOGLE,
     accessToken: 'mock-access-token',
     refreshToken: 'mock-refresh-token',
+    connectionParameters: {},
   },
   messageFolders: overrides.messageFolders ?? [],
   visibility: MessageChannelVisibility.SHARE_EVERYTHING,
