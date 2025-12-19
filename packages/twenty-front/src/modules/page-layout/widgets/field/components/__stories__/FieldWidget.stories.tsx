@@ -1,8 +1,14 @@
+import {
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
+} from '@apollo/client';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,10 +19,11 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
-import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
@@ -248,160 +255,63 @@ const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
+const CoreClientProviderWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+
+  return (
+    <ApolloCoreClientContext.Provider value={apolloClient}>
+      {children}
+    </ApolloCoreClientContext.Provider>
+  );
+};
+
+const TAB_ID_OVERVIEW = 'tab-overview';
+
+const createPageLayoutWithWidget = (
+  widget: PageLayoutWidget,
+  objectMetadataId: string,
+) => ({
+  id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+  name: 'Mock Page Layout',
+  type: PageLayoutType.RECORD_PAGE,
+  objectMetadataId,
+  tabs: [
+    {
+      __typename: 'PageLayoutTab' as const,
+      id: TAB_ID_OVERVIEW,
+      title: 'Overview',
+      position: 0,
+      pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      widgets: [widget],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    },
+  ],
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  deletedAt: null,
+});
+
 const meta: Meta<typeof FieldWidget> = {
   title: 'Modules/PageLayout/Widgets/FieldWidget',
   component: FieldWidget,
   decorators: [
     ComponentDecorator,
-    ChipGeneratorsDecorator,
     I18nFrontDecorator,
-    (Story, context) => {
-      assertFieldWidgetOrThrow(context.args.widget);
-
-      const fieldMetadataId = context.args.widget.configuration.fieldMetadataId;
-      const fieldMetadataItem = [
-        nameField,
-        addressField,
-        employeesField,
-        linkedinField,
-        accountOwnerField,
-        idealCustomerProfileField,
-        annualRecurringRevenueField,
-        personEmailsField,
-        personPhonesField,
-        opportunityStageField,
-        companyWorkPolicyField,
-        companyPeopleField,
-        timelineActivityWorkspaceMemberField,
-      ].find((field) => field.id === fieldMetadataId);
-
-      // Determine which object and record to use based on the field
-      const isPersonField = [personEmailsField, personPhonesField].some(
-        (field) => field.id === fieldMetadataId,
-      );
-      const isOpportunityField = [opportunityStageField].some(
-        (field) => field.id === fieldMetadataId,
-      );
-      const isTimelineActivityField = [
-        timelineActivityWorkspaceMemberField,
-      ].some((field) => field.id === fieldMetadataId);
-      const objectMetadataItem = isPersonField
-        ? personObjectMetadataItem
-        : isOpportunityField
-          ? opportunityObjectMetadataItem
-          : isTimelineActivityField
-            ? timelineActivityObjectMetadataItem
-            : companyObjectMetadataItem;
-      const mockRecord = isPersonField
-        ? mockPersonRecord
-        : isOpportunityField
-          ? mockOpportunityRecord
-          : isTimelineActivityField
-            ? mockTimelineActivityRecord
-            : mockCompanyRecord;
-      const recordId = isPersonField
-        ? TEST_PERSON_RECORD_ID
-        : isOpportunityField
-          ? TEST_OPPORTUNITY_RECORD_ID
-          : isTimelineActivityField
-            ? TEST_TIMELINE_ACTIVITY_RECORD_ID
-            : TEST_RECORD_ID;
-
-      const initializeState = (snapshot: MutableSnapshot) => {
-        snapshot.set(
-          objectMetadataItemsState,
-          generatedMockObjectMetadataItems,
-        );
-        snapshot.set(shouldAppBeLoadingState, false);
-        snapshot.set(
-          pageLayoutPersistedComponentState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          }),
-          {
-            id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-            name: 'Mock Page Layout',
-            type: PageLayoutType.DASHBOARD,
-            objectMetadataId: objectMetadataItem.id,
-            tabs: [],
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z',
-            deletedAt: null,
-          },
-        );
-
-        // Set the record with the appropriate field value
-        snapshot.set(recordStoreFamilyState(recordId), {
-          ...mockRecord,
-          [fieldMetadataItem?.name ?? '']:
-            mockRecord[fieldMetadataItem?.name as keyof typeof mockRecord],
-        });
-
-        // Set the related WorkspaceMember record for relation field display
-        if (
-          !isPersonField &&
-          mockCompanyRecord.accountOwner !== null &&
-          mockCompanyRecord.accountOwner !== undefined
-        ) {
-          snapshot.set(
-            recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
-            mockCompanyRecord.accountOwner,
-          );
-        }
-
-        // Set the related Person record for ONE_TO_MANY relation display
-        if (!isPersonField && !isOpportunityField && !isTimelineActivityField) {
-          snapshot.set(
-            recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-            mockPersonRecord,
-          );
-        }
-
-        // Set the related WorkspaceMember record for TimelineActivity relation display
-        if (isTimelineActivityField) {
-          snapshot.set(
-            recordStoreFamilyState('test-workspace-member-xyz'),
-            mockWorkspaceMemberRecord,
-          );
-        }
-      };
-
-      return (
-        <MemoryRouter>
-          <JestMetadataAndApolloMocksWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
-              <LayoutRenderingProvider
-                value={{
-                  isInRightDrawer: false,
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: recordId,
-                    targetObjectNameSingular: objectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
-                  value={{
-                    layoutMode: 'vertical-list',
-                    tabId: 'fields',
-                  }}
-                >
-                  <Story />
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
-          </JestMetadataAndApolloMocksWrapper>
-        </MemoryRouter>
-      );
-    },
+    ChipGeneratorsDecorator,
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
   ],
   parameters: {
     layout: 'centered',
-  },
-  argTypes: {
-    widget: {
-      control: 'object',
-      description: 'Widget configuration',
-    },
   },
 };
 
@@ -409,11 +319,11 @@ export default meta;
 type Story = StoryObj<typeof FieldWidget>;
 
 export const TextFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-text-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Company Name',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -432,13 +342,65 @@ export const TextFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -448,11 +410,11 @@ export const TextFieldWidget: Story = {
 };
 
 export const AddressFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-address-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Address',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -471,13 +433,65 @@ export const AddressFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -490,11 +504,11 @@ export const AddressFieldWidget: Story = {
 };
 
 export const NumberFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-number-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Employees',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -513,13 +527,65 @@ export const NumberFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -529,11 +595,11 @@ export const NumberFieldWidget: Story = {
 };
 
 export const LinkFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-link-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'LinkedIn',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -552,13 +618,65 @@ export const LinkFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -568,11 +686,11 @@ export const LinkFieldWidget: Story = {
 };
 
 export const ManyToOneRelationFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-relation-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -591,13 +709,75 @@ export const ManyToOneRelationFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      // Set the related WorkspaceMember record for relation field display
+      if (
+        mockCompanyRecord.accountOwner !== null &&
+        mockCompanyRecord.accountOwner !== undefined
+      ) {
+        snapshot.set(
+          recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
+          mockCompanyRecord.accountOwner,
+        );
+      }
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -607,11 +787,11 @@ export const ManyToOneRelationFieldWidget: Story = {
 };
 
 export const OneToManyRelationFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-one-to-many-relation-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -630,13 +810,70 @@ export const OneToManyRelationFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      // Set the related Person record for ONE_TO_MANY relation display
+      snapshot.set(
+        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+        mockPersonRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -646,11 +883,11 @@ export const OneToManyRelationFieldWidget: Story = {
 };
 
 export const BooleanFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-boolean-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Ideal Customer Profile',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -669,13 +906,65 @@ export const BooleanFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -684,11 +973,11 @@ export const BooleanFieldWidget: Story = {
 };
 
 export const CurrencyFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-currency-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Annual Recurring Revenue',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -707,13 +996,65 @@ export const CurrencyFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -722,11 +1063,11 @@ export const CurrencyFieldWidget: Story = {
 };
 
 export const EmailsFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-emails-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Emails',
       objectMetadataId: personObjectMetadataItem.id,
@@ -745,13 +1086,68 @@ export const EmailsFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        personObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+        mockPersonRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_PERSON_RECORD_ID,
+                    targetObjectNameSingular:
+                      personObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -761,11 +1157,11 @@ export const EmailsFieldWidget: Story = {
 };
 
 export const PhonesFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-phones-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Phones',
       objectMetadataId: personObjectMetadataItem.id,
@@ -784,13 +1180,68 @@ export const PhonesFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        personObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+        mockPersonRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_PERSON_RECORD_ID,
+                    targetObjectNameSingular:
+                      personObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -800,11 +1251,11 @@ export const PhonesFieldWidget: Story = {
 };
 
 export const SelectFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-select-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Stage',
       objectMetadataId: opportunityObjectMetadataItem.id,
@@ -823,13 +1274,68 @@ export const SelectFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        opportunityObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        recordStoreFamilyState(TEST_OPPORTUNITY_RECORD_ID),
+        mockOpportunityRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_OPPORTUNITY_RECORD_ID,
+                    targetObjectNameSingular:
+                      opportunityObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -840,11 +1346,11 @@ export const SelectFieldWidget: Story = {
 };
 
 export const MultiSelectFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-multi-select-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Work Policy',
       objectMetadataId: companyObjectMetadataItem.id,
@@ -863,13 +1369,65 @@ export const MultiSelectFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -883,11 +1441,11 @@ export const MultiSelectFieldWidget: Story = {
 };
 
 export const TimelineActivityRelationFieldWidget: Story = {
-  args: {
-    widget: {
+  render: () => {
+    const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
       id: 'widget-timeline-activity-relation-field',
-      pageLayoutTabId: 'tab-overview',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
       title: 'Workspace Member',
       objectMetadataId: timelineActivityObjectMetadataItem.id,
@@ -906,13 +1464,73 @@ export const TimelineActivityRelationFieldWidget: Story = {
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
-    } as PageLayoutWidget,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        timelineActivityObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID),
+        mockTimelineActivityRecord,
+      );
+      // Set the related WorkspaceMember record for TimelineActivity relation display
+      snapshot.set(
+        recordStoreFamilyState('test-workspace-member-xyz'),
+        mockWorkspaceMemberRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_TIMELINE_ACTIVITY_RECORD_ID,
+                    targetObjectNameSingular:
+                      timelineActivityObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
   },
-  render: (args) => (
-    <div style={{ width: '400px', padding: '20px' }}>
-      <FieldWidget widget={args.widget} />
-    </div>
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
