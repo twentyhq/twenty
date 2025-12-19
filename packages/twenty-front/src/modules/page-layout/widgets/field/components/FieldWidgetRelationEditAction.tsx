@@ -16,6 +16,11 @@ import {
   type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { CustomError } from 'twenty-shared/utils';
 import { IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -26,6 +31,21 @@ type FieldWidgetRelationEditActionProps = {
     | FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
 };
+
+const StyledEditButton = styled(LightIconButton)<{ isDropdownOpen: boolean }>`
+  ${({ isDropdownOpen, theme }) =>
+    !isDropdownOpen &&
+    css`
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity ${theme.animation.duration.instant}s ease;
+    `}
+
+  .widget:hover & {
+    opacity: 1;
+    pointer-events: auto;
+  }
+`;
 
 export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
@@ -65,8 +85,24 @@ export const FieldWidgetRelationEditAction = ({
 
   const isMorphRelation = isFieldMorphRelation(fieldDefinition);
 
+  const relationSelectionDropdownId =
+    getRecordFieldCardRelationPickerDropdownId({
+      fieldDefinition,
+      recordId,
+    });
+
+  const isRelationSelectionDropdownOpen = useRecoilComponentValue(
+    isDropdownOpenComponentState,
+    relationSelectionDropdownId,
+  );
+
   const dropdownTriggerClickableComponent = (
-    <LightIconButton Icon={IconPencil} accent="secondary" />
+    <StyledEditButton
+      isDropdownOpen={isRelationSelectionDropdownOpen}
+      Icon={IconPencil}
+      accent="secondary"
+      className="display-on-widget-hover"
+    />
   );
 
   return (

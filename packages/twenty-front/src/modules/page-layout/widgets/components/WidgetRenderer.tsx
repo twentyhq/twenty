@@ -114,6 +114,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-widget-id={widget.id}
+      className="widget"
     >
       {showHeader && (
         <WidgetCardHeader
