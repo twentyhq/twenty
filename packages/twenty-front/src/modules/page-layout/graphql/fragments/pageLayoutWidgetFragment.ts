@@ -116,9 +116,11 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         firstDayOfTheWeek
       }
       ... on IframeConfiguration {
+        configurationType
         url
       }
       ... on StandaloneRichTextConfiguration {
+        configurationType
         body {
           blocknote
           markdown

@@ -14,17 +14,15 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import {
-  GraphOrderBy,
-  GraphType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
   AxisNameDisplay,
   type BarChartConfiguration,
+  BarChartLayout,
   PageLayoutType,
   type PageLayoutWidget,
+  WidgetConfigurationType,
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -90,14 +88,14 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             __typename: 'AggregateChartConfiguration',
-            graphType: GraphType.AGGREGATE,
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidget,
+        } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'gauge-widget',
@@ -114,7 +112,7 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             __typename: 'GaugeChartConfiguration',
-            graphType: GraphType.GAUGE,
+            configurationType: WidgetConfigurationType.GAUGE_CHART,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
@@ -122,7 +120,7 @@ const mixedGraphsPageLayoutMocks = {
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidget,
+        } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'pie-widget',
@@ -139,7 +137,7 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             __typename: 'PieChartConfiguration',
-            graphType: GraphType.PIE,
+            configurationType: WidgetConfigurationType.PIE_CHART,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
             groupByFieldMetadataId: createdAtField.id,
@@ -148,7 +146,7 @@ const mixedGraphsPageLayoutMocks = {
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidget,
+        } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'bar-widget',
@@ -165,7 +163,8 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             __typename: 'BarChartConfiguration',
-            graphType: GraphType.VERTICAL_BAR,
+            configurationType: WidgetConfigurationType.BAR_CHART,
+            layout: BarChartLayout.VERTICAL,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: nameField.id,
             primaryAxisGroupByFieldMetadataId: createdAtField.id,

@@ -3,12 +3,13 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   BarChartLayout,
   WidgetConfigurationType,
-  type BarChartConfiguration,
   type WidgetConfiguration,
 } from '~/generated/graphql';
 
 export const getWidgetTitle = (
-  configuration: WidgetConfiguration,
+  configuration: Pick<WidgetConfiguration, 'configurationType'> & {
+    layout?: BarChartLayout;
+  },
   index: number,
 ): string => {
   switch (configuration.configurationType) {
@@ -19,10 +20,7 @@ export const getWidgetTitle = (
     case WidgetConfigurationType.PIE_CHART:
       return `${t`Pie Chart`} ${index + 1}`;
     case WidgetConfigurationType.BAR_CHART:
-      if (
-        (configuration as BarChartConfiguration).layout ===
-        BarChartLayout.VERTICAL
-      ) {
+      if (configuration.layout === BarChartLayout.VERTICAL) {
         return `${t`Vertical Bar Chart`} ${index + 1}`;
       } else {
         return `${t`Horizontal Bar Chart`} ${index + 1}`;
