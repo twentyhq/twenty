@@ -23,6 +23,7 @@ import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -128,6 +129,12 @@ describe('WorkspaceManagerService', () => {
           provide: ObjectMetadataService,
           useValue: {
             deleteWorkspaceAllObjectMetadata: jest.fn(),
+          },
+        },
+        {
+          provide: TwentyStandardApplicationService,
+          useValue: {
+            synchronizeTwentyStandardApplicationOrThrow: jest.fn(),
           },
         },
         {

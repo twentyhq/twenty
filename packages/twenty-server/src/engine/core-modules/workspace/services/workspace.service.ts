@@ -17,6 +17,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -242,8 +243,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
+    const isV2SyncEnabled = this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_V2_ENABLED',
+    );
+
     await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
+      [
+        ...DEFAULT_FEATURE_FLAGS,
+        ...(isV2SyncEnabled
+          ? [FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED]
+          : []),
+      ],
       workspace.id,
     );
 
