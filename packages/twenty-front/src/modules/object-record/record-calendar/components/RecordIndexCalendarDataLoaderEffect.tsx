@@ -39,7 +39,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
   );
 
   useEffect(() => {
-    upsertRecordsInStore(records);
+    upsertRecordsInStore({ partialRecords: records });
     const recordIds = records.map((record) => record.id);
     setRecordCalendarRecordIds(recordIds);
   }, [records, setRecordCalendarRecordIds, upsertRecordsInStore]);
