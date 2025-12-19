@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -26,7 +26,13 @@ import { CustomError } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailRelationSectionDropdownToMany = () => {
+type RecordDetailRelationSectionDropdownToManyProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailRelationSectionDropdownToMany = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailRelationSectionDropdownToManyProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldMetadataId } = fieldDefinition;
   const {
@@ -160,11 +166,13 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPlus}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPlus}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <MultipleRecordPicker

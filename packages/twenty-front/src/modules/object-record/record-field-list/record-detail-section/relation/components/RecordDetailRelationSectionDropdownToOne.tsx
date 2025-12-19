@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -29,7 +29,13 @@ import { CustomError } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailRelationSectionDropdownToOne = () => {
+type RecordDetailRelationSectionDropdownToOneProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailRelationSectionDropdownToOne = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailRelationSectionDropdownToOneProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   assertFieldMetadata(
     FieldMetadataType.RELATION,
@@ -157,11 +163,13 @@ export const RecordDetailRelationSectionDropdownToOne = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPencil}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPencil}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <SingleRecordPicker
