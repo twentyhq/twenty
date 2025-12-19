@@ -122,7 +122,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     return (
       <FieldWidgetRelation
         fieldDefinition={fieldDefinition}
-        recordId={targetRecord.id}
         relationValue={record}
         isInRightDrawer={isInRightDrawer}
       />

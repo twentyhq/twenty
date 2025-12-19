@@ -26,7 +26,6 @@ const StyledRelationChipsContainer = styled.div`
 
 type FieldWidgetRelationProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  recordId: string;
   relationValue: any;
   isInRightDrawer: boolean;
 };
