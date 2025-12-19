@@ -1,9 +1,10 @@
+import { RelativeDateUpdateEffect } from '@/localization/components/RelativeDateUpdateEffect';
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { UserContext } from '@/users/contexts/UserContext';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
@@ -24,6 +25,7 @@ export const DateTimeDisplay = ({
 }: DateTimeDisplayProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
+  const [, setTick] = useState(0);
 
   const formattedDate = formatDateTimeString({
     value,
@@ -35,15 +37,22 @@ export const DateTimeDisplay = ({
   });
 
   return (
-    <EllipsisDisplay>
-      {formattedDate}
-      <span></span>
-      {isNonEmptyString(value) && (
-        <>
-          <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation date={new Date(value)} />
-        </>
-      )}
-    </EllipsisDisplay>
+    <>
+      <RelativeDateUpdateEffect
+        displayFormat={dateFieldSettings?.displayFormat}
+        onTick={() => setTick((prev) => prev + 1)}
+        dateValue={value}
+      />
+      <EllipsisDisplay>
+        {formattedDate}
+        <span></span>
+        {isNonEmptyString(value) && (
+          <>
+            <StyledTimeZoneSpacer />
+            <TimeZoneAbbreviation date={new Date(value)} />
+          </>
+        )}
+      </EllipsisDisplay>
+    </>
   );
 };
