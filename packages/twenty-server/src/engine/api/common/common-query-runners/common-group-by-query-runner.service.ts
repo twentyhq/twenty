@@ -71,6 +71,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
