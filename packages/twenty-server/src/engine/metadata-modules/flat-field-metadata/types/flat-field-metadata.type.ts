@@ -21,14 +21,6 @@ export type FieldMetadataEntityRelationProperties =
   (typeof FIELD_METADATA_RELATION_PROPERTIES)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
-  FlatEntityFrom<
-    FieldMetadataEntity<T>,
-    FieldMetadataEntityRelationProperties
-  > & {
-    universalIdentifier: string;
-    viewFieldIds: string[];
-    viewFilterIds: string[];
-    kanbanAggregateOperationViewIds: string[];
-    calendarViewIds: string[];
-    mainGroupByFieldMetadataViewIds: string[];
+  FlatEntityFrom<FieldMetadataEntity<T>> & {
+    universalIdentifier: string; // TODO remove once universalIdentifier is required on entity directly
   };
