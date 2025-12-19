@@ -132,36 +132,43 @@ jobs:
         run: |
           TARGET_TAG="${{ steps.target.outputs.target_tag }}"
           INDEBTED_TAG="${TARGET_TAG}-indebted"
+          BRANCH_NAME="${{ steps.merge.outputs.branch_name }}"
 
-          PR_URL=$(gh pr create \
-            --title "Sync with upstream $TARGET_TAG" \
-            --body "## Automated sync from upstream
+          # Debug: check token permissions
+          echo "Checking token permissions..."
+          curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }} | jq '.permissions'
 
-          **Upstream tag:** \`$TARGET_TAG\`
-          **Our tag (after merge):** \`$INDEBTED_TAG\`
+          # Try creating PR via REST API for better error details
+          echo "Creating PR via API..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls \
+            -d "{
+              \"title\": \"Sync with upstream $TARGET_TAG\",
+              \"head\": \"$BRANCH_NAME\",
+              \"base\": \"main\",
+              \"body\": \"## Automated sync from upstream\\n\\n**Upstream tag:** \`$TARGET_TAG\`\\n**Our tag (after merge):** \`$INDEBTED_TAG\`\\n\\n### What this PR does\\n- Merges upstream tag \`$TARGET_TAG\` from \`twentyhq/twenty\`\\n- Regenerates \`yarn.lock\` to apply our security resolutions\\n\\n### After merging this PR\\nThe \`create-release-tag\` workflow will automatically:\\n1. Create tag \`$INDEBTED_TAG\` on the merged commit\\n2. Trigger the Docker image build\"
+            }")
 
-          ### What this PR does
-          - Merges upstream tag \`$TARGET_TAG\` from \`twentyhq/twenty\`
-          - Regenerates \`yarn.lock\` to apply our security resolutions
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
 
-          ### After merging this PR
-          The \`create-release-tag\` workflow will automatically:
-          1. Create tag \`$INDEBTED_TAG\` on the merged commit
-          2. Trigger the Docker image build
+          echo "HTTP Code: $HTTP_CODE"
+          echo "Response: $BODY"
 
-          ### Review checklist
-          - [ ] Review upstream changes for breaking changes
-          - [ ] Verify CI passes
-          - [ ] Merge when ready
-
-          ---
-          *This PR was automatically created by the sync-upstream workflow.*" \
-            --base main \
-            --head ${{ steps.merge.outputs.branch_name }})
-
-          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-          echo "pr_created=true" >> $GITHUB_OUTPUT
-          echo "Created PR: $PR_URL"
+          if [ "$HTTP_CODE" = "201" ]; then
+            PR_URL=$(echo "$BODY" | jq -r '.html_url')
+            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "Created PR: $PR_URL"
+          else
+            echo "::error::Failed to create PR. HTTP $HTTP_CODE"
+            echo "$BODY" | jq .
+            exit 1
+          fi
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
