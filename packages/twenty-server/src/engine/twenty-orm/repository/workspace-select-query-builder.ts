@@ -342,7 +342,9 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private getMainAliasTarget(): EntityTarget<T> {
-    const mainAliasTarget = this.expressionMap.mainAlias?.target;
+    const mainAlias = this.expressionMap.mainAlias;
+
+    const mainAliasTarget = mainAlias?.target;
 
     if (!mainAliasTarget) {
       throw new TwentyORMException(
@@ -356,6 +358,12 @@ export class WorkspaceSelectQueryBuilder<
 
   private applyRowLevelPermissionPredicates(): void {
     if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    // Subqueries don't have entity metadata, skip permission predicates
+    // Permissions are already applied on the original entity query
+    if (this.expressionMap.mainAlias?.subQuery) {
       return;
     }
 
