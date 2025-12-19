@@ -11,7 +11,7 @@ import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/co
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
-import { SettingsSecurityOther } from '@/settings/workspace/components/SettingsSecurityOther';
+import { SettingsSecurityOther } from '@/settings/security/components/SettingsSecurityOther';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';

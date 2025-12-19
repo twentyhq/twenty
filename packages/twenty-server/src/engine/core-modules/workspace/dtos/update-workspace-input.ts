@@ -118,5 +118,5 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
-  allowRequests?: boolean;
+  allowExternalRequests?: boolean;
 }

@@ -314,5 +314,5 @@ export class WorkspaceEntity {
 
   @Field()
   @Column({ default: true })
-  allowRequests: boolean;
+  allowExternalRequests: boolean;
 }

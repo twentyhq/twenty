@@ -12,13 +12,13 @@ import styled from '@emotion/styled';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const SettingsSecurityOther = () => {
-  const StyledToggleRequests = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing(4)};
-  `;
+const StyledToggleRequests = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
 
+export const SettingsSecurityOther = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -72,13 +72,13 @@ export const SettingsSecurityOther = () => {
       await updateWorkspace({
         variables: {
           input: {
-            allowRequests: value,
+            allowExternalRequests: value,
           },
         },
       });
       setCurrentWorkspace({
         ...currentWorkspace,
-        allowRequests: value,
+        allowExternalRequests: value,
       });
     } catch (err: any) {
       enqueueErrorSnackBar({
@@ -105,7 +105,7 @@ export const SettingsSecurityOther = () => {
           Icon={IconHttpGet}
           title={t`Allow requests to twenty-icons`}
           description={t`Grant access to send requests to twenty-icons to show companies' icons.`}
-          checked={currentWorkspace?.allowRequests ?? false}
+          checked={currentWorkspace?.allowExternalRequests ?? false}
           onChange={handleRequestsChange}
           advancedMode
         />

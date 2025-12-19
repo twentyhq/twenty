@@ -27,7 +27,7 @@ export const getAvatarUrl = (
 
   if (
     objectNameSingular === CoreObjectNameSingular.Company &&
-    currentWorkspace?.allowRequests === true
+    currentWorkspace?.allowExternalRequests === true
   ) {
     return getLogoUrlFromDomainName(
       getCompanyDomainName(record as Company) ?? '',
