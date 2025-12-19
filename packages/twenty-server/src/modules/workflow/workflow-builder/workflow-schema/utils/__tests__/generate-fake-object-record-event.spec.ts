@@ -36,58 +36,70 @@ describe('generateFakeObjectRecordEvent', () => {
     );
 
     expect(result).toEqual({
-      object: {
+      workspaceMemberId: {
         isLeaf: true,
-        icon: 'test-company-icon',
-        label: 'Company',
-        value: 'A company',
-        fieldIdName: 'properties.after.id',
-        objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+        type: 'string',
+        label: 'Workspace Member ID',
+        value: null,
       },
-      fields: {
-        'properties.after.field1': {
-          type: 'TEXT',
-          value: 'test',
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        'properties.after.field2': {
-          type: 'NUMBER',
-          value: 123,
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
-        },
+      'properties.after.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       },
-      _outputSchemaType: 'RECORD',
+      'properties.after.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
     });
   });
 
-  it('should generate record with "after" prefix for UPDATED action', () => {
+  it('should generate record with "before" and "after" prefix for UPDATED action', () => {
     const result = generateFakeObjectRecordEvent(
       mockCompanyObjectMetadataInfo,
       DatabaseEventAction.UPDATED,
     );
 
     expect(result).toEqual({
-      object: {
+      workspaceMemberId: {
         isLeaf: true,
-        icon: 'test-company-icon',
-        label: 'Company',
-        value: 'A company',
-        fieldIdName: 'properties.after.id',
-        objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+        type: 'string',
+        label: 'Workspace Member ID',
+        value: null,
       },
-      fields: {
-        'properties.after.field1': {
-          type: 'TEXT',
-          value: 'test',
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        'properties.after.field2': {
-          type: 'NUMBER',
-          value: 123,
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
-        },
+      'properties.before.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       },
-      _outputSchemaType: 'RECORD',
+      'properties.before.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
+      'properties.after.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+      },
+      'properties.after.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
+      'properties.diff': {
+        isLeaf: true,
+        type: 'object',
+        label: 'Changed Fields',
+        value: {},
+      },
+      'properties.updatedFields': {
+        isLeaf: true,
+        type: 'array',
+        label: 'Updated Field Names',
+        value: [],
+      },
     });
   });
 
@@ -98,27 +110,22 @@ describe('generateFakeObjectRecordEvent', () => {
     );
 
     expect(result).toEqual({
-      object: {
+      workspaceMemberId: {
         isLeaf: true,
-        icon: 'test-company-icon',
-        label: 'Company',
-        value: 'A company',
-        fieldIdName: 'properties.before.id',
-        objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+        type: 'string',
+        label: 'Workspace Member ID',
+        value: null,
       },
-      fields: {
-        'properties.before.field1': {
-          type: 'TEXT',
-          value: 'test',
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        'properties.before.field2': {
-          type: 'NUMBER',
-          value: 123,
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
-        },
+      'properties.before.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       },
-      _outputSchemaType: 'RECORD',
+      'properties.before.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
     });
   });
 
@@ -129,27 +136,22 @@ describe('generateFakeObjectRecordEvent', () => {
     );
 
     expect(result).toEqual({
-      object: {
+      workspaceMemberId: {
         isLeaf: true,
-        icon: 'test-company-icon',
-        label: 'Company',
-        value: 'A company',
-        fieldIdName: 'properties.before.id',
-        objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+        type: 'string',
+        label: 'Workspace Member ID',
+        value: null,
       },
-      fields: {
-        'properties.before.field1': {
-          type: 'TEXT',
-          value: 'test',
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        'properties.before.field2': {
-          type: 'NUMBER',
-          value: 123,
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
-        },
+      'properties.before.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       },
-      _outputSchemaType: 'RECORD',
+      'properties.before.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
     });
   });
 
@@ -160,27 +162,28 @@ describe('generateFakeObjectRecordEvent', () => {
     );
 
     expect(result).toEqual({
-      object: {
+      workspaceMemberId: {
         isLeaf: true,
-        icon: 'test-company-icon',
-        label: 'Company',
-        value: 'A company',
-        fieldIdName: 'properties.after.id',
-        objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
+        type: 'string',
+        label: 'Workspace Member ID',
+        value: null,
       },
-      fields: {
-        'properties.after.field1': {
-          type: 'TEXT',
-          value: 'test',
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
-        },
-        'properties.after.field2': {
-          type: 'NUMBER',
-          value: 123,
-          fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
-        },
+      'properties.after.field1': {
+        type: 'TEXT',
+        value: 'test',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       },
-      _outputSchemaType: 'RECORD',
+      'properties.after.field2': {
+        type: 'NUMBER',
+        value: 123,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+      },
+      'properties.updatedFields': {
+        isLeaf: true,
+        type: 'array',
+        label: 'Updated Field Names',
+        value: [],
+      },
     });
   });
 
