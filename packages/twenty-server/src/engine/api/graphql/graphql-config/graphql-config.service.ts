@@ -121,7 +121,11 @@ export class GraphQLConfigService
           } = context.req;
 
           if (!workspace) {
-            return new GraphQLSchema({});
+            throw new GraphQLError('Unauthenticated', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
           }
 
           return await this.createSchema(context, {
