@@ -214,6 +214,7 @@ describe('WorkspaceEntityManager', () => {
         IS_DASHBOARD_V2_ENABLED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
+        IS_READ_ON_REPLICA_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
