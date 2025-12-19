@@ -28,20 +28,27 @@ export const useUpsertRecordsInStore = () => {
               })
             : partialRecord;
 
+          if (!isDefined(currentRecord)) {
+            set(recordStoreFamilyState(partialRecord.id), {
+              id: partialRecord.id,
+              __typename: partialRecord.__typename,
+              ...filteredPartialRecord,
+            });
+            continue;
+          }
+
           const filteredCurrentRecord = isDefined(recordGqlFields)
-            ? currentRecord
-              ? filterRecordOnGqlFields({
-                  record: currentRecord,
-                  recordGqlFields,
-                })
-              : undefined
+            ? filterRecordOnGqlFields({
+                record: currentRecord,
+                recordGqlFields,
+              })
             : currentRecord;
 
           if (!isDeeplyEqual(filteredCurrentRecord, filteredPartialRecord)) {
             set(recordStoreFamilyState(partialRecord.id), {
               ...currentRecord,
               ...filteredPartialRecord,
-            } as ObjectRecord);
+            });
           }
         }
       },
