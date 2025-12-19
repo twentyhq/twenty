@@ -2,11 +2,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   POSTGRES_DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
-  POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE,
   POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
 } from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
 import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-array-field-value.util';
-import { isNullEquivalentRawJsonFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-raw-json-field-value.util';
 import { isNullEquivalentTextFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-text-field-value.util';
 
 export const findPostgresDefaultNullEquivalentValue = (
@@ -19,10 +17,7 @@ export const findPostgresDefaultNullEquivalentValue = (
       return isNullEquivalentTextFieldValue(value) || value === 'NULL'
         ? POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
         : undefined;
-    case FieldMetadataType.RAW_JSON:
-      return isNullEquivalentRawJsonFieldValue(value) || value === 'NULL'
-        ? POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE
-        : undefined;
+    case FieldMetadataType.MULTI_SELECT:
     case FieldMetadataType.ARRAY:
       return isNullEquivalentArrayFieldValue(value) || value === 'NULL'
         ? POSTGRES_DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE
@@ -32,10 +27,6 @@ export const findPostgresDefaultNullEquivalentValue = (
         case 'name':
           return isNullEquivalentTextFieldValue(value) || value === 'NULL'
             ? POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
-            : undefined;
-        case 'context':
-          return isNullEquivalentRawJsonFieldValue(value) || value === 'NULL'
-            ? POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
         default:
           return undefined;
@@ -128,10 +119,6 @@ export const findPostgresDefaultNullEquivalentValue = (
     }
     case FieldMetadataType.RICH_TEXT_V2: {
       switch (key) {
-        case 'blocknote':
-          return isNullEquivalentRawJsonFieldValue(value) || value === 'NULL'
-            ? POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE
-            : undefined;
         case 'markdown':
           return isNullEquivalentTextFieldValue(value) || value === 'NULL'
             ? POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE

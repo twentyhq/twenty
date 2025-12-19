@@ -23,6 +23,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -34,7 +35,7 @@ import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
   component: Dropdown,
-  decorators: [ComponentDecorator, (Story) => <Story />],
+  decorators: [I18nFrontDecorator, ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
     dropdownOffset: { x: 0, y: 8 },

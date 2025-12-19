@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ActorMetadata,
   EmailsMetadata,
@@ -8,13 +9,12 @@ import {
   type FullNameMetadata,
   type LinksMetadata,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -127,7 +127,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBriefcase',
   })
   @WorkspaceIsNullable()
-  jobTitle: string;
+  jobTitle: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -137,7 +137,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPhone',
   })
   @WorkspaceIsDeprecated()
-  phone: string;
+  @WorkspaceIsNullable()
+  phone: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phones,
@@ -160,7 +161,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
-  city: string;
+  city: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
@@ -171,7 +172,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.position,
@@ -305,6 +306,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Events linked to the person`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetPerson',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

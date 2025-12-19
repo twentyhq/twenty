@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
@@ -30,6 +31,7 @@ export const EventRowCalendarEvent = ({
   authorFullName,
   labelIdentifierValue,
 }: EventRowCalendarEventProps) => {
+  const { t } = useLingui();
   const [, eventAction] = event.name.split('.');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,7 +44,7 @@ export const EventRowCalendarEvent = ({
       <StyledRowContainer>
         <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         <StyledEventRowItemAction>
-          linked a calendar event with {labelIdentifierValue}
+          {t`linked a calendar event with ${labelIdentifierValue}`}
         </StyledEventRowItemAction>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>

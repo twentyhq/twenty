@@ -30,8 +30,10 @@
     "class-validator": "^0.14.0",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
+    "lodash.camelcase": "^4.3.0",
     "qs": "^6.11.2",
     "react-router-dom": "^6.4.4",
+    "transliteration": "^2.3.5",
     "zod": "^4.1.11"
   },
   "exports": {
@@ -45,10 +47,20 @@
       "import": "./dist/ai.mjs",
       "require": "./dist/ai.cjs"
     },
+    "./application": {
+      "types": "./dist/application/index.d.ts",
+      "import": "./dist/application.mjs",
+      "require": "./dist/application.cjs"
+    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.cjs"
+    },
+    "./database-events": {
+      "types": "./dist/database-events/index.d.ts",
+      "import": "./dist/database-events.mjs",
+      "require": "./dist/database-events.cjs"
     },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
@@ -89,7 +101,9 @@
   "files": [
     "dist",
     "ai",
+    "application",
     "constants",
+    "database-events",
     "metadata",
     "testing",
     "translations",
@@ -103,8 +117,14 @@
       "ai": [
         "dist/ai/index.d.ts"
       ],
+      "application": [
+        "dist/application/index.d.ts"
+      ],
       "constants": [
         "dist/constants/index.d.ts"
+      ],
+      "database-events": [
+        "dist/database-events/index.d.ts"
       ],
       "metadata": [
         "dist/metadata/index.d.ts"

@@ -91,15 +91,15 @@ export const RecordCalendarTopBar = () => {
           selectSizeVariant="small"
           options={[
             {
-              label: 'Month',
+              label: t`Month`,
               value: ViewCalendarLayout.MONTH,
             },
             {
-              label: 'Week',
+              label: t`Week`,
               value: ViewCalendarLayout.WEEK,
             },
             {
-              label: 'Timeline',
+              label: t`Timeline`,
               value: ViewCalendarLayout.DAY,
             },
           ]}
@@ -121,6 +121,7 @@ export const RecordCalendarTopBar = () => {
           dropdownComponents={
             <DropdownContent widthInPixels={280}>
               <DateTimePicker
+                instanceId={recordCalendarId}
                 date={recordCalendarSelectedDate}
                 onChange={handleDateChange}
                 onClose={handleDateChange}

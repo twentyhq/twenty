@@ -99,15 +99,15 @@ export class FlatCronTriggerValidatorService {
     return validationResult;
   }
 
-  public async validateFlatCronTriggerCreation({
+  public validateFlatCronTriggerCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
       flatServerlessFunctionMaps,
     },
-  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>): Promise<
-    FailedFlatEntityValidation<FlatCronTrigger>
-  > {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.cronTrigger
+  >): FailedFlatEntityValidation<FlatCronTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatCronTrigger> = {
       type: 'create_cron_trigger',
       errors: [],

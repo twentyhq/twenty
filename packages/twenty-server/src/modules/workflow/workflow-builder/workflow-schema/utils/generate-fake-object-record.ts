@@ -4,27 +4,22 @@ import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builde
 
 export const generateFakeObjectRecord = ({
   objectMetadataInfo,
-  depth = 0,
-  maxDepth = 1,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
-  depth?: number;
-  maxDepth?: number;
 }): RecordOutputSchema => {
+  const { flatObjectMetadata } = objectMetadataInfo;
+
   return {
     object: {
       isLeaf: true,
-      icon:
-        objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon ?? undefined,
-      label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
-      value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
+      icon: flatObjectMetadata.icon ?? undefined,
+      label: flatObjectMetadata.labelSingular,
+      value: flatObjectMetadata.description,
       fieldIdName: 'id',
-      objectMetadataId: objectMetadataInfo.objectMetadataItemWithFieldsMaps.id,
+      objectMetadataId: flatObjectMetadata.id,
     },
     fields: generateObjectRecordFields({
       objectMetadataInfo,
-      depth,
-      maxDepth,
     }),
     _outputSchemaType: 'RECORD',
   };

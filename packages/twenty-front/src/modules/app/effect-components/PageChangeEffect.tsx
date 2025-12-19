@@ -24,7 +24,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -82,7 +82,8 @@ export const PageChangeEffect = () => {
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordIndexId);
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordIndexId);
+  const { resetRecordBoardSelection } =
+    useResetRecordBoardSelection(recordIndexId);
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordIndexId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordIndexId);
 
@@ -141,7 +142,7 @@ export const PageChangeEffect = () => {
         deactivateRecordTableRow();
       }
       if (contextStoreCurrentViewType === ContextStoreViewType.Kanban) {
-        resetRecordSelection();
+        resetRecordBoardSelection();
         deactivateBoardCard();
         unfocusBoardCard();
       }
@@ -304,7 +305,7 @@ export const PageChangeEffect = () => {
     resetTableRowSelection,
     unfocusRecordTableRow,
     deactivateRecordTableRow,
-    resetRecordSelection,
+    resetRecordBoardSelection,
     deactivateBoardCard,
     unfocusBoardCard,
     resetFocusStackToRecordIndex,

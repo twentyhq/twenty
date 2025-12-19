@@ -8,11 +8,13 @@ export const computeNewPositionsOfDraggedRecords = ({
   draggedRecordId,
   targetRecordId,
   sourceRecordIds,
+  isDroppedAfterList,
 }: {
   arrayOfRecordsWithPosition: RecordWithPosition[];
   draggedRecordId: string;
   targetRecordId: string;
   sourceRecordIds: string[];
+  isDroppedAfterList: boolean;
 }): RecordWithPosition[] | null => {
   const targetItem = arrayOfRecordsWithPosition.find(
     (recordToFind) => recordToFind.id === targetRecordId,
@@ -38,11 +40,7 @@ export const computeNewPositionsOfDraggedRecords = ({
     (recordToFind) => recordToFind.id === targetRecordId,
   );
 
-  const lastIndex = arrayOfRecordsWithPosition.length - 1;
-
   const shouldGoToFirstPosition = indexOfTargetItem === 0;
-
-  const shouldGoToLastPosition = indexOfTargetItem === lastIndex;
 
   if (shouldGoToFirstPosition) {
     const newPositions = computeNewEvenlySpacedPositions({
@@ -58,7 +56,7 @@ export const computeNewPositionsOfDraggedRecords = ({
       }));
 
     return newSourceRecordsWithPosition;
-  } else if (shouldGoToLastPosition) {
+  } else if (isDroppedAfterList) {
     const newPositions = computeNewEvenlySpacedPositions({
       startingPosition: targetPosition,
       endingPosition: targetPosition + sourceRecordIds.length + 1,

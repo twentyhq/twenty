@@ -1,44 +1,81 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
-import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
-  const objectMetadataItemWithFieldMaps =
-    getMockObjectMetadataItemWithFieldsMaps({
-      id: 'object-id',
-      workspaceId: 'workspace-id',
-      nameSingular: 'person',
-      namePlural: 'people',
-      indexMetadatas: [],
-      fieldIdByJoinColumnName: {},
-      fieldIdByName: {
-        name: 'name-id',
-        age: 'age-id',
-        fullName: 'fullname-id',
-      },
-      fieldsById: {
-        'name-id': getMockFieldMetadataEntity({
-          workspaceId: 'workspace-id',
-          objectMetadataId: 'object-id',
-          id: 'name-id',
-          type: FieldMetadataType.TEXT,
-          name: 'name',
-          label: 'Name',
-          isLabelSyncedWithName: true,
-          isNullable: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      },
-    });
+  const workspaceId = 'workspace-id';
+  const objectMetadataId = 'object-id';
+
+  const createMockField = (
+    overrides: Partial<FlatFieldMetadata> & {
+      id: string;
+      name: string;
+      type: FieldMetadataType;
+    },
+  ): FlatFieldMetadata =>
+    ({
+      workspaceId,
+      objectMetadataId,
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: overrides.id,
+      viewFieldIds: [],
+      viewFilterIds: [],
+      viewGroupIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+      label: overrides.name,
+      ...overrides,
+    }) as FlatFieldMetadata;
+
+  const nameField = createMockField({
+    id: 'name-id',
+    type: FieldMetadataType.TEXT,
+    name: 'name',
+    label: 'Name',
+  });
+
+  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+    byId: {
+      'name-id': nameField,
+    },
+    idByUniversalIdentifier: {
+      'name-id': 'name-id',
+    },
+    universalIdentifiersByApplicationId: {},
+  };
+
+  const flatObjectMetadata: FlatObjectMetadata = {
+    id: objectMetadataId,
+    workspaceId,
+    nameSingular: 'person',
+    namePlural: 'people',
+    labelSingular: 'Person',
+    labelPlural: 'People',
+    isCustom: false,
+    isRemote: false,
+    isActive: true,
+    isSystem: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: objectMetadataId,
+    fieldMetadataIds: ['name-id'],
+    indexMetadataIds: [],
+    viewIds: [],
+    applicationId: null,
+  } as unknown as FlatObjectMetadata;
 
   const mockWorkspaceId = 'workspace-id';
   const mockAuthContext = {
@@ -73,7 +110,8 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       try {
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
-          objectMetadataItem: objectMetadataItemWithFieldMaps,
+          objectMetadataItem: flatObjectMetadata,
+          flatFieldMetadataMaps,
           workspaceId: mockWorkspaceId,
           authContext: mockAuthContext,
           entities: afterEntities,
@@ -115,7 +153,8 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
 
       const result = formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadataItemWithFieldMaps,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
         workspaceId: mockWorkspaceId,
         authContext: mockAuthContext,
         entities: afterEntities,
@@ -155,7 +194,8 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
 
       const result = formatTwentyOrmEventToDatabaseBatchEvent({
         action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadataItemWithFieldMaps,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
         workspaceId: mockWorkspaceId,
         authContext: mockAuthContext,
         entities: afterEntity,

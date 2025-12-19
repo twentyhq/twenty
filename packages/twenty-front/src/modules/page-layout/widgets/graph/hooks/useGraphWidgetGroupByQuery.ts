@@ -1,4 +1,7 @@
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
@@ -12,7 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
-  type PieChartConfiguration,
 } from '~/generated/graphql';
 
 export const useGraphWidgetGroupByQuery = ({
@@ -24,11 +26,15 @@ export const useGraphWidgetGroupByQuery = ({
   configuration: GroupByChartConfiguration;
   limit?: number;
 }) => {
+  const { calendarStartDay } = useDateTimeFormat();
+
   const { objectMetadataItem, aggregateField, gqlOperationFilter } =
     useGraphWidgetQueryCommon({
       objectMetadataItemId,
       configuration,
     });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(aggregateField)) {
     throw new Error('Aggregate field not found');
@@ -51,26 +57,24 @@ export const useGraphWidgetGroupByQuery = ({
     throw new Error('Aggregate operation not found');
   }
 
-  const isPieChart = (
-    config: GroupByChartConfiguration,
-  ): config is PieChartConfiguration => {
-    return config.__typename === 'PieChartConfiguration';
-  };
-
-  const groupByQueryVariables = isPieChart(configuration)
+  const groupByQueryVariables = isPieChartConfiguration(configuration)
     ? generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem,
+        objectMetadataItems,
         chartConfiguration: configuration,
         aggregateOperation: aggregateOperation,
         limit,
+        firstDayOfTheWeek: calendarStartDay,
       })
     : generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
         objectMetadataItem,
+        objectMetadataItems,
         chartConfiguration: configuration as
           | BarChartConfiguration
           | LineChartConfiguration,
         aggregateOperation: aggregateOperation,
         limit,
+        firstDayOfTheWeek: calendarStartDay,
       });
 
   const variables = {

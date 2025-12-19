@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFullNameFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameFieldDisplay';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
@@ -11,14 +12,13 @@ import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
-  align-items: center;
   background: inherit;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   overflow: hidden;
-  height: 28px;
+  height: 24px;
   padding: ${({ theme }) => theme.spacing(0, 1.25)};
   box-sizing: border-box;
   display: flex;
@@ -83,7 +83,7 @@ export const RecordTitleFullNameFieldDisplay = ({
       }}
     >
       {!content ? (
-        <StyledEmptyText>Untitled</StyledEmptyText>
+        <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
       ) : (
         <OverflowingTextWithTooltip
           text={isNonEmptyString(content) ? content : fieldDefinition.label}

@@ -1,30 +1,29 @@
+import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
-import { type ThemeType } from 'twenty-ui/theme';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
   colorRegistry: GraphColorRegistry;
   id: string;
-  instanceId: string;
-  enableArea: boolean;
-  theme: ThemeType;
 };
 
 export const useLineChartData = ({
   data,
   colorRegistry,
   id,
-  instanceId,
-  enableArea,
-  theme,
 }: UseLineChartDataProps) => {
-  const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
+  const hiddenLegendIds = useRecoilComponentValue(
+    graphWidgetHiddenLegendIdsComponentState,
+  );
+
+  const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
@@ -32,62 +31,41 @@ export const useLineChartData = ({
         fallbackIndex: index,
         totalGroups: data.length,
       });
-      const shouldEnableArea = series.enableArea ?? enableArea;
-      const gradientId = `lineGradient-${id}-${instanceId}-${series.id}-${index}`;
 
-      return {
-        ...series,
-        colorScheme,
-        gradientId,
-        shouldEnableArea,
-        label: series.label || series.id,
-      };
+      const sanitizedSeriesId = series.id
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_-]/g, '');
+      const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
+      const label = series.label ?? series.id;
+
+      return { ...series, colorScheme, areaFillId, label };
     });
-  }, [data, colorRegistry, id, instanceId, enableArea]);
+  }, [data, colorRegistry, id]);
 
-  const nivoData: LineSeries[] = data.map((series) => ({
-    id: series.id,
-    data: series.data.map((point) => ({
-      x: point.x,
-      y: point.y,
-    })),
-  }));
-
-  const seriesWithArea = enrichedSeries.filter(
-    (series) => series.shouldEnableArea,
-  );
-
-  const defs = seriesWithArea.map((series) =>
-    createGradientDef(
-      series.colorScheme,
-      series.gradientId,
-      false,
-      90,
-      theme.name === 'light',
-    ),
-  );
-
-  const fill = seriesWithArea.map((series) => ({
-    match: { id: series.id },
-    id: series.gradientId,
-  }));
-
-  const colors = enrichedSeries.map((series) => series.colorScheme.solid);
-
-  const legendItems = enrichedSeries.map((series) => {
-    return {
+  const legendItems: GraphWidgetLegendItem[] = allEnrichedSeries.map(
+    (series) => ({
       id: series.id,
       label: series.label,
       color: series.colorScheme.solid,
-    };
-  });
+    }),
+  );
 
-  return {
-    enrichedSeries,
-    nivoData,
-    defs,
-    fill,
-    colors,
-    legendItems,
-  };
+  const visibleData = data.filter(
+    (series) => !hiddenLegendIds.includes(series.id),
+  );
+
+  const enrichedSeries = allEnrichedSeries.filter(
+    (series) => !hiddenLegendIds.includes(series.id),
+  );
+
+  const nivoData: LineSeries[] = visibleData.map((series) => ({
+    id: series.id,
+    data: series.data.map((point) => ({ x: point.x, y: point.y })),
+  }));
+
+  const colors: string[] = enrichedSeries.map(
+    (series) => series.colorScheme.solid,
+  );
+
+  return { enrichedSeries, nivoData, colors, legendItems, visibleData };
 };

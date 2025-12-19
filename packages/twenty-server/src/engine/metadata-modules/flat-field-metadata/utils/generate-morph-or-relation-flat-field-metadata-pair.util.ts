@@ -1,3 +1,4 @@
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
@@ -13,7 +14,8 @@ import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/f
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
+import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
@@ -39,6 +41,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatFieldMetadataType: FieldMetadataType;
   sourceFlatObjectMetadataJoinColumnName: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
     Required<
@@ -47,6 +50,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   workspaceId: string;
   morphId?: string | null;
   workspaceCustomApplicationId: string;
+  targetFieldName?: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -58,11 +62,15 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   createFieldInput,
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
+  targetFlatFieldMetadataType,
   workspaceId,
   workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
+  targetFieldName,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
+  const sourceFlatFieldMetadataType = createFieldInput.type;
+
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =
@@ -72,6 +80,17 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
+
+  const defaultDescriptionFromField =
+    buildDescriptionForRelationFieldMetadataOnFromField({
+      relationObjectMetadataNamePlural: sourceFlatObjectMetadata.namePlural,
+      targetObjectLabelSingular: targetFlatObjectMetadata.labelSingular,
+    });
+  const defaultDescriptionToField =
+    buildDescriptionForRelationFieldMetadataOnToField({
+      relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
+      targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
+    });
   const sourceFlatFieldMetadata: Omit<
     FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
@@ -82,10 +101,15 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
       workspaceCustomApplicationId,
     }),
-    morphId,
+    morphId:
+      sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
+        ? morphId
+        : null,
     objectMetadataId: sourceFlatObjectMetadata.id,
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
-    type: createFieldInput.type,
+    type: sourceFlatFieldMetadataType,
+    description:
+      createFieldInput.description ?? defaultDescriptionFromField.description,
     defaultValue: null,
     settings: sourceFlatFieldMetadataSettings,
     options: null,
@@ -95,13 +119,18 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
+    description:
+      createFieldInput.description ?? defaultDescriptionToField.description,
     label: relationCreationPayload.targetFieldLabel,
-    name: computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    ),
+    name:
+      targetFieldName ??
+      computeMetadataNameFromLabel({
+        label: relationCreationPayload.targetFieldLabel,
+      }),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
+    isSystem: createFieldInput.isSystem ?? false,
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
@@ -113,21 +142,27 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
           ? RelationType.MANY_TO_ONE
           : RelationType.ONE_TO_MANY,
     });
-  const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
-    {
-      ...getDefaultFlatFieldMetadata({
-        createFieldInput: targetCreateFieldInput,
-        workspaceId,
-        fieldMetadataId: targetRelationTargetFieldMetadataId,
-        workspaceCustomApplicationId,
-      }),
-      type: FieldMetadataType.RELATION,
-      defaultValue: null,
-      settings: targetFlatFieldMetadataSettings,
-      options: null,
-      relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
-      relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
-    };
+
+  const targetFlatFieldMetadata: FlatFieldMetadata<
+    typeof targetFlatFieldMetadataType
+  > = {
+    ...getDefaultFlatFieldMetadata({
+      createFieldInput: targetCreateFieldInput,
+      workspaceId,
+      fieldMetadataId: targetRelationTargetFieldMetadataId,
+      workspaceCustomApplicationId,
+    }),
+    morphId:
+      targetFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
+        ? morphId
+        : null,
+    type: targetFlatFieldMetadataType,
+    defaultValue: null,
+    settings: targetFlatFieldMetadataSettings,
+    options: null,
+    relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
+    relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
+  };
 
   const indexMetadata: FlatIndexMetadata = generateIndexForFlatFieldMetadata({
     flatFieldMetadata:

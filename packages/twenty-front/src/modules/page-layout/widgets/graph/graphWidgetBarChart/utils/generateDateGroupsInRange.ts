@@ -1,4 +1,4 @@
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -7,6 +7,7 @@ type GenerateDateRangeParams = {
   endDate: Date;
   granularity:
     | ObjectRecordGroupByDateGranularity.DAY
+    | ObjectRecordGroupByDateGranularity.WEEK
     | ObjectRecordGroupByDateGranularity.MONTH
     | ObjectRecordGroupByDateGranularity.QUARTER
     | ObjectRecordGroupByDateGranularity.YEAR;
@@ -30,7 +31,7 @@ export const generateDateGroupsInRange = ({
   let currentDateCursor = new Date(startDate);
 
   while (currentDateCursor <= endDate) {
-    if (iterations >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+    if (iterations >= BAR_CHART_CONSTANTS.MAXIMUM_NUMBER_OF_BARS) {
       wasTruncated = true;
       break;
     }
@@ -41,6 +42,10 @@ export const generateDateGroupsInRange = ({
     switch (granularity) {
       case ObjectRecordGroupByDateGranularity.DAY:
         currentDateCursor.setDate(currentDateCursor.getDate() + 1);
+        break;
+
+      case ObjectRecordGroupByDateGranularity.WEEK:
+        currentDateCursor.setDate(currentDateCursor.getDate() + 7);
         break;
 
       case ObjectRecordGroupByDateGranularity.MONTH:

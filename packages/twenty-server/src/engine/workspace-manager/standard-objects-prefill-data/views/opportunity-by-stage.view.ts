@@ -3,10 +3,10 @@ import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { STANDARD_OBJECTS } from 'src/engine/core-modules/application/constants/standard-object.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const opportunitiesByStageView = ({
@@ -29,6 +29,11 @@ export const opportunitiesByStageView = ({
   const viewUniversalIdentifier =
     STANDARD_OBJECTS.opportunity.views.byStage.universalIdentifier;
 
+  const stageFieldMetadataId =
+    opportunityObjectMetadata.fields.find(
+      (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+    )?.id ?? '';
+
   return {
     id: v4(),
     universalIdentifier: viewUniversalIdentifier,
@@ -39,16 +44,13 @@ export const opportunitiesByStageView = ({
     key: null,
     position: 2,
     icon: 'IconLayoutKanban',
-    kanbanFieldMetadataId:
-      opportunityObjectMetadata.fields.find(
-        (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
-      )?.id ?? '',
     kanbanAggregateOperation: AggregateOperations.MIN,
     kanbanAggregateOperationFieldMetadataId:
       opportunityObjectMetadata.fields.find(
         (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.amount,
       )?.id ?? '',
     filters: [],
+    mainGroupByFieldMetadataId: stageFieldMetadataId,
     fields: [
       {
         fieldMetadataId:

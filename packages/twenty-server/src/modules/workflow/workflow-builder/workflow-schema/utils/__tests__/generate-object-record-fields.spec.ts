@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { mockCompanyObjectMetadataInfo } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
@@ -17,26 +17,6 @@ describe('generateObjectRecordFields', () => {
     jest.clearAllMocks();
   });
 
-  const companyMockObjectMetadataItem =
-    mockObjectMetadataItemsWithFieldMaps.find(
-      (item) => item.nameSingular === 'company',
-    )!;
-
-  const mockObjectMetadataMaps = {
-    byId: {
-      [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
-    },
-    idByNameSingular: {
-      [companyMockObjectMetadataItem.nameSingular]:
-        companyMockObjectMetadataItem.id,
-    },
-  };
-
-  const objectMetadataInfo = {
-    objectMetadataMaps: mockObjectMetadataMaps,
-    objectMetadataItemWithFieldsMaps: companyMockObjectMetadataItem,
-  };
-
   it('should generate fields for valid fields only', () => {
     (shouldGenerateFieldFakeValue as jest.Mock).mockImplementation(
       (field) => field.type !== FieldMetadataType.RELATION,
@@ -51,7 +31,9 @@ describe('generateObjectRecordFields', () => {
       }),
     );
 
-    const result = generateObjectRecordFields({ objectMetadataInfo });
+    const result = generateObjectRecordFields({
+      objectMetadataInfo: mockCompanyObjectMetadataInfo,
+    });
 
     expect(result).toEqual({
       domainName: {
@@ -75,7 +57,9 @@ describe('generateObjectRecordFields', () => {
   it('should return empty object when no valid fields', () => {
     (shouldGenerateFieldFakeValue as jest.Mock).mockReturnValue(false);
 
-    const result = generateObjectRecordFields({ objectMetadataInfo });
+    const result = generateObjectRecordFields({
+      objectMetadataInfo: mockCompanyObjectMetadataInfo,
+    });
 
     expect(result).toEqual({});
     expect(shouldGenerateFieldFakeValue).toHaveBeenCalledTimes(2);

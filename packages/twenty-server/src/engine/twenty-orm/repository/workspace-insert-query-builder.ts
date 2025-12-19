@@ -95,7 +95,11 @@ export class WorkspaceInsertQueryBuilder<
       this.internalContext,
     );
 
-    const formattedValues = formatData(values, objectMetadata);
+    const formattedValues = formatData(
+      values,
+      objectMetadata,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     return super.values(formattedValues);
   }
@@ -105,7 +109,9 @@ export class WorkspaceInsertQueryBuilder<
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
-        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       });
 
@@ -159,13 +165,15 @@ export class WorkspaceInsertQueryBuilder<
       const formattedResultForEvent = formatResult<T[]>(
         afterResult,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.CREATED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedResultForEvent,
           authContext: this.authContext,
@@ -176,6 +184,7 @@ export class WorkspaceInsertQueryBuilder<
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedResultForEvent,
           authContext: this.authContext,
@@ -202,7 +211,8 @@ export class WorkspaceInsertQueryBuilder<
       const formattedResult = formatResult<T[]>(
         resultWithoutInsertionExtraColumns,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return {
@@ -216,7 +226,12 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadata);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadata,
+        this.connection.manager as WorkspaceEntityManager,
+        this.internalContext,
+      );
     }
   }
 

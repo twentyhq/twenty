@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createContext } from 'react';
 
+import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useRecoilState } from 'recoil';
 import { type ColorScheme } from 'twenty-ui/input';
@@ -18,10 +19,16 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
   const [persistedColorScheme, setPersistedColorScheme] = useRecoilState(
     persistedColorSchemeState,
   );
-  document.documentElement.className =
-    persistedColorScheme === 'Dark' ? 'dark' : 'light';
+  const systemColorScheme = useSystemColorScheme();
+  const effectiveColorScheme =
+    persistedColorScheme === 'System'
+      ? systemColorScheme
+      : persistedColorScheme;
 
-  const theme = persistedColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+  document.documentElement.className =
+    effectiveColorScheme === 'Dark' ? 'dark' : 'light';
+
+  const theme = effectiveColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
 
   return (
     <ThemeSchemeContext.Provider value={setPersistedColorScheme}>

@@ -4,5 +4,4 @@ export const FLAT_VIEW_GROUP_EDITABLE_PROPERTIES = [
   'isVisible',
   'fieldValue',
   'position',
-  'fieldMetadataId',
 ] as const satisfies (keyof FlatViewGroup)[];

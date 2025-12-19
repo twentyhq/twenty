@@ -165,9 +165,23 @@ const SettingsAgentForm = lazy(() =>
   })),
 );
 
+const SettingsAgentTurnDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAgentTurnDetail').then((module) => ({
+    default: module.SettingsAgentTurnDetail,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
-  import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
-    default: module.SettingsWorkspaceMembers,
+  import('~/pages/settings/members/SettingsWorkspaceMembers').then(
+    (module) => ({
+      default: module.SettingsWorkspaceMembers,
+    }),
+  ),
+);
+
+const SettingsWorkspaceMember = lazy(() =>
+  import('~/pages/settings/members/SettingsWorkspaceMember').then((module) => ({
+    default: module.SettingsWorkspaceMember,
   })),
 );
 
@@ -422,6 +436,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.AIAgentDetail}
           element={<SettingsAgentForm mode="edit" />}
         />
+        <Route
+          path={SettingsPath.AIAgentTurnDetail}
+          element={<SettingsAgentTurnDetail />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
@@ -447,6 +465,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.WorkspaceMembersPage}
           element={<SettingsWorkspaceMembers />}
+        />
+        <Route
+          path={SettingsPath.WorkspaceMemberPage}
+          element={<SettingsWorkspaceMember />}
         />
       </Route>
       <Route

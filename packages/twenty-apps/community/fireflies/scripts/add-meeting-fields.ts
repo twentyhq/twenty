@@ -50,7 +50,11 @@ interface FieldDefinition {
   options?: FieldOption[];
 }
 
+// Meeting fields based on Fireflies GraphQL API transcript schema
+// See: https://docs.fireflies.ai/graphql-api/query/transcript
+// Note: Some fields require higher plans (Pro, Business, Enterprise)
 const MEETING_FIELDS: FieldDefinition[] = [
+  // === Internal Twenty Relations ===
   {
     type: 'RELATION',
     name: 'note',
@@ -59,11 +63,21 @@ const MEETING_FIELDS: FieldDefinition[] = [
     icon: 'IconNotes',
     isNullable: true,
   },
+
+  // === Basic Fields (All Plans) ===
+  {
+    type: 'TEXT',
+    name: 'firefliesMeetingId',
+    label: 'Fireflies ID',
+    description: 'Unique transcript ID from Fireflies (maps to: id)',
+    icon: 'IconKey',
+    isNullable: true,
+  },
   {
     type: 'DATE_TIME',
     name: 'meetingDate',
     label: 'Meeting Date',
-    description: 'Date and time when the meeting occurred',
+    description: 'When the meeting occurred (maps to: date)',
     icon: 'IconCalendar',
     isNullable: true,
   },
@@ -71,39 +85,107 @@ const MEETING_FIELDS: FieldDefinition[] = [
     type: 'NUMBER',
     name: 'duration',
     label: 'Duration (minutes)',
-    description: 'Meeting duration in minutes',
+    description: 'Meeting duration in minutes (maps to: duration)',
     icon: 'IconClock',
     isNullable: true,
   },
   {
     type: 'TEXT',
-    name: 'meetingType',
-    label: 'Meeting Type',
-    description: 'Type of meeting (e.g., Sales Call, Sprint Planning, 1:1)',
-    icon: 'IconTag',
+    name: 'organizerEmail',
+    label: 'Organizer Email',
+    description: 'Meeting organizer email (maps to: organizer_email)',
+    icon: 'IconMail',
+    isNullable: true,
+  },
+  {
+    type: 'LINKS',
+    name: 'transcriptUrl',
+    label: 'Transcript URL',
+    description: 'Link to full transcript (maps to: transcript_url)',
+    icon: 'IconFileText',
+    isNullable: true,
+  },
+  {
+    type: 'LINKS',
+    name: 'meetingLink',
+    label: 'Meeting Link',
+    description: 'Original meeting link (maps to: meeting_link)',
+    icon: 'IconLink',
+    isNullable: true,
+  },
+
+  // === Pro+ Fields (summary, speakers, audio_url, transcript) ===
+  {
+    type: 'TEXT',
+    name: 'transcript',
+    label: 'Full Transcript',
+    description: 'Full meeting transcript with speaker names and timestamps [Pro+]',
+    icon: 'IconFileText',
+    isNullable: true,
+  },
+  {
+    type: 'TEXT',
+    name: 'overview',
+    label: 'Overview',
+    description: 'AI-generated meeting summary (maps to: summary.overview) [Pro+]',
+    icon: 'IconFileDescription',
+    isNullable: true,
+  },
+  {
+    type: 'TEXT',
+    name: 'notes',
+    label: 'AI Notes',
+    description: 'Detailed AI-generated meeting notes (maps to: summary.notes) [Pro+]',
+    icon: 'IconNotes',
     isNullable: true,
   },
   {
     type: 'TEXT',
     name: 'keywords',
     label: 'Keywords',
-    description: 'Key topics and themes discussed (comma-separated)',
+    description: 'Key topics extracted (maps to: summary.keywords) [Pro+]',
     icon: 'IconTags',
     isNullable: true,
   },
   {
+    type: 'LINKS',
+    name: 'audioUrl',
+    label: 'Audio URL',
+    description: 'Link to audio recording (maps to: audio_url) [Pro+]',
+    icon: 'IconHeadphones',
+    isNullable: true,
+  },
+
+  // === Business+ Fields (analytics, video_url, full summary) ===
+  {
+    type: 'TEXT',
+    name: 'meetingType',
+    label: 'Meeting Type',
+    description: 'AI-detected meeting type (maps to: summary.meeting_type) [Business+]',
+    icon: 'IconTag',
+    isNullable: true,
+  },
+  {
+    type: 'TEXT',
+    name: 'topics',
+    label: 'Topics Discussed',
+    description: 'Topics covered in meeting (maps to: summary.topics_discussed) [Business+]',
+    icon: 'IconListDetails',
+    isNullable: true,
+  },
+  {
     type: 'NUMBER',
-    name: 'sentimentScore',
-    label: 'Sentiment Score',
-    description: 'Overall meeting sentiment (0-1 scale, where 1 is most positive)',
-    icon: 'IconMoodSmile',
+    name: 'actionItemsCount',
+    label: 'Action Items',
+    description: 'Number of action items (count of: summary.action_items) [Business+]',
+    icon: 'IconCheckbox',
     isNullable: true,
   },
   {
     type: 'NUMBER',
     name: 'positivePercent',
     label: 'Positive %',
-    description: 'Percentage of positive sentiment in conversation',
+    description: 'Positive sentiment % (maps to: analytics.sentiments.positive_pct) [Business+]',
     icon: 'IconThumbUp',
     isNullable: true,
   },
@@ -111,69 +193,48 @@ const MEETING_FIELDS: FieldDefinition[] = [
     type: 'NUMBER',
     name: 'negativePercent',
     label: 'Negative %',
-    description: 'Percentage of negative sentiment in conversation',
+    description: 'Negative sentiment % (maps to: analytics.sentiments.negative_pct) [Business+]',
     icon: 'IconThumbDown',
     isNullable: true,
   },
   {
     type: 'NUMBER',
-    name: 'actionItemsCount',
-    label: 'Action Items',
-    description: 'Number of action items identified',
-    icon: 'IconCheckbox',
+    name: 'neutralPercent',
+    label: 'Neutral %',
+    description: 'Neutral sentiment % (maps to: analytics.sentiments.neutral_pct) [Business+]',
+    icon: 'IconMoodNeutral',
     isNullable: true,
   },
   {
     type: 'LINKS',
-    name: 'transcriptUrl',
-    label: 'Transcript URL',
-    description: 'Link to full transcript in Fireflies',
-    icon: 'IconFileText',
-    isNullable: true,
-  },
-  {
-    type: 'LINKS',
-    name: 'recordingUrl',
-    label: 'Recording URL',
-    description: 'Link to video/audio recording in Fireflies',
+    name: 'videoUrl',
+    label: 'Video URL',
+    description: 'Link to video recording (maps to: video_url) [Business+]',
     icon: 'IconVideo',
     isNullable: true,
   },
-  {
-    type: 'TEXT',
-    name: 'firefliesMeetingId',
-    label: 'Fireflies Meeting ID',
-    description: 'Unique identifier from Fireflies',
-    icon: 'IconKey',
-    isNullable: true,
-  },
-  {
-    type: 'TEXT',
-    name: 'organizerEmail',
-    label: 'Organizer Email',
-    description: 'Email address of the meeting organizer',
-    icon: 'IconMail',
-    isNullable: true,
-  },
+
+  // === Import Tracking Fields (Internal) ===
   {
     type: 'SELECT',
     name: 'importStatus',
     label: 'Import Status',
-    description: 'Status of the meeting import from Fireflies',
+    description: 'Status of the Fireflies import',
     icon: 'IconCheck',
     isNullable: true,
     options: [
       { value: 'SUCCESS', label: 'Success', position: 0, color: 'green' },
-      { value: 'FAILED', label: 'Failed', position: 1, color: 'red' },
-      { value: 'PENDING', label: 'Pending', position: 2, color: 'yellow' },
-      { value: 'RETRYING', label: 'Retrying', position: 3, color: 'orange' },
+      { value: 'PARTIAL', label: 'Partial', position: 1, color: 'blue' },
+      { value: 'FAILED', label: 'Failed', position: 2, color: 'red' },
+      { value: 'PENDING', label: 'Pending', position: 3, color: 'yellow' },
+      { value: 'RETRYING', label: 'Retrying', position: 4, color: 'orange' },
     ],
   },
   {
     type: 'TEXT',
     name: 'importError',
     label: 'Import Error',
-    description: 'Error message if meeting import failed',
+    description: 'Error message if import failed',
     icon: 'IconAlertTriangle',
     isNullable: true,
   },
@@ -181,7 +242,7 @@ const MEETING_FIELDS: FieldDefinition[] = [
     type: 'DATE_TIME',
     name: 'lastImportAttempt',
     label: 'Last Import Attempt',
-    description: 'Date and time of the last import attempt',
+    description: 'When import was last attempted',
     icon: 'IconClock',
     isNullable: true,
   },
@@ -189,7 +250,7 @@ const MEETING_FIELDS: FieldDefinition[] = [
     type: 'NUMBER',
     name: 'importAttempts',
     label: 'Import Attempts',
-    description: 'Number of times import has been attempted',
+    description: 'Number of import attempts',
     icon: 'IconRepeat',
     isNullable: true,
   },
@@ -414,13 +475,9 @@ const main = async () => {
     }
 
     if (createdCount === 0 && skippedCount === MEETING_FIELDS.length) {
-      console.log('\n✨ All fields already exist. Nothing to do!');
+      console.log('\n✨ All fields already exist. Nothing to do!\n');
     } else if (createdCount > 0) {
-      console.log('\n✨ Custom fields added successfully!');
-      console.log('\n📝 Next steps:');
-      console.log('   1. Re-sync your app: npx twenty-cli app sync');
-      console.log('   2. Update the createMeetingRecord function to use these fields');
-      console.log('   3. Test the integration with a real meeting');
+      console.log('\n✨ Custom fields added successfully!\n');
     }
 
   } catch (error) {

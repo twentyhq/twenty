@@ -2,7 +2,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
 import { IconFilter } from 'twenty-ui/display';
 
@@ -22,7 +22,7 @@ export const AnyFieldSearchChip = () => {
 
   return (
     <SortOrFilterChip
-      testId={ADVANCED_FILTER_DROPDOWN_ID}
+      testId={ViewBarFilterDropdownIds.ADVANCED}
       labelKey={t`Any field`}
       labelValue={`: ${anyFieldFilterValue}`}
       Icon={IconFilter}

@@ -1,12 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
+import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart';
+import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetGaugeChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetGaugeChart',
   component: GraphWidgetGaugeChart,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <GraphWidgetTestWrapper>
+        <Story />
+      </GraphWidgetTestWrapper>
+    ),
+    ComponentDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -53,7 +61,6 @@ export const WithCustomColors: Story = {
       min: 0,
       max: 100,
       color: 'purple',
-      to: '/metrics/progress',
       label: 'Progress',
     },
     displayType: 'number',
@@ -83,7 +90,6 @@ export const Default: Story = {
       value: 0.5,
       min: 0,
       max: 1,
-      to: '/metrics/conversion',
       label: 'Conversion rate',
     },
     displayType: 'percentage',
@@ -120,7 +126,6 @@ export const Catalog: Story = {
               min: 0,
               max: 1,
               label: 'Percentage',
-              to: '/metrics/catalog',
             },
             displayType: 'percentage' as const,
             id: `gauge-chart-catalog-${value}`,
@@ -157,7 +162,6 @@ export const WithoutValue: Story = {
       value: 65,
       min: 0,
       max: 100,
-      to: '/metrics/conversion-without-value',
       label: 'Conversion rate',
     },
     displayType: 'percentage',
@@ -186,7 +190,6 @@ export const Revenue: Story = {
       value: 750,
       min: 0,
       max: 1000,
-      to: '/financials/revenue',
       label: 'Revenue',
     },
     displayType: 'shortNumber',
@@ -215,7 +218,6 @@ export const Temperature: Story = {
       value: 22,
       min: -10,
       max: 40,
-      to: '/sensors/temperature',
       label: 'Temperature',
     },
     suffix: '°C',
@@ -244,7 +246,6 @@ export const Storage: Story = {
       value: 384,
       min: 0,
       max: 512,
-      to: '/system/storage',
       label: 'Storage Used',
     },
     suffix: ' GB',
@@ -273,7 +274,6 @@ export const Rating: Story = {
       value: 4.2,
       min: 0,
       max: 5,
-      to: '/reviews/rating',
       label: 'Average Rating',
     },
     suffix: ' ⭐',
@@ -303,7 +303,6 @@ export const WithoutLegend: Story = {
       value: 65,
       min: 0,
       max: 100,
-      to: '/metrics/conversion-no-legend',
       label: 'Conversion rate',
     },
     displayType: 'percentage',

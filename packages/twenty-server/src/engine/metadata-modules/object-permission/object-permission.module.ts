@@ -9,7 +9,7 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -20,8 +20,8 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
       FieldPermissionEntity,
       FieldMetadataEntity,
     ]),
-    WorkspacePermissionsCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceCacheModule,
   ],
   providers: [ObjectPermissionService, FieldPermissionService],
   exports: [ObjectPermissionService, FieldPermissionService],

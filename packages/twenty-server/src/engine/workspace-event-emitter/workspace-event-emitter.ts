@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'twenty-shared/utils';
+import {
+  ObjectRecordCreateEvent,
+  ObjectRecordDeleteEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+  ObjectRecordUpsertEvent,
+  ObjectRecordRestoreEvent,
+} from 'twenty-shared/database-events';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
-import type { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -29,7 +31,7 @@ export type DatabaseBatchEventInput<T, A extends keyof ActionEventMap<T>> = {
   objectMetadataNameSingular: string;
   action: A;
   events: ActionEventMap<T>[A][];
-  objectMetadata: Omit<ObjectMetadataEntity, 'indexMetadatas'>;
+  objectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };
 

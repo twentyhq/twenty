@@ -1,23 +1,20 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { assertBarChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertBarChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { type ComputedDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  type BarChartConfiguration,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -32,6 +29,8 @@ export const GraphWidgetBarChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  assertBarChartWidgetOrThrow(widget);
+
   const {
     data,
     indexBy,
@@ -40,6 +39,7 @@ export const GraphWidgetBarChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     layout,
     loading,
     hasTooManyGroups,
@@ -47,11 +47,11 @@ export const GraphWidgetBarChartRenderer = ({
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as BarChartConfiguration,
+    configuration: widget.configuration,
   });
 
   const navigate = useNavigate();
-  const configuration = widget.configuration as BarChartConfiguration;
+  const configuration = widget.configuration;
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -75,7 +75,7 @@ export const GraphWidgetBarChartRenderer = ({
     }),
   );
 
-  const handleBarClick = (datum: ComputedDatum<BarChartDataItem>) => {
+  const handleBarClick = (datum: ComputedDatum<BarDatum>) => {
     const displayValue = datum.data[indexBy];
     const rawValue = formattedToRawLookup.get(displayValue as string) ?? null;
 
@@ -116,6 +116,7 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        showLegend={showLegend}
         layout={layout}
         groupMode={groupMode}
         id={widget.id}

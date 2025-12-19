@@ -1,6 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import {
+  FieldMetadataType,
+  MessageParticipantRole,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -39,14 +43,34 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Role`,
     icon: 'IconAt',
     options: [
-      { value: 'from', label: 'From', position: 0, color: 'green' },
-      { value: 'to', label: 'To', position: 1, color: 'blue' },
-      { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
-      { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
+      {
+        value: MessageParticipantRole.FROM,
+        label: 'From',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageParticipantRole.TO,
+        label: 'To',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageParticipantRole.CC,
+        label: 'Cc',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageParticipantRole.BCC,
+        label: 'Bcc',
+        position: 3,
+        color: 'red',
+      },
     ],
-    defaultValue: "'from'",
+    defaultValue: `'${MessageParticipantRole.FROM}'`,
   })
-  role: string;
+  role: MessageParticipantRole;
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
@@ -55,7 +79,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
@@ -64,7 +89,8 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Display Name`,
     icon: 'IconUser',
   })
-  displayName: string;
+  @WorkspaceIsNullable()
+  displayName: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,

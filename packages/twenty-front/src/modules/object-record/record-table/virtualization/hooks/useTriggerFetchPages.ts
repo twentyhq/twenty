@@ -1,13 +1,14 @@
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -22,9 +23,6 @@ import { useDebouncedCallback } from 'use-debounce';
 const TIME_BETWEEN_UI_BATCH_UPDATE = 25;
 const PAGING_FOR_UI_UPDATE = 10;
 const TIME_BETWEEN_TWO_REQUETS = 25;
-
-const DATA_PAGE_SIZE = 10;
-const DATA_PAGE_OVERSCAN = 3;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
@@ -75,40 +73,18 @@ export const useTriggerFetchPages = () => {
           lastScrollPositionCallbackState,
         );
 
-        const numberOfRowsDisplayedInTable = Math.min(
-          Math.floor(tableScrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
-          30,
-        );
-
-        const halfNumberOfRowsVisible = Math.floor(
-          numberOfRowsDisplayedInTable / 2,
-        );
-
-        const realIndexAtTheMiddleOfTheTable =
-          Math.floor(lastScrollPosition / (RECORD_TABLE_ROW_HEIGHT + 1)) +
-          halfNumberOfRowsVisible;
-
-        const pageForRealIndex = Math.ceil(
-          realIndexAtTheMiddleOfTheTable / DATA_PAGE_SIZE,
-        );
-
-        const totalNumberOfRealIndices =
+        const totalNumberOfRecordsToVirtualize =
           getSnapshotValue(
             snapshot,
             totalNumberOfRecordsToVirtualizeCallbackState,
           ) ?? 0;
 
-        const maxPage = Math.ceil(totalNumberOfRealIndices / DATA_PAGE_SIZE);
-
-        const overscanPageAtTop = Math.max(
-          0,
-          pageForRealIndex - DATA_PAGE_OVERSCAN,
-        );
-
-        const overscanPageAtBottom = Math.min(
-          maxPage,
-          pageForRealIndex + DATA_PAGE_OVERSCAN,
-        );
+        const { overscanPageAtBottom, overscanPageAtTop } =
+          getVirtualizationOverscanWindow(
+            lastScrollPosition,
+            tableScrollWrapperHeight,
+            totalNumberOfRecordsToVirtualize,
+          );
 
         const pagesAlreadyLoaded = getSnapshotValue(
           snapshot,
@@ -150,10 +126,13 @@ export const useTriggerFetchPages = () => {
 
         if (pagesAreContiguous) {
           const startingRealIndexToFetch =
-            (pagesToFetch.at(0) ?? 0) * DATA_PAGE_SIZE;
+            (pagesToFetch.at(0) ?? 0) *
+            TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
           const endingRealIndexToFetch =
-            (pagesToFetch.at(-1) ?? 0) * DATA_PAGE_SIZE + DATA_PAGE_SIZE;
+            (pagesToFetch.at(-1) ?? 0) *
+              TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE +
+            TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
           const numberOfRecordsToFetch =
             endingRealIndexToFetch - startingRealIndexToFetch;

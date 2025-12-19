@@ -1,6 +1,7 @@
-import { CustomException } from 'src/utils/custom-exception';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
-export class ApprovedAccessDomainException extends CustomException<ApprovedAccessDomainExceptionCode> {}
+import { CustomException } from 'src/utils/custom-exception';
 
 export enum ApprovedAccessDomainExceptionCode {
   APPROVED_ACCESS_DOMAIN_NOT_FOUND = 'APPROVED_ACCESS_DOMAIN_NOT_FOUND',
@@ -10,4 +11,31 @@ export enum ApprovedAccessDomainExceptionCode {
   APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID = 'APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID',
   APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED = 'APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED',
   APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN = 'APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN',
+}
+
+const approvedAccessDomainExceptionUserFriendlyMessages: Record<
+  ApprovedAccessDomainExceptionCode,
+  MessageDescriptor
+> = {
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_NOT_FOUND]: msg`Approved access domain not found.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED]: msg`This domain has already been verified.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED]: msg`This domain is already registered.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL]: msg`The domain does not match your email domain.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID]: msg`Invalid validation token.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED]: msg`This domain has already been validated.`,
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN]: msg`Please use a company email domain.`,
+};
+
+export class ApprovedAccessDomainException extends CustomException<ApprovedAccessDomainExceptionCode> {
+  constructor(
+    message: string,
+    code: ApprovedAccessDomainExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        approvedAccessDomainExceptionUserFriendlyMessages[code],
+    });
+  }
 }

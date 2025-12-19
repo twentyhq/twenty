@@ -5,7 +5,6 @@ import { resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -20,13 +19,13 @@ import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-exec
 export class CodeWorkflowAction implements WorkflowAction {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async execute({
     currentStepId,
     steps,
     context,
+    runInfo,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = findStepOrThrow({
       stepId: currentStepId,
@@ -46,22 +45,15 @@ export class CodeWorkflowAction implements WorkflowAction {
     ) as WorkflowCodeActionInput;
 
     try {
-      const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-      if (!workspaceId) {
-        throw new WorkflowStepExecutorException(
-          'Scoped workspace not found',
-          WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
-        );
-      }
+      const { workspaceId } = runInfo;
 
       const result =
-        await this.serverlessFunctionService.executeOneServerlessFunction(
-          workflowActionInput.serverlessFunctionId,
+        await this.serverlessFunctionService.executeOneServerlessFunction({
+          id: workflowActionInput.serverlessFunctionId,
           workspaceId,
-          workflowActionInput.serverlessFunctionInput,
-          workflowActionInput.serverlessFunctionVersion,
-        );
+          payload: workflowActionInput.serverlessFunctionInput,
+          version: workflowActionInput.serverlessFunctionVersion,
+        });
 
       if (result.error) {
         return { error: result.error.errorMessage };

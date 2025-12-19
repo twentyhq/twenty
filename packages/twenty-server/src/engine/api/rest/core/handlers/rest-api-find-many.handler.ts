@@ -29,14 +29,17 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       const parsedArgs = this.parseRequestArgs(request);
       const {
         authContext,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
       const selectedFields = await this.computeSelectedFields({
         depth: parsedArgs.depth,
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         authContext,
       });
 
@@ -48,15 +51,17 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
           },
           {
             authContext,
-            objectMetadataMaps,
-            objectMetadataItemWithFieldMaps,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
           },
         );
 
       return this.formatRestResponse(
         records,
         aggregatedValues,
-        objectMetadataItemWithFieldMaps.namePlural,
+        flatObjectMetadata.namePlural,
         pageInfo,
       );
     } catch (error) {

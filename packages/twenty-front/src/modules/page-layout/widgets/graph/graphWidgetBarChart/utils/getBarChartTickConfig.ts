@@ -1,18 +1,19 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
-import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-
-const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
+import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
+import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
+import { type BarDatum } from '@nivo/bar';
 
 export type BarChartTickConfig = {
   categoryTickValues: (string | number)[];
   numberOfValueTicks: number;
   maxBottomAxisTickLabelLength: number;
   maxLeftAxisTickLabelLength: number;
+  bottomAxisTickRotation: number;
 };
 
 export const getBarChartTickConfig = ({
@@ -27,13 +28,19 @@ export const getBarChartTickConfig = ({
 }: {
   width: number;
   height: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
   axisFontSize: number;
   layout: BarChartLayout;
 }): BarChartTickConfig => {
+  const clampValueTickCount = (tickCount: number) =>
+    Math.min(
+      BAR_CHART_CONSTANTS.MAXIMUM_VALUE_TICK_COUNT,
+      Math.max(BAR_CHART_CONSTANTS.MINIMUM_VALUE_TICK_COUNT, tickCount),
+    );
+
   const categoryTickValues = computeBarChartCategoryTickValues({
     axisSize: layout === BarChartLayout.VERTICAL ? width : height,
     axisFontSize,
@@ -49,12 +56,14 @@ export const getBarChartTickConfig = ({
   const availableWidth = width - (margins.left + margins.right);
   const availableHeight = height - (margins.top + margins.bottom);
 
-  const numberOfValueTicks = computeBarChartValueTickCount({
-    axisSize:
-      layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
-    axisFontSize,
-    layout,
-  });
+  const numberOfValueTicks = clampValueTickCount(
+    computeBarChartValueTickCount({
+      axisSize:
+        layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
+      axisFontSize,
+      layout,
+    }),
+  );
 
   const widthPerTick = calculateWidthPerTick({
     layout,
@@ -63,18 +72,29 @@ export const getBarChartTickConfig = ({
     valueTickCount: numberOfValueTicks,
   });
 
-  const maxBottomAxisTickLabelLength = calculateMaxTickLabelLength({
-    widthPerTick,
+  const actualDataPointCount = data.length;
+  const widthPerDataPoint =
+    layout === BarChartLayout.VERTICAL &&
+    actualDataPointCount > 0 &&
+    availableWidth > 0
+      ? availableWidth / actualDataPointCount
+      : widthPerTick;
+
+  const tickRotationConfig = getTickRotationConfig({
+    widthPerTick: widthPerDataPoint,
     axisFontSize,
   });
 
-  // TODO: Make this dynamic based on the data
-  const maxLeftAxisTickLabelLength = MAX_LEFT_AXIS_LABEL_LENGTH;
+  const maxLeftAxisTickLabelLength = computeMaxLabelLengthForMargin({
+    marginSize: margins.left,
+    axisFontSize,
+  });
 
   return {
     categoryTickValues,
     numberOfValueTicks,
-    maxBottomAxisTickLabelLength,
+    maxBottomAxisTickLabelLength: tickRotationConfig.maxLabelLength,
     maxLeftAxisTickLabelLength,
+    bottomAxisTickRotation: tickRotationConfig.tickRotation,
   };
 };

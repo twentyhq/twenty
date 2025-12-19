@@ -2,6 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { parse } from 'path';
 
+import {
+  ApplicationManifest,
+  FieldManifest,
+  ObjectManifest,
+  RoleManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
+} from 'twenty-shared/application';
+import { HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -11,33 +20,29 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import {
-  FieldManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
-} from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -48,8 +53,8 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
-    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -57,6 +62,10 @@ export class ApplicationSyncService {
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly roleService: RoleService,
+    private readonly objectPermissionService: ObjectPermissionService,
+    private readonly fieldPermissionService: FieldPermissionService,
+    private readonly permissionService: PermissionFlagService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -97,6 +106,12 @@ export class ApplicationSyncService {
       });
     }
 
+    await this.syncRoles({
+      manifest,
+      workspaceId,
+      applicationId: application.id,
+    });
+
     this.logger.log('✅ Application sync from manifest completed');
   }
 
@@ -121,6 +136,7 @@ export class ApplicationSyncService {
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         serverlessFunctionLayerId: null,
+        defaultServerlessFunctionRoleId: null,
         workspaceId,
       }));
 
@@ -160,7 +176,178 @@ export class ApplicationSyncService {
       description: manifest.application.description,
       version: packageJson.version,
       serverlessFunctionLayerId,
+      defaultServerlessFunctionRoleId: null,
     });
+  }
+
+  private async syncRoles({
+    manifest,
+    workspaceId,
+    applicationId,
+  }: {
+    manifest: ApplicationManifest;
+    workspaceId: string;
+    applicationId: string;
+  }) {
+    let defaultServerlessFunctionRoleId: string | null = null;
+
+    for (const role of manifest.roles ?? []) {
+      let existingRole = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: role.universalIdentifier,
+        workspaceId,
+      });
+
+      if (existingRole) {
+        await this.roleService.updateRole({
+          input: {
+            id: existingRole.id,
+            update: role,
+          },
+          workspaceId,
+        });
+      } else {
+        existingRole = await this.roleService.createRole({
+          input: role,
+          workspaceId,
+          applicationId,
+        });
+      }
+
+      await this.syncApplicationRolePermissions({
+        role,
+        workspaceId,
+        roleId: existingRole.id,
+      });
+
+      if (
+        existingRole.universalIdentifier ===
+        manifest.application.functionRoleUniversalIdentifier
+      ) {
+        defaultServerlessFunctionRoleId = existingRole.id;
+      }
+    }
+
+    if (isDefined(defaultServerlessFunctionRoleId)) {
+      await this.applicationService.update(applicationId, {
+        defaultServerlessFunctionRoleId: defaultServerlessFunctionRoleId,
+      });
+    }
+  }
+
+  private async syncApplicationRolePermissions({
+    role,
+    workspaceId,
+    roleId,
+  }: {
+    role: RoleManifest;
+    workspaceId: string;
+    roleId: string;
+  }) {
+    if (
+      (role.objectPermissions ?? []).length > 0 ||
+      (role.fieldPermissions ?? []).length > 0
+    ) {
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          },
+        );
+
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+      const formattedObjectPermissions = role.objectPermissions
+        ?.map((perm) => ({
+          ...perm,
+          objectMetadataId: isDefined(perm.objectNameSingular)
+            ? objectIdByNameSingular[perm.objectNameSingular]
+            : isDefined(perm.objectUniversalIdentifier)
+              ? flatObjectMetadataMaps.idByUniversalIdentifier[
+                  perm.objectUniversalIdentifier
+                ]
+              : undefined,
+        }))
+        .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
+          isDefined(perm.objectMetadataId),
+        );
+
+      if (isDefined(formattedObjectPermissions)) {
+        await this.objectPermissionService.upsertObjectPermissions({
+          workspaceId,
+          input: {
+            roleId,
+            objectPermissions: formattedObjectPermissions,
+          },
+        });
+      }
+
+      const formattedFieldPermissions = role?.fieldPermissions
+        ?.map((perm) => {
+          const objectMetadataId = isDefined(perm.objectNameSingular)
+            ? objectIdByNameSingular[perm.objectNameSingular]
+            : isDefined(perm.objectUniversalIdentifier)
+              ? flatObjectMetadataMaps.idByUniversalIdentifier[
+                  perm.objectUniversalIdentifier
+                ]
+              : undefined;
+
+          const fieldMetadataId = isDefined(objectMetadataId)
+            ? isDefined(perm.fieldName)
+              ? Object.values(flatFieldMetadataMaps.byId).find(
+                  (flatField) =>
+                    isDefined(flatField) &&
+                    flatField.objectMetadataId === objectMetadataId &&
+                    flatField.name === perm.fieldName,
+                )?.id
+              : isDefined(perm.fieldUniversalIdentifier)
+                ? Object.values(flatFieldMetadataMaps.byId).find(
+                    (flatField) =>
+                      isDefined(flatField) &&
+                      flatField.objectMetadataId === objectMetadataId &&
+                      flatField.universalIdentifier ===
+                        perm.fieldUniversalIdentifier,
+                  )?.id
+                : undefined
+            : undefined;
+
+          return {
+            ...perm,
+            objectMetadataId,
+            fieldMetadataId,
+          };
+        })
+        .filter(
+          (
+            perm,
+          ): perm is typeof perm & {
+            objectMetadataId: string;
+            fieldMetadataId: string;
+          } =>
+            isDefined(perm.objectMetadataId) && isDefined(perm.fieldMetadataId),
+        );
+
+      if (isDefined(formattedFieldPermissions)) {
+        await this.fieldPermissionService.upsertFieldPermissions({
+          workspaceId,
+          input: {
+            roleId,
+            fieldPermissions: formattedFieldPermissions,
+          },
+        });
+      }
+    }
+
+    if (isDefined(role?.permissionFlags) && role.permissionFlags.length > 0) {
+      await this.permissionService.upsertPermissionFlags({
+        workspaceId,
+        input: {
+          roleId,
+          permissionFlagKeys: role.permissionFlags,
+        },
+      });
+    }
   }
 
   private async syncFields({
@@ -219,14 +406,14 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
         },
         workspaceId,
       });
-      await this.fieldMetadataServiceV2.deleteOneField({
+      await this.fieldMetadataService.deleteOneField({
         deleteOneFieldInput: { id: fieldToDelete.id },
         workspaceId,
       });
@@ -256,7 +443,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput,
         workspaceId,
       });
@@ -264,7 +451,7 @@ export class ApplicationSyncService {
 
     for (const fieldToCreate of fieldsToCreate) {
       const createFieldInput: CreateFieldInput = {
-        name: computeMetadataNameFromLabel(fieldToCreate.label),
+        name: computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
         type: fieldToCreate.type,
         label: fieldToCreate.label,
         description: fieldToCreate.description ?? undefined,
@@ -281,7 +468,7 @@ export class ApplicationSyncService {
         workspaceId,
       };
 
-      await this.fieldMetadataServiceV2.createOneField({
+      await this.fieldMetadataService.createOneField({
         createFieldInput,
         workspaceId,
         applicationId,
@@ -342,7 +529,7 @@ export class ApplicationSyncService {
     );
 
     for (const objectToDelete of objectsToDelete) {
-      await this.objectMetadataServiceV2.deleteOneObject({
+      await this.objectMetadataService.deleteOneObject({
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -373,7 +560,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOneObject({
+      await this.objectMetadataService.updateOneObject({
         updateObjectInput,
         workspaceId,
       });
@@ -405,7 +592,7 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      const createdObject = await this.objectMetadataServiceV2.createOneObject({
+      const createdObject = await this.objectMetadataService.createOneObject({
         createObjectInput,
         applicationId,
         workspaceId,
@@ -913,7 +1100,7 @@ export class ApplicationSyncService {
         id: triggerToUpdate.id,
         update: {
           path: triggerToSync.path,
-          httpMethod: triggerToSync.httpMethod,
+          httpMethod: triggerToSync.httpMethod as HTTPMethod,
           isAuthRequired: triggerToSync.isAuthRequired,
         },
       };
@@ -931,7 +1118,7 @@ export class ApplicationSyncService {
 
       const createRouteTriggerInput = {
         path: triggerToCreate.path,
-        httpMethod: triggerToCreate.httpMethod,
+        httpMethod: triggerToCreate.httpMethod as HTTPMethod,
         isAuthRequired: triggerToCreate.isAuthRequired,
         serverlessFunctionId,
       };
@@ -985,59 +1172,44 @@ export class ApplicationSyncService {
     }
 
     const flatObjectMetadataMapsByApplicationId =
-      getFlatEntitiesByApplicationId(
-        existingFlatObjectMetadataMaps,
-        application.id,
-      );
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        applicationId: application.id,
+      });
 
-    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatObjectMetadataMapsByApplicationId.map((obj) => obj.id),
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-    });
+    const flatIndexMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatIndexMetadataMaps,
+        applicationId: application.id,
+      });
 
-    const flatIndexMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
-      existingFlatIndexMetadataMaps,
-      application.id,
-    );
-
-    const fromFlatIndexMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatIndexMetadataMapsByApplicationId.map(
-        (field) => field.id,
-      ),
-      flatEntityMaps: existingFlatIndexMetadataMaps,
-    });
-
-    const flatFieldMetadataMapsByApplicationId = getFlatEntitiesByApplicationId(
-      existingFlatFieldMetadataMaps,
-      application.id,
-    );
-
-    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatFieldMetadataMapsByApplicationId.map((idx) => idx.id),
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-    });
+    const flatFieldMetadataMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatFieldMetadataMaps,
+        applicationId: application.id,
+      });
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: fromFlatObjectMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+        allFlatEntityOperationByMetadataName: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatIndexMaps: {
-            from: fromFlatIndexMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatFieldMetadataMaps: {
-            from: fromFlatFieldMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
         },
         workspaceId,
-        buildOptions: {
-          isSystemBuild: true,
-          inferDeletionFromMissingEntities: true,
-        },
+        isSystemBuild: true,
       },
     );
 

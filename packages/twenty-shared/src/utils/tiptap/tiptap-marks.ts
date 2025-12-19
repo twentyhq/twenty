@@ -17,6 +17,7 @@ export const TIPTAP_NODE_TYPES = {
   BULLET_LIST: 'bulletList',
   ORDERED_LIST: 'orderedList',
   LIST_ITEM: 'listItem',
+  HARD_BREAK: 'hardBreak',
 } as const;
 
 export type TipTapMarkType =

@@ -19,6 +19,7 @@ import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-j
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
@@ -64,6 +65,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
+    AiAgentMonitorModule,
     CronTriggerModule,
     DatabaseEventTriggerModule,
     ServerlessFunctionModule,

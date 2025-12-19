@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
-  RelationOnDeleteAction,
   LinksMetadata,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -43,7 +43,8 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Title`,
     icon: 'IconH1',
   })
-  title: string;
+  @WorkspaceIsNullable()
+  title: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
@@ -112,7 +113,8 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Description`,
     icon: 'IconFileDescription',
   })
-  description: string;
+  @WorkspaceIsNullable()
+  description: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
@@ -121,16 +123,18 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Location`,
     icon: 'IconMapPin',
   })
-  location: string;
+  @WorkspaceIsNullable()
+  location: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
     type: FieldMetadataType.TEXT,
     label: msg`iCal UID`,
     description: msg`iCal UID`,
     icon: 'IconKey',
   })
-  iCalUID: string;
+  @WorkspaceIsNullable()
+  iCalUid: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
@@ -139,7 +143,8 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Conference Solution`,
     icon: 'IconScreenShare',
   })
-  conferenceSolution: string;
+  @WorkspaceIsNullable()
+  conferenceSolution: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,

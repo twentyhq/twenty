@@ -1,0 +1,19 @@
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
+
+export const pageLayoutTabEntityRelationProperties = [
+  'workspace',
+  'pageLayout',
+  'widgets',
+  'application',
+] as const satisfies (keyof PageLayoutTabEntity)[];
+
+export type PageLayoutTabEntityRelationProperties =
+  (typeof pageLayoutTabEntityRelationProperties)[number];
+
+export type FlatPageLayoutTab = FlatEntityFrom<
+  PageLayoutTabEntity,
+  PageLayoutTabEntityRelationProperties
+> & {
+  widgetIds: string[];
+};

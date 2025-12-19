@@ -19,18 +19,16 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     super(ALL_METADATA_NAME.databaseEventTrigger);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<
       typeof ALL_METADATA_NAME.databaseEventTrigger
     >,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.databaseEventTrigger,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.databaseEventTrigger,
+    'created'
   > {
     const validationResult =
-      await this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerCreation(
+      this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerCreation(
         args,
       );
 
@@ -52,15 +50,13 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<
       typeof ALL_METADATA_NAME.databaseEventTrigger
     >,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.databaseEventTrigger,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.databaseEventTrigger,
+    'deleted'
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerDeletion(
@@ -85,15 +81,13 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.databaseEventTrigger
     >,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.databaseEventTrigger,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.databaseEventTrigger,
+    'updated'
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerUpdate(

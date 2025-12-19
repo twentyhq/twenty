@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 export const CHART_CONFIGURATION_SETTING_LABELS = {
   SOURCE: msg`Source`,
   DATA_LABELS: msg`Data labels`,
+  CENTER_METRIC: msg`Show value in center`,
   COLORS: msg`Colors`,
   FILTER: msg`Filter`,
   GROUP_BY: msg`Group by`,
@@ -17,9 +18,14 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   STACKED_BARS: msg`Stacked bars`,
   STACKED_LINES: msg`Stacked lines`,
   OMIT_NULL_VALUES: msg`Omit zero values`,
+  HIDE_EMPTY_CATEGORY: msg`Hide empty category`,
   MIN_RANGE: msg`Min range`,
   MAX_RANGE: msg`Max range`,
   DATE_GRANULARITY_X: msg`Date granularity`,
   DATE_GRANULARITY_Y: msg`Date granularity`,
   DATE_GRANULARITY: msg`Date granularity`,
+  SHOW_LEGEND: msg`Legend`,
+  PREFIX: msg`Prefix`,
+  SUFFIX: msg`Suffix`,
+  CUMULATIVE: msg`Cumulative`,
 };

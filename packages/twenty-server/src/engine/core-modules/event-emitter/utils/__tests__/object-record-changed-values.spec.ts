@@ -1,27 +1,46 @@
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const mockObjectMetadata = getMockObjectMetadataItemWithFieldsMaps({
+const mockObjectMetadata = {
   id: '1',
   icon: 'Icon123',
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',
   labelPlural: 'Objects',
-  description: 'Test object metadata',
   targetTableName: 'test_table',
   workspaceId: '1',
-  fieldsById: {},
-  fieldIdByName: {},
+  universalIdentifier: '1',
   isSystem: false,
   isCustom: false,
   isActive: true,
   isRemote: false,
   isAuditLogged: true,
   isSearchable: true,
-  indexMetadatas: [],
-  fieldIdByJoinColumnName: {},
-});
+  indexMetadataIds: [],
+  fieldMetadataIds: [],
+  viewIds: [],
+  applicationId: null,
+  isLabelSyncedWithName: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  shortcut: null,
+  description: null,
+  standardOverrides: null,
+  isUIReadOnly: false,
+  standardId: null,
+  labelIdentifierFieldMetadataId: null,
+  imageIdentifierFieldMetadataId: null,
+  duplicateCriteria: null,
+} as FlatObjectMetadata;
+
+const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+  byId: {},
+  idByUniversalIdentifier: {},
+  universalIdentifiersByApplicationId: {},
+};
 
 describe('objectRecordChangedValues', () => {
   it('detects changes in scalar values correctly', () => {
@@ -40,6 +59,7 @@ describe('objectRecordChangedValues', () => {
       oldRecord,
       newRecord,
       mockObjectMetadata,
+      mockFlatFieldMetadataMaps,
     );
 
     expect(result).toEqual({
@@ -61,6 +81,7 @@ describe('objectRecordChangedValues', () => {
       oldRecord,
       newRecord,
       mockObjectMetadata,
+      mockFlatFieldMetadataMaps,
     );
 
     expect(result).toEqual({});
@@ -82,6 +103,7 @@ describe('objectRecordChangedValues', () => {
       oldRecord,
       newRecord,
       mockObjectMetadata,
+      mockFlatFieldMetadataMaps,
     );
 
     expect(result).toEqual({});
@@ -111,6 +133,7 @@ describe('objectRecordChangedValues', () => {
       oldRecord,
       newRecord,
       mockObjectMetadata,
+      mockFlatFieldMetadataMaps,
     );
 
     expect(result).toEqual(expectedChanges);

@@ -9,11 +9,11 @@ import { z } from 'zod';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
+const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
   if (forResponse) {
     return true;
   }
@@ -28,10 +28,10 @@ const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
   }
 };
 
-const getFieldZodType = (field: FieldMetadataEntity): z.ZodTypeAny => {
+const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
   switch (field.type) {
     case FieldMetadataType.UUID:
-      return z.uuidv4();
+      return z.string().uuidv4();
 
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
@@ -41,7 +41,7 @@ const getFieldZodType = (field: FieldMetadataEntity): z.ZodTypeAny => {
       return z.string().datetime();
 
     case FieldMetadataType.DATE:
-      return z.date();
+      return z.string().date();
 
     case FieldMetadataType.NUMBER: {
       const settings =
@@ -73,7 +73,7 @@ const getFieldZodType = (field: FieldMetadataEntity): z.ZodTypeAny => {
 };
 
 export const generateRecordPropertiesZodSchema = (
-  objectMetadata: ObjectMetadataEntity,
+  objectMetadata: ObjectMetadataForToolSchema,
   forResponse = false,
   restrictedFields?: RestrictedFieldsPermissions,
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {

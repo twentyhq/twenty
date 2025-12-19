@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
 import { useRecordIndexGroupsAggregatesGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsAggregatesGroupBy';
@@ -9,6 +10,7 @@ import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useEffect } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,6 +51,10 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   const { setRecordIndexAggregateDisplayValueForRecordGroupValue } =
     useSetRecordIndexAggregateDisplayValueForRecordGroupValue();
 
+  const recordGroupDefinitions = useRecoilComponentValue(
+    recordGroupDefinitionsComponentSelector,
+  );
+
   useEffect(() => {
     if (
       !loading &&
@@ -71,13 +77,29 @@ export const RecordIndexGroupAggregateQueryEffect = ({
           recordIndexGroupAggregateFieldMetadataItem,
         );
 
-        for (const recordAggregateValueByGroupValue of recordAggregateValueByGroupValueArray) {
-          setRecordIndexAggregateDisplayValueForRecordGroupValue(
-            recordIndexGroupAggregateOperation,
-            recordIndexGroupAggregateFieldMetadataItem,
-            recordAggregateValueByGroupValue.recordGroupValue,
-            recordAggregateValueByGroupValue.recordAggregateValue,
-          );
+        for (const recordGroupDefinition of recordGroupDefinitions) {
+          const foundAggregateValueForGroup =
+            recordAggregateValueByGroupValueArray.find(
+              (recordAggregateValueByGroupValue) =>
+                recordAggregateValueByGroupValue.recordGroupValue ===
+                recordGroupDefinition.value,
+            );
+
+          if (isDefined(foundAggregateValueForGroup)) {
+            setRecordIndexAggregateDisplayValueForRecordGroupValue(
+              recordIndexGroupAggregateOperation,
+              recordIndexGroupAggregateFieldMetadataItem,
+              foundAggregateValueForGroup.recordGroupValue,
+              foundAggregateValueForGroup.recordAggregateValue,
+            );
+          } else {
+            setRecordIndexAggregateDisplayValueForRecordGroupValue(
+              recordIndexGroupAggregateOperation,
+              recordIndexGroupAggregateFieldMetadataItem,
+              recordGroupDefinition.value ?? '',
+              0,
+            );
+          }
         }
       }
     }
@@ -92,6 +114,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordAggregateGqlField,
     recordIndexAggregateDisplayLabelCallbackState,
     objectMetadataItem,
+    recordGroupDefinitions,
   ]);
 
   return null;

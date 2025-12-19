@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -25,16 +22,13 @@ import { ROCKET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seed
 import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/survey-results-object-seed.constant';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
-import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
-    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -85,13 +79,9 @@ export class DevSeederMetadataService {
   public async seed({
     dataSourceMetadata,
     workspaceId,
-    featureFlags,
-    twentyStandardFlatApplication,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
-    twentyStandardFlatApplication: FlatApplication;
-    featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
 
@@ -125,13 +115,6 @@ export class DevSeederMetadataService {
         fieldMetadataSeeds: fieldConfig.seeds,
       });
     }
-
-    await this.seedCoreViews({
-      workspaceId,
-      dataSourceMetadata,
-      featureFlags,
-      twentyStandardFlatApplication,
-    });
   }
 
   private async seedCustomObject({
@@ -143,7 +126,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataServiceV2.createOneObject({
+    await this.objectMetadataService.createOneObject({
       createObjectInput: {
         ...objectMetadataSeed,
         dataSourceId,
@@ -162,7 +145,7 @@ export class DevSeederMetadataService {
     fieldMetadataSeeds: FieldMetadataSeed[];
   }): Promise<void> {
     const objectMetadata =
-      await this.objectMetadataServiceV2.findOneWithinWorkspace(workspaceId, {
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
         where: { nameSingular: objectMetadataNameSingular },
       });
 
@@ -176,33 +159,9 @@ export class DevSeederMetadataService {
       objectMetadataId: objectMetadata.id,
     }));
 
-    await this.fieldMetadataServiceV2.createManyFields({
+    await this.fieldMetadataService.createManyFields({
       createFieldInputs,
       workspaceId,
-    });
-  }
-
-  private async seedCoreViews({
-    workspaceId,
-    dataSourceMetadata,
-    featureFlags,
-    twentyStandardFlatApplication,
-  }: {
-    workspaceId: string;
-    dataSourceMetadata: DataSourceEntity;
-    featureFlags?: Record<string, boolean>;
-    twentyStandardFlatApplication: FlatApplication;
-  }): Promise<void> {
-    const createdObjectMetadata =
-      await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
-
-    await prefillCoreViews({
-      coreDataSource: this.coreDataSource,
-      workspaceId,
-      objectMetadataItems: createdObjectMetadata,
-      workspaceSchemaName: dataSourceMetadata.schema,
-      featureFlags,
-      twentyStandardFlatApplication,
     });
   }
 
@@ -253,7 +212,7 @@ export class DevSeederMetadataService {
       objectIdByNameSingular,
     });
 
-    await this.fieldMetadataServiceV2.createManyFields({
+    await this.fieldMetadataService.createManyFields({
       createFieldInputs,
       workspaceId,
     });

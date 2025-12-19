@@ -1,21 +1,25 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
+  const groupFieldMetadata = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
 
   const recordGroupFilter = useMemo(() => {
     if (isDefined(currentRecordGroupDefinition)) {
       const fieldMetadataItem = fields.find(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.id === currentRecordGroupDefinition.fieldMetadataId,
+        (fieldMetadataItem) => fieldMetadataItem.id === groupFieldMetadata?.id,
       );
 
       if (!fieldMetadataItem) {
         throw new Error(
-          `Field metadata item with id ${currentRecordGroupDefinition.fieldMetadataId} not found`,
+          `Field metadata item with id ${groupFieldMetadata?.id} not found`,
         );
       }
 
@@ -31,7 +35,7 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
     }
 
     return {};
-  }, [currentRecordGroupDefinition, fields]);
+  }, [currentRecordGroupDefinition, fields, groupFieldMetadata?.id]);
 
   return { recordGroupFilter };
 };

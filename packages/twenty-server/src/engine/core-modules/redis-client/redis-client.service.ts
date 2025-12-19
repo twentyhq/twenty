@@ -2,6 +2,7 @@ import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
 import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -9,6 +10,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
   private redisQueueClient: IORedis | null = null;
+  private redisPubSubClient: RedisPubSub | null = null;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -46,6 +48,19 @@ export class RedisClientService implements OnModuleDestroy {
     return this.redisClient;
   }
 
+  getPubSubClient() {
+    if (!this.redisPubSubClient) {
+      const redisClient = this.getClient();
+
+      this.redisPubSubClient = new RedisPubSub({
+        publisher: redisClient.duplicate(),
+        subscriber: redisClient.duplicate(),
+      });
+    }
+
+    return this.redisPubSubClient;
+  }
+
   async onModuleDestroy() {
     if (isDefined(this.redisQueueClient)) {
       await this.redisQueueClient.quit();
@@ -54,6 +69,10 @@ export class RedisClientService implements OnModuleDestroy {
     if (isDefined(this.redisClient)) {
       await this.redisClient.quit();
       this.redisClient = null;
+    }
+    if (isDefined(this.redisPubSubClient)) {
+      await this.redisPubSubClient.close();
+      this.redisPubSubClient = null;
     }
   }
 }

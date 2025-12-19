@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Role deletion should fail when deleting a non-editable system role (Admin) 1`] = `
+[
+  {
+    "extensions": {
+      "code": "FORBIDDEN",
+      "subCode": "CANNOT_UNASSIGN_LAST_ADMIN",
+      "userFriendlyMessage": "You cannot remove the admin role from the last administrator. Please assign another administrator first.",
+    },
+    "message": "Cannot unassign admin role from last admin of the workspace",
+    "name": "ForbiddenError",
+  },
+]
+`;
+
+exports[`Role deletion should fail when deleting a non-existent role 1`] = `
+[
+  {
+    "extensions": {
+      "code": "NOT_FOUND",
+      "subCode": "ROLE_NOT_FOUND",
+      "userFriendlyMessage": "The role you are looking for could not be found. It may have been deleted or you may not have access to it.",
+    },
+    "message": "Role not found",
+    "name": "NotFoundError",
+  },
+]
+`;
+
+exports[`Role deletion should fail when deleting the workspace default role (Member) 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "The default role cannot be deleted as it is required for the workspace to function properly.",
+    },
+    "message": "Default role cannot be deleted",
+  },
+]
+`;

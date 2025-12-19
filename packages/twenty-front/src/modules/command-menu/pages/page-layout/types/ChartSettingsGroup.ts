@@ -4,7 +4,7 @@ import { type ComponentType } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 
 export type ChartSettingsGroup = {
-  heading: string;
+  heading: MessageDescriptor;
   items: ChartSettingsItem[];
 };
 
@@ -17,6 +17,7 @@ export type ChartSettingsItem = {
   dependsOn?: CHART_CONFIGURATION_SETTING_IDS[];
   DropdownContent?: ComponentType;
   dropdownWidth?: number;
-  isInput?: boolean;
+  isNumberInput?: boolean;
+  isTextInput?: boolean;
   inputPlaceholder?: MessageDescriptor;
 };

@@ -89,7 +89,7 @@ export const useDestroyOneRecord = ({
           throw error;
         });
 
-      registerObjectOperation(objectMetadataItem.nameSingular, {
+      registerObjectOperation(objectMetadataItem, {
         type: 'destroy-one',
       });
 

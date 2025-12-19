@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowCommonException,
   WorkflowCommonExceptionCode,
@@ -32,14 +32,15 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export type ObjectMetadataInfo = {
-  objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
@@ -58,20 +59,27 @@ export class WorkflowCommonWorkspaceService {
       );
     }
 
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workflowVersion = await workflowVersionRepository.findOne({
+          where: {
+            id: workflowVersionId,
+          },
+        });
+
+        return this.getValidWorkflowVersionOrFail(workflowVersion);
       },
-    });
-
-    return this.getValidWorkflowVersionOrFail(workflowVersion);
+    );
   }
 
   async getValidWorkflowVersionOrFail(
@@ -84,66 +92,55 @@ export class WorkflowCommonWorkspaceService {
       );
     }
 
-    // FIXME: For now we will make the trigger optional. Later, we'll have to ensure the trigger is defined when publishing the flow.
-    // if (!workflowVersion.trigger) {
-    //   throw new WorkflowTriggerException(
-    //     'Workflow version does not contains trigger',
-    //     WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-    //   );
-    // }
-
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
 
-  async getObjectMetadataMaps(
-    workspaceId: string,
-  ): Promise<ObjectMetadataMaps> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+  async getFlatEntityMaps(workspaceId: string): Promise<{
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    objectIdByNameSingular: Record<string, string>;
+  }> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
     const { idByNameSingular } = buildObjectIdByNameMaps(
       flatObjectMetadataMaps,
     );
-    const objectMetadataMaps: ObjectMetadataMaps = {
-      byId: {},
-      idByNameSingular,
+
+    return {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular: idByNameSingular,
     };
-
-    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
-      if (isDefined(flatObj)) {
-        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
-          flatObj,
-          flatFieldMetadataMaps,
-          flatIndexMaps,
-        );
-      }
-    }
-
-    return objectMetadataMaps;
   }
 
-  async getObjectMetadataItemWithFieldsMaps(
+  async getObjectMetadataInfo(
     objectNameSingular: string,
     workspaceId: string,
   ): Promise<ObjectMetadataInfo> {
-    const objectMetadataMaps = await this.getObjectMetadataMaps(workspaceId);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } = await this.getFlatEntityMaps(workspaceId);
 
-    const objectMetadataItemWithFieldsMaps =
-      getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
-        objectNameSingular,
+    const objectId = objectIdByNameSingular[objectNameSingular];
+
+    if (!isDefined(objectId)) {
+      throw new WorkflowCommonException(
+        `Failed to read: Object ${objectNameSingular} not found`,
+        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
+    }
 
-    if (!objectMetadataItemWithFieldsMaps) {
+    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+
+    if (!isDefined(flatObjectMetadata)) {
       throw new WorkflowCommonException(
         `Failed to read: Object ${objectNameSingular} not found`,
         WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -151,8 +148,9 @@ export class WorkflowCommonWorkspaceService {
     }
 
     return {
-      objectMetadataItemWithFieldsMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     };
   }
 
@@ -165,73 +163,80 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }): Promise<void> {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-        workspaceId,
-        'workflowRun',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    const workflowAutomatedTriggerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
-        workspaceId,
-        'workflowAutomatedTrigger',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
+        const workflowRunRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            workspaceId,
+            'workflowRun',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    for (const workflowId of workflowIds) {
-      switch (operation) {
-        case 'delete':
-          await workflowAutomatedTriggerRepository.softDelete({
+        const workflowAutomatedTriggerRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+            workspaceId,
+            'workflowAutomatedTrigger',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        for (const workflowId of workflowIds) {
+          switch (operation) {
+            case 'delete':
+              await workflowAutomatedTriggerRepository.softDelete({
+                workflowId,
+              });
+
+              await workflowRunRepository.softDelete({
+                workflowId,
+              });
+
+              await workflowVersionRepository.softDelete({
+                workflowId,
+              });
+
+              break;
+            case 'restore':
+              await workflowAutomatedTriggerRepository.restore({
+                workflowId,
+              });
+
+              await workflowRunRepository.restore({
+                workflowId,
+              });
+
+              await workflowVersionRepository.restore({
+                workflowId,
+              });
+
+              break;
+          }
+
+          await this.deactivateVersionOnDelete({
+            workflowVersionRepository,
             workflowId,
+            workspaceId,
+            operation,
           });
 
-          await workflowRunRepository.softDelete({
+          await this.handleServerlessFunctionSubEntities({
+            workflowVersionRepository,
             workflowId,
+            workspaceId,
+            operation,
           });
-
-          await workflowVersionRepository.softDelete({
-            workflowId,
-          });
-
-          break;
-        case 'restore':
-          await workflowAutomatedTriggerRepository.restore({
-            workflowId,
-          });
-
-          await workflowRunRepository.restore({
-            workflowId,
-          });
-
-          await workflowVersionRepository.restore({
-            workflowId,
-          });
-
-          break;
-      }
-
-      await this.deactivateVersionOnDelete({
-        workflowVersionRepository,
-        workflowId,
-        workspaceId,
-        operation,
-      });
-
-      await this.handleServerlessFunctionSubEntities({
-        workflowVersionRepository,
-        workflowId,
-        workspaceId,
-        operation,
-      });
-    }
+        }
+      },
+    );
   }
 
   private async deactivateVersionOnDelete({
@@ -250,10 +255,10 @@ export class WorkflowCommonWorkspaceService {
     }
 
     const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         workspaceId,
         'workflow',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOne({

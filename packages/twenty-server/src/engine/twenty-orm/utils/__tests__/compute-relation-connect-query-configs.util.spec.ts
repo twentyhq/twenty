@@ -2,147 +2,350 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 
 describe('computeRelationConnectQueryConfigs', () => {
-  const personMetadata = {
+  const personFields: FlatFieldMetadata[] = [
+    {
+      id: 'person-id-field-id',
+      name: 'id',
+      type: FieldMetadataType.UUID,
+      label: 'id',
+      objectMetadataId: 'person-object-metadata-id',
+      isNullable: false,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'person-id-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'person-name-field-id',
+      name: 'name',
+      type: FieldMetadataType.FULL_NAME,
+      label: 'name',
+      objectMetadataId: 'person-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'person-name-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'person-company-1-field-id',
+      name: 'company-related-to-1',
+      type: FieldMetadataType.RELATION,
+      label: 'company-related-to-1',
+      objectMetadataId: 'person-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'person-company-1-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+      relationTargetObjectMetadataId: 'company-object-metadata-id',
+      relationTargetFieldMetadataId: 'company-id-field-id',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: 'company-related-to-1Id',
+      },
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'person-company-2-field-id',
+      name: 'company-related-to-2',
+      type: FieldMetadataType.RELATION,
+      label: 'company-related-to-2',
+      objectMetadataId: 'person-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'person-company-2-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+      relationTargetObjectMetadataId: 'company-object-metadata-id',
+      relationTargetFieldMetadataId: 'company-id-field-id',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: 'company-related-to-2Id',
+      },
+    } as unknown as FlatFieldMetadata,
+  ];
+
+  const companyFields: FlatFieldMetadata[] = [
+    {
+      id: 'company-id-field-id',
+      name: 'id',
+      type: FieldMetadataType.UUID,
+      label: 'id',
+      objectMetadataId: 'company-object-metadata-id',
+      isNullable: false,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'company-id-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'company-name-field-id',
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'name',
+      objectMetadataId: 'company-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'company-name-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'company-description-field-id',
+      name: 'description',
+      type: FieldMetadataType.TEXT,
+      label: 'description',
+      objectMetadataId: 'company-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'company-description-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'company-domain-name-field-id',
+      name: 'domainName',
+      type: FieldMetadataType.LINKS,
+      label: 'domainName',
+      objectMetadataId: 'company-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'company-domain-name-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+    {
+      id: 'company-address-field-id',
+      name: 'address',
+      type: FieldMetadataType.TEXT,
+      label: 'address',
+      objectMetadataId: 'company-object-metadata-id',
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: 'company-address-field-id',
+      viewFieldIds: [],
+      viewFilterIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    } as unknown as FlatFieldMetadata,
+  ];
+
+  const allFields = [...personFields, ...companyFields];
+
+  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+    byId: allFields.reduce(
+      (acc, field) => {
+        acc[field.id] = field;
+
+        return acc;
+      },
+      {} as Record<string, FlatFieldMetadata>,
+    ),
+    idByUniversalIdentifier: allFields.reduce(
+      (acc, field) => {
+        acc[field.universalIdentifier] = field.id;
+
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
+    universalIdentifiersByApplicationId: {},
+  };
+
+  const createFlatObjectMetadata = (
+    partial: Partial<FlatObjectMetadata> & {
+      id: string;
+      nameSingular: string;
+      fieldMetadataIds: string[];
+      indexMetadataIds: string[];
+    },
+  ): FlatObjectMetadata =>
+    ({
+      namePlural: `${partial.nameSingular}s`,
+      labelSingular: partial.nameSingular,
+      labelPlural: `${partial.nameSingular}s`,
+      icon: 'Icon',
+      targetTableName: partial.nameSingular,
+      workspaceId: 'workspace-id',
+      isCustom: false,
+      isRemote: false,
+      isActive: true,
+      isSystem: false,
+      isAuditLogged: true,
+      isSearchable: true,
+      universalIdentifier: partial.id,
+      viewIds: [],
+      applicationId: null,
+      isLabelSyncedWithName: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      shortcut: null,
+      description: null,
+      standardOverrides: null,
+      isUIReadOnly: false,
+      standardId: null,
+      labelIdentifierFieldMetadataId: null,
+      imageIdentifierFieldMetadataId: null,
+      duplicateCriteria: null,
+      ...partial,
+    }) as FlatObjectMetadata;
+
+  const personMetadata = createFlatObjectMetadata({
     id: 'person-object-metadata-id',
     nameSingular: 'person',
-    fieldsById: {
-      'person-id-field-id': {
-        id: 'person-id-field-id',
-        name: 'id',
-        type: FieldMetadataType.UUID,
-        label: 'id',
-      },
-      'person-name-field-id': {
-        id: 'person-name-field-id',
-        name: 'name',
-        type: FieldMetadataType.FULL_NAME,
-        label: 'name',
-      },
-      'person-company-1-field-id': {
-        id: 'person-company-1-field-id',
-        name: 'company-related-to-1',
-        type: FieldMetadataType.RELATION,
-        label: 'company-related-to-1',
-        relationTargetObjectMetadataId: 'company-object-metadata-id',
-        relationTargetFieldMetadataId: 'company-id-field-id',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-        },
-      },
-      'person-company-2-field-id': {
-        id: 'person-company-2-field-id',
-        name: 'company-related-to-2',
-        type: FieldMetadataType.RELATION,
-        label: 'company-related-to-2',
-        relationTargetObjectMetadataId: 'company-object-metadata-id',
-        relationTargetFieldMetadataId: 'company-id-field-id',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-        },
-      },
-    },
-    fieldIdByName: {
-      id: 'person-id-field-id',
-      name: 'person-name-field-id',
-      'company-related-to-1': 'person-company-1-field-id',
-      'company-related-to-2': 'person-company-2-field-id',
-    },
-  } as unknown as ObjectMetadataItemWithFieldMaps;
+    indexMetadataIds: [],
+    fieldMetadataIds: personFields.map((f) => f.id),
+  });
 
-  const companyMetadata = {
+  const companyMetadata = createFlatObjectMetadata({
     id: 'company-object-metadata-id',
     nameSingular: 'company',
-    indexMetadatas: [
-      {
-        id: 'company-id-index-metadata-id',
-        name: 'company-id-index-metadata-name',
-        indexFieldMetadatas: [
-          {
-            fieldMetadataId: 'company-id-field-id',
-          },
-        ],
-        isUnique: true,
-      },
-      {
-        id: 'company-domain-index-metadata-id',
-        name: 'company-domain-index-metadata-name',
-        indexFieldMetadatas: [
-          {
-            fieldMetadataId: 'company-domain-name-field-id',
-          },
-        ],
-        isUnique: true,
-      },
-      {
-        id: 'company-composite-index-metadata-id',
-        name: 'company-composite-index-metadata-name',
-        indexFieldMetadatas: [
-          {
-            fieldMetadataId: 'company-name-field-id',
-          },
-          {
-            fieldMetadataId: 'company-description-field-id',
-          },
-        ],
-        isUnique: true,
-      },
+    indexMetadataIds: [
+      'company-id-index-metadata-id',
+      'company-domain-index-metadata-id',
+      'company-composite-index-metadata-id',
     ],
-    fieldsById: {
-      'company-id-field-id': {
-        id: 'company-id-field-id',
-        name: 'id',
-        type: FieldMetadataType.UUID,
-        label: 'id',
-      },
-      'company-name-field-id': {
-        id: 'company-name-field-id',
-        name: 'name',
-        type: FieldMetadataType.TEXT,
-        label: 'name',
-      },
-      'company-description-field-id': {
-        id: 'company-description-field-id',
-        name: 'description',
-        type: FieldMetadataType.TEXT,
-        label: 'description',
-      },
-      'company-domain-name-field-id': {
-        id: 'company-domain-name-field-id',
-        name: 'domainName',
-        type: FieldMetadataType.LINKS,
-        label: 'domainName',
-      },
-      'company-address-field-id': {
-        id: 'company-address-field-id',
-        name: 'address',
-        type: FieldMetadataType.TEXT,
-        label: 'address',
-      },
-    },
-    fieldIdByName: {
-      id: 'company-id-field-id',
-      name: 'company-name-field-id',
-      description: 'company-description-field-id',
-      domainName: 'company-domain-name-field-id',
-      address: 'company-address-field-id',
-    },
-  } as unknown as ObjectMetadataItemWithFieldMaps;
+    fieldMetadataIds: companyFields.map((f) => f.id),
+  });
 
-  const objectMetadataMaps = {
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byId: {
       'person-object-metadata-id': personMetadata,
       'company-object-metadata-id': companyMetadata,
     },
-    idByNameSingular: {
-      person: 'person-object-metadata-id',
-      company: 'company-object-metadata-id',
+    idByUniversalIdentifier: {
+      'person-object-metadata-id': 'person-object-metadata-id',
+      'company-object-metadata-id': 'company-object-metadata-id',
     },
-  } as ObjectMetadataMaps;
+    universalIdentifiersByApplicationId: {},
+  };
+
+  const createFlatIndexFieldMetadata = (
+    id: string,
+    fieldMetadataId: string,
+    indexMetadataId: string,
+    order: number,
+  ) => ({
+    id,
+    fieldMetadataId,
+    indexMetadataId,
+    order,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  const flatIndexMaps: FlatEntityMaps<FlatIndexMetadata> = {
+    byId: {
+      'company-id-index-metadata-id': {
+        id: 'company-id-index-metadata-id',
+        name: 'company-id-index-metadata-name',
+        isUnique: true,
+        objectMetadataId: 'company-object-metadata-id',
+        universalIdentifier: 'company-id-index-metadata-id',
+        flatIndexFieldMetadatas: [
+          createFlatIndexFieldMetadata(
+            'company-id-index-field-metadata-id',
+            'company-id-field-id',
+            'company-id-index-metadata-id',
+            0,
+          ),
+        ],
+      } as unknown as FlatIndexMetadata,
+      'company-domain-index-metadata-id': {
+        id: 'company-domain-index-metadata-id',
+        name: 'company-domain-index-metadata-name',
+        isUnique: true,
+        objectMetadataId: 'company-object-metadata-id',
+        universalIdentifier: 'company-domain-index-metadata-id',
+        flatIndexFieldMetadatas: [
+          createFlatIndexFieldMetadata(
+            'company-domain-index-field-metadata-id',
+            'company-domain-name-field-id',
+            'company-domain-index-metadata-id',
+            0,
+          ),
+        ],
+      } as unknown as FlatIndexMetadata,
+      'company-composite-index-metadata-id': {
+        id: 'company-composite-index-metadata-id',
+        name: 'company-composite-index-metadata-name',
+        isUnique: true,
+        objectMetadataId: 'company-object-metadata-id',
+        universalIdentifier: 'company-composite-index-metadata-id',
+        flatIndexFieldMetadatas: [
+          createFlatIndexFieldMetadata(
+            'company-name-index-field-metadata-id',
+            'company-name-field-id',
+            'company-composite-index-metadata-id',
+            0,
+          ),
+          createFlatIndexFieldMetadata(
+            'company-description-index-field-metadata-id',
+            'company-description-field-id',
+            'company-composite-index-metadata-id',
+            1,
+          ),
+        ],
+      } as unknown as FlatIndexMetadata,
+    },
+    idByUniversalIdentifier: {
+      'company-id-index-metadata-id': 'company-id-index-metadata-id',
+      'company-domain-index-metadata-id': 'company-domain-index-metadata-id',
+      'company-composite-index-metadata-id':
+        'company-composite-index-metadata-id',
+    },
+    universalIdentifiersByApplicationId: {},
+  };
 
   it('should return an empty object if no connect fields are found', () => {
     const peopleEntityInputs = [
@@ -159,7 +362,9 @@ describe('computeRelationConnectQueryConfigs', () => {
     const result = computeRelationConnectQueryConfigs(
       peopleEntityInputs,
       personMetadata,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
       {},
     );
 
@@ -187,7 +392,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
         relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow('Connect is not allowed for name on person');
@@ -213,7 +420,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
         relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
@@ -255,7 +464,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
         relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
@@ -304,7 +515,9 @@ describe('computeRelationConnectQueryConfigs', () => {
       computeRelationConnectQueryConfigs(
         peopleEntityInputs,
         personMetadata,
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
         relationConnectQueryFieldsByEntityIndex,
       );
     }).toThrow(
@@ -374,7 +587,9 @@ describe('computeRelationConnectQueryConfigs', () => {
     const result = computeRelationConnectQueryConfigs(
       peopleEntityInputs,
       personMetadata,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
       relationConnectQueryFieldsByEntityIndex,
     );
 
@@ -392,12 +607,11 @@ describe('computeRelationConnectQueryConfigs', () => {
         relationFieldName: 'company-related-to-1Id',
         targetObjectName: 'company',
         uniqueConstraintFields: [
-          {
+          expect.objectContaining({
             id: 'company-domain-name-field-id',
-            label: 'domainName',
             name: 'domainName',
             type: FieldMetadataType.LINKS,
-          },
+          }),
         ],
       },
       {
@@ -410,12 +624,11 @@ describe('computeRelationConnectQueryConfigs', () => {
         relationFieldName: 'company-related-to-2Id',
         targetObjectName: 'company',
         uniqueConstraintFields: [
-          {
+          expect.objectContaining({
             id: 'company-id-field-id',
-            label: 'id',
             name: 'id',
             type: FieldMetadataType.UUID,
-          },
+          }),
         ],
       },
     ]);

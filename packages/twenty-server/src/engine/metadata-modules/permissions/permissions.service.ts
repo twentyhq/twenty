@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
@@ -16,14 +16,14 @@ import {
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     private readonly userRoleService: UserRoleService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
@@ -77,10 +77,10 @@ export class PermissionsService {
       defaultSettingsPermissions,
     );
 
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
     const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
@@ -109,6 +109,8 @@ export class PermissionsService {
         [PermissionFlagType.UPLOAD_FILE]: false,
         [PermissionFlagType.DOWNLOAD_FILE]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+        [PermissionFlagType.HTTP_REQUEST_TOOL]: false,
+        [PermissionFlagType.CODE_INTERPRETER_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
@@ -130,8 +132,8 @@ export class PermissionsService {
     setting: PermissionFlagType;
     apiKeyId?: string;
   }): Promise<boolean> {
-    if (apiKeyId) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+    if (isDefined(apiKeyId)) {
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKeyId,
         workspaceId,
       );

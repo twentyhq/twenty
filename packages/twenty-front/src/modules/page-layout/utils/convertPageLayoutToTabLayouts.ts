@@ -39,6 +39,13 @@ export const convertPageLayoutToTabLayouts = (
         minH = iframeMinimumSize.h;
       }
 
+      if (widget.type === WidgetType.STANDALONE_RICH_TEXT) {
+        const richTextMinimumSize =
+          WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
+        minW = richTextMinimumSize.w;
+        minH = richTextMinimumSize.h;
+      }
+
       return {
         i: widget.id,
         x: widget.gridPosition.column,

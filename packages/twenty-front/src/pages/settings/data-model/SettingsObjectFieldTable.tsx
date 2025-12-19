@@ -106,7 +106,7 @@ export const SettingsObjectFieldTable = ({
 }: SettingsObjectFieldTableProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showInactive, setShowInactive] = useState(mode === 'new-field');
+  const [showInactive, setShowInactive] = useState(true);
 
   const tableMetadata = objectMetadataItem.isCustom
     ? GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM

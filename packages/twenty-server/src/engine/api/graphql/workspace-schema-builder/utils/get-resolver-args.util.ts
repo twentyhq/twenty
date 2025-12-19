@@ -190,6 +190,10 @@ export const getResolverArgs = (
           type: GraphQLInt,
           isNullable: true,
         },
+        offsetForRecords: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
       };
     default:
       throw new Error(`Unknown resolver type: ${type}`);

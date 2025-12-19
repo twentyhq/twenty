@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
@@ -17,7 +18,7 @@ const StyledCard = styled.div<{ isSingleNote: boolean }>`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
-  max-width: ${({ isSingleNote }) => (isSingleNote ? '300px' : 'unset')};
+  width: 100%;
 `;
 
 const StyledCardDetailsContainer = styled.div`
@@ -88,7 +89,7 @@ export const NoteTile = ({
           })
         }
       >
-        <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+        <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
       <StyledFooter>

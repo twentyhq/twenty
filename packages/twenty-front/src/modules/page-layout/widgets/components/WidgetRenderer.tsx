@@ -6,6 +6,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
@@ -20,7 +21,7 @@ import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { WidgetType } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -60,7 +61,12 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
+  // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
+  // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
+  const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
+  const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
+
+  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({
@@ -95,6 +101,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   return (
     <WidgetCard
+      headerLess={!showHeader}
       variant={variant}
       isEditable={isPageLayoutInEditMode}
       onClick={isPageLayoutInEditMode ? handleClick : undefined}

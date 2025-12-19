@@ -15,7 +15,5 @@ export type FlatFieldMetadataTypeValidationArgs<T extends FieldMetadataType> =
 export type FlatFieldMetadataTypeValidator = {
   [T in FieldMetadataType]: (
     args: FlatFieldMetadataTypeValidationArgs<T>,
-  ) =>
-    | FlatFieldMetadataValidationError[]
-    | Promise<FlatFieldMetadataValidationError[]>;
+  ) => FlatFieldMetadataValidationError[];
 };

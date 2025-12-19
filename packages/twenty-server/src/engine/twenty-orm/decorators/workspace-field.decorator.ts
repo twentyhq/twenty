@@ -1,14 +1,14 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
-  type FieldMetadataType,
-  type FieldMetadataSettings,
   type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -82,7 +82,8 @@ export function WorkspaceField<T extends FieldMetadataType>(
       generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
     const name = propertyKey.toString();
     const label = options.label.message ?? '';
-    const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
+    const isLabelSyncedWithName =
+      computeMetadataNameFromLabel({ label }) === name;
 
     metadataArgsStorage.addFields({
       target: object.constructor,

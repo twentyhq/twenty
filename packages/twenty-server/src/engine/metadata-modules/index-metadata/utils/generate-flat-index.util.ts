@@ -10,7 +10,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 
-type GenerateFlatIndexArgs = {
+export type GenerateFlatIndexArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   objectFlatFieldMetadatas: FlatFieldMetadata[];
   flatIndex: Omit<FlatIndexMetadata, 'name'>;
@@ -47,12 +47,12 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
     });
 
   const isUnique = orderedFlatFields.some((flatField) => flatField.isUnique);
-  const orderedFlatFieldNames = orderedFlatFields.map((flatField) => ({
-    name: flatField.name,
-  }));
+  const orderedIndexColumnNames = orderedFlatFields.map(
+    (flatField) => flatField.name,
+  );
   const name = generateDeterministicIndexNameV2({
     flatObjectMetadata,
-    relatedFieldNames: orderedFlatFieldNames,
+    orderedIndexColumnNames,
     isUnique,
   });
 

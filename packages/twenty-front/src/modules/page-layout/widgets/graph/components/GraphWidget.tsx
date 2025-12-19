@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
@@ -8,7 +9,7 @@ import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graphW
 import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
-import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import { GraphType } from '~/generated/graphql';
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(

@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   WORKFLOW_RUN_ENQUEUE_CRON_PATTERN,
-  WorkflowRunEnqueueJob,
+  WorkflowRunEnqueueCronJob,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue.cron.job';
 
 @Command({
@@ -22,7 +22,7 @@ export class WorkflowRunEnqueueCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron({
-      jobName: WorkflowRunEnqueueJob.name,
+      jobName: WorkflowRunEnqueueCronJob.name,
       data: undefined,
       options: {
         repeat: {

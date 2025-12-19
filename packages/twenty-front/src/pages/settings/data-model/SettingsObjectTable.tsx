@@ -68,7 +68,7 @@ export const SettingsObjectTable = ({
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [showDeactivated, setShowDeactivated] = useState(false);
+  const [showDeactivated, setShowDeactivated] = useState(true);
   const [showSystemObjects, setShowSystemObjects] = useState(false);
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();

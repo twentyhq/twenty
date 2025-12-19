@@ -6,9 +6,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useGetAvailableFieldsForCalendar = () => {
@@ -26,10 +25,8 @@ export const useGetAvailableFieldsForCalendar = () => {
   );
 
   const availableFieldsForCalendar =
-    objectMetadataItem?.readableFields.filter(
-      (field) =>
-        field.type === FieldMetadataType.DATE ||
-        field.type === FieldMetadataType.DATE_TIME,
+    objectMetadataItem?.readableFields.filter((field) =>
+      isFieldMetadataDateKind(field.type),
     ) ?? [];
 
   const navigate = useNavigateSettings();

@@ -1,4 +1,4 @@
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
@@ -10,13 +10,13 @@ export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();
 
   const { resetFilterDropdown } = useResetFilterDropdown(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
+    ViewBarFilterDropdownIds.MAIN,
   );
 
   const handleClick = () => {
     resetFilterDropdown();
     toggleDropdown({
-      dropdownComponentInstanceIdFromProps: VIEW_BAR_FILTER_DROPDOWN_ID,
+      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.MAIN,
     });
   };
 

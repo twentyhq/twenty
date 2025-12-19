@@ -35,24 +35,39 @@ export const WorkflowObjectDropdownContent = ({
       objectMetadataItem.isActive && objectMetadataItem.isSystem,
   );
 
+  const matchesSearchFilter = (
+    objectMetadataItem: (typeof objectMetadataItems)[number],
+    searchInputLowerCase: string,
+  ) => {
+    return (
+      objectMetadataItem.nameSingular
+        .toLowerCase()
+        .includes(searchInputLowerCase) ||
+      objectMetadataItem.labelSingular
+        .toLowerCase()
+        .includes(searchInputLowerCase) ||
+      objectMetadataItem.labelPlural
+        .toLowerCase()
+        .includes(searchInputLowerCase)
+    );
+  };
+
+  const searchInputLowerCase = searchInputValue.toLowerCase();
+
   const shouldShowAdvanced =
     showAdvancedOption &&
     !isSystemObjectsOpen &&
     (!isNonEmptyString(searchInputValue) ||
-      searchInputValue.toLowerCase().includes('advanced'));
+      searchInputLowerCase.includes('advanced'));
 
   const filteredNonSystemObjects = nonSystemObjectMetadataItems.filter(
     (objectMetadataItem) =>
-      objectMetadataItem.nameSingular
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase()),
+      matchesSearchFilter(objectMetadataItem, searchInputLowerCase),
   );
 
   const filteredSystemObjects = systemObjectMetadataItems.filter(
     (objectMetadataItem) =>
-      objectMetadataItem.nameSingular
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase()),
+      matchesSearchFilter(objectMetadataItem, searchInputLowerCase),
   );
 
   const filteredObjects = isSystemObjectsOpen

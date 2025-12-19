@@ -1,6 +1,7 @@
-import { CustomException } from 'src/utils/custom-exception';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
-export class GraphqlQueryRunnerException extends CustomException<GraphqlQueryRunnerExceptionCode> {}
+import { CustomException } from 'src/utils/custom-exception';
 
 export enum GraphqlQueryRunnerExceptionCode {
   INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
@@ -21,4 +22,42 @@ export enum GraphqlQueryRunnerExceptionCode {
   INVALID_POST_HOOK_PAYLOAD = 'INVALID_POST_HOOK_PAYLOAD',
   UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT = 'UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT',
   UPSERT_MAX_RECORDS_EXCEEDED = 'UPSERT_MAX_RECORDS_EXCEEDED',
+}
+
+const graphqlQueryRunnerExceptionUserFriendlyMessages: Record<
+  GraphqlQueryRunnerExceptionCode,
+  MessageDescriptor
+> = {
+  [GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT]: msg`Invalid query input.`,
+  [GraphqlQueryRunnerExceptionCode.MAX_DEPTH_REACHED]: msg`Maximum query depth reached.`,
+  [GraphqlQueryRunnerExceptionCode.INVALID_CURSOR]: msg`Invalid cursor provided.`,
+  [GraphqlQueryRunnerExceptionCode.INVALID_DIRECTION]: msg`Invalid direction provided.`,
+  [GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR]: msg`Unsupported operator.`,
+  [GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT]: msg`Conflicting arguments provided.`,
+  [GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND]: msg`Field not found.`,
+  [GraphqlQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD]: msg`Missing required system field.`,
+  [GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND]: msg`Object not found.`,
+  [GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND]: msg`Record not found.`,
+  [GraphqlQueryRunnerExceptionCode.INVALID_ARGS_FIRST]: msg`Invalid 'first' argument.`,
+  [GraphqlQueryRunnerExceptionCode.INVALID_ARGS_LAST]: msg`Invalid 'last' argument.`,
+  [GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND]: msg`Relation settings not found.`,
+  [GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND]: msg`Relation target not found.`,
+  [GraphqlQueryRunnerExceptionCode.NOT_IMPLEMENTED]: msg`This feature is not implemented.`,
+  [GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD]: msg`Invalid post-hook payload.`,
+  [GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT]: msg`Multiple matching records found during upsert.`,
+  [GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED]: msg`Maximum records exceeded for upsert.`,
+};
+
+export class GraphqlQueryRunnerException extends CustomException<GraphqlQueryRunnerExceptionCode> {
+  constructor(
+    message: string,
+    code: GraphqlQueryRunnerExceptionCode,
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+  ) {
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        graphqlQueryRunnerExceptionUserFriendlyMessages[code],
+    });
+  }
 }

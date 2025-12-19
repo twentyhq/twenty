@@ -1,26 +1,39 @@
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-import { createClient } from '../../generated';
+import type {
+  FunctionConfig,
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  CronPayload,
+} from 'twenty-sdk';
+import Twenty, { type Person } from '../../generated';
 
-export const main = async (params: { recipient?: string }) => {
+type CreateNewPostCardParams =
+  | { name?: string }
+  | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
+  | CronPayload;
+
+export const main = async (params: CreateNewPostCardParams) => {
   try {
-    const client = createClient({
-      url: `${process.env.TWENTY_API_URL}/graphql`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-      },
-    });
+    const client = new Twenty();
+
+    const name =
+      'name' in params
+        ? params.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+        : 'Hello world';
+
     const createPostCard = await client.mutation({
       createPostCard: {
         __args: {
           data: {
-            name: params.recipient ?? 'Hello-world',
+            name,
           },
         },
         name: true,
         id: true,
       },
     });
+
+    console.log('createPostCard result', createPostCard);
+
     return createPostCard;
   } catch (error) {
     console.error(error);
@@ -28,7 +41,7 @@ export const main = async (params: { recipient?: string }) => {
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,

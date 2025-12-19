@@ -11,18 +11,18 @@ import {
 } from '@nestjs/common';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 /**
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead

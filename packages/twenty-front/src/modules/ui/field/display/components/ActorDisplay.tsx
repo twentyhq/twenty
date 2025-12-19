@@ -1,5 +1,6 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarChip, Chip } from 'twenty-ui/components';
@@ -12,6 +13,7 @@ import {
   IconMail,
   IconMicrosoftCalendar,
   IconMicrosoftOutlook,
+  IconPlug,
   IconRobot,
   IconSettingsAutomation,
   IconWebhook,
@@ -62,6 +64,8 @@ export const ActorDisplay = ({
         return IconSettingsAutomation;
       case 'WEBHOOK':
         return IconWebhook;
+      case 'APPLICATION':
+        return IconPlug;
       default:
         return undefined;
     }
@@ -73,6 +77,7 @@ export const ActorDisplay = ({
   return (
     <Chip
       label={name ?? ''}
+      emptyLabel={t`Untitled`}
       leftComponent={
         <AvatarChip
           placeholderColorSeed={workspaceMemberId ?? undefined}

@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -65,6 +65,34 @@ describe('computeMetadataNameFromLabel', () => {
         expected: 'mixedCase',
       },
     },
+    {
+      title: 'should add "Custom" suffix to reserved keywords',
+      context: {
+        input: 'Plan',
+        expected: 'planCustom',
+      },
+    },
+    {
+      title: 'should add "Custom" suffix to plural reserved keywords',
+      context: {
+        input: 'Events',
+        expected: 'eventsCustom',
+      },
+    },
+    {
+      title: 'should add "Custom" suffix to core object names',
+      context: {
+        input: 'User',
+        expected: 'userCustom',
+      },
+    },
+    {
+      title: 'should not modify non-reserved keywords',
+      context: {
+        input: 'Customer',
+        expected: 'customer',
+      },
+    },
   ];
 
   const failingTestCases: ComputeMetadataNameFromLabelTestCase[] = [
@@ -96,7 +124,7 @@ describe('computeMetadataNameFromLabel', () => {
 
   describe('successful cases', () => {
     it.each(successfulTestCases)('$title', ({ context }) => {
-      const result = computeMetadataNameFromLabel(context.input);
+      const result = computeMetadataNameFromLabelOrThrow(context.input);
 
       expect(result).toBe(context.expected);
     });
@@ -104,7 +132,7 @@ describe('computeMetadataNameFromLabel', () => {
 
   describe('failing cases', () => {
     it.each(failingTestCases)('$title', ({ context }) => {
-      expect(() => computeMetadataNameFromLabel(context.input)).toThrow(
+      expect(() => computeMetadataNameFromLabelOrThrow(context.input)).toThrow(
         context.expectToThrow?.error,
       );
     });

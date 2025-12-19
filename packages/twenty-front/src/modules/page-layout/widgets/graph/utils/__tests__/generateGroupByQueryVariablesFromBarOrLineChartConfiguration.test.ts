@@ -1,6 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateGroupByQueryVariablesFromBarOrLineChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarOrLineChartConfiguration';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import {
   AggregateOperations,
   type BarChartConfiguration,
@@ -67,6 +70,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -81,6 +85,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -97,6 +102,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-4',
@@ -111,6 +117,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-3',
@@ -128,6 +135,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.HORIZONTAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -142,6 +150,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.HORIZONTAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -152,6 +161,98 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         expect(result).toMatchSnapshot();
       });
     });
+
+    it('applies date granularity when primary axis uses a relation date subfield', () => {
+      const relationField = {
+        id: 'field-rel',
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relation: { targetObjectMetadata: { nameSingular: 'company' } },
+      };
+
+      const objectMetadataItem: ObjectMetadataItem = {
+        id: 'obj-main',
+        nameSingular: 'opportunity',
+        namePlural: 'opportunities',
+        fields: [relationField],
+      } as ObjectMetadataItem;
+
+      const targetObjectMetadata: ObjectMetadataItem = {
+        id: 'obj-company',
+        nameSingular: 'company',
+        namePlural: 'companies',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            type: FieldMetadataType.DATE_TIME,
+          },
+        ],
+      } as ObjectMetadataItem;
+
+      const result =
+        generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
+          objectMetadataItem,
+          objectMetadataItems: [objectMetadataItem, targetObjectMetadata],
+          chartConfiguration: buildBarChartConfiguration({
+            graphType: GraphType.VERTICAL_BAR,
+            primaryAxisGroupByFieldMetadataId: relationField.id,
+            primaryAxisGroupBySubFieldName: 'createdAt',
+          }),
+        });
+
+      expect(result.groupBy[0]).toEqual({
+        company: {
+          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+        },
+      });
+    });
+
+    it('applies date granularity for relation date subfield in line charts as well', () => {
+      const relationField = {
+        id: 'field-rel',
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relation: { targetObjectMetadata: { nameSingular: 'company' } },
+      };
+
+      const objectMetadataItem: ObjectMetadataItem = {
+        id: 'obj-main',
+        nameSingular: 'opportunity',
+        namePlural: 'opportunities',
+        fields: [relationField],
+      } as ObjectMetadataItem;
+
+      const targetObjectMetadata: ObjectMetadataItem = {
+        id: 'obj-company',
+        nameSingular: 'company',
+        namePlural: 'companies',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            type: FieldMetadataType.DATE_TIME,
+          },
+        ],
+      } as ObjectMetadataItem;
+
+      const result =
+        generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
+          objectMetadataItem,
+          objectMetadataItems: [objectMetadataItem, targetObjectMetadata],
+          chartConfiguration: buildLineChartConfiguration({
+            graphType: GraphType.LINE,
+            primaryAxisGroupByFieldMetadataId: relationField.id,
+            primaryAxisGroupBySubFieldName: 'createdAt',
+          }),
+        });
+
+      expect(result.groupBy[0]).toEqual({
+        company: {
+          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+        },
+      });
+    });
   });
 
   describe('Line Chart Configuration', () => {
@@ -159,6 +260,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -173,6 +275,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -189,6 +292,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-3',
@@ -204,6 +308,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-4',
@@ -218,6 +323,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -234,6 +340,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       expect(() =>
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildBarChartConfiguration({
             primaryAxisGroupByFieldMetadataId: 'invalid-field',
           }),
@@ -245,6 +352,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       expect(() =>
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             primaryAxisGroupByFieldMetadataId: 'invalid-field',
           }),

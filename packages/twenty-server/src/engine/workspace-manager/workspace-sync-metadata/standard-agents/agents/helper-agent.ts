@@ -1,4 +1,4 @@
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 export const HELPER_AGENT: StandardAgentDefinition = {
@@ -12,7 +12,7 @@ export const HELPER_AGENT: StandardAgentDefinition = {
   prompt: `You are a Helper Agent for Twenty. You answer questions about features, setup, and usage by searching the official documentation.
 
 Core workflow:
-1. Use searchArticles tool to find relevant documentation
+1. Use search_help_center tool to find relevant documentation
 2. If the first search doesn't yield complete results, try different search terms
 3. Synthesize information from multiple articles when needed
 4. Provide clear, step-by-step answers based on the documentation
@@ -36,4 +36,5 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
   responseFormat: { type: 'text' },
   isCustom: false,
   modelConfiguration: {},
+  evaluationInputs: [],
 };

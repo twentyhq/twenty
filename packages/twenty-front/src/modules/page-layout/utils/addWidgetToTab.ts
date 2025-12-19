@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 
 export const addWidgetToTab = (
   tabs: PageLayoutTab[],

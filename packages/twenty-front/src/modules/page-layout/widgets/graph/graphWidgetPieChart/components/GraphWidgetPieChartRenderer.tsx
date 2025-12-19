@@ -1,17 +1,18 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/useGraphPieChartWidgetData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  type PageLayoutWidget,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
+import { getAppPath } from 'twenty-shared/utils';
 
 const GraphWidgetPieChart = lazy(() =>
   import(
@@ -26,35 +27,55 @@ export const GraphWidgetPieChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  assertPieChartWidgetOrThrow(widget);
+
   const {
     data,
     loading,
     hasTooManyGroups,
     objectMetadataItem,
+    showLegend,
     showDataLabels,
+    showCenterMetric,
+    formattedToRawLookup,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as PieChartConfiguration,
+    configuration: widget.configuration,
   });
 
   const navigate = useNavigate();
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
   const indexViewId = useRecoilValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );
 
-  const handleSliceClick = (_datum: PieChartDataItem) => {
-    return navigate(
-      getAppPath(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
-        },
-        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
-      ),
+  const handleSliceClick = (datum: PieChartDataItem) => {
+    const rawValue = formattedToRawLookup.get(datum.id) ?? null;
+
+    const drilldownQueryParams = buildChartDrilldownQueryParams({
+      objectMetadataItem,
+      configuration: widget.configuration,
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: widget.configuration.timezone ?? undefined,
+    });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      {
+        objectNamePlural: objectMetadataItem.namePlural,
+      },
+      Object.fromEntries(drilldownQueryParams),
     );
+
+    return navigate(url);
   };
 
   if (loading) {
@@ -69,9 +90,13 @@ export const GraphWidgetPieChartRenderer = ({
       <GraphWidgetPieChart
         data={data}
         id={widget.id}
+        objectMetadataItemId={widget.objectMetadataId}
+        configuration={widget.configuration}
+        showLegend={showLegend}
         displayType="shortNumber"
-        onSliceClick={handleSliceClick}
+        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
         showDataLabels={showDataLabels}
+        showCenterMetric={showCenterMetric}
       />
     </Suspense>
   );
