@@ -345,6 +345,8 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -612,6 +614,8 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -971,6 +975,8 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -1238,6 +1244,8 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -1608,6 +1616,8 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -1875,6 +1885,8 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -2234,6 +2246,8 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -2501,6 +2515,8 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -2871,6 +2887,8 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -3138,6 +3156,8 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -3497,6 +3517,8 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -3764,6 +3786,8 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -4153,6 +4177,8 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -4420,6 +4446,8 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -4779,6 +4807,8 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -5046,6 +5076,8 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -5405,6 +5437,8 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -5672,6 +5706,8 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -6048,6 +6084,8 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -6315,6 +6353,8 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -6740,6 +6780,8 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -7007,6 +7049,8 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -7420,6 +7464,8 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -7687,6 +7733,8 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -8082,6 +8130,8 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -8349,6 +8399,8 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -8732,6 +8784,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -8999,6 +9053,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -9435,6 +9491,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -9702,6 +9760,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -10061,6 +10121,8 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -10328,6 +10390,8 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
@@ -10687,6 +10751,8 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
       "role": [],
       "roleTarget": [],
       "routeTrigger": [],
+      "rowLevelPermissionPredicate": [],
+      "rowLevelPermissionPredicateGroup": [],
       "serverlessFunction": [],
       "view": [
         {
@@ -10954,6 +11020,8 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
+      "invalidRowLevelPermissionPredicate": 0,
+      "invalidRowLevelPermissionPredicateGroup": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
