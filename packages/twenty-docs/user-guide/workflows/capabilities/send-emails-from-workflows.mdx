@@ -32,8 +32,8 @@ Before you can send emails from workflows:
 | Field | Value |
 |-------|-------|
 | **To** | `{{trigger.object.email}}` |
-| **Subject** | Welcome to {{Your Company Name}} |
-| **Body** | Hi {{trigger.object.firstName}}, ... |
+| **Subject** | `Welcome to {{Your Company Name}}` |
+| **Body** | `Hi {{trigger.object.firstName}}, ...` |
 
 4. **Test and activate**: Test with a sample record, then activate
 
@@ -41,7 +41,7 @@ Before you can send emails from workflows:
 
 Reference data from previous steps using `{{variable}}` syntax:
 
-```
+```text
 Hi {{trigger.object.firstName}},
 
 Thank you for connecting with us!
@@ -71,7 +71,7 @@ The Team
 1. **Trigger**: Record is Created (People)
 
 2. **Add Filter action**:
-   - Condition: `{{trigger.object.source}}` equals "Website"
+   - Condition: `{{trigger.object.source}}` equals `"Website"`
    - If true → continue to website welcome email
 
 3. **Branch for other sources**:
@@ -92,11 +92,11 @@ The Team
 
 3. **Send Email #1**: To opportunity owner
    - To: `{{trigger.object.owner.email}}`
-   - Subject: Congratulations on closing {{trigger.object.name}}!
+   - Subject: `Congratulations on closing {{trigger.object.name}}!`
 
 4. **Send Email #2**: To manager
    - To: `{{searchRecords.manager.email}}`
-   - Subject: Deal Won: {{trigger.object.name}}
+   - Subject: `Deal Won: {{trigger.object.name}}`
 
 ## Scheduled Follow-up Emails
 

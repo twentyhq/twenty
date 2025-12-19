@@ -3991,6 +3991,38 @@
     {
       "source": "/user-guide/settings/settings-faq",
       "destination": "/user-guide/settings/how-tos/settings-faq"
+    },
+    {
+      "source": "/user-guide/workflows/how-tos/send-emails-from-workflows",
+      "destination": "/user-guide/workflows/capabilities/send-emails-from-workflows"
+    },
+    {
+      "source": "/user-guide/calendar-emails/capabilities/emails-and-calendars",
+      "destination": "/user-guide/calendar-emails/capabilities/mailbox"
+    },
+    {
+      "source": "/user-guide/workflows/how-tos/crm-automations/update-companies-and-create-tasks-when-deal-closed",
+      "destination": "/user-guide/workflows/how-tos/crm-automations/closed-won-automations"
+    },
+    {
+      "source": "/user-guide/workflows/how-tos/how-to-use-branches-in-workflows",
+      "destination": "/user-guide/workflows/capabilities/use-branches-in-workflows"
+    },
+    {
+      "source": "/user-guide/workflows/getting-started/getting-started-workflows",
+      "destination": "/user-guide/workflows/overview"
+    },
+    {
+      "source": "/user-guide/views-pipelines/how-tos/create-custom-views",
+      "destination": "/user-guide/views-pipelines/overview"
+    },
+    {
+      "source": "/user-guide/views-pipelines/getting-started/view-management",
+      "destination": "/user-guide/views-pipelines/overview"
+    },
+    {
+      "source": "/user-guide/billing/capabilities/billing-and-pricing-faq",
+      "destination": "/user-guide/billing/how-tos/billing-faq"
     }
   ]
 }

@@ -26,7 +26,7 @@ Starts the workflow when a new record is created in a selected object (People, C
 
 <Note>
 - This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-- **It is not recommended for records created manually**: with this trigger, worfklows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggerred before the user inputs all the fields.
+- **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
 To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
 </Note>
 
@@ -64,7 +64,7 @@ Choose how the workflow should handle record selection:
 
 - **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
 
-- **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will runfrom beginning to end as many times as there are records selected.
+- **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run from beginning to end as many times as there are records selected.
 
   <Note>
   **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
