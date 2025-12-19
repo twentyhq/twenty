@@ -14,6 +14,8 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -29,6 +31,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -41,8 +44,8 @@ import {
   AggregateOperations,
   AxisNameDisplay,
   PageLayoutType,
-  type PageLayoutWidget,
 } from '~/generated/graphql';
+import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -60,6 +63,60 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'createdAt',
 });
+const accountOwnerField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'accountOwner',
+});
+const companyPeopleField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'people',
+});
+
+const TEST_RECORD_ID = 'test-record-123';
+const TEST_PERSON_RECORD_ID = 'test-person-456';
+
+const mockPersonRecord: ObjectRecord = {
+  __typename: 'Person',
+  id: TEST_PERSON_RECORD_ID,
+  name: {
+    __typename: 'FullName',
+    firstName: 'Jane',
+    lastName: 'Smith',
+  },
+};
+
+const mockCompanyRecord: ObjectRecord = {
+  __typename: 'Company',
+  id: TEST_RECORD_ID,
+  name: 'Acme Corporation',
+  people: [
+    {
+      __typename: 'Person',
+      id: TEST_PERSON_RECORD_ID,
+      name: {
+        __typename: 'FullName',
+        firstName: 'Jane',
+        lastName: 'Smith',
+      },
+    },
+  ],
+  accountOwner: {
+    __typename: 'WorkspaceMember',
+    id: '20202020-0687-4c41-b707-ed1bfca972a7',
+    name: {
+      __typename: 'FullName',
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+    avatarUrl: '',
+    userEmail: 'john.doe@acme.com',
+    colorScheme: 'Light',
+    locale: 'en',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
+  },
+};
 
 const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: companyObjectMetadataItem,
@@ -136,6 +193,7 @@ const meta: Meta<typeof WidgetRenderer> = {
   component: WidgetRenderer,
   decorators: [
     I18nFrontDecorator,
+    ChipGeneratorsDecorator,
     (Story) => {
       const initializeState = (snapshot: MutableSnapshot) => {
         snapshot.set(
@@ -531,6 +589,212 @@ export const TallWidget: Story = {
       <WidgetRenderer widget={args.widget} />
     </div>
   ),
+};
+
+export const WithManyToOneRelationFieldWidget: Story = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-relation-field',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.FIELD,
+      title: 'Account Owner',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        fieldMetadataId: accountOwnerField.id,
+        layout: 'FIELD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A MANY_TO_ONE relation field widget in readonly mode displaying the Account Owner relation.',
+      },
+    },
+  },
+  render: (args) => {
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        {
+          id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          name: 'Mock Page Layout',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: companyObjectMetadataItem.id,
+          tabs: [],
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          deletedAt: null,
+        },
+      );
+      snapshot.set(
+        isPageLayoutInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        false,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      // Set the related WorkspaceMember record for relation field display
+      if (
+        mockCompanyRecord.accountOwner !== null &&
+        mockCompanyRecord.accountOwner !== undefined
+      ) {
+        snapshot.set(
+          recordStoreFamilyState(
+            (mockCompanyRecord.accountOwner as ObjectRecord).id,
+          ),
+          mockCompanyRecord.accountOwner,
+        );
+      }
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetRenderer widget={args.widget} />
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+};
+
+export const WithOneToManyRelationFieldWidget: Story = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-one-to-many-relation-field',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.FIELD,
+      title: 'People',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        fieldMetadataId: companyPeopleField.id,
+        layout: 'FIELD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A ONE_TO_MANY relation field widget in readonly mode displaying the People relation.',
+      },
+    },
+  },
+  render: (args) => {
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        {
+          id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          name: 'Mock Page Layout',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: companyObjectMetadataItem.id,
+          tabs: [],
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          deletedAt: null,
+        },
+      );
+      snapshot.set(
+        isPageLayoutInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        false,
+      );
+      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      snapshot.set(
+        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+        mockPersonRecord,
+      );
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: 'vertical-list',
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetRenderer widget={args.widget} />
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
