@@ -1,7 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { GraphWidget } from '@/page-layout/widgets/graph/components/GraphWidget';
-import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphType } from '~/generated/graphql';
 
@@ -24,11 +23,9 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
   }
 
   return (
-    <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
-      <GraphWidget
-        objectMetadataId={widget.objectMetadataId}
-        graphType={graphType}
-      />
-    </WidgetComponentInstanceContext.Provider>
+    <GraphWidget
+      objectMetadataId={widget.objectMetadataId}
+      graphType={graphType}
+    />
   );
 };
