@@ -41,7 +41,12 @@ export class SyncMessageFoldersService {
     > & {
       connectedAccount: Pick<
         ConnectedAccountWorkspaceEntity,
-        'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+        | 'provider'
+        | 'accessToken'
+        | 'refreshToken'
+        | 'id'
+        | 'handle'
+        | 'connectionParameters'
       >;
       messageFolders: MessageFolder[];
     };
@@ -64,7 +69,15 @@ export class SyncMessageFoldersService {
   }
 
   async discoverAllFolders(
-    connectedAccount: MessageChannelWorkspaceEntity['connectedAccount'],
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'provider'
+      | 'connectionParameters'
+    >,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
