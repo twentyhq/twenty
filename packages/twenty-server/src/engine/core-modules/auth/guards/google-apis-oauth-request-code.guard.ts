@@ -51,6 +51,8 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         redirectLocation: request.query.redirectLocation,
         calendarVisibility: request.query.calendarVisibility,
         messageVisibility: request.query.messageVisibility,
+        skipMessageChannelConfiguration:
+          request.query.skipMessageChannelConfiguration,
         loginHint: request.query.loginHint,
         userId: userId,
         workspaceId: workspaceId,

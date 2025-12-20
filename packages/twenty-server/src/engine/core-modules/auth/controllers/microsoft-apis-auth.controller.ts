@@ -79,6 +79,7 @@ export class MicrosoftAPIsAuthController {
         redirectLocation,
         calendarVisibility,
         messageVisibility,
+        skipMessageChannelConfiguration,
       } = user;
 
       const { workspaceMemberId, userId, workspaceId } =
@@ -113,6 +114,7 @@ export class MicrosoftAPIsAuthController {
           refreshToken,
           calendarVisibility,
           messageVisibility,
+          skipMessageChannelConfiguration,
         });
 
       if (userId) {

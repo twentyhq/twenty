@@ -22,7 +22,10 @@ const getNextOnboardingStatus = (
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    return OnboardingStatus.SYNC_EMAIL;
+    if (currentWorkspace?.workspaceMembersCount === 1) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
+    return OnboardingStatus.INVITE_TEAM;
   }
   if (
     currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&

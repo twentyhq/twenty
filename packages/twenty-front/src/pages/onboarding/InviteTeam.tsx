@@ -129,12 +129,14 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
-      const result = await sendInvitation({ emails });
 
-      if (isDefined(result.errors)) {
-        throw result.errors;
-      }
       if (emails.length > 0) {
+        const result = await sendInvitation({ emails });
+
+        if (isDefined(result.errors)) {
+          throw result.errors;
+        }
+
         enqueueSuccessSnackBar({
           message: t`Invite link sent to email addresses`,
           options: {
