@@ -10,6 +10,7 @@ import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -92,6 +93,7 @@ export const EventRow = ({
   mainObjectMetadataItem,
 }: EventRowProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const { recordId } = useContext(TimelineActivityContext);
@@ -120,6 +122,7 @@ export const EventRow = ({
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
     record: recordFromStore,
+    allowExternalRequests: currentWorkspace?.allowExternalRequests,
   });
 
   const authorFullName = getTimelineActivityAuthorFullName(

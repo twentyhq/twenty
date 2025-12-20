@@ -10,24 +10,20 @@ import {
   getLogoUrlFromDomainName,
   isDefined,
 } from 'twenty-shared/utils';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState } from 'recoil';
 
 export const getAvatarUrl = (
   objectNameSingular: string,
   record: ObjectRecord,
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
+  allowExternalRequests?: boolean | undefined,
 ) => {
   if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return record.avatarUrl ?? undefined;
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
-
   if (
     objectNameSingular === CoreObjectNameSingular.Company &&
-    currentWorkspace?.allowExternalRequests === true
+    allowExternalRequests === true
   ) {
     return getLogoUrlFromDomainName(
       getCompanyDomainName(record as Company) ?? '',
