@@ -41,6 +41,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.Global,
         label: name,
+        shortLabel: name,
         position: index,
         isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
