@@ -42,6 +42,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         scope: ActionScope.Global,
         label: name,
         position: index,
+        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
         shouldBeRegistered: () => true,
         component: (
