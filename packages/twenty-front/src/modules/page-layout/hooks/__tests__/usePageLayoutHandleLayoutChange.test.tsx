@@ -52,6 +52,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     });
 
     expect(result.current.layouts['tab-1']).toEqual(newLayouts);
+    expect(result.current.layouts['tab-1']).not.toBe(newLayouts); // Ensure a clone was set, not the same reference
     expect(result.current.layouts['tab-2']).toBeUndefined();
   });
 
