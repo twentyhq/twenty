@@ -1,47 +1,37 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
-import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
-import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { renderHook } from '@testing-library/react';
 import { useIncrementalUpdateManyRecords } from '../useIncrementalUpdateManyRecords';
 
-jest.mock('@/object-metadata/hooks/useApolloCoreClient');
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/hooks/useRegisterObjectOperation');
-jest.mock('@/object-record/hooks/useUpdateManyRecordsMutation');
+jest.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
+  useUpdateManyRecords: jest.fn(),
+}));
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries', () => ({
   useRefetchAggregateQueries: () => ({
     refetchAggregateQueries: jest.fn(),
   }),
 }));
 jest.mock('@/object-record/hooks/useIncrementalFetchAndMutateRecords');
-jest.mock('@/object-record/utils/sanitizeRecordInput');
 
-const mockUseApolloCoreClient = jest.mocked(useApolloCoreClient);
 const mockUseObjectMetadataItem = jest.mocked(useObjectMetadataItem);
 const mockUseRegisterObjectOperation = jest.mocked(useRegisterObjectOperation);
-const mockUseUpdateManyRecordsMutation = jest.mocked(
-  useUpdateManyRecordsMutation,
-);
+const mockUseUpdateManyRecords = jest.mocked(useUpdateManyRecords);
 const mockUseIncrementalFetchAndMutateRecords = jest.mocked(
   useIncrementalFetchAndMutateRecords,
 );
-const mockSanitizeRecordInput = jest.mocked(sanitizeRecordInput);
 
 describe('useIncrementalUpdateManyRecords', () => {
-  const mockMutate = jest.fn();
+  const mockUpdateManyRecords = jest.fn();
   const mockRegisterObjectOperation = jest.fn();
   const mockIncrementalFetchAndMutate = jest.fn();
   const mockUpdateProgress = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockUseApolloCoreClient.mockReturnValue({
-      mutate: mockMutate,
-    } as any);
 
     mockUseObjectMetadataItem.mockReturnValue({
       objectMetadataItem: {
@@ -53,8 +43,8 @@ describe('useIncrementalUpdateManyRecords', () => {
       registerObjectOperation: mockRegisterObjectOperation,
     });
 
-    mockUseUpdateManyRecordsMutation.mockReturnValue({
-      updateManyRecordsMutation: 'UPDATE_MUTATION' as any,
+    mockUseUpdateManyRecords.mockReturnValue({
+      updateManyRecords: mockUpdateManyRecords,
     });
 
     mockUseIncrementalFetchAndMutateRecords.mockReturnValue({
@@ -64,13 +54,9 @@ describe('useIncrementalUpdateManyRecords', () => {
       updateProgress: mockUpdateProgress,
       cancel: jest.fn(),
     });
-
-    mockSanitizeRecordInput.mockImplementation(
-      ({ recordInput }) => recordInput,
-    );
   });
 
-  it('should call incrementalFetchAndMutate and execute mutations', async () => {
+  it('should call incrementalFetchAndMutate and execute mutations via useUpdateManyRecords', async () => {
     mockIncrementalFetchAndMutate.mockImplementation(async (callback) => {
       // Simulate one batch
       await callback({
@@ -90,25 +76,30 @@ describe('useIncrementalUpdateManyRecords', () => {
     await result.current.incrementalUpdateManyRecords({ name: 'New Name' });
 
     expect(mockIncrementalFetchAndMutate).toHaveBeenCalled();
-    expect(mockMutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        mutation: 'UPDATE_MUTATION',
-        variables: {
-          filter: { id: { in: ['1', '2'] } },
-          data: { name: 'New Name' },
-        },
-      }),
-    );
+    expect(mockUpdateManyRecords).toHaveBeenCalledWith({
+      recordIdsToUpdate: ['1', '2'],
+      updateOneRecordInput: { name: 'New Name' },
+      delayInMsBetweenRequests: 50,
+      skipRegisterObjectOperation: true,
+      skipRefetchAggregateQueries: true,
+      abortSignal: expect.any(AbortSignal),
+    });
     expect(mockUpdateProgress).toHaveBeenCalledWith(2, 2);
     expect(mockRegisterObjectOperation).toHaveBeenCalledWith(
       expect.anything(),
       {
         type: 'update-many',
+        result: {
+          updateInputs: [
+            { id: '1', name: 'New Name' },
+            { id: '2', name: 'New Name' },
+          ],
+        },
       },
     );
   });
 
-  it('should pass abortSignal to mutation', async () => {
+  it('should pass abortSignal to updateManyRecords', async () => {
     const abortController = new AbortController();
     mockIncrementalFetchAndMutate.mockImplementation(async (callback) => {
       await callback({
@@ -127,13 +118,9 @@ describe('useIncrementalUpdateManyRecords', () => {
 
     await result.current.incrementalUpdateManyRecords({ name: 'New Name' });
 
-    expect(mockMutate).toHaveBeenCalledWith(
+    expect(mockUpdateManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
-        context: {
-          fetchOptions: {
-            signal: abortController.signal,
-          },
-        },
+        abortSignal: abortController.signal,
       }),
     );
   });

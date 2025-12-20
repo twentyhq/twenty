@@ -2,7 +2,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { renderHook } from '@testing-library/react';
 
-import { expect } from '@storybook/test';
 import { useIncrementalFetchAndMutateRecords } from '../useIncrementalFetchAndMutateRecords';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
@@ -30,8 +29,6 @@ describe('useIncrementalFetchAndMutateRecords', () => {
   });
 
   it('should fetch and mutate records in batches', async () => {
-    // Setup mock returns
-    // First page: 2 records, total 3.
     mockFindManyRecordsLazy.mockResolvedValue({
       data: {
         companies: {
@@ -45,7 +42,6 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       },
     });
 
-    // Second page: 1 record, total 3.
     mockFetchMoreRecordsLazy.mockResolvedValue({
       data: {
         edges: [{ node: { id: '3' } }],
@@ -68,7 +64,6 @@ describe('useIncrementalFetchAndMutateRecords', () => {
     await result.current.incrementalFetchAndMutate(mutateBatchMock);
 
     expect(mockFindManyRecordsLazy).toHaveBeenCalled();
-    // Expect 2 batches
     expect(mutateBatchMock).toHaveBeenCalledTimes(2);
 
     expect(mutateBatchMock).toHaveBeenNthCalledWith(1, {
@@ -105,16 +100,9 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       } as any),
     );
 
-    // Initial state
     expect(result.current.isProcessing).toBe(false);
 
-    // Trigger process
-    const promise = result.current.incrementalFetchAndMutate(jest.fn());
-
-    // We can't easily assert isProcessing=true here without proper act() wrapping since it changes immediately.
-    // relying on the finally block to reset it.
-
-    await promise;
+    await result.current.incrementalFetchAndMutate(jest.fn());
 
     expect(result.current.isProcessing).toBe(false);
   });
@@ -173,8 +161,6 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       useIncrementalFetchAndMutateRecords({ objectNameSingular: 'c' } as any),
     );
 
-    // calling it when null shouldn't explode
     result.current.cancel();
-    expect(true).toBe(true);
   });
 });
