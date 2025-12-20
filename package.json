@@ -190,7 +190,7 @@
     "vite": "^7.0.0"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^18.x",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
