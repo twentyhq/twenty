@@ -10,6 +10,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -39,6 +40,10 @@ registerEnumType(MessageFolderPendingSyncAction, {
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
+@WorkspaceIndex(['messageChannelId', 'externalId'], {
+  isUnique: true,
+  indexWhereClause: '"deletedAt" IS NULL',
+})
 export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,

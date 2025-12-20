@@ -2,6 +2,8 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
+const SOURCE_FOLDER = 'src';
+
 export const copyBaseApplicationProject = async ({
   appName,
   appDisplayName,
@@ -21,10 +23,23 @@ export const copyBaseApplicationProject = async ({
 
   await createYarnLock(appDirectory);
 
+  const sourceFolderPath = join(appDirectory, SOURCE_FOLDER);
+
+  await fs.ensureDir(sourceFolderPath);
+
+  const defaultServerlessFunctionRoleUniversalIdentifier = v4();
+
+  await createDefaultServerlessFunctionRoleConfig({
+    displayName: appDisplayName,
+    appDirectory: sourceFolderPath,
+    defaultServerlessFunctionRoleUniversalIdentifier,
+  });
+
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
-    appDirectory,
+    appDirectory: sourceFolderPath,
+    defaultServerlessFunctionRoleUniversalIdentifier,
   });
 };
 
@@ -76,14 +91,41 @@ yarn-error.log*
   await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
 };
 
+const createDefaultServerlessFunctionRoleConfig = async ({
+  displayName,
+  appDirectory,
+  defaultServerlessFunctionRoleUniversalIdentifier,
+}: {
+  displayName: string;
+  appDirectory: string;
+  defaultServerlessFunctionRoleUniversalIdentifier: string;
+}) => {
+  const content = `import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
+  label: '${displayName} default function role',
+  description: '${displayName} default function role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: true,
+  canDestroyAllObjectRecords: false,
+};
+`;
+
+  await fs.writeFile(join(appDirectory, 'role.config.ts'), content);
+};
+
 const createApplicationConfig = async ({
   displayName,
   description,
   appDirectory,
+  defaultServerlessFunctionRoleUniversalIdentifier,
 }: {
   displayName: string;
   description?: string;
   appDirectory: string;
+  defaultServerlessFunctionRoleUniversalIdentifier: string;
 }) => {
   const content = `import { type ApplicationConfig } from 'twenty-sdk';
 
@@ -91,6 +133,7 @@ const config: ApplicationConfig = {
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
+  functionRoleUniversalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
 };
 
 export default config;
@@ -127,7 +170,7 @@ const createPackageJson = async ({
       auth: 'twenty auth login',
     },
     dependencies: {
-      'twenty-sdk': '0.2.2',
+      'twenty-sdk': '0.2.3',
     },
     devDependencies: {
       '@types/node': '^24.7.2',
