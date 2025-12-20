@@ -375,7 +375,7 @@ export const SettingsObjectFieldEdit = () => {
               />
             </Section>
 
-            {!isLabelIdentifier && !readonly && (
+            {!isLabelIdentifier && !readonly && fieldMetadataItem.isCustom && (
               <Section>
                 <H2Title
                   title={t`Danger zone`}
