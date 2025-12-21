@@ -1,9 +1,9 @@
 import { useRecoilValue } from 'recoil';
 
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useEffect } from 'react';
 
 type CommandMenuTopBarInputFocusEffectProps = {
@@ -14,13 +14,11 @@ export const CommandMenuTopBarInputFocusEffect = ({
   inputRef,
 }: CommandMenuTopBarInputFocusEffectProps) => {
   const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const focusStack = useRecoilValue(focusStackState);
-  const isModalInStack = focusStack.some(
-    (item) => item.componentInstance.componentType === FocusComponentType.MODAL,
-  );
+  const currentFocusId = useRecoilValue(currentFocusIdSelector);
+  const isTextInputFocused = currentFocusId === SIDE_PANEL_FOCUS_ID;
 
   useEffect(() => {
-    if (isModalInStack) {
+    if (!isTextInputFocused) {
       inputRef.current?.blur();
       return;
     }
@@ -31,7 +29,7 @@ export const CommandMenuTopBarInputFocusEffect = ({
     ) {
       inputRef.current?.focus();
     }
-  }, [commandMenuPage, inputRef, isModalInStack]);
+  }, [commandMenuPage, inputRef, isTextInputFocused]);
 
   return null;
 };
