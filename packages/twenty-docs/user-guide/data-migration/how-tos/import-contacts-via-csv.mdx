@@ -10,11 +10,21 @@ This guide walks you through importing your contacts (People) into Twenty. **Imp
 ## Before You Start
 
 ### Prerequisites Checklist
-<Check>Your file is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>No duplicate email addresses in your file</Check>
-<Check>**Companies imported first** (if linking People to Companies)</Check>
-<Check>All custom fields exist in **Settings → Data Model**</Check>
+<Check>
+Your file is CSV, XLSX, or XLS format
+</Check>
+<Check>
+File has fewer than 10,000 records
+</Check>
+<Check>
+No duplicate email addresses in your file
+</Check>
+<Check>
+**Companies imported first** (if linking People to Companies)
+</Check>
+<Check>
+All custom fields exist in **Settings → Data Model**
+</Check>
 
 <Warning>
 **Import Companies Before People**
@@ -64,7 +74,9 @@ Add a column with the Company's unique identifier:
 | `companyDomain` | URL format | `https://acme.com` |
 | `companyId` | UUID | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
-<Note>**Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.</Note>
+<Note>
+**Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+</Note>
 
 ### Sample CSV Structure
 
@@ -74,7 +86,9 @@ John,Smith,john@acme.com,CEO,https://acme.com,4159095555,US
 Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
-<Note>**Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.</Note>
+<Note>
+**Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+</Note>
 
 ## Step 2: Access the Import Feature
 
@@ -135,7 +149,9 @@ If you have Select or Multi-Select fields (like Lead Source):
 2. Match each value in your file to a Twenty option
 3. Or create new options if needed
 
-<Note>Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.</Note>
+<Note>
+Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+</Note>
 
 ## Step 6: Review and Fix Errors
 
