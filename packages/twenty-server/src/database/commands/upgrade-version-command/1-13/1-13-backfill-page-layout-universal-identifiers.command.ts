@@ -12,7 +12,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Command({
@@ -30,7 +30,7 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
     @InjectRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,

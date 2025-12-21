@@ -5,7 +5,8 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { In, MoreThan } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
@@ -19,7 +20,7 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
 @Injectable()
 export class TimelineActivityRepository {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async upsertTimelineActivities({
@@ -27,61 +28,73 @@ export class TimelineActivityRepository {
     workspaceId,
     payloads,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
-    const recentTimelineActivities = await this.findRecentTimelineActivities({
-      objectSingularName,
-      workspaceId,
-      payloads,
-    });
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const payloadsWithDiff = payloads
-      .filter(({ properties }) => {
-        const isDiffEmpty =
-          properties.diff !== null &&
-          properties.diff &&
-          Object.keys(properties.diff).length === 0;
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const recentTimelineActivities =
+          await this.findRecentTimelineActivities({
+            objectSingularName,
+            workspaceId,
+            payloads,
+          });
 
-        return !isDiffEmpty;
-      })
-      .map(({ properties, ...rest }) => ({
-        ...rest,
-        properties: isDefined(properties.diff) ? { diff: properties.diff } : {},
-      }));
+        const payloadsWithDiff = payloads
+          .filter(({ properties }) => {
+            const isDiffEmpty =
+              properties.diff !== null &&
+              properties.diff &&
+              Object.keys(properties.diff).length === 0;
 
-    const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
-      [];
+            return !isDiffEmpty;
+          })
+          .map(({ properties, ...rest }) => ({
+            ...rest,
+            properties: isDefined(properties.diff)
+              ? { diff: properties.diff }
+              : {},
+          }));
 
-    for (const payload of payloadsWithDiff) {
-      const recentTimelineActivity = recentTimelineActivities.find(
-        (timelineActivity) =>
-          timelineActivity[`${objectSingularName}Id`] === payload.recordId &&
-          timelineActivity.workspaceMemberId === payload.workspaceMemberId &&
-          (!isDefined(payload.linkedRecordId) ||
-            timelineActivity.linkedRecordId === payload.linkedRecordId) &&
-          timelineActivity.name === payload.name,
-      );
+        const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
+          [];
 
-      if (recentTimelineActivity) {
-        const mergedProperties = objectRecordDiffMerge(
-          recentTimelineActivity.properties,
-          payload.properties,
-        );
+        for (const payload of payloadsWithDiff) {
+          const recentTimelineActivity = recentTimelineActivities.find(
+            (timelineActivity) =>
+              timelineActivity[`${objectSingularName}Id`] ===
+                payload.recordId &&
+              timelineActivity.workspaceMemberId ===
+                payload.workspaceMemberId &&
+              (!isDefined(payload.linkedRecordId) ||
+                timelineActivity.linkedRecordId === payload.linkedRecordId) &&
+              timelineActivity.name === payload.name,
+          );
 
-        await this.updateTimelineActivity({
-          id: recentTimelineActivity.id,
-          properties: mergedProperties,
-          workspaceMemberId: payload.workspaceMemberId,
+          if (recentTimelineActivity) {
+            const mergedProperties = objectRecordDiffMerge(
+              recentTimelineActivity.properties,
+              payload.properties,
+            );
+
+            await this.updateTimelineActivity({
+              id: recentTimelineActivity.id,
+              properties: mergedProperties,
+              workspaceMemberId: payload.workspaceMemberId,
+              workspaceId,
+            });
+          } else {
+            payloadsToInsert.push(payload);
+          }
+        }
+
+        await this.insertTimelineActivities({
+          objectSingularName,
+          payloads: payloadsToInsert,
           workspaceId,
         });
-      } else {
-        payloadsToInsert.push(payload);
-      }
-    }
-
-    await this.insertTimelineActivities({
-      objectSingularName,
-      payloads: payloadsToInsert,
-      workspaceId,
-    });
+      },
+    );
   }
 
   private async findRecentTimelineActivities({
@@ -90,7 +103,7 @@ export class TimelineActivityRepository {
     payloads,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const timelineActivityTypeORMRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
         'timelineActivity',
         {
@@ -128,7 +141,7 @@ export class TimelineActivityRepository {
     }
 
     const timelineActivityTypeORMRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
         'timelineActivity',
         {
@@ -161,7 +174,7 @@ export class TimelineActivityRepository {
     workspaceId: string;
   }) {
     const timelineActivityTypeORMRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
         'timelineActivity',
         {

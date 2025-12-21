@@ -90,7 +90,7 @@ export const WithVariable: Story = {
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
         blocknote: null,
-        markdown: `## Title\nVariable: {{${MOCKED_STEP_ID}.name}}`,
+        markdown: `## Title  \nVariable: {{${MOCKED_STEP_ID}.name}}`,
       });
     });
     expect(args.onChange).toHaveBeenCalledTimes(1);

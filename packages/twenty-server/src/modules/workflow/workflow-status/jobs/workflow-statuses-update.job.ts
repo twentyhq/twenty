@@ -8,8 +8,9 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -69,37 +70,44 @@ export class WorkflowStatusesUpdateJob {
   protected readonly logger = new Logger(WorkflowStatusesUpdateJob.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
-    switch (event.type) {
-      case WorkflowVersionEventType.CREATE:
-      case WorkflowVersionEventType.DELETE:
-        await Promise.all(
-          event.workflowIds.map((workflowId) =>
-            this.handleWorkflowVersionCreatedOrDeleted({
-              workflowId,
-              workspaceId: event.workspaceId,
-            }),
-          ),
-        );
-        break;
-      case WorkflowVersionEventType.STATUS_UPDATE:
-        await Promise.all(
-          event.statusUpdates.map((statusUpdate) =>
-            this.handleWorkflowVersionStatusUpdated({
-              statusUpdate,
-              workspaceId: event.workspaceId,
-            }),
-          ),
-        );
-        break;
-      default:
-        break;
-    }
+    const authContext = buildSystemAuthContext(event.workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        switch (event.type) {
+          case WorkflowVersionEventType.CREATE:
+          case WorkflowVersionEventType.DELETE:
+            await Promise.all(
+              event.workflowIds.map((workflowId) =>
+                this.handleWorkflowVersionCreatedOrDeleted({
+                  workflowId,
+                  workspaceId: event.workspaceId,
+                }),
+              ),
+            );
+            break;
+          case WorkflowVersionEventType.STATUS_UPDATE:
+            await Promise.all(
+              event.statusUpdates.map((statusUpdate) =>
+                this.handleWorkflowVersionStatusUpdated({
+                  statusUpdate,
+                  workspaceId: event.workspaceId,
+                }),
+              ),
+            );
+            break;
+          default:
+            break;
+        }
+      },
+    );
   }
 
   private async handleWorkflowVersionCreatedOrDeleted({
@@ -110,14 +118,14 @@ export class WorkflowStatusesUpdateJob {
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
@@ -212,14 +220,14 @@ export class WorkflowStatusesUpdateJob {
     workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },

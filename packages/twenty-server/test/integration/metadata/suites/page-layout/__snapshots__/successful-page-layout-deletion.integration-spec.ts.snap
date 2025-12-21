@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout deletion should succeed should soft delete and restore a page layout 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": Any<String>,
+  "id": Any<String>,
+  "name": "Page Layout To Delete",
+  "objectMetadataId": null,
+  "type": "RECORD_PAGE",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout deletion should succeed should soft delete and restore a page layout 2`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Page Layout To Delete",
+  "objectMetadataId": null,
+  "type": "RECORD_PAGE",
+  "updatedAt": Any<String>,
+}
+`;

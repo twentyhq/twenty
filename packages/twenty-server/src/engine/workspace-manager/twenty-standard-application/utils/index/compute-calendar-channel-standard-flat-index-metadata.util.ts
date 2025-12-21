@@ -9,7 +9,7 @@ export const buildCalendarChannelStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'calendarChannel'>, 'context'>): Record<
@@ -23,7 +23,7 @@ export const buildCalendarChannelStandardFlatIndexMetadatas = ({
       indexName: 'connectedAccountIdIndex',
       relatedFieldNames: ['connectedAccount'],
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

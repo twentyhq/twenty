@@ -33,7 +33,7 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
     const twentyStandardApplicationId = '20202020-5adb-4091-81b7-d5be86a8bdd2';
     const twentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date(),
+        now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId,
       });
@@ -50,7 +50,6 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
             isSystemBuild: true,
           },
           fromToAllFlatEntityMaps: {
-            // Should be dynamic
             flatObjectMetadataMaps: {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatObjectMetadataMaps,
@@ -62,6 +61,22 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
             flatIndexMaps: {
               from: createEmptyFlatEntityMaps(),
               to: twentyStandardAllFlatEntityMaps.flatIndexMaps,
+            },
+            flatViewFieldMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFieldMaps,
+            },
+            flatViewFilterMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewFilterMaps,
+            },
+            flatViewGroupMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewGroupMaps,
+            },
+            flatViewMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatViewMaps,
             },
           },
           workspaceId,

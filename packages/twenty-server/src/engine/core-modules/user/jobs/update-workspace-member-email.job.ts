@@ -4,7 +4,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type UpdateWorkspaceMemberEmailJobData = {
@@ -21,7 +22,7 @@ export class UpdateWorkspaceMemberEmailJob {
 
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   @Process(UpdateWorkspaceMemberEmailJob.name)
@@ -32,13 +33,23 @@ export class UpdateWorkspaceMemberEmailJob {
     const workspace =
       await this.userWorkspaceService.findFirstWorkspaceByUserId(userId);
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    await workspaceMemberRepository.update({ userId }, { userEmail: email });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await workspaceMemberRepository.update(
+          { userId },
+          { userEmail: email },
+        );
+      },
+    );
   }
 }

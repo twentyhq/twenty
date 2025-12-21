@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Page layout tab deletion should succeed should soft delete and restore a page layout tab 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Tab To Delete",
+  "updatedAt": Any<String>,
+}
+`;
