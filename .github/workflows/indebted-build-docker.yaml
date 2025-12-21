@@ -71,7 +71,18 @@ jobs:
         id: login-ecr-dev
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Check if tag exists in Dev ECR
+        id: check-dev
+        run: |
+          if aws ecr describe-images --repository-name ${{ env.IMAGE_NAME }} --image-ids imageTag=${{ steps.tag.outputs.VERSION }} 2>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Tag ${{ steps.tag.outputs.VERSION }} already exists in Dev ECR - skipping push"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Tag and push to Dev ECR
+        if: steps.check-dev.outputs.exists == 'false'
         run: |
           DEV_REGISTRY="${{ env.DEV_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com"
           docker tag twenty-local:${{ steps.tag.outputs.VERSION }} $DEV_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.VERSION }}
@@ -90,7 +101,18 @@ jobs:
         id: login-ecr-prod
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Check if tag exists in Prod ECR
+        id: check-prod
+        run: |
+          if aws ecr describe-images --repository-name ${{ env.IMAGE_NAME }} --image-ids imageTag=${{ steps.tag.outputs.VERSION }} 2>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Tag ${{ steps.tag.outputs.VERSION }} already exists in Prod ECR - skipping push"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Tag and push to Prod ECR
+        if: steps.check-prod.outputs.exists == 'false'
         run: |
           PROD_REGISTRY="${{ env.PROD_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com"
           docker tag twenty-local:${{ steps.tag.outputs.VERSION }} $PROD_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.VERSION }}
