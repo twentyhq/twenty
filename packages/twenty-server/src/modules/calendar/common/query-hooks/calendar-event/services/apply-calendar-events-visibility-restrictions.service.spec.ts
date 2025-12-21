@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -52,20 +52,21 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     findOneByOrFail: jest.fn(),
   };
 
-  const mockTwentyORMGlobalManager = {
-    getRepositoryForWorkspace: jest
+  const mockGlobalWorkspaceOrmManager = {
+    getRepository: jest.fn().mockImplementation((workspaceId, name) => {
+      if (name === 'calendarChannelEventAssociation') {
+        return mockCalendarEventAssociationRepository;
+      }
+      if (name === 'connectedAccount') {
+        return mockConnectedAccountRepository;
+      }
+      if (name === 'workspaceMember') {
+        return mockWorkspaceMemberRepository;
+      }
+    }),
+    executeInWorkspaceContext: jest
       .fn()
-      .mockImplementation((workspaceId, name) => {
-        if (name === 'calendarChannelEventAssociation') {
-          return mockCalendarEventAssociationRepository;
-        }
-        if (name === 'connectedAccount') {
-          return mockConnectedAccountRepository;
-        }
-        if (name === 'workspaceMember') {
-          return mockWorkspaceMemberRepository;
-        }
-      }),
+      .mockImplementation((_authContext: any, fn: () => any) => fn()),
   };
 
   beforeEach(async () => {
@@ -73,8 +74,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       providers: [
         ApplyCalendarEventsVisibilityRestrictionsService,
         {
-          provide: TwentyORMGlobalManager,
-          useValue: mockTwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
         },
       ],
     }).compile();

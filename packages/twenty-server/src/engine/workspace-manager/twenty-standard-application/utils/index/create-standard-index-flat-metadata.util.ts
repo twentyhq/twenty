@@ -41,7 +41,7 @@ export const createStandardIndexFlatMetadata = <
     indexWhereClause = null,
     isUnique = false,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
   twentyStandardApplicationId,
   now,
@@ -59,7 +59,7 @@ export const createStandardIndexFlatMetadata = <
   };
 
   const objectMetadataId =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].id;
+    standardObjectMetadataRelatedEntityIds[objectName].id;
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
@@ -67,7 +67,7 @@ export const createStandardIndexFlatMetadata = <
 
   const relatedFieldIds = relatedFieldNames.map(
     (fieldName) =>
-      standardFieldMetadataIdByObjectAndFieldName[objectName].fields[fieldName],
+      standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
   );
   const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityIds: relatedFieldIds,
@@ -78,7 +78,7 @@ export const createStandardIndexFlatMetadata = <
 
   return generateFlatIndexMetadataWithNameOrThrow({
     flatIndex: {
-      createdAt: now.toISOString(),
+      createdAt: now,
       applicationId: twentyStandardApplicationId,
       indexType,
       indexWhereClause,
@@ -86,17 +86,17 @@ export const createStandardIndexFlatMetadata = <
       isUnique,
       objectMetadataId,
       universalIdentifier: indexDefinition.universalIdentifier,
-      updatedAt: now.toISOString(),
+      updatedAt: now,
       workspaceId,
       id: indexId,
       flatIndexFieldMetadatas: flatFieldMetadatas.map<FlatIndexFieldMetadata>(
         ({ id: fieldMetadataId }, index) => ({
-          createdAt: now.toISOString(),
+          createdAt: now,
           fieldMetadataId,
           id: v4(),
           indexMetadataId: indexId,
           order: index,
-          updatedAt: now.toISOString(),
+          updatedAt: now,
         }),
       ),
     },

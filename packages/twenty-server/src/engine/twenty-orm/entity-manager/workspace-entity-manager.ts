@@ -34,6 +34,7 @@ import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceDataSourceInterface } from 'src/engine/twenty-orm/interfaces/workspace-datasource.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -57,12 +58,14 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
@@ -70,19 +73,52 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  private readonly internalContext: WorkspaceInternalContext;
+  private readonly _legacyInternalContext?: WorkspaceInternalContext;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: WorkspaceDataSource;
 
   constructor(
-    internalContext: WorkspaceInternalContext,
+    legacyInternalContext: WorkspaceInternalContext | undefined,
     connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
-    this.internalContext = internalContext;
     this.repositories = new Map();
+    this._legacyInternalContext = legacyInternalContext;
+  }
+
+  private get eventEmitterService(): WorkspaceEventEmitter {
+    const isGlobalFlow = (this.connection as WorkspaceDataSourceInterface)
+      .isGlobalFlow;
+
+    if (isGlobalFlow) {
+      return (this.connection as unknown as GlobalWorkspaceDataSource)
+        .eventEmitterService;
+    }
+
+    return this._legacyInternalContext!.eventEmitterService;
+  }
+
+  get internalContext(): WorkspaceInternalContext {
+    const isGlobalFlow = (this.connection as WorkspaceDataSourceInterface)
+      .isGlobalFlow;
+
+    if (isGlobalFlow) {
+      const context = getWorkspaceContext();
+
+      return {
+        workspaceId: context.authContext.workspace.id,
+        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        flatIndexMaps: context.flatIndexMaps,
+        objectIdByNameSingular: context.objectIdByNameSingular,
+        featureFlagsMap: context.featureFlagsMap,
+        eventEmitterService: this.eventEmitterService,
+      };
+    }
+
+    return this._legacyInternalContext!;
   }
 
   getFeatureFlagMap(): FeatureFlagMap {
@@ -146,7 +182,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
-      this.internalContext,
       target,
       this,
       dataSource.featureFlagMap,
