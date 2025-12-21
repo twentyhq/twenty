@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
@@ -15,7 +15,8 @@ export const CommandMenuTopBarInputFocusEffect = ({
 }: CommandMenuTopBarInputFocusEffectProps) => {
   const commandMenuPage = useRecoilValue(commandMenuPageState);
   const currentFocusId = useRecoilValue(currentFocusIdSelector);
-  const isTextInputFocused = currentFocusId === SIDE_PANEL_FOCUS_ID;
+  const isTextInputFocused =
+    currentFocusId === COMMAND_MENU_SEARCH_INPUT_FOCUS_ID;
 
   useEffect(() => {
     if (!isTextInputFocused) {
