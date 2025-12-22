@@ -222,11 +222,23 @@ export class MigratePageLayoutWidgetConfigurationCommand extends ActiveOrSuspend
       select: ['id', 'type', 'configuration'],
     });
 
-    const widgetsToMigrate = widgets.filter((widget) =>
-      needsMigration(
-        widget.type,
-        widget.configuration as unknown as Record<string, unknown>,
-      ),
+    const widgetsWithNullConfiguration = widgets.filter(
+      (widget) => !isDefined(widget.configuration),
+    );
+
+    for (const widget of widgetsWithNullConfiguration) {
+      this.logger.log(
+        `Widget ${widget.id} has a corrupted configuration (null). Skipping migration.`,
+      );
+    }
+
+    const widgetsToMigrate = widgets.filter(
+      (widget) =>
+        isDefined(widget.configuration) &&
+        needsMigration(
+          widget.type,
+          widget.configuration as unknown as Record<string, unknown>,
+        ),
     );
 
     this.logger.log(
