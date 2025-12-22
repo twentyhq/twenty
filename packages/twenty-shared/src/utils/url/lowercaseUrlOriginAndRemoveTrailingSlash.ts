@@ -11,7 +11,9 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
 
   const lowercaseOrigin = url.origin.toLowerCase();
   const path =
-    safeDecodeURIComponent(url.pathname) + safeDecodeURIComponent(url.search) + url.hash;
+    safeDecodeURIComponent(url.pathname) +
+    safeDecodeURIComponent(url.search) +
+    url.hash;
 
   return (lowercaseOrigin + path).replace(/\/$/, '');
 };

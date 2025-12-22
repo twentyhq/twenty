@@ -231,47 +231,47 @@ describe('safeParseRelativeDateFilterJSONStringified', () => {
     });
 
     describe('THIS direction', () => {
-       it('should parse THIS direction with SECOND unit (no amount)', () => {
-         const input = JSON.stringify({
-           direction: 'THIS',
-           unit: 'SECOND',
-         });
+      it('should parse THIS direction with SECOND unit (no amount)', () => {
+        const input = JSON.stringify({
+          direction: 'THIS',
+          unit: 'SECOND',
+        });
 
-         const result = safeParseRelativeDateFilterJSONStringified(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
-         expect(result).toEqual({
-           direction: 'THIS',
-           unit: 'SECOND',
-         });
-       });
+        expect(result).toEqual({
+          direction: 'THIS',
+          unit: 'SECOND',
+        });
+      });
 
-       it('should parse THIS direction with MINUTE unit (no amount)', () => {
-         const input = JSON.stringify({
-           direction: 'THIS',
-           unit: 'MINUTE',
-         });
+      it('should parse THIS direction with MINUTE unit (no amount)', () => {
+        const input = JSON.stringify({
+          direction: 'THIS',
+          unit: 'MINUTE',
+        });
 
-         const result = safeParseRelativeDateFilterJSONStringified(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
-         expect(result).toEqual({
-           direction: 'THIS',
-           unit: 'MINUTE',
-         });
-       });
+        expect(result).toEqual({
+          direction: 'THIS',
+          unit: 'MINUTE',
+        });
+      });
 
-       it('should parse THIS direction with HOUR unit (no amount)', () => {
-         const input = JSON.stringify({
-           direction: 'THIS',
-           unit: 'HOUR',
-         });
+      it('should parse THIS direction with HOUR unit (no amount)', () => {
+        const input = JSON.stringify({
+          direction: 'THIS',
+          unit: 'HOUR',
+        });
 
-         const result = safeParseRelativeDateFilterJSONStringified(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
-         expect(result).toEqual({
-           direction: 'THIS',
-           unit: 'HOUR',
-         });
-       });
+        expect(result).toEqual({
+          direction: 'THIS',
+          unit: 'HOUR',
+        });
+      });
 
       it('should parse THIS direction with DAY unit (no amount)', () => {
         const input = JSON.stringify({
