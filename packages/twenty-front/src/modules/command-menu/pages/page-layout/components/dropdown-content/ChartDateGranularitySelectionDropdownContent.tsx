@@ -4,6 +4,7 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -53,7 +54,12 @@ const getCurrentDateGranularity = ({
 };
 
 const isChartConfiguration = (
-  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
+  configuration:
+    | WidgetConfiguration
+    | FieldsConfiguration
+    | FieldConfiguration
+    | null
+    | undefined,
 ): configuration is ChartConfiguration => {
   return (
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||

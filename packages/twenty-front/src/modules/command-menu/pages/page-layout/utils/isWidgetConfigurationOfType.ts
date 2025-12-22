@@ -1,3 +1,4 @@
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import {
   type AggregateChartConfiguration,
@@ -52,7 +53,12 @@ export type WidgetConfigurationOfType<T extends WidgetConfigurationTypename> =
 export const isWidgetConfigurationOfType = <
   T extends WidgetConfigurationTypename,
 >(
-  configuration: WidgetConfiguration | FieldsConfiguration | null | undefined,
+  configuration:
+    | WidgetConfiguration
+    | FieldsConfiguration
+    | FieldConfiguration
+    | null
+    | undefined,
   typename: T,
 ): configuration is WidgetConfigurationTypenameMap[T] => {
   return configuration?.__typename === typename;

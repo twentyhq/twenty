@@ -1,6 +1,10 @@
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutType,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -40,7 +44,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -63,6 +67,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'accountOwner',
             layout: 'FIELD',
           },
@@ -86,6 +91,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'opportunities',
             layout: 'FIELD',
           },
@@ -109,6 +115,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'people',
             layout: 'FIELD',
           },
@@ -132,6 +139,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'name',
             layout: 'FIELD',
           },
@@ -155,6 +163,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'employees',
             layout: 'FIELD',
           },
@@ -178,6 +187,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldConfiguration',
+            configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: 'linkedinLink',
             layout: 'FIELD',
           },
@@ -215,7 +225,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -252,7 +262,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -289,7 +299,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -326,7 +336,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -363,7 +373,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -400,7 +410,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),

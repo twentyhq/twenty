@@ -1,9 +1,8 @@
 import { type WidgetSizeConfig } from '@/page-layout/types/WidgetSizeConfig';
 import { WidgetConfigurationType } from '~/generated/graphql';
 
-export const GRAPH_WIDGET_SIZES: Record<
-  WidgetConfigurationType,
-  WidgetSizeConfig
+export const GRAPH_WIDGET_SIZES: Partial<
+  Record<WidgetConfigurationType, WidgetSizeConfig>
 > = {
   [WidgetConfigurationType.AGGREGATE_CHART]: {
     default: { w: 2, h: 2 },
@@ -24,13 +23,5 @@ export const GRAPH_WIDGET_SIZES: Record<
   [WidgetConfigurationType.LINE_CHART]: {
     default: { w: 6, h: 10 },
     minimum: { w: 4, h: 4 },
-  },
-  [WidgetConfigurationType.IFRAME]: {
-    default: { w: 6, h: 6 },
-    minimum: { w: 4, h: 4 },
-  },
-  [WidgetConfigurationType.STANDALONE_RICH_TEXT]: {
-    default: { w: 4, h: 4 },
-    minimum: { w: 2, h: 2 },
   },
 };
