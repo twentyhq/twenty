@@ -1,0 +1,168 @@
+---
+title: リンク
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## 連絡先リンク
+
+連絡先情報を表示するためのスタイライズされたリンクコンポーネントです。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| プロパティ     | タイプ               | 説明                          |
+| --------- | ----------------- | --------------------------- |
+| className | string            | 追加スタイル用のオプション名              |
+| href      | string            | リンクのターゲットURLまたはパス           |
+| onClick   | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
+| children  | `React.ReactNode` | リンク内に表示されるコンテンツ             |
+
+</Tab>
+
+</Tabs>
+
+## 生リンク
+
+リンクを表示するためのスタイライズされたリンクコンポーネントです。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| プロパティ     | タイプ               | 説明                          |
+| --------- | ----------------- | --------------------------- |
+| className | string            | 追加のスタイリングのためのオプション名         |
+| href      | string            | リンクのターゲットURLまたはパス           |
+| onClick   | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
+| children  | `React.ReactNode` | リンク内に表示されるコンテンツ             |
+
+</Tab>
+</Tabs>
+
+## 丸リンク
+
+リンクのためのチップコンポーネントを備えた丸いスタイルのリンクです。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ    | タイプ               | 説明                          |
+| -------- | ----------------- | --------------------------- |
+| href     | string            | リンクのターゲットURLまたはパス           |
+| children | `React.ReactNode` | リンク内に表示されるコンテンツ             |
+| onClick  | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
+
+</Tab>
+</Tabs>
+
+## ソーシャルリンク
+
+URL、LinkedIn、X(またはTwitter)など、さまざまなソーシャルリンクタイプに対応したスタイライズされたソーシャルリンクです。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| プロパティ    | タイプ               | 説明                                                                                                                             |
+| -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| href     | string            | リンクのターゲットURLまたはパス                                                                                                              |
+| children | `React.ReactNode` | リンク内に表示されるコンテンツ                                                                                                                |
+| タイプ      | string            | ソーシャルリンクの種類です。 ソーシャルリンクの種類です。 オプションには、`url`、`LinkedIn`、`Twitter`があります。 ソーシャルリンクの種類です。 オプションには、`url`、`LinkedIn`、`Twitter`があります。 |
+| onClick  | 機能                | リンクがクリックされるとトリガーされるコールバック関数                                                                                                    |
+
+</Tab>
+</Tabs>

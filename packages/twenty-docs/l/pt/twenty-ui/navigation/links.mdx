@@ -1,0 +1,168 @@
+---
+title: Links
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Link de Contato
+
+Um componente de link estilizado para exibir informações de contato.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| className    | string            | Nome opcional para estilização adicional.               |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| onClick      | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
+
+</Tab>
+
+</Tabs>
+
+## Link Puro
+
+Um componente de link estilizado para exibir links.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| className    | string            | Nome opcional para estilização adicional.               |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| aoClicar     | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
+
+</Tab>
+</Tabs>
+
+## Link Arredondado
+
+Um link estilizado de forma arredondada com um componente Chip para links.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
+| aoClicar     | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
+
+</Tab>
+</Tabs>
+
+## Link Social
+
+Links sociais estilizados, com suporte para vários tipos de links sociais, como URLs, LinkedIn e X (ou Twitter).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propriedades | Tipo              | Descrição                                                                                              |
+| ------------ | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| href         | string            | A URL ou caminho de destino para o link                                                                |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                                                |
+| tipo         | string            | O tipo de links sociais. Opções incluem: `url`, `LinkedIn` e `Twitter` |
+| onClick      | função            | Função de retorno de chamada para ser disparada quando o link é clicado                                |
+
+</Tab>
+</Tabs>
