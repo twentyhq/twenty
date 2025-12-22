@@ -17,6 +17,7 @@ import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/com
 import { RenameIndexNameCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-rename-index.command';
 import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { DeleteRemovedAgentsCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-delete-removed-agents.command';
+import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-migrate-page-layout-widget-configuration.command';
 import { UpdateCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/1-14/1-14-update-created-by-enum.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -49,6 +50,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.14 Commands
     protected readonly updateCreatedByEnumCommand: UpdateCreatedByEnumCommand,
     protected readonly deleteRemovedAgentsCommand: DeleteRemovedAgentsCommand,
+    protected readonly migratePageLayoutWidgetConfigurationCommand: MigratePageLayoutWidgetConfigurationCommand,
   ) {
     super(
       workspaceRepository,
@@ -73,6 +75,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1140: VersionCommands = [
       this.updateCreatedByEnumCommand,
       this.deleteRemovedAgentsCommand,
+      this.migratePageLayoutWidgetConfigurationCommand,
     ];
 
     this.allCommands = {
