@@ -1004,6 +1004,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: 'FIELD',
         fieldMetadataId: accountOwnerField.id,
         layout: 'FIELD',
       },
@@ -1117,6 +1118,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: 'FIELD',
         fieldMetadataId: companyPeopleField.id,
         layout: 'FIELD',
       },
