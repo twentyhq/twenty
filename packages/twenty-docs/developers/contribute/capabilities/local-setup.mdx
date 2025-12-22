@@ -235,6 +235,10 @@ cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
 cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
+<Info>
+**Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
 ## Step 6: Installing dependencies
 To build Twenty server and seed some data into your database, run the following command:
 ```bash
