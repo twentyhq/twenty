@@ -359,7 +359,7 @@ export type BarChartConfiguration = {
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   groupMode?: Maybe<BarChartGroupMode>;
   isCumulative?: Maybe<Scalars['Boolean']>;
-  layout?: Maybe<BarChartLayout>;
+  layout: BarChartLayout;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];

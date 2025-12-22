@@ -149,13 +149,10 @@ export class BarChartConfigurationValidator
   @IsOptional()
   groupMode?: BarChartGroupMode;
 
-  @Field(() => BarChartLayout, {
-    nullable: true,
-    defaultValue: BarChartLayout.VERTICAL,
-  })
+  @Field(() => BarChartLayout)
   @IsEnum(BarChartLayout)
-  @IsOptional()
-  layout?: BarChartLayout;
+  @IsNotEmpty()
+  layout: BarChartLayout;
 
   @Field(() => Boolean, {
     nullable: true,

@@ -2,13 +2,19 @@ import {
   type PageLayoutWidget,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { type WidgetConfiguration } from '~/generated/graphql';
 import {
-  AggregateOperations,
-  AxisNameDisplay,
-  GraphOrderBy,
-  type WidgetConfiguration,
-  WidgetConfigurationType,
-} from '~/generated/graphql';
+  TEST_AGGREGATE_CHART_CONFIGURATION,
+  TEST_BAR_CHART_CONFIGURATION,
+  TEST_FIELD_METADATA_ID_1,
+  TEST_FIELD_METADATA_ID_2,
+  TEST_FIELD_METADATA_ID_3,
+  TEST_GAUGE_CHART_CONFIGURATION,
+  TEST_IFRAME_CONFIGURATION,
+  TEST_LINE_CHART_CONFIGURATION,
+  TEST_OBJECT_METADATA_ID,
+  TEST_PIE_CHART_CONFIGURATION,
+} from '~/testing/mock-data/widget-configurations';
 import { extractFieldMetadataIdsFromWidget } from '../extractFieldMetadataIdsFromWidget';
 
 const createMockWidget = (
@@ -31,11 +37,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
   it('should return empty array for IFRAME widget', () => {
     const widget = createMockWidget({
       type: WidgetType.IFRAME,
-      configuration: {
-        __typename: 'IframeConfiguration' as const,
-        configurationType: WidgetConfigurationType.IFRAME,
-        url: 'https://example.com',
-      },
+      configuration: TEST_IFRAME_CONFIGURATION,
     });
 
     expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([]);
@@ -43,143 +45,91 @@ describe('extractFieldMetadataIdsFromWidget', () => {
 
   it('should extract field IDs from BarChartConfiguration', () => {
     const widget = createMockWidget({
-      configuration: {
-        __typename: 'BarChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.BAR_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: 'field-2',
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        displayDataLabel: false,
-      },
-      objectMetadataId: 'object-1',
+      configuration: TEST_BAR_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(2);
-    expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
+    expect(result).toContain(TEST_FIELD_METADATA_ID_2);
   });
 
   it('should extract field IDs from BarChartConfiguration with optional Y grouping', () => {
     const widget = createMockWidget({
       configuration: {
-        __typename: 'BarChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.BAR_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: 'field-2',
-        secondaryAxisGroupByFieldMetadataId: 'field-3',
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        displayDataLabel: false,
+        ...TEST_BAR_CHART_CONFIGURATION,
+        secondaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_3,
       },
-      objectMetadataId: 'object-1',
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(3);
-    expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
-    expect(result).toContain('field-3');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
+    expect(result).toContain(TEST_FIELD_METADATA_ID_2);
+    expect(result).toContain(TEST_FIELD_METADATA_ID_3);
   });
 
   it('should extract field IDs from LineChartConfiguration', () => {
     const widget = createMockWidget({
-      configuration: {
-        __typename: 'LineChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.LINE_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.SUM,
-        primaryAxisGroupByFieldMetadataId: 'field-2',
-        primaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        displayDataLabel: false,
-      },
-      objectMetadataId: 'object-1',
+      configuration: TEST_LINE_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(2);
-    expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
+    expect(result).toContain(TEST_FIELD_METADATA_ID_2);
   });
 
   it('should extract field IDs from PieChartConfiguration', () => {
     const widget = createMockWidget({
-      configuration: {
-        __typename: 'PieChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.PIE_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
-        groupByFieldMetadataId: 'field-2',
-        orderBy: GraphOrderBy.FIELD_ASC,
-        displayDataLabel: false,
-      },
-      objectMetadataId: 'object-1',
+      configuration: TEST_PIE_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(2);
-    expect(result).toContain('field-1');
-    expect(result).toContain('field-2');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
+    expect(result).toContain(TEST_FIELD_METADATA_ID_2);
   });
 
   it('should extract field IDs from AggregateChartConfiguration', () => {
     const widget = createMockWidget({
-      configuration: {
-        __typename: 'AggregateChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.AVG,
-        displayDataLabel: false,
-      },
-      objectMetadataId: 'object-1',
+      configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(1);
-    expect(result).toContain('field-1');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
   });
 
   it('should extract field IDs from GaugeChartConfiguration', () => {
     const widget = createMockWidget({
-      configuration: {
-        __typename: 'GaugeChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.GAUGE_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.SUM,
-        displayDataLabel: false,
-      },
-      objectMetadataId: 'object-1',
+      configuration: TEST_GAUGE_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);
 
     expect(result).toHaveLength(1);
-    expect(result).toContain('field-1');
+    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
   });
 
   it('should not include undefined optional fields', () => {
     const widget = createMockWidget({
       configuration: {
-        __typename: 'BarChartConfiguration' as const,
-        configurationType: WidgetConfigurationType.BAR_CHART,
-        aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: AggregateOperations.COUNT,
-        primaryAxisGroupByFieldMetadataId: 'field-2',
+        ...TEST_BAR_CHART_CONFIGURATION,
         secondaryAxisGroupByFieldMetadataId: undefined,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        displayDataLabel: false,
       },
-      objectMetadataId: 'object-1',
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
     const result = extractFieldMetadataIdsFromWidget(widget);

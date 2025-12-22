@@ -2,6 +2,7 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import {
   AggregateOperations,
   AxisNameDisplay,
+  BarChartLayout,
   GraphOrderBy,
   type GridPosition,
   type PageLayoutWidget,
@@ -20,6 +21,7 @@ const createDefaultGraphConfiguration = (
   return {
     __typename: 'BarChartConfiguration',
     configurationType: WidgetConfigurationType.BAR_CHART,
+    layout: BarChartLayout.VERTICAL,
     displayDataLabel: false,
     color: 'blue' satisfies ThemeColor,
     primaryAxisGroupByFieldMetadataId: fieldSelection?.groupByFieldMetadataIdX,

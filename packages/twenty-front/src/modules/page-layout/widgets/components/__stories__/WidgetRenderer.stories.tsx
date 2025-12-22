@@ -909,6 +909,7 @@ export const TallWidget: Story = {
       configuration: {
         __typename: 'BarChartConfiguration',
         configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
