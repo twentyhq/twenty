@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import testTokens from './test/integration/constants/test-tokens.json';
 
 // Load .env vars at jest boot time
