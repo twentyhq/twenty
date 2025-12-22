@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsOptional,
@@ -51,6 +52,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   shortcut?: string;
+
+  @IsArray()
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  detailFieldOrder?: string[] | null;
 
   @IsBoolean()
   @IsOptional()

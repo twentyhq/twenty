@@ -35,22 +35,56 @@ export const useFieldListFieldMetadataItems = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const availableFieldMetadataItems = objectMetadataItem.readableFields
-    .filter(
-      (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
-        !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
-        (!excludeCreatedAtAndUpdatedAt ||
-          (fieldMetadataItem.name !== 'createdAt' &&
-            fieldMetadataItem.name !== 'deletedAt')) &&
-        (showRelationSections ||
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-            fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION)),
-    )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+  const filteredFields = objectMetadataItem.readableFields.filter(
+    (fieldMetadataItem) =>
+      isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
+      fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
+      !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
+      (!excludeCreatedAtAndUpdatedAt ||
+        (fieldMetadataItem.name !== 'createdAt' &&
+          fieldMetadataItem.name !== 'deletedAt')) &&
+      (showRelationSections ||
+        (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+          fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION)),
+  );
+
+  // Sort fields based on detailFieldOrder if available, otherwise alphabetically
+  const availableFieldMetadataItems = (() => {
+    const detailFieldOrder = objectMetadataItem.detailFieldOrder;
+
+    if (!detailFieldOrder || detailFieldOrder.length === 0) {
+      // Default alphabetical sorting
+      return filteredFields.sort((fieldMetadataItemA, fieldMetadataItemB) =>
+        fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+      );
+    }
+
+    // Create a map for quick lookup
+    const fieldMap = new Map(
+      filteredFields.map((field) => [field.id, field]),
     );
+
+    // Sort based on custom order
+    const orderedFields: typeof filteredFields = [];
+    const remainingFields = new Set(filteredFields.map((f) => f.id));
+
+    // Add fields in the specified order
+    for (const fieldId of detailFieldOrder) {
+      const field = fieldMap.get(fieldId);
+      if (field) {
+        orderedFields.push(field);
+        remainingFields.delete(fieldId);
+      }
+    }
+
+    // Add any remaining fields (new fields not in the saved order) alphabetically
+    const newFields = Array.from(remainingFields)
+      .map((id) => fieldMap.get(id))
+      .filter(isDefined)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return [...orderedFields, ...newFields];
+  })();
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
     availableFieldMetadataItems

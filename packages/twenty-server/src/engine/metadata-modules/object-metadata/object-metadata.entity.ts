@@ -97,6 +97,9 @@ export class ObjectMetadataEntity
   @Column({ nullable: true, type: 'varchar' })
   shortcut: string | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  detailFieldOrder: string[] | null;
+
   // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;

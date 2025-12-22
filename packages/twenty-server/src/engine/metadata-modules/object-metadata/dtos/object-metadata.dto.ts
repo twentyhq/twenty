@@ -56,6 +56,9 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   shortcut?: string;
 
+  @Field(() => [String], { nullable: true })
+  detailFieldOrder?: string[] | null;
+
   @FilterableField()
   isCustom: boolean;
 

@@ -18,4 +18,5 @@ export type ObjectMetadataItem = Omit<
   updatableFields: FieldMetadataItem[];
   labelIdentifierFieldMetadataId: string;
   indexMetadatas: IndexMetadataItem[];
+  detailFieldOrder?: string[] | null;
 };
