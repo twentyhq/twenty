@@ -59,6 +59,61 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Restart containers for changes to take effect
 4. Admin panel will show current values but cannot modify them
 
+## Multi-Workspace Mode
+
+By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+
+### Single-Workspace Mode (Default)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+- One workspace per Twenty instance
+- First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
+- New signups are disabled after the first workspace is created
+- Simple URL structure: `https://your-domain.com`
+
+### Enabling Multi-Workspace Mode
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+
+**Key differences from single-workspace mode:**
+- Multiple workspaces can be created on the same instance
+- Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
+- Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
+- No automatic admin privileges — first user in each workspace is a regular user
+- Workspace-specific settings like subdomain and custom domain become available in workspace settings
+
+<Warning>
+**Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+</Warning>
+
+### DNS Configuration for Multi-Workspace
+
+When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+
+### Restricting Workspace Creation
+
+In multi-workspace mode, you may want to limit who can create new workspaces:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+
 ## Gmail & Google Calendar Integration
 
 ### Create Google Cloud Project
