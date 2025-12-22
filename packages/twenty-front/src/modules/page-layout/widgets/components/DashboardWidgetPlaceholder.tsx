@@ -50,6 +50,7 @@ export const DashboardWidgetPlaceholder = () => {
       isDragging={false}
       isResizing={false}
       onClick={handleClick}
+      className="widget"
     >
       <WidgetCardHeader
         widgetId="widget-placeholder"

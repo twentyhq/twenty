@@ -26,7 +26,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   objectMetadataItem: ObjectMetadataItem;
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }

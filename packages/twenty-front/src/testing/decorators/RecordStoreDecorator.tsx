@@ -9,7 +9,7 @@ export const RecordStoreDecorator: Decorator = (Story, context) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    upsertRecordsInStore(records);
+    upsertRecordsInStore({ partialRecords: records });
   });
 
   return <Story />;
