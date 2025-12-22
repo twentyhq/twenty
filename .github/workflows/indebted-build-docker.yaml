@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Image tag (e.g., v1.12.1-indebted or test-123)'
+        description: 'Git tag to build (e.g., v1.12.1-indebted). Must exist in repo.'
         required: true
 
 # Serialize builds - one at a time, others queue
@@ -32,6 +32,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # For workflow_dispatch, checkout the specified tag; for push, checkout the pushed tag
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - name: Set image tag
         id: tag
