@@ -63,9 +63,9 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'" 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
 
     steps:
@@ -78,12 +78,12 @@ jobs:
         id: merge_attempt
         run: |
           echo "Attempting to merge main into current branch..."
-          
+
           git fetch origin main
-          
+
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Current branch: $CURRENT_BRANCH"
-          
+
           if git merge origin/main --no-edit; then
             echo "✅ Successfully merged main into current branch"
             echo "merged=true" >> $GITHUB_OUTPUT
@@ -91,16 +91,16 @@ jobs:
           else
             echo "❌ Merge failed due to conflicts"
             echo "⚠️ Falling back to comparing current branch against main without merge"
-            
+
             # Abort the failed merge
             git merge --abort
-            
+
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "BRANCH_STATE=conflicts" >> $GITHUB_ENV
           fi
 
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
 
       - name: Build shared dependencies
         run: |
@@ -128,22 +128,22 @@ jobs:
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
-            
+
             echo "" >> "$env_file"
-            
+
             if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"
             fi
           }
-          
+
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/current_branch"
           set_env_var "NODE_PORT" "${{ env.CURRENT_SERVER_PORT }}"
           set_env_var "REDIS_URL" "redis://localhost:6379"
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
-          
+
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
@@ -166,19 +166,19 @@ jobs:
           timeout=300
           interval=5
           elapsed=0
-          
+
           while [ $elapsed -lt $timeout ]; do
             if curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
                curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
-            
+
             echo "Current branch server not ready yet, waiting ${interval}s..."
             sleep $interval
             elapsed=$((elapsed + interval))
           done
-          
+
           if [ $elapsed -ge $timeout ]; then
             echo "Timeout waiting for current branch server to start"
             echo "Current server log:"
@@ -188,15 +188,15 @@ jobs:
 
       - name: Download GraphQL and REST responses from current branch
         run: |
-          # Admin token from jest-integration.config.ts
-          ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
-          
+          # Read admin token from shared test tokens file (single source of truth)
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
           # Load introspection query from file
           INTROSPECTION_QUERY=$(cat packages/twenty-utils/graphql-introspection-query.graphql)
-          
+
           # Prepare the query payload
           QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
-          
+
           echo "Downloading GraphQL schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
@@ -205,7 +205,7 @@ jobs:
             -o current-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
             -s
-          
+
           echo "Downloading GraphQL metadata schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
@@ -214,32 +214,32 @@ jobs:
             -o current-metadata-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
             -s
-          
+
           # Download current branch OpenAPI specs
           echo "Downloading OpenAPI specifications from current server..."
           curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o current-rest-api.json \
             -w "HTTP Status: %{http_code}\n"
-          
+
           curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o current-rest-metadata-api.json \
             -w "HTTP Status: %{http_code}\n"
-          
+
           # Verify the downloads
           echo "Current branch files downloaded:"
           ls -la current-*
-          
+
 
       - name: Preserve current branch files
         run: |
           # Create a temp directory to store current branch files
           mkdir -p /tmp/current-branch-files
-          
+
           # Move current branch files to temp directory
           mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to preserve"
-          
+
           echo "Preserved current branch files for later restoration"
 
       - name: Stop current branch server
@@ -263,7 +263,7 @@ jobs:
           rm -rf node_modules packages/*/node_modules packages/*/dist dist .nx/cache
 
       - name: Install dependencies for main branch
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
 
       - name: Build main branch dependencies
         run: |
@@ -281,22 +281,22 @@ jobs:
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
-            
+
             echo "" >> "$env_file"
-            
+
             if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"
             fi
           }
-          
+
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
           set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
           set_env_var "REDIS_URL" "redis://localhost:6379"
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
-          
+
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
@@ -319,19 +319,19 @@ jobs:
           timeout=300
           interval=5
           elapsed=0
-          
+
           while [ $elapsed -lt $timeout ]; do
             if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
                curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
-            
+
             echo "Main branch server not ready yet, waiting ${interval}s..."
             sleep $interval
             elapsed=$((elapsed + interval))
           done
-          
+
           if [ $elapsed -ge $timeout ]; then
             echo "Timeout waiting for main branch server to start"
             echo "Main server log:"
@@ -341,15 +341,15 @@ jobs:
 
       - name: Download GraphQL and REST responses from main branch
         run: |
-          # Admin token from jest-integration.config.ts
-          ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
-          
+          # Read admin token from shared test tokens file (single source of truth)
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
           # Load introspection query from file
           INTROSPECTION_QUERY=$(cat packages/twenty-utils/graphql-introspection-query.graphql)
-          
+
           # Prepare the query payload
           QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
-          
+
           echo "Downloading GraphQL schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
@@ -358,7 +358,7 @@ jobs:
             -o main-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
             -s
-          
+
           echo "Downloading GraphQL metadata schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
@@ -367,33 +367,33 @@ jobs:
             -o main-metadata-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
             -s
-          
+
           # Download main branch OpenAPI specs
           echo "Downloading OpenAPI specifications from main server..."
           curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o main-rest-api.json \
             -w "HTTP Status: %{http_code}\n"
-          
+
           curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o main-rest-metadata-api.json \
             -w "HTTP Status: %{http_code}\n"
-          
+
           # Verify the downloads
           echo "Main branch files downloaded:"
           ls -la main-*
-          
+
 
       - name: Restore current branch files
         run: |
           # Move current branch files back to working directory
           mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
-          
+
           # Verify all files are present
           echo "All API files restored:"
           ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
-          
+
           # Clean up temp directory
           rm -rf /tmp/current-branch-files
 
@@ -406,9 +406,9 @@ jobs:
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
           npm install -g @graphql-inspector/cli
-          
+
           echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
-          
+
           # Check if GraphQL schema has changes
           echo "Checking GraphQL schema for changes..."
           if graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >/dev/null 2>&1; then
@@ -426,7 +426,7 @@ jobs:
               echo "\`\`\`" >> graphql-schema-diff.md
             }
           fi
-          
+
           # Check if GraphQL metadata schema has changes
           echo "Checking GraphQL metadata schema for changes..."
           if graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
@@ -444,7 +444,7 @@ jobs:
               echo "\`\`\`" >> graphql-metadata-diff.md
             }
           fi
-          
+
           # Show summary
           echo "Generated diff files:"
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
@@ -452,32 +452,32 @@ jobs:
       - name: Check REST API Breaking Changes
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
-          
+
           # Use the Java-based openapi-diff via Docker
           docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest \
             --json /specs/rest-api-diff.json \
             /specs/main-rest-api.json /specs/current-rest-api.json || echo "OpenAPI diff completed with exit code $?"
-          
+
           # Check if the output file was created and is valid JSON
           if [ -f "rest-api-diff.json" ] && jq empty rest-api-diff.json 2>/dev/null; then
             # Check for breaking changes using Java openapi-diff JSON structure
             incompatible=$(jq -r '.incompatible // false' rest-api-diff.json)
             different=$(jq -r '.different // false' rest-api-diff.json)
-            
+
             # Count changes
             new_endpoints=$(jq -r '.newEndpoints | length' rest-api-diff.json 2>/dev/null || echo "0")
             missing_endpoints=$(jq -r '.missingEndpoints | length' rest-api-diff.json 2>/dev/null || echo "0")
             changed_operations=$(jq -r '.changedOperations | length' rest-api-diff.json 2>/dev/null || echo "0")
-            
+
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST API"
-              
+
               # Generate breaking changes report
               echo "# REST API Breaking Changes" > rest-api-diff.md
               echo "" >> rest-api-diff.md
               echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-api-diff.md
               echo "" >> rest-api-diff.md
-              
+
               # Parse and format the changes from Java openapi-diff
               jq -r '
                 if (.missingEndpoints | length) > 0 then
@@ -493,7 +493,7 @@ jobs:
                   (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
                 else "" end
               ' rest-api-diff.json >> rest-api-diff.md
-              
+
             elif [ "$different" = "true" ]; then
               echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed) - no PR comment will be posted"
               # Don't create markdown file for non-breaking changes to avoid PR comments
@@ -503,7 +503,7 @@ jobs:
             fi
           else
             echo "⚠️ OpenAPI diff tool could not process the files"
-            
+
             echo "# REST API Analysis Error" > rest-api-diff.md
             echo "" >> rest-api-diff.md
             echo "⚠️ **Error occurred while analyzing REST API changes**" >> rest-api-diff.md
@@ -512,7 +512,7 @@ jobs:
             echo "\`\`\`" >> rest-api-diff.md
             docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-api.json /specs/current-rest-api.json 2>&1 >> rest-api-diff.md || echo "Could not capture error output"
             echo "\`\`\`" >> rest-api-diff.md
-            
+
             # Don't fail the workflow for tool errors
             echo "::warning::REST API analysis tool error - continuing workflow"
           fi
@@ -520,33 +520,33 @@ jobs:
       - name: Check REST Metadata API Breaking Changes
         run: |
           echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
-          
+
           # Use the Java-based openapi-diff for metadata API as well
           docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest \
             --json /specs/rest-metadata-api-diff.json \
             /specs/main-rest-metadata-api.json /specs/current-rest-metadata-api.json || echo "OpenAPI diff completed with exit code $?"
-          
+
           # Check if the output file was created and is valid JSON
           if [ -f "rest-metadata-api-diff.json" ] && jq empty rest-metadata-api-diff.json 2>/dev/null; then
             # Check for breaking changes using Java openapi-diff JSON structure
             incompatible=$(jq -r '.incompatible // false' rest-metadata-api-diff.json)
             different=$(jq -r '.different // false' rest-metadata-api-diff.json)
-            
+
             # Count changes
             new_endpoints=$(jq -r '.newEndpoints | length' rest-metadata-api-diff.json 2>/dev/null || echo "0")
             missing_endpoints=$(jq -r '.missingEndpoints | length' rest-metadata-api-diff.json 2>/dev/null || echo "0")
             changed_operations=$(jq -r '.changedOperations | length' rest-metadata-api-diff.json 2>/dev/null || echo "0")
-            
+
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST Metadata API"
-              
+
               # Generate breaking changes report (only for breaking changes)
               echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
               echo "" >> rest-metadata-api-diff.md
               echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-metadata-api-diff.md
               echo "" >> rest-metadata-api-diff.md
-              
-              # Parse and format the changes from Java openapi-diff 
+
+              # Parse and format the changes from Java openapi-diff
               jq -r '
                 if (.missingEndpoints | length) > 0 then
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
@@ -570,7 +570,7 @@ jobs:
             fi
           else
             echo "⚠️ OpenAPI diff tool could not process the metadata API files"
-            
+
             echo "# REST Metadata API Analysis Error" > rest-metadata-api-diff.md
             echo "" >> rest-metadata-api-diff.md
             echo "⚠️ **Error occurred while analyzing REST Metadata API changes**" >> rest-metadata-api-diff.md
@@ -579,7 +579,7 @@ jobs:
             echo "\`\`\`" >> rest-metadata-api-diff.md
             docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-metadata-api.json /specs/current-rest-metadata-api.json 2>&1 >> rest-metadata-api-diff.md || echo "Could not capture error output"
             echo "\`\`\`" >> rest-metadata-api-diff.md
-            
+
             # Don't fail the workflow for tool errors
             echo "::warning::REST Metadata API analysis tool error - continuing workflow"
           fi
@@ -592,7 +592,7 @@ jobs:
             const fs = require('fs');
             let hasChanges = false;
             let comment = '';
-            
+
             try {
               if (fs.existsSync('graphql-schema-diff.md')) {
                 const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
@@ -604,7 +604,7 @@ jobs:
                   comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
                 }
               }
-              
+
               if (fs.existsSync('graphql-metadata-diff.md')) {
                 const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
                 if (graphqlMetadataDiff.trim()) {
@@ -615,7 +615,7 @@ jobs:
                   comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
                 }
               }
-              
+
               if (fs.existsSync('rest-api-diff.md')) {
                 const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
                 if (restDiff.trim()) {
@@ -626,7 +626,7 @@ jobs:
                   comment += restDiff + '\n\n';
                 }
               }
-              
+
               if (fs.existsSync('rest-metadata-api-diff.md')) {
                 const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
                 if (metadataDiff.trim()) {
@@ -637,37 +637,37 @@ jobs:
                   comment += metadataDiff + '\n\n';
                 }
               }
-              
+
               // Only post comment if there are changes
               if (hasChanges) {
                 // Add branch state information only if there were conflicts
                 const branchState = process.env.BRANCH_STATE || 'unknown';
                 let branchStateNote = '';
-                
+
                 if (branchState === 'conflicts') {
                   branchStateNote = '\n\n⚠️ **Note**: Could not merge with `main` due to conflicts. This comparison shows changes between the current branch and `main` as separate states.\n';
                 }
                 // Check if there are any breaking changes detected
                 let hasBreakingChanges = false;
                 let breakingChangeNote = '';
-                
+
                 // Check for breaking changes in any of the diff files
                 if (fs.existsSync('rest-api-diff.md')) {
                   const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨') || 
+                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨') ||
                       restDiff.includes('Removed Endpoints') || restDiff.includes('Changed Operations')) {
                     hasBreakingChanges = true;
                   }
                 }
-                
+
                 if (fs.existsSync('rest-metadata-api-diff.md')) {
                   const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨') || 
+                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨') ||
                       metadataDiff.includes('Removed Endpoints') || metadataDiff.includes('Changed Operations')) {
                     hasBreakingChanges = true;
                   }
                 }
-                
+
                 // Also check GraphQL changes for breaking changes indicators
                 if (fs.existsSync('graphql-schema-diff.md')) {
                   const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
@@ -675,18 +675,18 @@ jobs:
                     hasBreakingChanges = true;
                   }
                 }
-                
+
                 if (fs.existsSync('graphql-metadata-diff.md')) {
                   const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
                   if (graphqlMetadataDiff.includes('Breaking changes') || graphqlMetadataDiff.includes('BREAKING')) {
                     hasBreakingChanges = true;
                   }
                 }
-                
+
                 // Check PR title for "breaking"
                 const prTitle = ${{ toJSON(github.event.pull_request.title) }};
                 const titleContainsBreaking = prTitle.toLowerCase().includes('breaking');
-                
+
                 if (hasBreakingChanges) {
                   if (titleContainsBreaking) {
                     breakingChangeNote = '\n\n## ✅ Breaking Change Protocol\n\n' +
@@ -702,20 +702,20 @@ jobs:
                       'For breaking changes, add to commit message:\n```\nfeat: add new API endpoint\n\nBREAKING CHANGE: removed deprecated field from User schema\n```';
                   }
                 }
-                
+
                 const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
                 const commentBody = COMMENT_MARKER + '\n' + comment + branchStateNote + '\n⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
-                
+
                 // Get all comments to find existing API changes comment
                 const {data: comments} = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
                 });
-                
+
                 // Find our existing comment
                 const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-                
+
                 if (botComment) {
                   // Update existing comment
                   await github.rest.issues.updateComment({
@@ -737,17 +737,17 @@ jobs:
                 }
               } else {
                 console.log('No API changes detected - skipping PR comment');
-                
+
                 // Check if there's an existing comment to remove
                 const {data: comments} = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
                 });
-                
+
                 const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
                 const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-                
+
                 if (botComment) {
                   await github.rest.issues.deleteComment({
                     owner: context.repo.owner,
@@ -780,7 +780,7 @@ jobs:
             /tmp/main-server.log
             /tmp/current-server.log
             *-api.json
-            *-schema-introspection.json  
+            *-schema-introspection.json
             *-diff.md
             *-diff.json
 

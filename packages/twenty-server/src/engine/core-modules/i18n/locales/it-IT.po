@@ -3903,7 +3903,7 @@ msgstr "L'etichetta dell'opzione supera i 63 caratteri"
 #. js-lingui-id: h8lHqX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label format not supported"
-msgstr "Il formato dell'etichetta opzione non  8supportato"
+msgstr ""
 
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
