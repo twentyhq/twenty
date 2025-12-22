@@ -11,7 +11,7 @@ on:
     paths:
       - 'packages/twenty-docs/**/*.mdx'
       - '!packages/twenty-docs/fr/**'
-      - 'crowdin.yml'
+      - 'crowdin-docs.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -62,7 +62,9 @@ jobs:
           download_translations: false
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
+          config: 'crowdin-docs.yml'
         env:
-          CROWDIN_PROJECT_ID: 1
+          # Docs translations project
+          CROWDIN_PROJECT_ID: '2'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 

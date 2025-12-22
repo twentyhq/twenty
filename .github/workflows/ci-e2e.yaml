@@ -1,4 +1,4 @@
-name: CI E2E Playwright Tests
+name: CI E2E
 
 on:
   push:
@@ -67,7 +67,7 @@ jobs:
         lscpu
 
     - name: Install dependencies
-      uses: ./.github/workflows/actions/yarn-install
+      uses: ./.github/actions/yarn-install
 
     - name: Build twenty-shared
       run: npx nx build twenty-shared
