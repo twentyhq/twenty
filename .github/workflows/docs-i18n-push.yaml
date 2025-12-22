@@ -50,8 +50,6 @@ jobs:
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
           config: 'crowdin-docs.yml'
-          # Allow updating existing files instead of failing
-          upload_sources_args: '--update-strings'
         env:
           # Docs translations project
           CROWDIN_PROJECT_ID: '2'
