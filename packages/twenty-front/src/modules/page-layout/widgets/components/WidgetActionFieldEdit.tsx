@@ -16,6 +16,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/FieldWidgetEditAction';
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
+import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -78,7 +79,11 @@ export const WidgetActionFieldEdit = () => {
     );
   }
 
-  const instanceId = `field-widget-${targetRecord.id}-${fieldMetadataItem.name}-${isInRightDrawer ? 'right-drawer' : ''}`;
+  const instanceId = getFieldWidgetInstanceId({
+    recordId: targetRecord.id,
+    fieldName: fieldMetadataItem.name,
+    isInRightDrawer,
+  });
 
   const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
     recordId: targetRecord.id,
