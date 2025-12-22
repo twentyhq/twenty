@@ -1,0 +1,153 @@
+---
+title: 文本
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## 文本输入
+
+允许用户输入和编辑文本。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 属性             | 类型       | 描述                                             |
+| -------------- | -------- | ---------------------------------------------- |
+| 类名             | 字符串      | 用于附加样式的可选名称                                    |
+| 标签             | 字符串      | 表示输入的标签                                        |
+| onChange       | function | 当输入值更改时调用的函数                                   |
+| fullWidth      | 布尔值      | 指示输入是否应占用100%的宽度                               |
+| disableHotkeys | 布尔值      | 指示输入是否启用热键                                     |
+| 错误             | 字符串      | 表示要显示的错误信息。 提供时，还会在输入的右侧添加一个错误图标               |
+| onKeyDown      | function | 当输入字段获得焦点并按下按键时调用。 接收`React.KeyboardEvent`作为参数 |
+| RightIcon      | 图标组件     | 在输入右侧显示的可选图标组件                                 |
+
+该组件还接受其他HTML输入元素属性。
+
+</Tab>
+
+</Tabs>
+
+## 自动调整大小的文本输入
+
+根据内容自动调整高度的文本输入组件。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 属性          | 类型  | 描述                                        |
+| ----------- | --- | ----------------------------------------- |
+| onValidate  | 函数  | 用户验证输入时要触发的回调函数                           |
+| minRows     | 数字  | 文本区域的最小行数                                 |
+| 占位符         | 字符串 | 在文本区域为空时要显示的占位符文本                         |
+| onFocus     | 函数  | 当文本区域获得焦点时要触发的回调函数                        |
+| 变体          | 字符串 | 输入的变体。 选项包括：`default`, `icon`, 和 `button` |
+| buttonTitle | 字符串 | 按钮的标题（仅适用于按钮变体）                           |
+| 值           | 字符串 | 文本区域的初始值                                  |
+
+</Tab>
+
+</Tabs>
+
+## 文本区域
+
+允许你创建多行文本输入。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 属性       | 类型       | 描述                |
+| -------- | -------- | ----------------- |
+| disabled | 布尔值      | 指示文本区域是否被禁用       |
+| minRows  | 数字       | 文本区域的最小可见行数。      |
+| onChange | function | 当文本区域内容更改时触发的回调函数 |
+| 占位符      | 字符串      | 当文本区域为空时显示的占位符文本  |
+| 值        | 字符串      | 文本区域的当前值          |
+
+</Tab>
+</Tabs>
