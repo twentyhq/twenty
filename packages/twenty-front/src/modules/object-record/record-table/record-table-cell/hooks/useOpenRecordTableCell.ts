@@ -100,10 +100,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         isActionButtonClick,
         isNavigating,
       }: OpenTableCellArgs) => {
-        if (isReadOnly) {
-          return;
-        }
-
         set(clickOutsideListenerIsActivatedState, false);
 
         const isFirstColumnCell = cellPosition.column === 0;
@@ -146,6 +142,11 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
           setViewableRecordId(recordId);
           setViewableRecordNameSingular(objectNameSingular);
 
+          return;
+        }
+
+        // Block editing for read-only records, but allow navigation/viewing (handled above)
+        if (isReadOnly) {
           return;
         }
 
