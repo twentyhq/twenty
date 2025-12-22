@@ -89,8 +89,10 @@ jobs:
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
+          config: 'crowdin-app.yml'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          # App translations project
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
