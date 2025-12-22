@@ -115,6 +115,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       icon: 'IconList',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -132,6 +133,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       description: 'Name of the favorite folder',
       icon: 'IconText',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -151,6 +153,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       description: 'Favorites in this folder',
       icon: 'IconHeart',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'favoriteFolder',
       settings: {
