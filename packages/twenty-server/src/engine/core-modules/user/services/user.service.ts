@@ -71,7 +71,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspace.id,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
@@ -97,7 +97,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspace.id,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
@@ -121,7 +121,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspace.id,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
@@ -207,7 +207,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               workspaceId,
-              'workspaceMember',
+              WorkspaceMemberWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );
 
@@ -261,7 +261,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 

@@ -101,7 +101,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
@@ -359,7 +359,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
-            'workspaceMember',
+            WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 

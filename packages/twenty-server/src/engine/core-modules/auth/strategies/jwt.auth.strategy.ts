@@ -6,6 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { Strategy } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -190,6 +191,14 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       workspaceMemberId: payload.workspaceMemberId,
     };
 
+    if (
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
+    ) {
+      return context;
+    }
+
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         buildSystemAuthContext(workspace.id),
@@ -197,7 +206,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               workspace.id,
-              'workspaceMember',
+              WorkspaceMemberWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );
 
