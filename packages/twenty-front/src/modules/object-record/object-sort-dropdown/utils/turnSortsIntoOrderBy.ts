@@ -51,11 +51,5 @@ export const turnSortsIntoOrderBy = (
     return [...sortsOrderBy, ...positionOrderBy].flat();
   }
 
-  const defaultOrderBy = [
-    {
-      id: 'AscNullsFirst',
-    },
-  ] satisfies RecordGqlOperationOrderBy;
-
-  return [...sortsOrderBy, ...defaultOrderBy].flat();
+  return sortsOrderBy.flat();
 };
