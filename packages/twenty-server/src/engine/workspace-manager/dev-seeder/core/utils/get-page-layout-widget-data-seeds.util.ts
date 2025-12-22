@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -141,6 +142,7 @@ export const getPageLayoutWidgetDataSeeds = (
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             color: 'auto',
+            layout: BarChartLayout.VERTICAL,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
@@ -171,6 +173,7 @@ export const getPageLayoutWidgetDataSeeds = (
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             color: 'auto',
+            layout: BarChartLayout.VERTICAL,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
@@ -255,6 +258,7 @@ export const getPageLayoutWidgetDataSeeds = (
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             color: 'auto',
+            layout: BarChartLayout.VERTICAL,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
@@ -356,6 +360,7 @@ export const getPageLayoutWidgetDataSeeds = (
             axisNameDisplay: AxisNameDisplay.NONE,
             displayDataLabel: false,
             color: 'auto',
+            layout: BarChartLayout.VERTICAL,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },

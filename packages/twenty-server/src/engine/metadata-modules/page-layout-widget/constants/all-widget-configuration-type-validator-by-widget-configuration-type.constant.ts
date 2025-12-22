@@ -19,6 +19,7 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     [WidgetConfigurationType.PIE_CHART]: PieChartConfigurationValidator,
     [WidgetConfigurationType.STANDALONE_RICH_TEXT]:
       StandaloneRichTextConfigurationValidator,
-  } as const satisfies {
+    // TODO: Remove the partial when we have all the widget configuration types in the backend
+  } as const satisfies Partial<{
     [P in WidgetConfigurationType]: new () => PageLayoutWidgetConfigurationBase;
-  };
+  }>;
