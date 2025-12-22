@@ -1,5 +1,6 @@
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
@@ -36,6 +37,7 @@ export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
 };
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
   body: {
     blocknote: 'valid',
     markdown: 'valid',
@@ -67,6 +69,7 @@ export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
 
 export const TEST_VERTICAL_BAR_CHART_CONFIG = {
   configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.VERTICAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -82,6 +85,7 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG = {
 
 export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL = {
   configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.VERTICAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -92,6 +96,7 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL = {
 
 export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
   configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.HORIZONTAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
@@ -107,6 +112,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
 
 export const TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL = {
   configurationType: WidgetConfigurationType.BAR_CHART,
+  layout: BarChartLayout.HORIZONTAL,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
