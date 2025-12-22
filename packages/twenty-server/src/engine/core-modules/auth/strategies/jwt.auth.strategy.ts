@@ -206,7 +206,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               workspace.id,
-              WorkspaceMemberWorkspaceEntity,
+              'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
 
