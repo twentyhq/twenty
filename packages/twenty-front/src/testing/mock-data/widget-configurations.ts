@@ -1,8 +1,8 @@
-import { TypedAggregateChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedAggregateChartConfiguration';
-import { TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
-import { TypedGaugeChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedGaugeChartConfiguration';
-import { TypedLineChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedLineChartConfiguration';
-import { TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
+import { type TypedAggregateChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedAggregateChartConfiguration';
+import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
+import { type TypedGaugeChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedGaugeChartConfiguration';
+import { type TypedLineChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedLineChartConfiguration';
+import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
@@ -14,7 +14,7 @@ import {
   type StandaloneRichTextConfiguration,
   type WidgetConfiguration,
   WidgetConfigurationType,
-  WidgetType
+  WidgetType,
 } from '~/generated/graphql';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
@@ -34,10 +34,11 @@ export const TEST_BAR_CHART_CONFIGURATION: TypedBarChartConfiguration = {
   axisNameDisplay: AxisNameDisplay.NONE,
 };
 
-export const TEST_BAR_CHART_CONFIGURATION_HORIZONTAL: TypedBarChartConfiguration = {
-  ...TEST_BAR_CHART_CONFIGURATION,
-  layout: BarChartLayout.HORIZONTAL,
-};
+export const TEST_BAR_CHART_CONFIGURATION_HORIZONTAL: TypedBarChartConfiguration =
+  {
+    ...TEST_BAR_CHART_CONFIGURATION,
+    layout: BarChartLayout.HORIZONTAL,
+  };
 
 export const TEST_LINE_CHART_CONFIGURATION: TypedLineChartConfiguration = {
   __typename: 'LineChartConfiguration',
@@ -63,13 +64,14 @@ export const TEST_PIE_CHART_CONFIGURATION: TypedPieChartConfiguration = {
   displayDataLabel: true,
 };
 
-export const TEST_AGGREGATE_CHART_CONFIGURATION: TypedAggregateChartConfiguration = {
-  __typename: 'AggregateChartConfiguration',
-  configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.COUNT,
-  displayDataLabel: false,
-};
+export const TEST_AGGREGATE_CHART_CONFIGURATION: TypedAggregateChartConfiguration =
+  {
+    __typename: 'AggregateChartConfiguration',
+    configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+    aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
+    aggregateOperation: AggregateOperations.COUNT,
+    displayDataLabel: false,
+  };
 
 export const TEST_GAUGE_CHART_CONFIGURATION: TypedGaugeChartConfiguration = {
   __typename: 'GaugeChartConfiguration',
@@ -128,4 +130,3 @@ export const createTestWidget = (
   deletedAt: null,
   ...overrides,
 });
-
