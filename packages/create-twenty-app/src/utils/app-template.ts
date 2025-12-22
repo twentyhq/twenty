@@ -100,7 +100,7 @@ const createDefaultServerlessFunctionRoleConfig = async ({
   appDirectory: string;
   defaultServerlessFunctionRoleUniversalIdentifier: string;
 }) => {
-  const content = `import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+  const content = `import { type RoleConfig } from 'twenty-sdk';
 
 export const functionRole: RoleConfig = {
   universalIdentifier: '${defaultServerlessFunctionRoleUniversalIdentifier}',
@@ -168,13 +168,17 @@ const createPackageJson = async ({
       uninstall: 'twenty app uninstall',
       help: 'twenty help',
       auth: 'twenty auth login',
+      lint: 'eslint',
+      'lint-fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.2.3',
+      'twenty-sdk': '0.2.4',
     },
     devDependencies: {
-      '@types/node': '^24.7.2',
       typescript: '^5.9.3',
+      '@types/node': '^24.7.2',
+      eslint: '^9.32.0',
+      'typescript-eslint': '^8.50.0',
     },
   };
 
