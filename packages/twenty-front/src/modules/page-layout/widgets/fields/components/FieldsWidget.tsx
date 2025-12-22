@@ -44,11 +44,11 @@ type FieldsWidgetProps = {
   widget: PageLayoutWidget;
 };
 
-export const FieldsWidget = ({ widget: _widget }: FieldsWidgetProps) => {
+export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
 
-  const instanceId = `fields-widget-${targetRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`;
+  const instanceId = `fields-widget-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
 
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,

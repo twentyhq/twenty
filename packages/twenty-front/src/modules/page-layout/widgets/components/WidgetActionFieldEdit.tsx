@@ -79,11 +79,13 @@ export const WidgetActionFieldEdit = () => {
     );
   }
 
-  const instanceId = getFieldWidgetInstanceId({
-    recordId: targetRecord.id,
-    fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
-  });
+  const instanceId =
+    widget.id +
+    getFieldWidgetInstanceId({
+      recordId: targetRecord.id,
+      fieldName: fieldMetadataItem.name,
+      isInRightDrawer,
+    });
 
   const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
     recordId: targetRecord.id,

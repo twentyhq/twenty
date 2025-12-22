@@ -13,6 +13,7 @@ import { FieldWidgetCellHoveredPortal } from '@/page-layout/widgets/field/compon
 import { FieldWidgetInlineCell } from '@/page-layout/widgets/field/components/FieldWidgetInlineCell';
 import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
 import { getFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/getFieldWidgetInstanceId';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -38,15 +39,19 @@ export const FieldWidgetDisplay = ({
   recordId,
   isInRightDrawer,
 }: FieldWidgetDisplayProps) => {
+  const widget = useCurrentWidget();
+
   const [isHovered, setIsHovered] = useRecoilComponentState(
     fieldWidgetHoverComponentState,
   );
 
-  const instanceId = getFieldWidgetInstanceId({
-    recordId,
-    fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
-  });
+  const instanceId =
+    widget.id +
+    getFieldWidgetInstanceId({
+      recordId,
+      fieldName: fieldMetadataItem.name,
+      isInRightDrawer,
+    });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
