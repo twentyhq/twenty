@@ -30,66 +30,152 @@ npm install twenty-sdk
 yarn add twenty-sdk
 ```
 
-## Getting started
-You can either scaffold a new app or add the SDK to an existing one.
+## Usage
 
-- Start new (recommended):
-  ```bash
-  npx create-twenty-app@latest my-twenty-app
-  cd my-twenty-app
-  ```
-- Existing project: install the SDK as shown above, then use the CLI below.
+```
+Usage: twenty [options] [command]
 
-## CLI quickstart
+CLI for Twenty application development
+
+Options:
+  --workspace <name>   Use a specific workspace configuration (default: "default")
+  -V, --version        output the version number
+  -h, --help           display help for command
+
+Commands:
+  auth                 Authentication commands
+  app                  Application development commands
+  help [command]       display help for command
+```
+
+## Global Options
+
+- `--workspace <name>`: Use a specific workspace configuration profile. Defaults to `default`. See Configuration for details.
+
+## Commands
+
+### Auth
+
+Authenticate the CLI against your Twenty workspace.
+
+- `twenty auth login` — Authenticate with Twenty.
+  - Options:
+    - `--api-key <key>`: API key for authentication.
+    - `--api-url <url>`: Twenty API URL (defaults to your current profile's value or `http://localhost:3000`).
+  - Behavior: Prompts for any missing values, persists them to the active workspace profile, and validates the credentials.
+
+- `twenty auth logout` — Remove authentication credentials for the active workspace profile.
+
+- `twenty auth status` — Print the current authentication status (API URL, masked API key, validity).
+
+Examples:
+
 ```bash
-# Authenticate using your API key (CLI will prompt for it)
+# Login interactively (recommended)
 twenty auth login
 
-# Add a new entity to your application (guided prompts)
-twenty app add
+# Provide values in flags
+twenty auth login --api-key $TWENTY_API_KEY --api-url https://api.twenty.com
 
-# Generate a typed Twenty client and TypeScript definitions for your workspace entities
-twenty app generate
+# Login interactively for a specific workspace profile
+twenty auth login --workspace my-custom-workspace
 
-# Start dev mode: automatically syncs changes to your workspace for instant testing
+# Check status
+twenty auth status
+
+# Logout current profile
+twenty auth logout
+```
+
+### App
+
+Application development commands.
+
+- `twenty app sync [appPath]` — One-time sync of the application to your Twenty workspace.
+- Behavior: Compute your application's manifest and send it to your workspace to sync your application
+
+- `twenty app dev [appPath]` — Watch and sync local application changes.
+  - Options:
+    - `-d, --debounce <ms>`: Debounce delay in milliseconds (default: `1000`).
+  - Behavior: Performs an initial sync, then watches the directory for changes and re-syncs after debounced edits. Press Ctrl+C to stop.
+
+- `twenty app uninstall [appPath]` — Uninstall the application from the current workspace.
+  - Note: `twenty app delete` exists as a hidden alias for backward compatibility.
+
+- `twenty app add [entityType]` — Add a new entity to your application.
+  - Arguments:
+    - `entityType`: one of `function` or `object`. If omitted, an interactive prompt is shown.
+  - Options:
+    - `--path <path>`: The path where the entity file should be created (relative to the current directory).
+  - Behavior:
+    - `object`: prompts for singular/plural names and labels, then creates a new object definition file.
+    - `function`: prompts for a name and scaffolds a serverless function file.
+
+- `twenty app generate [appPath]` — Generate the typed Twenty client for your application.
+
+- `twenty app logs [appPath]` — Stream application function logs.
+  - Options:
+    - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
+    - `-n, --functionName <name>`: Only show logs for a specific function name.
+
+Examples:
+
+```bash
+# Start dev mode with default debounce
 twenty app dev
 
-# One‑time sync of local changes
+# Start dev mode with custom workspace profile
+twenty app dev --workspace my-custom-workspace
+
+# Dev mode with custom debounce
+twenty app dev --debounce 1500
+
+# One-time sync of the current directory
 twenty app sync
 
-# Uninstall the application from the current workspace
-twenty app uninstall
+# Add a new object interactively
+twenty app add
+
+# Generate client types
+twenty app generate
+
+# Watch all function logs
+twenty app logs
+
+# Watch logs for a specific function by name
+twenty app logs -n my-function
 ```
 
-## Usage (SDK)
-```typescript
-// Example: import what you need from the SDK
-import { /* your exports */ } from 'twenty-sdk';
+## Configuration
+
+The CLI stores configuration per user in a JSON file:
+
+- Location: `~/.twenty/config.json`
+- Structure: Profiles keyed by workspace name. The active profile is selected with `--workspace <name>`.
+
+Example configuration file:
+
+```json
+{
+  "profiles": {
+    "default": {
+      "apiUrl": "http://localhost:3000",
+      "apiKey": "<your-api-key>"
+    },
+    "prod": {
+      "apiUrl": "https://api.twenty.com",
+      "apiKey": "<your-api-key>"
+    }
+  }
+}
 ```
 
-## Publish your application
-Applications are currently stored in [`twenty/packages/twenty-apps`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps).
+Notes:
 
-You can share your application with all Twenty users:
+- If a profile is missing, `apiUrl` defaults to `http://localhost:3000` until set.
+- `twenty auth login` writes the `apiUrl` and `apiKey` for the default profile.
+- `twenty auth login --workspace custom-workspace` writes the `apiUrl` and `apiKey` for a custom `custom-workspace` profile.
 
-```bash
-# pull the Twenty project
-git clone https://github.com/twentyhq/twenty.git
-cd twenty
-
-# create a new branch
-git checkout -b feature/my-awesome-app
-```
-
-- Copy your app folder into `twenty/packages/twenty-apps`.
-- Commit your changes and open a pull request on https://github.com/twentyhq/twenty
-
-```bash
-git commit -m "Add new application"
-git push
-```
-
-Our team reviews contributions for quality, security, and reusability.
 
 ## Troubleshooting
 - Auth errors: run `twenty auth login` again and ensure the API key has the required permissions.
