@@ -3,13 +3,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
+import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
 
 @Injectable()
 export class BillingWebhookSubscriptionScheduleService {
@@ -29,6 +29,24 @@ export class BillingWebhookSubscriptionScheduleService {
       | Stripe.SubscriptionScheduleCanceledEvent.Data,
   ) {
     const schedule = data.object as Stripe.SubscriptionSchedule;
+
+    if (
+      isDefined(schedule.released_subscription) &&
+      schedule.status === 'released'
+    ) {
+      await this.billingSubscriptionRepository.update(
+        { stripeSubscriptionId: schedule.released_subscription },
+        {
+          phases: [],
+        },
+      );
+
+      return {
+        stripeSubscriptionId: schedule.released_subscription,
+        phasesCount: 0,
+        scheduleId: schedule.id,
+      };
+    }
 
     if (!isDefined(schedule.subscription)) {
       throw new Error('Subscription is not defined');

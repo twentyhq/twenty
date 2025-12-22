@@ -1,12 +1,20 @@
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type DatumId } from '@nivo/pie';
 import { renderHook } from '@testing-library/react';
 import { usePieChartData } from '../usePieChartData';
+
+const mockUseRecoilComponentValue = jest.fn();
+jest.mock(
+  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  () => ({
+    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
+  }),
+);
 
 describe('usePieChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseRecoilComponentValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
@@ -109,20 +117,91 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[1].colorScheme.name).toBe('blue');
   });
 
-  it('should memoize calculations', () => {
-    const { result, rerender } = renderHook(
-      () =>
-        usePieChartData({
-          data: mockData,
-          colorRegistry: mockColorRegistry,
-        }),
-      { initialProps: { hoveredSliceId: null as DatumId | null } },
+  it('should return legend items from all data', () => {
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
     );
 
-    const firstEnrichedData = result.current.enrichedData;
+    expect(result.current.legendItems).toHaveLength(3);
+    expect(result.current.legendItems[0]).toMatchObject({
+      id: 'item1',
+      label: 'item1',
+      color: 'redSolid',
+    });
+  });
 
-    rerender({ hoveredSliceId: null as DatumId | null });
+  it('should filter enriched data based on hidden legend ids', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item2']);
 
-    expect(result.current.enrichedData).toBe(firstEnrichedData);
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(2);
+    expect(result.current.enrichedData.map((d) => d.id)).toEqual([
+      'item1',
+      'item3',
+    ]);
+  });
+
+  it('should maintain colors after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item1']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData[0].colorScheme.name).toBe('blue');
+  });
+
+  it('should keep all items in legend even when filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item1', 'item2']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(1);
+    expect(result.current.legendItems).toHaveLength(3);
+  });
+
+  it('should preserve original percentages after filtering', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['item2']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(2);
+    expect(result.current.enrichedData[0].percentage).toBe(30);
+    expect(result.current.enrichedData[1].percentage).toBe(20);
+  });
+
+  it('should handle hidden ids that do not exist in data', () => {
+    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+
+    const { result } = renderHook(() =>
+      usePieChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+      }),
+    );
+
+    expect(result.current.enrichedData).toHaveLength(3);
   });
 });

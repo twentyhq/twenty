@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Diagnostic disk space issue
         run: df -h
       - name: Front / Write .env
@@ -53,7 +53,7 @@ jobs:
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Save storybook build cache
-        uses: ./.github/workflows/actions/save-cache
+        uses: ./.github/actions/save-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
@@ -74,11 +74,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Restore storybook build cache
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
       - name: Front / Write .env
@@ -107,7 +107,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - uses: actions/download-artifact@v4
         with:
           pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
@@ -132,9 +132,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Restore storybook build cache
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
@@ -165,26 +165,48 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Restore ${{ matrix.task }} cache
         id: restore-task-cache
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.TASK_CACHE_KEY }}
       - name: Reset .env
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: reset:env
       - name: Run ${{ matrix.task }} task
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
       - name: Save ${{ matrix.task }} cache
-        uses: ./.github/workflows/actions/save-cache
+        uses: ./.github/actions/save-cache
         with:
           key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
+  front-build:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=10240"
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Front / Write .env
+        run: npx nx reset:env twenty-front
+      - name: Build frontend
+        run: npx nx build twenty-front
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -193,6 +215,7 @@ jobs:
       [
         changed-files-check,
         front-task,
+        front-build,
         front-chromatic-deployment,
         merge-reports-and-check-coverage,
         front-sb-test,

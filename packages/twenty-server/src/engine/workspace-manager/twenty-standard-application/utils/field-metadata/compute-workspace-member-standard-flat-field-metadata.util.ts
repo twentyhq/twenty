@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   NumberDataType,
   RelationType,
@@ -11,7 +12,11 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
+  WorkspaceMemberNumberFormatEnum,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   now,
@@ -20,7 +25,10 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'workspaceMember'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'workspaceMember', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'workspaceMember'>,
   FlatFieldMetadata
 > => ({
@@ -55,7 +63,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -74,7 +82,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -92,7 +100,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -378,6 +386,12 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -388,6 +402,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'assignedTasks',
       label: 'Assigned tasks',
       description: 'Tasks assigned to the workspace member',
@@ -408,6 +424,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the workspace member',
@@ -428,6 +446,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'accountOwnerForCompanies',
       label: 'Account Owner For Companies',
       description: 'Account owner for companies',
@@ -444,31 +464,12 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  authoredAttachments: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'authoredAttachments',
-      label: 'Authored attachments',
-      description: 'Attachments created by the workspace member',
-      icon: 'IconFileImport',
-      isSystem: true,
-      isNullable: false,
-      targetObjectName: 'attachment',
-      targetFieldName: 'author',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   connectedAccounts: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'connectedAccounts',
       label: 'Connected accounts',
       description: 'Connected accounts',
@@ -489,6 +490,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageParticipants',
       label: 'Message Participants',
       description: 'Message Participants',
@@ -509,6 +512,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'blocklist',
       label: 'Blocklist',
       description: 'Blocklisted handles',
@@ -529,6 +534,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
@@ -549,6 +556,8 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Events',
       description: 'Events linked to the workspace member',

@@ -57,8 +57,7 @@ export const PaymentSuccess = () => {
       }
 
       throw new Error(
-        "We're waiting for a confirmation from our payment provider (Stripe).\n" +
-          'Please try again in a few seconds, sorry.',
+        t`We're waiting for a confirmation from our payment provider (Stripe).\nPlease try again in a few seconds, sorry.`,
       );
     } catch (error) {
       setIsLoading(false);
@@ -72,8 +71,8 @@ export const PaymentSuccess = () => {
         <OnboardingModalCircularIcon Icon={IconCheck} />
       </AnimatedEaseIn>
       <StyledTitleContainer>
-        <Title noMarginTop>All set!</Title>
-        <SubTitle>Your account has been activated.</SubTitle>
+        <Title noMarginTop>{t`All set!`}</Title>
+        <SubTitle>{t`Your account has been activated.`}</SubTitle>
       </StyledTitleContainer>
       <MainButton
         title={t`Start`}

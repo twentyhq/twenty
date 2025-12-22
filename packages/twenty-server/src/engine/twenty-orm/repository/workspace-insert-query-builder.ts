@@ -115,6 +115,40 @@ export class WorkspaceInsertQueryBuilder<
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       });
 
+      // Fix overwrites for composite fields - valuesSet contains formatted/flattened column names
+      // but overwrites was computed before formatData, missing composite field columns
+      if (
+        isDefined(this.expressionMap.onUpdate?.overwrite) &&
+        isDefined(this.expressionMap.valuesSet)
+      ) {
+        const valuesArray = Array.isArray(this.expressionMap.valuesSet)
+          ? this.expressionMap.valuesSet
+          : [this.expressionMap.valuesSet];
+
+        const allValueKeys = new Set(
+          valuesArray.flatMap((value) => Object.keys(value)),
+        );
+
+        const mainAliasMetadata = this.expressionMap.mainAlias?.metadata;
+
+        if (mainAliasMetadata) {
+          const missingColumns = mainAliasMetadata.columns
+            .filter(
+              (col) =>
+                allValueKeys.has(col.databaseName) &&
+                !this.expressionMap.onUpdate.overwrite!.includes(
+                  col.databaseName,
+                ),
+            )
+            .map((col) => col.databaseName);
+
+          this.expressionMap.onUpdate.overwrite = [
+            ...this.expressionMap.onUpdate.overwrite,
+            ...missingColumns,
+          ];
+        }
+      }
+
       const mainAliasTarget = this.getMainAliasTarget();
 
       const objectMetadata = getObjectMetadataFromEntityTarget(
@@ -226,7 +260,12 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext,
       );
 
-      throw computeTwentyORMException(error, objectMetadata);
+      throw await computeTwentyORMException(
+        error,
+        objectMetadata,
+        this.connection.manager as WorkspaceEntityManager,
+        this.internalContext,
+      );
     }
   }
 

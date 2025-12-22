@@ -11,7 +11,6 @@ type FieldMetadataTypesNotTestedForFilterInputValidation =
 type FieldMetadataTypesNotTestedForCreateInputValidation =
   | 'TS_VECTOR'
   | 'ACTOR'
-  | 'POSITION'
   | 'NUMERIC';
 
 export type FieldMetadataTypesToTestForCreateInputValidation = Exclude<

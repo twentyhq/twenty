@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -98,6 +99,7 @@ const PhoneInputWithContext = ({
 const meta: Meta<typeof PhoneInputWithContext> = {
   title: 'UI/Input/PhonesFieldInput',
   component: PhoneInputWithContext,
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;

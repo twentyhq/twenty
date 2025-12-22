@@ -17,7 +17,7 @@ export const computeStandardWorkflowViewFields = (
         fieldName: 'name',
         position: 0,
         isVisible: true,
-        size: 210,
+        size: 150,
       },
     }),
     allWorkflowsStatuses: createStandardViewFieldFlatMetadata({

@@ -14,28 +14,36 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { SkillsService } from 'src/engine/core-modules/skills/skills.service';
 import {
   type ToolIndexEntry,
   ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
-  AGENT_SEARCH_TOOL_NAME,
-  createAgentSearchTool,
+  createLoadSkillTool,
   createLoadToolsTool,
   type DynamicToolStore,
+  LOAD_SKILL_TOOL_NAME,
   LOAD_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import {
+  extractCodeInterpreterFiles,
+  type ExtractedFile,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import {
+  type AIModelConfig,
+  ModelProvider,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -44,17 +52,15 @@ export type ChatExecutionOptions = {
   userWorkspaceId: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
+  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   preloadedTools: string[];
-  initialAgents: string[];
+  modelConfig: AIModelConfig;
 };
 
-const INITIAL_AGENTS_LIMIT = 2;
-
-// Common tools to pre-load for quick access
 const COMMON_PRELOAD_TOOLS = ['http_request', 'search_help_center'];
 
 @Injectable()
@@ -63,7 +69,7 @@ export class ChatExecutionService {
 
   constructor(
     private readonly toolRegistry: ToolRegistryService,
-    private readonly agentService: AgentService,
+    private readonly skillsService: SkillsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AIBillingService,
     private readonly agentActorContextService: AgentActorContextService,
@@ -75,30 +81,36 @@ export class ChatExecutionService {
     userWorkspaceId,
     messages,
     browsingContext,
+    onCodeExecutionUpdate,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId } =
+    const { actorContext, roleId, userId } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
       );
 
-    const toolContext = { workspaceId: workspace.id, roleId, actorContext };
-
-    const lastUserMessage = this.getLastUserMessage(messages);
+    const toolContext = {
+      workspaceId: workspace.id,
+      roleId,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      onCodeExecutionUpdate,
+    };
 
     const contextString = browsingContext
       ? this.buildContextFromBrowsingContext(workspace, browsingContext)
       : undefined;
 
-    const [toolCatalog, initialAgents] = await Promise.all([
-      this.toolRegistry.buildToolIndex(workspace.id, roleId),
-      this.agentService.searchAgents(lastUserMessage, workspace.id, {
-        limit: INITIAL_AGENTS_LIMIT,
-      }),
-    ]);
+    const toolCatalog = await this.toolRegistry.buildToolIndex(
+      workspace.id,
+      roleId,
+    );
+
+    const skillCatalog = this.skillsService.getAllSkills();
 
     this.logger.log(
-      `Built tool catalog with ${toolCatalog.length} tools, ${initialAgents.length} agents`,
+      `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
@@ -114,6 +126,10 @@ export class ChatExecutionService {
 
     const registeredModel =
       this.aiModelRegistryService.getDefaultPerformanceModel();
+
+    const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
+      registeredModel.modelId,
+    );
 
     const activeTools: ToolSet = {
       ...preloadedTools,
@@ -132,16 +148,33 @@ export class ChatExecutionService {
           this.logger.log(`Dynamically loaded tools: ${toolNames.join(', ')}`);
         },
       ),
-      [AGENT_SEARCH_TOOL_NAME]: createAgentSearchTool((query, options) =>
-        this.agentService.searchAgents(query, workspace.id, options),
+      [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
+        this.skillsService.getSkillsByNames(skillNames),
       ),
     };
 
+    const { processedMessages, extractedFiles } =
+      extractCodeInterpreterFiles(messages);
+
+    let storedFiles: Array<{
+      filename: string;
+      storagePath: string;
+      url: string;
+    }> = [];
+
+    if (extractedFiles.length > 0) {
+      storedFiles = await this.storeExtractedFiles(
+        extractedFiles,
+        workspace.id,
+      );
+    }
+
     const systemPrompt = this.buildSystemPrompt(
       toolCatalog,
-      initialAgents,
+      skillCatalog,
       preloadedToolNames,
       contextString,
+      storedFiles,
     );
 
     this.logger.log(
@@ -151,7 +184,7 @@ export class ChatExecutionService {
     const stream = streamText({
       model: registeredModel.model,
       system: systemPrompt,
-      messages: convertToModelMessages(messages),
+      messages: convertToModelMessages(processedMessages),
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
@@ -187,7 +220,7 @@ export class ChatExecutionService {
     return {
       stream,
       preloadedTools: preloadedToolNames,
-      initialAgents: initialAgents.map((a) => a.name),
+      modelConfig,
     };
   }
 
@@ -247,44 +280,24 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getLastUserMessage(
-    messages: UIMessage<unknown, UIDataTypes, UITools>[],
-  ): string {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const message = messages[i];
-
-      if (message.role === 'user') {
-        const textPart = message.parts.find((part) => part.type === 'text');
-
-        if (textPart && 'text' in textPart) {
-          return textPart.text;
-        }
-      }
-    }
-
-    return '';
-  }
-
   private buildSystemPrompt(
     toolCatalog: ToolIndexEntry[],
-    agents: AgentEntity[],
+    skillCatalog: Array<{ name: string; label: string; description: string }>,
     preloadedTools: string[],
     contextString?: string,
+    storedFiles?: Array<{ filename: string; storagePath: string; url: string }>,
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
-    if (agents.length > 0) {
-      const skillsSection = agents
-        .map((agent) => `## ${agent.label} Expertise\n${agent.prompt}`)
-        .join('\n\n');
-
-      parts.push(`\nYou have the following expertise:\n\n${skillsSection}`);
-    }
-
     parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
+    parts.push(this.buildSkillCatalogSection(skillCatalog));
+
+    if (storedFiles && storedFiles.length > 0) {
+      parts.push(this.buildUploadedFilesSection(storedFiles));
+    }
 
     if (contextString) {
       parts.push(
@@ -293,6 +306,50 @@ export class ChatExecutionService {
     }
 
     return parts.join('\n');
+  }
+
+  private buildUploadedFilesSection(
+    storedFiles: Array<{ filename: string; storagePath: string; url: string }>,
+  ): string {
+    const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
+
+    const filesJson = JSON.stringify(
+      storedFiles.map((f) => ({ filename: f.filename, url: f.url })),
+    );
+
+    return `
+## Uploaded Files
+
+The user has uploaded the following files:
+${fileList}
+
+**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
+When calling code_interpreter, include the files parameter with these values:
+\`\`\`json
+${filesJson}
+\`\`\`
+
+In your Python code, access files at \`/home/user/{filename}\`.`;
+  }
+
+  private buildSkillCatalogSection(
+    skillCatalog: Array<{ name: string; label: string; description: string }>,
+  ): string {
+    if (skillCatalog.length === 0) {
+      return '';
+    }
+
+    const skillsList = skillCatalog
+      .map((skill) => `- \`${skill.name}\`: ${skill.description}`)
+      .join('\n');
+
+    return `
+## Available Skills
+
+Skills provide detailed expertise for specialized tasks. Load a skill before attempting complex operations.
+To load a skill, call \`${LOAD_SKILL_TOOL_NAME}\` with the skill name(s).
+
+${skillsList}`;
   }
 
   private buildToolCatalogSection(
@@ -329,6 +386,7 @@ ${preloadedTools.length > 0 ? preloadedTools.map((t) => `- \`${t}\` ✓`).join('
       'database',
       'action',
       'workflow',
+      'dashboard',
       'metadata',
       'view',
     ];
@@ -357,8 +415,7 @@ ${tools
 ### How to Use Tools
 1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet
 2. **Pre-loaded tools** (marked with ✓): Use directly
-3. **Other tools**: First call \`${LOAD_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\`, then use the tool
-4. **Agent expertise**: Call \`${AGENT_SEARCH_TOOL_NAME}\` to load specialized knowledge for workflows, etc.`);
+3. **Other tools**: First call \`${LOAD_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\`, then use the tool`);
 
     return sections.join('\n');
   }
@@ -375,6 +432,8 @@ ${tools
         return 'Metadata Tools (schema management)';
       case 'view':
         return 'View Tools (query views)';
+      case 'dashboard':
+        return 'Dashboard Tools (create/manage dashboards)';
       default:
         return category;
     }
@@ -390,5 +449,18 @@ ${tools
         // Other providers don't have native web search
         return {};
     }
+  }
+
+  private async storeExtractedFiles(
+    files: ExtractedFile[],
+    _workspaceId: string,
+  ): Promise<Array<{ filename: string; storagePath: string; url: string }>> {
+    // Files are already uploaded and have URLs, just return them with their info
+    // The code interpreter tool will download them when needed
+    return files.map((file) => ({
+      filename: file.filename,
+      storagePath: file.filename,
+      url: file.url,
+    }));
   }
 }

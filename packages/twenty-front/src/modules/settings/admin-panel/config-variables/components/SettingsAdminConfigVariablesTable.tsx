@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { SettingsAdminConfigVariablesRow } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -20,8 +21,8 @@ export const SettingsAdminConfigVariablesTable = ({
   return (
     <Table>
       <TableRow gridAutoColumns="5fr 3fr 1fr">
-        <TableHeader>Name</TableHeader>
-        <TableHeader align="right">Value</TableHeader>
+        <TableHeader>{t`Name`}</TableHeader>
+        <TableHeader align="right">{t`Value`}</TableHeader>
         <TableHeader align="right"></TableHeader>
       </TableRow>
       <StyledTableBody>

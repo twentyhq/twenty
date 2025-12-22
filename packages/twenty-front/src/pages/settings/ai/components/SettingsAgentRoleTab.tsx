@@ -84,7 +84,7 @@ export const SettingsAgentRoleTab = ({
     setIsCreatingRole(true);
     try {
       const roleId = v4();
-      const roleName = `${agentLabel} Agent Role`;
+      const roleName = t`${agentLabel} Agent Role`;
 
       const { data } = await createRole({
         variables: {

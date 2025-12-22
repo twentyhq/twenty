@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
+import { type ObjectRecordNonDestructiveEvent } from 'twenty-shared/database-events';
 
-import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

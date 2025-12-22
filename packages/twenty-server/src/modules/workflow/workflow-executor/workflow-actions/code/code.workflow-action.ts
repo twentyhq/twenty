@@ -48,12 +48,12 @@ export class CodeWorkflowAction implements WorkflowAction {
       const { workspaceId } = runInfo;
 
       const result =
-        await this.serverlessFunctionService.executeOneServerlessFunction(
-          workflowActionInput.serverlessFunctionId,
+        await this.serverlessFunctionService.executeOneServerlessFunction({
+          id: workflowActionInput.serverlessFunctionId,
           workspaceId,
-          workflowActionInput.serverlessFunctionInput,
-          workflowActionInput.serverlessFunctionVersion,
-        );
+          payload: workflowActionInput.serverlessFunctionInput,
+          version: workflowActionInput.serverlessFunctionVersion,
+        });
 
       if (result.error) {
         return { error: result.error.errorMessage };

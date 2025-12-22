@@ -1,14 +1,3 @@
-import { type SyncableEntityOptions } from '@/application/syncable-entity-options.type';
+import { type Application } from 'twenty-shared/application';
 
-type ApplicationVariable = SyncableEntityOptions & {
-  value?: string;
-  description?: string;
-  isSecret?: boolean;
-};
-
-export type ApplicationConfig = SyncableEntityOptions & {
-  displayName?: string;
-  description?: string;
-  icon?: string;
-  applicationVariables?: Record<string, ApplicationVariable>;
-};
+export type ApplicationConfig = Application;

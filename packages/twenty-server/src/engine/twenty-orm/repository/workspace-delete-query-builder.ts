@@ -140,7 +140,7 @@ export class WorkspaceDeleteQueryBuilder<
         affected: result.affected,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      throw await computeTwentyORMException(error);
     }
   }
 

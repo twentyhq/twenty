@@ -143,7 +143,7 @@ export class ApiKeyService {
     await this.validateApiKey(apiKeyId, workspaceId);
 
     const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.ACCESS,
+      JwtTokenTypeEnum.API_KEY,
       workspaceId,
     );
 

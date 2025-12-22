@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'favorite'>, 'context'>): Record<
-  AllStandardObjectFieldName<'favorite'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'favorite', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'favorite'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -55,7 +56,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -74,7 +75,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -92,7 +93,7 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -119,11 +120,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  view: createStandardFieldFlatMetadata({
+  viewId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'view',
+      fieldName: 'viewId',
       type: FieldMetadataType.UUID,
       label: 'ViewId',
       description: 'ViewId',
@@ -141,6 +142,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'forWorkspaceMember',
       label: 'Workspace Member',
       description: 'Favorite workspace member',
@@ -163,6 +166,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'person',
       label: 'Person',
       description: 'Favorite person',
@@ -185,6 +190,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'company',
       label: 'Company',
       description: 'Favorite company',
@@ -207,6 +214,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'opportunity',
       label: 'Opportunity',
       description: 'Favorite opportunity',
@@ -229,6 +238,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflow',
       label: 'Workflow',
       description: 'Favorite workflow',
@@ -251,6 +262,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflowVersion',
       label: 'Workflow',
       description: 'Favorite workflow version',
@@ -273,6 +286,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workflowRun',
       label: 'Workflow',
       description: 'Favorite workflow run',
@@ -295,6 +310,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'task',
       label: 'Task',
       description: 'Favorite task',
@@ -317,6 +334,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'note',
       label: 'Note',
       description: 'Favorite note',
@@ -339,6 +358,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'dashboard',
       label: 'Dashboard',
       description: 'Favorite dashboard',
@@ -361,6 +382,8 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favoriteFolder',
       label: 'Favorite Folder',
       description: 'The folder this favorite belongs to',
@@ -372,28 +395,6 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'favoriteFolderId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  custom: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'custom',
-      label: 'Custom',
-      description: 'Favorite custom object',
-      icon: 'IconHeart',
-      isNullable: true,
-      targetObjectName: 'note',
-      targetFieldName: 'favorites',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

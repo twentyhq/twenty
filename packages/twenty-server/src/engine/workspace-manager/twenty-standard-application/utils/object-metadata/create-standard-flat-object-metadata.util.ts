@@ -19,7 +19,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
-        standardId: STANDARD_OBJECTS.attachment.universalIdentifier,
         nameSingular: 'attachment',
         namePlural: 'attachments',
         labelSingular: 'Attachment',
@@ -46,7 +45,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.blocklist.universalIdentifier,
-        standardId: STANDARD_OBJECTS.blocklist.universalIdentifier,
         nameSingular: 'blocklist',
         namePlural: 'blocklists',
         labelSingular: 'Blocklist',
@@ -76,8 +74,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
-        standardId:
           STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
         nameSingular: 'calendarChannelEventAssociation',
         namePlural: 'calendarChannelEventAssociations',
@@ -110,7 +106,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarChannel.universalIdentifier,
-        standardId: STANDARD_OBJECTS.calendarChannel.universalIdentifier,
         nameSingular: 'calendarChannel',
         namePlural: 'calendarChannels',
         labelSingular: 'Calendar Channel',
@@ -142,8 +137,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
-        standardId:
-          STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
         nameSingular: 'calendarEventParticipant',
         namePlural: 'calendarEventParticipants',
         labelSingular: 'Calendar event participant',
@@ -174,7 +167,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-        standardId: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         nameSingular: 'calendarEvent',
         namePlural: 'calendarEvents',
         labelSingular: 'Calendar event',
@@ -203,7 +195,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
-        standardId: STANDARD_OBJECTS.company.universalIdentifier,
         nameSingular: 'company',
         namePlural: 'companies',
         labelSingular: 'Company',
@@ -212,6 +203,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconBuildingSkyscraper',
         isSearchable: true,
         shortcut: 'C',
+        duplicateCriteria: [['name'], ['domainNamePrimaryLinkUrl']],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -235,7 +227,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.connectedAccount.universalIdentifier,
-        standardId: STANDARD_OBJECTS.connectedAccount.universalIdentifier,
         nameSingular: 'connectedAccount',
         namePlural: 'connectedAccounts',
         labelSingular: 'Connected Account',
@@ -243,7 +234,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A connected account',
         icon: 'IconAt',
         isSystem: true,
-        isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'handle',
       },
       workspaceId,
@@ -263,7 +253,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.dashboard.universalIdentifier,
-        standardId: STANDARD_OBJECTS.dashboard.universalIdentifier,
         nameSingular: 'dashboard',
         namePlural: 'dashboards',
         labelSingular: 'Dashboard',
@@ -291,7 +280,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,
-        standardId: STANDARD_OBJECTS.favorite.universalIdentifier,
         nameSingular: 'favorite',
         namePlural: 'favorites',
         labelSingular: 'Favorite',
@@ -322,7 +310,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
-        standardId: STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
         nameSingular: 'favoriteFolder',
         namePlural: 'favoriteFolders',
         labelSingular: 'Favorite Folder',
@@ -352,8 +339,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
-        standardId:
           STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
         nameSingular: 'messageChannelMessageAssociation',
         namePlural: 'messageChannelMessageAssociations',
@@ -386,7 +371,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.messageChannel.universalIdentifier,
-        standardId: STANDARD_OBJECTS.messageChannel.universalIdentifier,
         nameSingular: 'messageChannel',
         namePlural: 'messageChannels',
         labelSingular: 'Message Channel',
@@ -417,7 +401,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.messageFolder.universalIdentifier,
-        standardId: STANDARD_OBJECTS.messageFolder.universalIdentifier,
         nameSingular: 'messageFolder',
         namePlural: 'messageFolders',
         labelSingular: 'Message Folder',
@@ -449,7 +432,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.messageParticipant.universalIdentifier,
-        standardId: STANDARD_OBJECTS.messageParticipant.universalIdentifier,
         nameSingular: 'messageParticipant',
         namePlural: 'messageParticipants',
         labelSingular: 'Message Participant',
@@ -480,7 +462,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
-        standardId: STANDARD_OBJECTS.messageThread.universalIdentifier,
         nameSingular: 'messageThread',
         namePlural: 'messageThreads',
         labelSingular: 'Message Thread',
@@ -489,7 +470,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconMessage',
         isSystem: true,
         isAuditLogged: false,
-        isUIReadOnly: true,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -509,7 +489,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
-        standardId: STANDARD_OBJECTS.message.universalIdentifier,
         nameSingular: 'message',
         namePlural: 'messages',
         labelSingular: 'Message',
@@ -518,7 +497,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconMessage',
         isSystem: true,
         isAuditLogged: false,
-        isUIReadOnly: true,
         labelIdentifierFieldMetadataName: 'subject',
       },
       workspaceId,
@@ -538,7 +516,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
-        standardId: STANDARD_OBJECTS.note.universalIdentifier,
         nameSingular: 'note',
         namePlural: 'notes',
         labelSingular: 'Note',
@@ -566,7 +543,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,
-        standardId: STANDARD_OBJECTS.noteTarget.universalIdentifier,
         nameSingular: 'noteTarget',
         namePlural: 'noteTargets',
         labelSingular: 'Note Target',
@@ -593,7 +569,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.opportunity.universalIdentifier,
-        standardId: STANDARD_OBJECTS.opportunity.universalIdentifier,
         nameSingular: 'opportunity',
         namePlural: 'opportunities',
         labelSingular: 'Opportunity',
@@ -621,7 +596,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
-        standardId: STANDARD_OBJECTS.person.universalIdentifier,
         nameSingular: 'person',
         namePlural: 'people',
         labelSingular: 'Person',
@@ -630,6 +604,11 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconUser',
         isSearchable: true,
         shortcut: 'P',
+        duplicateCriteria: [
+          ['nameFirstName', 'nameLastName'],
+          ['linkedinLinkPrimaryLinkUrl'],
+          ['emailsPrimaryEmail'],
+        ],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -649,7 +628,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
-        standardId: STANDARD_OBJECTS.task.universalIdentifier,
         nameSingular: 'task',
         namePlural: 'tasks',
         labelSingular: 'Task',
@@ -677,7 +655,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,
-        standardId: STANDARD_OBJECTS.taskTarget.universalIdentifier,
         nameSingular: 'taskTarget',
         namePlural: 'taskTargets',
         labelSingular: 'Task Target',
@@ -708,7 +685,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-        standardId: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
         nameSingular: 'timelineActivity',
         namePlural: 'timelineActivities',
         labelSingular: 'Timeline Activity',
@@ -717,6 +693,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
           'Aggregated / filtered event to be displayed on the timeline',
         icon: 'IconTimelineEvent',
         isSystem: true,
+        isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -736,14 +713,12 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
-        standardId: STANDARD_OBJECTS.workflow.universalIdentifier,
         nameSingular: 'workflow',
         namePlural: 'workflows',
         labelSingular: 'Workflow',
         labelPlural: 'Workflows',
         description: 'A workflow',
         icon: 'IconSettingsAutomation',
-        isSearchable: true,
         shortcut: 'W',
         labelIdentifierFieldMetadataName: 'name',
       },
@@ -767,8 +742,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
-        standardId:
           STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
         nameSingular: 'workflowAutomatedTrigger',
         namePlural: 'workflowAutomatedTriggers',
@@ -796,14 +769,15 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
-        standardId: STANDARD_OBJECTS.workflowRun.universalIdentifier,
         nameSingular: 'workflowRun',
         namePlural: 'workflowRuns',
         labelSingular: 'Workflow Run',
         labelPlural: 'Workflow Runs',
         description: 'A workflow run',
         icon: 'IconHistoryToggle',
-        isSearchable: true,
+        isSystem: true,
+        isAuditLogged: false,
+        isUIReadOnly: true,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -827,14 +801,14 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-        standardId: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         nameSingular: 'workflowVersion',
         namePlural: 'workflowVersions',
         labelSingular: 'Workflow Version',
         labelPlural: 'Workflow Versions',
         description: 'A workflow version',
         icon: 'IconVersions',
-        isSearchable: true,
+        isSystem: true,
+        isUIReadOnly: true,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -858,7 +832,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.workspaceMember.universalIdentifier,
-        standardId: STANDARD_OBJECTS.workspaceMember.universalIdentifier,
         nameSingular: 'workspaceMember',
         namePlural: 'workspaceMembers',
         labelSingular: 'Workspace Member',
@@ -866,6 +839,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         description: 'A workspace member',
         icon: 'IconUserCircle',
         isSystem: true,
+        isSearchable: true,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,

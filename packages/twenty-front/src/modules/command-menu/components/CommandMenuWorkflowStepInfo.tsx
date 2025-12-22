@@ -97,9 +97,9 @@ export const CommandMenuWorkflowStepInfo = ({
       ? isTrigger
         ? (stepDefinition.definition.name ??
           (stepDefinition.definition.type === 'MANUAL'
-            ? 'Launch manually'
-            : 'Trigger'))
-        : (stepDefinition.definition.name ?? 'Action')
+            ? t`Launch manually`
+            : t`Trigger`))
+        : (stepDefinition.definition.name ?? t`Action`)
       : '';
 
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
@@ -135,7 +135,7 @@ export const CommandMenuWorkflowStepInfo = ({
         actionType: stepDefinition.definition.type,
       });
 
-  const headerType = isTrigger ? 'Trigger' : 'Action';
+  const headerType = isTrigger ? t`Trigger` : t`Action`;
 
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 

@@ -24,7 +24,7 @@ on:
   pull_request:
     paths:
       - 'packages/twenty-docs/**'
-      - 'crowdin.yml'
+      - 'crowdin-docs.yml'
       - '.github/workflows/docs-i18n-pull.yaml'
 
 concurrency:
@@ -96,9 +96,14 @@ jobs:
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
+          config: 'crowdin-docs.yml'
+          # Only download languages supported by Mintlify (see supported-languages.ts)
+          # Using multiple -l flags since download_language only accepts single language
+          download_translations_args: '-l fr -l ar -l cs -l de -l es -l it -l ja -l ko -l pt -l ro -l ru -l tr -l zh-CN'
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          CROWDIN_PROJECT_ID: '1'
+          # Docs translations project
+          CROWDIN_PROJECT_ID: '2'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Fix file permissions

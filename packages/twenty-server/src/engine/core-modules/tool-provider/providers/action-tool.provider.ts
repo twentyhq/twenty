@@ -9,11 +9,15 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  type Tool,
+  type ToolExecutionContext,
+} from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
@@ -24,6 +28,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
+    private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -35,6 +40,13 @@ export class ActionToolProvider implements ToolProvider {
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
     const tools: ToolSet = {};
 
+    const executionContext: ToolExecutionContext = {
+      workspaceId: context.workspaceId,
+      userId: context.userId,
+      userWorkspaceId: context.userWorkspaceId,
+      onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+    };
+
     const hasHttpPermission = await this.permissionsService.hasToolPermission(
       context.rolePermissionConfig,
       context.workspaceId,
@@ -44,7 +56,7 @@ export class ActionToolProvider implements ToolProvider {
     if (hasHttpPermission) {
       tools['http_request'] = this.createToolEntry(
         this.httpTool,
-        context.workspaceId,
+        executionContext,
       );
     }
 
@@ -57,24 +69,38 @@ export class ActionToolProvider implements ToolProvider {
     if (hasEmailPermission) {
       tools['send_email'] = this.createToolEntry(
         this.sendEmailTool,
-        context.workspaceId,
+        executionContext,
       );
     }
 
     tools['search_help_center'] = this.createToolEntry(
       this.searchHelpCenterTool,
-      context.workspaceId,
+      executionContext,
     );
+
+    const hasCodeInterpreterPermission =
+      await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.CODE_INTERPRETER_TOOL,
+      );
+
+    if (hasCodeInterpreterPermission) {
+      tools['code_interpreter'] = this.createToolEntry(
+        this.codeInterpreterTool,
+        executionContext,
+      );
+    }
 
     return tools;
   }
 
-  private createToolEntry(tool: Tool, workspaceId: string) {
+  private createToolEntry(tool: Tool, context: ToolExecutionContext) {
     return {
       description: tool.description,
       inputSchema: tool.inputSchema,
       execute: async (parameters: { input: ToolInput }) =>
-        tool.execute(parameters.input, workspaceId),
+        tool.execute(parameters.input, context),
     };
   }
 }

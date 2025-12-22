@@ -115,6 +115,7 @@ export class GraphQLConfigService
             user,
             workspace,
             apiKey,
+            application,
             workspaceMemberId,
             userWorkspaceId,
           } = context.req;
@@ -127,6 +128,7 @@ export class GraphQLConfigService
             user,
             workspace,
             apiKey,
+            application,
             workspaceMemberId,
             userWorkspaceId,
           });

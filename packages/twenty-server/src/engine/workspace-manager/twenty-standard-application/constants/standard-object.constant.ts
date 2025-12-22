@@ -48,15 +48,12 @@ export const STANDARD_OBJECTS = {
       },
       name: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.name },
       fullPath: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fullPath },
-      type: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.type },
       fileCategory: {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
       },
       createdBy: {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
       },
-      author: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.author },
-      activity: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.activity },
       task: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.task },
       note: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.note },
       person: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.person },
@@ -68,12 +65,8 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
       },
       workflow: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow },
-      custom: { universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
-      authorIdIndex: {
-        universalIdentifier: 'a7c3e8f2-9b14-4d6a-8e5f-1c2d3b4a5e6f',
-      },
       taskIdIndex: {
         universalIdentifier: 'b8d4f9a3-0c25-4e7b-9f6a-2d3e4c5b6f70',
       },
@@ -391,9 +384,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.domainName,
       },
       address: { universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address },
-      addressOld: {
-        universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
-      },
       employees: { universalIdentifier: COMPANY_STANDARD_FIELD_IDS.employees },
       linkedinLink: {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
@@ -628,8 +618,7 @@ export const STANDARD_OBJECTS = {
       },
       task: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.task },
       note: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.note },
-      view: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view },
-      custom: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.custom },
+      viewId: { universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view },
       favoriteFolder: {
         universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
       },
@@ -1038,7 +1027,6 @@ export const STANDARD_OBJECTS = {
       },
       position: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.position },
       title: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.title },
-      body: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.body },
       bodyV2: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.bodyV2 },
       createdBy: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.createdBy },
       noteTargets: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.noteTargets },
@@ -1098,7 +1086,6 @@ export const STANDARD_OBJECTS = {
       opportunity: {
         universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
       },
-      custom: { universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
       noteIdIndex: {
@@ -1257,14 +1244,12 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-e01d-4144-9d44-789abcdefabc',
       },
       name: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.name },
-      email: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.email },
       emails: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.emails },
       linkedinLink: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.linkedinLink,
       },
       xLink: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.xLink },
       jobTitle: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.jobTitle },
-      phone: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.phone },
       phones: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.phones },
       city: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.city },
       avatarUrl: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.avatarUrl },
@@ -1363,7 +1348,6 @@ export const STANDARD_OBJECTS = {
       },
       position: { universalIdentifier: TASK_STANDARD_FIELD_IDS.position },
       title: { universalIdentifier: TASK_STANDARD_FIELD_IDS.title },
-      body: { universalIdentifier: TASK_STANDARD_FIELD_IDS.body },
       bodyV2: { universalIdentifier: TASK_STANDARD_FIELD_IDS.bodyV2 },
       dueAt: { universalIdentifier: TASK_STANDARD_FIELD_IDS.dueAt },
       status: { universalIdentifier: TASK_STANDARD_FIELD_IDS.status },
@@ -1514,7 +1498,6 @@ export const STANDARD_OBJECTS = {
       opportunity: {
         universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.opportunity,
       },
-      custom: { universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.custom },
     },
     indexes: {
       taskIdIndex: {
@@ -1586,9 +1569,6 @@ export const STANDARD_OBJECTS = {
       targetDashboard: {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetDashboard,
-      },
-      targetCustom: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetCustom,
       },
       linkedRecordCachedName: {
         universalIdentifier:
@@ -1679,9 +1659,6 @@ export const STANDARD_OBJECTS = {
       position: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.position },
       versions: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.versions },
       runs: { universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.runs },
-      eventListeners: {
-        universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
-      },
       automatedTriggers: {
         universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
       },
@@ -1956,10 +1933,6 @@ export const STANDARD_OBJECTS = {
       accountOwnerForCompanies: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
-      },
-      authoredAttachments: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
       },
       connectedAccounts: {
         universalIdentifier:

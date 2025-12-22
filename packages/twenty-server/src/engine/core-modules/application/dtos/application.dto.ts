@@ -13,6 +13,7 @@ import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicatio
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 @ObjectType('Application')
 export class ApplicationDTO {
@@ -42,6 +43,15 @@ export class ApplicationDTO {
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  defaultServerlessFunctionRoleId?: string;
+
+  @IsOptional()
+  @Field(() => RoleDTO, { nullable: true })
+  defaultServerlessFunctionRole?: RoleDTO;
 
   @Field(() => [AgentDTO])
   agents?: AgentDTO[];

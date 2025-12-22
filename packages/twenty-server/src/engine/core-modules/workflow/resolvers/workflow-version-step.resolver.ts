@@ -161,7 +161,7 @@ export class WorkflowVersionStepResolver {
         headers,
         body,
       },
-      workspace.id,
+      { workspaceId: workspace.id },
     );
   }
 }

@@ -5,17 +5,19 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -107,7 +109,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }: {
     payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
-    apiKey?: string;
+    apiKey: ApiKeyEntity | undefined;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -241,8 +243,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
+    const isV2SyncEnabled = this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_V2_ENABLED',
+    );
+
     await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
+      [
+        ...DEFAULT_FEATURE_FLAGS,
+        ...(isV2SyncEnabled
+          ? [FeatureFlagKey.IS_WORKSPACE_CREATION_V2_ENABLED]
+          : []),
+      ],
       workspace.id,
     );
 
@@ -389,7 +400,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
-    apiKey?: string;
+    apiKey: ApiKeyEntity | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -439,7 +450,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           userWorkspaceId,
           workspaceId,
           setting: permission,
-          apiKeyId: apiKey,
+          apiKeyId: apiKey?.id,
         });
 
       if (!hasPermission) {

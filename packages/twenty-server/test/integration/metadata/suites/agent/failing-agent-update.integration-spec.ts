@@ -205,16 +205,16 @@ describe('Agent update should fail', () => {
       gqlFields: 'id name isCustom',
     });
 
-    const dashboardBuilderAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'dashboard-builder' && agent.isCustom === false,
+    const helperAgent = data.findManyAgents.find(
+      (agent) => agent.name === 'helper' && agent.isCustom === false,
     );
 
-    expect(dashboardBuilderAgent).toBeDefined();
+    expect(helperAgent).toBeDefined();
 
     const { errors } = await updateOneAgent({
       expectToFail: true,
       input: {
-        id: dashboardBuilderAgent!.id,
+        id: helperAgent!.id,
         label: 'Attempted Update to Standard Agent',
       },
     });

@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -11,7 +12,7 @@ import { SettingsDevelopersWebhookDetail } from '../../webhooks/components/Setti
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhookDetail',
   component: SettingsDevelopersWebhookDetail,
-  decorators: [PageDecorator],
+  decorators: [I18nFrontDecorator, PageDecorator],
   args: {
     routePath: '/settings/webhooks/:webhookId',
     routeParams: { ':webhookId': '1234' },

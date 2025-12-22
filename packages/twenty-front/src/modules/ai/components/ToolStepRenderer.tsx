@@ -6,6 +6,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
+import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
@@ -141,6 +142,32 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
+  // Special handling for code_interpreter tool
+  if (toolName === 'code_interpreter') {
+    const codeInput = toolInput as { code?: string } | undefined;
+    const codeOutput = output as {
+      result?: {
+        stdout?: string;
+        stderr?: string;
+        exitCode?: number;
+        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+      };
+    } | null;
+
+    const isRunning = !output && !hasError;
+
+    return (
+      <CodeExecutionDisplay
+        code={codeInput?.code ?? ''}
+        stdout={codeOutput?.result?.stdout ?? ''}
+        stderr={codeOutput?.result?.stderr || errorText || ''}
+        exitCode={codeOutput?.result?.exitCode}
+        files={codeOutput?.result?.files}
+        isRunning={isRunning}
+      />
+    );
+  }
+
   if (!output && !hasError) {
     return (
       <StyledContainer>
@@ -163,7 +190,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   const displayMessage = hasError
-    ? 'Tool execution failed'
+    ? t`Tool execution failed`
     : output &&
         typeof output === 'object' &&
         'message' in output &&
@@ -213,13 +240,13 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     isActive={activeTab === 'output'}
                     onClick={() => setActiveTab('output')}
                   >
-                    Output
+                    {t`Output`}
                   </StyledTab>
                   <StyledTab
                     isActive={activeTab === 'input'}
                     onClick={() => setActiveTab('input')}
                   >
-                    Input
+                    {t`Input`}
                   </StyledTab>
                 </StyledTabContainer>
 

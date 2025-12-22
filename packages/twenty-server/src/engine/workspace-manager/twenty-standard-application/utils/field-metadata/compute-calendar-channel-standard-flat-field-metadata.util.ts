@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,7 +20,10 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'calendarChannel'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'calendarChannel', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'calendarChannel'>,
   FlatFieldMetadata
 > => ({
@@ -54,7 +58,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -73,7 +77,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -91,7 +95,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -383,6 +387,8 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'connectedAccount',
       label: 'Connected Account',
       description: 'Connected Account',
@@ -405,6 +411,8 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'calendarChannelEventAssociations',
       label: 'Calendar Channel Event Associations',
       description: 'Calendar Channel Event Associations',

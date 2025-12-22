@@ -1,0 +1,118 @@
+# Weekly translation QA report using Crowdin's native QA checks
+
+name: 'Weekly Translation QA Report'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday at 9am UTC
+  workflow_dispatch: # Allow manual trigger
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  qa_report:
+    name: Generate QA Report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Generate QA report from Crowdin
+        id: generate_report
+        run: |
+          npx ts-node packages/twenty-utils/translation-qa-report.ts || true
+          if [ -f TRANSLATION_QA_REPORT.md ]; then
+            echo "report_generated=true" >> $GITHUB_OUTPUT
+            # Count critical issues (exclude spellcheck)
+            CRITICAL=$(grep -oP '⚠️\s+\K\d+' TRANSLATION_QA_REPORT.md 2>/dev/null || echo "0")
+            echo "critical_issues=$CRITICAL" >> $GITHUB_OUTPUT
+          else
+            echo "report_generated=false" >> $GITHUB_OUTPUT
+            echo "critical_issues=0" >> $GITHUB_OUTPUT
+          fi
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Create QA branch and commit report
+        if: steps.generate_report.outputs.report_generated == 'true'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+
+          BRANCH_NAME="i18n-qa-report-$(date +%Y-%m-%d)"
+          git checkout -B $BRANCH_NAME
+
+          git add TRANSLATION_QA_REPORT.md
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "docs: weekly translation QA report"
+            git push origin HEAD:$BRANCH_NAME --force
+            echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          else
+            echo "No changes to commit"
+            echo "BRANCH_NAME=" >> $GITHUB_ENV
+          fi
+
+      - name: Create pull request
+        if: steps.generate_report.outputs.report_generated == 'true' && env.BRANCH_NAME != ''
+        run: |
+          CRITICAL="${{ steps.generate_report.outputs.critical_issues }}"
+
+          BODY=$(cat <<EOF
+          ## Weekly Translation QA Report
+
+          **Critical issues (excluding spellcheck): $CRITICAL**
+
+          📊 **View in Crowdin**: https://twenty.crowdin.com/u/projects/1/all?filter=qa-issue
+
+          ### For AI-Assisted Fixing
+
+          Open this PR in Cursor and say:
+
+          > "Fix the translation QA issues using the Crowdin API"
+
+          The AI can help fix:
+          - ✅ Variables mismatch (missing/wrong placeholders)
+          - ✅ Escaped Unicode sequences
+          - ⚠️ Tags mismatch
+          - ⚠️ Empty translations
+
+          ### Available Scripts
+
+          \`\`\`bash
+          # View QA report
+          CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/translation-qa-report.ts
+
+          # Fix encoding issues automatically
+          CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/fix-crowdin-translations.ts
+          \`\`\`
+
+          ---
+          *Close without merging after issues are addressed*
+          EOF
+          )
+
+          EXISTING_PR=$(gh pr list --head $BRANCH_NAME --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -n "$EXISTING_PR" ]; then
+            gh pr edit $EXISTING_PR --body "$BODY"
+          else
+            gh pr create \
+              --base main \
+              --head $BRANCH_NAME \
+              --title "i18n: Translation QA Report ($CRITICAL critical issues)" \
+              --body "$BODY" || true
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

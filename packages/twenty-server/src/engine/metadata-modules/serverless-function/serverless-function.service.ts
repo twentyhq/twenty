@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
@@ -6,8 +6,11 @@ import { join } from 'path';
 import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Sources } from 'twenty-shared/types';
+import {
+  DEFAULT_API_KEY_NAME,
+  DEFAULT_API_URL_NAME,
+} from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -32,7 +35,13 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+
+const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -45,8 +54,8 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly auditService: AuditService,
-    @Inject('PUB_SUB')
-    private readonly pubSub: RedisPubSub,
+    private readonly applicationTokenService: ApplicationTokenService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
@@ -86,12 +95,17 @@ export class ServerlessFunctionService {
     }
   }
 
-  async executeOneServerlessFunction(
-    id: string,
-    workspaceId: string,
-    payload: object,
+  async executeOneServerlessFunction({
+    id,
+    workspaceId,
+    payload,
     version = 'latest',
-  ): Promise<ServerlessExecuteResult> {
+  }: {
+    id: string;
+    workspaceId: string;
+    payload: object;
+    version?: string;
+  }): Promise<ServerlessExecuteResult> {
     await this.throttleExecution(workspaceId);
 
     const functionToExecute =
@@ -102,14 +116,45 @@ export class ServerlessFunctionService {
         },
         relations: [
           'serverlessFunctionLayer',
-          'application',
           'application.applicationVariables',
         ],
       });
 
+    const applicationAccessToken = isDefined(functionToExecute.applicationId)
+      ? await this.applicationTokenService.generateApplicationToken({
+          workspaceId,
+          applicationId: functionToExecute.applicationId,
+          expiresInSeconds: Math.max(
+            functionToExecute.timeoutSeconds,
+            MIN_TOKEN_EXPIRATION_IN_SECONDS,
+          ),
+        })
+      : undefined;
+
+    const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
+
+    const envVariables = {
+      ...(isDefined(baseUrl)
+        ? {
+            [DEFAULT_API_URL_NAME]: baseUrl,
+          }
+        : {}),
+      ...(isDefined(applicationAccessToken)
+        ? {
+            [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
+          }
+        : {}),
+      ...buildEnvVar(functionToExecute),
+    };
+
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
-        this.serverlessService.execute(functionToExecute, payload, version),
+        this.serverlessService.execute({
+          serverlessFunction: functionToExecute,
+          payload,
+          version,
+          env: envVariables,
+        }),
       timeoutMs: functionToExecute.timeoutSeconds * 1000,
     });
 
@@ -118,15 +163,19 @@ export class ServerlessFunctionService {
       console.log(resultServerlessFunction.logs);
     }
 
-    await this.pubSub.publish(SERVERLESS_FUNCTION_LOGS_TRIGGER, {
-      serverlessFunctionLogs: {
-        logs: resultServerlessFunction.logs,
-        id: functionToExecute.id,
-        name: functionToExecute.name,
-        universalIdentifier: functionToExecute.universalIdentifier,
-        applicationId: functionToExecute.applicationId,
-        applicationUniversalIdentifier:
-          functionToExecute.application?.universalIdentifier,
+    await this.subscriptionService.publish({
+      channel: SubscriptionChannel.SERVERLESS_FUNCTION_LOGS_CHANNEL,
+      workspaceId,
+      payload: {
+        serverlessFunctionLogs: {
+          logs: resultServerlessFunction.logs,
+          id: functionToExecute.id,
+          name: functionToExecute.name,
+          universalIdentifier: functionToExecute.universalIdentifier,
+          applicationId: functionToExecute.applicationId,
+          applicationUniversalIdentifier:
+            functionToExecute.application?.universalIdentifier,
+        },
       },
     });
 

@@ -6,7 +6,8 @@ const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
   align-items: center;
   display: flex;
   height: 100%;
-  width: 100%;
+  flex: 1;
+  overflow: hidden;
   justify-content: center;
   box-sizing: border-box;
 

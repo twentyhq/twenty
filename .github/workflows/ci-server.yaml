@@ -59,16 +59,16 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Restore server setup
         id: restore-server-setup-cache
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
       - name: Server / Run lint & typecheck
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
           tasks: lint,typecheck
@@ -140,7 +140,7 @@ jobs:
             exit 1
           fi
       - name: Save server setup
-        uses: ./.github/workflows/actions/save-cache
+        uses: ./.github/actions/save-cache
         with:
           key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
   server-test:
@@ -153,13 +153,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Restore server setup
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Run Tests
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
           tasks: test
@@ -171,7 +171,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5]
+        shard: [1, 2, 3, 4, 5, 6]
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -209,14 +209,14 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 5
+      SHARD_COUNTER: 6
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Update .env.test for integrations tests
         run: |
           echo "" >> .env.test
@@ -226,7 +226,7 @@ jobs:
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
       - name: Restore server setup
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Server / Build
@@ -243,7 +243,7 @@ jobs:
       - name: Run ClickHouse seeds
         run: npx nx clickhouse:seed twenty-server
       - name: Server / Run Integration Tests
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
           tasks: 'test:integration'

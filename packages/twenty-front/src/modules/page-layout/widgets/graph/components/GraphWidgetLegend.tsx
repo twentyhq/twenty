@@ -1,8 +1,16 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
-import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
-import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
+import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
+import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
+import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth';
+import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth';
+import { useLegendItemToggle } from '@/page-layout/widgets/graph/hooks/useLegendItemToggle';
+import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -59,8 +67,13 @@ const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
   align-items: center;
 `;
 
-const StyledLegendItem = styled.div<{ canShrink?: boolean }>`
+const StyledLegendItem = styled.div<{
+  canShrink?: boolean;
+  isHidden?: boolean;
+  isInteractive?: boolean;
+}>`
   align-items: center;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -69,10 +82,25 @@ const StyledLegendItem = styled.div<{ canShrink?: boolean }>`
   min-width: 0;
 `;
 
-const StyledLegendLabel = styled.div<{ fixedWidth?: boolean }>`
+const StyledLegendLabel = styled.div<{
+  fixedWidth?: boolean;
+  isHidden?: boolean;
+}>`
   color: ${({ theme }) => theme.font.color.secondary};
   ${({ fixedWidth }) => fixedWidth && `width: ${LEGEND_LABEL_MAX_WIDTH}px;`}
   overflow: hidden;
+  text-decoration: ${({ isHidden }) => (isHidden ? 'line-through' : 'none')};
+  opacity: ${({ isHidden }) =>
+    isHidden ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
+
+  :hover {
+    opacity: 1;
+  }
+`;
+
+const StyledLegendDot = styled(GraphWidgetLegendDot)<{ isHidden?: boolean }>`
+  opacity: ${({ isHidden }) =>
+    isHidden ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
 `;
 
 const StyledPaginationContainer = styled.div`
@@ -117,6 +145,45 @@ export const GraphWidgetLegend = ({
     useState<AnimationDirection>('forward');
 
   const theme = useTheme();
+
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
+  const isInteractive = !isPageLayoutInEditMode;
+
+  const setHighlightedLegendId = useSetRecoilComponentState(
+    graphWidgetHighlightedLegendIdComponentState,
+  );
+
+  const [hiddenLegendIds, setHiddenLegendIds] = useRecoilComponentState(
+    graphWidgetHiddenLegendIdsComponentState,
+  );
+
+  const itemIds = items.map((item) => item.id);
+
+  const { toggleLegendItem } = useLegendItemToggle({
+    itemIds,
+    isInteractive,
+  });
+
+  if (isPageLayoutInEditMode && hiddenLegendIds.length > 0) {
+    setHiddenLegendIds([]);
+  }
+
+  const handleLegendItemMouseEnter = (itemId: string) => {
+    if (!isInteractive) {
+      return;
+    }
+    setHighlightedLegendId(itemId);
+  };
+
+  const handleLegendItemMouseLeave = () => {
+    if (!isInteractive) {
+      return;
+    }
+    setHighlightedLegendId(null);
+  };
 
   const shouldShowLegend = show && items.length > 1;
 
@@ -234,17 +301,31 @@ export const GraphWidgetLegend = ({
                   }}
                   centered={!needsPagination}
                 >
-                  {visibleItems.map((item) => (
-                    <StyledLegendItem
-                      key={item.id}
-                      canShrink={!needsPagination}
-                    >
-                      <GraphWidgetLegendDot color={item.color} />
-                      <StyledLegendLabel fixedWidth={needsPagination}>
-                        <OverflowingTextWithTooltip text={item.label} />
-                      </StyledLegendLabel>
-                    </StyledLegendItem>
-                  ))}
+                  {visibleItems.map((item) => {
+                    const isHidden = hiddenLegendIds.includes(item.id);
+                    return (
+                      <StyledLegendItem
+                        key={item.id}
+                        canShrink={!needsPagination}
+                        isHidden={isHidden}
+                        isInteractive={isInteractive}
+                        onClick={() => toggleLegendItem(item.id)}
+                        onMouseEnter={() => handleLegendItemMouseEnter(item.id)}
+                        onMouseLeave={handleLegendItemMouseLeave}
+                      >
+                        <StyledLegendDot
+                          color={item.color}
+                          isHidden={isHidden}
+                        />
+                        <StyledLegendLabel
+                          fixedWidth={needsPagination}
+                          isHidden={isHidden}
+                        >
+                          <OverflowingTextWithTooltip text={item.label} />
+                        </StyledLegendLabel>
+                      </StyledLegendItem>
+                    );
+                  })}
                 </StyledItemsWrapper>
               </AnimatePresence>
             </StyledAnimationClipContainer>
