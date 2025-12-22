@@ -62,7 +62,6 @@ export const RecordTableCellHoveredPortalContent = () => {
     (!isReadOnly || isFirstColumn) &&
     !(isMobile && isFirstColumn);
 
-  // Show interactive style (border, pointer) when not read-only, or when showing navigation button on first column
   const showInteractiveStyle = !isReadOnly || (isFirstColumn && showButton);
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
