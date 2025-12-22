@@ -1,0 +1,52 @@
+---
+title: Limit Emails Imported
+description: Control which emails are imported into Twenty.
+---
+
+## Overview
+
+By default, Twenty syncs all external emails from your connected mailbox. You can limit what gets imported using **folder selection** and **visibility settings**.
+
+## Method 1: Folder Selection (Recommended)
+
+Control which email folders sync with Twenty:
+
+1. Go to **Settings → Releases → Lab**
+2. Enable **Message Folder**
+3. Return to **Settings → Accounts**
+4. Select your connected email account
+5. Choose which folders to sync:
+
+| Folder | Description |
+|--------|-------------|
+| **Inbox** | Primary incoming emails |
+| **Sent** | Outgoing emails you've sent |
+| **Archive** | Archived messages |
+| **Custom Folders** | Any specific folders you want |
+
+6. Exclude folders you don't want synced (Spam, Trash, personal folders)
+
+<Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
+
+## Method 2: Contact Auto-Creation Settings
+
+Control when contacts are created from emails:
+
+1. Go to **Settings → Accounts**
+2. Select your connected mailbox
+3. Choose an option:
+   - **Deactivated**: No contacts created, but emails still sync to existing contacts
+   - **Sent & Received**: Create contacts from all external emails
+   - **Sent Only**: Only create contacts from emails you send
+
+## What's Always Excluded
+
+These emails are never synced, regardless of settings:
+
+- **Internal emails**: Messages between colleagues (same domain)
+- **Group emails**: Distribution lists and group messages
+- **Spam/Trash**: System folders are typically excluded
+
+## Important Note
+
+<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>
