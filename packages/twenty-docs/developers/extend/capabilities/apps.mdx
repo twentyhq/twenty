@@ -66,13 +66,53 @@ See also: the CLI reference pages for [create-twenty-app](https://www.npmjs.com/
 
 ## Project structure (scaffolded)
 
-When you run `npx create-twenty-app`, you get a minimal project with:
+When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 
-- TypeScript configured out of the box
-- Scripts that wrap the `twenty` CLI from the locally installed `twenty-sdk`
-- Example placeholders to help you add entities, actions, and sync logic
+- Copies a minimal base application into `my-twenty-app/`
+- Adds a local `twenty-sdk` dependency and Yarn 4 configuration
+- Creates config files and scripts wired to the `twenty` CLI
+- Generates a default application config and a default function role
 
-Open the README in your scaffolded project for a full tour. The most important scripts are listed above.
+A freshly scaffolded app looks like this:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    releases/
+      yarn-4.9.2.cjs
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  src/
+    application.config.ts
+    role.config.ts
+    // your entities, actions, and other app files
+```
+
+At a high level:
+
+- **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, and `auth` that delegate to the local `twenty` CLI.
+- **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+- **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
+- **.nvmrc**: Pins the Node.js version expected by the project.
+- **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app’s TypeScript sources.
+- **README.md**: A short README in the app root with basic instructions.
+- **src/**: The main place where you define your application-as-code:
+  - `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See “Application config” below.
+  - `role.config.ts`: Default function role used by your serverless functions. See “Default function role” below.
+  - Future entities, actions/functions, and any supporting code you add.
+
+Later commands will add more files and folders:
+
+- `yarn generate` will create a `generated/` folder (typed Twenty client + workspace types).
+- `yarn create-entity` will add entity definition files under `src/` for your custom objects.
+
 
 ## Authentication
 
@@ -81,7 +121,7 @@ The first time you run `yarn auth`, you'll be prompted for:
 - API URL (defaults to http://localhost:3000 or your current workspace profile)
 - API key
 
-Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`. See details in the [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk).
+Your credentials are stored per-user in `~/.twenty/config.json`. You can maintain multiple profiles and switch using `--workspace <name>`.
 
 Examples:
 
@@ -110,12 +150,140 @@ Tip: `yarn dev` performs an initial sync and watches for changes, syncing after 
 
 The twenty-sdk provides typed building blocks you use inside your app. Below are the key pieces you'll touch most often.
 
+### Defining objects
+
+Custom objects are regular TypeScript classes annotated with decorators from `twenty-sdk`. They live under `src/objects/` in your app and describe both schema and behavior for records in your workspace.
+
+Here is the `postCard` object from the Hello World app:
+
+```ts filename="src/objects/postCard.ts"
+import { type Note } from '../../generated';
+
+import {
+  type AddressField,
+  Field,
+  FieldType,
+  type FullNameField,
+  Object,
+  OnDeleteAction,
+  Relation,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+@Object({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post card',
+  labelPlural: 'Post cards',
+  description: ' A post card object',
+  icon: 'IconMail',
+})
+export class PostCard {
+  @Field({
+    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+    type: FieldType.TEXT,
+    label: 'Content',
+    description: "Postcard's content",
+    icon: 'IconAbc',
+  })
+  content: string;
+
+  @Field({
+    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+    type: FieldType.FULL_NAME,
+    label: 'Recipient name',
+    icon: 'IconUser',
+  })
+  recipientName: FullNameField;
+
+  @Field({
+    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+    type: FieldType.ADDRESS,
+    label: 'Recipient address',
+    icon: 'IconHome',
+  })
+  recipientAddress: AddressField;
+
+  @Field({
+    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+    type: FieldType.SELECT,
+    label: 'Status',
+    icon: 'IconSend',
+    defaultValue: `'${PostCardStatus.DRAFT}'`,
+    options: [
+      { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+      { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+      { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+      { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+    ],
+  })
+  status: PostCardStatus;
+
+  @Relation({
+    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
+    type: RelationType.ONE_TO_MANY,
+    label: 'Notes',
+    icon: 'IconComment',
+    inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
+    onDelete: OnDeleteAction.CASCADE,
+  })
+  notes: Note[];
+
+  @Field({
+    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+    type: FieldType.DATE_TIME,
+    label: 'Delivered at',
+    icon: 'IconCheck',
+    isNullable: true,
+    defaultValue: null,
+  })
+  deliveredAt?: Date;
+}
+```
+
+Key points:
+
+- The `@Object` decorator defines the object identity and labels used across the workspace; its `universalIdentifier` must be unique and stable across deployments.
+- Each `@Field` decorator defines a field on the object with a type, label, and its own stable `universalIdentifier`. Some field types (like `FULL_NAME` and `ADDRESS`) use helper types such as `FullNameField` and `AddressField`.
+- `@Relation` wires this object to other objects (standard or custom) and controls cascade behavior with `onDelete`.
+- You can scaffold new objects using `yarn create-entity`, which guides you through naming, fields, and relationships, then generates object files similar to the `postCard` example.
+
+
 ### Application config (application.config.ts)
 
-Define global metadata and variables for your app using ApplicationConfig.
+Every app has a single `application.config.ts` file in `src/` that describes:
 
+- **Who the app is**: identifiers, display name, and description.
+- **How its functions run**: which role they use for permissions.
+- **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+
+When you scaffold a new app, you start with a minimal config:
+
+```ts filename="src/application.config.ts"
+import { type ApplicationConfig } from 'twenty-sdk';
+
+const config: ApplicationConfig = {
+  universalIdentifier: '<generated-app-uuid>',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  functionRoleUniversalIdentifier: '<generated-role-uuid>',
+};
+
+export default config;
 ```
-// application.config.ts
+
+You can gradually extend this file as your app grows. For example, you can add an icon and application-scoped variables:
+
+```ts filename="src/application.config.ts"
 import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
@@ -123,7 +291,6 @@ const config: ApplicationConfig = {
   displayName: 'My App',
   description: 'What your app does',
   icon: 'IconWorld', // Choose an icon by name
-  // Expose variables available to your serverless functions via process.env
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '<uuid>',
@@ -132,7 +299,6 @@ const config: ApplicationConfig = {
       isSecret: false,
     },
   },
-  // Role used by your functions (permissions in your workspace)
   functionRoleUniversalIdentifier: '<your-role-uuid>',
 };
 
@@ -140,8 +306,9 @@ export default config;
 ```
 
 Notes:
-- applicationVariables become environment variables for your functions (e.g. process.env.DEFAULT_RECIPIENT_NAME).
-- universalIdentifier fields are deterministic IDs you own; generate and keep them stable across syncs.
+- `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
+- `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
+- `functionRoleUniversalIdentifier` must match the role you define in `role.config.ts` (see below).
 
 #### Roles and permissions
 
@@ -151,16 +318,35 @@ Applications can define roles that encapsulate permissions on your workspace’s
 - The typed client will be restricted to the permissions granted to that role.
 - Follow least‑privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
 
-##### Example: define a role
+##### Default function role (role.config.ts)
 
-Create a role file that your application can use as its default function role. This example grants read/update on the `postCard` object, hides the `content` field, and allows the role to be assigned to applications.
+When you scaffold a new app, the CLI also creates `src/role.config.ts`. This file exports the default role your serverless functions will use at runtime:
 
+```ts filename="src/role.config.ts"
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
+  universalIdentifier: '<generated-role-uuid>',
+  label: 'My Twenty App default function role',
+  description: 'My Twenty App default function role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: true,
+  canDestroyAllObjectRecords: false,
+};
 ```
-// src/roles/function-role.ts
-// Tip: In your project, import the proper types/enums:
-// import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
 
-export const functionRole = {
+The `universalIdentifier` of this role is automatically wired into `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+
+- **role.config.ts** defines what the default function role can do.
+- **application.config.ts** points to that role so your functions inherit its permissions.
+
+As you move beyond the initial scaffold, you should tighten this role and make it explicit about what it can access. A more production-ready role might look closer to:
+
+```ts filename="src/role.config.ts"
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
+
+export const functionRole: RoleConfig = {
   universalIdentifier: '<your-role-uuid>',
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -191,19 +377,11 @@ export const functionRole = {
   ],
   // If using the enum from 'twenty-sdk', this would be: [PermissionFlag.APPLICATIONS]
   permissionFlags: ['APPLICATIONS'],
-} as const;
-```
-
-Then reference this role in your application config so your serverless functions use its permissions at runtime:
-
-```ts filename="application.config.ts"
-export default {
-  // ...other config
-  functionRoleUniversalIdentifier: '<your-role-uuid>',
 };
 ```
 
 Notes:
+- Start from the scaffolded role, then progressively restrict it following least‑privilege.
 - Replace the `objectPermissions` and `fieldPermissions` with the objects/fields your functions need.
 - `permissionFlags` control access to platform-level capabilities. Keep them minimal; add only what you need.
 - See a working example in the Hello World app: `packages/twenty-apps/hello-world/src/roles/function-role.ts`.
@@ -277,6 +455,11 @@ Common trigger types:
 - route: Exposes your function on an HTTP path and method.
 - cron: Runs your function on a schedule using a CRON expression.
 - databaseEvent: Runs on workspace object lifecycle events (e.g. person.created).
+
+You can create new functions in two ways:
+
+- **Scaffolded**: Run `yarn create-entity --path <custom-path>` and choose the option to add a new function. This generates a starter file under `<custom-path>` with a `main` handler and a `config` block similar to the example above.
+- **Manual**: Create a new file and export `main` and `config` yourself, following the same pattern.
 
 ### Generated typed client
 
