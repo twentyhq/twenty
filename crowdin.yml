@@ -11,6 +11,12 @@
 "preserve_hierarchy": true
 
 #
+# Target languages for download - only languages supported by Mintlify
+# See packages/twenty-docs/navigation/supported-languages.ts
+#
+"languages": ["fr", "ar", "cs", "de", "es", "it", "ja", "ko", "pt", "ro", "ru", "tr", "zh-CN"]
+
+#
 # Files configuration.
 # See https://support.crowdin.com/developer/configuration-file/ for all available options
 #
