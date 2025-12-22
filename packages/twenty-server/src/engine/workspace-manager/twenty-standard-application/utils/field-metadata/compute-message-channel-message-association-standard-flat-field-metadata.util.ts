@@ -117,7 +117,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message id from the messaging provider',
         icon: 'IconHash',
         isNullable: true,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -134,7 +134,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Thread id from the messaging provider',
         icon: 'IconHash',
         isNullable: true,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -151,7 +151,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Direction',
         icon: 'IconDirection',
         isNullable: false,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
         defaultValue: `'${MessageDirection.INCOMING}'`,
         options: [
           {
@@ -184,7 +184,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Channel Id',
         icon: 'IconHash',
         isNullable: true,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
         targetObjectName: 'messageChannel',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
@@ -209,7 +209,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Thread Id',
         icon: 'IconHash',
         isNullable: true,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
         targetObjectName: 'messageThread',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
@@ -234,7 +234,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Id',
         icon: 'IconHash',
         isNullable: true,
-      isUIReadOnly: true,
+        isUIReadOnly: true,
         targetObjectName: 'message',
         targetFieldName: 'messageChannelMessageAssociations',
         settings: {
