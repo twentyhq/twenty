@@ -1,5 +1,6 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
@@ -24,23 +25,24 @@ const StyledRelationChipsContainer = styled.div`
 `;
 
 type FieldWidgetMorphRelationProps = {
-  fieldMetadata: FieldMorphRelationMetadata;
+  fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
   recordId: string;
   isInRightDrawer: boolean;
 };
 
 export const FieldWidgetMorphRelation = ({
-  fieldMetadata,
+  fieldDefinition,
   recordId,
   isInRightDrawer,
 }: FieldWidgetMorphRelationProps) => {
+  const fieldMetadata = fieldDefinition.metadata;
+
   const recordsWithObjectNameSingular =
     useGetMorphRelationRelatedRecordsWithObjectNameSingular({
       recordId,
       morphRelations: fieldMetadata.morphRelations,
     });
 
-  // Render all related records from all morph targets
   if (recordsWithObjectNameSingular.length > 0) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>

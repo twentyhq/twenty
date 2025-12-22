@@ -41,18 +41,18 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-| Props     | Tipo                                     | Descrição                                                     |
-| --------- | ---------------------------------------- | ------------------------------------------------------------- |
-| className | Nome opcional para estilização adicional | Nome opcional para estilização adicional                      |
-| href      | Nome opcional para estilização adicional | O URL ou caminho de destino para o link                       |
-| onClick   | função                                   | Função de retorno de chamada acionada quando o link é clicado |
-| filhos    | `React.ReactNode`                        | O conteúdo a ser exibido dentro do link                       |
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| className    | string            | Nome opcional para estilização adicional.               |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| onClick      | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
 
 </Tab>
 
 </Tabs>
 
-## Link Cru
+## Link Puro
 
 Um componente de link estilizado para exibir links.
 
@@ -82,19 +82,19 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-| Props     | Tipo                                     | Descrição                                                     |
-| --------- | ---------------------------------------- | ------------------------------------------------------------- |
-| className | Nome opcional para estilização adicional | Nome opcional para estilização adicional                      |
-| href      | Nome opcional para estilização adicional | O URL ou caminho de destino para o link                       |
-| onClick   | função                                   | Função de retorno de chamada acionada quando o link é clicado |
-| filhos    | `React.ReactNode`                        | O conteúdo a ser exibido dentro do link                       |
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| className    | string            | Nome opcional para estilização adicional.               |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| aoClicar     | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
 
 </Tab>
 </Tabs>
 
 ## Link Arredondado
 
-Um link com estilo arredondado com um componente Chip para links.
+Um link estilizado de forma arredondada com um componente Chip para links.
 
 <Tabs>
 <Tab title="Usage">
@@ -122,11 +122,11 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-| Props    | Tipo                                     | Descrição                                                     |
-| -------- | ---------------------------------------- | ------------------------------------------------------------- |
-| href     | Nome opcional para estilização adicional | O URL ou caminho de destino para o link                       |
-| filhos   | `React.ReactNode`                        | O conteúdo a ser exibido dentro do link                       |
-| aoClicar | função                                   | Função de retorno de chamada acionada quando o link é clicado |
+| Propriedades | Tipo              | Descrição                                                               |
+| ------------ | ----------------- | ----------------------------------------------------------------------- |
+| href         | string            | A URL ou caminho de destino para o link                                 |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                 |
+| aoClicar     | função            | Função de retorno de chamada para ser disparada quando o link é clicado |
 
 </Tab>
 </Tabs>
@@ -157,12 +157,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-| Props   | Tipo                                     | Descrição                                                                                                 |
-| ------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| href    | Nome opcional para estilização adicional | O URL ou caminho de destino para o link                                                                   |
-| filhos  | `React.ReactNode`                        | O conteúdo a ser exibido dentro do link                                                                   |
-| tipo    | Nome opcional para estilização adicional | O tipo de links sociais. As opções incluem: `url`, `LinkedIn` e `Twitter` |
-| onClick | função                                   | Função de retorno de chamada acionada quando o link é clicado                                             |
+| Propriedades | Tipo              | Descrição                                                                                              |
+| ------------ | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| href         | string            | A URL ou caminho de destino para o link                                                                |
+| filhos       | `React.ReactNode` | O conteúdo a ser exibido dentro do link                                                                |
+| tipo         | string            | O tipo de links sociais. Opções incluem: `url`, `LinkedIn` e `Twitter` |
+| onClick      | função            | Função de retorno de chamada para ser disparada quando o link é clicado                                |
 
 </Tab>
 </Tabs>

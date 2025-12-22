@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
@@ -24,7 +24,13 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
+type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailMorphRelationSectionDropdownOneToManyProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
@@ -150,11 +156,13 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPlus}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPlus}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <MultipleRecordPicker

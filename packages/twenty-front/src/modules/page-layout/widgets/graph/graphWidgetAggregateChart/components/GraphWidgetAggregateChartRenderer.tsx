@@ -1,8 +1,8 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
 import { lazy, Suspense } from 'react';
+import { useCurrentWidget } from '../../../hooks/useCurrentWidget';
 
 const GraphWidgetAggregateChart = lazy(() =>
   import(
@@ -12,11 +12,9 @@ const GraphWidgetAggregateChart = lazy(() =>
   })),
 );
 
-export const GraphWidgetAggregateChartRenderer = ({
-  widget,
-}: {
-  widget: PageLayoutWidget;
-}) => {
+export const GraphWidgetAggregateChartRenderer = () => {
+  const widget = useCurrentWidget();
+
   assertAggregateChartWidgetOrThrow(widget);
 
   const { value, loading } = useGraphWidgetAggregateQuery({

@@ -1,0 +1,43 @@
+---
+title: Message Queue
+---
+
+
+Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
+Each use case will have its own queue class extended from `MessageQueueServiceBase`.
+
+Currently, we only support `bull-mq`[bull-mq](https://bullmq.io/) as the queue driver.
+
+## Steps to create and use a new queue
+
+1. Add a queue name for your new queue under enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+4. Add worker class with token based injection just like producer.
+
+### Example usage
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+
+

@@ -1,4 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
@@ -24,16 +25,17 @@ const StyledRelationChipsContainer = styled.div`
 `;
 
 type FieldWidgetRelationProps = {
-  fieldMetadata: FieldRelationMetadata;
+  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
   isInRightDrawer: boolean;
 };
 
 export const FieldWidgetRelation = ({
-  fieldMetadata,
+  fieldDefinition,
   relationValue,
   isInRightDrawer,
 }: FieldWidgetRelationProps) => {
+  const fieldMetadata = fieldDefinition.metadata;
   const isOneToMany = fieldMetadata.relationType === 'ONE_TO_MANY';
   const relationObjectNameSingular =
     fieldMetadata.relationObjectMetadataNameSingular;
@@ -60,10 +62,12 @@ export const FieldWidgetRelation = ({
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
-          <RecordChip
-            objectNameSingular={relationObjectNameSingular}
-            record={relationValue}
-          />
+          <StyledRelationChipsContainer>
+            <RecordChip
+              objectNameSingular={relationObjectNameSingular}
+              record={relationValue}
+            />
+          </StyledRelationChipsContainer>
         </StyledContainer>
       </RightDrawerProvider>
     );
