@@ -101,7 +101,6 @@ export const FieldWidgetRelationEditAction = ({
       isDropdownOpen={isRelationSelectionDropdownOpen}
       Icon={IconPencil}
       accent="secondary"
-      className="display-on-widget-hover"
     />
   );
 
