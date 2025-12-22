@@ -1,6 +1,10 @@
 import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import {
+  PageLayoutType,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated/graphql';
 
 export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -40,7 +44,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -77,7 +81,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -114,7 +118,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -151,7 +155,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -188,7 +192,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -225,7 +229,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),
@@ -262,7 +266,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
+            configurationType: WidgetConfigurationType.FIELDS,
             sections: [],
           },
           createdAt: new Date().toISOString(),

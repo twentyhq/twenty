@@ -554,11 +554,13 @@ describe('useChartSettingsValues', () => {
       const verticalConfig = buildBarChartConfiguration({
         ...baseConfig,
         configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.VERTICAL,
       });
 
       const horizontalConfig = buildBarChartConfiguration({
         ...baseConfig,
         configurationType: WidgetConfigurationType.BAR_CHART,
+        layout: BarChartLayout.HORIZONTAL,
       });
 
       const { result: verticalResult } =

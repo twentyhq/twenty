@@ -4,6 +4,7 @@ import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
+import { getConfigurationTypeFromGraphType } from '@/command-menu/pages/page-layout/utils/getConfigurationTypeFromGraphType';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -82,12 +83,13 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           throw new Error('Widget configuration is not a chart configuration');
         }
 
+        const newConfigurationType =
+          getConfigurationTypeFromGraphType(graphType);
+
         let configToUpdate = {
           __typename:
-            GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[
-              currentConfiguration.configurationType
-            ],
-          configurationType: currentConfiguration.configurationType,
+            GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[newConfigurationType],
+          configurationType: newConfigurationType,
         } as Partial<ChartConfiguration>;
 
         if (
@@ -170,7 +172,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
             .getValue();
 
           const updatedLayouts = updateWidgetMinimumSizeForGraphType({
-            configurationType: currentConfiguration.configurationType,
+            configurationType: newConfigurationType,
             widgetId: currentlyEditingWidgetId,
             tabId: activeTabId,
             currentLayouts,
