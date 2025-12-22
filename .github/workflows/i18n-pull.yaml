@@ -46,7 +46,7 @@ jobs:
           git checkout -B i18n origin/i18n || git checkout -b i18n
 
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
 
       - name: Build twenty-shared
         run: npx nx build twenty-shared
@@ -89,8 +89,10 @@ jobs:
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
+          config: 'crowdin-app.yml'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          # App translations project
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
@@ -98,6 +100,12 @@ jobs:
       # We need to fix this before the next steps
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
+
+      # Fix encoding issues (escaped Unicode like \u62db -> 招) and push fixes back to Crowdin
+      - name: Fix translation encoding and sync to Crowdin
+        run: npx ts-node packages/twenty-utils/fix-crowdin-translations.ts
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Compile translations
         id: compile_translations

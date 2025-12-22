@@ -52,7 +52,7 @@ msgstr "'n Gekoppelde rekening"
 #. js-lingui-id: cOSBjW
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "A dashboard"
-msgstr "7n Paneel"
+msgstr ""
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -403,7 +403,7 @@ msgstr "'n Indeksmetadata-fout het voorgekom."
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
-msgstr " 80Nag \\b0aan vergelykings \\b8met ten minste een veld"
+msgstr ""
 
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts

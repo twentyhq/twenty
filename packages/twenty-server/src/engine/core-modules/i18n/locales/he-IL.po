@@ -3931,7 +3931,7 @@ msgstr "ערך אפשרות חורג מ-63 תווים."
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value format not supported"
-msgstr "פורמט ערך האפשרות אינו נתמך"
+msgstr ""
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3942,7 +3942,7 @@ msgstr "נדרש ערך אפשרות."
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr "ערך האפשרות חייב להיות מחרוזת של לפחות תו אחד"
+msgstr ""
 
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -5736,7 +5736,7 @@ msgstr "האימות נכשל עבור 0 אובייקטים ו-0 שדות"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr " תַאִים לִהְיוֹת בְּאוֹתִיּוֹת רִשׁוֹנוֹת   ובפורמט snake_case \"{sanitizedValue}\""
+msgstr ""
 
 #. js-lingui-id: gj6Gxm
 #: src/engine/core-modules/email-verification/email-verification.exception.ts

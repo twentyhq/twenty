@@ -2457,7 +2457,7 @@ msgstr "Ongeldige CALDAV-inloggegevens. Controleer uw gebruikersnaam en wachtwoo
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
-msgstr "Ongeldige landcode {countryCode}"
+msgstr "Ongeldige belcode {callingCode}"
 
 #. js-lingui-id: tG/2Q/
 #: src/engine/core-modules/captcha/captcha.guard.ts
@@ -2482,7 +2482,7 @@ msgstr "Ongeldige ID van gekoppeld account."
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
-msgstr "Ongeldig belcode {callingCode}"
+msgstr "Ongeldige landcode {countryCode}"
 
 #. js-lingui-id: 0RwhuX
 #: src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception.ts
