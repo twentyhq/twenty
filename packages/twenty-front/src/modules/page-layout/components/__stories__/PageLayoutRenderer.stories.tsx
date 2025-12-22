@@ -30,6 +30,9 @@ import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMet
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const mockDashboardObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('dashboard');
+
 const idField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: mockPersonObjectMetadataItem,
   fieldName: 'id',
@@ -57,7 +60,7 @@ const mixedGraphsPageLayoutMocks = {
   id: 'mixed-graphs-layout',
   name: 'Mixed Graph Dashboard',
   type: PageLayoutType.DASHBOARD,
-  objectMetadataId: mockPersonObjectMetadataItem.id,
+  objectMetadataId: mockDashboardObjectMetadataItem.id,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
   deletedAt: null,

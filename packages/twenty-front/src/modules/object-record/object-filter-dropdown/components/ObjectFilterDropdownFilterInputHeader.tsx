@@ -1,26 +1,18 @@
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewBarFilterDropdownFilterInputMenuHeader } from '@/views/components/ViewBarFilterDropdownFilterInputMenuHeader';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { useLingui } from '@lingui/react/macro';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useContext } from 'react';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 
+// TODO: we shouldn't guess in which parent we are, this should be splitted in two components, one for each case
 export const ObjectFilterDropdownFilterInputHeader = () => {
-  const { t } = useLingui();
-
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
-  );
-
-  const selectedOperandInDropdown = useRecoilComponentValue(
-    selectedOperandInDropdownComponentState,
   );
 
   const { closeDropdown } = useCloseDropdown();
@@ -30,10 +22,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
   )?.instanceId;
 
   const isInViewBarFilterDropdown =
-    dropdownInstanceId === VIEW_BAR_FILTER_DROPDOWN_ID;
-
-  const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
+    dropdownInstanceId === ViewBarFilterDropdownIds.MAIN;
 
   if (isInViewBarFilterDropdown) {
     return <ViewBarFilterDropdownFilterInputMenuHeader />;
@@ -47,9 +36,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
           />
         }
       >
-        {isVectorSearchFilter
-          ? t`Search`
-          : fieldMetadataItemUsedInDropdown?.label}
+        {fieldMetadataItemUsedInDropdown?.label}
       </DropdownMenuHeader>
     );
   }

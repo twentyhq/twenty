@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
@@ -7,6 +6,7 @@ import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWi
 import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChartRenderer';
 import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChartRenderer';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated/graphql';
@@ -20,11 +20,12 @@ const GraphWidgetGaugeChart = lazy(() =>
 );
 
 export type GraphWidgetProps = {
-  widget: PageLayoutWidget;
   objectMetadataId: string;
 };
 
-export const GraphWidget = ({ widget, objectMetadataId }: GraphWidgetProps) => {
+export const GraphWidget = ({ objectMetadataId }: GraphWidgetProps) => {
+  const widget = useCurrentWidget();
+
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
@@ -42,7 +43,7 @@ export const GraphWidget = ({ widget, objectMetadataId }: GraphWidgetProps) => {
 
   switch (configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART:
-      return <GraphWidgetAggregateChartRenderer widget={widget} />;
+      return <GraphWidgetAggregateChartRenderer />;
 
     case WidgetConfigurationType.GAUGE_CHART: {
       const gaugeData = {
@@ -70,13 +71,13 @@ export const GraphWidget = ({ widget, objectMetadataId }: GraphWidgetProps) => {
     }
 
     case WidgetConfigurationType.PIE_CHART:
-      return <GraphWidgetPieChartRenderer widget={widget} />;
+      return <GraphWidgetPieChartRenderer />;
 
     case WidgetConfigurationType.BAR_CHART:
-      return <GraphWidgetBarChartRenderer widget={widget} />;
+      return <GraphWidgetBarChartRenderer />;
 
     case WidgetConfigurationType.LINE_CHART:
-      return <GraphWidgetLineChartRenderer widget={widget} />;
+      return <GraphWidgetLineChartRenderer />;
 
     default:
       return null;

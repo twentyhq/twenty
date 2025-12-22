@@ -17,7 +17,7 @@ export const computeStandardMessageThreadViewFields = (
         fieldName: 'messages',
         position: 0,
         isVisible: true,
-        size: 150,
+        size: 180,
       },
     }),
     allMessageThreadsCreatedAt: createStandardViewFieldFlatMetadata({

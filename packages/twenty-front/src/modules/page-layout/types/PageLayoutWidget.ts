@@ -1,3 +1,4 @@
+import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { type RulesLogic } from 'json-logic-js';
 import { type Nullable } from 'twenty-shared/types';
@@ -12,5 +13,5 @@ export type PageLayoutWidget = Omit<
 > & {
   objectMetadataId?: Nullable<string>;
   conditionalDisplay?: RulesLogic;
-  configuration: WidgetConfiguration | FieldsConfiguration;
+  configuration: WidgetConfiguration | FieldsConfiguration | FieldConfiguration;
 };

@@ -2,6 +2,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
+import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
 import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidget';
 import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
@@ -28,6 +29,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.IFRAME:
       return <IframeWidget widget={widget} />;
+
+    case WidgetType.FIELD:
+      return <FieldWidget widget={widget} />;
 
     case WidgetType.FIELDS:
       return <FieldsWidget widget={widget} />;

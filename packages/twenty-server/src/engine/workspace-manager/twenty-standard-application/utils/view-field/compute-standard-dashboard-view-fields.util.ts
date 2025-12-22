@@ -17,7 +17,7 @@ export const computeStandardDashboardViewFields = (
         fieldName: 'title',
         position: 0,
         isVisible: true,
-        size: 210,
+        size: 200,
       },
     }),
     allDashboardsCreatedBy: createStandardViewFieldFlatMetadata({
