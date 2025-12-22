@@ -101,10 +101,21 @@ export const useCreateNewIndexRecord = ({
             });
           }
         } else {
-          navigate(AppPath.RecordShowPage, {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          });
+          const isNewWorkflow =
+            objectMetadataItem.nameSingular === 'workflow' &&
+            !createdRecord.name;
+
+          navigate(
+            AppPath.RecordShowPage,
+            {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: recordId,
+            },
+            undefined,
+            isNewWorkflow
+              ? { state: { isNewWorkflow: true, objectRecordId: recordId } }
+              : undefined,
+          );
         }
 
         if (isDefined(recordIndexGroupFieldMetadataItem)) {

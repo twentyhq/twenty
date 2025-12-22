@@ -29,6 +29,7 @@ import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/ho
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useOpenNewWorkflowTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewWorkflowTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -100,6 +101,8 @@ export const PageChangeEffect = () => {
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
+  const { openNewWorkflowTitleCell } = useOpenNewWorkflowTitleCell();
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -167,6 +170,12 @@ export const PageChangeEffect = () => {
             },
           },
         });
+
+        const isNewWorkflow = location.state?.isNewWorkflow === true;
+
+        if (isNewWorkflow) {
+          openNewWorkflowTitleCell({ recordId: location.state.objectRecordId });
+        }
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {
@@ -310,6 +319,7 @@ export const PageChangeEffect = () => {
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
+    openNewWorkflowTitleCell,
   ]);
 
   useEffect(() => {
