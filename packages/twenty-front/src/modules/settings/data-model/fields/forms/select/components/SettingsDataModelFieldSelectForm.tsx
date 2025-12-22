@@ -17,6 +17,7 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useTheme } from '@emotion/react';
@@ -119,6 +120,10 @@ export const SettingsDataModelFieldSelectForm = ({
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
     });
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    existingFieldMetadataId,
+  );
+  const isNullable = fieldMetadataItem?.isNullable;
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
@@ -340,6 +345,7 @@ export const SettingsDataModelFieldSelectForm = ({
                               onChange(nextOptions);
                             }}
                             isDefault={isOptionDefaultValue(option.value)}
+                            fieldIsNullable={!!isNullable}
                             onSetAsDefault={() => {
                               if (disabled) {
                                 return;

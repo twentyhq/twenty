@@ -12,7 +12,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -24,7 +24,7 @@ export type StreamAgentChatOptions = {
   workspace: WorkspaceEntity;
   response: Response;
   messages: ExtendedUIMessage[];
-  recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
+  browsingContext: BrowsingContextType | null;
 };
 
 @Injectable()
@@ -43,7 +43,7 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     messages,
-    recordIdsByObjectMetadataNameSingular,
+    browsingContext,
     response,
   }: StreamAgentChatOptions) {
     const thread = await this.threadRepository.findOne({
@@ -67,7 +67,7 @@ export class AgentChatStreamingService {
             workspace,
             userWorkspaceId,
             messages,
-            recordIdsByObjectMetadataNameSingular,
+            browsingContext,
           });
 
           // Write initial status

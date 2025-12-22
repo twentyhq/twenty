@@ -165,7 +165,7 @@ export const useDeleteOneRecord = ({
 
       await refetchAggregateQueries();
 
-      registerObjectOperation(objectNameSingular, {
+      registerObjectOperation(objectMetadataItem, {
         type: 'delete-one',
       });
 
@@ -179,7 +179,6 @@ export const useDeleteOneRecord = ({
       deleteOneRecordMutation,
       refetchAggregateQueries,
       registerObjectOperation,
-      objectNameSingular,
       mutationResponseField,
       objectPermissionsByObjectMetadataId,
       upsertRecordsInStore,

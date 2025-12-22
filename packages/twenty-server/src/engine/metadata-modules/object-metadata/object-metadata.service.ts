@@ -324,13 +324,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         },
       );
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      featureFlagsMap: existingFeatureFlagsMap,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'featureFlagsMap',
+    ]);
 
     const {
       flatObjectMetadataToCreate,
@@ -343,6 +343,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceCustomApplicationId:
         applicationId ?? workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      existingFeatureFlagsMap,
     });
 
     const optimisticFlatFieldMetadataMaps = [

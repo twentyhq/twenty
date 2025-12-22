@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: grid;
   grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
   height: 100%;
 `;
 

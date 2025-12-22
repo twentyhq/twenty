@@ -5,7 +5,6 @@ type FieldMetadataTypesNotTestedForFilterInputValidation =
   | 'RICH_TEXT'
   | 'POSITION'
   | 'ACTOR'
-  | 'MORPH_RELATION'
   | 'NUMERIC'
   | 'RICH_TEXT_V2';
 
@@ -13,7 +12,6 @@ type FieldMetadataTypesNotTestedForCreateInputValidation =
   | 'TS_VECTOR'
   | 'ACTOR'
   | 'POSITION'
-  | 'MORPH_RELATION'
   | 'NUMERIC';
 
 export type FieldMetadataTypesToTestForCreateInputValidation = Exclude<
