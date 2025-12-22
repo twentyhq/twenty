@@ -1,0 +1,38 @@
+---
+title: ステップバー
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+アクティブなステップをハイライトして、一連の番号付きステップの進行状況を表示します。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 アクティブなステップをハイライトして、一連の番号付きステップの進行状況を表示します。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ     | タイプ | 説明                                                                                     |
+| --------- | --- | -------------------------------------------------------------------------------------- |
+| アクティブステップ | 数   | 現在アクティブなステップのインデックス。 これにより、どのステップを視覚的にハイライトするかが決まります。 これにより、どのステップを視覚的にハイライトするかが決まります。 |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,37 @@
+---
+title: 이미지 입력
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+사용자가 이미지를 업로드하고 제거할 수 있도록 합니다.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티         | 유형       | 설명                                                                                    |
+| ------------ | -------- | ------------------------------------------------------------------------------------- |
+| 사진           | 문자열      | 이미지 소스 URL                                                                            |
+| onUpload     | function | 사용자가 새 이미지를 업로드할 때 호출되는 함수입니다. `File` 객체를 매개변수로 받습니다. |
+| onRemove     | function | 사용자가 제거 버튼을 클릭할 때 호출되는 함수입니다.                                         |
+| onAbort      | function | 사용자가 이미지 업로드 중 중단 버튼을 클릭할 때 호출되는 함수입니다.                               |
+| isUploading  | 부울       | 이미지가 현재 업로드 중인지 여부를 나타냅니다.                                            |
+| errorMessage | 문자열      | 이미지 입력 아래에 표시할 선택적 오류 메시지입니다.                                         |
+| disabled     | 부울       | `true`인 경우 전체 입력이 비활성화되고 버튼을 클릭할 수 없습니다.                              |
+
+</Tab>
+</Tabs>

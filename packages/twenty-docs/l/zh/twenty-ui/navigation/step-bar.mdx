@@ -1,0 +1,38 @@
+---
+title: 步骤条
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+通过突出显示活动步骤来显示一系列编号步骤的进度。 它呈现一个包含步骤的容器，每个步骤由 `Step` 组件表示。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 属性         | 类型 | 描述                        |
+| ---------- | -- | ------------------------- |
+| activeStep | 数字 | 当前活动步骤的索引。 这决定了应突出显示哪个步骤。 |
+
+</Tab>
+</Tabs>

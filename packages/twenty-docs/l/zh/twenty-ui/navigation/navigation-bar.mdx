@@ -1,0 +1,52 @@
+---
+title: 导航栏
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+渲染一个包含多个`NavigationBarItem`组件的导航栏。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 属性             | 类型  | 描述                                                           |
+| -------------- | --- | ------------------------------------------------------------ |
+| activeItemName | 字符串 | 当前活跃导航项的名称                                                   |
+| 项目             | 数组  | 表示每个导航项目的对象数组。 每个对象包含项目的`名称`、显示的`图标`组件以及项目被点击时调用的`onClick`函数 |
+
+</Tab>
+</Tabs>

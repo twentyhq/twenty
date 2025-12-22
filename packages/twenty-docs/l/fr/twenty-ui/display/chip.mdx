@@ -1,0 +1,148 @@
+---
+title: Puce
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Un élément visuel que vous pouvez utiliser comme un conteneur cliquable ou non cliquable avec une étiquette, des composants optionnels à gauche et à droite, et diverses options de style pour afficher des étiquettes et des tags.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propriétés   | Type                     | Description                                                                                                                          |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| linkToEntity | chaîne                   | Le lien vers l'entité                                                                                                                |
+| entityId     | chaîne                   | L'identifiant unique pour l'entité                                                                                                   |
+| nom          | chaîne                   | Le nom de l'entité                                                                                                                   |
+| pictureUrl   | chaîne                   | Image",                                                                                                                              |
+| avatarType   | Type d'avatar            | Le type d'avatar que vous souhaitez afficher. A deux options : `arrondie` et `carrée`                |
+| variante     | `EntityChipVariant` enum | Variante de la puce entité que vous souhaitez afficher. A deux options : `régulier` et `transparent` |
+| LeftIcon     | ComposantIcône           | Un composant React représentant une icône. Affiché sur le côté gauche de la puce                                     |
+
+</Tab>
+</Tabs>
+
+## Exemples
+
+### Puce transparente désactivée
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Puce désactivée avec infobulle
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Puce entité
+
+Un élément semblable à une puce pour afficher des informations sur une entité.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propriétés   | Type                     | Description                                                                                                                          |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| linkToEntity | chaîne                   | Le lien vers l'entité                                                                                                                |
+| entityId     | chaîne                   | L'identifiant unique pour l'entité                                                                                                   |
+| nom          | chaîne                   | Le nom de l'entité                                                                                                                   |
+| pictureUrl   | chaîne                   | Image",                                                                                                                              |
+| avatarType   | Type d'avatar            | Le type d'avatar que vous souhaitez afficher. A deux options : `arrondie` et `carrée`                |
+| variante     | `EntityChipVariant` enum | Variante de la puce entité que vous souhaitez afficher. A deux options : `régulier` et `transparent` |
+| LeftIcon     | ComposantIcône           | Un composant React représentant une icône. Affiché sur le côté gauche de la puce                                     |
+
+</Tab>
+</Tabs>

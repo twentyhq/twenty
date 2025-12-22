@@ -97,7 +97,8 @@ jobs:
           skip_ref_checkout: true
           dryrun_action: false
           # Only download languages supported by Mintlify (see supported-languages.ts)
-          download_language: 'fr,ar,cs,de,es,it,ja,ko,pt,ro,ru,tr,zh-CN'
+          # Using multiple -l flags since download_language only accepts single language
+          download_translations_args: '-l fr -l ar -l cs -l de -l es -l it -l ja -l ko -l pt -l ro -l ru -l tr -l zh-CN'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
