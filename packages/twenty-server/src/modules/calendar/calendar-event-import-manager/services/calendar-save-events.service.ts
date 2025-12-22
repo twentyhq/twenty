@@ -52,9 +52,7 @@ export class CalendarSaveEventsService {
               {
                 where: {
                   iCalUid: Any(
-                    fetchedCalendarEvents.map(
-                      (event) => event.iCalUid as string,
-                    ),
+                    fetchedCalendarEvents.map((event) => event.iCalUid),
                   ),
                 },
               },
@@ -68,9 +66,8 @@ export class CalendarSaveEventsService {
             const calendarEventsToUpsert = fetchedCalendarEvents.map(
               (fetchedCalendarEvent) => ({
                 id:
-                  existingEventsByICalUid.get(
-                    fetchedCalendarEvent.iCalUid as string,
-                  )?.id ?? uuid(),
+                  existingEventsByICalUid.get(fetchedCalendarEvent.iCalUid)
+                    ?.id ?? uuid(),
                 iCalUid: fetchedCalendarEvent.iCalUid,
                 title: fetchedCalendarEvent.title,
                 description: fetchedCalendarEvent.description,
@@ -99,7 +96,7 @@ export class CalendarSaveEventsService {
               transactionManager,
             );
 
-            const eventIdByICalUid = new Map(
+            const eventIdByICalUid = new Map<string, string>(
               calendarEventsToUpsert.map((event) => [event.iCalUid, event.id]),
             );
 
@@ -111,7 +108,7 @@ export class CalendarSaveEventsService {
               | 'recurringEventExternalId'
             >[] = fetchedCalendarEvents.map((fetchedCalendarEvent) => {
               const calendarEventId = eventIdByICalUid.get(
-                fetchedCalendarEvent.iCalUid as string,
+                fetchedCalendarEvent.iCalUid,
               );
 
               if (!calendarEventId) {
@@ -138,13 +135,10 @@ export class CalendarSaveEventsService {
             }
 
             const participantsToCreate = fetchedCalendarEvents
-              .filter(
-                (event) =>
-                  !existingEventsByICalUid.has(event.iCalUid as string),
-              )
+              .filter((event) => !existingEventsByICalUid.has(event.iCalUid))
               .flatMap((fetchedCalendarEvent) => {
                 const calendarEventId = eventIdByICalUid.get(
-                  fetchedCalendarEvent.iCalUid as string,
+                  fetchedCalendarEvent.iCalUid,
                 );
 
                 if (!calendarEventId) {
@@ -160,12 +154,10 @@ export class CalendarSaveEventsService {
               });
 
             const participantsToUpdate = fetchedCalendarEvents
-              .filter((event) =>
-                existingEventsByICalUid.has(event.iCalUid as string),
-              )
+              .filter((event) => existingEventsByICalUid.has(event.iCalUid))
               .flatMap((fetchedCalendarEvent) => {
                 const calendarEventId = eventIdByICalUid.get(
-                  fetchedCalendarEvent.iCalUid as string,
+                  fetchedCalendarEvent.iCalUid,
                 );
 
                 if (!calendarEventId) {
