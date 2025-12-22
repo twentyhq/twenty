@@ -1,12 +1,25 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import {
+  FieldContext,
+  type GenericFieldContextType,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
+import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/FieldWidgetEditAction';
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow, CustomError } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';
@@ -19,6 +32,7 @@ type WidgetActionRendererProps = {
 export const WidgetActionRenderer = ({ action }: WidgetActionRendererProps) => {
   const widget = useCurrentWidget();
   const targetRecord = useTargetRecord();
+  const { isInRightDrawer } = useLayoutRenderingContext();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -36,6 +50,18 @@ export const WidgetActionRenderer = ({ action }: WidgetActionRendererProps) => {
     resolvedFieldMetadataId ?? '',
   );
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    objectRecordId: targetRecord.id,
+  });
+
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: targetRecord.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
   if (action.id === 'edit' && widget.type === WidgetType.FIELD) {
     assertIsDefinedOrThrow(fieldMetadataItem);
 
@@ -50,17 +76,54 @@ export const WidgetActionRenderer = ({ action }: WidgetActionRendererProps) => {
     const isRelationField =
       isFieldRelation(fieldDefinition) || isFieldMorphRelation(fieldDefinition);
 
-    if (!isRelationField) {
-      throw new Error(
-        'Edit action is only available for relation fields for now',
+    if (isRelationField) {
+      return (
+        <FieldWidgetRelationEditAction
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
+        />
       );
     }
 
+    const instanceId = `field-widget-${targetRecord.id}-${fieldMetadataItem.name}-${isInRightDrawer ? 'right-drawer' : ''}`;
+
+    const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
+      recordId: targetRecord.id,
+      fieldName: fieldMetadataItem.name,
+      prefix: instanceId,
+    });
+
+    const fieldContextValue = {
+      recordId: targetRecord.id,
+      maxWidth: 200,
+      isLabelIdentifier: false,
+      fieldDefinition,
+      useUpdateRecord: useUpdateOneObjectRecordMutation,
+      isDisplayModeFixHeight: false,
+      isRecordFieldReadOnly: isRecordFieldReadOnly({
+        isRecordReadOnly,
+        objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+          objectPermissionsByObjectMetadataId,
+          objectMetadataId: objectMetadataItem.id,
+        }),
+        fieldMetadataItem: {
+          id: fieldMetadataItem.id,
+          isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        },
+      }),
+      anchorId: recordFieldInputInstanceId,
+    } satisfies GenericFieldContextType;
+
     return (
-      <FieldWidgetRelationEditAction
-        fieldDefinition={fieldDefinition}
-        recordId={targetRecord.id}
-      />
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: recordFieldInputInstanceId,
+        }}
+      >
+        <FieldContext.Provider value={fieldContextValue}>
+          <FieldWidgetEditAction />
+        </FieldContext.Provider>
+      </RecordFieldComponentInstanceContext.Provider>
     );
   }
 
