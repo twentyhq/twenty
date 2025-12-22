@@ -21,23 +21,16 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import {
   type CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
-export type VersionCommands = {
-  beforeSyncMetadata: (
-    | WorkspacesMigrationCommandRunner
-    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
-  )[];
-  afterSyncMetadata: (
-    | WorkspacesMigrationCommandRunner
-    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
-  )[];
-};
+export type VersionCommands = (
+  | WorkspacesMigrationCommandRunner
+  | ActiveOrSuspendedWorkspacesMigrationCommandRunner
+)[];
 export type AllCommands = Record<string, VersionCommands>;
 const execPromise = promisify(exec);
 
@@ -54,7 +47,6 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -184,7 +176,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       'Initialized upgrade context with:',
       `- currentVersion (migrating to): ${currentAppVersion}`,
       `- fromWorkspaceVersion: ${previousVersion}`,
-      `- ${this.commands.beforeSyncMetadata.length + this.commands.afterSyncMetadata.length} commands`,
+      `- ${this.commands.length} commands`,
     ];
 
     this.logger.log(chalk.blue(message.join('\n   ')));
@@ -269,9 +261,9 @@ If any workspaces are not on the previous minor version, roll back to that versi
         );
       }
       case 'equal': {
-        await this.runBeforeSyncMetadata(args);
-        await this.syncWorkspaceMetadataCommand.runOnWorkspace(args);
-        await this.runAfterSyncMetadata(args);
+        for (const command of this.commands) {
+          await command.runOnWorkspace(args);
+        }
 
         if (!options.dryRun) {
           await this.workspaceRepository.update(
@@ -302,18 +294,6 @@ If any workspaces are not on the previous minor version, roll back to that versi
       }
     }
   }
-
-  public readonly runBeforeSyncMetadata = async (args: RunOnWorkspaceArgs) => {
-    for (const command of this.commands.beforeSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  };
-
-  public readonly runAfterSyncMetadata = async (args: RunOnWorkspaceArgs) => {
-    for (const command of this.commands.afterSyncMetadata) {
-      await command.runOnWorkspace(args);
-    }
-  };
 
   private retrieveCurrentAppVersion() {
     const appVersion = this.twentyConfigService.get('APP_VERSION');

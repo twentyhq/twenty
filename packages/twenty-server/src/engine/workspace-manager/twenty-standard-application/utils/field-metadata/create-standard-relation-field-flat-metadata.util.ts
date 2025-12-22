@@ -15,6 +15,12 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
+> = CreateStandardMorphOrRelationFieldContext<O, T, FieldMetadataType.RELATION>;
+
+export type CreateStandardMorphOrRelationFieldContext<
+  O extends AllStandardObjectName,
+  T extends AllStandardObjectName,
+  F extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
 > = {
   fieldName: AllStandardObjectFieldName<O>;
   label: string;
@@ -26,7 +32,7 @@ export type CreateStandardRelationFieldContext<
   isNullable?: boolean;
   isUIReadOnly?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings: FieldMetadataSettings<FieldMetadataType.RELATION>;
+  settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
 };
 

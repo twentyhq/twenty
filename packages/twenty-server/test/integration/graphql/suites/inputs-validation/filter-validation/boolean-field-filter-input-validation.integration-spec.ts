@@ -14,7 +14,8 @@ describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
   let objectMetadataId: string;
   let objectMetadataSingularName: string;
   let objectMetadataPluralName: string;
-  let targetObjectMetadataId: string;
+  let targetObjectMetadata1Id: string;
+  let targetObjectMetadata2Id: string;
 
   beforeAll(async () => {
     const setupTest = await setupTestObjectsWithAllFieldTypes();
@@ -22,13 +23,15 @@ describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
     objectMetadataId = setupTest.objectMetadataId;
     objectMetadataSingularName = setupTest.objectMetadataSingularName;
     objectMetadataPluralName = setupTest.objectMetadataPluralName;
-    targetObjectMetadataId = setupTest.targetObjectMetadataId;
+    targetObjectMetadata1Id = setupTest.targetObjectMetadata1Id;
+    targetObjectMetadata2Id = setupTest.targetObjectMetadata2Id;
   });
 
   afterAll(async () => {
     await destroyManyObjectsMetadata([
       objectMetadataId,
-      targetObjectMetadataId,
+      targetObjectMetadata1Id,
+      targetObjectMetadata2Id,
     ]);
   });
 

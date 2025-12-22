@@ -182,6 +182,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the task.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'targetTask',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

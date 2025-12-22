@@ -1,17 +1,22 @@
-import { randomUUID } from 'crypto';
-
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { RelationType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
-const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR =
-  'apiInputValidationTargetTestObject';
-const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL =
-  'apiInputValidationTargetTestObjects';
+const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1 =
+  'apiInputValidationTargetTestObject1';
+const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1 =
+  'apiInputValidationTargetTestObjects1';
+const TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2 =
+  'apiInputValidationTargetTestObject2';
+const TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2 =
+  'apiInputValidationTargetTestObjects2';
 
 export const TEST_TARGET_OBJECT_RECORD_ID =
   '20202020-a21e-4ec2-873b-de4264d89025';
@@ -20,6 +25,15 @@ export const TEST_UUID_FIELD_VALUE = '20202020-b21e-4ec2-873b-de4264d89025';
 
 export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
   '20202020-b21e-4ec2-873b-de4264d89021';
+
+export const joinColumnNameForManyToOneMorphRelationField1 =
+  computeMorphRelationFieldName({
+    fieldName: 'manyToOneMorphRelationField',
+    relationType: RelationType.MANY_TO_ONE,
+    targetObjectMetadataNameSingular:
+      TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+    targetObjectMetadataNamePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
+  }) + 'Id';
 
 export const setupTestObjectsWithAllFieldTypes = async () => {
   const createdObjectMetadata = await createOneObjectMetadata({
@@ -33,21 +47,33 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   const objectMetadataId = createdObjectMetadata.data.createOneObject.id;
 
-  const createdTargetObjectMetadata = await createOneObjectMetadata({
+  const createdTargetObjectMetadata1 = await createOneObjectMetadata({
     input: {
-      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
-      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
+      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
     },
   });
 
-  const targetObjectMetadataId =
-    createdTargetObjectMetadata.data.createOneObject.id;
+  const createdTargetObjectMetadata2 = await createOneObjectMetadata({
+    input: {
+      nameSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2,
+      namePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2,
+      labelSingular: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_2,
+      labelPlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_2,
+    },
+  });
+
+  const targetObjectMetadata1Id =
+    createdTargetObjectMetadata1.data.createOneObject.id;
+  const targetObjectMetadata2Id =
+    createdTargetObjectMetadata2.data.createOneObject.id;
 
   const fieldMetadataCreationInputs = getFieldMetadataCreationInputs(
     objectMetadataId,
-    targetObjectMetadataId,
+    targetObjectMetadata1Id,
+    targetObjectMetadata2Id,
   );
 
   for (const input of fieldMetadataCreationInputs) {
@@ -58,8 +84,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
-      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
       gqlFields: `id`,
       data: [
         {
@@ -73,11 +99,15 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
     createManyOperationFactory({
       objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
       objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
-      gqlFields: `id`,
+      gqlFields: `
+      id
+      ${joinColumnNameForManyToOneMorphRelationField1}`,
       data: [
         {
-          id: randomUUID(),
+          id: v4(),
           manyToOneRelationFieldId: TEST_TARGET_OBJECT_RECORD_ID,
+          [joinColumnNameForManyToOneMorphRelationField1]:
+            TEST_TARGET_OBJECT_RECORD_ID,
           uuidField: TEST_UUID_FIELD_VALUE,
           textField: 'test',
           phonesField: {
@@ -135,7 +165,7 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
           arrayField: ['test'],
         },
         {
-          id: randomUUID(),
+          id: v4(),
         },
       ],
     }),
@@ -143,8 +173,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
-      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR,
-      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL,
+      objectMetadataSingularName: TEST_TARGET_OBJECT_METADATA_NAME_SINGULAR_1,
+      objectMetadataPluralName: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
       gqlFields: `id`,
       data: [
         {
@@ -156,7 +186,8 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
 
   return {
     objectMetadataId,
-    targetObjectMetadataId,
+    targetObjectMetadata1Id,
+    targetObjectMetadata2Id,
     objectMetadataSingularName: TEST_OBJECT_METADATA_NAME_SINGULAR,
     objectMetadataPluralName: TEST_OBJECT_METADATA_NAME_PLURAL,
   };
