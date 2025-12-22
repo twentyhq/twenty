@@ -52,7 +52,6 @@ const StyledHandle = styled(Handle, {
       transform: translate(-50%, -50%);
       width: calc(100% + ${({ theme }) => theme.spacing(4)});
       height: calc(100% + ${({ theme }) => theme.spacing(4)});
-      pointer-events: auto;
     }
 
     transition:
