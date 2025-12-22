@@ -151,6 +151,7 @@
                   "label": "CRM Automations",
                   "pages": [
                     "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                    "user-guide/workflows/how-tos/crm-automations/display-number-of-emails-received",
                     "user-guide/workflows/how-tos/crm-automations/formula-fields",
                     "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                     "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
