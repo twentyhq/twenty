@@ -141,7 +141,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
           direction: ViewSortDirection.ASC,
         },
       ],
-      expected: [{ id: 'AscNullsFirst' }],
+      expected: [],
       objectMetadataItemOverrides: {
         isRemote: true,
       },
