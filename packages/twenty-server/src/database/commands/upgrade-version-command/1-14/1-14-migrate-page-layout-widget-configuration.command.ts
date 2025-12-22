@@ -109,6 +109,11 @@ const migrateConfiguration = (
         ...configuration,
         configurationType: WidgetConfigurationType.WORKFLOW_RUN,
       };
+    case WidgetType.FIELD:
+      return {
+        ...configuration,
+        configurationType: WidgetConfigurationType.FIELD,
+      };
     default:
       assertUnreachable(widgetType);
   }

@@ -13,6 +13,7 @@ export enum WidgetConfigurationType {
   IFRAME = 'IFRAME',
   STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT',
   VIEW = 'VIEW',
+  FIELD = 'FIELD',
   FIELDS = 'FIELDS',
   TIMELINE = 'TIMELINE',
   TASKS = 'TASKS',

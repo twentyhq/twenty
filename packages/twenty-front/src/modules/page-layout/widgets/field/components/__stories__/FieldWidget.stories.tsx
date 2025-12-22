@@ -26,7 +26,11 @@ import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget'
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutType,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -336,6 +340,7 @@ export const TextFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: nameField.id,
         layout: 'FIELD',
       },
@@ -427,6 +432,7 @@ export const AddressFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: addressField.id,
         layout: 'FIELD',
       },
@@ -521,6 +527,7 @@ export const NumberFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: employeesField.id,
         layout: 'FIELD',
       },
@@ -612,6 +619,7 @@ export const LinkFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: linkedinField.id,
         layout: 'FIELD',
       },
@@ -703,6 +711,7 @@ export const ManyToOneRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: accountOwnerField.id,
         layout: 'FIELD',
       },
@@ -804,6 +813,7 @@ export const OneToManyRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
         layout: 'FIELD',
       },
@@ -900,6 +910,7 @@ export const BooleanFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: idealCustomerProfileField.id,
         layout: 'FIELD',
       },
@@ -990,6 +1001,7 @@ export const CurrencyFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: annualRecurringRevenueField.id,
         layout: 'FIELD',
       },
@@ -1080,6 +1092,7 @@ export const EmailsFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: personEmailsField.id,
         layout: 'FIELD',
       },
@@ -1174,6 +1187,7 @@ export const PhonesFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: personPhonesField.id,
         layout: 'FIELD',
       },
@@ -1268,6 +1282,7 @@ export const SelectFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: opportunityStageField.id,
         layout: 'FIELD',
       },
@@ -1363,6 +1378,7 @@ export const MultiSelectFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyWorkPolicyField.id,
         layout: 'FIELD',
       },
@@ -1458,6 +1474,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
       },
       configuration: {
         __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: timelineActivityWorkspaceMemberField.id,
         layout: 'FIELD',
       },
