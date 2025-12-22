@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
+import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -116,40 +117,13 @@ const DeleteObjectMetadataInputSchema = z.object({
   }),
 });
 
-const formatValidationErrors = (
-  error: WorkspaceMigrationBuilderExceptionV2,
-): string => {
-  const report = error.failedWorkspaceMigrationBuildResult.report;
-  const errorMessages: string[] = [];
-
-  for (const [entityType, failures] of Object.entries(report)) {
-    if (Array.isArray(failures) && failures.length > 0) {
-      for (const failure of failures) {
-        if (failure.errors && Array.isArray(failure.errors)) {
-          for (const validationError of failure.errors) {
-            const message = validationError.message || validationError.code;
-
-            errorMessages.push(`[${entityType}] ${message}`);
-          }
-        }
-      }
-    }
-  }
-
-  if (errorMessages.length === 0) {
-    return error.message;
-  }
-
-  return `Validation errors:\n${errorMessages.join('\n')}`;
-};
-
 @Injectable()
 export class ObjectMetadataToolsFactory {
   constructor(private readonly objectMetadataService: ObjectMetadataService) {}
 
   generateTools(workspaceId: string): ToolSet {
     return {
-      'get-object-metadata': {
+      get_object_metadata: {
         description:
           'Find objects metadata. Retrieve information about the data model objects in the workspace.',
         inputSchema: GetObjectMetadataInputSchema,
@@ -172,7 +146,7 @@ export class ObjectMetadataToolsFactory {
           );
         },
       },
-      'create-object-metadata': {
+      create_object_metadata: {
         description:
           'Create a new object metadata in the workspace data model.',
         inputSchema: CreateObjectMetadataInputSchema,
@@ -209,7 +183,7 @@ export class ObjectMetadataToolsFactory {
           }
         },
       },
-      'update-object-metadata': {
+      update_object_metadata: {
         description:
           'Update an existing object metadata. Provide the object ID and the fields to update.',
         inputSchema: UpdateObjectMetadataInputSchema,
@@ -249,7 +223,7 @@ export class ObjectMetadataToolsFactory {
           }
         },
       },
-      'delete-object-metadata': {
+      delete_object_metadata: {
         description:
           'Delete an object metadata by its ID. This will also delete all associated fields.',
         inputSchema: DeleteObjectMetadataInputSchema,

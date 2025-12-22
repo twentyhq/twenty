@@ -8,6 +8,7 @@ import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-mod
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
+import { FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout/constants/flat-page-layout-editable-properties.constant';
 import { FLAT_ROLE_TARGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role-target/constants/flat-role-target-editable-properties.constant';
 import { FLAT_ROLE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role/constants/flat-role-editable-properties.constant';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
@@ -113,6 +114,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
       'evaluationInputs',
     ],
   },
+  pageLayout: {
+    propertiesToCompare: [...FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES, 'deletedAt'],
+    propertiesToStringify: [],
+  },
   pageLayoutWidget: {
     propertiesToCompare: [
       ...FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
@@ -121,7 +126,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToStringify: ['gridPosition', 'configuration'],
   },
   pageLayoutTab: {
-    propertiesToCompare: [...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES],
+    propertiesToCompare: [
+      ...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
+      'deletedAt',
+    ],
     propertiesToStringify: [],
   },
 } as const satisfies {

@@ -1,9 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { GRAPH_WIDGET_TEST_INSTANCE_ID } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
-import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
   AggregateOperations,
@@ -12,7 +11,6 @@ import {
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -36,17 +34,14 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',
   component: GraphWidgetPieChart,
   decorators: [
-    (Story) => (
-      <GraphWidgetComponentInstanceContext.Provider
-        value={{ instanceId: GRAPH_WIDGET_TEST_INSTANCE_ID }}
-      >
-        <Story />
-      </GraphWidgetComponentInstanceContext.Provider>
-    ),
-    ComponentDecorator,
     I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
-    RootDecorator,
+    (Story) => (
+      <GraphWidgetTestWrapper>
+        <Story />
+      </GraphWidgetTestWrapper>
+    ),
+    ComponentDecorator,
   ],
   parameters: {
     layout: 'centered',
@@ -369,17 +364,14 @@ export const Storage: Story = {
 
 export const Catalog: Story = {
   decorators: [
-    (Story) => (
-      <GraphWidgetComponentInstanceContext.Provider
-        value={{ instanceId: GRAPH_WIDGET_TEST_INSTANCE_ID }}
-      >
-        <Story />
-      </GraphWidgetComponentInstanceContext.Provider>
-    ),
-    CatalogDecorator,
     I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
-    RootDecorator,
+    (Story) => (
+      <GraphWidgetTestWrapper>
+        <Story />
+      </GraphWidgetTestWrapper>
+    ),
+    CatalogDecorator,
   ],
   parameters: {
     catalog: {

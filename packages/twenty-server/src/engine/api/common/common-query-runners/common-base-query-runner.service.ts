@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { Omit } from 'zod/v4/core/util.cjs';
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
@@ -33,6 +32,7 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -48,9 +48,8 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -64,8 +63,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
   protected readonly dataArgProcessor: DataArgProcessor;
-  @Inject()
-  protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
@@ -90,6 +87,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly featureFlagService: FeatureFlagService;
 
   protected abstract readonly operationName: CommonQueryNames;
+
+  protected readonly isReadOnly: boolean = false;
 
   public async execute(
     args: CommonInput<Args>,
@@ -303,10 +302,14 @@ export abstract class CommonBaseQueryRunnerService<
     workspaceId: string,
   ): Promise<string> {
     if (isDefined(authContext.apiKey)) {
-      return this.apiKeyRoleService.getRoleIdForApiKey(
+      return this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );
+    }
+
+    if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
+      return authContext.application?.defaultServerlessFunctionRoleId;
     }
 
     if (!isDefined(authContext.userWorkspaceId)) {
@@ -330,22 +333,30 @@ export abstract class CommonBaseQueryRunnerService<
 
     const roleId = await this.getRoleIdOrThrow(authContext, workspaceId);
 
-    const rolePermissionConfig = { unionOf: [roleId] };
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: [roleId],
+    };
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
+    const isReadOnReplicaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_READ_ON_REPLICA_ENABLED,
+        workspaceId,
+      );
+
+    const globalWorkspaceDataSource =
+      this.isReadOnly && isReadOnReplicaEnabled
+        ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
+        : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const repository = globalWorkspaceDataSource.getRepository(
       queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
     );
 
-    const globalWorkspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
     return {
       ...queryRunnerContext,
       authContext,
-      workspaceDataSource:
-        globalWorkspaceDataSource as unknown as WorkspaceDataSource,
+      workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
     };

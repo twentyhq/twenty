@@ -38,7 +38,7 @@ const formatGoogleCalendarEvent = (
     externalUpdatedAt: event.updated ?? '',
     description: event.description ?? '',
     location: event.location ?? '',
-    iCalUID: event.iCalUID ?? '',
+    iCalUid: event.iCalUID ?? '',
     conferenceSolution:
       event.conferenceData?.conferenceSolution?.key?.type ?? '',
     conferenceLinkLabel: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
@@ -63,7 +63,7 @@ const formatGoogleCalendarEvent = (
     'externalUpdatedAt',
     'description',
     'location',
-    'iCalUID',
+    'iCalUid',
     'conferenceSolution',
     'conferenceLinkLabel',
     'conferenceLinkUrl',

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { lazy, type ReactElement, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -211,6 +212,7 @@ export const AttachmentList = ({
             size="large"
             isClosable
             onClose={handleClosePreview}
+            ignoreContainer
           >
             <StyledModalHeader>
               <StyledHeader>
@@ -239,7 +241,7 @@ export const AttachmentList = ({
                   fallback={
                     <StyledLoadingContainer>
                       <StyledLoadingText>
-                        Loading document viewer...
+                        {t`Loading document viewer...`}
                       </StyledLoadingText>
                     </StyledLoadingContainer>
                   }

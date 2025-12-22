@@ -19,7 +19,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -37,27 +38,31 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 )
 export class WorkflowTriggerResolver {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
   @Mutation(() => Boolean)
   async activateWorkflowVersion(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
     return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
+      workspace.id,
     );
   }
 
   @Mutation(() => Boolean)
   async deactivateWorkflowVersion(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
     return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
+      workspace.id,
     );
   }
 
@@ -68,18 +73,26 @@ export class WorkflowTriggerResolver {
     @Args('input')
     { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
-      where: {
-        userId: user.id,
-      },
-    });
+    const workspaceMember =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext,
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspace.id,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workspaceMemberRepository.findOneOrFail({
+            where: {
+              userId: user.id,
+            },
+          });
+        },
+      );
 
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
@@ -92,14 +105,19 @@ export class WorkflowTriggerResolver {
         },
         workspaceMemberId: workspaceMember.id,
       }),
+      workspaceId: workspace.id,
     });
   }
 
   @Mutation(() => WorkflowRunDTO)
   async stopWorkflowRun(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.stopWorkflowRun(workflowRunId);
+    return this.workflowTriggerWorkspaceService.stopWorkflowRun(
+      workflowRunId,
+      workspace.id,
+    );
   }
 }

@@ -3,17 +3,20 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
 import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import { GraphType } from '~/generated/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
@@ -108,10 +111,8 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           graphType === GraphType.HORIZONTAL_BAR ||
           graphType === GraphType.LINE;
         const wasBarOrLineChart =
-          currentConfiguration.__typename === 'BarChartConfiguration' ||
-          currentConfiguration.__typename === 'LineChartConfiguration';
-        const wasPieChart =
-          currentConfiguration.__typename === 'PieChartConfiguration';
+          isBarOrLineChartConfiguration(currentConfiguration);
+        const wasPieChart = isPieChartConfiguration(currentConfiguration);
 
         if (isPieChart && wasBarOrLineChart) {
           configToUpdate = {

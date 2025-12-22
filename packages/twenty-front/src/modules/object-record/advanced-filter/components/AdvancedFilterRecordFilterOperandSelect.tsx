@@ -5,6 +5,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -43,7 +44,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
         selectedOption={{
           label: filter?.operand
             ? getOperandLabel(filter.operand)
-            : 'Select operand',
+            : t`Select operand`,
           value: null,
         }}
         isDisabled

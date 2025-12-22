@@ -208,7 +208,7 @@ export const WorkflowEditActionServerlessFunction = ({
               isLeaf: true,
               icon: 'IconVariable',
               tab: 'test',
-              label: 'Generate Function Output',
+              label: t`Generate Function Output`,
             },
             _outputSchemaType: 'LINK',
           },
@@ -301,10 +301,14 @@ export const WorkflowEditActionServerlessFunction = ({
   };
 
   const tabs = [
-    { id: WorkflowServerlessFunctionTabId.CODE, title: 'Code', Icon: IconCode },
+    {
+      id: WorkflowServerlessFunctionTabId.CODE,
+      title: t`Code`,
+      Icon: IconCode,
+    },
     {
       id: WorkflowServerlessFunctionTabId.TEST,
-      title: 'Test',
+      title: t`Test`,
       Icon: IconPlayerPlay,
     },
   ];
@@ -448,7 +452,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
-                <InputLabel>Result</InputLabel>
+                <InputLabel>{t`Result`}</InputLabel>
                 <ServerlessFunctionExecutionResult
                   serverlessFunctionTestData={serverlessFunctionTestData}
                   isTesting={isTesting}
@@ -456,7 +460,7 @@ export const WorkflowEditActionServerlessFunction = ({
               </StyledCodeEditorContainer>
               {serverlessFunctionTestData.output.logs.length > 0 && (
                 <StyledCodeEditorContainer>
-                  <InputLabel>Logs</InputLabel>
+                  <InputLabel>{t`Logs`}</InputLabel>
                   <TextArea
                     textAreaId={testLogsTextAreaId}
                     value={

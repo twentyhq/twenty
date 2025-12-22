@@ -34,7 +34,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   triggerUpdateRelationsOptimisticEffect({
     cache,
@@ -81,6 +81,26 @@ export const triggerUpdateRecordOptimisticEffect = ({
           filter: rootQueryFilter ?? {},
           objectMetadataItem,
         });
+
+        const currentRecordIndexInRootQueryEdges = isRecordMatchingFilter({
+          record: currentRecord,
+          filter: rootQueryFilter ?? {},
+          objectMetadataItem,
+        });
+
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryConnection,
+        );
+
+        const newTotalCount = isDefined(totalCount)
+          ? Math.max(
+              totalCount +
+                (updatedRecordMatchesThisRootQueryFilter ? 1 : 0) +
+                (currentRecordIndexInRootQueryEdges ? -1 : 0),
+              0,
+            )
+          : undefined;
 
         const updatedRecordIndexInRootQueryEdges =
           rootQueryCurrentEdges.findIndex(
@@ -131,6 +151,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         return {
           ...rootQueryConnection,
           edges: rootQueryNextEdges,
+          totalCount: newTotalCount,
         };
       },
     },

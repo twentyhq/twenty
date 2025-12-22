@@ -1,6 +1,7 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export const FIELD_METADATA_RELATION_PROPERTIES = [
   'relationTargetFieldMetadata',
@@ -20,9 +21,9 @@ export type FieldMetadataEntityRelationProperties =
   (typeof FIELD_METADATA_RELATION_PROPERTIES)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
-  Omit<
+  FlatEntityFrom<
     FieldMetadataEntity<T>,
-    FieldMetadataEntityRelationProperties | 'viewGroups'
+    FieldMetadataEntityRelationProperties
   > & {
     universalIdentifier: string;
     viewFieldIds: string[];

@@ -6,17 +6,20 @@ import {
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getDateGroupsFromData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { isDefined } from 'twenty-shared/utils';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 type OneDimensionalFillParams = {
   data: GroupByRawResult[];
   keys: string[];
   dateGranularity: SupportedDateGranularity;
+  orderBy?: GraphOrderBy | null;
 };
 
 export const fillDateGapsInOneDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
+  orderBy,
 }: OneDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
@@ -42,10 +45,11 @@ export const fillDateGapsInOneDimensionalBarChartData = ({
     return { data, wasTruncated: false };
   }
 
-  const { dates: allDates, wasTruncated } = getDateGroupsFromData(
+  const { dates: allDates, wasTruncated } = getDateGroupsFromData({
     parsedDates,
     dateGranularity,
-  );
+    orderBy,
+  });
 
   const filledData = allDates.map((date) => {
     const key = date.toISOString();

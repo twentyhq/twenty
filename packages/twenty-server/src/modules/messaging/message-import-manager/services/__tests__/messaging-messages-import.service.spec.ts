@@ -5,7 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
@@ -106,11 +106,14 @@ describe('MessagingMessagesImportService', () => {
         },
       },
       {
-        provide: TwentyORMManager,
+        provide: GlobalWorkspaceOrmManager,
         useValue: {
           getRepository: jest.fn().mockResolvedValue({
             update: jest.fn().mockResolvedValue(undefined),
           }),
+          executeInWorkspaceContext: jest
+            .fn()
+            .mockImplementation((_authContext: any, fn: () => any) => fn()),
         },
       },
       {
@@ -219,11 +222,14 @@ describe('MessagingMessagesImportService', () => {
       connectedAccountRefreshTokensService.refreshAndSaveTokens,
     ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
 
-    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith({
-      ...mockConnectedAccount,
-      accessToken: 'new-access-token',
-      refreshToken: 'new-refresh-token',
-    });
+    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith(
+      {
+        ...mockConnectedAccount,
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+      },
+      workspaceId,
+    );
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
       {

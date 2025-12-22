@@ -5,13 +5,16 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-export const SeeRunsWorkflowVersionSingleRecordAction = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVersion?.workflow.id,
-  );
+const SeeRunsWorkflowVersionSingleRecordActionContent = ({
+  workflowId,
+  recordId,
+}: {
+  workflowId: string;
+  recordId: string;
+}) => {
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   return (
     <ActionLink
@@ -31,6 +34,24 @@ export const SeeRunsWorkflowVersionSingleRecordAction = () => {
           },
         },
       }}
+    />
+  );
+};
+
+export const SeeRunsWorkflowVersionSingleRecordAction = () => {
+  const recordId = useSelectedRecordIdOrThrow();
+  const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
+
+  const workflowId = workflowVersion?.workflow?.id;
+
+  if (!isDefined(workflowId)) {
+    return null;
+  }
+
+  return (
+    <SeeRunsWorkflowVersionSingleRecordActionContent
+      workflowId={workflowId}
+      recordId={recordId}
     />
   );
 };

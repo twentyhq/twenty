@@ -2,99 +2,111 @@
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has different relation types 1`] = `
 {
-  "error": {
-    "code": "FIELD_METADATA_RELATION_MALFORMED",
-    "message": "Morph relation creation payloads must have the same relation type",
-    "userFriendlyMessage": {
-      "id": Any<String>,
+  "errors": [
+    {
+      "code": "FIELD_METADATA_RELATION_MALFORMED",
       "message": "Morph relation creation payloads must have the same relation type",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "Morph relation creation payloads must have the same relation type",
+      },
     },
-  },
+  ],
   "status": "fail",
 }
 `;
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has invalid relation payload 1`] = `
 {
-  "error": {
-    "code": "FIELD_METADATA_RELATION_MALFORMED",
-    "message": "Morph relation input transpilation failed",
-    "userFriendlyMessage": {
-      "id": Any<String>,
-      "message": "Invalid morph relation input",
-    },
-    "value": [
-      {
-        "targetObjectMetadataId": Any<String>,
-        "type": "ONE_TO_MANY",
+  "errors": [
+    {
+      "code": "FIELD_METADATA_RELATION_MALFORMED",
+      "message": "Morph relation input transpilation failed",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "Invalid morph relation input",
       },
-    ],
-  },
+      "value": [
+        {
+          "targetObjectMetadataId": Any<String>,
+          "type": "ONE_TO_MANY",
+        },
+      ],
+    },
+  ],
   "status": "fail",
 }
 `;
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has several references to same object metadata 1`] = `
 {
-  "error": {
-    "code": "FIELD_METADATA_RELATION_MALFORMED",
-    "message": "Morph relation creation payloads must have only relation to the same object metadata",
-    "userFriendlyMessage": {
-      "id": Any<String>,
-      "message": "Morph relation creation payloads must only contain relation to the same object metadata",
+  "errors": [
+    {
+      "code": "FIELD_METADATA_RELATION_MALFORMED",
+      "message": "Morph relation creation payloads must have only relation to the same object metadata",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "Morph relation creation payloads must only contain relation to the same object metadata",
+      },
     },
-  },
+  ],
   "status": "fail",
 }
 `;
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload is empty array 1`] = `
 {
-  "error": {
-    "code": "FIELD_METADATA_RELATION_MALFORMED",
-    "message": "Morph relation creation payloads are empty",
-    "userFriendlyMessage": {
-      "id": Any<String>,
-      "message": "At least one relation is require",
+  "errors": [
+    {
+      "code": "FIELD_METADATA_RELATION_MALFORMED",
+      "message": "Morph relation creation payloads are empty",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "At least one relation is require",
+      },
     },
-  },
+  ],
   "status": "fail",
 }
 `;
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload is missing 1`] = `
 {
-  "error": {
-    "code": "INVALID_FIELD_INPUT",
-    "message": "Relation creation payload is required",
-    "userFriendlyMessage": {
-      "id": Any<String>,
+  "errors": [
+    {
+      "code": "INVALID_FIELD_INPUT",
       "message": "Relation creation payload is required",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "Relation creation payload is required",
+      },
+      "value": undefined,
     },
-    "value": undefined,
-  },
+  ],
   "status": "fail",
 }
 `;
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when target object metadata is not found 1`] = `
 {
-  "error": {
-    "code": "FIELD_METADATA_RELATION_MALFORMED",
-    "message": "Morph relation input transpilation failed",
-    "userFriendlyMessage": {
-      "id": Any<String>,
-      "message": "Invalid morph relation input",
-    },
-    "value": [
-      {
-        "targetFieldIcon": "IconPet",
-        "targetFieldLabel": "Pet",
-        "targetObjectMetadataId": Any<String>,
-        "type": "ONE_TO_MANY",
+  "errors": [
+    {
+      "code": "FIELD_METADATA_RELATION_MALFORMED",
+      "message": "Morph relation input transpilation failed",
+      "userFriendlyMessage": {
+        "id": Any<String>,
+        "message": "Invalid morph relation input",
       },
-    ],
-  },
+      "value": [
+        {
+          "targetFieldIcon": "IconPet",
+          "targetFieldLabel": "Pet",
+          "targetObjectMetadataId": Any<String>,
+          "type": "ONE_TO_MANY",
+        },
+      ],
+    },
+  ],
   "status": "fail",
 }
 `;
@@ -106,7 +118,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       {
         "applicationId": Any<String>,
         "calendarViewIds": [],
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
         "icon": "IconRelationOneToMany",
@@ -117,7 +129,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isNullable": true,
         "isSystem": false,
         "isUIReadOnly": false,
-        "isUnique": null,
+        "isUnique": false,
         "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
         "mainGroupByFieldMetadataViewIds": [],
@@ -134,7 +146,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "standardOverrides": null,
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "viewFieldIds": [],
         "viewFilterIds": [],
         "workspaceId": Any<String>,
@@ -142,9 +154,9 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       {
         "applicationId": Any<String>,
         "calendarViewIds": [],
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "defaultValue": null,
-        "description": null,
+        "description": "new field description",
         "icon": "IconPet",
         "id": Any<String>,
         "isActive": true,
@@ -153,7 +165,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isNullable": true,
         "isSystem": false,
         "isUIReadOnly": false,
-        "isUnique": null,
+        "isUnique": false,
         "kanbanAggregateOperationViewIds": [],
         "label": "Pet",
         "mainGroupByFieldMetadataViewIds": [],
@@ -172,7 +184,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "standardOverrides": null,
         "type": "RELATION",
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "viewFieldIds": [],
         "viewFilterIds": [],
         "workspaceId": Any<String>,
@@ -180,7 +192,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       {
         "applicationId": Any<String>,
         "calendarViewIds": [],
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
         "icon": "IconRelationOneToMany",
@@ -191,7 +203,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isNullable": true,
         "isSystem": false,
         "isUIReadOnly": false,
-        "isUnique": null,
+        "isUnique": false,
         "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
         "mainGroupByFieldMetadataViewIds": [],
@@ -208,7 +220,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "standardOverrides": null,
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "viewFieldIds": [],
         "viewFilterIds": [],
         "workspaceId": Any<String>,
@@ -216,9 +228,9 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       {
         "applicationId": Any<String>,
         "calendarViewIds": [],
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "defaultValue": null,
-        "description": null,
+        "description": "new field description",
         "icon": "IconBuilding",
         "id": Any<String>,
         "isActive": true,
@@ -227,7 +239,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isNullable": true,
         "isSystem": false,
         "isUIReadOnly": false,
-        "isUnique": null,
+        "isUnique": false,
         "kanbanAggregateOperationViewIds": [],
         "label": "Company",
         "mainGroupByFieldMetadataViewIds": [],
@@ -246,7 +258,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "standardOverrides": null,
         "type": "RELATION",
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "viewFieldIds": [],
         "viewFilterIds": [],
         "workspaceId": Any<String>,
@@ -255,15 +267,15 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "indexMetadatas": [
       {
         "applicationId": Any<String>,
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "flatIndexFieldMetadatas": [
           {
-            "createdAt": Any<ClockDate>,
+            "createdAt": Any<String>,
             "fieldMetadataId": Any<String>,
             "id": Any<String>,
             "indexMetadataId": Any<String>,
             "order": 0,
-            "updatedAt": Any<ClockDate>,
+            "updatedAt": Any<String>,
           },
         ],
         "id": Any<String>,
@@ -274,20 +286,20 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "name": "IDX_f687e4e4252800dddd8e5518362",
         "objectMetadataId": Any<String>,
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "workspaceId": Any<String>,
       },
       {
         "applicationId": Any<String>,
-        "createdAt": Any<ClockDate>,
+        "createdAt": Any<String>,
         "flatIndexFieldMetadatas": [
           {
-            "createdAt": Any<ClockDate>,
+            "createdAt": Any<String>,
             "fieldMetadataId": Any<String>,
             "id": Any<String>,
             "indexMetadataId": Any<String>,
             "order": 0,
-            "updatedAt": Any<ClockDate>,
+            "updatedAt": Any<String>,
           },
         ],
         "id": Any<String>,
@@ -298,7 +310,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "name": "IDX_cb15d901e889e25d0a9acecb595",
         "objectMetadataId": Any<String>,
         "universalIdentifier": Any<String>,
-        "updatedAt": Any<ClockDate>,
+        "updatedAt": Any<String>,
         "workspaceId": Any<String>,
       },
     ],

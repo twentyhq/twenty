@@ -6,11 +6,11 @@ import {
 
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type DeletePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/delete-page-layout-widget.input';
+import { type DeletePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/delete-page-layout-widget.input';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
   deletePageLayoutWidgetInput: rawDeletePageLayoutWidgetInput,
@@ -36,6 +36,6 @@ export const fromDeletePageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
 
   return {
     ...existingFlatPageLayoutWidgetToDelete,
-    deletedAt: new Date(),
+    deletedAt: new Date().toISOString(),
   };
 };

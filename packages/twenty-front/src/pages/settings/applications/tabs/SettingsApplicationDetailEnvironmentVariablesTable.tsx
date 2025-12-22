@@ -49,15 +49,15 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       <StyledSearchInput
         instanceId="env-var-search"
         LeftIcon={IconSearch}
-        placeholder="Search a variable"
+        placeholder={t`Search a variable`}
         value={searchTerm}
         onChange={setSearchTerm}
       />
       <Table>
         <StyledApplicationEnvironmentVariableTableRow>
-          <TableHeader>Name</TableHeader>
-          <TableHeader>Value</TableHeader>
-          <TableHeader>Info</TableHeader>
+          <TableHeader>{t`Name`}</TableHeader>
+          <TableHeader>{t`Value`}</TableHeader>
+          <TableHeader>{t`Info`}</TableHeader>
           <TableHeader></TableHeader>
         </StyledApplicationEnvironmentVariableTableRow>
         {filteredEnvVariable.length > 0 && (

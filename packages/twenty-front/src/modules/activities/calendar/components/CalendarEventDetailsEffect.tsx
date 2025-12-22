@@ -16,7 +16,7 @@ export const CalendarEventDetailsEffect = ({
       return;
     }
 
-    upsertRecordsInStore([record]);
+    upsertRecordsInStore({ partialRecords: [record] });
   }, [record, upsertRecordsInStore]);
 
   return <></>;

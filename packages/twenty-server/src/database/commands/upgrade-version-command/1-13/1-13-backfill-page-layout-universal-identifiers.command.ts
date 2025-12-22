@@ -9,15 +9,16 @@ import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/worksp
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
-import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
+import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Command({
   name: 'upgrade:1-13:backfill-page-layout-universal-identifiers',
   description:
-    'Backfill universalIdentifier and applicationId for pageLayoutWidget and pageLayoutTab',
+    'Backfill universalIdentifier and applicationId for pageLayout, pageLayoutTab and pageLayoutWidget',
 })
 export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -27,7 +28,9 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
     @InjectRepository(PageLayoutTabEntity)
     private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
+    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -52,7 +55,7 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
 
     const applicationId = workspaceCustomFlatApplication.id;
 
-    const widgetsToUpdate = await this.pageLayoutWidgetRepository.find({
+    const pageLayoutsToUpdate = await this.pageLayoutRepository.find({
       where: [
         { workspaceId, universalIdentifier: IsNull() },
         { workspaceId, applicationId: IsNull() },
@@ -61,29 +64,29 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     });
 
     this.logger.log(
-      `Found ${widgetsToUpdate.length} pageLayoutWidget records to backfill`,
+      `Found ${pageLayoutsToUpdate.length} pageLayout records to backfill`,
     );
 
-    for (const widget of widgetsToUpdate) {
+    for (const pageLayout of pageLayoutsToUpdate) {
       const universalIdentifier = v4();
 
       if (options.dryRun) {
         this.logger.log(
-          `[DRY RUN] Would update pageLayoutWidget ${widget.id} with universalIdentifier ${universalIdentifier} and applicationId ${applicationId}`,
+          `[DRY RUN] Would update pageLayout ${pageLayout.id} with universalIdentifier ${universalIdentifier} and applicationId ${applicationId}`,
         );
       } else {
-        await this.pageLayoutWidgetRepository.update(
-          { id: widget.id },
+        await this.pageLayoutRepository.update(
+          { id: pageLayout.id },
           {
             universalIdentifier,
             applicationId,
           },
         );
-
-        this.logger.log(
-          `Updated pageLayoutWidget ${widget.id} with universalIdentifier ${universalIdentifier}`,
-        );
       }
+
+      this.logger.log(
+        `Updated pageLayout ${pageLayout.id} with universalIdentifier ${universalIdentifier}`,
+      );
     }
 
     const tabsToUpdate = await this.pageLayoutTabRepository.find({
@@ -120,19 +123,56 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
       }
     }
 
+    const widgetsToUpdate = await this.pageLayoutWidgetRepository.find({
+      where: [
+        { workspaceId, universalIdentifier: IsNull() },
+        { workspaceId, applicationId: IsNull() },
+      ],
+      select: ['id', 'workspaceId'],
+    });
+
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] Would have ' : ''}Successfully backfilled ${widgetsToUpdate.length} widgets and ${tabsToUpdate.length} tabs`,
+      `Found ${widgetsToUpdate.length} pageLayoutWidget records to backfill`,
+    );
+
+    for (const widget of widgetsToUpdate) {
+      const universalIdentifier = v4();
+
+      if (options.dryRun) {
+        this.logger.log(
+          `[DRY RUN] Would update pageLayoutWidget ${widget.id} with universalIdentifier ${universalIdentifier} and applicationId ${applicationId}`,
+        );
+      } else {
+        await this.pageLayoutWidgetRepository.update(
+          { id: widget.id },
+          {
+            universalIdentifier,
+            applicationId,
+          },
+        );
+
+        this.logger.log(
+          `Updated pageLayoutWidget ${widget.id} with universalIdentifier ${universalIdentifier}`,
+        );
+      }
+    }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] Would have ' : ''}Successfully backfilled ${pageLayoutsToUpdate.length} pageLayouts, ${tabsToUpdate.length} pageLayoutTabs and ${widgetsToUpdate.length} pageLayoutWidgets`,
     );
 
     if (
       !options.dryRun &&
-      (tabsToUpdate.length > 0 || widgetsToUpdate.length > 0)
+      (pageLayoutsToUpdate.length > 0 ||
+        tabsToUpdate.length > 0 ||
+        widgetsToUpdate.length > 0)
     ) {
       this.logger.log(
         `Invalidating and recomputing cache for workspace ${workspaceId}`,
       );
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatPageLayoutMaps',
         'flatPageLayoutTabMaps',
         'flatPageLayoutWidgetMaps',
       ]);

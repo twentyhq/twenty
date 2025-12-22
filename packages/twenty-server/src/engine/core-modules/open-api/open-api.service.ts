@@ -99,10 +99,10 @@ export class OpenApiService {
   }
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(
@@ -180,6 +180,30 @@ export class OpenApiService {
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
 
+    schema.paths['/dashboards/{id}/duplicate'] = {
+      post: {
+        tags: ['dashboards'],
+        summary: 'Duplicate a dashboard',
+        description: 'Creates a duplicate of an existing dashboard',
+        operationId: 'duplicateDashboard',
+        parameters: [{ $ref: '#/components/parameters/idPath' }],
+        responses: {
+          '201': {
+            description: 'Dashboard duplicated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/DashboardForResponse',
+                },
+              },
+            },
+          },
+          '400': { $ref: '#/components/responses/400' },
+          '401': { $ref: '#/components/responses/401' },
+        },
+      },
+    } as OpenAPIV3_1.PathItemObject;
+
     schema.webhooks = filteredObjectMetadataItems.reduce(
       (paths, item) => {
         paths[
@@ -246,10 +270,10 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-      `${request.protocol}://${request.get('host')}`,
-    );
+    const baseUrl = getServerUrl({
+      serverUrlEnv: this.twentyConfigService.get('SERVER_URL'),
+      serverUrlFallback: `${request.protocol}://${request.get('host')}`,
+    });
 
     const tokenFromQuery = request.query.token;
     const schema = baseSchema(

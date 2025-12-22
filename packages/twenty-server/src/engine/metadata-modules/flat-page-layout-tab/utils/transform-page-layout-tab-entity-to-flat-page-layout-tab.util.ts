@@ -1,13 +1,13 @@
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
+import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 
 export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
   pageLayoutTabEntity: PageLayoutTabEntity,
 ): FlatPageLayoutTab => {
   return {
-    createdAt: pageLayoutTabEntity.createdAt,
-    deletedAt: pageLayoutTabEntity.deletedAt,
-    updatedAt: pageLayoutTabEntity.updatedAt,
+    createdAt: pageLayoutTabEntity.createdAt.toISOString(),
+    deletedAt: pageLayoutTabEntity.deletedAt?.toISOString() ?? null,
+    updatedAt: pageLayoutTabEntity.updatedAt.toISOString(),
     id: pageLayoutTabEntity.id,
     title: pageLayoutTabEntity.title,
     position: pageLayoutTabEntity.position,
@@ -16,5 +16,6 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
     universalIdentifier:
       pageLayoutTabEntity.universalIdentifier ?? pageLayoutTabEntity.id,
     applicationId: pageLayoutTabEntity.applicationId,
+    widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
   };
 };

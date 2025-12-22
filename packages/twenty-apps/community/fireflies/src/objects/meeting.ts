@@ -1,6 +1,6 @@
-import { ObjectMetadata } from 'twenty-sdk/application';
+import { Object } from 'twenty-sdk';
 
-@ObjectMetadata({
+@Object({
   universalIdentifier: 'd1831348-b4a4-4426-9c0b-0af19e7a9c27',
   nameSingular: 'meeting',
   namePlural: 'meetings',

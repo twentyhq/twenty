@@ -58,7 +58,7 @@ export const WorkflowStepFilterFieldSelect = ({
     part: 'stepId',
   });
 
-  const { variableLabel } = useSearchVariable({
+  const { variableLabel, variablePathLabel } = useSearchVariable({
     stepId,
     rawVariableName: stepFilter.stepOutputKey,
     isFullRecord: stepFilter.isFullRecord ?? false,
@@ -110,6 +110,7 @@ export const WorkflowStepFilterFieldSelect = ({
             selectedOption={{
               value: stepFilter.stepOutputKey,
               label: disabledLabel,
+              fullLabel: variablePathLabel,
               Icon: icon,
             }}
             isDisabled={true}
@@ -127,6 +128,7 @@ export const WorkflowStepFilterFieldSelect = ({
         <SelectControl
           selectedOption={{
             label,
+            fullLabel: variablePathLabel,
             value: stepFilter.stepOutputKey,
             Icon: icon,
           }}

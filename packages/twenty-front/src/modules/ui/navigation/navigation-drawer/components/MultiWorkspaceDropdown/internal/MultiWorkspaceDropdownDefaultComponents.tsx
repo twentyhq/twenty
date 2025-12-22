@@ -2,10 +2,13 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { supportChatState } from '@/client-config/states/supportChatState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -19,6 +22,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { type ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -26,7 +30,9 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   Avatar,
   IconDotsVertical,
+  IconHelpCircle,
   IconLogout,
+  IconMessage,
   IconPlus,
   IconSwitchHorizontal,
   IconUserPlus,
@@ -50,6 +56,7 @@ const StyledDescription = styled.div`
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
@@ -60,12 +67,26 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { signOut } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
+  const supportChat = useRecoilValue(supportChatState);
+  const isSupportChatConfigured =
+    supportChat?.supportDriver === 'FRONT' &&
+    isNonEmptyString(supportChat.supportFrontChatId);
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
+
+  const handleSupport = () => {
+    window.FrontChat?.('show');
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+  };
+
+  const handleDocumentation = () => {
+    window.open(getDocumentationUrl(currentWorkspaceMember?.locale), '_blank');
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+  };
 
   const handleChange = async (availableWorkspace: AvailableWorkspace) => {
     redirectToWorkspaceDomain(
@@ -153,7 +174,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   }}
                 >
                   <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? '(No name)'}
+                    text={availableWorkspace.displayName ?? t`(No name)`}
                     avatar={
                       <Avatar
                         placeholder={availableWorkspace.displayName || ''}
@@ -200,6 +221,18 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         >
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>
+        {isSupportChatConfigured && (
+          <MenuItem
+            LeftIcon={IconMessage}
+            text={t`Support`}
+            onClick={handleSupport}
+          />
+        )}
+        <MenuItem
+          LeftIcon={IconHelpCircle}
+          text={t`Documentation`}
+          onClick={handleDocumentation}
+        />
         <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
       </DropdownMenuItemsContainer>
     </DropdownContent>

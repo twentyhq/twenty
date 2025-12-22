@@ -14,6 +14,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { type ViewFilterOperand } from 'twenty-shared/types';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -54,7 +55,7 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
           selectedOption={{
             label: filter?.operand
               ? getOperandLabel(filter.operand)
-              : 'Select operand',
+              : t`Select operand`,
             value: null,
           }}
         />

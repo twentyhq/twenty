@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
+import { Separator } from '@/settings/components/Separator';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import {
@@ -51,6 +52,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
           />
+          <Separator />
           <SettingsDataModelFieldIsUniqueForm
             fieldType={fieldType}
             existingFieldMetadataId={existingFieldMetadataId}

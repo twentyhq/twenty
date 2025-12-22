@@ -7,7 +7,8 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @Command({
@@ -20,10 +21,10 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
 
   @Option({
@@ -50,31 +51,40 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    try {
-      const workflowRunRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
-          workspaceId,
-          'workflowRun',
-          { shouldBypassPermissionChecks: true },
-        );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-      const createdAtCondition = {
-        createdAt: LessThan(this.createdBeforeDate || new Date().toISOString()),
-      };
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext,
+      async () => {
+        try {
+          const workflowRunRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+              workspaceId,
+              'workflowRun',
+              { shouldBypassPermissionChecks: true },
+            );
 
-      const workflowRunCount = await workflowRunRepository.count({
-        where: createdAtCondition,
-      });
+          const createdAtCondition = {
+            createdAt: LessThan(
+              this.createdBeforeDate || new Date().toISOString(),
+            ),
+          };
 
-      if (!options.dryRun && workflowRunCount > 0) {
-        await workflowRunRepository.delete(createdAtCondition);
-      }
+          const workflowRunCount = await workflowRunRepository.count({
+            where: createdAtCondition,
+          });
 
-      this.logger.log(
-        `${options.dryRun ? ' (DRY RUN): ' : ''}Deleted ${workflowRunCount} workflow runs`,
-      );
-    } catch (error) {
-      this.logger.error('Error while deleting workflowRun', error);
-    }
+          if (!options.dryRun && workflowRunCount > 0) {
+            await workflowRunRepository.delete(createdAtCondition);
+          }
+
+          this.logger.log(
+            `${options.dryRun ? ' (DRY RUN): ' : ''}Deleted ${workflowRunCount} workflow runs`,
+          );
+        } catch (error) {
+          this.logger.error('Error while deleting workflowRun', error);
+        }
+      },
+    );
   }
 }

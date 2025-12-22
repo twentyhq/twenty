@@ -5,7 +5,7 @@ exports[`Standard object metadata update should fail when trying to update label
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_OBJECT_INPUT",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Invalid object input.",
   },
   "message": "Cannot edit standard object metadata properties: labelIdentifierFieldMetadataId",
   "name": "UserInputError",
@@ -17,7 +17,7 @@ exports[`Standard object metadata update should fail when trying to update nameP
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_OBJECT_INPUT",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Invalid object input.",
   },
   "message": "Cannot edit standard object metadata properties: namePlural",
   "name": "UserInputError",
@@ -29,7 +29,7 @@ exports[`Standard object metadata update should fail when trying to update nameS
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_OBJECT_INPUT",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Invalid object input.",
   },
   "message": "Cannot edit standard object metadata properties: nameSingular",
   "name": "UserInputError",
@@ -41,7 +41,7 @@ exports[`Standard object metadata update should fail when trying to update sever
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_OBJECT_INPUT",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "Invalid object input.",
   },
   "message": "Cannot edit standard object metadata properties: isLabelSyncedWithName, namePlural",
   "name": "UserInputError",

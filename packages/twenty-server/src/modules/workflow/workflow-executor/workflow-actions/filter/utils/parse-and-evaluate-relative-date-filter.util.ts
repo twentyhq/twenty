@@ -1,12 +1,18 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   endOfDay,
+  endOfHour,
+  endOfSecond,
+  endOfMinute,
   endOfMonth,
   endOfWeek,
   endOfYear,
   isWithinInterval,
   startOfDay,
+  startOfHour,
+  startOfMinute,
   startOfMonth,
+  startOfSecond,
   startOfWeek,
   startOfYear,
 } from 'date-fns';
@@ -122,6 +128,21 @@ function evaluateThisDirection(
     : 1;
 
   switch (unit) {
+    case 'SECOND':
+      return isWithinInterval(dateToCheck, {
+        start: startOfSecond(now),
+        end: endOfSecond(now),
+      });
+    case 'MINUTE':
+      return isWithinInterval(dateToCheck, {
+        start: startOfMinute(now),
+        end: endOfMinute(now),
+      });
+    case 'HOUR':
+      return isWithinInterval(dateToCheck, {
+        start: startOfHour(now),
+        end: endOfHour(now),
+      });
     case 'DAY':
       return isWithinInterval(dateToCheck, {
         start: startOfDay(now),

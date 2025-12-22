@@ -9,6 +9,7 @@ import {
 } from '../hooks/useKeyboardShortcutMenu';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { t } from '@lingui/core/macro';
 import { KeyboardMenuDialog } from './KeyboardShortcutMenuDialog';
 import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
@@ -29,12 +30,12 @@ export const KeyboardShortcutMenuOpenContent = () => {
   return (
     <>
       <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
-        <KeyboardMenuGroup heading="Table">
+        <KeyboardMenuGroup heading={t`Table`}>
           {KEYBOARD_SHORTCUTS_TABLE.map((TableShortcut, index) => (
             <KeyboardMenuItem shortcut={TableShortcut} key={index} />
           ))}
         </KeyboardMenuGroup>
-        <KeyboardMenuGroup heading="General">
+        <KeyboardMenuGroup heading={t`General`}>
           {KEYBOARD_SHORTCUTS_GENERAL.map((GeneralShortcut) => (
             <KeyboardMenuItem shortcut={GeneralShortcut} />
           ))}

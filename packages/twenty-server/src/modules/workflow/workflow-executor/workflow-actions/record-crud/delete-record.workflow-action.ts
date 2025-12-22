@@ -9,7 +9,6 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -25,7 +24,6 @@ import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workf
 export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly deleteRecordService: DeleteRecordService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
@@ -63,14 +61,7 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new RecordCrudException(
-        'Failed to delete: Workspace ID is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const { workspaceId } = runInfo;
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);

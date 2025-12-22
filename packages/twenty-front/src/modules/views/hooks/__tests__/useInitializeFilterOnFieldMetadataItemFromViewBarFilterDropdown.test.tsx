@@ -17,7 +17,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -165,7 +165,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     expect(result.current.objectFilterDropdownFilterIsSelected).toBe(true);
     expect(result.current.selectedOperandInDropdown).toBe(defaultOperand);
     expect(mockPushFocusItemToFocusStack).toHaveBeenCalledWith({
-      focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
+      focusId: ViewBarFilterDropdownIds.MAIN,
       component: {
         type: FocusComponentType.DROPDOWN,
         instanceId: personCompanyFieldMetadataItemMock.id,

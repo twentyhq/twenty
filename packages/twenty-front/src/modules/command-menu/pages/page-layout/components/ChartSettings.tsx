@@ -10,7 +10,6 @@ import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/u
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -20,7 +19,11 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import { assertChartWidgetOrThrow } from '@/command-menu/pages/page-layout/utils/assertChartWidgetOrThrow';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { GraphType } from '~/generated/graphql';
 
 const StyledCommandMenuContainer = styled.div`
   display: flex;
@@ -36,11 +39,9 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (widget.configuration?.__typename === 'IframeConfiguration') {
-    throw new Error(t`IframeConfiguration is not supported`);
-  }
+  assertChartWidgetOrThrow(widget);
 
-  const configuration = widget.configuration as ChartConfiguration;
+  const configuration = widget.configuration;
   const currentGraphType = configuration?.graphType;
 
   const { getChartSettingsValues } = useChartSettingsValues({
@@ -102,13 +103,13 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       .map((item) => item.id),
   );
 
-  const primaryAxisFieldMetadataId =
-    configuration.__typename === 'BarChartConfiguration' ||
-    configuration.__typename === 'LineChartConfiguration'
-      ? configuration.primaryAxisGroupByFieldMetadataId
-      : configuration.__typename === 'PieChartConfiguration'
-        ? configuration.groupByFieldMetadataId
-        : null;
+  const primaryAxisFieldMetadataId = isBarOrLineChartConfiguration(
+    configuration,
+  )
+    ? configuration.primaryAxisGroupByFieldMetadataId
+    : isPieChartConfiguration(configuration)
+      ? configuration.groupByFieldMetadataId
+      : null;
 
   const primaryAxisField = objectMetadataItem?.fields?.find(
     (field) => field.id === primaryAxisFieldMetadataId,
@@ -116,13 +117,13 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const isPrimaryAxisDate = isFieldMetadataDateKind(primaryAxisField?.type);
 
-  const primaryAxisDateGranularity =
-    configuration.__typename === 'BarChartConfiguration' ||
-    configuration.__typename === 'LineChartConfiguration'
-      ? configuration.primaryAxisDateGranularity
-      : configuration.__typename === 'PieChartConfiguration'
-        ? configuration.dateGranularity
-        : null;
+  const primaryAxisDateGranularity = isBarOrLineChartConfiguration(
+    configuration,
+  )
+    ? configuration.primaryAxisDateGranularity
+    : isPieChartConfiguration(configuration)
+      ? configuration.dateGranularity
+      : null;
 
   const bannerTargetHeading =
     currentGraphType === GraphType.PIE

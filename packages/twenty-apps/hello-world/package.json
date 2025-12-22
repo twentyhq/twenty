@@ -1,6 +1,6 @@
 {
   "name": "hello-world",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -17,7 +17,7 @@
     "auth": "twenty auth login"
   },
   "dependencies": {
-    "twenty-sdk": "0.1.2"
+    "twenty-sdk": "0.2.2"
   },
   "devDependencies": {
     "@types/node": "^24.7.2"

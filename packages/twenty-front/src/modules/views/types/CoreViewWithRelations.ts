@@ -31,6 +31,7 @@ export type CoreViewWithRelations = {
   >[];
   viewSorts: CoreViewSortEssential[];
   mainGroupByFieldMetadataId?: string | null;
+  shouldHideEmptyGroups: boolean;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   calendarFieldMetadataId?: string | null;
