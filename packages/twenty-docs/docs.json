@@ -34,115 +34,302 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Getting Started",
+                "group": "Discover Twenty",
                 "icon": "rocket",
                 "pages": [
                   "user-guide/introduction",
-                  "user-guide/getting-started/what-is-twenty",
-                  "user-guide/getting-started/create-workspace",
-                  "user-guide/getting-started/navigate-around-twenty",
-                  "user-guide/getting-started/configure-your-workspace",
-                  "user-guide/getting-started/implementation-services",
-                  "user-guide/getting-started/migrating-from-other-crms",
-                  "user-guide/getting-started/import-export-data"
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/getting-started/capabilities/what-is-twenty",
+                      "user-guide/getting-started/capabilities/implementation-services",
+                      "user-guide/getting-started/capabilities/glossary"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/getting-started/how-tos/create-workspace",
+                      "user-guide/getting-started/how-tos/navigate-around-twenty",
+                      "user-guide/getting-started/how-tos/configure-your-workspace"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Data Model",
                 "icon": "database",
                 "pages": [
-                  "user-guide/data-model/customize-your-data-model",
-                  "user-guide/data-model/objects",
-                  "user-guide/data-model/fields",
-                  "user-guide/data-model/creating-records",
-                  "user-guide/data-model/relation-fields",
-                  "user-guide/data-model/data-model-faq"
+                  "user-guide/data-model/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/data-model/capabilities/objects",
+                      "user-guide/data-model/capabilities/fields",
+                      "user-guide/data-model/capabilities/relation-fields"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/data-model/how-tos/create-custom-objects",
+                      "user-guide/data-model/how-tos/create-custom-fields",
+                      "user-guide/data-model/how-tos/create-relation-fields",
+                      "user-guide/data-model/how-tos/customize-your-data-model",
+                      "user-guide/data-model/how-tos/data-model-faq"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "CRM Essentials",
-                "icon": "users",
+                "group": "Data Migration",
+                "icon": "cloud-arrow-up",
                 "pages": [
-                  "user-guide/crm-essentials/contact-and-account-management",
-                  "user-guide/crm-essentials/pipeline",
-                  "user-guide/crm-essentials/view-management",
-                  "user-guide/crm-essentials/sales-use-cases"
+                  "user-guide/data-migration/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/data-migration/capabilities/file-formats",
+                      "user-guide/data-migration/capabilities/field-mapping",
+                      "user-guide/data-migration/capabilities/uniqueness-constraints",
+                      "user-guide/data-migration/capabilities/import-relations",
+                      "user-guide/data-migration/capabilities/error-handling"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/data-migration/how-tos/prepare-your-csv-files",
+                      "user-guide/data-migration/how-tos/import-companies-via-csv",
+                      "user-guide/data-migration/how-tos/import-contacts-via-csv",
+                      "user-guide/data-migration/how-tos/import-relations-between-objects-via-csv",
+                      "user-guide/data-migration/how-tos/update-existing-records-via-import",
+                      "user-guide/data-migration/how-tos/fix-import-errors",
+                      "user-guide/data-migration/how-tos/export-your-data",
+                      "user-guide/data-migration/how-tos/import-data-via-api",
+                      "user-guide/data-migration/how-tos/migrating-from-other-crms",
+                      "user-guide/data-migration/how-tos/migrating-from-self-hosted-to-cloud"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Views",
-                "icon": "table",
+                "group": "Calendar & Emails",
+                "icon": "envelope",
                 "pages": [
-                  "user-guide/views/kanban-views",
-                  "user-guide/views/views-sort-filter"
+                  "user-guide/calendar-emails/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/calendar-emails/capabilities/mailbox",
+                      "user-guide/calendar-emails/capabilities/calendar"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                      "user-guide/calendar-emails/how-tos/limit-emails-imported",
+                      "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
+                      "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
+                      "user-guide/calendar-emails/how-tos/can-i-book-meetings-from-twenty",
+                      "user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
-                  "user-guide/workflows/getting-started-workflows",
-                  "user-guide/workflows/workflow-features",
-                  "user-guide/workflows/internal-automations",
-                  "user-guide/workflows/external-tool-integration",
-                  "user-guide/workflows/workflow-troubleshooting",
-                  "user-guide/workflows/workflow-credits",
-                  "user-guide/workflows/professional-services"
+                  "user-guide/workflows/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/workflows/capabilities/workflow-triggers",
+                      "user-guide/workflows/capabilities/workflow-actions",
+                      "user-guide/workflows/capabilities/workflow-branches",
+                      "user-guide/workflows/capabilities/workflow-runs",
+                      "user-guide/workflows/capabilities/workflow-versions",
+                      "user-guide/workflows/capabilities/workflow-credits",
+                      "user-guide/workflows/capabilities/use-branches-in-workflows",
+                      "user-guide/workflows/capabilities/use-iterator",
+                      "user-guide/workflows/capabilities/send-emails-from-workflows"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      {
+                        "group": "CRM Automations",
+                        "pages": [
+                          "user-guide/workflows/how-tos/crm-automations/send-email-alerts-with-tasks-due",
+                          "user-guide/workflows/how-tos/crm-automations/formula-fields",
+                          "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
+                          "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
+                          "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                        ]
+                      },
+                      {
+                        "group": "Connect to Other Tools",
+                        "pages": [
+                          "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
+                          "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                        ]
+                      },
+                      {
+                        "group": "Advanced Configurations",
+                        "pages": [
+                          "user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions"
+                        ]
+                      },
+                      {
+                        "group": "Need More Help",
+                        "pages": [
+                          "user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
+                          "user-guide/workflows/how-tos/need-more-help/workflows-faq",
+                          "user-guide/workflows/how-tos/need-more-help/professional-services"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Collaboration",
-                "icon": "envelope",
+                "group": "AI",
+                "icon": "robot",
                 "pages": [
-                  "user-guide/collaboration/emails-and-calendars",
-                  "user-guide/collaboration/notes",
-                  "user-guide/collaboration/tasks"
+                  "user-guide/ai/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/ai/capabilities/ai-chatbot",
+                      "user-guide/ai/capabilities/ai-agents",
+                      "user-guide/ai/capabilities/permissions-access-control"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/ai/how-tos/ai-faq"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Integrations & API",
-                "icon": "plug",
+                "group": "Views & Pipelines",
+                "icon": "table",
                 "pages": [
-                  "user-guide/integrations-api/apis-overview",
-                  "user-guide/integrations-api/api-webhooks",
-                  "user-guide/integrations-api/integrations"
+                  "user-guide/views-pipelines/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/views-pipelines/capabilities/table-views",
+                      "user-guide/views-pipelines/capabilities/kanban-views",
+                      "user-guide/views-pipelines/capabilities/calendar-view",
+                      "user-guide/views-pipelines/capabilities/filters-and-sorting",
+                      "user-guide/views-pipelines/capabilities/fields-and-columns",
+                      "user-guide/views-pipelines/capabilities/view-settings"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
+                      "user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
+                      "user-guide/views-pipelines/how-tos/create-a-calendar-view-for-tasks-due",
+                      "user-guide/views-pipelines/how-tos/restrict-access-to-your-view",
+                      "user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline",
+                      "user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline",
+                      "user-guide/views-pipelines/how-tos/track-time-in-stage"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Reporting",
+                "group": "Dashboards",
                 "icon": "chart-bar",
                 "pages": [
-                  "user-guide/reporting/reporting-overview"
+                  "user-guide/dashboards/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/dashboards/capabilities/dashboards",
+                      "user-guide/dashboards/capabilities/widgets"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/dashboards/how-tos/dashboards-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Permissions & Access",
+                "icon": "lock",
+                "pages": [
+                  "user-guide/permissions-access/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/permissions-access/capabilities/permissions",
+                      "user-guide/permissions-access/capabilities/sso-configuration"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/permissions-access/how-tos/permissions-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Billing",
+                "icon": "credit-card",
+                "pages": [
+                  "user-guide/billing/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/billing/capabilities/pricing-plans",
+                      "user-guide/billing/capabilities/workflow-credits"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/billing/how-tos/billing-faq"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Settings",
                 "icon": "gear",
                 "pages": [
-                  "user-guide/settings/profile-settings",
-                  "user-guide/settings/experience-settings",
-                  "user-guide/settings/email-calendar-setup",
-                  "user-guide/settings/workspace-settings",
-                  "user-guide/settings/member-management",
-                  "user-guide/settings/permissions",
-                  "user-guide/settings/domains-settings",
-                  "user-guide/settings/releases-settings",
-                  "user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Pricing",
-                "icon": "credit-card",
-                "pages": [
-                  "user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Resources",
-                "icon": "book-open",
-                "pages": [
-                  "user-guide/resources/glossary",
-                  "user-guide/resources/github"
+                  "user-guide/settings/overview",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "user-guide/settings/capabilities/workspace-settings",
+                      "user-guide/settings/capabilities/member-management",
+                      "user-guide/settings/capabilities/profile-settings",
+                      "user-guide/settings/capabilities/experience-settings",
+                      "user-guide/settings/capabilities/domains-settings",
+                      "user-guide/settings/capabilities/releases-settings"
+                    ]
+                  },
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/settings/how-tos/settings-faq"
+                    ]
+                  }
                 ]
               }
             ]
@@ -152,109 +339,125 @@
             "groups": [
               {
                 "group": "Developers",
-                "pages": []
+                "pages": [
+                  "developers/introduction"
+                ]
               },
               {
-                "group": "Getting Started",
-                "icon": "rocket",
+                "group": "Extend",
+                "icon": "plug",
                 "pages": [
-                  "developers/introduction",
-                  "developers/local-setup",
+                  "developers/extend/extend",
                   {
-                    "group": "Self-Hosting",
+                    "group": "Capabilities",
                     "pages": [
-                      "developers/self-hosting/docker-compose",
-                      "developers/self-hosting/setup",
-                      "developers/self-hosting/upgrade-guide",
-                      "developers/self-hosting/cloud-providers",
-                      "developers/self-hosting/troubleshooting"
-                    ]
-                  },
-                  {
-                    "group": "API and Webhooks",
-                    "pages": [
-                      "developers/api-and-webhooks/api",
-                      "developers/api-and-webhooks/webhooks"
+                      "developers/extend/capabilities/apis",
+                      "developers/extend/capabilities/webhooks",
+                      "developers/extend/capabilities/apps"
                     ]
                   }
                 ]
               },
               {
-                "group": "Contributing",
-                "icon": "code-branch",
+                "group": "Self-Host",
+                "icon": "desktop",
                 "pages": [
-                  "developers/bug-and-requests",
+                  "developers/self-host/self-host",
                   {
-                    "group": "Frontend Development",
+                    "group": "Capabilities",
                     "pages": [
-                      "developers/frontend-development/storybook",
+                      "developers/self-host/capabilities/docker-compose",
+                      "developers/self-host/capabilities/setup",
+                      "developers/self-host/capabilities/upgrade-guide",
+                      "developers/self-host/capabilities/cloud-providers",
+                      "developers/self-host/capabilities/troubleshooting"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Contribute",
+                "icon": "github",
+                "pages": [
+                  "developers/contribute/contribute",
+                  {
+                    "group": "Capabilities",
+                    "pages": [
+                      "developers/contribute/capabilities/local-setup",
+                      "developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Twenty UI",
+                        "group": "Frontend Development",
                         "pages": [
-                          "twenty-ui/introduction",
+                          "developers/contribute/capabilities/frontend-development/storybook",
                           {
-                            "group": "Display",
+                            "group": "Twenty UI",
                             "pages": [
-                              "twenty-ui/display/checkmark",
-                              "twenty-ui/display/chip",
-                              "twenty-ui/display/icons",
-                              "twenty-ui/display/soon-pill",
-                              "twenty-ui/display/tag",
-                              "twenty-ui/display/app-tooltip"
+                              "twenty-ui/introduction",
+                              {
+                                "group": "Display",
+                                "pages": [
+                                  "twenty-ui/display/checkmark",
+                                  "twenty-ui/display/chip",
+                                  "twenty-ui/display/icons",
+                                  "twenty-ui/display/soon-pill",
+                                  "twenty-ui/display/tag",
+                                  "twenty-ui/display/app-tooltip"
+                                ]
+                              },
+                              {
+                                "group": "Feedback",
+                                "pages": [
+                                  "twenty-ui/progress-bar"
+                                ]
+                              },
+                              {
+                                "group": "Input",
+                                "pages": [
+                                  "twenty-ui/input/buttons",
+                                  "twenty-ui/input/color-scheme",
+                                  "twenty-ui/input/text",
+                                  "twenty-ui/input/checkbox",
+                                  "twenty-ui/input/icon-picker",
+                                  "twenty-ui/input/image-input",
+                                  "twenty-ui/input/radio",
+                                  "twenty-ui/input/select",
+                                  "twenty-ui/input/toggle",
+                                  "twenty-ui/input/block-editor"
+                                ]
+                              },
+                              {
+                                "group": "Navigation",
+                                "pages": [
+                                  "twenty-ui/navigation",
+                                  "twenty-ui/navigation/breadcrumb",
+                                  "twenty-ui/navigation/links",
+                                  "twenty-ui/navigation/menu-item",
+                                  "twenty-ui/navigation/navigation-bar",
+                                  "twenty-ui/navigation/step-bar"
+                                ]
+                              }
                             ]
                           },
-                          {
-                            "group": "Feedback",
-                            "pages": [
-                              "twenty-ui/progress-bar"
-                            ]
-                          },
-                          {
-                            "group": "Input",
-                            "pages": [
-                              "twenty-ui/input/buttons",
-                              "twenty-ui/input/color-scheme",
-                              "twenty-ui/input/text",
-                              "twenty-ui/input/checkbox",
-                              "twenty-ui/input/icon-picker",
-                              "twenty-ui/input/image-input",
-                              "twenty-ui/input/radio",
-                              "twenty-ui/input/select",
-                              "twenty-ui/input/toggle",
-                              "twenty-ui/input/block-editor"
-                            ]
-                          },
-                          {
-                            "group": "Navigation",
-                            "pages": [
-                              "twenty-ui/navigation",
-                              "twenty-ui/navigation/breadcrumb",
-                              "twenty-ui/navigation/links",
-                              "twenty-ui/navigation/menu-item",
-                              "twenty-ui/navigation/navigation-bar",
-                              "twenty-ui/navigation/step-bar"
-                            ]
-                          }
+                          "developers/contribute/capabilities/frontend-development/frontend-commands",
+                          "developers/contribute/capabilities/frontend-development/work-with-figma",
+                          "developers/contribute/capabilities/frontend-development/best-practices-front",
+                          "developers/contribute/capabilities/frontend-development/style-guide",
+                          "developers/contribute/capabilities/frontend-development/folder-architecture-front",
+                          "developers/contribute/capabilities/frontend-development/hotkeys"
                         ]
                       },
-                      "developers/frontend-development/frontend-commands",
-                      "developers/frontend-development/work-with-figma",
-                      "developers/frontend-development/best-practices-front",
-                      "developers/frontend-development/style-guide",
-                      "developers/frontend-development/folder-architecture-front",
-                      "developers/frontend-development/hotkeys"
-                    ]
-                  },
-                  {
-                    "group": "Backend Development",
-                    "pages": [
-                      "developers/backend-development/server-commands",
-                      "developers/backend-development/feature-flags",
-                      "developers/backend-development/folder-architecture-server",
-                      "developers/backend-development/zapier",
-                      "developers/backend-development/best-practices-server",
-                      "developers/backend-development/custom-objects",
-                      "developers/backend-development/queue"
+                      {
+                        "group": "Backend Development",
+                        "pages": [
+                          "developers/contribute/capabilities/backend-development/server-commands",
+                          "developers/contribute/capabilities/backend-development/feature-flags",
+                          "developers/contribute/capabilities/backend-development/folder-architecture-server",
+                          "developers/contribute/capabilities/backend-development/zapier",
+                          "developers/contribute/capabilities/backend-development/best-practices-server",
+                          "developers/contribute/capabilities/backend-development/custom-objects",
+                          "developers/contribute/capabilities/backend-development/queue"
+                        ]
+                      }
                     ]
                   }
                 ]
@@ -370,7 +573,7 @@
                 "group": "Tarifs",
                 "icon": "credit-card",
                 "pages": [
-                  "l/fr/user-guide/pricing/billing-and-pricing-faq"
+                  "l/fr/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -606,7 +809,7 @@
                 "group": "التسعير",
                 "icon": "credit-card",
                 "pages": [
-                  "l/ar/user-guide/pricing/billing-and-pricing-faq"
+                  "l/ar/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -842,7 +1045,7 @@
                 "group": "Ceny",
                 "icon": "credit-card",
                 "pages": [
-                  "l/cs/user-guide/pricing/billing-and-pricing-faq"
+                  "l/cs/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -1078,7 +1281,7 @@
                 "group": "Preisgestaltung",
                 "icon": "credit-card",
                 "pages": [
-                  "l/de/user-guide/pricing/billing-and-pricing-faq"
+                  "l/de/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -1314,7 +1517,7 @@
                 "group": "Precios",
                 "icon": "credit-card",
                 "pages": [
-                  "l/es/user-guide/pricing/billing-and-pricing-faq"
+                  "l/es/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -1550,7 +1753,7 @@
                 "group": "Prezzi",
                 "icon": "credit-card",
                 "pages": [
-                  "l/it/user-guide/pricing/billing-and-pricing-faq"
+                  "l/it/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -1786,7 +1989,7 @@
                 "group": "料金",
                 "icon": "credit-card",
                 "pages": [
-                  "l/ja/user-guide/pricing/billing-and-pricing-faq"
+                  "l/ja/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -2022,7 +2225,7 @@
                 "group": "가격",
                 "icon": "credit-card",
                 "pages": [
-                  "l/ko/user-guide/pricing/billing-and-pricing-faq"
+                  "l/ko/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -2258,7 +2461,7 @@
                 "group": "Preços",
                 "icon": "credit-card",
                 "pages": [
-                  "l/pt/user-guide/pricing/billing-and-pricing-faq"
+                  "l/pt/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -2494,7 +2697,7 @@
                 "group": "Prețuri",
                 "icon": "credit-card",
                 "pages": [
-                  "l/ro/user-guide/pricing/billing-and-pricing-faq"
+                  "l/ro/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -2730,7 +2933,7 @@
                 "group": "Цены",
                 "icon": "credit-card",
                 "pages": [
-                  "l/ru/user-guide/pricing/billing-and-pricing-faq"
+                  "l/ru/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -2966,7 +3169,7 @@
                 "group": "Fiyatlandırma",
                 "icon": "credit-card",
                 "pages": [
-                  "l/tr/user-guide/pricing/billing-and-pricing-faq"
+                  "l/tr/user-guide/pricing/billing-faq"
                 ]
               },
               {
@@ -3202,7 +3405,7 @@
                 "group": "定價",
                 "icon": "credit-card",
                 "pages": [
-                  "l/zh/user-guide/pricing/billing-and-pricing-faq"
+                  "l/zh/user-guide/pricing/billing-faq"
                 ]
               },
               {
