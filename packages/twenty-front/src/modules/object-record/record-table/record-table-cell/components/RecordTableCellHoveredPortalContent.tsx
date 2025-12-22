@@ -57,7 +57,9 @@ export const RecordTableCellHoveredPortalContent = () => {
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const showButton =
-    !isFieldInputOnly && !isReadOnly && !(isMobile && isFirstColumn);
+    !isFieldInputOnly &&
+    (!isReadOnly || isFirstColumn) &&
+    !(isMobile && isFirstColumn);
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 

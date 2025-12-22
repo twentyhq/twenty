@@ -1,5 +1,4 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectPermission } from '~/generated/graphql';
 
@@ -17,8 +16,13 @@ export const isObjectMetadataSettingsReadOnly = ({
   objectMetadataItem,
   workspaceCustomApplicationId,
 }: IsObjectMetadataReadOnlyParams) => {
+  // Note: we intentionally don't check isUIReadOnly here because that flag
+  // controls record-level editing, not whether custom fields can be added.
+  // Remote objects cannot have custom fields added.
   return (
-    isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem }) ||
+    (isDefined(objectPermissions) &&
+      !objectPermissions.canUpdateObjectRecords) ||
+    objectMetadataItem?.isRemote === true ||
     (isDefined(objectMetadataItem?.applicationId)
       ? isDefined(workspaceCustomApplicationId)
         ? objectMetadataItem.applicationId !== workspaceCustomApplicationId

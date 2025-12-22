@@ -30,7 +30,9 @@ export const useTimelineActivities = (
     });
 
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
-    (field) => field.name === targetableObjectFieldIdName,
+    (field) =>
+      field.relation?.targetObjectMetadata?.nameSingular ===
+      targetableObject.targetObjectNameSingular,
   );
 
   const { recordGqlFields: depthOneRecordGqlFields } =
