@@ -70,6 +70,7 @@ export const useGetRecordFilterDisplayValue = () => {
 
           const relativeDateDisplayValue = getRelativeDateDisplayValue(
             relativeDateFilter.data,
+            shouldDisplayTimeZoneAbbreviation,
           );
 
           return ` ${relativeDateDisplayValue}`;
@@ -111,6 +112,7 @@ export const useGetRecordFilterDisplayValue = () => {
 
           const relativeDateDisplayValue = getRelativeDateDisplayValue(
             relativeDateFilter.data,
+            shouldDisplayTimeZoneAbbreviation,
           );
 
           return `${relativeDateDisplayValue}`;

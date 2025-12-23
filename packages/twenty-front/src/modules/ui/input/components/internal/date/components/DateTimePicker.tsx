@@ -448,9 +448,15 @@ export const DateTimePicker = ({
   );
 
   const selectedDates = isRelative
-    ? highlightedDates.map((plainDate) =>
-        getShiftedDateToSystemTimeZone(new Date(plainDate.toString())),
-      )
+    ? highlightedDates.map((plainDate) => {
+        const date = new Date();
+
+        date.setDate(plainDate.day);
+        date.setMonth(plainDate.month - 1);
+        date.setFullYear(plainDate.year);
+
+        return date;
+      })
     : [shiftedDateForReactDatePicker];
 
   const calendarStartDayNumber =
