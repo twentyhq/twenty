@@ -1,4 +1,4 @@
-import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '@/utils/sort';
+import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
 describe('sort', () => {
   describe('sortNullsFirst', () => {

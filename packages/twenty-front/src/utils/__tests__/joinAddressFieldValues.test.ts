@@ -1,5 +1,5 @@
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { joinAddressFieldValues } from '@/utils/joinAddressFieldValues';
+import { joinAddressFieldValues } from '~/utils/joinAddressFieldValues';
 
 describe('joinAddressFieldValues', () => {
   const mockAddressValue: FieldAddressValue = {

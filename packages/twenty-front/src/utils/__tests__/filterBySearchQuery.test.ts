@@ -1,4 +1,4 @@
-import { filterBySearchQuery } from '@/utils/filterBySearchQuery';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 describe('filterBySearchQuery', () => {
   type TestUser = {

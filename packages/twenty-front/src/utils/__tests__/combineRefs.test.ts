@@ -1,5 +1,5 @@
 import { type MutableRefObject } from 'react';
-import { combineRefs } from '@/utils/combineRefs';
+import { combineRefs } from '~/utils/combineRefs';
 
 describe('combineRefs', () => {
   it('should handle function refs', () => {

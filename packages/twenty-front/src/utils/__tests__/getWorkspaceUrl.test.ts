@@ -1,5 +1,5 @@
 import { type WorkspaceUrls } from '~/generated/graphql';
-import { getWorkspaceUrl } from '@/utils/getWorkspaceUrl';
+import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 describe('getWorkspaceUrl', () => {
   it('should return customUrl when it is defined', () => {

@@ -1,4 +1,4 @@
-import { logDebug } from '@/utils/logDebug';
+import { logDebug } from '~/utils/logDebug';
 
 describe('logDebug', () => {
   let consoleDebugSpy: jest.SpyInstance;

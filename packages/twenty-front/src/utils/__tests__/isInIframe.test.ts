@@ -1,4 +1,4 @@
-import { isInFrame } from '@/utils/isInIframe';
+import { isInFrame } from '~/utils/isInIframe';
 
 describe('isInFrame', () => {
   it('should return a boolean value', () => {

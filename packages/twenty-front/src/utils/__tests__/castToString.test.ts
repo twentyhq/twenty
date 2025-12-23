@@ -1,4 +1,4 @@
-import { castToString } from '@/utils/castToString';
+import { castToString } from '~/utils/castToString';
 
 it('returns an empty string when undefined is provided', () => {
   expect(castToString(undefined)).toBe('');
