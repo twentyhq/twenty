@@ -74,7 +74,7 @@ jobs:
         run: |
           # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
           LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
-          
+
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
             crowdin download \
@@ -88,7 +88,7 @@ jobs:
               --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
             echo ""
           done
-          
+
           echo "=== Download complete ==="
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
