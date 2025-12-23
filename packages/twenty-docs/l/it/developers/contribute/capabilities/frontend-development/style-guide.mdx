@@ -21,16 +21,16 @@ Usa sempre componenti funzionali TSX.
 Non utilizzare l'`import` di default con `const`, perché è più difficile da leggere e importare con il completamento del codice.
 
 ```tsx
-// ❌ Male, più difficile da leggere, più difficile da importare con il completamento del codice
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
-  return <div>Ciao Mondo</div>;
+  return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ Bene, facile da leggere, facile da importare con il completamento del codice
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
-  return <div>Ciao Mondo</div>;
+  return <div>Hello World</div>;
 };
 ```
 
@@ -41,24 +41,24 @@ Crea il tipo di proprietà e chiamalo `(ComponentName)Props` se non c'è bisogno
 Usa la destrutturazione delle props.
 
 ```tsx
-// ❌ Male, nessun tipo
-export const MyComponent = (props) => <div>Ciao {props.name}</div>;
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ Bene, tipo
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Ciao {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
 #### Evita di usare `React.FC` o `React.FunctionComponent` per definire i tipi di proprietà
 
 ```tsx
-/* ❌ - Male, definisce le annotazioni dei tipi di componenti con `FC`
- *    - Con `React.FC`, il componente accetta implicitamente una prop `children`
- *      anche se non è definita nel tipo di prop. Questo potrebbe non essere
- *      sempre desiderabile, soprattutto se il componente non intende rendere
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
  *      children.
  */
 const EmailField: React.FC<{
@@ -86,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 Evita di usare l'espansione singola delle variabili delle props negli elementi JSX, come `{...props}`. Questa pratica spesso porta a un codice meno leggibile e più difficile da mantenere perché non è chiaro quali props stia ricevendo il componente.
 
 ```tsx
-/* ❌ - Male, espande una singola variabile di prop nel componente sottostante
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -137,12 +137,12 @@ onClick?.();
 Usa sempre `type` invece di `interface`, perché quasi sempre si sovrappongono, e `type` è più flessibile.
 
 ```tsx
-// ❌ Male
+// ❌ Bad
 interface MyInterface {
   name: string;
 }
 
-// ✅ Bene
+// ✅ Good
 type MyType = {
   name: string;
 };
@@ -155,7 +155,7 @@ type MyType = {
 Puoi vedere perché TypeScript consiglia di evitare gli enum [qui](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ Male, utilizza un enum
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",

@@ -40,7 +40,7 @@ export const MyComponent = () => {
 
 تجنب استخدام `useRef` لتخزين الحالة.
 
-إذا كنت ترغب في تخزين الحالة، يجب أن تستخدم `useState` أو `useRecoilState`.
+If you want to store state, you should use `useState` or `useRecoilState`.
 
 انظر [كيفية إدارة إعادة العرض](#managing-re-renders) إذا شعرت أنك بحاجة إلى `useRef` لمنع بعض إعادة العرض من الحدوث.
 
@@ -56,23 +56,23 @@ export const MyComponent = () => {
 
 تجنب إعادة العرض في الميزات الجديدة أصبح سهلاً الآن عن طريق إزالتها على المستوى الجذري.
 
-مكون الجانب `PageChangeEffect` يحتوي فقط على `useEffect` واحد يقوم بعقد جميع المنطق لتنفيذه عند تغيير الصفحة.
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 بهذه الطريقة، تعرف أن هناك مكان واحد فقط يمكنه تحفيز إعادة العرض.
 
-### فكر جيدًا قبل إضافة `useEffect` في قاعدة التعليمات البرمجية الخاصة بك
+### Always think twice before adding `useEffect` in your codebase
 
-غالبًا ما تكون إعادة العرض ناجمة عن `useEffect` غير ضروري.
+Re-renders are often caused by unnecessary `useEffect`.
 
-يجب أن تفكر في ما إذا كنت بحاجة إلى `useEffect`، أو ما إذا كان بإمكانك نقل المنطق إلى وظيفة معالج الحدث.
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-ستجد أنه من السهل عمومًا نقل المنطق إلى وظيفة `handleClick` أو `handleChange`.
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 يمكنك أيضًا العثور عليها في المكتبات مثل Apollo: `onCompleted`، `onError`، إلخ.
 
-### استخدم مكونًا متماثلاً لاستخراج `useEffect` أو منطق استدعاء البيانات
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-إذا شعرت أنك بحاجة إلى إضافة `useEffect` في مكون الجذر الخاص بك، يجب أن تفكر في استخراجه في مكون الجانب.
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
 

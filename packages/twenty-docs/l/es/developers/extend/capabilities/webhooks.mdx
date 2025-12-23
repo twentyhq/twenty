@@ -7,28 +7,28 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Webhooks push data to your systems in real-time when events occur in Twenty — no polling required. Use them to keep external systems in sync, trigger automations, or send alerts.
 
-## Crear un Webhook
+## Create a Webhook
 
-1. Ve a **Configuración → APIs y Webhooks → Webhooks**
-2. Haga clic en **+ Crear webhook**
+1. Go to **Settings → APIs & Webhooks → Webhooks**
+2. Click **+ Create webhook**
 3. Enter your webhook URL (must be publicly accessible)
-4. Haga clic en **Guardar**
+4. Click **Save**
 
 The webhook activates immediately and starts sending notifications.
 
 <VimeoEmbed videoId="928786708" title="Creating a webhook" />
 
-### Gestionar Webhooks
+### Manage Webhooks
 
 **Edit**: Click the webhook → Update URL → **Save**
 
 **Delete**: Click the webhook → **Delete** → Confirm
 
-## Eventos
+## Events
 
 Twenty sends webhooks for these event types:
 
-| Evento             | Ejemplo                                                    |
+| Event              | Example                                                    |
 | ------------------ | ---------------------------------------------------------- |
 | **Record Created** | `person.created`, `company.created`, `note.created`        |
 | **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
@@ -55,23 +55,23 @@ Each webhook sends an HTTP POST with a JSON body:
 }
 ```
 
-| Campo             | Descripción                                      |
-| ----------------- | ------------------------------------------------ |
-| `evento`          | What happened (e.g., `person.created`)           |
-| `datos`           | The full record that was created/updated/deleted |
-| `marca de tiempo` | When the event occurred (UTC)                    |
+| Field       | Description                                      |
+| ----------- | ------------------------------------------------ |
+| `event`     | What happened (e.g., `person.created`)           |
+| `data`      | The full record that was created/updated/deleted |
+| `timestamp` | When the event occurred (UTC)                    |
 
 <Note>
   Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
 </Note>
 
-## Validación de Webhook
+## Webhook Validation
 
 Twenty signs each webhook request for security. Validate signatures to ensure requests are authentic.
 
 ### Headers
 
-| Encabezado                   | Descripción           |
+| Header                       | Description           |
 | ---------------------------- | --------------------- |
 | `X-Twenty-Webhook-Signature` | HMAC SHA256 signature |
 | `X-Twenty-Webhook-Timestamp` | Request timestamp     |
@@ -103,7 +103,7 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 
 ## Webhooks vs Workflows
 
-| Método                       | Dirección | Use Case                                                   |
+| Method                       | Direction | Use Case                                                   |
 | ---------------------------- | --------- | ---------------------------------------------------------- |
 | **Webhooks**                 | OUT       | Automatically notify external systems of any record change |
 | **Workflow + HTTP Request**  | OUT       | Send data out with custom logic (filters, transformations) |

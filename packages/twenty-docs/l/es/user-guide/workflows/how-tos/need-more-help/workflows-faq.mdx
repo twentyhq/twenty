@@ -25,8 +25,8 @@ description: Frequently asked questions about workflows in Twenty.
   </Accordion>
 
   <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Tipo | Records Required | Ejecuciones de flujos de trabajo |
-    | ---- | ---------------- | -------------------------------- |
+    | Type | Records Required | Workflow Runs |
+    | ---- | ---------------- | ------------- |
 
     \| **Global** | None | Once, no record input |
     \| **Single** | One or more selected | Once per selected record |
@@ -39,7 +39,7 @@ description: Frequently asked questions about workflows in Twenty.
     See [Workflow Triggers](/l/es/user-guide/workflows/capabilities/workflow-triggers) for details.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. ¿Qué debo hacer?">
+  <Accordion title="I don't see an If/Else node. What should I do?">
     An explicit If/Else node is not yet available but is on our roadmap.
 
     **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
@@ -106,7 +106,7 @@ description: Frequently asked questions about workflows in Twenty.
     * Use the variable picker when configuring a field
     * Or type `{{stepName.fieldName}}` directly
 
-    **Ejemplos**:
+    **Examples**:
 
     * Trigger data: `{{trigger.object.email}}`
     * Search results: `{{searchRecords[0].name}}`
@@ -176,7 +176,7 @@ description: Frequently asked questions about workflows in Twenty.
     * Multiple workflows running simultaneously across your workspace
     * High-frequency automated triggers (e.g., Record Updated on a busy object)
 
-    **Soluciones**:
+    **Solutions**:
 
     * Use **Bulk** triggers instead of Single to process many records in one run
     * Space out large batch operations
@@ -187,8 +187,8 @@ description: Frequently asked questions about workflows in Twenty.
   <Accordion title="What are the workflow rate limits?">
     Twenty has two rate limits to ensure system stability:
 
-    | Límite | Valor | Behavior |
-    | ------ | ----- | -------- |
+    | Limit | Value | Behavior |
+    | ----- | ----- | -------- |
 
     \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
     \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |

@@ -1,24 +1,19 @@
 ---
-title: バックエンドコマンド
+title: Backend Commands
 ---
 
-## 便利なコマンド
+## Useful commands
 
-これらのコマンドは packages/twenty-server フォルダから実行してください。
-これらのコマンドは packages/twenty-server フォルダから実行してください。
-これらのコマンドは packages/twenty-server フォルダから実行してください。
-これらのコマンドは packages/twenty-server フォルダから実行してください。
-これらのコマンドは packages/twenty-server フォルダから実行してください。
-これらのコマンドは packages/twenty-server フォルダから実行してください。
+These commands should be executed from packages/twenty-server folder.
 From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
 
-### 初期設定
+### First time setup
 
 ```
-npx nx database:reset twenty-server # 開発用のシードでデータベースを設定する
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-### サーバーの起動
+### Starting the server
 
 ```
 npx nx run twenty-server:start
@@ -27,80 +22,80 @@ npx nx run twenty-server:start
 ### Lint
 
 ```
-npx nx run twenty-server:lint # --fix を付けることでリントエラーを修正可能
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
-### テスト
+### Test
 
 ```
-npx nx run twenty-server:test:unit          # 単体テストを実行
-npx nx run twenty-server:test:integration   # 統合テストを実行
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
 
-注: 統合テストを実行する前にデータベースをリセットする必要がある場合、 `npx nx run twenty-server:test:integration:with-db-reset` を実行できます。
+Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
 
-### データベースのリセット
+### Resetting the database
 
-データベースをリセットおよびシードしたい場合は、次のコマンドを実行してください:
+If you want to reset and seed the database, you can run the following command:
 
 ```bash
 npx nx run twenty-server:database:reset
 ```
 
-### マイグレーション
+### Migrations
 
-#### Core/Metadata スキーマ (TypeORM) のオブジェクトに対して
+#### For objects in Core/Metadata schemas (TypeORM)
 
 ```bash
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
 ```
 
-#### ワークスペースオブジェクトに対して
+#### For Workspace objects
 
-マイグレーションファイルはなく、それぞれのワークスペースに対して自動的に生成され、
-データベースに保存され、このコマンドで適用されます。
+There are no migrations files, migration are generated automatically for each workspace,
+stored in the database, and applied with this command
 
 ```bash
 npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  これによりデータベースが削除され、マイグレーションとシードが再実行されます。
+  This will drop the database and re-run the migrations and seed.
 
-  このコマンドを実行する前に、保持したいデータをバックアップしてください。
+  Make sure to back up any data you want to keep before running this command.
 </Warning>
 
-## 技術スタック
+## Tech Stack
 
-Twenty は主にバックエンドに NestJS を使用しています。
+Twenty primarily uses NestJS for the backend.
 
-最初に使用した ORM は Prisma でした。 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 現在のプロジェクトでは TypeORM を使用しています。
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
 
-現在の技術スタックは次のようになっています。
+Here's what the tech stack now looks like.
 
-**コア**
+**Core**
 
 * [NestJS](https://nestjs.com/)
 * [TypeORM](https://typeorm.io/)
 * [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
-**データベース**
+**Database**
 
 * [Postgres](https://www.postgresql.org/)
 
-**サードパーティ統合**
+**Third-party integrations**
 
-* [Sentry](https://sentry.io/welcome/) バグトラッキング用
+* [Sentry](https://sentry.io/welcome/) for tracking bugs
 
-**テスト**
+**Testing**
 
 * [Jest](https://jestjs.io/)
 
-**ツール**
+**Tooling**
 
 * [Yarn](https://yarnpkg.com/)
 * [ESLint](https://eslint.org/)
 
-**開発**
+**Development**
 
 * [AWS EKS](https://aws.amazon.com/eks/)

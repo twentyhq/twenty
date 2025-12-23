@@ -1,22 +1,22 @@
 ---
-title: Comandos do Frontend
+title: Frontend Commands
 ---
 
-## Comandos Úteis
+## Useful commands
 
-### Iniciando o aplicativo
+### Starting the app
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerar esquema GraphQL baseado no esquema de API GraphQL
+### Regenerate graphql schema based on API graphql schema
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-OU
+OR
 
 ```bash
 npx nx run twenty-front:graphql:generate
@@ -25,30 +25,30 @@ npx nx run twenty-front:graphql:generate
 ### Lint
 
 ```bash
-npx nx run twenty-front:lint # passe --fix para corrigir erros de lint
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## Traduções
+## Translations
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### Teste
+### Test
 
 ```bash
-npx nx run twenty-front:test # execute testes com jest
-npx nx run twenty-front:storybook:serve:dev # execute storybook
-npx nx run twenty-front:storybook:test # execute testes # (precisa de yarn storybook:serve:dev em execução)
-npx nx run twenty-front:storybook:coverage # (precisa de yarn storybook:serve:dev em execução)
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Pilha de Tecnologias
+## Tech Stack
 
-O projeto possui uma pilha limpa e simples, com pouco código boilerplate.
+The project has a clean and simple stack, with minimal boilerplate code.
 
-**Aplicativo**
+**App**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,35 +56,35 @@ O projeto possui uma pilha limpa e simples, com pouco código boilerplate.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Testes**
+**Testing**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Ferramentas**
+**Tooling**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
 * [ESLint](https://eslint.org/)
 
-## Arquitetura
+## Architecture
 
-### Roteamento
+### Routing
 
-[React Router](https://reactrouter.com/) gerencia o roteamento.
+[React Router](https://reactrouter.com/) handles the routing.
 
-Para evitar [re-renderizações](/l/pt/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) desnecessárias, toda a lógica de roteamento está em um `useEffect` no `PageChangeEffect`.
+To avoid unnecessary [re-renders](/l/pt/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### Gerenciamento de Estado
+### State Management
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) gerencia o estado.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
 
-Veja [melhores práticas](/l/pt/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) para mais informações sobre gerenciamento de estado.
+See [best practices](/l/pt/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
 
-## Testes
+## Testing
 
-[Jest](https://jestjs.io/) serve como ferramenta para testes unitários enquanto [Storybook](https://storybook.js.org/) para teste de componentes.
+[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
 
-Jest é principalmente para testar funções utilitárias, e não os componentes em si.
+Jest is mainly for testing utility functions, and not components themselves.
 
-Storybook é para testar o comportamento de componentes isolados, bem como exibir o sistema de design.
+Storybook is for testing the behavior of isolated components, as well as displaying the design system.

@@ -1,92 +1,92 @@
 ---
 title: Běhy průběhu práce
-description: Monitor and manage workflow executions.
+description: Sledujte a spravujte běhy pracovních postupů.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## O bězích
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+**Běh** je záznam provedení pracovního postupu. Při každém spuštění pracovního postupu—ať už událostí záznamu, plánem, ruční akcí nebo webhookem—se vytvoří nový běh.
 
-## Viewing Runs
+## Zobrazení běhů
 
-### From the Workflow Editor
+### Z editoru pracovních postupů
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. Otevřete pracovní postup, který chcete sledovat
+2. Klikněte na panel **Běhů** na pravé straně
+3. Zobrazte seznam nedávných běhů s jejich stavem
 
-### From the Workflow Runs View
+### Ze zobrazení běhů pracovních postupů
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. V postranním panelu přejděte na **Běhy pracovních postupů**
+2. Zobrazte běhy napříč všemi pracovními postupy
+3. Filtrujte podle stavu, pracovního postupu nebo data
 
-## Run Statuses
+## Stavy běhů
 
-| Stav          | Popis                                                                    |
-| ------------- | ------------------------------------------------------------------------ |
-| **Běží**      | Workflow is currently executing                                          |
-| **Completed** | Workflow finished successfully                                           |
-| **Failed**    | Workflow encountered an error and stopped                                |
-| **Waiting**   | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Stav          | Popis                                                                               |
+| ------------- | ----------------------------------------------------------------------------------- |
+| **Běží**      | Pracovní postup se právě provádí                                                    |
+| **Dokončeno** | Pracovní postup byl úspěšně dokončen                                                |
+| **Selhalo**   | Pracovní postup narazil na chybu a zastavil se                                      |
+| **Čekání**    | Pracovní postup je pozastaven (např. čeká na akci Zpoždění nebo odeslání formuláře) |
 
-## Run Details
+## Podrobnosti běhu
 
-Click on any run to see:
+Kliknutím na libovolný běh zobrazíte:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **Stav**: Aktuální stav běhu
+* **Zahájeno**: Kdy běh začal
+* **Doba trvání**: Jak dlouho běh trval
+* **Data spouštěče**: Vstup, který spustil pracovní postup
+* **Výstupy kroků**: Data vrácená jednotlivými kroky
+* **Chybové zprávy**: Pokud běh selhal, co se pokazilo
 
-## Step-by-Step Execution
+## Provádění krok za krokem
 
-Each run shows the progression through your workflow:
+Každý běh ukazuje průchod vaším pracovním postupem:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. Zjistěte, které kroky byly úspěšně dokončeny
+2. Zjistěte, kde došlo k selhání
+3. Zobrazte data předávaná mezi kroky
+4. Laděte problémy zkoumáním vstupů a výstupů kroků
 
-## Error Handling
+## Zpracování chyb
 
-When a run fails:
+Když běh selže:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
+1. Otevřete neúspěšný běh
+2. Najděte krok, který selhání způsobil
+3. Zkontrolujte podrobnosti v chybové zprávě
+4. Běžné problémy:
+   * Chybí povinná pole
    * Neplatný formát dat
-   * External API errors
-   * Permission issues
+   * Chyby externího rozhraní API
+   * Problémy s oprávněními
 
-## Re-running Workflows
+## Opětovné spuštění pracovních postupů
 
-If a run fails, you can:
+Pokud běh selže, můžete:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* Odstraňte základní problém a počkejte na další spuštění
+* U ručních pracovních postupů spusťte znovu se stejnými nebo aktualizovanými daty
+* Zkontrolujte logiku pracovního postupu, abyste předešli budoucím selháním
 
-## Performance Tips
+## Tipy k výkonu
 
-### Managing Run History
+### Správa historie běhů
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* Běhy jsou uchovávány pro historické účely
+* Velmi staré běhy mohou být automaticky archivovány
+* Exportujte data běhů, pokud potřebujete uchovávat záznamy
 
-### Monitoring Best Practices
+### Osvědčené postupy pro monitorování
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* Po aktivaci nových pracovních postupů pravidelně kontrolujte běhy
+* Prohlédněte si neúspěšné běhy a hledejte opakující se vzorce
 
-## Related
+## Související
 
-* [Workflow Triggers](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/cs/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odstraňování problémů s pracovními postupy](/l/cs/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

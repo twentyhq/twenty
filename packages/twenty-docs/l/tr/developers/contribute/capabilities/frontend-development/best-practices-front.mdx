@@ -19,7 +19,7 @@ Durumunuzu depolamak için ihtiyaç duyduğunuz kadar atom oluşturmak iyi bir u
 ```tsx
 export const myAtomState = atom({
   key: 'myAtomState',
-  default: 'default değer',
+  default: 'default value',
 });
 
 export const MyComponent = () => {
@@ -186,14 +186,14 @@ const [email, setEmail] = useState('');
 Olay işleyici adları `handle` ile başlamalı, bileşen props'larında olayları adlandırmak için `on` bir ön ek olarak kullanılmaktadır.
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ İyi
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -239,7 +239,7 @@ Bunun en yaygın örneği simge bileşenleridir:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// MyComponent'te
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -284,7 +284,7 @@ Aşırı prop taşıma kullanıyorsanız, [durum yönetimi en iyi uygulamaların
 **Kullanım**
 
 ```tsx
-// ❌ Kötü, tüm göreli yolu belirtir
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -309,10 +309,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('Email geçerli bir e-posta olmalıdır'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'Şifre en az 8 karakter içermelidir'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 

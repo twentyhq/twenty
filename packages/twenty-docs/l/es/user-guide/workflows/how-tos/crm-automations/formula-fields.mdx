@@ -5,7 +5,7 @@ description: Create formula fields using workflows until native support is avail
 
 Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
 
-## Casos de Uso Comunes
+## Common Use Cases
 
 | Use Case            | Formula Example                   |
 | ------------------- | --------------------------------- |
@@ -25,7 +25,7 @@ Twenty doesn't yet support native formula fields yet (coming in 2026), but you c
 
 **Goal**: Automatically combine first and last name into a full name field.
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated or Created (People)
 
@@ -79,7 +79,7 @@ export const main = async (params) => {
 
 **Goal**: Calculate how many days remain until a task's due date.
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
 
@@ -114,7 +114,7 @@ export const main = async (params) => {
 
 **Goal**: Score leads based on company size, industry, and engagement.
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated (People or Companies)
 
@@ -155,7 +155,7 @@ export const main = async (params) => {
 
 **Goal**: Automatically extract and store the email domain.
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated (People, Email field)
 
@@ -175,7 +175,7 @@ export const main = async (params) => {
 
 3. **Update Record**: Set Domain field to `{{code.domain}}`
 
-## Mejores prácticas
+## Best Practices
 
 ### Performance
 
@@ -189,7 +189,7 @@ export const main = async (params) => {
 * Use default values when data is missing
 * Return clear error messages when calculations fail
 
-### Pruebas
+### Testing
 
 * Test with edge cases (empty fields, zero values)
 * Verify calculations manually before activating

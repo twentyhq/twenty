@@ -21,14 +21,14 @@ Utilizează întotdeauna componente funcționale TSX.
 Nu folosi `import` implicit cu `const`, deoarece este mai greu de citit și mai greu de importat cu completarea de cod.
 
 ```tsx
-// ❌ Rău, mai greu de citit, mai greu de importat cu completarea codului
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
   return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ Bun, ușor de citit, ușor de importat cu completarea codului
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
 };
@@ -41,10 +41,10 @@ Creează tipul proprietăților și numește-l `(NumeComponentă)Props` dacă nu
 Folosește destructurarea props.
 
 ```tsx
-// ❌ Rău, fără tip
+// ❌ Bad, no type
 export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ Bun, cu tip
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
@@ -55,11 +55,11 @@ export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</di
 #### Ferește-te de utilizarea `React.FC` sau `React.FunctionComponent` pentru a defini tipurile props
 
 ```tsx
-/* ❌ - Rău, definește adnotările de componente cu `FC`
- *    - Cu `React.FC`, componenta acceptă implicit o prop `children`
- *      chiar dacă nu este definit în tipul prop. Acest lucru nu este întotdeauna
- *      de dorit, în special dacă componenta nu intenționează să redea
- *      copii.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
 const EmailField: React.FC<{
   value: string;
@@ -86,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 Evită utilizarea împrăștierii de proprietăți cu o singură variabilă în elemente JSX, cum ar fi `{...props}`. Această practică adesea duce la cod mai puțin lizibil și mai greu de întreținut deoarece nu este clar ce proprietăți primește componenta.
 
 ```tsx
-/* ❌ - Rău, împrăștie o singură variabilă prop în componenta subadiacentă
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -155,14 +155,14 @@ type MyType = {
 Poți vedea de ce TypeScript recomandă evitarea enumurilor [aici](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ Rău, utilizează un enum
+// ❌ Bad, utilizes an enum
 enum Color {
-  Roșu = "red",
-  Verde = "green",
-  Albastru = "blue",
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
 }
 
-let color = Color.Roșu;
+let color = Color.Red;
 ```
 
 ```tsx

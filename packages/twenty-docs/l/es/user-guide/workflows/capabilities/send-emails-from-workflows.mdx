@@ -6,7 +6,7 @@ image: /images/user-guide/workflows/workflow.png
 
 Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
 
-## Prerrequisitos
+## Prerequisites
 
 Before you can send emails from workflows:
 
@@ -19,7 +19,7 @@ Before you can send emails from workflows:
 
 **Goal**: Send a welcome email when a new person is added to the CRM.
 
-**Configuración**:
+**Setup**:
 
 1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
 
@@ -30,10 +30,10 @@ Before you can send emails from workflows:
    * Select **Send Email**
    * Configure the email:
 
-| Campo       | Valor                                  |
+| Field       | Value                                  |
 | ----------- | -------------------------------------- |
 | **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Bienvenido a {{Your Company Name}}`   |
+| **Subject** | `Welcome to {{Your Company Name}}`     |
 | **Body**    | `Hi {{trigger.object.firstName}}, ...` |
 
 4. **Test and activate**: Test with a sample record, then activate
@@ -55,7 +55,7 @@ The Team
 
 ### Available Variables from Triggers
 
-| Tipo de disparador         | Common Variables                       |
+| Trigger Type               | Common Variables                       |
 | -------------------------- | -------------------------------------- |
 | **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
 | **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
@@ -67,7 +67,7 @@ The Team
 
 **Goal**: Send different welcome emails based on where the lead came from.
 
-**Configuración**:
+**Setup**:
 
 1. **Trigger**: Record is Created (People)
 
@@ -85,7 +85,7 @@ The Team
 
 **Goal**: Email the sales rep and their manager when an opportunity is won.
 
-**Configuración**:
+**Setup**:
 
 1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
 
@@ -105,7 +105,7 @@ The Team
 
 **Goal**: Send a follow-up email 3 days after a meeting is logged.
 
-**Configuración**:
+**Setup**:
 
 1. **Trigger**: Record is Created (Activities, Type = "Meeting")
 
@@ -116,7 +116,7 @@ The Team
    * Subject: Following up on our conversation
    * Body: Reference meeting details from trigger
 
-## Mejores prácticas
+## Best Practices
 
 ### Email Content
 
@@ -132,7 +132,7 @@ The Team
 * Avoid spam trigger words
 * Ensure unsubscribe options for marketing emails
 
-### Solución de Problemas
+### Troubleshooting
 
 * Verify email account is connected and active
 * Check recipient email address is valid

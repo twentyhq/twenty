@@ -1,0 +1,136 @@
+---
+title: Detect Stale Opportunities
+description: Automatically notify managers when opportunities haven't been updated.
+---
+
+Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+
+## The Problem
+
+Opportunities sitting without updates lead to:
+
+* Deals going cold
+* Unreliable forecasts
+* Lost revenue
+
+## The Solution
+
+Create a scheduled workflow that finds stale opportunities and emails their managers.
+
+## Step-by-Step Setup
+
+### Step 1: Create the Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Name it "Stale Opportunity Alert"
+
+### Step 2: Configure the Trigger
+
+1. Select **On a Schedule**
+2. Set to run daily (e.g., every day at 8 AM)
+
+### Step 3: Search for Stale Opportunities
+
+1. Add **Search Records** action
+2. Configure:
+
+| Field      | Value                                           |
+| ---------- | ----------------------------------------------- |
+| **Object** | Opportunities                                   |
+| **Filter** | Updated At is before (today - 7 days)           |
+| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
+| **Limit**  | 100                                             |
+
+### Step 4: Check If Any Found
+
+1. Add **Filter** action
+2. Condition: `{{searchRecords.length}}` is greater than 0
+3. If no stale opportunities, the workflow stops here
+
+### Step 5: Format the Alert (Code Action)
+
+Add a **Code** action to format the email:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Step 6: Send Alert Email
+
+Add **Send Email** action:
+
+| Field       | Value                                                       |
+| ----------- | ----------------------------------------------------------- |
+| **To**      | sales-manager@yourcompany.com                               |
+| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
+| **Body**    | `{{code.summary}}`                                          |
+
+### Step 7: Test and Activate
+
+1. Click **Test** to run the workflow
+2. Check that the email contains the right data
+3. Activate when ready
+
+## Customization Options
+
+### Change Staleness Threshold
+
+Modify the Search Records filter to change from 7 days to your preferred period:
+
+* 3 days for high-velocity sales
+* 14 days for enterprise deals
+* 30 days for long sales cycles
+
+### Alert Individual Reps
+
+Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+
+### Add Escalation
+
+Create multiple workflows with increasing severity:
+
+1. Day 7: Email to rep
+2. Day 14: Email to rep + manager
+3. Day 21: Create task for manager to intervene
+
+### Include in Slack
+
+Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+
+## Related
+
+* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Send Emails from Workflows](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)

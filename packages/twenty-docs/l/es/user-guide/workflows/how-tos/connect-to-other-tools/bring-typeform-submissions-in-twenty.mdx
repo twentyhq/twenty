@@ -17,7 +17,7 @@ For standard webhook setup, see [Set Up a Webhook Trigger](/l/es/user-guide/work
 1. In Typeform, open your form
 2. Go to **Connect → Webhooks**
 3. Paste your Twenty webhook URL
-4. Guardar
+4. Save
 
 ### Step 3: Understand the Typeform Payload
 
@@ -110,9 +110,9 @@ Now in subsequent steps, you can select `contact.firstName`, `contact.email`, et
 
 Add a **Create Record** action:
 
-| Campo          | Valor                                                |
+| Field          | Value                                                |
 | -------------- | ---------------------------------------------------- |
-| **Object**     | Personas                                             |
+| **Object**     | People                                               |
 | **First Name** | `{{code.contact.firstName}}`                         |
 | **Last Name**  | `{{code.contact.lastName}}`                          |
 | **Email**      | `{{code.contact.email}}`                             |

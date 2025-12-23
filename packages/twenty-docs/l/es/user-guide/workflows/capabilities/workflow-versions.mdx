@@ -1,85 +1,85 @@
 ---
-title: Versiones del flujo de trabajo
-description: Gestiona versiones y borradores de flujos de trabajo.
+title: Workflow Versions
+description: Manage workflow versions and drafts.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## Acerca de las versiones
+## About Versions
 
-Cada vez que activas un flujo de trabajo, se crea una nueva versión. Esto te permite hacer un seguimiento de los cambios a lo largo del tiempo y revertir a configuraciones anteriores si es necesario.
+Every time you activate a workflow, a new version is created. This allows you to track changes over time and revert to previous configurations if needed.
 
-## Estados de la versión
+## Version Statuses
 
-| Estado          | Descripción                                    |
-| --------------- | ---------------------------------------------- |
-| **Borrador**    | En edición, aún no publicado                   |
-| **Activo**      | Versión en vivo respondiendo a activadores     |
-| **Desactivado** | Anteriormente activo pero detenido manualmente |
-| **Archivado**   | Versiones pasadas guardadas para historial     |
+| Status          | Description                            |
+| --------------- | -------------------------------------- |
+| **Draft**       | Being edited, not yet published        |
+| **Active**      | Live version responding to triggers    |
+| **Deactivated** | Previously active but manually stopped |
+| **Archived**    | Past versions kept for history         |
 
-## Trabajar con borradores
+## Working with Drafts
 
-Cuando editas un flujo de trabajo activo, tus cambios se guardan como un **borrador**. La versión activa sigue ejecutándose mientras trabajas en las actualizaciones.
+When you edit an active workflow, your changes are saved as a **draft**. The active version continues to run while you work on updates.
 
-Cuando termines de editar, puedes:
+Once you're done editing, you can:
 
-* **Activar**: Publica el borrador como la nueva versión activa (la versión anterior se archiva)
-* **Descartar**: Elimina el borrador y conserva la versión activa actual
+* **Activate**: Publish the draft as the new active version (the previous version is archived)
+* **Discard**: Delete the draft and keep the current active version
 
-## Historial de versiones
+## Version History
 
-### Ver versiones anteriores
+### Viewing Past Versions
 
-1. Abre el flujo de trabajo
-2. Haz clic en la pestaña **Versiones**
-3. Consulta todas las versiones anteriores con marcas de tiempo
+1. Open the workflow
+2. Click the **Versions** tab
+3. See all previous versions with timestamps
 
-### Restaurar una versión
+### Restoring a Version
 
-1. Encuentra la versión que quieres restaurar
-2. Haz clic en **Usar como borrador**
-3. La versión se copia a un nuevo borrador
-4. Realiza las actualizaciones necesarias
-5. Activa cuando esté lista
+1. Find the version you want to restore
+2. Click **Use as draft**
+3. The version is copied to a new draft
+4. Make any necessary updates
+5. Activate when ready
 
-## Mejores prácticas
+## Best Practices
 
-### Gestión de versiones
+### Version Management
 
-* Activa solo cuando esté lista para producción
-* Mantén cambios significativos entre versiones
-* Documenta los cambios importantes en los nombres o descripciones de los flujos de trabajo
-* Prueba en modo borrador antes de activar
+* Activate only when ready for production
+* Keep meaningful changes between versions
+* Document major changes in workflow names or descriptions
+* Test in draft mode before activating
 
-### Revertir cambios
+### Reverting Changes
 
-* Si una nueva versión causa problemas, restaura la versión anterior
-* Usa el historial de versiones para ver qué cambió
-* Siempre prueba las versiones restauradas antes de activar
+* If a new version causes issues, restore the previous version
+* Use the version history to track what changed
+* Always test restored versions before activating
 
-## Flujos de Trabajo comunes
+## Common Workflows
 
-### Edición rápida
+### Quick Edit
 
-1. Realiza cambios menores en un flujo de trabajo activo
-2. Prueba en modo borrador
-3. Activa la nueva versión
+1. Make minor changes to an active workflow
+2. Test in draft mode
+3. Activate the new version
 
-### Revisión importante
+### Major Revision
 
-1. Usa la versión anterior como punto de partida
-2. Realiza cambios significativos en el borrador
-3. Prueba a fondo todos los escenarios
-4. Activa cuando estés seguro
+1. Use the previous version as a starting point
+2. Make significant changes in draft
+3. Thoroughly test all scenarios
+4. Activate when confident
 
-### Reversión
+### Rollback
 
-1. Identifica el problema con la versión actual
-2. Encuentra la última versión funcional en el historial
-3. Haz clic en **Usar como borrador**
-4. Activa para restaurar el comportamiento anterior
+1. Identify the issue with the current version
+2. Find the last working version in history
+3. Click **Use as draft**
+4. Activate to restore the old behavior
 
-## Relacionado
+## Related
 
-* [Primeros pasos con Flujos de Trabajo](/l/es/user-guide/workflows/overview)
-* [Ejecuciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-runs)
+* [Getting Started with Workflows](/l/es/user-guide/workflows/overview)
+* [Workflow Runs](/l/es/user-guide/workflows/capabilities/workflow-runs)

@@ -18,12 +18,12 @@ Kullanıcı bir öğeyle etkileşimde bulunduğunda ek bilgi gösteren kısa bir
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Müşteri Bilgileri
+            Customer Insights
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Müşteri davranışlarını ve tercihlerini keşfedin"
+            content="Explore customer behavior and preferences"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -63,7 +63,7 @@ Taşan metinleri ele alır ve metin taştığında bir tooltip gösterir.
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Müşterinin son ürün sorgusuyla ilgili takip edin. Fiyatlandırma seçeneklerini tartışın, herhangi bir endişeyi giderin ve ek ürün bilgisi sağlayın. Gelecekteki referanslar için görüşmenin detaylarını CRM'ye kaydedin.';
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };

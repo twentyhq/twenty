@@ -1,92 +1,92 @@
 ---
 title: عمليات تشغيل سير العمل
-description: Monitor and manage workflow executions.
+description: راقِب وأدِر عمليات تنفيذ سير العمل.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## حول عمليات التشغيل
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+**تشغيل** هو سجل لتنفيذ سير العمل. في كل مرة يتم فيها تشغيل سير عمل—سواءً بواسطة حدث سجل، أو جدول زمني، أو إجراء يدوي، أو خطاف ويب—يتم إنشاء عملية تشغيل جديدة.
 
-## Viewing Runs
+## عرض عمليات التشغيل
 
-### From the Workflow Editor
+### من محرر سير العمل
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. افتح سير العمل الذي تريد مراقبته
+2. انقر على لوحة **التشغيل** في الجانب الأيمن
+3. اطلع على قائمة بأحدث عمليات التشغيل مع حالتها
 
-### From the Workflow Runs View
+### من عرض عمليات تشغيل سير العمل
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. انتقل إلى **عمليات تشغيل سير العمل** في الشريط الجانبي
+2. اعرض عمليات التشغيل عبر جميع سير العمل
+3. رشّح حسب الحالة أو سير العمل أو التاريخ
 
-## Run Statuses
+## حالات التشغيل
 
-| الحالة           | الوصف                                                                    |
-| ---------------- | ------------------------------------------------------------------------ |
-| **جارٍ التنفيذ** | Workflow is currently executing                                          |
-| **Completed**    | Workflow finished successfully                                           |
-| **Failed**       | Workflow encountered an error and stopped                                |
-| **Waiting**      | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| الحالة           | الوصف                                                             |
+| ---------------- | ----------------------------------------------------------------- |
+| **جارٍ التنفيذ** | سير العمل قيد التنفيذ حاليًا                                      |
+| **مكتمل**        | انتهى سير العمل بنجاح                                             |
+| **فشل**          | واجه سير العمل خطأً وتوقّف                                        |
+| **في انتظار**    | سير العمل متوقف مؤقتًا (مثال: ينتظر إجراء التأخير أو إرسال نموذج) |
 
-## Run Details
+## تفاصيل عملية التشغيل
 
-Click on any run to see:
+انقر على أي عملية تشغيل للاطلاع على:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **الحالة**: الوضع الحالي لعملية التشغيل
+* **وقت البدء**: وقت بدء عملية التشغيل
+* **المدة**: الوقت الذي استغرقته عملية التشغيل
+* **بيانات المُشغِّل**: المُدخل الذي بدأ سير العمل
+* **مخرجات الخطوة**: البيانات التي ترجعها كل خطوة
+* **رسائل الخطأ**: إذا فشلت عملية التشغيل، ما الخطأ الذي حدث
 
-## Step-by-Step Execution
+## تنفيذ خطوة بخطوة
 
-Each run shows the progression through your workflow:
+تعرض كل عملية تشغيل التقدم خلال سير عملك:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. اطلع على الخطوات التي اكتملت بنجاح
+2. حدّد مواضع حدوث الفشل
+3. اعرض البيانات الممررة بين الخطوات
+4. استكشف المشكلات وأصلحها بفحص مدخلات الخطوات ومخرجاتها
 
-## Error Handling
+## التعامل مع الأخطاء
 
-When a run fails:
+عند فشل عملية تشغيل:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
+1. افتح عملية التشغيل الفاشلة
+2. حدّد الخطوة التي تسببت في الفشل
+3. تحقق من رسالة الخطأ للتفاصيل
+4. مشكلات شائعة:
+   * حقول مطلوبة مفقودة
    * تنسيق بيانات غير صالح
-   * External API errors
-   * Permission issues
+   * أخطاء واجهة برمجة التطبيقات الخارجية
+   * مشكلات الأذونات
 
-## Re-running Workflows
+## إعادة تشغيل سير العمل
 
-If a run fails, you can:
+إذا فشلت عملية تشغيل، يمكنك:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* أصلح المشكلة الأساسية وانتظر المُشغِّل التالي
+* بالنسبة لسير العمل اليدوي، شغّل مرة أخرى باستخدام البيانات نفسها أو بيانات محدَّثة
+* راجع منطق سير العمل لمنع حالات الفشل المستقبلية
 
-## Performance Tips
+## نصائح الأداء
 
-### Managing Run History
+### إدارة محفوظات التشغيل
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* تُحتفظ بعمليات التشغيل كمرجع تاريخي
+* قد تُؤرشف عمليات التشغيل القديمة جدًا تلقائيًا
+* صدّر بيانات التشغيل إذا كنت بحاجة إلى الاحتفاظ بسجلات
 
-### Monitoring Best Practices
+### أفضل ممارسات المراقبة
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* تحقق بانتظام من عمليات التشغيل بعد تفعيل سير عمل جديدة
+* راجع عمليات التشغيل الفاشلة لتحديد الأنماط
 
-## Related
+## ذات صلة
 
-* [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/ar/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [استكشاف مشكلات سير العمل وإصلاحها](/l/ar/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

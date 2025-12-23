@@ -1,5 +1,5 @@
 ---
-title: Erwarteten Betrag in Ihrer Pipeline anzeigen},{
+title: Show Expected Amount in Your Pipeline
 description: Gewichtete Deal‑Werte basierend auf der Phasenwahrscheinlichkeit berechnen und anzeigen.
 ---
 
@@ -45,7 +45,7 @@ Wenn Benutzer diese berechneten Felder nicht manuell bearbeiten sollen:
 
 Dadurch können nur die Workflows diese Werte aktualisieren.
 
-## Schritt 2: Workflow #1 erstellen — Probability bei Phasenwechsel aktualisieren
+## Schritt 2: Workflow #1 erstellen — Probability bei Phasenwechsel aktualisieren
 
 Dieser Workflow setzt die Probability automatisch, wenn eine Opportunity in eine neue Phase wechselt.
 
@@ -97,7 +97,7 @@ Nachdem die Verzweigungen wieder zusammengeführt wurden:
    * Feld: Expected Amount
    * Wert: Amount × Probability
 
-## Schritt 3: Workflow #2 erstellen — Bei Änderung von Amount neu berechnen
+## Schritt 3: Workflow #2 erstellen — Bei Änderung von Amount neu berechnen
 
 Dieser Workflow aktualisiert den Expected Amount, wenn sich der Amount des Deals ändert.
 
@@ -138,8 +138,8 @@ Jede Spalte zeigt nun den insgesamt gewichteten Pipeline‑Wert für diese Phase
 | -------------------------- | ----------------------------------------------------------------------------------------- |
 | **Feld „Probability“**     | Speichert die phasenbasierte Gewinnwahrscheinlichkeit                                     |
 | **Feld „Expected Amount“** | Speichert Amount × Probability                                                            |
-| **Workflow #1**            | Aktualisiert Probability bei Phasenwechsel und berechnet anschließend Expected Amount neu |
-| **Workflow #2**            | Berechnet Expected Amount neu, wenn sich Amount ändert                                    |
+| **Workflow #1**            | Aktualisiert Probability bei Phasenwechsel und berechnet anschließend Expected Amount neu |
+| **Workflow #2**            | Berechnet Expected Amount neu, wenn sich Amount ändert                                    |
 | **Aggregation**            | Zeigt die Summe des Expected Amount pro Phase an                                          |
 
 ## Verwandt

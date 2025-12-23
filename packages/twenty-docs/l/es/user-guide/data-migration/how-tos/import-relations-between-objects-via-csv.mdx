@@ -3,7 +3,7 @@ title: Import Relations Between Objects via CSV
 description: Complete step-by-step guide to linking records during CSV import.
 ---
 
-## Resumen
+## Overview
 
 This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
 
@@ -23,12 +23,12 @@ The "one" side is the **parent**. The "many" side is the **child**.
 
 ### Common Relations in Twenty
 
-| Relación                  | "One" Side (Parent) | "Many" Side (Child) |
+| Relation                  | "One" Side (Parent) | "Many" Side (Child) |
 | ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Empresa             | Personas            |
-| Companies → Opportunities | Empresa             | Oportunidades       |
-| People → Tasks            | Persona             | Tareas              |
-| People → Notes            | Persona             | Notas               |
+| Companies → People        | Company             | People              |
+| Companies → Opportunities | Company             | Opportunities       |
+| People → Tasks            | Person              | Tasks               |
+| People → Notes            | Person              | Notes               |
 
 ## Step 1: Identify the "One" and "Many" Sides
 
@@ -60,12 +60,12 @@ The parent ("one" side) must exist in Twenty before you can reference it.
 
 You need to reference the parent record using a **unique identifier**. Available options:
 
-| Parent Object                       | Available Unique Identifiers                                    |
-| ----------------------------------- | --------------------------------------------------------------- |
-| **Companies**                       | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**                          | `id` (UUID), `email`, or any custom unique field                |
-| **Miembros del espacio de trabajo** | `id` (UUID), `email` (not name)                                 |
-| **Objetos personalizados**          | `id` (UUID), or any field marked as unique                      |
+| Parent Object         | Available Unique Identifiers                                    |
+| --------------------- | --------------------------------------------------------------- |
+| **Companies**         | `id` (UUID), `domain` (recommended), or any custom unique field |
+| **People**            | `id` (UUID), `email`, or any custom unique field                |
+| **Workspace Members** | `id` (UUID), `email` (not name)                                 |
+| **Custom Objects**    | `id` (UUID), or any field marked as unique                      |
 
 <Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
 
@@ -110,11 +110,11 @@ The `companyDomain` column references the Company's domain.
 
 ### Format Requirements
 
-| Identificador      | Formato        | Ejemplo                                |
-| ------------------ | -------------- | -------------------------------------- |
-| Dominio            | URL format     | `https://acme.com`                     |
-| Correo electrónico | Standard email | `john@acme.com`                        |
-| ID                 | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Identifier | Format         | Example                                |
+| ---------- | -------------- | -------------------------------------- |
+| Domain     | URL format     | `https://acme.com`                     |
+| Email      | Standard email | `john@acme.com`                        |
+| ID         | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
   **Domain format matters!**
@@ -184,7 +184,7 @@ Review proposal,jane@yourcompany.com
   </Accordion>
 
   <Accordion title="Can I update relations on existing records?">
-    ¡Sí! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+    Yes! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
   </Accordion>
 
   <Accordion title="Can I import Many-to-Many relationships?">
@@ -196,7 +196,7 @@ Review proposal,jane@yourcompany.com
   </Accordion>
 
   <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. Puedes hacerlo de las siguientes maneras:
+    The import will show an error for that row. You can either:
 
     * Import the parent record first, then re-import
     * Fix the reference value
@@ -219,7 +219,7 @@ Review proposal,jane@yourcompany.com
   If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
 </Warning>
 
-## Solución de Problemas
+## Troubleshooting
 
 Having issues? Check:
 

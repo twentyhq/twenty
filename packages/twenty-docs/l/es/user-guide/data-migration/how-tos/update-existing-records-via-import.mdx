@@ -3,18 +3,18 @@ title: Update Existing Records via Import
 description: Complete step-by-step guide to bulk updating records using CSV import.
 ---
 
-## Resumen
+## Overview
 
 Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
 
-**Casos de uso:**
+**Use cases:**
 
 * Update job titles for multiple people
 * Change company information in bulk
 * Add data to new custom fields
 * Correct data errors across many records
 
-## Cómo Funciona
+## How It Works
 
 When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
 
@@ -99,11 +99,11 @@ Twenty matches records by the unique identifier and updates them with new values
 
 ## Choosing the Right Unique Identifier
 
-| Objeto                     | Recommended          | Alternative | Notas                        |
-| -------------------------- | -------------------- | ----------- | ---------------------------- |
-| **People**                 | `correo Electrónico` | `id`        | Email is human-readable      |
-| **Companies**              | `dominio`            | `id`        | Domain is human-readable     |
-| **Objetos personalizados** | Any unique field     | `id`        | Use your custom unique field |
+| Object             | Recommended      | Alternative | Notes                        |
+| ------------------ | ---------------- | ----------- | ---------------------------- |
+| **People**         | `email`          | `id`        | Email is human-readable      |
+| **Companies**      | `domain`         | `id`        | Domain is human-readable     |
+| **Custom objects** | Any unique field | `id`        | Use your custom unique field |
 
 <Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
 
@@ -127,7 +127,7 @@ After importing:
 
 **Fields not included in your import file remain unchanged.**
 
-| Your file includes...        | Resultado                                              |
+| Your file includes...        | Result                                                 |
 | ---------------------------- | ------------------------------------------------------ |
 | `email`, `jobTitle`          | Only `jobTitle` is updated; other fields stay the same |
 | `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated                     |
@@ -146,7 +146,7 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 
 ## Common Mistakes to Avoid
 
-| Mistake                        | Problem                                                 | Resultado                              | Solution                                  |
+| Mistake                        | Problem                                                 | Result                                 | Solution                                  |
 | ------------------------------ | ------------------------------------------------------- | -------------------------------------- | ----------------------------------------- |
 | **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com`        | Creates new record instead of updating | Keep unique identifiers unchanged         |
 | **Multiple unique fields**     | Mapping both `email` AND `id`                           | Potential matching conflicts           | Map only ONE unique identifier            |
@@ -169,7 +169,7 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
   </Accordion>
 
   <Accordion title="Can I update relation fields (like Company)?">
-    ¡Sí! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+    Yes! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
   </Accordion>
 
   <Accordion title="How do I know which records will be updated vs. created?">
@@ -181,7 +181,7 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
   </Accordion>
 </AccordionGroup>
 
-## Mejores prácticas
+## Best Practices
 
 1. **Export first** — always start from an export to ensure correct format
 2. **Backup before updating** — export your data before making bulk changes
@@ -189,7 +189,7 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
 5. **Only include necessary columns** — fewer columns means less chance for errors
 
-## Solución de Problemas
+## Troubleshooting
 
 Having issues? Check:
 

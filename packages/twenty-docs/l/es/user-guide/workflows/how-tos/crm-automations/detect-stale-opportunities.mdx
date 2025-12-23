@@ -33,11 +33,11 @@ Create a scheduled workflow that finds stale opportunities and emails their mana
 ### Step 3: Search for Stale Opportunities
 
 1. Add **Search Records** action
-2. Configurar:
+2. Configure:
 
-| Campo      | Valor                                           |
+| Field      | Value                                           |
 | ---------- | ----------------------------------------------- |
-| **Object** | Oportunidades                                   |
+| **Object** | Opportunities                                   |
 | **Filter** | Updated At is before (today - 7 days)           |
 | **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
 | **Limit**  | 100                                             |
@@ -92,7 +92,7 @@ export const main = async (params) => {
 
 Add **Send Email** action:
 
-| Campo       | Valor                                                       |
+| Field       | Value                                                       |
 | ----------- | ----------------------------------------------------------- |
 | **To**      | sales-manager@yourcompany.com                               |
 | **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |

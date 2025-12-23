@@ -1,22 +1,22 @@
 ---
-title: Comandos del Frontend
+title: Frontend Commands
 ---
 
-## Comandos útiles
+## Useful commands
 
-### Iniciando la aplicación
+### Starting the app
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerar el esquema de graphql basado en el esquema API graphql
+### Regenerate graphql schema based on API graphql schema
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-O
+OR
 
 ```bash
 npx nx run twenty-front:graphql:generate
@@ -28,14 +28,14 @@ npx nx run twenty-front:graphql:generate
 npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## Traducciones
+## Translations
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### Prueba
+### Test
 
 ```bash
 npx nx run twenty-front:test # run jest tests
@@ -44,11 +44,11 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Stack Tecnológico
+## Tech Stack
 
 The project has a clean and simple stack, with minimal boilerplate code.
 
-**Aplicación**
+**App**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,35 +56,35 @@ The project has a clean and simple stack, with minimal boilerplate code.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Pruebas**
+**Testing**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Herramientas**
+**Tooling**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
 * [ESLint](https://eslint.org/)
 
-## Arquitectura
+## Architecture
 
-### Enrutamiento
+### Routing
 
-[React Router](https://reactrouter.com/) maneja el enrutamiento.
+[React Router](https://reactrouter.com/) handles the routing.
 
-Para evitar [re-renderizados](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) innecesarios toda la lógica de enrutamiento está en un `useEffect` en `PageChangeEffect`.
+To avoid unnecessary [re-renders](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### Gestión del Estado
+### State Management
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) maneja la gestión del estado.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
 
-Ver [mejores prácticas](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) para más información sobre la gestión del estado.
+See [best practices](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
 
-## Pruebas
+## Testing
 
-[Jest](https://jestjs.io/) sirve como la herramienta para pruebas unitarias mientras [Storybook](https://storybook.js.org/) es para pruebas de componentes.
+[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
 
-Jest es principalmente para probar funciones utilitarias, y no los componentes en sí mismos.
+Jest is mainly for testing utility functions, and not components themselves.
 
-Storybook es para probar el comportamiento de componentes aislados, así como mostrar el sistema de diseño.
+Storybook is for testing the behavior of isolated components, as well as displaying the design system.

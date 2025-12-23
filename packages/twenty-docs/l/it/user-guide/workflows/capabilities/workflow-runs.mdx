@@ -1,92 +1,92 @@
 ---
 title: Esecuzioni del workflow
-description: Monitor and manage workflow executions.
+description: Monitora e gestisci le esecuzioni dei flussi di lavoro.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## Informazioni sulle esecuzioni
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+Un'**Esecuzione** è una registrazione dell'esecuzione di un flusso di lavoro. Ogni volta che un flusso di lavoro viene attivato — che sia da un evento di record, una pianificazione, un'azione manuale o un webhook — viene creata una nuova esecuzione.
 
-## Viewing Runs
+## Visualizzazione delle esecuzioni
 
-### From the Workflow Editor
+### Dall'editor del flusso di lavoro
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. Apri il flusso di lavoro che desideri monitorare
+2. Fai clic sul pannello **Esecuzioni** a destra
+3. Visualizza un elenco delle esecuzioni recenti con il relativo stato
 
-### From the Workflow Runs View
+### Dalla vista Esecuzioni dei flussi di lavoro
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. Vai a **Esecuzioni dei flussi di lavoro** nella barra laterale
+2. Visualizza le esecuzioni in tutti i flussi di lavoro
+3. Filtra per stato, flusso di lavoro o data
 
-## Run Statuses
+## Stati delle esecuzioni
 
-| Stato             | Descrizione                                                              |
-| ----------------- | ------------------------------------------------------------------------ |
-| **In esecuzione** | Workflow is currently executing                                          |
-| **Completed**     | Workflow finished successfully                                           |
-| **Failed**        | Workflow encountered an error and stopped                                |
-| **Waiting**       | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Stato             | Descrizione                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| **In esecuzione** | Il flusso di lavoro è in esecuzione                                                               |
+| **Completato**    | Il flusso di lavoro è terminato correttamente                                                     |
+| **Non riuscito**  | Il flusso di lavoro ha riscontrato un errore ed è stato interrotto                                |
+| **In attesa**     | Il flusso di lavoro è in pausa (ad es., in attesa di un'azione Ritardo o dell'invio di un modulo) |
 
-## Run Details
+## Dettagli dell'esecuzione
 
-Click on any run to see:
+Fai clic su una qualsiasi esecuzione per visualizzare:
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **Stato**: stato attuale dell'esecuzione
+* **Ora di avvio**: quando è iniziata l'esecuzione
+* **Durata**: quanto è durata l'esecuzione
+* **Dati del trigger**: l'input che ha avviato il flusso di lavoro
+* **Output dei passaggi**: dati restituiti da ciascun passaggio
+* **Messaggi di errore**: se l'esecuzione non è riuscita, cosa è andato storto
 
-## Step-by-Step Execution
+## Esecuzione passo dopo passo
 
-Each run shows the progression through your workflow:
+Ogni esecuzione mostra l'avanzamento nel flusso di lavoro:
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. Vedi quali passaggi sono stati completati correttamente
+2. Identifica dove si sono verificati errori
+3. Visualizza i dati scambiati tra i passaggi
+4. Esegui il debug dei problemi esaminando gli input e gli output dei passaggi
 
-## Error Handling
+## Gestione degli errori
 
-When a run fails:
+Quando un'esecuzione non riesce:
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
+1. Apri l'esecuzione non riuscita
+2. Trova il passaggio che ha causato l'errore
+3. Controlla il messaggio di errore per i dettagli
+4. Problemi comuni:
+   * Campi obbligatori mancanti
    * Formato dati non valido
-   * External API errors
-   * Permission issues
+   * Errori delle API esterne
+   * Problemi di autorizzazioni
 
-## Re-running Workflows
+## Eseguire nuovamente i flussi di lavoro
 
-If a run fails, you can:
+Se un'esecuzione non riesce, puoi:
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* Correggi il problema alla base e attendi il prossimo trigger
+* Per i flussi di lavoro manuali, attivalo di nuovo con gli stessi dati o con dati aggiornati
+* Rivedi la logica del flusso di lavoro per prevenire errori futuri
 
-## Performance Tips
+## Suggerimenti sulle prestazioni
 
-### Managing Run History
+### Gestione della cronologia delle esecuzioni
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* Le esecuzioni vengono conservate per riferimento storico
+* Le esecuzioni molto vecchie possono essere archiviate automaticamente
+* Esporta i dati delle esecuzioni se devi conservare i registri
 
-### Monitoring Best Practices
+### Pratiche consigliate per il monitoraggio
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* Controlla regolarmente le esecuzioni dopo aver attivato nuovi flussi di lavoro
+* Esamina le esecuzioni non riuscite per identificare schemi ricorrenti
 
-## Related
+## Correlati
 
-* [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/it/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Risoluzione dei problemi dei flussi di lavoro](/l/it/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

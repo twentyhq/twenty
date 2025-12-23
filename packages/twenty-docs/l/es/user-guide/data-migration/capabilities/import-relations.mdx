@@ -3,7 +3,7 @@ title: Import Relations Between Objects
 description: Import relationships between records via CSV.
 ---
 
-## Resumen
+## Overview
 
 Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
 
@@ -121,11 +121,11 @@ If it doesn't exist:
 
 ### Available Unique Fields for Relations
 
-| Objeto                                | Unique Fields Available                 |
+| Object                                | Unique Fields Available                 |
 | ------------------------------------- | --------------------------------------- |
 | **Companies**                         | `id`, `domain`, any custom unique field |
 | **People**                            | `id`, `email`, any custom unique field  |
-| **Miembros del espacio de trabajo**   | `id`, `email` (not name)                |
+| **Workspace Members**                 | `id`, `email` (not name)                |
 | **Other standard and custom objects** | `id`, any field marked as unique        |
 
 <Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>

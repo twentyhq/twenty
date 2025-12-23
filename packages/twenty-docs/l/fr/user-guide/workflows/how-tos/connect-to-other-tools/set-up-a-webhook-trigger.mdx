@@ -1,0 +1,171 @@
+---
+title: Set Up a Webhook Trigger
+description: Receive data from external services to trigger workflows.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Webhook triggers allow external services to start your workflows by sending data to a unique URL. Use them to connect forms, third-party apps, and custom integrations.
+
+## When to Use Webhooks
+
+| Use Case                | Example                                 |
+| ----------------------- | --------------------------------------- |
+| **Web forms**           | Contact form submissions create leads   |
+| **Third-party apps**    | Stripe payment → create customer record |
+| **Custom integrations** | Your app → Twenty automation            |
+| **No-code tools**       | Zapier, Make, n8n connections           |
+
+## Step-by-Step Setup
+
+### Step 1: Create the Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Name it (e.g., "Website Form Submission")
+
+### Step 2: Configure the Webhook Trigger
+
+1. Click on the trigger block
+2. Select **Webhook**
+3. You'll receive a unique webhook URL like:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Copy this URL—you'll need it for your external service
+
+### Step 3: Define Expected Data Structure
+
+For **POST** requests, define the expected body structure:
+
+1. Click **Define expected body**
+2. Enter a sample JSON that matches what your service will send:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Click **Save**—this creates variables you can use in subsequent steps
+
+### Step 4: Add Actions
+
+Now add actions that use the webhook data:
+
+**Example: Create a Person record**
+
+1. Add **Create Record** action
+2. Select **People** object
+3. Map fields:
+
+| Field      | Value                                                |
+| ---------- | ---------------------------------------------------- |
+| First Name | `{{trigger.body.firstName}}`                         |
+| Last Name  | `{{trigger.body.lastName}}`                          |
+| Email      | `{{trigger.body.email}}`                             |
+| Company    | Search or create based on `{{trigger.body.company}}` |
+
+### Step 5: Test the Webhook
+
+Before activating, test your webhook:
+
+**Using cURL**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Using Postman or similar**:
+
+1. Create a POST request to your webhook URL
+2. Set Content-Type header to `application/json`
+3. Add your test JSON body
+4. Send and check workflow runs
+
+### Step 6: Activate
+
+Once tested, click **Activate** to make the workflow live.
+
+## Handling Different Data Structures
+
+### Nested Data
+
+If your webhook sends nested data:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Reference with: `{{trigger.body.contact.email}}`
+
+### Arrays
+
+If data includes arrays:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+How you handle arrays depends on your use case:
+
+**Unknown number of items → Use Iterator**
+
+If you need to process each item in the array (e.g., create a record for each), add a **Code** action to parse the array, then use **Iterator**:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Then use Iterator to loop through: `{{code.items}}`
+
+**Known/specific fields → Extract to named fields**
+
+If the array contains specific fields you want to access individually (e.g., form answers where position 0 is always "first name", position 1 is always "last name"), add a **Code** action to extract them:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Now you can select `product.name` and `product.qty` individually in subsequent steps.
+
+<Tip>
+  For more details on handling arrays, see [Handle Arrays in Code Actions](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Related
+
+* [Workflow Triggers](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/fr/user-guide/workflows/capabilities/workflow-actions)
