@@ -45,13 +45,12 @@ export const FieldWidgetDisplay = ({
     fieldWidgetHoverComponentState,
   );
 
-  const instanceId =
-    widget.id +
-    getFieldWidgetInstanceId({
-      recordId,
-      fieldName: fieldMetadataItem.name,
-      isInRightDrawer,
-    });
+  const instanceId = getFieldWidgetInstanceId({
+    widgetId: widget.id,
+    recordId,
+    fieldName: fieldMetadataItem.name,
+    isInRightDrawer,
+  });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
