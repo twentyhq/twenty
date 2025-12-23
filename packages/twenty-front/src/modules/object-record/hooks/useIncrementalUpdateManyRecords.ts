@@ -62,35 +62,37 @@ export const useIncrementalUpdateManyRecords = <
     let totalUpdatedCount = 0;
     const allUpdatedRecordIds: string[] = [];
 
-    await incrementalFetchAndMutate(
-      async ({ recordIds, totalCount, abortSignal }) => {
-        await updateManyRecords({
-          recordIdsToUpdate: recordIds,
-          updateOneRecordInput: fieldsToUpdate,
-          delayInMsBetweenRequests: delayInMsBetweenMutations,
-          skipRegisterObjectOperation: true,
-          skipRefetchAggregateQueries: true,
-          abortSignal,
-        });
+    try {
+      await incrementalFetchAndMutate(
+        async ({ recordIds, totalCount, abortSignal }) => {
+          await updateManyRecords({
+            recordIdsToUpdate: recordIds,
+            updateOneRecordInput: fieldsToUpdate,
+            delayInMsBetweenRequests: delayInMsBetweenMutations,
+            skipRegisterObjectOperation: true,
+            skipRefetchAggregateQueries: true,
+            abortSignal,
+          });
 
-        totalUpdatedCount += recordIds.length;
-        allUpdatedRecordIds.push(...recordIds);
+          totalUpdatedCount += recordIds.length;
+          allUpdatedRecordIds.push(...recordIds);
 
-        updateProgress(totalUpdatedCount, totalCount);
-      },
-    );
+          updateProgress(totalUpdatedCount, totalCount);
+        },
+      );
+    } finally {
+      await refetchAggregateQueries();
 
-    await refetchAggregateQueries();
-
-    registerObjectOperation(objectMetadataItem, {
-      type: 'update-many',
-      result: {
-        updateInputs: allUpdatedRecordIds.map((id) => ({
-          id,
-          ...fieldsToUpdate,
-        })),
-      },
-    });
+      registerObjectOperation(objectMetadataItem, {
+        type: 'update-many',
+        result: {
+          updateInputs: allUpdatedRecordIds.map((id) => ({
+            id,
+            ...fieldsToUpdate,
+          })),
+        },
+      });
+    }
 
     return totalUpdatedCount;
   };

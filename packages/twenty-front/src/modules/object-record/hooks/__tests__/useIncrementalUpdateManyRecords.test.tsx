@@ -124,4 +124,25 @@ describe('useIncrementalUpdateManyRecords', () => {
       }),
     );
   });
+
+  it('should execute cleanup actions (refetch aggregates, register operation) even if processing fails', async () => {
+    mockIncrementalFetchAndMutate.mockRejectedValue(new Error('Process failed'));
+
+    const { result } = renderHook(() =>
+      useIncrementalUpdateManyRecords({
+        objectNameSingular: 'company',
+      } as any),
+    );
+
+    await expect(
+      result.current.incrementalUpdateManyRecords({ name: 'New Name' }),
+    ).rejects.toThrow('Process failed');
+
+    expect(mockRegisterObjectOperation).toHaveBeenCalledWith(expect.anything(), {
+      type: 'update-many',
+      result: {
+        updateInputs: [],
+      },
+    });
+  });
 });

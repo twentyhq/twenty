@@ -119,6 +119,12 @@ export const useIncrementalFetchAndMutateRecords = <T>({
 
         lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
       }
+    } catch (error) {
+      if ((error as any).name === 'AbortError') {
+        return;
+      }
+
+      throw error;
     } finally {
       setIsProcessing(false);
       setProgress({

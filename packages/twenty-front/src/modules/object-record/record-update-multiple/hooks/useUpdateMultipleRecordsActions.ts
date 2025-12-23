@@ -63,16 +63,8 @@ export const useUpdateMultipleRecordsActions = ({
   });
 
   const updateRecords = async (fieldsToUpdate: Record<string, any>) => {
-    try {
-      const count = await incrementalUpdateManyRecords(fieldsToUpdate);
-      return count;
-    } catch (error) {
-      if ((error as any).name === 'AbortError') {
-        return;
-      }
-
-      throw error;
-    }
+    const count = await incrementalUpdateManyRecords(fieldsToUpdate);
+    return count;
   };
 
   return {

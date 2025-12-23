@@ -371,8 +371,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconBoxMultiple,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ objectPermissions }) =>
-      objectPermissions.canUpdateObjectRecords,
+    shouldBeRegistered: ({ objectPermissions, isRemote }) =>
+      objectPermissions.canUpdateObjectRecords && !isRemote,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <UpdateMultipleRecordsAction />,
   },

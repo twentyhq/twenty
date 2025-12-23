@@ -83,20 +83,5 @@ describe('useUpdateMultipleRecordsActions', () => {
     ).rejects.toThrow('Update failed');
   });
 
-  it('should ignore AbortError and return undefined', async () => {
-    const error: any = new Error('Aborted');
-    error.name = 'AbortError';
-    mockIncrementalUpdateManyRecords.mockRejectedValue(error);
 
-    const { result } = renderHook(() =>
-      useUpdateMultipleRecordsActions({
-        objectNameSingular: 'company',
-        contextStoreInstanceId: 'test-id',
-      }),
-    );
-
-    const count = await result.current.updateRecords({ name: 'New Name' });
-
-    expect(count).toBeUndefined();
-  });
 });

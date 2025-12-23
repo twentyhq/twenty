@@ -163,4 +163,34 @@ describe('useIncrementalFetchAndMutateRecords', () => {
 
     result.current.cancel();
   });
+
+  it('should silently return when AbortError is thrown during fetch', async () => {
+    const error: any = new Error('Aborted');
+    error.name = 'AbortError';
+    mockFindManyRecordsLazy.mockRejectedValue(error);
+
+    const { result } = renderHook(() =>
+      useIncrementalFetchAndMutateRecords({
+        objectNameSingular: 'company',
+      } as any),
+    );
+
+    await expect(
+      result.current.incrementalFetchAndMutate(jest.fn()),
+    ).resolves.toBeUndefined();
+  });
+
+  it('should rethrow non-AbortError errors', async () => {
+    mockFindManyRecordsLazy.mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() =>
+      useIncrementalFetchAndMutateRecords({
+        objectNameSingular: 'company',
+      } as any),
+    );
+
+    await expect(
+      result.current.incrementalFetchAndMutate(jest.fn()),
+    ).rejects.toThrow('Network error');
+  });
 });
