@@ -1,0 +1,226 @@
+---
+title: Fehlerbehebung
+---
+
+## Fehlerbehebung
+
+Wenn Sie bei der Einrichtung der Entwicklungsumgebung, dem Upgrade Ihrer Instanz oder dem Self-Hosting auf Probleme stoßen, finden Sie hier einige Lösungen für häufige Probleme.
+
+### Selbsthosting
+
+#### Erste Installation führt zu `password authentication failed for user "postgres"`
+
+🚨 **WICHTIG: Diese Lösung ist NUR für Neuinstallationen** 🚨
+Wenn Sie bereits eine bestehende Twenty-Instanz mit Produktionsdaten haben, **NICHT** diesen Schritten folgen, da diese permanent Ihre Datenbank löschen!
+
+Bei der ersten Installation von Twenty möchten Sie möglicherweise das Standard-Datenbankpasswort ändern.
+Das während der ersten Installation gesetzte Passwort wird dauerhaft im Datenbank-Volumen gespeichert. Wenn Sie später versuchen, dieses Passwort in Ihrer Konfiguration zu ändern, ohne das alte Volumen zu entfernen, erhalten Sie Authentifizierungsfehler, da die Datenbank noch das ursprüngliche Passwort verwendet.
+
+⚠️ WARNUNG: Die folgenden Schritte werden ALLE Datenbankdaten PERMANENT LÖSCHEN! ⚠️
+Fahren Sie nur fort, wenn dies eine Neuinstallation ohne wichtige Daten ist.
+
+Um das `PG_DATABASE_PASSWORD` zu aktualisieren, müssen Sie:
+
+```sh
+# Aktualisieren Sie das PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR-Zeilenumbrüche gefunden [Windows]
+
+Dies liegt an den Zeilenumbruchzeichen von Windows und der git-Konfiguration. Versuchen Sie Folgendes auszuführen:
+
+```
+git config --global core.autocrlf false
+```
+
+Löschen Sie dann das Repository und klonen Sie es erneut.
+
+#### Fehlendes Metadaten-Schema
+
+Während der Twenty-Installation müssen Sie Ihre Postgres-Datenbank mit den richtigen Schemata, Erweiterungen und Benutzern bereitstellen.
+Wenn Sie diese Bereitstellung erfolgreich durchführen, sollten Sie `default` und `metadata` Schemata in Ihrer Datenbank haben.
+Falls nicht, stellen Sie sicher, dass auf Ihrem Rechner nicht mehr als eine Postgres-Instanz läuft.
+
+#### Modul 'twenty-emails' oder seine entsprechenden Typdeklarationen nicht gefunden.
+
+Sie müssen das Paket `twenty-emails` erstellen, bevor Sie die Initialisierung der Datenbank mit `npx nx run twenty-emails:build` ausführen.
+
+#### Fehlendes Twenty-x Paket
+
+Stellen Sie sicher, dass Sie `yarn` im Root-Verzeichnis ausführen und dann `npx nx server:dev twenty-server` ausführen. Wenn das immer noch nicht funktioniert, versuchen Sie, das fehlende Paket manuell zu erstellen.
+
+#### Lint beim Speichern funktioniert nicht
+
+Normalerweise sollte dies sofort mit der installierten eslint-Erweiterung funktionieren. Wenn es nicht funktioniert, versuchen Sie, dies zu Ihren vscode-Einstellungen hinzuzufügen (im Entwicklungscontainer-Bereich):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Beim Ausführen von `npx nx start` oder `npx nx start twenty-front` wird ein Speicherfehler angezeigt
+
+Kommentieren Sie in `packages/twenty-front/.env` `VITE_DISABLE_TYPESCRIPT_CHECKER=true` und `VITE_DISABLE_ESLINT_CHECKER=true` aus, um Hintergrundprüfungen zu deaktivieren und den RAM-Bedarf zu reduzieren.
+
+**If it does not work:**
+Run only the services you need, instead of `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
+
+**If it does not work:**
+If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+Eine Möglichkeit ist, den Befehl unten im Terminal auszuführen oder ihn im .bashrc-Profil hinzuzufügen, um ihn automatisch einzurichten:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+Das Flag --max-old-space-size=8192 setzt ein oberes Limit von 8GB für den Node.js-Heap; der Verbrauch steigt mit dem Bedarf der Anwendung.
+Referenz: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**If it does not work:**
+Investigate which processes are taking you most of your machine RAM. Bei Twenty haben wir festgestellt, dass einige vscode-Erweiterungen viel RAM verwenden, daher deaktivieren wir sie vorübergehend.
+
+**If it does not work:**
+Restart your machine helps to clean up ghost processes.
+
+#### Beim Ausführen von `npx nx start` gibt es seltsame [0] und [1] in den Logs
+
+Das ist zu erwarten, da der Befehl `npx nx start` im Hintergrund weitere Befehle ausführt.
+
+#### Es werden keine E-Mails gesendet
+
+Meistens liegt das daran, dass der `worker` nicht im Hintergrund läuft. Versuchen Sie auszuführen
+
+```
+npx nx worker twenty-server
+```
+
+#### Kann mein Microsoft 365-Konto nicht verbinden
+
+Meistens liegt das daran, dass Ihr Administrator die Microsoft 365-Lizenz für Ihr Konto nicht aktiviert hat. Überprüfen Sie [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Wenn Sie einen Fehlercode `AADSTS50020` haben, bedeutet dies wahrscheinlich, dass Sie ein privates Microsoft-Konto verwenden. Dies wird derzeit nicht unterstützt. Weitere Informationen [hier](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### Beim Ausführen von `yarn` erscheinen Warnungen in der Konsole
+
+Warnungen informieren über das Ziehen zusätzlicher Abhängigkeiten, die nicht explizit in `package.json` angegeben sind. Solange kein schwerwiegender Fehler auftritt, sollte alles wie erwartet funktionieren.
+
+#### Wenn der Benutzer auf die Anmeldeseite zugreift, wird ein Fehler über einen unberechtigten Benutzer, der versucht, auf den Arbeitsbereich zuzugreifen, in den Logs angezeigt
+
+Das ist zu erwarten, da der Benutzer ohne Anmeldung nicht berechtigt ist, da seine Identität nicht verifiziert ist.
+
+#### Wie überprüfen Sie, ob Ihr Worker läuft?
+
+* Gehen Sie zu [webhook-test.com](https://webhook-test.com/) und kopieren Sie **Ihre einzigartige Webhook-URL**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook-Test" />
+</div>
+
+* Öffnen Sie Ihre Twenty-App, navigieren Sie zu `/settings`, und aktivieren Sie den **Erweitert**-Schalter unten links auf dem Bildschirm.
+* Erstellen Sie einen neuen Webhook.
+* Fügen Sie **Ihre einzigartige Webhook-URL** in das Feld **Endpoint-Url** in Twenty ein. Stellen Sie die **Filter** auf `Companies` und `Created` ein.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook-Einstellungen" />
+</div>
+
+* Gehen Sie zu `/objects/companies` und erstellen Sie einen neuen Unternehmenseintrag.
+* Kehren Sie zu [webhook-test.com](https://webhook-test.com/) zurück und prüfen Sie, ob ein neuer **POST-Anfrage** empfangen wurde.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook-Test-Ergebnis" />
+</div>
+
+* Wenn eine **POST-Anfrage** empfangen wird, läuft Ihr Worker erfolgreich. Andernfalls müssen Sie Ihren Worker beheben.
+
+#### Front-End startet nicht und gibt Fehler TS5042 zurück: Option "project" kann nicht mit Quelldateien auf der Befehlszeile gemischt werden
+
+Kommentieren Sie das Checker-Plugin in `packages/twenty-ui/vite-config.ts` wie im folgenden Beispiel aus
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Admin-Panel nicht zugänglich
+
+Führen Sie den folgenden Befehl im Datenbankcontainer aus, um Zugriff auf das Admin-Panel zu erhalten: `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`
+
+### 1-Klick Docker Compose
+
+#### Kann mich nicht einloggen
+
+Wenn Sie sich nach der Einrichtung nicht anmelden können:
+
+1. Führen Sie die folgenden Befehle aus:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Starten Sie die Docker-Container neu:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Beachten Sie, dass der database:reset-Befehl Ihre Datenbank vollständig löscht und neu erstellt.
+
+#### Verbindungsprobleme hinter einem Reverse-Proxy
+
+Wenn Sie Twenty hinter einem Reverse-Proxy ausführen und Verbindungsprobleme haben:
+
+1. **SERVER_URL überprüfen:**
+
+   Stellen Sie sicher, dass `SERVER_URL` in Ihrer `.env`-Datei mit Ihrer externen Zugriffs-URL übereinstimmt, einschließlich `https`, falls SSL aktiviert ist.
+
+2. **Reverse-Proxy-Einstellungen prüfen:**
+
+   * Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen korrekt an den Twenty-Server weiterleitet.
+   * Stellen Sie sicher, dass Header wie `X-Forwarded-For` und `X-Forwarded-Proto` korrekt gesetzt sind.
+
+3. **Dienste neu starten:**
+
+   Starten Sie nach Änderungen sowohl den Reverse-Proxy als auch die Twenty-Container neu.
+
+#### Fehler beim Hochladen eines Bildes – Berechtigung verweigert
+
+Das Ändern des Datenordner-Eigentums auf dem Host von root zu einem anderen Benutzer und Gruppe löst dieses Problem.
+
+## Hilfe erhalten
+
+Wenn Sie auf Probleme stoßen, die in diesem Leitfaden nicht behandelt werden:
+
+* Protokolle überprüfen:
+
+  Überprüfen Sie die Container-Logs auf Fehlermeldungen:
+
+  ```bash
+  docker compose logs
+  ```
+
+* Unterstützung aus der Community:
+
+  Wenden Sie sich an die [Twenty Community](https://github.com/twentyhq/twenty/issues) oder [Support-Kanäle](https://discord.gg/cx5n4Jzs57) für Unterstützung.

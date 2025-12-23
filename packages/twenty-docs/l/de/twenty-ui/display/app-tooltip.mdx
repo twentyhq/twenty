@@ -1,0 +1,78 @@
+---
+title: App-Tooltip
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Kopfzeile" />
+</Frame>
+
+Eine kurze Nachricht, die zusätzliche Informationen anzeigt, wenn ein Benutzer mit einem Element interagiert.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+    export const MyComponent = () => {
+      return (
+        <>
+          <p id="hoverText" style={{ display: "inline-block" }}>
+            Customer Insights
+          </p>
+          <AppTooltip
+            className
+            anchorSelect="#hoverText"
+            content="Explore customer behavior and preferences"
+            delayHide={0}
+            offset={6}
+            noArrow={false}
+            isOpen={true}
+            place="bottom"
+            positionStrategy="absolute"
+          />
+        </>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften"  | Typ                                                 | Beschreibung                                                                                                                                                                                                |
+    | ---------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Klassenname      | Zeichenkette                                        | Optionale CSS-Klasse für zusätzliche Stilgebung                                                                                                                                                             |
+    | anchorSelect     | CSS-Selektor                                        | Selektor für den Tooltip-Anker (das Element, das den Tooltip triggert)                                                                                                                                      |
+    | Inhalt           | string                                              | Der Inhalt, den Sie im Tooltip anzeigen möchten                                                                                                                                                             |
+    | delayHide        | nummer                                              | Die Verzögerung in Sekunden, bis der Tooltip nach dem Verlassen des Ankers ausgeblendet wird                                                                                                                |
+    | offset           | nummer                                              | Der Versatz in Pixeln zur Positionierung des Tooltips                                                                                                                                                       |
+    | noArrow          | boolesch                                            | Wenn `wahr`, wird der Pfeil am Tooltip ausgeblendet                                                                                                                                                         |
+    | isOpen           | boolesch                                            | Wenn `wahr`, ist der Tooltip standardmäßig geöffnet                                                                                                                                                         |
+    | place            | `PlacesType` Zeichenkette von `react-tooltip`       | Gibt die Platzierung des Tooltips an. Werte umfassen `unten`, `links`, `rechts`, `oben`, `oben-start`, `oben-end`, `rechts-start`, `rechts-end`, `unten-start`, `unten-end`, `links-start`, und `links-end` |
+    | positionStrategy | `PositionStrategy` Zeichenkette von `react-tooltip` | Positionsstrategie für den Tooltip. Hat zwei Werte: `absolut` und `fest`                                                                                                                                    |
+  </Tab>
+</Tabs>
+
+## Überlaufender Text mit Tooltip
+
+Behandelt überlaufenden Text und zeigt einen Tooltip an, wenn der Text überläuft.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      const crmTaskDescription =
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                      |
+    | ------------- | ------------ | ----------------------------------------------------------------- |
+    | text          | Zeichenkette | Der Inhalt, den Sie im überlaufenden Textbereich anzeigen möchten |
+  </Tab>
+</Tabs>

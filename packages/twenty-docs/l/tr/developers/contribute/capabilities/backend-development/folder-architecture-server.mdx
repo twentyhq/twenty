@@ -1,0 +1,125 @@
+---
+title: Klasör Mimarisi
+info: A detailed look into our server folder architecture
+---
+
+The backend directory structure is as follows:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+Defines permissions and includes handlers for each entity.
+
+## Decorators
+
+Defines custom decorators in NestJS for added functionality.
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Filtreler
+
+Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details.
+
+## Health
+
+Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+
+## Meta Veriler
+
+Defines custom objects and makes available a GraphQL API (graphql/metadata).
+
+## İş Alanı
+
+Generates and serves custom GraphQL schema based on the metadata.
+
+### Workspace Directory Structure
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+
+This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+
+### Workspace Schema builder
+
+Generates the GraphQL schema, and includes:
+
+#### Factories:
+
+Specialised constructors to generate GraphQL-related constructs.
+
+* The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
+* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+
+#### GraphQL Types
+
+Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+
+#### Interfaces and Object Definitions
+
+Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+
+#### Services
+
+Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+
+#### Storage
+
+Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+
+### Workspace Resolver Builder
+
+Creates resolver functions for querying and mutating the GraphQL schema.
+
+Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+
+### Çalışma Alanı Sorgu Çalıştırıcı
+
+Veritabanında oluşturulan sorguları çalıştırır ve sonucu çözümleyip getirir.

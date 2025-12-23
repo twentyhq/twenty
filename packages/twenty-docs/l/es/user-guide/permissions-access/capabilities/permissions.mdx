@@ -1,0 +1,198 @@
+---
+title: Permisos
+description: Control access to objects, fields, and settings with role-based permissions.
+image: /images/user-guide/permissions/permissions.png
+---
+
+El sistema de permisos de Twenty te permite controlar el acceso a tres áreas principales:
+
+* **Objetos y Campos**: Controla quién puede ver, editar o eliminar registros y campos individuales
+* **Configuraciones**: Gestiona el acceso a la configuración del espacio de trabajo y a las funciones administrativas
+* **Acciones**: Controla acciones generales del espacio de trabajo como importar datos o enviar correos electrónicos
+
+## Create a Role
+
+Para crear un nuevo rol:
+
+1. Go to **Settings → Roles**
+2. En **Todos los Roles**, haz clic en **+ Crear Rol**
+3. Introduce un nombre para el rol
+4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+5. Haz clic en **Guardar** para finalizar
+
+## Delete a Role
+
+Para eliminar un rol:
+
+1. Go to **Settings → Roles**
+2. Haz clic en el rol que deseas eliminar
+3. Open the **Settings** tab, then click **Delete Role**
+4. Haz clic en **Confirmar** en el modal
+
+<Note>
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Todos excepto el rol **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado al rol **Admin**.
+</Note>
+
+## Assign Roles to Members
+
+### Ver Asignaciones Actuales
+
+* Go to **Settings → Roles**
+* Ver todos los roles y cuántos miembros están asignados a cada uno
+* Ver qué miembros tienen qué roles
+
+### Assign a Role to a Member
+
+1. Go to **Settings → Roles**
+2. Haz clic en el rol que deseas asignar
+3. Abre la pestaña **Asignación**
+4. Click **+ Assign to member**
+5. Selecciona al miembro del espacio de trabajo de la lista
+6. Confirma la asignación
+
+### Set Default Role
+
+1. Go to **Settings → Roles**
+2. En la sección **Opciones**, encuentra **Rol Predeterminado**
+3. Selecciona qué rol deberían recibir automáticamente los nuevos miembros
+4. Los nuevos miembros del espacio de trabajo serán asignados a este rol cuando se unan
+
+<Note>
+  You can only assign roles to existing workspace members. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Personalizar Permisos
+
+Los permisos determinan qué puede acceder o modificar cada rol dentro de tu espacio de trabajo, incluidos registros de objetos, configuraciones y acciones del espacio de trabajo.
+
+### Object Permissions
+
+The **Objects** section controls what this role can do with records across your workspace.
+
+#### Set Default Permissions (All Objects)
+
+First, configure the baseline permissions that apply to **all objects** by default:
+
+| Permission                                  | Descripción                            |
+| ------------------------------------------- | -------------------------------------- |
+| **Ver registros en todos los objetos**      | View records in lists and detail pages |
+| **Editar registros en todos los objetos**   | Modify existing records                |
+| **Eliminar registros en todos los objetos** | Soft-delete records (can be restored)  |
+| **Destruir registros en todos los objetos** | Permanently delete records             |
+
+Select or unselect based on what should be the default behavior for this role.
+
+<Note>
+  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+</Note>
+
+#### Add Object-Level Exceptions
+
+After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+
+Click **+ Add rule** and select an object to create an exception.
+
+**Example rules for an Intern role:**
+
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+
+### Field Permissions
+
+Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+
+| Permission     | Descripción                |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
+
+**Example — Restrict sensitive fields:**
+
+For the Intern role with People edit access, you might want to restrict certain fields:
+
+* People → Email → **See Field** only (cannot edit)
+* People → Address → **No Access** (completely hidden)
+
+This allows the intern to edit most People fields while protecting sensitive information.
+
+### How Permission Inheritance Works
+
+Permissions cascade from general to specific:
+
+1. **All Objects** → sets the baseline for all objects
+2. **Object-Level rules** → override the baseline for specific objects
+3. **Field-Level rules** → override the object setting for specific fields
+
+More specific settings always take precedence.
+
+### Gestión de Excepciones de Permisos
+
+To override inherited permissions:
+
+1. Haz clic en **X** para eliminar la regla heredada
+2. Select the specific permissions you want
+3. Haz clic en el ícono naranja de **Deshacer** (flecha circular) para revertir los cambios
+
+Cuando termines, haz clic en **Finalizar**, luego en **Guardar** una vez que seas redirigido a la página del rol.
+
+### Permisos de Configuraciones del Espacio de Trabajo
+
+Controla el acceso a configuraciones del espacio de trabajo de dos maneras:
+
+* Activa **Acceso Completo a Configuraciones** para otorgar acceso completo
+* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+
+<Note>
+  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+</Note>
+
+### Permisos de Acción del Espacio de Trabajo
+
+Controla el acceso a acciones generales del espacio de trabajo:
+
+* Activa **Acceso Completo a la Aplicación** para otorgar permisos completos
+* O habilita acciones individuales como **Enviar Email**, **Importar CSV** y **Exportar CSV**
+
+## Assigning Roles to API Keys and AI Agents
+
+Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+
+### Why Assign Roles to API Keys and AI Agents?
+
+* **Security**: Limit what automated processes can access or modify
+* **Compliance**: Ensure integrations only touch the data they need
+* **Control**: Prevent accidental data changes from misconfigured automations
+* **Auditability**: Track which actions were performed by which integration or agent
+
+### Assign a Role to an API Key
+
+1. Go to **Settings → Roles**
+2. Haz clic en el rol que deseas asignar
+3. Abre la pestaña **Asignación**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key from the list
+6. Confirma la asignación
+
+The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+
+<Note>
+  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+</Note>
+
+### Assign a Role to an AI Agent
+
+1. Go to **Settings → Roles**
+2. Haz clic en el rol que deseas asignar
+3. Abre la pestaña **Asignación**
+4. Under **AI Agents**, click **+ Assign to AI agent**
+5. Select the AI agent from the list
+6. Confirma la asignación
+
+The AI agent will only be able to access data and perform actions allowed by its assigned role.
+
+<Note>
+  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+</Note>

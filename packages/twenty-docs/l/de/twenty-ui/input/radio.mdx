@@ -1,0 +1,97 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Kopfzeile" />
+</Frame>
+
+Verwendet, wenn Benutzer nur eine Option aus einer Reihe von Optionen auswählen können.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
+
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
+
+
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften"        | Typ                       | Beschreibung                                                                                        |
+    | ---------------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
+    | Stil                   | `React.CSS` Eigenschaften | Zusätzliche Inline-Stile für die Komponente                                                         |
+    | Klassenname            | Zeichenkette              | Optionale CSS-Klasse für zusätzliche Stilgebung                                                     |
+    | markiert               | boolesch                  | Indicates whether the radio button is checked                                                       |
+    | wert                   | Zeichenkette              | The label or text associated with the radio button                                                  |
+    | onChange               | Funktion                  | The function called when the selected radio button is changed                                       |
+    | beiMarkierungsÄnderung | Funktion                  | The function called when the `checked` state of the radio button changes                            |
+    | größe                  | Zeichenkette              | Die Größe des Radiobuttons. Optionen umfassen: `groß` und `klein`                                   |
+    | deaktiviert            | boolesch                  | Wenn `true`, ist der Radiobutton deaktiviert und nicht anklickbar                                   |
+    | labelPosition          | Zeichenkette              | Die Position des Labeltextes im Verhältnis zum Radiobutton. Hat zwei Optionen: `links` und `rechts` |
+  </Tab>
+</Tabs>
+
+## Radio Group
+
+Groups together related radio buttons.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const [selectedValue, setSelectedValue] = useState("Option 1");
+
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften   | Typ               | Beschreibung                                                                                    |
+    | --------------- | ----------------- | ----------------------------------------------------------------------------------------------- |
+    | wert            | Zeichenkette      | The value of the currently selected radio button                                                |
+    | onChange        | Funktion          | The callback function triggered when the radio button is changed                                |
+    | beiWertÄnderung | Funktion          | Die Callback-Funktion, die ausgelöst wird, wenn sich der ausgewählte Wert in der Gruppe ändert. |
+    | Kinder          | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group              |
+  </Tab>
+</Tabs>

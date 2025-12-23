@@ -1,0 +1,48 @@
+---
+title: Formati di file supportati
+description: Formati di file supportati per l'importazione dei dati in Twenty.
+---
+
+## Formati supportati
+
+Twenty supporta tre formati di file per l'importazione:
+
+| Formato            | Estensione | Note                            |
+| ------------------ | ---------- | ------------------------------- |
+| **CSV**            | .csv       | Consigliato, il più compatibile |
+| **Excel**          | .xlsx      | Formato Excel moderno           |
+| **Excel (Legacy)** | .xls       | Formato Excel precedente        |
+
+## Requisiti dei file
+
+| Requisito            | Valore                                                  |
+| -------------------- | ------------------------------------------------------- |
+| **Codifica**         | UTF-8 consigliato                                       |
+| **Limite di record** | 10.000 record per file                                  |
+| **Struttura**        | La prima riga deve contenere le intestazioni di colonna |
+| **Contenuto**        | Un solo tipo di oggetto per file                        |
+
+## Migliori pratiche per CSV
+
+* **Delimitatore**: usa la virgola (`,`) o il punto e virgola (`;`)
+* **Qualificatore di testo**: usa le virgolette doppie (`\"`) per il testo che contiene virgole
+* **Terminatori di riga**: Windows (CRLF) o Unix (LF), entrambi supportati
+* **Valori vuoti**: lascia le celle vuote, non usare "NULL" o "N/A"
+
+## Migliori pratiche per Excel
+
+Durante l'esportazione da Excel:
+
+* Rimuovi le formule (esporta solo i valori)
+* Elimina le righe vuote alla fine
+* Assicurati che non ci siano celle unite
+* Usa solo il primo foglio
+
+## Set di dati di grandi dimensioni
+
+Per set di dati superiori a 10.000 record:
+
+* Suddividi in più file
+* Oppure usa l'[importazione tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api) per un numero illimitato di record
+
+<Note>Per migrazioni molto grandi (oltre 100.000 record), le API sono significativamente più veloci e più affidabili delle importazioni CSV.</Note>

@@ -1,0 +1,135 @@
+---
+title: Workflow Triggers
+description: Learn about the different triggers that start your workflows.
+---
+
+## About Triggers
+
+Workflows always start with a single trigger that defines when the automation should run.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+
+  * Arbeitsbereichsmitglieder
+  * Calendar Events
+  * Messages (Emails)
+  * Tasks, Notes, and many other system objects
+
+  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+</Tip>
+
+## Datensatz wird erstellt
+
+Startet den Workflow, wenn ein neuer Datensatz in einem ausgewählten Objekt (Personen, Unternehmen, Gelegenheiten oder ein benutzerdefiniertes Objekt) erstellt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf neue Datensätze überwacht werden soll.
+
+<Note>
+  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+</Note>
+
+## Datensatz wird aktualisiert
+
+Startet den Workflow, wenn Änderungen an einem bestehenden Datensatz vorgenommen werden.
+
+**Konfiguration**:
+
+* Wählen Sie den Objekttyp aus
+* Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+
+## Datensatz wird aktualisiert oder erstellt
+
+Startet den Workflow, wenn ein Datensatz in einem ausgewählten Objekt entweder erstellt oder aktualisiert wird.
+
+**Warum das wichtig ist**: Dieser Auslöser ist besonders hilfreich, da auf verschiedene Arten erstellte Datensätze sich unterschiedlich verhalten:
+
+* **API-/CSV-Importe**: Datensätze werden sofort mit allen Feldern befüllt erstellt
+* **Manuelle Erstellung**: Datensätze werden zuerst erstellt, dann werden Felder in nachfolgenden Aktualisierungen hinzugefügt
+
+**Konfiguration**:
+
+* Wählen Sie den Objekttyp aus, der überwacht werden soll
+* Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+* Der Workflow wird sowohl bei der ersten Erstellung als auch bei nachfolgenden Aktualisierungen ausgelöst
+
+## Datensatz wird gelöscht
+
+Startet den Workflow, wenn ein Datensatz aus einem Objekt entfernt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf Löschungen überwacht werden soll.
+
+## Manual Trigger
+
+Startet den Workflow, wenn er durch eine Benutzeraktion ausgelöst wird. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Verfügbarkeitskonfiguration**: Wählen Sie aus, wie der Workflow die Datensatzauswahl handhaben soll:
+
+* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+
+* **Einzeln**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. The workflow will run from beginning to end as many times as there are records selected.
+
+  <Note>
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+  </Note>
+
+* **Bulk**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird einmal ausgeführt, wobei die gesamte Liste der Datensätze als Eingabe verwendet wird. This means the workflow needs to contain an [Iterator action](/l/de/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  This is more advanced, and best for people who want to optimize the number of workflow runs.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Zusätzliche Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus (für Einzel- und Bulk-Verfügbarkeit)
+* Wählen Sie ein Befehls-Symbol für den Workflow-Trigger
+* Platzierung in der Navigationsleiste konfigurieren (angeheftet oder nicht angeheftet)
+
+**Zugriffsmethoden**:
+
+* `Cmd+K` menu to find and launch manual workflows
+* Benutzerdefinierte Schaltfläche in der oberen Navigationsleiste (falls konfiguriert)
+
+## Time-Based Trigger: On a Schedule
+
+Startet den Workflow auf regelmäßiger Basis, die Sie definieren.
+
+**Konfiguration**:
+
+* Zeiteinheit auswählen (Minuten, Stunden, Tage)
+* Geben Sie einen Wert ein oder verwenden Sie benutzerdefinierte Cron-Ausdrücke für erweitertes Scheduling
+
+<Note>
+  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+</Note>
+
+## External Trigger: Webhook
+
+Startet den Workflow, wenn eine GET- oder POST-Anfrage von einem externen Dienst empfangen wird.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Konfiguration**:
+
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
+
+## Choosing the Right Trigger
+
+| Use Case                    | Recommended Trigger                       |
+| --------------------------- | ----------------------------------------- |
+| New leads need processing   | Datensatz wird erstellt                   |
+| Data changes need sync      | Datensatz wird aktualisiert               |
+| Import/manual data handling | Datensatz wird aktualisiert oder erstellt |
+| Cleanup after deletion      | Datensatz wird gelöscht                   |
+| User-initiated action       | Manuell auslösen                          |
+| Recurring reports           | Nach Zeitplan                             |
+| External integration        | Webhook or On a Schedule                  |

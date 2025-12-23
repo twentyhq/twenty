@@ -1,0 +1,22 @@
+---
+title: Osvědčené postupy
+---
+
+Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při práci na backendu.
+
+## Follow a modular approach
+
+Backend sleduje modulární přístup, což je základní princip při práci s NestJS. Ujistěte se, že rozdělujete svůj kód na znovupoužitelné moduly, abyste udrželi čistý a organizovaný kód.
+Každý modul by měl zahrnovat určitou funkci nebo funkcionalitu a mít jasně definovaný rozsah. This modular approach enables clear separation of concerns and removes unnecessary complexities.
+
+## Expose services to use in modules
+
+Always create services that have a clear and single responsibility, which enhances code readability and maintainability. Pojmenovávejte služby výstižně a konzistentně.
+
+Měli byste také zpřístupnit služby, které chcete používat v jiných modulech. Zpřístupnění služeb ostatním modulům je možné díky výkonnému systému injektování závislostí v NestJS a podporuje volné vazby mezi komponentami.
+
+## Vyhněte se použití typu `any`
+
+Když deklarujete proměnnou jako `any`, kontrolor typů TypeScriptu neprovádí kontrolu typů, což umožňuje přiřadit proměnné jakýkoliv typ hodnot. TypeScript používá odvozování typů ke stanovení typu proměnné na základě hodnoty. Prohlášením jako `any` TypeScript již nemůže odvodit typ. To ztěžuje chycení chyb souvisejících s typy během vývoje, což vede k chybám za běhu a činí kód obtížně udržovatelným, méně spolehlivým a těžším na pochopení pro ostatní.
+
+Proto by všechno mělo mít typ. Pokud tedy vytvoříte nový objekt se jménem a příjmením, měli byste vytvořit rozhraní nebo typ, který obsahuje jméno a příjmení a definuje tvar objektu, se kterým pracujete.

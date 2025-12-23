@@ -911,7 +911,7 @@
         "language": "ar",
         "tabs": [
           {
-            "tab": "دليل المستخدم",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1079,7 +1079,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "الذكاء الاصطناعي",
                 "icon": "robot",
                 "pages": [
                   "l/ar/user-guide/ai/overview",
@@ -1130,7 +1130,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "لوحات القيادة",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ar/user-guide/dashboards/overview",
@@ -1170,7 +1170,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "الفوترة",
                 "icon": "credit-card",
                 "pages": [
                   "l/ar/user-guide/billing/overview",
@@ -1190,7 +1190,7 @@
                 ]
               },
               {
-                "group": "الإعدادات",
+                "group": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
                 "icon": "gear",
                 "pages": [
                   "l/ar/user-guide/settings/overview",
@@ -1219,7 +1219,7 @@
             "tab": "المطورون",
             "groups": [
               {
-                "group": "المطورين",
+                "group": "المطورون",
                 "pages": [
                   "l/ar/developers/introduction"
                 ]
@@ -1267,7 +1267,7 @@
                       "l/ar/developers/contribute/capabilities/local-setup",
                       "l/ar/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "تطوير الواجهة",
+                        "group": "تطوير الواجهة الأمامية",
                         "pages": [
                           "l/ar/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -1286,13 +1286,13 @@
                                 ]
                               },
                               {
-                                "group": "الملاحظات",
+                                "group": "التغذية الراجعة",
                                 "pages": [
                                   "l/ar/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "إدخال",
                                 "pages": [
                                   "l/ar/twenty-ui/input/buttons",
                                   "l/ar/twenty-ui/input/color-scheme",
@@ -1328,7 +1328,7 @@
                         ]
                       },
                       {
-                        "group": "تطوير الخلفية",
+                        "group": "تطوير الواجهة الخلفية",
                         "pages": [
                           "l/ar/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ar/developers/contribute/capabilities/backend-development/feature-flags",
@@ -1351,7 +1351,7 @@
         "language": "cs",
         "tabs": [
           {
-            "tab": "Uživatelská příručka",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1507,7 +1507,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Potřebujete další pomoc",
                         "pages": [
                           "l/cs/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -1570,7 +1570,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Panely",
                 "icon": "chart-bar",
                 "pages": [
                   "l/cs/user-guide/dashboards/overview",
@@ -1610,7 +1610,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Fakturace",
                 "icon": "credit-card",
                 "pages": [
                   "l/cs/user-guide/billing/overview",
@@ -1715,7 +1715,7 @@
                             "pages": [
                               "l/cs/twenty-ui/introduction",
                               {
-                                "group": "Zobrazení",
+                                "group": "Zobrazit",
                                 "pages": [
                                   "l/cs/twenty-ui/display/checkmark",
                                   "l/cs/twenty-ui/display/chip",
@@ -1726,13 +1726,13 @@
                                 ]
                               },
                               {
-                                "group": "Komentář",
+                                "group": "Zpětná vazba",
                                 "pages": [
                                   "l/cs/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "Vstup",
                                 "pages": [
                                   "l/cs/twenty-ui/input/buttons",
                                   "l/cs/twenty-ui/input/color-scheme",
@@ -1747,7 +1747,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigace",
                                 "pages": [
                                   "l/cs/twenty-ui/navigation",
                                   "l/cs/twenty-ui/navigation/breadcrumb",
@@ -1791,7 +1791,7 @@
         "language": "de",
         "tabs": [
           {
-            "tab": "Benutzerhandbuch",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -1947,7 +1947,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Brauchen Sie mehr Hilfe",
                         "pages": [
                           "l/de/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -1959,7 +1959,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "KI",
                 "icon": "robot",
                 "pages": [
                   "l/de/user-guide/ai/overview",
@@ -2050,7 +2050,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Abrechnung",
                 "icon": "credit-card",
                 "pages": [
                   "l/de/user-guide/billing/overview",
@@ -2155,7 +2155,7 @@
                             "pages": [
                               "l/de/twenty-ui/introduction",
                               {
-                                "group": "Anzeige",
+                                "group": "Anzeigen",
                                 "pages": [
                                   "l/de/twenty-ui/display/checkmark",
                                   "l/de/twenty-ui/display/chip",
@@ -2166,13 +2166,13 @@
                                 ]
                               },
                               {
-                                "group": "Feedback",
+                                "group": "Rückmeldung",
                                 "pages": [
                                   "l/de/twenty-ui/progress-bar"
                                 ]
                               },
                               {
-                                "group": "Input",
+                                "group": "Eingabe",
                                 "pages": [
                                   "l/de/twenty-ui/input/buttons",
                                   "l/de/twenty-ui/input/color-scheme",
@@ -2231,7 +2231,7 @@
         "language": "es",
         "tabs": [
           {
-            "tab": "Guía de usuario",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -2339,7 +2339,7 @@
                 ]
               },
               {
-                "group": "Workflows",
+                "group": "Flujos de trabajo",
                 "icon": "bolt",
                 "pages": [
                   "l/es/user-guide/workflows/overview",
@@ -2399,7 +2399,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "IA",
                 "icon": "robot",
                 "pages": [
                   "l/es/user-guide/ai/overview",
@@ -2450,7 +2450,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Tableros",
                 "icon": "chart-bar",
                 "pages": [
                   "l/es/user-guide/dashboards/overview",
@@ -2490,7 +2490,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Facturación",
                 "icon": "credit-card",
                 "pages": [
                   "l/es/user-guide/billing/overview",
@@ -2648,7 +2648,7 @@
                         ]
                       },
                       {
-                        "group": "Desarrollo de backend",
+                        "group": "Desarrollo Backend",
                         "pages": [
                           "l/es/developers/contribute/capabilities/backend-development/server-commands",
                           "l/es/developers/contribute/capabilities/backend-development/feature-flags",
@@ -2671,7 +2671,7 @@
         "language": "it",
         "tabs": [
           {
-            "tab": "Guida Utente",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -2779,7 +2779,7 @@
                 ]
               },
               {
-                "group": "Workflows",
+                "group": "Flussi di Lavoro",
                 "icon": "bolt",
                 "pages": [
                   "l/it/user-guide/workflows/overview",
@@ -2890,7 +2890,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Cruscotti",
                 "icon": "chart-bar",
                 "pages": [
                   "l/it/user-guide/dashboards/overview",
@@ -2930,7 +2930,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Fatturazione",
                 "icon": "credit-card",
                 "pages": [
                   "l/it/user-guide/billing/overview",
@@ -3035,7 +3035,7 @@
                             "pages": [
                               "l/it/twenty-ui/introduction",
                               {
-                                "group": "Visualizzazione",
+                                "group": "Mostra",
                                 "pages": [
                                   "l/it/twenty-ui/display/checkmark",
                                   "l/it/twenty-ui/display/chip",
@@ -3067,7 +3067,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigazione",
                                 "pages": [
                                   "l/it/twenty-ui/navigation",
                                   "l/it/twenty-ui/navigation/breadcrumb",
@@ -4431,7 +4431,7 @@
         "language": "ro",
         "tabs": [
           {
-            "tab": "Ghid de utilizator",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -4587,7 +4587,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Ai nevoie de mai mult ajutor",
                         "pages": [
                           "l/ro/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/ro/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -4620,7 +4620,7 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Vizualizări și fluxuri",
                 "icon": "table",
                 "pages": [
                   "l/ro/user-guide/views-pipelines/overview",
@@ -4650,7 +4650,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Tablouri de Bord",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ro/user-guide/dashboards/overview",
@@ -4690,7 +4690,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Facturare",
                 "icon": "credit-card",
                 "pages": [
                   "l/ro/user-guide/billing/overview",
@@ -4787,7 +4787,7 @@
                       "l/ro/developers/contribute/capabilities/local-setup",
                       "l/ro/developers/contribute/capabilities/bug-and-requests",
                       {
-                        "group": "Dezvoltare Frontend",
+                        "group": "Frontend Development",
                         "pages": [
                           "l/ro/developers/contribute/capabilities/frontend-development/storybook",
                           {
@@ -4827,7 +4827,7 @@
                                 ]
                               },
                               {
-                                "group": "Navigation",
+                                "group": "Navigare",
                                 "pages": [
                                   "l/ro/twenty-ui/navigation",
                                   "l/ro/twenty-ui/navigation/breadcrumb",
@@ -4871,7 +4871,7 @@
         "language": "ru",
         "tabs": [
           {
-            "tab": "Руководство пользователя",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "Discover Twenty",
@@ -5027,7 +5027,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Нужна дополнительная помощь",
                         "pages": [
                           "l/ru/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/ru/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -5039,7 +5039,7 @@
                 ]
               },
               {
-                "group": "AI",
+                "group": "ИИ",
                 "icon": "robot",
                 "pages": [
                   "l/ru/user-guide/ai/overview",
@@ -5060,7 +5060,7 @@
                 ]
               },
               {
-                "group": "Views & Pipelines",
+                "group": "Представления и воронки",
                 "icon": "table",
                 "pages": [
                   "l/ru/user-guide/views-pipelines/overview",
@@ -5090,7 +5090,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Панели управления",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ru/user-guide/dashboards/overview",
@@ -5130,7 +5130,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Биллинг",
                 "icon": "credit-card",
                 "pages": [
                   "l/ru/user-guide/billing/overview",
@@ -5288,7 +5288,7 @@
                         ]
                       },
                       {
-                        "group": "Бэкенд разработка",
+                        "group": "Разработка серверной части",
                         "pages": [
                           "l/ru/developers/contribute/capabilities/backend-development/server-commands",
                           "l/ru/developers/contribute/capabilities/backend-development/feature-flags",
@@ -5467,7 +5467,7 @@
                         ]
                       },
                       {
-                        "group": "Need More Help",
+                        "group": "Daha Fazla Yardım mı İhtiyacınız Var",
                         "pages": [
                           "l/tr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting",
                           "l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq",
@@ -5530,7 +5530,7 @@
                 ]
               },
               {
-                "group": "Dashboards",
+                "group": "Gösterge Panelleri",
                 "icon": "chart-bar",
                 "pages": [
                   "l/tr/user-guide/dashboards/overview",
@@ -5570,7 +5570,7 @@
                 ]
               },
               {
-                "group": "Billing",
+                "group": "Faturalandırma",
                 "icon": "credit-card",
                 "pages": [
                   "l/tr/user-guide/billing/overview",

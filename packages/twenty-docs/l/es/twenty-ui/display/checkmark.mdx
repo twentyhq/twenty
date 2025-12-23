@@ -1,0 +1,58 @@
+---
+title: Marca de verificación
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Encabezado" />
+</Frame>
+
+Representa una acción exitosa o completada.
+
+<Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    Extiende `React.ComponentPropsWithoutRef<'div'>` y acepta todas las propiedades de un elemento `div` regular.
+  </Tab>
+</Tabs>
+
+## Marca de verificación animada
+
+Representa un ícono de marca de verificación con la característica adicional de animación.
+
+<Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props       | Tipo     | Descripción                                        | Predeterminado |
+    | ----------- | -------- | -------------------------------------------------- | -------------- |
+    | isAnimating | booleano | Controla si la marca de verificación está animando | falso          |
+    | color       | cadena   | Color de la marca de verificación                  |                |
+    | duración    | número   | La duración de la animación en segundos            | 0.5 segundos   |
+    | tamaño      | número   | El tamaño de la marca de verificación              | 28 píxeles     |
+  </Tab>
+</Tabs>

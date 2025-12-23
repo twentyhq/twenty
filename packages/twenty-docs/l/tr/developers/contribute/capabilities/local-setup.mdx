@@ -1,0 +1,331 @@
+---
+title: Yerel Kurulum
+description: Twenty'i yerel olarak çalıştırmak isteyen katkıda bulunanlar (veya meraklı geliştiriciler) için kılavuz.
+---
+
+## Ön Gereksinimler
+
+<Tabs>
+  <Tab title="Linux ve MacOS">
+    Twenty'i yüklemeden ve kullanmadan önce bilgisayarınıza aşağıdakileri yüklediğinizden emin olun:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm` çalışmaz, bunun yerine `yarn` kullanmalısınız. Yarn artık Node.js ile birlikte geliyor, bu yüzden ayrı bir yüklemeye gerek yoktur.
+      Eğer henüz yapmadıysanız Yarn'ı etkinleştirmek için sadece `corepack enable` komutunu çalıştırmanız gerekiyor.
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    1. WSL Kurun
+       PowerShell'i Yönetici olarak açın ve çalıştırın:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Şimdi bilgisayarınızı yeniden başlatmanız gerektiğine dair bir uyarı göreceksiniz. Eğer görmüyorsanız, manuel olarak yeniden başlatın.
+
+    Yeniden başladıktan sonra bir powershell penceresi açılacak ve Ubuntu yüklenecek. Bu biraz zaman alabilir.
+    Ubuntu kurulumunuz için bir kullanıcı adı ve şifre oluşturmanız gerektiğine dair bir uyarı göreceksiniz.
+
+    2. git'i Yükleyin ve Yapılandırın
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Adınız"
+
+    git config --global user.email "emailiniz@alan.com"
+    ```
+
+    3. nvm, node.js ve yarn'ı Yükleyin
+
+    <Warning>
+      Doğru `node` versiyonunu yüklemek için `nvm` kullanın. `.nvmrc` tüm katkıda bulunanların aynı versiyonu kullanmasını sağlar.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    nvm'i kullanmak için terminalinizi kapatıp yeniden açın. Sonra aşağıdaki komutları çalıştırın.
+
+    ```bash
+
+    nvm install # önerilen node versiyonunu yükler
+
+    nvm use # önerilen node versiyonunu kullan
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Adım 1: Git Clone
+
+Terminalinizde aşağıdaki komutu çalıştırın.
+
+<Tabs>
+  <Tab title="SSH (Önerilen)">
+    SSH anahtarlarını henüz kurmadıysanız, bunu nasıl yapacağınızı [buradan](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) öğrenebilirsiniz.
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## Adım 2: Kök Dizine Konuçlanın
+
+```bash
+cd twenty
+```
+
+Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalısınız.
+
+## Adım 3: Bir PostgreSQL Veritabanı Kurun
+
+<Tabs>
+  <Tab title="Linux">
+    **Seçenek 1 (tercih edilen):** Veritabanınızı yerel olarak kurmak için:
+    Linux makinenize Postgresql yüklemek için şu bağlantıyı kullanın: [Postgresql Kurulumu](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Not: İzin hatalarından kaçınmak için `psql` komutundan önce `sudo -u postgres` eklemeniz gerekebilir.
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Seçenek 1 (tercih edilen):** Veritabanınızı `brew` ile yerel olarak kurmak için:
+
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    PostgreSQL sunucusunun çalışıp çalışmadığını kontrol etmek için şu komutu çalıştırabilirsiniz:
+
+    ```bash
+      brew services list
+    ```
+
+    Yükleyici, MacOS'ta Homebrew ile yüklenirken varsayılan olarak `postgres` kullanıcısını oluşturmayabilir. Bunun yerine, macOS kullanıcı adınıza (ör. "john") uygun bir PostgreSQL rolü oluşturur.
+    Gerekiyorsa `postgres` kullanıcısını kontrol etmek ve oluşturtmak için şu adımları izleyin:
+
+    ```bash
+      # PostgreSQL'e Bağlan
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
+    ```
+
+    psql isteminde (postgres=#) şu komutu çalıştırın:
+
+    ```bash
+     # Mevcut PostgreSQL rollerini listeleyin
+     \du
+    ```
+
+    Şu benzer bir çıktı göreceksiniz:
+
+    ```bash
+     Rol adı | Özellikler  | Üyesi olduğu
+     -----------+-------------+-----------
+     john      | Superuser   | {}
+    ```
+
+    Eğer listede bir `postgres` rolü görmüyorsanız, bir sonraki adıma geçin.
+    `postgres` rolünü manuel olarak oluşturun:
+
+    ```bash
+     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    Bu, `postgres` adıyla giriş erişimi olan bir süper kullanıcı rolü oluşturur.
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Aşağıdaki tüm adımlar WSL terminalinde (sanallaştırma makineniz içinde) çalıştırılmalıdır.
+
+    **Seçenek 1:** Postgresql'i yerel olarak sağlamak için:
+    Linux sanal makinenize Postgresql yüklemek için şu bağlantıyı kullanın: [Postgresql Kurulumu](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Not: İzin hatalarından kaçınmak için `psql` komutundan önce `sudo -u postgres` eklemeniz gerekebilir.
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+    WSL üzerinde Docker çalıştırmak ek bir karmaşıklık katmanı ekler.
+    Yalnızca ek adımlar dahil olmak üzere extra karmaşıklık adımlarına aşinaysanız kullanın. [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl) etkinleştirmenizi içeren.
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Veritabanına [localhost:5432](localhost:5432) adresinden, kullanıcı `postgres` ve şifre `postgres` ile şimdi erişebilirsiniz.
+
+## Adım 4: Redis Veritabanı (önbellek) Kurun
+
+Twenty, en iyi performansı sağlamak için bir redis önbelleğe ihtiyaç duyar
+
+<Tabs>
+  <Tab title="Linux">
+    **Seçenek 1:** Redis'i yerel olarak sağlamak için:
+    Linux makinenize Redis yüklemek için şu bağlantıyı kullanın: [Redis Kurulumu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Seçenek 1 (tercih edilen):** Redis'i `brew` ile yerel olarak sağlamak için:
+
+    ```bash
+    brew install redis
+    ```
+
+    Redis sunucunuzu başlatın:
+    `brew services start redis`
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    **Seçenek 1:** Redis'i yerel olarak sağlamak için:
+    Linux sanal makinenize Redis yüklemek için şu bağlantıyı kullanın: [Redis Kurulumu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Seçenek 2:** Eğer docker yüklüyse:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Bir İstemci GUI'ye ihtiyacınız varsa, [redis insight](https://redis.io/insight/) (ücretsiz sürüm mevcut) öneriyoruz.
+
+## Adım 5: Çevresel değişkenleri ayarlayın
+
+Projenizi yapılandırmak için çevresel değişkenler veya `.env` dosyaları kullanın. Daha fazla bilgi [burada](/l/tr/developers/self-host/capabilities/setup)
+
+`.env.example` dosyalarını `/front` ve `/server` içine kopyalayın:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/tr/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
+## Step 6: Installing dependencies
+
+Twenty server'ı oluşturup veritabanınıza bazı veriler yerleştirmek için aşağıdaki komutu çalıştırın:
+
+```bash
+yarn
+```
+
+`npm` veya `pnpm` çalışmaz
+
+## Adım 7: Projeyi çalıştırma
+
+<Tabs>
+  <Tab title="Linux">
+    Dağıtımınıza bağlı olarak, Redis sunucusu otomatik olarak başlatılabilir.
+    Değilse, dağıtımınız için [Redis Kurulum Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) üzerinden kontrol edin.
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redis zaten çalışıyor olmalıdır. Değilse, şu komutu çalıştırın:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Dağıtımınıza bağlı olarak, Redis sunucusu otomatik olarak başlatılabilir.
+    Değilse, dağıtımınız için [Redis Kurulum Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) üzerinden kontrol edin.
+  </Tab>
+</Tabs>
+
+Veritabanınızı aşağıdaki komutla kurun:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Sunucuyu, çalışanı ve ön uç hizmetlerini başlatın:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternatif olarak, tüm hizmetleri aynı anda başlatabilirsiniz:
+
+```bash
+npx nx start
+```
+
+## Step 8: Use Twenty
+
+**Ön Uç**
+
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
+Varsayılan demo hesabıyla giriş yapabilirsiniz: `tim@apple.dev` (şifre: `tim@apple.dev`)
+
+**Arka Uç**
+
+* Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000)
+* GraphQL API'sine [http://localhost:3000/graphql](http://localhost:3000/graphql) adresinden erişebilirsiniz.
+* REST API'sine [http://localhost:3000/rest](http://localhost:3000/rest) adresinden ulaşabilirsiniz.
+
+## Sorun Giderme
+
+Herhangi bir sorunla karşılaşırsanız, çözümler için [Sorun Giderme](/l/tr/developers/self-host/capabilities/troubleshooting) sayfasına bakın.
