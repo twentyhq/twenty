@@ -157,11 +157,12 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         toggleClickOutside(false);
 
         setActiveDropdownFocusIdAndMemorizePrevious(
-          getDropdownFocusIdForRecordField(
+          getDropdownFocusIdForRecordField({
             recordId,
-            fieldDefinition.fieldMetadataId,
-            'table-cell',
-          ),
+            fieldMetadataId: fieldDefinition.fieldMetadataId,
+            componentType: 'table-cell',
+            instanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+          }),
         );
       },
     [

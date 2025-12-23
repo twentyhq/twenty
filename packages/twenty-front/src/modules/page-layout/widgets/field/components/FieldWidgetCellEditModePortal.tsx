@@ -24,12 +24,18 @@ export const FieldWidgetCellEditModePortal = ({
   instanceId,
 }: FieldWidgetCellEditModePortalProps) => {
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
-  const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+  const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
     recordId,
-    fieldMetadataItem.id,
-    'inline-cell',
-  );
+    fieldMetadataId: fieldMetadataItem.id,
+    componentType: 'inline-cell',
+    instanceId,
+  });
   const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
+
+  console.log('FieldWidgetCellEditModePortal', {
+    expectedDropdownFocusId,
+    activeDropdownFocusId,
+  });
 
   const setIsHovered = useSetRecoilComponentState(
     fieldWidgetHoverComponentState,

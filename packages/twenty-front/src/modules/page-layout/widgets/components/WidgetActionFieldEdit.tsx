@@ -11,6 +11,7 @@ import {
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
@@ -121,7 +122,13 @@ export const WidgetActionFieldEdit = () => {
       }}
     >
       <FieldContext.Provider value={fieldContextValue}>
-        <FieldWidgetEditAction />
+        <RecordInlineCellContext.Provider
+          value={{
+            instanceIdPrefix: instanceId,
+          }}
+        >
+          <FieldWidgetEditAction />
+        </RecordInlineCellContext.Provider>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );

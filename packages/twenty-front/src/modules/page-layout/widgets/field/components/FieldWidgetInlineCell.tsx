@@ -34,6 +34,8 @@ export const FieldWidgetInlineCell = ({
   loading,
   instanceIdPrefix,
 }: FieldWidgetInlineCellProps) => {
+  console.log('in FieldWidgetInlineCell', { instanceIdPrefix });
+
   const {
     fieldDefinition,
     recordId,
@@ -141,11 +143,17 @@ export const FieldWidgetInlineCell = ({
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+        const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
           recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          componentType: 'inline-cell',
+          instanceId: instanceIdPrefix ?? '',
+        });
+
+        console.log('in FieldWidgetInlineCell click outside', {
+          currentDropdownFocusId,
+          expectedDropdownFocusId,
+        });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
           return;
@@ -165,10 +173,12 @@ export const FieldWidgetInlineCell = ({
       recordId,
       fieldDefinition.fieldMetadataId,
       persistFieldFromFieldInputContext,
+      instanceIdPrefix,
     ],
   );
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
+    instanceIdPrefix: instanceIdPrefix,
     readonly: isReadOnly,
     buttonIcon: buttonIcon,
     editModeContent: <FieldInput />,

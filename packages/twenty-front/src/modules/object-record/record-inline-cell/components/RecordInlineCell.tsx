@@ -142,11 +142,12 @@ export const RecordInlineCell = ({
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        const expectedDropdownFocusId = getDropdownFocusIdForRecordField(
+        const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
           recordId,
-          fieldDefinition.fieldMetadataId,
-          'inline-cell',
-        );
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          componentType: 'inline-cell',
+          instanceId: instanceIdPrefix ?? '',
+        });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
           return;
@@ -166,6 +167,7 @@ export const RecordInlineCell = ({
       recordId,
       fieldDefinition.fieldMetadataId,
       persistFieldFromFieldInputContext,
+      instanceIdPrefix,
     ],
   );
 
@@ -173,6 +175,7 @@ export const RecordInlineCell = ({
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isReadOnly,
+    instanceIdPrefix,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)
