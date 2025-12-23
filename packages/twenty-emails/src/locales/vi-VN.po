@@ -50,7 +50,7 @@ msgstr "Không gian làm việc sẽ bị ngừng hoạt động trong {remainin
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Nếu bạn muốn tiếp tục sử dụng Twenty, vui lòng cập nhật gói đăng ký của bạn trong vòng {remainingDays} ngày kế tiếp."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
