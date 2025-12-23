@@ -1,176 +1,176 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: Alan Eşlemesi
+description: Veri içe aktarma sırasında alan eşlemenin nasıl çalıştığı.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## Alan Eşlemesi Nasıl Çalışır
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+Bir dosya yüklediğinizde, Twenty sütunlarınızı analiz eder ve bunları mevcut alanlarla eşleştirmeye çalışır.
 
-### Automatic Mapping
+### Otomatik Eşleme
 
-Twenty tries to match columns based on:
+Twenty, sütunları aşağıdakilere göre eşleştirmeye çalışır:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* Sütun başlık adları (tam veya benzer eşleşmeler)
+* Veri türü algılama (tarihler, sayılar, e-postalar)
+* Yaygın alan kalıpları
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**Hızlı ipucu:** İçe aktarmak istediğiniz nesneden birkaç satır dışa aktarın. Dışa aktarılan dosya, Twenty'nin beklediği sütun adlarını tam olarak içerir; bu da içe aktarma sırasında otomatik eşlemeyi sorunsuz hale getirir.</Note>
 
-### Manual Mapping Options
+### Manuel Eşleme Seçenekleri
 
-For each column, you can:
+Her sütun için şunları yapabilirsiniz:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **Bir alana eşleyin**: Açılır menüden eşleşen Twenty alanını seçin
+* **Eşleme yapmayın**: Sütunu tamamen atlayın (veri içe aktarılmayacaktır)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**Alanlar, içe aktarmadan önce mevcut olmalıdır.** İçe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce özel alanları **Ayarlar → Veri Modeli** altında oluşturun.</Note>
 
-## Field Type Compatibility
+## Alan Türü Uyumluluğu
 
-All field types available in the Data Model are supported for import.
+Veri Modelinde mevcut olan tüm alan türleri içe aktarma için desteklenir.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+`id` değerlerini de içe aktararak yeni kayıtlara belirli bir ID atayabilir veya mevcut olanları güncelleyebilirsiniz.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## Veri Biçimi Gereksinimleri
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**Bazı alanların özel bir sözdizimi vardır.** İçe aktarmayı hazırlamadan önce her alan türü için beklenen sözdizimini görmek adına örnek dosyayı indirmenizi öneririz.</Note>
 
-### Address Fields
+### Adres Alanları
 
-Address is a nested field with multiple columns. Some can be left empty.
+Adres, birden çok sütuna sahip iç içe bir alandır. Bazıları boş bırakılabilir.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**: Sokak adresinin 1. satırı
+* **Address / Address 2**: Sokak adresinin 2. satırı
+* **Address / City**: Şehir adı
+* **Address / State**: Eyalet veya il
+* **Address / Country**: Ülke adı
+* **Address / Post Code**: Posta/ZIP kodu
 
-### Array Fields
+### Dizi Alanları
 
-Use the following format:
+Aşağıdaki biçimi kullanın:
 
 ```
 ["value1","value2"]
 ```
 
-### Boolean Fields
+### Boole Alanları
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+`TRUE` veya `FALSE` kullanın (büyük harf) - `true` ya da `false` kullanmayın
 
-### Currency Fields
+### Para Birimi Alanları
 
-Currency is a nested field with two columns that **both must be filled**:
+Para birimi, her ikisi de doldurulması gereken iki sütundan oluşan iç içe bir alandır:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Amount / Amount**: Sayısal değer (örn. `1234.56`)
+* **Amount / Currency**: Para birimi kodu (örn. `USD`, `EUR`)
 
-### Date Fields
+### Tarih Alanları
 
-Supported formats:
+Desteklenen biçimler:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD` (önerilir)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* ISO 8601 biçimi
 
-### Domain Fields
+### Alan Adı Alanları
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* Kopyalar oluşmasını önlemek için `https://domain.com` biçiminin kullanılması önerilir; çünkü posta kutusu ve takvim eşzamanlaştırmalarıyla oluşturulan Şirketler için kullanılan biçim budur
+* Bir `Domain Label` ve `Domain URL` doldurulabilir: en iyi uygulama olarak etikete `domain.com`, URL'ye `https://domain.com` yazmaktır
+* Alan adları, Şirketler nesnesi içinde benzersiz olmalıdır
+* **İçe aktarılacak dosya içinde alan adlarının benzersiz olması gerekir**
 
-### Email Fields
+### E-posta Alanları
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
+* Geçerli e-posta biçiminde olmalıdır
+* E-postalar, Kişiler nesnesi içinde benzersiz olmalıdır
+* **İçe aktarılacak dosya içinde e-postaların benzersiz olması gerekir**
+* Ek e-postalar için: ana e-posta için **Emails / Primary Email**'i ve şu biçimle **Emails / Additional Emails**'i kullanın:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Id Fields
+### ID Alanları
 
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
+İçe aktarma sırasında bir `id` belirtmek isteğe bağlıdır. Sağlanmazsa Twenty bir tane otomatik olarak oluşturur.
 
-Use cases for mapping an `id` column:
+`id` sütununu eşlemeye yönelik kullanım durumları:
 
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
+* **Belirli bir ID ayarlayın**: Yeni oluşturulan kayıtlar için UUID seçin
+* **Mevcut kayıtları güncelleyin**: Yinelenenler oluşturmak yerine mevcut kayıtlarla eşleştirerek güncelleyin. Bu durumda diğer benzersiz alanları eşlememeniz önerilir: Yalnızca tek bir benzersiz alanı eşlemek daha sorunsuz bir içe aktarma sağlar.
 
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Bir `id` sağlarsanız, UUID biçiminde olmalıdır (ör. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-### JSON Fields
+### JSON Alanları
 
-Use valid JSON format:
+Geçerli JSON biçimini kullanın:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### Links Fields
+### Bağlantı Alanları
 
-Similar to Domain fields:
+Alan Adı alanlarına benzer:
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+* Etiket ve URL sütunlarının ikisini de doldurun: **Links / Link URL** ve **Links / Link Label**
+* Tam URL biçimini kullanın: `https://example.com`
+* İkincil bağlantılar için **Links / Secondary Links** sütununu şu biçimde kullanın:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### Multi-Select Fields
+### Çoklu Seçim Alanları
 
-Use the **API names** (not the display labels) in the following format:
+**Görünen etiketleri** değil, **API adlarını** aşağıdaki biçimde kullanın:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+API adlarının nerede bulunacağını [buradan](#finding-api-names-for-select-fields) görün.
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+<Note>Yeni seçim seçenekleri içe aktarma tarafından otomatik olarak oluşturulmaz. İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde ekleyin.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **İçe aktarma üzerine yazar, ekleme yapmaz.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  Bir kayıtta halihazırda `VALUE2` ve `VALUE3` seçiliyse ve siz `["VALUE1"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `VALUE1` bulunur. Önceki seçimler birleştirilmez, değiştirilir.
 </Warning>
 
-### Number Fields
+### Sayı Alanları
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* Yalnızca sayılar
+* Ondalıklar nokta kullanır: `1234.56`
+* Binlik ayırıcı kullanmayın
 
-### Phone Fields
+### Telefon Alanları
 
-Phone is a nested field with multiple columns that **must be filled**
+Telefon, birden çok sütundan oluşan ve **doldurulması gereken** iç içe bir alandır
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Phones / Primary Phone Number**: Telefon numarası (örn. `4159095555`)
+* **Phones / Primary Phone Country Code**: Ülke kodu (örn. `US`)
+* **Phones / Primary Phone Calling Code**: Arama kodu (örn. `+1`)
 
-### Rating Fields
+### Puanlama Alanları
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+Şu API adı biçimini kullanın: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
 
 ### İlişki Alanları
 
-Please see our dedicated article: [Import Relations Between Objects](/l/tr/user-guide/data-migration/capabilities/import-relations)
+Lütfen şu özel makalemize bakın: [Nesneler Arasındaki İlişkileri İçe Aktarma](/l/tr/user-guide/data-migration/capabilities/import-relations)
 
 ### Seçim Alanları
 
-Use the **API name** of the option (not the display label):
+**Görünen etiketi** değil, seçeneğin **API adını** kullanın:
 
 ```
 VALUE1
