@@ -1,0 +1,97 @@
+---
+title: Радио
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Заголовок" />
+</Frame>
+
+Используется, когда пользователи могут выбрать только один вариант из серии вариантов.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
+
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
+
+
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства        | Тип                  | Описание                                                                                |
+    | --------------- | -------------------- | --------------------------------------------------------------------------------------- |
+    | стиль           | Свойства `React.CSS` | Дополнительные встроенные стили для компонента.                                         |
+    | className       | строка               | Необязательный CSS-класс для дополнительного стилирования                               |
+    | checked         | boolean              | Indicates whether the radio button is checked                                           |
+    | значение        | строка               | Метка или текст, связанные с радио-кнопкой.                                             |
+    | onChange        | функция              | Функция вызывается при изменении выбранной радио-кнопки.                                |
+    | onCheckedChange | функция              | The function called when the `checked` state of the radio button changes                |
+    | размер          | строка               | Размер радио-кнопки. Options include: `large` and `small`                               |
+    | отключено       | boolean              | If `true`, the radio button is disabled and not clickable                               |
+    | позицияМетки    | строка               | Положение текста метки относительно радио-кнопки. Имеет два варианта: `left` и `right`. |
+  </Tab>
+</Tabs>
+
+## Группа Радио
+
+Объединяет связанные радио-кнопки.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const [selectedValue, setSelectedValue] = useState("Option 1");
+
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства      | Тип               | Описание                                                                           |
+    | ------------- | ----------------- | ---------------------------------------------------------------------------------- |
+    | значение      | строка            | Значение в настоящее время выбранной радио-кнопки.                                 |
+    | onChange      | функция           | Функция обратного вызова, вызываемая при изменении радио-кнопки.                   |
+    | onValueChange | функция           | Функция обратного вызова, вызываемая при изменении выбранного значения в группе.   |
+    | children      | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+  </Tab>
+</Tabs>

@@ -2311,7 +2311,7 @@ msgstr "Id"
 #. js-lingui-id: Ebc83S
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
-msgstr "Ideal kundprofil: Anger om f\\u00f6retaget \\u00e4r den mest l\\u00e4mpliga och v\\u00e4rdefulla kunden f\\u00f6r dig"
+msgstr "Ideal kundprofil: Anger om företaget är den mest lämpliga och värdefulla kunden för dig"
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -2884,7 +2884,7 @@ msgstr "Inbjudan är skadad."
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is canceled"
-msgstr "\\u00c4r inst\\u00e4lld"
+msgstr "Är inställd"
 
 #. js-lingui-id: k+g9Uh
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2892,19 +2892,19 @@ msgstr "\\u00c4r inst\\u00e4lld"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
-msgstr "\\u00c4r automatisk skapande av kontakt aktiverad"
+msgstr "Är automatisk skapande av kontakt aktiverad"
 
 #. js-lingui-id: uBx1xd
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Is Full Day"
-msgstr "\\u00c4r heldag"
+msgstr "Är heldag"
 
 #. js-lingui-id: 3iAfL2
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Is Organizer"
-msgstr "\\u00c4r organisat\\u00f6r"
+msgstr "Är organisatör"
 
 #. js-lingui-id: VrHWrH
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2918,7 +2918,7 @@ msgstr "Är skickad mapp"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
-msgstr "\\u00c4r synkronisering aktiverad"
+msgstr "Är synkronisering aktiverad"
 
 #. js-lingui-id: BHCUSr
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2954,12 +2954,12 @@ msgstr "JSON-objekt som innehåller anpassade anslutningsparametrar"
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide steps"
-msgstr "Json-objekt f\\u00f6r att tillhandah\\u00e5lla steg"
+msgstr "Json-objekt för att tillhandahålla steg"
 
 #. js-lingui-id: fOjmZ1
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide trigger"
-msgstr "Json-objekt f\\u00f6r att tillhandah\\u00e5lla trigger"
+msgstr "Json-objekt för att tillhandahålla trigger"
 
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
@@ -2969,7 +2969,7 @@ msgstr "JSON-svarformat kräver ett schema"
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
-msgstr "Json-v\\u00e4rde f\\u00f6r h\\u00e4ndelsedetaljer"
+msgstr "Json-värde för händelsedetaljer"
 
 #. js-lingui-id: u4ex5r
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3070,7 +3070,7 @@ msgstr "Etikett får inte innehålla kommatecken"
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
-msgstr "Spr\\u00e5k"
+msgstr "Språk"
 
 #. js-lingui-id: hHtzNQ
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -3106,7 +3106,7 @@ msgstr "Senaste synkhistorik-ID"
 #. js-lingui-id: tGwswq
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Last time the record was changed"
-msgstr "Senaste tiden posten \\u00e4ndrades"
+msgstr "Senaste tiden posten ändrades"
 
 #. js-lingui-id: o1zvNS
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -3122,7 +3122,7 @@ msgstr "Linked Object Metadata Id"
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Record cached name"
-msgstr "Cachenamn f\\u00f6r l\\u00e4nkad post"
+msgstr "Cachenamn för länkad post"
 
 #. js-lingui-id: sgHAxx
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -3139,7 +3139,7 @@ msgstr "LinkedIn"
 #. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
-msgstr "Lista \\u00f6ver m\\u00f6jligheter f\\u00f6r vilka personen \\u00e4r kontaktpunkt"
+msgstr "Lista över möjligheter för vilka personen är kontaktpunkt"
 
 #. js-lingui-id: wJijgU
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3176,7 +3176,7 @@ msgstr "Maj"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Meet Link"
-msgstr "M\\u00f6tesl\\u00e4nk"
+msgstr "Möteslänk"
 
 #. js-lingui-id: xDAtGP
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3296,7 +3296,7 @@ msgstr "Meddelande synkroniserat med en meddelandekanal"
 #. js-lingui-id: de2nM/
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Thread"
-msgstr "Meddelandetr\\u00e5d"
+msgstr "Meddelandetråd"
 
 #. js-lingui-id: km1jgD
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3307,7 +3307,7 @@ msgstr "Meddelandetråd-ID"
 #. js-lingui-id: RD0ecC
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Message Threads"
-msgstr "Meddelandetr\\u00e5dar"
+msgstr "Meddelandetrådar"
 
 #. js-lingui-id: t7TeQU
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3319,22 +3319,22 @@ msgstr "Meddelanden"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Messages from the channel."
-msgstr "Meddelanden fr\\u00e5n kanalen."
+msgstr "Meddelanden från kanalen."
 
 #. js-lingui-id: rYPBO7
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages from the thread."
-msgstr "Meddelanden fr\\u00e5n tr\\u00e5den."
+msgstr "Meddelanden från tråden."
 
 #. js-lingui-id: XcKQrV
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider access token"
-msgstr "Access-token fr\\u00e5n meddelandeleverant\\u00f6ren"
+msgstr "Access-token från meddelandeleverantören"
 
 #. js-lingui-id: 80EvIk
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Messaging provider refresh token"
-msgstr "Uppdateringstoken fr\\u00e5n meddelandeleverant\\u00f6ren"
+msgstr "Uppdateringstoken från meddelandeleverantören"
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -3511,12 +3511,12 @@ msgstr "Namnet måste vara i camelCase-format."
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 msgid "Name of the favorite folder"
-msgstr "Namnet p\\u00e5 favoritmappen"
+msgstr "Namnet på favoritmappen"
 
 #. js-lingui-id: csMjko
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
-msgstr "Namnet p\\u00e5 arbetsfl\\u00f6dets k\\u00f6rning"
+msgstr "Namnet på arbetsflödets körning"
 
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -5182,7 +5182,7 @@ msgstr "Arbetsflödets automatiserade triggring typ"
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The workflow last published version id"
-msgstr "ID f\\u00f6r den senast publicerade versionen av arbetsfl\\u00f6det"
+msgstr "ID för den senast publicerade versionen av arbetsflödet"
 
 #. js-lingui-id: /EdWx6
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -5404,12 +5404,12 @@ msgstr "Denna variabel kan endast ställas in via miljön."
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread External Id"
-msgstr "Externt id f\\u00f6r tr\\u00e5d"
+msgstr "Externt id för tråd"
 
 #. js-lingui-id: RSSbWN
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Thread id from the messaging provider"
-msgstr "Tr\\u00e5d-id fr\\u00e5n meddelandeleverant\\u00f6ren"
+msgstr "Tråd-id från meddelandeleverantören"
 
 #. js-lingui-id: sS8v5K
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -5665,7 +5665,7 @@ msgstr "Användarvänligt felmeddelande"
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
-msgstr "Anv\\u00e4ndar-id"
+msgstr "Användar-id"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -9,6 +9,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -47,6 +48,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     description: msg`Message id from the messaging provider`,
     icon: 'IconHash',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageExternalId: string | null;
 
@@ -58,6 +60,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     description: msg`Thread id from the messaging provider`,
     icon: 'IconHash',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageThreadExternalId: string | null;
 
@@ -83,6 +86,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     ],
     defaultValue: `'${MessageDirection.INCOMING}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   direction: MessageDirection;
 
   @WorkspaceRelation({
@@ -96,6 +100,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     inverseSideFieldKey: 'messageChannelMessageAssociations',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageChannel: Relation<MessageChannelWorkspaceEntity> | null;
 
@@ -112,6 +117,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     inverseSideFieldKey: 'messageChannelMessageAssociations',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   message: Relation<MessageWorkspaceEntity> | null;
 

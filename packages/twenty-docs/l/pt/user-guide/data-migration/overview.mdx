@@ -1,0 +1,89 @@
+---
+title: Data Migration
+description: Import and export your CRM data via CSV files or API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Data Migration" />
+</Frame>
+
+## Import Methods
+
+Twenty supports two main methods for importing data:
+
+| Method         | Best For                             | Volume Limit            |
+| -------------- | ------------------------------------ | ----------------------- |
+| **CSV Import** | Standard migrations, regular updates | 10,000 records per file |
+| **API Import** | Large-scale migrations, automation   | Unlimited               |
+
+<Note>For very large datasets (hundreds of thousands of records), use the API. Our [implementation partners](/l/pt/user-guide/getting-started/capabilities/implementation-services) can help run these scripts if needed.</Note>
+
+## CSV Import Basics
+
+You can import data for any object using CSV, XLSX, or XLS files. Each file should contain **only one type of object** (e.g., only People records).
+
+<Note>**Fields must exist before import.** Uploading a CSV creates records but does not create fields. If you need custom fields, create them first under **Settings → Data Model**.</Note>
+
+### Steps
+
+1. Navigate to the object where you want to import data
+2. Click the **⋮** icon on the top right (this is the Command Menu) and click on **Import records**
+3. Download the template file to ensure your data is in the expected format
+4. Upload your formatted CSV file
+5. Map your columns to Twenty fields
+6. Review errors (highlighted in yellow) and fix them, directly editing in the UI
+7. Confirm the import
+
+### Importing relations between objects
+
+You can import relations between objects using the csv import function. You need to reference the related object using a unique field from this object: the `id`, the `email` for People and Workspace Members, the `domain` for companies, any other field set as unique in the data model for any other object.
+
+<Note>**Deleted records count toward uniqueness.** Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be restored.</Note>
+
+<Warning>
+  **Import Order Matters!**
+
+  When importing related objects, upload files in this order:
+
+  1. **Companies** first (the "one" side of relationships)
+  2. **People** second (linked to companies via companyId)
+  3. **Opportunities** third (linked to companies/people)
+  4. **Custom objects** with relations last
+
+  Why? The "one" side of a one-to-many relationship must exist before you can reference it. For example, the Company record must exist before you import a Person with that company's ID.
+</Warning>
+
+Please refer to [this article](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for a step-by-step guide on how to proceed.
+
+## Export Data
+
+Export your workspace data for backups, reporting, or migration.
+
+### Steps
+
+1. Navigate to the object you want to export
+2. Configure the view with the columns you need
+3. Click **⋮** → **Export view**
+4. Save the CSV file
+
+<Note>**Only visible columns are exported.** The CSV file will only contain the columns displayed in your current view. Add or hide columns before exporting to control what data is included.</Note>
+
+<Note>**Export limits**: Up to 20,000 records per export.</Note>
+
+## Permissions
+
+Data import and export require specific permissions:
+
+* **Import**: Requires "Import CSV" permission
+* **Export**: Requires "Export CSV" permission
+
+Contact your workspace admin if you don't have these permissions.
+
+## Next Steps
+
+* [Prepare your CSV files](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Import relations between objects](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Import via API for large datasets](/l/pt/user-guide/data-migration/how-tos/import-data-via-api)

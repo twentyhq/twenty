@@ -1,0 +1,138 @@
+---
+title: Čip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Hlavička" />
+</Frame>
+
+Vizuální prvek, který můžete používat jako kliknutelný nebo nekliknutelný kontejner se štítkem, volitelnými levými a pravými komponenty a různými styly pro zobrazení štítků a značek.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="Clickable Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti    | Typ                       | Popis                                                                                    |
+    | ------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | odkazNaEntitu | řetězec                   | Odkaz na entitu                                                                          |
+    | entitaId      | řetězec                   | Jedinečný identifikátor pro entitu                                                       |
+    | název         | textový řetězec           | Název entity                                                                             |
+    | obrázekUrl    | řetězec                   | s picture",                                                                              |
+    | typAvatara    | Typ avatara               | Typ avatara, který chcete zobrazit. Má dvě možnosti: `zaoblený` a `hranatý`              |
+    | varianta      | `EntityChipVariant` výčet | Varianta čipu entity, kterou chcete zobrazit. Má dvě možnosti: `běžný` a `transparentní` |
+    | Levá ikona    | Ikonová komponenta        | React komponenta představující ikonu. Zobrazeno na levé straně čipu                      |
+  </Tab>
+</Tabs>
+
+## Příklady
+
+### Transparentní deaktivovaný čip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br />
+
+### Deaktivovaný čip s tooltipem
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Čip entity
+
+Prvek podobný čipu pro zobrazení informací o entitě.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="Entity name"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti    | Typ                       | Popis                                                                                    |
+    | ------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | odkazNaEntitu | řetězec                   | Odkaz na entitu                                                                          |
+    | entitaId      | řetězec                   | Jedinečný identifikátor pro entitu                                                       |
+    | název         | řetězec                   | Název entity                                                                             |
+    | obrázekUrl    | řetězec                   | s picture",                                                                              |
+    | typAvatara    | Typ avatara               | Typ avatara, který chcete zobrazit. Má dvě možnosti: `zaoblený` a `hranatý`              |
+    | varianta      | `EntityChipVariant` výčet | Varianta čipu entity, kterou chcete zobrazit. Má dvě možnosti: `běžný` a `transparentní` |
+    | Levá ikona    | Ikonová komponenta        | React komponenta představující ikonu. Zobrazeno na levé straně čipu                      |
+  </Tab>
+</Tabs>

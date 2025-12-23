@@ -1,0 +1,49 @@
+---
+title: Geri Bildirim
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Başlık" />
+</Frame>
+
+İlerlemeyi veya geri sayımı belirtir ve sağdan sola doğru hareket eder.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";\n\nexport const MyComponent = () => {\n  return (\n    <ProgressBar\n      duration={6000}\n      delay={0}\n      easing="easeInOut"\n      barHeight={10}\n      barColor="#4bb543"\n      autoStart={true}\n    />\n  );\n};
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler      | Tür     | Açıklama                                                                                      | Varsayılan |
+    | --------------- | ------- | --------------------------------------------------------------------------------------------- | ---------- |
+    | süre            | sayı    | İlerleme çubuğunun toplam animasyon süresi milisaniye cinsindendir.                           | 3          |
+    | gecikme         | sayı    | İlerleme çubuğu animasyonunun başlamasındaki gecikme milisaniye cinsindendir.                 | 0          |
+    | easing          | dize    | Easing function for the progress bar animation                                                | easeInOut  |
+    | çubukYüksekliği | sayı    | Çubuğun piksel cinsinden yüksekliği                                                           | 24         |
+    | çubukRengi      | metin   | Çubuğun rengi                                                                                 | gray80     |
+    | otomatikBaşlat  | boolean | Eğer `doğru` ise, bileşen montajlandığında ilerleme çubuğu animasyonu otomatik olarak başlar. | `doğru`    |
+  </Tab>
+</Tabs>
+
+## Dairesel İlerleme Çubuğu
+
+Bir görevin ilerlemesini gösterir, genellikle yükleme ekranlarında veya kullanıcılara devam eden işlemleri bildirmek istediğiniz alanlarda kullanılır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";\n\nexport const MyComponent = () => {\n  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;\n};
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür   | Açıklama                             | Varsayılan   |
+    | -------------- | ----- | ------------------------------------ | ------------ |
+    | boyut          | sayı  | Dairesel ilerleme çubuğunun boyutu   | 50           |
+    | çubukGenişliği | sayı  | İlerleme çubuğu çizgisinin genişliği | 5            |
+    | çubukRengi     | metin | İlerleme çubuğunun rengi             | currentColor |
+  </Tab>
+</Tabs>

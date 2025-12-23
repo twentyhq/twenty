@@ -1,0 +1,34 @@
+---
+title: "\x062A\x062F\x062E\x064A\x0644 \x0627\x0644\x0635\x0648\x0631\x0629"
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="رأس الصفحة" />
+</Frame>
+
+4A4F33452D 44445245332A2E2F454A46 28452F 482532274429 35483129.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات     | النوع       | الوصف                                                                                             |
+    | ------------ | ----------- | ------------------------------------------------------------------------------------------------- |
+    | صورة         | نص          | 3946482746 45352F31 274435483129 27442544432A3148464A                    |
+    | onUpload     | دالة        | The function called when a user uploads a new image. It receives the `File` object as a parameter |
+    | onRemove     | دالة        | The function called when the user clicks on the remove button                                     |
+    | onAbort      | دالة        | The function called when a user clicks on the abort button during image upload                    |
+    | isUploading  | قيمة منطقية | Indicates whether an image is currently being uploaded                                            |
+    | errorMessage | نص          | An optional error message to display below the image input                                        |
+    | معطل         | قيمة منطقية | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  </Tab>
+</Tabs>

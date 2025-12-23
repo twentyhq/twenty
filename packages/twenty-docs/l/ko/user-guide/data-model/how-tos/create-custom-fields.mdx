@@ -1,0 +1,72 @@
+---
+title: Create Custom Fields
+description: Step-by-step guide to adding custom fields to any object.
+---
+
+Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+
+## Steps
+
+1. Go to **Settings → Data Model**
+2. Select the object you want to add a field to
+3. Click **+ Add Field**
+4. Choose a **field type** (see [Fields](/l/ko/user-guide/data-model/capabilities/fields) for all types)
+5. Enter the **field name** and optional description
+6. Configure field-specific settings (see below)
+7. Click **Save**
+
+**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+
+## Show the Field in Views
+
+New fields aren't automatically visible. To display:
+
+1. Open the object's table view
+2. Click **Options → Fields**
+3. Click the **eye icon** next to your field to show it
+4. Drag to reorder
+
+## Configuration Options
+
+### For Select / Multi-Select
+
+1. Click **+ Add option** to create choices
+2. Set a **default option** if desired
+3. Drag to reorder options
+
+<Note>
+  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/ko/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### For Currency Fields
+
+Set the **default currency** (USD, EUR, etc.) for new records.
+
+### For Phone Fields
+
+Set the **default country code** to pre-fill for new phone numbers.
+
+### Making a Field Unique
+
+Toggle **Unique** to prevent duplicate values across records.
+
+<Note>
+  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+</Note>
+
+### Setting Default Values
+
+For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+
+## Deactivating a Field
+
+1. Go to **Settings → Data Model**
+2. Find the field
+3. Click **⋮ → Deactivate**
+
+Data is preserved. You can reactivate or permanently delete later.
+
+## Related
+
+* [Fields](/l/ko/user-guide/data-model/capabilities/fields) — all field types explained
+* [Data Model FAQ](/l/ko/user-guide/data-model/how-tos/data-model-faq) — common questions

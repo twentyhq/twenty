@@ -1,0 +1,439 @@
+---
+title: Tlačítka
+image: /images/user-guide/views/filter.png
+---
+
+<Frame>
+  <img src="/images/user-guide/views/filter.png" alt="Hlavička" />
+</Frame>
+
+Seznam tlačítek a skupin tlačítek používaných v celé aplikaci.
+
+## Tlačítko
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+
+    export const MyComponent = () => {
+      return (
+        <Button
+          className
+          Icon={null}
+          title="Title"
+          fullWidth={false}
+          variant="primary"
+          size="medium"
+          position="standalone"
+          accent="default"
+          soon={false}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ                   | Popis                                                                                                      |
+    | ---------- | --------------------- | ---------------------------------------------------------------------------------------------------------- |
+    | className  | řetězec               | Volitelný název třídy pro dodatečné stylování                                                              |
+    | Ikona      | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                                            |
+    | název      | řetězec               | Textový obsah tlačítka                                                                                     |
+    | fullWidth  | booleovská hodnota    | Určuje, zda by tlačítko mělo zabírat celou šířku svého kontejneru                                          |
+    | varianta   | řetězec               | Vizualní stylová varianta tlačítka. Možnosti zahrnují `primární`, `sekundární` a `terciární`               |
+    | velikost   | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                     |
+    | pozice     | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Možnosti zahrnují: `samostatné`, `levé`, `pravé` a `střední` |
+    | akcent     | řetězec               | Barva akcentu tlačítka. Options include: `default`, `blue`, and `danger`                                   |
+    | brzy       | booleovská hodnota    | Indikuje, jestli je tlačítko označené jako "brzy" (například pro nadcházející funkce)                      |
+    | neaktivní  | booleovská hodnota    | Specifies whether the button is disabled or not                                                            |
+    | focus      | booleovská hodnota    | Určuje, zda tlačítko má zaměření                                                                           |
+    | onClick    | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko                                  |
+  </Tab>
+</Tabs>
+
+## Skupina tlačítek
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+    import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+    export const MyComponent = () => {
+      return (
+        <ButtonGroup variant="primary" size="large" accent="blue" className>
+          <Button
+            className
+            Icon={null}
+            title="Button 1"
+            fullWidth={false}
+            variant="primary"
+            size="medium"
+            position="standalone"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 2"
+            fullWidth={false}
+            variant="secondary"
+            size="medium"
+            position="left"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 3"
+            fullWidth={false}
+            variant="tertiary"
+            size="medium"
+            position="right"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+        </ButtonGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ             | Popis                                                                                                              |
+    | ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
+    | varianta   | řetězec         | The visual style variant of the buttons within the group. Možnosti zahrnují `primární`, `sekundární` a `terciární` |
+    | velikost   | řetězec         | Velikost tlačítek ve skupině. Má dvě možnosti: `střední` a `malé`                                                  |
+    | akcent     | textový řetězec | Barva akcentu tlačítek ve skupině. Options include `default`, `blue` and `danger`                                  |
+    | className  | řetězec         | Volitelný název třídy pro dodatečné stylování                                                                      |
+    | děti       | ReactNode       | Pole prvků React představující jednotlivá tlačítka ve skupině                                                      |
+  </Tab>
+</Tabs>
+
+## Plovoucí tlačítko
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButton
+          className
+          Icon={IconSearch}
+          title="Title"
+          size="medium"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti      | Typ                   | Popis                                                                                                  |
+    | --------------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
+    | className       | řetězec               | Volitelný název pro dodatečné stylování                                                                |
+    | Ikona           | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                                        |
+    | název           | řetězec               | Textový obsah tlačítka                                                                                 |
+    | velikost        | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                 |
+    | pozice          | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Options include: `standalone`, `left`, `middle`, `right` |
+    | přidatStín      | booleovská hodnota    | Určuje, zda se má na tlačítko přidat stín                                                              |
+    | použítRozmazání | booleovská hodnota    | Určuje, zda se má na tlačítko použít rozostření                                                        |
+    | neaktivní       | booleovská hodnota    | Determines whether the button is disabled                                                              |
+    | focus           | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                     |
+  </Tab>
+</Tabs>
+
+## Plovoucí skupina tlačítek
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButtonGroup size="small">
+          <FloatingButton
+            className
+            Icon={IconClipboardText}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+            focus={true}
+          />
+          <FloatingButton
+            className
+            Icon={IconCheckbox}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+          />
+        </FloatingButtonGroup>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ       | Popis                                                         | Výchozí |
+    | ---------- | --------- | ------------------------------------------------------------- | ------- |
+    | velikost   | řetězec   | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`        | malý    |
+    | děti       | ReactNode | Pole prvků React představující jednotlivá tlačítka ve skupině |         |
+  </Tab>
+</Tabs>
+
+## Plovoucí ikonové tlačítko
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingIconButton
+          className
+          Icon={IconSearch}
+          size="small"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={false}
+          onClick={() => console.log("click")}
+          isActive={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti      | Typ                   | Popis                                                                                                      |
+    | --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------- |
+    | className       | řetězec               | Volitelný název pro dodatečné stylování                                                                    |
+    | Ikona           | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                                            |
+    | velikost        | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                     |
+    | pozice          | řetězec               | Pozice tlačítka ve vztahu k jeho sourozencům. Možnosti zahrnují: `samostatné`, `levé`, `pravé` a `střední` |
+    | přidatStín      | booleovská hodnota    | Určuje, zda se má na tlačítko přidat stín                                                                  |
+    | použítRozmazání | booleovská hodnota    | Určuje, zda se má na tlačítko použít rozostření                                                            |
+    | neaktivní       | booleovská hodnota    | Determines whether the button is disabled                                                                  |
+    | focus           | booleovská hodnota    | Indikuje, zda tlačítko má zaměření                                                                         |
+    | onClick         | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko                                  |
+    | jeAktivní       | booleovská hodnota    | Určuje, zda je tlačítko v aktivním stavu                                                                   |
+  </Tab>
+</Tabs>
+
+## Plovoucí skupina ikonových tlačítek
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      const iconButtons = [
+        {
+          Icon: IconClipboardText,
+          onClick: () => console.log("Button 1 clicked"),
+          isActive: true,
+        },
+        {
+          Icon: IconCheckbox,
+          onClick: () => console.log("Button 2 clicked"),
+          isActive: true,
+        },
+      ];
+
+      return (
+        <FloatingIconButtonGroup
+        className
+        size="small"
+        iconButtons={iconButtons} />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti       | Typ     | Popis                                                                                                                                                                                                                                                                              |
+    | ---------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | řetězec | Volitelný název pro dodatečné stylování                                                                                                                                                                                                                                            |
+    | velikost         | řetězec | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                                                                                                                                                                                                                             |
+    | ikonová tlačítka | pole    | Pole objektů, z nichž každé představuje ikonové tlačítko ve skupině. Každý objekt by měl obsahovat ikonovou komponentu, kterou chcete zobrazit v tlačítku, funkci, kterou chcete vyvolat při kliknutí uživatele na tlačítko, a určení, zda by tlačítko mělo být aktivní či nikoli. |
+  </Tab>
+</Tabs>
+
+## Light Button
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { LightButton } from "@/ui/input/button/components/LightButton";
+
+    export const MyComponent = () => {
+      return <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={()=>console.log('click')}
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ                | Popis                                                                     |
+    | ---------- | ------------------ | ------------------------------------------------------------------------- |
+    | className  | řetězec            | Volitelný název pro dodatečné stylování                                   |
+    | ikona      | `React.ReactNode`  | Ikona, kterou chcete zobrazit v tlačítku                                  |
+    | název      | řetězec            | Textový obsah tlačítka                                                    |
+    | akcent     | řetězec            | Barva akcentu tlačítka. Options include: `secondary` and `tertiary`       |
+    | aktivní    | booleovská hodnota | Určuje, zda je tlačítko v aktivním stavu                                  |
+    | neaktivní  | booleovská hodnota | Determines whether the button is disabled                                 |
+    | focus      | booleovská hodnota | Indikuje, zda tlačítko má zaměření                                        |
+    | onClick    | funkce             | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko |
+  </Tab>
+</Tabs>
+
+## Light Icon Button
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <LightIconButton
+          className
+          testId="test1"
+          Icon={IconSearch}
+          title="Title"
+          size="small"
+          accent="secondary"
+          active={true}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti | Typ                   | Popis                                                                     |
+    | ---------- | --------------------- | ------------------------------------------------------------------------- |
+    | className  | řetězec               | Volitelný název pro dodatečné stylování                                   |
+    | testId     | řetězec               | Testovací identifikátor pro tlačítko                                      |
+    | Ikona      | `React.ComponentType` | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka           |
+    | název      | řetězec               | Textový obsah tlačítka                                                    |
+    | velikost   | řetězec               | Velikost tlačítka. Má dvě možnosti: `malé` a `střední`                    |
+    | akcent     | řetězec               | Barva akcentu tlačítka. Options include: `secondary` and `tertiary`       |
+    | aktivní    | booleovská hodnota    | Určuje, zda je tlačítko v aktivním stavu                                  |
+    | neaktivní  | booleovská hodnota    | Determines whether the button is disabled                                 |
+    | focus      | booleovská hodnota    | Indikuje, zda má tlačítko zaměření                                        |
+    | onClick    | funkce                | Funkce zpětného volání, která se spustí, když uživatel klikne na tlačítko |
+  </Tab>
+</Tabs>
+
+## Hlavní tlačítko
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { MainButton } from "@/ui/input/button/components/MainButton";
+    import { IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <MainButton
+          title="Checkbox"
+          fullWidth={false}
+          variant="primary"
+          soon={false}
+          Icon={IconCheckbox}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti           | Typ                              | Popis                                                                              |
+    | -------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+    | název                | řetězec                          | Textový obsah tlačítka                                                             |
+    | fullWidth            | booleovská hodnota               | Určuje, zda by tlačítko mělo zabírat celou šířku svého kontejneru                  |
+    | varianta             | řetězec                          | Vizuální stylová varianta tlačítka. Options include `primary` and `secondary`      |
+    | brzy                 | booleovská hodnota               | Indikuje, zda je tlačítko označeno jako "brzy" (například pro nadcházející funkce) |
+    | Ikona                | `React.ComponentType`            | Volitelná komponenta ikony, která se zobrazuje v rámci tlačítka                    |
+    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                       |
+  </Tab>
+</Tabs>
+
+## Zaoblené tlačítko s ikonou
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <RoundedIconButton
+          Icon={IconSearch}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti           | Typ                                             | Popis |
+    | -------------------- | ----------------------------------------------- | ----- |
+    | Ikona                | `React.ComponentType`                           |       |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |       |
+  </Tab>
+</Tabs>

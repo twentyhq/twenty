@@ -1,0 +1,85 @@
+---
+title: Mailbox
+description: Understanding email integration features in Twenty.
+---
+
+**Poznámka**: Chcete-li připojit své emailové účty a konfigurovat nastavení synchronizace, navštivte [Nastavení Emailu a Kalendáře](/l/cs/user-guide/calendar-emails/overview).
+
+## Jak funguje integrace emailu
+
+Twenty automaticky propojuje emaily z vašich připojených schránek s příslušnými CRM záznamy, udržuje historii komunikace na jednom místě.
+
+### Objects Where Emails Can Be Found
+
+Emailové konverzace se zobrazují ve třech hlavních objektech:
+
+* **Osoby**: Zobrazte si všechny emaily vyměněné s konkrétním kontaktem
+* **Společnosti**: Prohlédněte si všechny emaily týkající se společnosti a jejích zaměstnanců
+* **Příležitosti**: Přístup k emailovým vláknům souvisejícím se společností spojenou s touto příležitostí. Emailová vlákna od jednotlivých osob k příležitosti nejsou zatím zobrazena.
+
+### Prohlížení emailových vláken
+
+1. **Navigace na záznam**: Přejděte na jakýkoliv záznam Osoby, Společnosti, nebo Příležitosti
+2. **Výběr záložky Emailů**: Klikněte na záložku `Emaily` pro zobrazení synchronizovaných emailů
+3. **Otevření emailového vlákna**: Klikněte na jakýkoliv email, abyste otevřeli a přečetli si celou konverzaci
+4. **Procházení historie**: Projděte si kompletní emailovou historii s tímto kontaktem
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Co uvidíte
+
+### Zobrazení emailového vlákna
+
+Když otevřete emailové vlákno, můžete:
+
+* **Read Full Conversations**: See the complete email exchange
+* **Zobrazit účastníky**: Zobrazit všechny osoby zapojené do emailového vlákna
+* **Check Timestamps**: Know exactly when each email was sent
+* **Přístup k souvislostem**: Porozumět kompletní historii komunikace
+
+### Email Visibility
+
+V závislosti na nastavení vaší schránky, můžete vidět:
+
+* **Plný obsah**: Kompletní text emailu a detaily
+* **Předmět + Metadata**: Předmět emailu, odesílatel, příjemce a časové razítko
+* **Pouze Metadata**: Základní informace bez obsahu emailu
+
+## Chování synchronizace emailu
+
+### Co se synchronizuje
+
+* **Externí emaily**: Všechny emaily s kontakty mimo vaši organizaci
+* **Automatické propojení**: Emailové zprávy se připojí k existujícím záznamům Osoby a Společnosti
+* **Více adres**: Emailové zprávy z jakékoliv adresy se propojují se stejným záznamem kontaktu
+* **Aktualizace**: Nové emaily se objeví do 5 minut
+
+### Co se nesynchronizuje
+
+* **Interní emaily**: Emailové zprávy mezi kolegy (stejná doména) zůstávají soukromé
+* **Skupinové emaily**: Distribuční seznamy a skupinové emailové zprávy jsou vyloučeny
+* **Vyloučené složky**: Složky, které jste se rozhodli nesynchronizovat (nastavení pod Nastavení → Účty → Email)
+
+### Selektivní synchronizace složek (Laboratorní funkce)
+
+Ovládejte, které emailové složky se synchronizují s Twenty:
+
+1. Povolte `Složka zpráv` v Nastavení → Načítání → Lab
+2. Konfigurujte složky pod Nastavení → Účty → Email
+3. Vyberte konkrétní složky k zahrnutí nebo vyloučení (příchozí, odeslané, archiv, vlastní složky)
+
+## Řešení problémů s synchronizací emailu
+
+### Běžné problémy se synchronizací
+
+* **Zpoždění synchronizace**: Emailové zprávy se zobrazují do 5 minut, ale původní import může trvat déle
+* **Chybějící emaily**: Zkontrolujte, zda:
+  * Složky jsou vyloučeny v nastavení Složky zpráv
+  * Automatické vytváření kontaktů je deaktivováno (emaily potřebují existující záznamy Twenty)
+  * Email je od kolegů (stejná doména) nebo skupinových seznamů
+  * Schránka stále dokončuje původní synchronizaci
+
+### Omezení emailů
+
+* **Systémové složky**: Některé emailové složky nemusí být k dispozici pro synchronizaci
+* **Aliasy**: Pouze skutečné schránky mohou být připojeny (ne aliasy emailů)

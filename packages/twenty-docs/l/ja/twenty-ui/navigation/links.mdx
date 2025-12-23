@@ -1,5 +1,5 @@
 ---
-title: リンク
+title: Links
 image: /images/user-guide/what-is-twenty/20.png
 ---
 
@@ -7,162 +7,148 @@ image: /images/user-guide/what-is-twenty/20.png
   <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
 </Frame>
 
-## 連絡先リンク
+## Contact Link
 
-連絡先情報を表示するためのスタイライズされたリンクコンポーネントです。
+A stylized link component for displaying contact information.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
 
-```jsx
-import { BrowserRouter as Router } from 'react-router-dom';
+    import { ContactLink } from 'twenty-ui/navigation';
 
-import { ContactLink } from 'twenty-ui/navigation';
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log('Contact link clicked!', event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log('Contact link clicked!', event);
-  };
+      return (
+        <Router>
+          <ContactLink
+            className
+            href="mailto:example@example.com"
+            onClick={handleLinkClick}
+          >
+            example@example.com
+          </ContactLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <Router>
-      <ContactLink
-        className
-        href="mailto:example@example.com"
-        onClick={handleLinkClick}
-      >
-        example@example.com
-      </ContactLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ     | タイプ               | 説明                          |
-| --------- | ----------------- | --------------------------- |
-| className | string            | 追加スタイル用のオプション名              |
-| href      | string            | リンクのターゲットURLまたはパス           |
-| onClick   | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
-| children  | `React.ReactNode` | リンク内に表示されるコンテンツ             |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props     | Type              | Description                                                |
+    | --------- | ----------------- | ---------------------------------------------------------- |
+    | className | string            | Optional name for additional styling                       |
+    | href      | string            | The target URL or path for the link                        |
+    | onClick   | function          | Callback function to be triggered when the link is clicked |
+    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  </Tab>
 </Tabs>
 
-## 生リンク
+## Raw Link
 
-リンクを表示するためのスタイライズされたリンクコンポーネントです。
+A stylized link component for displaying links.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { RawLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
-  };
+      return (
+        <Router>
+          <RawLink className href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RawLink>
+        </Router>
+      );
+    };
 
-  return (
-    <Router>
-      <RawLink className href="/contact" onClick={handleLinkClick}>
-        Contact Us
-      </RawLink>
-    </Router>
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ     | タイプ               | 説明                          |
-| --------- | ----------------- | --------------------------- |
-| className | string            | 追加のスタイリングのためのオプション名         |
-| href      | string            | リンクのターゲットURLまたはパス           |
-| onClick   | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
-| children  | `React.ReactNode` | リンク内に表示されるコンテンツ             |
-
-</Tab>
+  <Tab title="Props">
+    | Props     | Type              | Description                                                |
+    | --------- | ----------------- | ---------------------------------------------------------- |
+    | className | string            | Optional name for additional styling                       |
+    | href      | string            | The target URL or path for the link                        |
+    | onClick   | function          | Callback function to be triggered when the link is clicked |
+    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  </Tab>
 </Tabs>
 
-## 丸リンク
+## Rounded Link
 
-リンクのためのチップコンポーネントを備えた丸いスタイルのリンクです。
+A rounded-styled link with a Chip component for links.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { RoundedLink } from "/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      const handleLinkClick = (event) => {
+        console.log("Contact link clicked!", event);
+      };
 
-export const MyComponent = () => {
-  const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
-  };
+      return (
+        <Router>
+          <RoundedLink href="/contact" onClick={handleLinkClick}>
+            Contact Us
+          </RoundedLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <Router>
-      <RoundedLink href="/contact" onClick={handleLinkClick}>
-        Contact Us
-      </RoundedLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| プロパティ    | タイプ               | 説明                          |
-| -------- | ----------------- | --------------------------- |
-| href     | string            | リンクのターゲットURLまたはパス           |
-| children | `React.ReactNode` | リンク内に表示されるコンテンツ             |
-| onClick  | 機能                | リンクがクリックされるとトリガーされるコールバック関数 |
-
-</Tab>
+  <Tab title="Props">
+    | Props    | Type              | Description                                                |
+    | -------- | ----------------- | ---------------------------------------------------------- |
+    | href     | string            | The target URL or path for the link                        |
+    | children | `React.ReactNode` | The content to be displayed inside the link                |
+    | onClick  | function          | Callback function to be triggered when the link is clicked |
+  </Tab>
 </Tabs>
 
-## ソーシャルリンク
+## Social Link
 
-URL、LinkedIn、X(またはTwitter)など、さまざまなソーシャルリンクタイプに対応したスタイライズされたソーシャルリンクです。
+Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { SocialLink } from "twenty-ui/navigation";
+    import { BrowserRouter as Router } from "react-router-dom";
 
-```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <SocialLink
+            type="twitter"
+            href="https://twitter.com/twentycrm"
+          ></SocialLink>
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <Router>
-      <SocialLink
-        type="twitter"
-        href="https://twitter.com/twentycrm"
-      ></SocialLink>
-    </Router>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ    | タイプ               | 説明                                                                                                                             |
-| -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| href     | string            | リンクのターゲットURLまたはパス                                                                                                              |
-| children | `React.ReactNode` | リンク内に表示されるコンテンツ                                                                                                                |
-| タイプ      | string            | ソーシャルリンクの種類です。 ソーシャルリンクの種類です。 オプションには、`url`、`LinkedIn`、`Twitter`があります。 ソーシャルリンクの種類です。 オプションには、`url`、`LinkedIn`、`Twitter`があります。 |
-| onClick  | 機能                | リンクがクリックされるとトリガーされるコールバック関数                                                                                                    |
-
-</Tab>
+  <Tab title="Props">
+    | Props    | Type              | Description                                                                 |
+    | -------- | ----------------- | --------------------------------------------------------------------------- |
+    | href     | string            | The target URL or path for the link                                         |
+    | children | `React.ReactNode` | The content to be displayed inside the link                                 |
+    | type     | string            | The type of social links. Options include: `url`, `LinkedIn`, and `Twitter` |
+    | onClick  | function          | Callback function to be triggered when the link is clicked                  |
+  </Tab>
 </Tabs>

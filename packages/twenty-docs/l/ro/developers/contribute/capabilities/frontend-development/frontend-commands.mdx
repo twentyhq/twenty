@@ -1,0 +1,90 @@
+---
+title: Comenzi Frontend
+---
+
+## Comenzi utile
+
+### Pornirea aplicației
+
+```bash
+npx nx start twenty-front
+```
+
+### Regenerate graphql schema based on API graphql schema
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+SAU
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # utilizați --fix pentru a corecta erorile de lint
+```
+
+## Traduceri
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Test
+
+```bash
+npx nx run twenty-front:test # rulați teste jest
+npx nx run twenty-front:storybook:serve:dev # rulați storybook
+npx nx run twenty-front:storybook:test # rulați testele # (are nevoie de yarn storybook:serve:dev pentru a rula)
+npx nx run twenty-front:storybook:coverage # (are nevoie de yarn storybook:serve:dev pentru a rula)
+```
+
+## Tehnologii Utilizate
+
+The project has a clean and simple stack, with minimal boilerplate code.
+
+**Aplicație**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**Testare**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**Instrumente**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## Arhitectură
+
+### Rutare
+
+[React Router](https://reactrouter.com/) se ocupă de rutare.
+
+Pentru a evita [re-redări](/l/ro/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutile, toată logica de rutare se află în `useEffect` în `PageChangeEffect`.
+
+### Managementul stării
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) se ocupă de managementul stării.
+
+Consultați [cele mai bune practici](/l/ro/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pentru mai multe informații despre managementul stării.
+
+## Testare
+
+[Jest](https://jestjs.io/) servește ca instrument pentru testarea unităților, în timp ce [Storybook](https://storybook.js.org/) este pentru testarea componentelor.
+
+Jest este utilizat în principal pentru testarea funcțiilor utilitare, nu a componentelor în sine.
+
+Storybook este pentru testarea comportamentului componentelor izolate, precum și pentru afișarea sistemului de design.

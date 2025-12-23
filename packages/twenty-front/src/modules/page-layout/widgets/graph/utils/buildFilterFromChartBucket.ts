@@ -6,6 +6,7 @@ import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/ut
 import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 import { isCyclicalDateGranularity } from '@/page-layout/widgets/graph/utils/isCyclicalDateGranularity';
 import { isTimeRangeDateGranularity } from '@/page-layout/widgets/graph/utils/isTimeRangeDateGranularity';
+import { serializeChartBucketValueForFilter } from '@/page-layout/widgets/graph/utils/serializeChartBucketValueForFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   ObjectRecordGroupByDateGranularity,
@@ -16,7 +17,6 @@ import {
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
   fieldName: string;
@@ -30,24 +30,6 @@ type BuildFilterFromChartBucketParams = {
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
   timezone?: string;
-};
-
-const formatChartFilterValue = (
-  fieldType: FieldMetadataType,
-  bucketRawValue: unknown,
-  operand: ViewFilterOperand,
-): string => {
-  const stringValue = String(bucketRawValue);
-
-  const needsJsonArray =
-    operand === ViewFilterOperand.IS &&
-    [
-      FieldMetadataType.SELECT,
-      FieldMetadataType.UUID,
-      FieldMetadataType.RELATION,
-    ].includes(fieldType);
-
-  return needsJsonArray ? JSON.stringify([stringValue]) : stringValue;
 };
 
 export const buildFilterFromChartBucket = ({
@@ -126,11 +108,12 @@ export const buildFilterFromChartBucket = ({
 
   const operand = availableOperands[0];
 
-  const value = formatChartFilterValue(
-    fieldMetadataItem.type,
+  const value = serializeChartBucketValueForFilter({
+    fieldType: fieldMetadataItem.type,
     bucketRawValue,
     operand,
-  );
+    subFieldName,
+  });
 
   return [
     {

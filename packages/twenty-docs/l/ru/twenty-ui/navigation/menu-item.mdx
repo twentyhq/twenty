@@ -1,0 +1,428 @@
+---
+title: Пункт меню
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Заголовок" />
+</Frame>
+
+Универсальный пункт меню, предназначенный для использования в меню или списке навигации.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
+
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства            | Тип             | Описание                                                                                   |
+    | ------------------- | --------------- | ------------------------------------------------------------------------------------------ |
+    | LeftIcon            | ИконкаКомпонент | Необязательная иконка слева, отображаемая перед текстом в пункте меню                      |
+    | акцент              | строка          | Указывает цвет акцента пункта меню. Варианты: `default`, `danger`, и `placeholder`         |
+    | текст               | строка          | Текстовое содержание пункта меню                                                           |
+    | кнопки с иконками   | массив          | Массив объектов, представляющих дополнительные кнопки с иконками, связанные с пунктом меню |
+    | открытаПодсказка    | булево          | Управляет видимостью всплывающей подсказки, связанной с пунктом меню                       |
+    | идентификатор теста | строка          | Атрибут data-testid для тестирования                                                       |
+    | onClick             | функция         | Функция обратного вызова, вызываемая при нажатии на пункт меню                             |
+    | className           | строка          | Необязательное имя для дополнительной стилизации                                           |
+  </Tab>
+</Tabs>
+
+## Варианты
+
+Различные варианты компонентов меню включают следующее:
+
+### Команда
+
+Командный стиль пункта меню в меню для указания сочетаний клавиш.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
+
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства             | Тип              | Описание                                                              |
+    | -------------------- | ---------------- | --------------------------------------------------------------------- |
+    | LeftIcon             | Компонент иконки | Необязательная левая иконка, отображаемая перед текстом в пункте меню |
+    | текст                | строка           | Текстовое содержание пункта меню                                      |
+    | перваяГорячаяКлавиша | строка           | Первая горячая клавиша, связанная с командой                          |
+    | втораяГорячаяКлавиша | строка           | Вторая горячая клавиша, связанная с командой                          |
+    | выбрано              | булево           | Указывает, выбран ли пункт меню                                       |
+    | onClick              | функция          | Функция обратного вызова, вызываемая при нажатии на пункт меню        |
+    | className            | строка           | Необязательное имя для дополнительного стилирования                   |
+  </Tab>
+</Tabs>
+
+### Перетаскиваемый
+
+Пункт меню, который можно перетаскивать, предназначен для использования в меню или списке, где элементы могут быть перетащены, и дополнительные действия могут быть выполнены через кнопки с иконками.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства                | Тип              | Описание                                                                                   |
+    | ----------------------- | ---------------- | ------------------------------------------------------------------------------------------ |
+    | LeftIcon                | Компонент иконки | Необязательная левая иконка, отображаемая перед текстом в пункте меню                      |
+    | акцент                  | строка           | Цвет акцента пункта меню. It can either be `default`, `placeholder`, and `danger`          |
+    | кнопки с иконками       | массив           | Массив объектов, представляющих дополнительные кнопки с иконками, связанные с пунктом меню |
+    | открытаПодсказка        | булево           | Управляет видимостью подсказки, связанной с пунктом меню                                   |
+    | нажатие                 | функция          | Функция обратного вызова, выполняемая при клике по ссылке                                  |
+    | текст                   | строка           | Текстовое содержание пункта меню                                                           |
+    | перетаскиваниеОтключено | булево           | Указывает, отключено ли перетаскивание                                                     |
+    | className               | строка           | Необязательное имя для дополнительного стилирования                                        |
+  </Tab>
+</Tabs>
+
+### Множественный выбор
+
+Предоставляет способ реализации функционала множественного выбора с использованием ассоциированного флажка.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства       | Тип              | Описание                                                              |
+    | -------------- | ---------------- | --------------------------------------------------------------------- |
+    | LeftIcon       | Компонент иконки | Необязательная левая иконка, отображаемая перед текстом в пункте меню |
+    | текст          | строка           | Текстовое содержание пункта меню                                      |
+    | выбрано        | булево           | Указывает, выбран ли пункт меню (отмечен)                             |
+    | onSelectChange | функция          | Функция обратного вызова, вызываемая при изменении состояния флажка   |
+    | className      | строка           | Необязательное имя для дополнительного стилирования                   |
+  </Tab>
+</Tabs>
+
+### Множественный выбор с аватаром
+
+Элемент меню с множественным выбором, имеющий аватар, флажок для выбора и текстовое содержание.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства       | Тип         | Описание                                                            |
+    | -------------- | ----------- | ------------------------------------------------------------------- |
+    | аватар         | `ReactNode` | Аватар или иконка, отображаемые слева от пункта меню                |
+    | текст          | строка      | Текстовое содержание пункта меню                                    |
+    | выбрано        | булево      | Указывает, выбран ли пункт меню (отмечен)                           |
+    | onSelectChange | функция     | Функция обратного вызова, вызываемая при изменении состояния флажка |
+    | className      | строка      | Необязательное имя для дополнительного стилирования                 |
+  </Tab>
+</Tabs>
+
+### Навигация
+
+Пункт меню с опциональной левой иконкой, текстовым содержанием и иконкой "стрелка вправо".
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
+
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип              | Описание                                                              |
+    | --------- | ---------------- | --------------------------------------------------------------------- |
+    | LeftIcon  | Компонент иконки | Необязательная левая иконка, отображаемая перед текстом в пункте меню |
+    | текст     | строка           | Текстовое содержание пункта меню                                      |
+    | onClick   | функция          | Функция обратного вызова, вызываемая при нажатии на пункт меню        |
+    | className | строка           | Необязательное имя для дополнительного стилирования                   |
+  </Tab>
+</Tabs>
+
+### Выбрать
+
+Выбираемый элемент меню, с опциональным левым содержанием (иконка и текст) и индикатором (иконкой "галочка") для отображения статуса выбора.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип              | Описание                                                              |
+    | --------- | ---------------- | --------------------------------------------------------------------- |
+    | LeftIcon  | Компонент иконки | Необязательная левая иконка, отображаемая перед текстом в пункте меню |
+    | текст     | строка           | Текстовое содержание пункта меню                                      |
+    | выбрано   | булево           | Указывает, выбран ли пункт меню (отмечен)                             |
+    | отключено | булево           | Указывает, отключен ли пункт меню                                     |
+    | hovered   | булево           | Указывает, наводится ли указатель на пункт меню                       |
+    | onClick   | функция          | Функция обратного вызова, вызываемая при нажатии на пункт меню        |
+    | className | строка           | Необязательное имя для дополнительного стилирования                   |
+  </Tab>
+</Tabs>
+
+### Select Avatar
+
+Выбираемый элемент меню с аватаром, с опциональным левым содержанием (аватар и текст) и индикатором (иконка "галочка") для отображения статуса выбора.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства            | Тип         | Описание                                                       |
+    | ------------------- | ----------- | -------------------------------------------------------------- |
+    | аватар              | `ReactNode` | Аватар или иконка, отображаемые слева от пункта меню           |
+    | текст               | строка      | Текстовое содержание пункта меню                               |
+    | выбрано             | булево      | Указывает, выбран ли пункт меню (отмечен)                      |
+    | отключено           | булево      | Указывает, отключен ли пункт меню                              |
+    | hovered             | булево      | Указывает, наводится ли указатель на пункт меню                |
+    | идентификатор теста | строка      | Атрибут data-testid для тестирования                           |
+    | нажатие             | функция     | Функция обратного вызова, вызываемая при нажатии на пункт меню |
+    | className           | строка      | Необязательное имя для дополнительного стилирования            |
+  </Tab>
+</Tabs>
+
+### Select Color
+
+Выбираемый элемент меню с образцом цвета, для ситуаций, когда пользователям нужно выбрать цвет из меню.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип     | Описание                                                                                                                                                                                               |
+    | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | цвет      | строка  | Цвет темы, который отображается как пример в пункте меню. Доступные варианты: `зелёный`, `бирюзовый`, `небесно-голубой`, `синий`, `фиолетовый`, `розовый`, `красный`, `оранжевый`, `жёлтый` и `серый`. |
+    | выбран    | булево  | Указывает, выбран ли пункт меню (отмечен)                                                                                                                                                              |
+    | отключен  | булево  | Указывает, отключен ли пункт меню                                                                                                                                                                      |
+    | hovered   | булево  | Указывает, наведено ли в данный момент на пункт меню                                                                                                                                                   |
+    | вариант   | строка  | Вариант цветового образца. Это может быть либо `по умолчанию`, либо `конвейер`.                                                                                                                        |
+    | onClick   | функция | Функция обратного вызова, вызываемая при нажатии на пункт меню                                                                                                                                         |
+    | className | строка  | Необязательное имя для дополнительной стилизации                                                                                                                                                       |
+  </Tab>
+</Tabs>
+
+### Переключить
+
+Элемент меню с переключателем для активации или деактивации определенной функции
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
+
+    import { MenuItemToggle } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства            | Тип             | Описание                                                                          |
+    | ------------------- | --------------- | --------------------------------------------------------------------------------- |
+    | LeftIcon            | ИконкаКомпонент | Необязательная иконка слева, отображаемая перед текстом в пункте меню             |
+    | текст               | строка          | Текстовое содержание пункта меню                                                  |
+    | переключено         | булево          | Указывает, в каком состоянии находится переключатель, "включено" или "выключено". |
+    | onToggleChange      | функция         | Функция обратного вызова, вызываемая при изменении состояния переключателя        |
+    | размерПереключателя | строка          | Размер переключателя. It can be either \                                          |
+    | className           | строка          | Необязательное имя для дополнительного стилирования                               |
+  </Tab>
+</Tabs>

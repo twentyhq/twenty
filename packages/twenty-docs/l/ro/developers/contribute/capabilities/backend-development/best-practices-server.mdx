@@ -1,0 +1,22 @@
+---
+title: Cele mai bune practici
+---
+
+This document outlines the best practices you should follow when working on the backend.
+
+## Urmați o abordare modulară
+
+Backend-ul urmează o abordare modulară, care este un principiu fundamental atunci când lucrați cu NestJS. Asigurați-vă că vă împărțiți codul în module reutilizabile pentru a menține o bază de cod curată și organizată.
+Fiecare modul ar trebui să encapsuleze o anumită funcționalitate sau caracteristică și să aibă un domeniu de aplicare bine definit. Această abordare modulară permite o clară separare a preocupărilor și elimină complexitățile inutile.
+
+## Expuneți servicii pentru utilizare în module
+
+Creați întotdeauna servicii care au o responsabilitate clară și unică, ceea ce îmbunătățește lizibilitatea și întreținerea codului. Denumirea serviciilor trebuie să fie descriptivă și consecventă.
+
+De asemenea, ar trebui să expuneți serviciile pe care doriți să le utilizați în alte module. Expunerea serviciilor la alte module este posibilă prin sistemul de injecție de dependențe puternic al NestJS și promovează cuplarea slabă între componente.
+
+## Evitați utilizarea tipului `any`
+
+Când declarați o variabilă ca fiind `any`, verificatorul de tip al TypeScript nu realizează niciun control de tip, făcând posibilă atribuirea oricărui tip de valori variabilei. TypeScript utilizează inferența tipului pentru a determina tipul variabilei pe baza valorii. Declarându-l ca `any`, TypeScript nu mai poate deduce tipul. This makes it hard to catch type-related errors during development, leading to runtime errors and makes the code less maintainable, less reliable, and harder to understand for others.
+
+De aceea, totul ar trebui să aibă un tip. Astfel, dacă creați un nou obiect cu un prenume și un nume de familie, ar trebui să creați o interfață sau tip care să conțină un prenume și un nume de familie care să definească forma obiectului pe care îl manipulați.

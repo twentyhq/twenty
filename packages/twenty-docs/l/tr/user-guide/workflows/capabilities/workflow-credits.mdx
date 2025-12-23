@@ -1,0 +1,76 @@
+---
+title: İş Akışı Kredileri
+description: Understand workflow credit consumption and management.
+---
+
+İş akışı kredileri, Twenty'deki otomasyonlarınızın gücüdür. Nasıl çalıştıklarını anlamak, maliyetleri optimize etmenize ve otomasyon bütçenizi etkili bir şekilde yönetmenize yardımcı olur.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## Kredi Tüketiminin Çalışma Prensibi
+
+Krediler, iş akışları çalıştığında tüketilir, oluşturulduğunda değil. Her iş akışı eylemi, karmaşıklığına göre kredi tüketir:
+
+### Eylem Türüne Göre Kredi Tüketimi
+
+* **Temel dahili işlemler**: Çok düşük kredi tüketimi
+  * Kayıt Ara
+  * Kayıt Oluştur
+  * Kayıt Güncelle
+  * Kayıt Sil
+  * Form işlemleri
+
+* **Karmaşık işlemler**: Daha yüksek kredi tüketimi
+  * Kod eylemleri (JavaScript yürütme)
+  * Harici hizmetlere HTTP İstekleri
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### Gerçek Zamanlı Düşüm
+
+Krediler, iş akışları çalışırken gerçek zamanlı olarak düşülür. Bu şu anlama gelir:
+
+* Taslak iş akışları kredi tüketmez
+* Sadece aktif, çalışan iş akışları kredi tahsisatınızı kullanır
+* Başarısız iş akışları, tamamlanan adımlarda yine de kredi tüketir
+
+## Kredilerin Yönetimi
+
+### Kredi Kullanımını Kontrol Et
+
+1. **Ayarlar → Faturalama** bölümüne gidin
+2. Güncel kredi tüketiminizi ve kalan bakiyenizi görüntüleyin
+3. İş akışlarınızı optimize etmek için kullanım desenlerini izleyin
+
+### Ek Kredi Satın Alma
+
+Plan tahsisinizin ötesinde daha fazla krediye ihtiyacınız varsa:
+
+1. **Ayarlar → Faturalama** bölümüne gidin
+2. Ek kredi satın alma seçeneğine tıklayın. Farklı boyutlarda paketler mevcuttur.
+3. Krediler mevcut bakiyenize eklenir
+
+## En İyi Uygulamalar
+
+* **Toplu İşleme**: Toplu işlemler ve Iterator eylemlerini verimli bir şekilde kullanın
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* Verimlilik için Kod eylemlerini optimize edin
+* Bireysel eylem çağrılarını azaltmak için toplu işlemler yapın

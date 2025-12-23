@@ -1,0 +1,44 @@
+---
+title: Kontrol Kutusu
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Başlık" />
+</Frame>
+
+Bir kullanıcı birden fazla seçeneği seçmek istediğinde kullanılır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler      | Tür      | Açıklama                                                                                      |
+    | --------------- | -------- | --------------------------------------------------------------------------------------------- |
+    | işaretli        | boolean  | Kontrol kutusunun işaretli olup olmadığını gösterir                                           |
+    | belirsiz        | boolean  | Kontrol kutusunun belirsiz bir durumda olup olmadığını gösterir (ne işaretli ne de işaretsiz) |
+    | onChange        | function | The callback function you want to trigger when the checkbox state changes                     |
+    | onCheckedChange | function | `checked` durumu değiştiğinde tetiklemek istediğiniz geri çağırma işlevi                      |
+    | varyant         | metin    | Kutunun görsel stil varyantı. Seçenekler şunları içerir: `primary`, `secondary` ve `tertiary` |
+    | boyut           | string   | Kontrol kutusunun boyutu. Has two options: `small` and `large`                                |
+    | şekil           | dize     | Kontrol kutusunun şekli. İki seçenek vardır: `squared` ve `rounded`                           |
+  </Tab>
+</Tabs>

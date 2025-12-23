@@ -1,0 +1,333 @@
+---
+title: Configurare locală
+description: Ghidul pentru contribuitori (sau dezvoltatori curioși) care doresc să ruleze Twenty local.
+---
+
+## Cerințe
+
+<Tabs>
+  <Tab title="Linux și MacOS">
+    Înainte de a instala și utiliza Twenty, asigurați-vă că instalați următoarele pe computerul dvs.:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm` nu va funcționa, ar trebui să folosiți `yarn` în schimb. Yarn este acum livrat cu Node.js, așa că nu este nevoie să-l instalați separat.
+      Trebuie doar să rulați `corepack enable` pentru a activa Yarn dacă nu ați făcut acest lucru deja.
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    1. Instalați WSL
+       Deschideți PowerShell ca Administrator și rulați:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Ar trebui să vedeți acum un mesaj pentru a reporni computerul. Dacă nu, reporniți-l manual.
+
+    La repornire, o fereastră PowerShell se va deschide și va instala Ubuntu. Acest lucru poate dura ceva timp.
+    Veți vedea un mesaj pentru a crea un nume de utilizator și o parolă pentru instalarea Ubuntu.
+
+    2. Instalați și configurați git
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Numele Dvs."
+
+    git config --global user.email "emailul@domeniu.com"
+    ```
+
+    3. Instalați nvm, node.js și yarn
+
+    <Warning>
+      Folosiți `nvm` pentru a instala versiunea corectă de `node`. Fișierul `.nvmrc` asigură că toți contribuitorii folosesc aceeași versiune.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    Închideți și redeschideți terminalul pentru a utiliza nvm. Apoi rulați următoarele comenzi.
+
+    ```bash
+
+    nvm install # instalează versiunea recomandată de node
+
+    nvm use # folosește versiunea recomandată de node
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Pasul 1: Clonarea Git
+
+Rulați în terminalul dvs. comanda următoare.
+
+<Tabs>
+  <Tab title="SSH (Recomandat)">
+    Dacă nu ați configurat deja cheile SSH, puteți învăța cum să faceți acest lucru [aici](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## Pasul 2: Poziționați-vă la rădăcină
+
+```bash
+cd twenty
+```
+
+Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiectului.
+
+## Pasul 3: Configurarea unei baze de date PostgreSQL
+
+<Tabs>
+  <Tab title="Linux">
+    **Opțiunea 1 (preferată):** Pentru a configura local baza de date:
+    Folosiți următorul link pentru a instala PostgreSQL pe mașina dvs. Linux: [Instalare PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Notă: Ar putea fi nevoie să adăugați `sudo -u postgres` la comandă înainte de `psql` pentru a evita erorile de permisiune.
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Opțiunea 1 (preferată):** Pentru a configura local baza de date cu `brew`:
+
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Puteți verifica dacă serverul PostgreSQL este activ executând:
+
+    ```bash
+      brew services list
+    ```
+
+    Instalatorul s-ar putea să nu creeze implicit utilizatorul `postgres` atunci când instalați
+    prin Homebrew pe MacOS. În schimb, creează un rol PostgreSQL care se potrivește cu numele de utilizator al
+    macOS-ului dvs. (de ex., "john").
+    Pentru a verifica și crea utilizatorul `postgres` dacă este necesar, urmați acești pași:
+
+    ```bash
+      # Conectare la PostgreSQL
+      psql postgres
+      sau
+      psql -U $(whoami) -d postgres
+    ```
+
+    Odată ce ajungeți la promptul psql (postgres=#), rulați:
+
+    ```bash
+     # Listați rolurile PostgreSQL existente
+     \du
+    ```
+
+    Veți vedea un rezultat similar cu:
+
+    ```bash
+     Role name | Attributes  | Member of
+     -----------+-------------+-----------
+     john      | Superuser   | {}
+    ```
+
+    Dacă nu vedeți un rol `postgres` listat, mergeți la pasul următor.
+    Creați rolul `postgres` manual:
+
+    ```bash
+     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    Acest lucru creează un rol de superutilizator numit `postgres` cu drept de autentificare.
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Toți pașii următori trebuie rulați în terminalul WSL (în cadrul mașinii dvs. virtuale)
+
+    **Opțiunea 1:** Pentru a configura local PostgreSQL:
+    Folosiți următorul link pentru a instala PostgreSQL pe mașina dvs. virtuală Linux: [Instalare PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Notă: Ar putea fi nevoie să adăugați `sudo -u postgres` la comandă înainte de `psql` pentru a evita erorile de permisiune.
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+    Rularea Docker pe WSL adaugă un strat suplimentar de complexitate.
+    Folosiți această opțiune doar dacă sunteți confortabil cu pașii suplimentari implicați, inclusiv activarea [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+
+    ```bash
+      make postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Acum puteți accesa baza de date la [localhost:5432](localhost:5432), cu utilizator `postgres` și parolă `postgres`.
+
+## Pasul 4: Configurați o bază de date Redis (cache)
+
+Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
+
+<Tabs>
+  <Tab title="Linux">
+    **Opțiunea 1:** Pentru a configura local Redis:
+    Folosiți următorul link pentru a instala Redis pe mașina dvs. Linux: [Instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Opțiunea 1 (preferată):** Pentru a configura local Redis cu `brew`:
+
+    ```bash
+    brew install redis
+    ```
+
+    Porniți serverul Redis:
+    `brew services start redis`
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    **Opțiunea 1:** Pentru a configura local Redis:
+    Folosiți următorul link pentru a instala Redis pe mașina dvs. virtuală Linux: [Instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Opțiunea 2:** Dacă aveți docker instalat:
+
+    ```bash
+      make redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Dacă aveți nevoie de o interfață grafică pentru client, vă recomandăm [Redis Insight](https://redis.io/insight/) (versiune gratuită disponibilă)
+
+## Pasul 5: Configurați variabilele de mediu
+
+Utilizați variabile de mediu sau fișiere `.env` pentru a configura proiectul dvs. Mai multe informații [aici](/l/ro/developers/self-host/capabilities/setup)
+
+Copiați fișierele `.env.example` din `/front` și `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ro/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
+## Pasul 6: Instalarea dependențelor
+
+Pentru a construi serverul Twenty și a adăuga date în baza dvs. de date, rulați următoarea comandă:
+
+```bash
+yarn
+```
+
+Rețineți că `npm` sau `pnpm` nu vor funcționa
+
+## Pasul 7: Rularea proiectului
+
+<Tabs>
+  <Tab title="Linux">
+    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar putea să fie pornit automat.
+    Dacă nu, verificați [ghidul de instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pentru distribuția dvs.
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redis ar trebui să fie deja pornit. Dacă nu, rulați:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar putea să fie pornit automat.
+    Dacă nu, verificați [ghidul de instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pentru distribuția dvs.
+  </Tab>
+</Tabs>
+
+Setați baza de date cu următoarea comandă:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Start the server, the worker and the frontend services:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternativ, puteți porni toate serviciile odată:
+
+```bash
+npx nx start
+```
+
+## Pasul 8: Utilizați Twenty
+
+**Front-end**
+
+Frontend-ul Twenty va rula la [http://localhost:3001](http://localhost:3001).
+Vă puteți loga folosind contul demo implicit: `tim@apple.dev` (parolă: `tim@apple.dev`)
+
+**Back-end**
+
+* Serverul Twenty va fi operativ la [http://localhost:3000](http://localhost:3000)
+* API-ul GraphQL poate fi accesat la [http://localhost:3000/graphql](http://localhost:3000/graphql)
+* API-ul REST poate fi accesat la [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Depanare
+
+Dacă întâmpinați vreo problemă, verificați [Depanare](/l/ro/developers/self-host/capabilities/troubleshooting) pentru soluții.

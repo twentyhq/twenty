@@ -1,0 +1,58 @@
+---
+title: Häkchen
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Kopfzeile" />
+</Frame>
+
+Stellt eine erfolgreiche oder abgeschlossene Aktion dar.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    Erweitert `React.ComponentPropsWithoutRef<'div'>` und akzeptiert alle Eigenschaften eines regulären `div`-Elements.
+  </Tab>
+</Tabs>
+
+## Animiertes Häkchen
+
+Stellt ein Häkchen-Symbol mit der zusätzlichen Funktion der Animation dar.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                          | Standard     |
+    | ------------- | ------------ | ------------------------------------- | ------------ |
+    | isAnimating   | boolesch     | Steuert, ob das Häkchen animiert wird | falsch       |
+    | farbe         | Zeichenkette | Farbe des Häkchens                    |              |
+    | Dauer         | nummer       | Die Dauer der Animation in Sekunden   | 0,5 Sekunden |
+    | größe         | nummer       | Die Größe des Häkchens                | 28 Pixel     |
+  </Tab>
+</Tabs>

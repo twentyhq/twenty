@@ -36,7 +36,7 @@ export const GraphWidget = ({ objectMetadataId }: GraphWidgetProps) => {
   );
 
   if (!isDefined(widget.configuration) || !hasValidConfiguration) {
-    return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
+    return <PageLayoutWidgetNoDataDisplay />;
   }
 
   const configurationType = widget.configuration?.configurationType;

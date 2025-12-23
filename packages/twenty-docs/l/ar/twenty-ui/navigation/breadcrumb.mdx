@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="رأس الصفحة" />
+</Frame>
+
+Renders a breadcrumb navigation bar.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات  | النوع  | الوصف                                                                                                                                                                               |
+    | --------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | اسم الفئة | نص     | اسم فئة اختياري لتنسيقات إضافية                                                                                                                                                     |
+    | روابط     | مصفوفة | An array of objects, each representing a breadcrumb link. كل كائن يحتوي على خاصية `children` (محتوى النص للرابط) وخاصية `href` اختيارية (رابط URL للتنقل إليه عند النقر على الرابط) |
+  </Tab>
+</Tabs>

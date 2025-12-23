@@ -1,0 +1,149 @@
+---
+title: Show Expected Amount in Your Pipeline
+description: Calculate and display weighted deal values based on stage probability.
+---
+
+The Expected Amount is a calculated value: **Amount × Probability**. This helps you forecast revenue by weighting deals based on how likely they are to close.
+
+<Tip>
+  This is an example of creating [Formula Fields](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows.
+</Tip>
+
+This guide walks you through setting up the custom fields and workflows needed to calculate and display expected amounts in your pipeline.
+
+## Step 1: Create Custom Fields
+
+You need two custom fields on the Opportunities object.
+
+### Create the Probability Field
+
+1. Go to **Settings → Data Model → Opportunities**
+2. Click **+ Add Field**
+3. Configure:
+   * **Name**: Probability
+   * **Type**: Number
+   * **Description**: Stage-based probability (0-100%)
+4. Click **Save**
+
+### Create the Expected Amount Field
+
+1. Click **+ Add Field**
+2. Configure:
+   * **Name**: Expected Amount
+   * **Type**: Currency
+   * **Description**: Calculated: Amount × Probability
+3. Click **Save**
+
+### Optional: Make Fields Read-Only for Users
+
+If you don't want users manually editing these calculated fields:
+
+1. Go to **Settings → Roles**
+2. Select the role to configure
+3. Find the Opportunities object
+4. Set **Probability** and **Expected Amount** fields to read-only
+
+This ensures only the workflows can update these values.
+
+## Step 2: Create Workflow #1 — Update Probability on Stage Change
+
+This workflow automatically sets the Probability when an opportunity moves to a new stage.
+
+### Create the Workflow
+
+1. Go to **Workflows**
+2. Click **+ New Workflow**
+3. Name it "Update Probability on Stage Change"
+
+### Configure the Trigger
+
+1. Add a **Record Created or Updated** trigger
+2. Select **Opportunities** as the object
+3. Filter on: **Stage** field is updated
+
+### Add Branches for Each Stage
+
+Create a branch for each stage with its probability:
+
+| Stage       | Probability |
+| ----------- | ----------- |
+| New         | 10%         |
+| Qualified   | 25%         |
+| Meeting     | 40%         |
+| Proposal    | 60%         |
+| Negotiation | 80%         |
+| Closed Won  | 100%        |
+| Closed Lost | 0%          |
+
+<Note>
+  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+</Note>
+
+For each stage:
+
+1. Add a **Filter** node: Stage = [stage name]
+2. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Field: Probability
+   * Value: [probability for that stage]
+
+### Calculate Expected Amount
+
+After the branches rejoin:
+
+1. Add a **Filter** node: Amount is not empty
+2. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Field: Expected Amount
+   * Value: Amount × Probability
+
+## Step 3: Create Workflow #2 — Recalculate on Amount Change
+
+This workflow updates the Expected Amount when the deal Amount changes.
+
+### Create the Workflow
+
+1. Go to **Workflows**
+2. Click **+ New Workflow**
+3. Name it "Recalculate Expected Amount on Amount Change"
+
+### Configure the Trigger
+
+1. Add a **Record Created or Updated** trigger
+2. Select **Opportunities** as the object
+3. Filter on: **Amount** field is updated
+
+### Add the Logic
+
+1. Add a **Filter** node: Amount is not empty
+2. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Field: Expected Amount
+   * Value: Amount × Probability
+
+## Step 4: Display in Your Pipeline
+
+Now show the Expected Amount totals in your Kanban view:
+
+1. Open your **Sales Pipeline** Kanban view
+2. Click the **number** next to any Stage name at the top of a column
+3. Select **Sum**
+4. Choose **Expected Amount**
+
+Each column now shows the total weighted pipeline value for that stage.
+
+## Summary
+
+| Component                 | Purpose                                                                   |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Probability field**     | Stores the stage-based win probability                                    |
+| **Expected Amount field** | Stores Amount × Probability                                               |
+| **Workflow #1**           | Updates Probability when Stage changes, then recalculates Expected Amount |
+| **Workflow #2**           | Recalculates Expected Amount when Amount changes                          |
+| **Aggregation**           | Displays Sum of Expected Amount per stage                                 |
+
+## Related
+
+* [Formula Fields](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) — create calculated fields using workflows
+* [Kanban Views](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — column aggregations
+* [How to Create Custom Fields](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — field configuration

@@ -1,0 +1,428 @@
+---
+title: Menüpunkt
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Kopfzeile" />
+</Frame>
+
+Ein vielseitiger Menüpunkt, der in einem Menü oder einer Navigationsliste verwendet werden kann.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
+
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften"     | Typ              | Beschreibung                                                                                                |
+    | ------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------- |
+    | Linkes Symbol       | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüpunkt angezeigt wird.                                 |
+    | Akzent              | Zeichenkette     | Gibt die Akzentfarbe des Menüelements an. Optionen umfassen: `default`, `danger` und `placeholder`          |
+    | text                | string           | Der Textinhalt des Menüelements                                                                             |
+    | Symbolschaltflächen | Array            | Ein Array von Objekten, das zusätzliche Symbolschaltflächen beschreibt, die dem Menüelement zugeordnet sind |
+    | isTooltipOpen       | boolesch         | Steuert die Sichtbarkeit des mit dem Menüpunkt verbundenen Tooltips                                         |
+    | testId              | Zeichenkette     | Das Attribut „data-testid“ für Testzwecke                                                                   |
+    | beiKlick            | Funktion         | Rückruffunktion, die ausgelöst wird, wenn auf den Menüpunkt geklickt wird                                   |
+    | Klassenname         | Zeichenkette     | Optionaler Name für zusätzliches Styling                                                                    |
+  </Tab>
+</Tabs>
+
+## Varianten
+
+Die verschiedenen Varianten der Menükomponente umfassen Folgendes:
+
+### Befehl
+
+Ein befehlsartiger Menüpunkt innerhalb eines Menüs zur Anzeige von Tastaturkürzeln.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
+
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ              | Beschreibung                                                                  |
+    | ------------- | ---------------- | ----------------------------------------------------------------------------- |
+    | Linkes Symbol | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird. |
+    | text          | Zeichenfolge     | Der Textinhalt des Menüelements                                               |
+    | firstHotKey   | Zeichenfolge     | Die erste Tastenkombination, die dem Befehl zugeordnet ist                    |
+    | secondHotKey  | Zeichenfolge     | Die zweite Tastenkombination, die dem Befehl zugeordnet ist                   |
+    | ausgewählt    | boolesch         | Gibt an, ob das Menüelement ausgewählt oder hervorgehoben ist                 |
+    | bei Klick     | Funktion         | Rückruffunktion, die ausgelöst wird, wenn das Menüelement angeklickt wird     |
+    | Klassenname   | Zeichenfolge     | Optionaler Name für zusätzliche Styling                                       |
+  </Tab>
+</Tabs>
+
+### Ziehen
+
+Ein verschiebbares Menüelement, das in einem Menü oder einer Liste verwendet werden soll, bei denen Elemente gezogen werden können und zusätzliche Aktionen über Symbolschaltflächen durchgeführt werden können.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften     | Typ              | Beschreibung                                                                                                   |
+    | ----------------- | ---------------- | -------------------------------------------------------------------------------------------------------------- |
+    | Linkes Symbol     | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird.                                  |
+    | Akzent            | Zeichenfolge     | Die Akzentfarbe des Menüelements. Es kann entweder sein `standard`, `platzhalter` und `gefahr`                 |
+    | Symbolknöpfe      | Array            | Ein Array von Objekten, die zusätzliche Symbolschaltflächen darstellen, die mit dem Menüelement verknüpft sind |
+    | isTooltipOpen     | boolesch         | Steuert die Sichtbarkeit des Tooltips, der mit dem Menüelement verknüpft ist                                   |
+    | bei Klick         | Funktion         | Rückruffunktion, die ausgelöst wird, wenn der Link geklickt wird                                               |
+    | text              | Zeichenfolge     | Der Textinhalt des Menüelements                                                                                |
+    | ZiehenDeaktiviert | boolesch         | Gibt an, ob das Ziehen deaktiviert ist                                                                         |
+    | Klassenname       | Zeichenfolge     | Optionaler Name für zusätzliche Styling                                                                        |
+  </Tab>
+</Tabs>
+
+### Mehrfachauswahl
+
+Bietet eine Möglichkeit, eine Mehrfachauswahl-Funktionalität mit einem zugehörigen Kontrollkästchen zu implementieren.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften  | Typ              | Beschreibung                                                                       |
+    | -------------- | ---------------- | ---------------------------------------------------------------------------------- |
+    | Linkes Symbol  | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird.      |
+    | text           | Zeichenfolge     | Der Textinhalt des Menüelements                                                    |
+    | ausgewählt     | boolesch         | Gibt an, ob das Menüelement ausgewählt (angehakt) ist                              |
+    | onSelectChange | Funktion         | Rückruffunktion, die ausgelöst wird, wenn der Kontrollkästchenstatus geändert wird |
+    | Klassenname    | Zeichenfolge     | Optionaler Name für zusätzliche Styling                                            |
+  </Tab>
+</Tabs>
+
+### Mehrfachauswahl Avatar
+
+Ein Mehrfachauswahl-Menüelement mit einem Avatar, einem Kontrollkästchen zur Auswahl und einem Textinhalt.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften  | Typ          | Beschreibung                                                                                |
+    | -------------- | ------------ | ------------------------------------------------------------------------------------------- |
+    | Avatar         | `ReactNode`  | Der Avatar oder das Symbol, das auf der linken Seite des Menüelements angezeigt werden soll |
+    | text           | Zeichenfolge | Der Textinhalt des Menüelements                                                             |
+    | ausgewählt     | boolesch     | Gibt an, ob das Menüelement ausgewählt (angehakt) ist                                       |
+    | onSelectChange | Funktion     | Rückruffunktion, die ausgelöst wird, wenn der Kontrollkästchenstatus geändert wird          |
+    | Klassenname    | Zeichenfolge | Optionaler Name für zusätzliche Styling                                                     |
+  </Tab>
+</Tabs>
+
+### Navigieren
+
+Ein Menüelement mit einem optionalen linken Symbol, Textinhalt und einem nach rechts zeigenden Chevron-Symbol.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
+
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ              | Beschreibung                                                                  |
+    | ------------- | ---------------- | ----------------------------------------------------------------------------- |
+    | Linkes Symbol | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird. |
+    | text          | Zeichenfolge     | Der Textinhalt des Menüelements                                               |
+    | bei Klick     | Funktion         | Rückruffunktion, die ausgelöst wird, wenn das Menüelement angeklickt wird     |
+    | Klassenname   | Zeichenfolge     | Optionaler Name für zusätzliche Styling                                       |
+  </Tab>
+</Tabs>
+
+### Auswahl
+
+Ein auswählbares Menüelement mit optionalem linken Inhalt (Symbol und Text) und einer Anzeige (Kontrollsymbol), die den ausgewählten Zustand anzeigt.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ              | Beschreibung                                                                  |
+    | ------------- | ---------------- | ----------------------------------------------------------------------------- |
+    | Linkes Symbol | Symbolkomponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird. |
+    | text          | Zeichenfolge     | Der Textinhalt des Menüelements                                               |
+    | ausgewählt    | boolesch         | Gibt an, ob das Menüelement ausgewählt (angehakt) ist                         |
+    | deaktiviert   | boolesch         | Gibt an, ob das Menüelement deaktiviert ist                                   |
+    | hovered       | boolesch         | Gibt an, ob das Menüelement momentan überflogen wird                          |
+    | onClick       | Funktion         | Rückruffunktion, die ausgelöst wird, wenn das Menüelement angeklickt wird     |
+    | Klassenname   | Zeichenfolge     | Optionaler Name für zusätzliche Stilierung                                    |
+  </Tab>
+</Tabs>
+
+### Avatar auswählen
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ         | Beschreibung                                                                                 |
+    | ------------- | ----------- | -------------------------------------------------------------------------------------------- |
+    | Avatar        | `ReactNode` | Der Avatar oder das Symbol, das auf der linken Seite des Menüelements angezeigt werden soll. |
+    | text          | string      | Der Textinhalt des Menüelements                                                              |
+    | ausgewählt    | boolesch    | Gibt an, ob das Menüelement ausgewählt (aktiviert) ist.                                      |
+    | deaktiviert   | boolesch    | Gibt an, ob das Menüelement deaktiviert ist.                                                 |
+    | hovered       | boolesch    | Gibt an, ob sich der Mauszeiger derzeit über dem Menüelement befindet.                       |
+    | TestId        | string      | Das data-testid-Attribut für Testzwecke                                                      |
+    | onClick       | Funktion    | Rückruffunktion, die ausgelöst wird, wenn das Menüelement angeklickt wird.                   |
+    | Klassenname   | string      | Optionaler Name für zusätzliche Stile                                                        |
+  </Tab>
+</Tabs>
+
+### Farbe auswählen
+
+Ein wählbares Menüelement mit Farbbeispiel für Situationen, in denen Benutzer eine Farbe aus einem Menü auswählen sollen.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ      | Beschreibung                                                                                                                                                              |
+    | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | farbe         | string   | Die Themenfarbe, die als Muster im Menüelement angezeigt wird. Optionen umfassen: `grün`, `türkis`, `himmel`, `blau`, `lila`, `rosa`, `rot`, `orange`, `gelb` und `grau`. |
+    | ausgewählt    | boolesch | Gibt an, ob das Menüelement ausgewählt (aktiviert) ist.                                                                                                                   |
+    | deaktiviert   | boolesch | Gibt an, ob das Menüelement deaktiviert ist.                                                                                                                              |
+    | hovered       | boolesch | Gibt an, ob sich der Mauszeiger derzeit über dem Menüelement befindet.                                                                                                    |
+    | Variante      | string   | Die Variante des Farbmusters. It can either be `default` or `pipeline`                                                                                                    |
+    | onClick       | funktion | Rückruffunktion, die ausgelöst wird, wenn das Menüelement angeklickt wird.                                                                                                |
+    | className     | string   | Optionaler Name für zusätzliche Stile                                                                                                                                     |
+  </Tab>
+</Tabs>
+
+### Umschalten
+
+Ein Menüelement mit einem zugehörigen Umschalter, mit dem Benutzer eine bestimmte Funktion aktivieren oder deaktivieren können.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
+
+    import { MenuItemToggle } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften  | Typ             | Beschreibung                                                                       |
+    | -------------- | --------------- | ---------------------------------------------------------------------------------- |
+    | LeftIcon       | Icon-Komponente | Ein optionales linkes Symbol, das vor dem Text im Menüelement angezeigt wird.      |
+    | text           | string          | Der Textinhalt des Menüelements                                                    |
+    | umgeschaltet   | boolesch        | Gibt an, ob der Umschalter im Zustand "ein" oder "aus" ist.                        |
+    | onToggleChange | funktion        | Rückruffunktion, die ausgelöst wird, wenn sich der Zustand des Umschalters ändert. |
+    | ToggleSize     | String          | Die Größe des Kippschalters. It can be either \                                    |
+    | ClassName      | String          | Optionaler Name für zusätzliche Stile                                              |
+  </Tab>
+</Tabs>
