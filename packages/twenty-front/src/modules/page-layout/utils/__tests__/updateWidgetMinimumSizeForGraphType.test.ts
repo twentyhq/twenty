@@ -1,8 +1,8 @@
 import { type Layouts } from 'react-grid-layout';
 import { GraphType } from '~/generated/graphql';
-import { getWidgetSize } from '../getWidgetSize';
-import { updateLayoutItemConstraints } from '../updateLayoutItemConstraints';
-import { updateWidgetMinimumSizeForGraphType } from '../updateWidgetMinimumSizeForGraphType';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
+import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
+import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
 
 jest.mock('../getWidgetSize');
 jest.mock('../updateLayoutItemConstraints');

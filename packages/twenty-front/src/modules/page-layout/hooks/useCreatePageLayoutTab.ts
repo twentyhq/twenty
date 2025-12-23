@@ -6,10 +6,10 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { type PageLayoutTab } from '../types/PageLayoutTab';
-import { getEmptyTabLayout } from '../utils/getEmptyTabLayout';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
 
 export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(

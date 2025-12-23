@@ -6,7 +6,7 @@ import {
   GraphType,
   WidgetType,
 } from '~/generated/graphql';
-import { createDefaultGraphWidget } from '../createDefaultGraphWidget';
+import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 
 describe('createDefaultGraphWidget', () => {
   const baseParams = {

@@ -7,7 +7,7 @@ import {
   countAvailableWorkspaces,
   getAvailableWorkspacePathAndSearchParams,
   getFirstAvailableWorkspaces,
-} from '../availableWorkspacesUtils';
+} from '@/auth/utils/availableWorkspacesUtils';
 
 const createMockAvailableWorkspace = (
   overrides: Partial<AvailableWorkspace> = {},

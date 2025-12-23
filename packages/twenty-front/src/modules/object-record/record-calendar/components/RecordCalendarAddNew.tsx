@@ -11,7 +11,7 @@ import { useRecoilValue } from 'recoil';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useRecordCalendarContextOrThrow } from '../contexts/RecordCalendarContext';
+import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 
 const StyledButton = styled(Button)`
   padding: ${({ theme }) => theme.spacing(0.5)};

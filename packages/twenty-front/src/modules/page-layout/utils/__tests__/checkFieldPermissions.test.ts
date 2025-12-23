@@ -1,5 +1,5 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { checkFieldPermissions } from '../checkFieldPermissions';
+import { checkFieldPermissions } from '@/page-layout/utils/checkFieldPermissions';
 
 describe('checkFieldPermissions', () => {
   const mockObjectPermissions: ObjectPermissions = {

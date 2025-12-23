@@ -4,7 +4,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { buildDateRangeFiltersForGranularity } from '../buildDateRangeFiltersForGranularity';
+import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 
 const testDate = Temporal.PlainDate.from('2024-03-15').toZonedDateTime({
   timeZone: 'Europe/Paris',

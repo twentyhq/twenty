@@ -1,4 +1,4 @@
-import { parseOperationsFromStrings } from '../parseOperationsFromStrings';
+import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 
 describe('parseOperationsFromStrings', () => {
   it('should parse operation strings into object/action pairs', () => {

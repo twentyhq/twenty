@@ -2,7 +2,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
 } from '~/generated/graphql';
-import { isBarChartConfiguration } from '../isBarChartConfiguration';
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 
 describe('isBarChartConfiguration', () => {
   it('should return true for BarChartConfiguration', () => {

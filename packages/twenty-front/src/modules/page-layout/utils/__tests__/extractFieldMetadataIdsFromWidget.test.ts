@@ -8,7 +8,7 @@ import {
   GraphOrderBy,
   GraphType,
 } from '~/generated/graphql';
-import { extractFieldMetadataIdsFromWidget } from '../extractFieldMetadataIdsFromWidget';
+import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 
 const createMockWidget = (
   overrides: Partial<PageLayoutWidget>,
