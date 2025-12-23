@@ -8,7 +8,6 @@ import { useEffect } from 'react';
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // eslint-disable-next-line no-restricted-imports
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
-// eslint-disable-next-line no-restricted-imports
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
