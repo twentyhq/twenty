@@ -9,10 +9,11 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // eslint-disable-next-line no-restricted-imports
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 // eslint-disable-next-line no-restricted-imports
-import { ClickOutsideListenerContext } from '../src/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+// eslint-disable-next-line no-restricted-imports
+import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
