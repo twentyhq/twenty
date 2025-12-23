@@ -287,8 +287,8 @@ describe('French locale tests', () => {
       const date = '2025-01-01T00:00:00.000Z';
       const dateToCompareWith = '2024-01-01T00:00:00.000Z';
       const result = beautifyDateDiff(date, dateToCompareWith, true, fr);
-      // Manual implementation returns early with year count (English format)
-      expect(result).toContain('year');
+      // Manual implementation with Lingui translations returns French
+      expect(result).toContain('an'); // French for year (singular)
     });
 
     it('should handle mixed years and days in French', () => {
