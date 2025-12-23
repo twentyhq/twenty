@@ -21,14 +21,14 @@ There are a lot of rules that are not defined here, but that are automatically c
 Не используйте стандартный `import` с `const`, так как это сложнее для чтения и импорта с автозаполнением кода.
 
 ```tsx
-// ❌ Плохо, сложнее читать, сложнее импортировать с автозаполнением кода
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
   return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ Хорошо, легко читать, легко импортировать с автозаполнением кода
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
 };
@@ -41,10 +41,10 @@ export function MyComponent() {
 Используйте деструктуризацию пропсов.
 
 ```tsx
-// ❌ Плохо, отсутствует тип
+// ❌ Bad, no type
 export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ Хорошо, тип определен
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
@@ -55,11 +55,11 @@ export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</di
 #### Воздержитесь от использования `React.FC` или `React.FunctionComponent` для определения типов пропсов.
 
 ```tsx
-/* ❌ - Плохо, определяет аннотации типов компонента с `FC`
- *    - С `React.FC`, компонент автоматически принимает проп children,
- *      даже если он не определен в типе пропс. Это может быть не всегда
- *      желательно, особенно если компонент не подразумевает рендеринг
- *      детей.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
 const EmailField: React.FC<{
   value: string;
@@ -86,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 Avoid using single variable prop spreading in JSX elements, like `{...props}`. Подобная практика часто приводит к менее читаемому и сложному в поддержке коду, так как непонятно, какие пропсы принимает компонент.
 
 ```tsx
-/* ❌ - Плохо, распространяет одиночный пропс в базовый компонент
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -137,12 +137,12 @@ onClick?.();
 Всегда используйте `type` вместо `interface`, так как они почти всегда пересекаются, а `type` более гибок.
 
 ```tsx
-// ❌ Плохо
+// ❌ Bad
 interface MyInterface {
   name: string;
 }
 
-// ✅ Хорошо
+// ✅ Good
 type MyType = {
   name: string;
 };
@@ -155,7 +155,7 @@ type MyType = {
 Вы можете увидеть, почему TypeScript рекомендует избегать перечислений [здесь](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ Плохо, использует перечисление
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",

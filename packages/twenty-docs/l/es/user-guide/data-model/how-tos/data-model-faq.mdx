@@ -1,16 +1,16 @@
 ---
-title: Preguntas Frecuentes del Modelo de Datos
+title: Data Model FAQ
 description: Frequently asked questions about Twenty's data model.
 ---
 
-## Gestión de Objetos
+## Object Management
 
 <AccordionGroup>
   <Accordion title="Can I delete a custom object?">
     Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
   </Accordion>
 
-  <Accordion title="¿Puedo eliminar objetos estándar (Personas, Empresas, etc.)?">
+  <Accordion title="Can I delete standard objects (People, Companies, etc.)?">
     No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
   </Accordion>
 
@@ -26,33 +26,33 @@ description: Frequently asked questions about Twenty's data model.
     Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
   </Accordion>
 
-  <Accordion title="¿Puedo reorganizar objetos en la barra de navegación izquierda?">
-    Aún no. La ordenación de objetos en la navegación está actualmente fijada, pero esta función está prevista para una futura versión.
+  <Accordion title="Can I reorder objects in the left navigation bar?">
+    Not yet. Object ordering in the navigation is currently fixed, but this feature is planned for a future release.
   </Accordion>
 
-  <Accordion title="¿Puedo ocultar objetos de la barra de navegación izquierda?">
-    Todos los objetos activos aparecen en la navegación. Puedes desactivar los objetos que no necesites en **Configuración → Modelo de Datos**.
+  <Accordion title="Can I hide objects from the left navigation bar?">
+    All active objects appear in the navigation. You can deactivate objects you don't need under **Settings → Data Model**.
   </Accordion>
 </AccordionGroup>
 
-## Capacidades de Campos
+## Field Capabilities
 
 <AccordionGroup>
   <Accordion title="Can I change a field type after creation?">
     No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
   </Accordion>
 
-  <Accordion title="¿Por qué necesito nombres singulares y plurales diferentes?">
-    Nuestra API de GraphQL usa ambas formas para diferentes operaciones:
+  <Accordion title="Why do I need different singular and plural names?">
+    Our GraphQL API uses both forms for different operations:
 
-    * `createPerson` (singular) para acciones de registro único
-    * `createPeople` (plural) para operaciones en masa
+    * `createPerson` (singular) for single record actions
+    * `createPeople` (plural) for bulk operations
 
-    Esto crea limitaciones cuando las formas singulares y plurales son iguales, pero mejora la experiencia del desarrollador.
+    This creates limitations when singular and plural forms are the same, but it improves the developer experience.
   </Accordion>
 
-  <Accordion title="¿Por qué algunos nombres de campos están protegidos?">
-    Ciertos nombres de campo como `Tipo` o `Aplicación` están reservados para uso del sistema. Elige nombres alternativos como `Categoría` o `Clasificación`.
+  <Accordion title="Why are some field names protected?">
+    Certain field names like `Type` or `Application` are reserved for system use. Choose alternative names like `Category` or `Classification` instead.
   </Accordion>
 
   <Accordion title="What happens when I deactivate a field?">
@@ -72,27 +72,27 @@ description: Frequently asked questions about Twenty's data model.
     * **Required**: The field must have a value (not currently supported for custom fields)
   </Accordion>
 
-  <Accordion title="¿Puedo crear campos de fórmula?">
-    Los campos de fórmula llegarán en **Q1 2026**. Mientras tanto, puedes usar flujos de trabajo para calcular y actualizar automáticamente los valores de los campos.
+  <Accordion title="Can I create formula fields?">
+    Formula fields are coming in **Q1 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
   </Accordion>
 
-  <Accordion title="¿Puedo tener campos anidados en mis objetos?">
-    Los campos anidados llegarán en **Q1 2026**. Actualmente, puedes usar flujos de trabajo para traer valores de campo de objetos relacionados. Por ejemplo, para mostrar la industria de una empresa en un registro de Persona, crea un campo personalizado en Personas y usa un flujo de trabajo para sincronizar el valor.
+  <Accordion title="Can I have nested fields in my objects?">
+    Nested fields are coming in **Q1 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
   </Accordion>
 
-  <Accordion title="¿Puedo reorganizar campos en objetos?">
-    El reordenamiento de campos estará disponible con diseños personalizados en **Q4 2025**. Currently, fields appear in alphabetical order.
+  <Accordion title="Can I reorder fields in objects?">
+    Field reordering will be available with custom layouts in **Q4 2025**. Currently, fields appear in alphabetical order.
   </Accordion>
 </AccordionGroup>
 
-## Relaciones
+## Relations
 
 <AccordionGroup>
   <Accordion title="Can I have a relation pointing to the same object?">
-    ¡Sí! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+    Yes! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
   </Accordion>
 
-  <Accordion title="¿Puedo crear relaciones de muchos a muchos?">
+  <Accordion title="Can I create many-to-many relationships?">
     Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
 
     For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
@@ -122,15 +122,15 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 </AccordionGroup>
 
-## Acceso y Permisos
+## Access and Permissions
 
 <AccordionGroup>
-  <Accordion title="¿Dónde puedo ver y editar mi modelo de datos?">
+  <Accordion title="Where can I see and edit my data model?">
     Go to **Settings → Data Model** to view and edit all your objects and fields.
   </Accordion>
 
-  <Accordion title="¿Por qué no puedo ver el Modelo de Datos en Configuración?">
-    Comunícate con tu administrador de espacio de trabajo. El acceso al modelo de datos suele estar restringido solo a administradores.
+  <Accordion title="Why can't I see the Data Model under Settings?">
+    Reach out to your workspace administrator. Data model access is usually restricted to administrators only.
   </Accordion>
 </AccordionGroup>
 
@@ -150,6 +150,6 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 </AccordionGroup>
 
-## ¿Necesitas más ayuda?
+## Need More Help?
 
 Check our [Implementation Services](/l/es/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.

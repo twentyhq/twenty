@@ -1,16 +1,16 @@
 ---
-title: ステップバー
+title: Step Bar
 image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="ヘッダー" />
+  <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
 
-アクティブなステップをハイライトして、一連の番号付きステップの進行状況を表示します。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 アクティブなステップをハイライトして、一連の番号付きステップの進行状況を表示します。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。 各 `Step` コンポーネントによって表されるステップを含むコンテナをレンダリングします。
+Displays progress through a sequence of numbered steps by highlighting the active step. It renders a container with steps, each represented by the `Step` component.
 
 <Tabs>
-  <Tab title="使用方法">
+  <Tab title="Usage">
     ```jsx
     import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
@@ -26,9 +26,9 @@ image: /images/user-guide/api/api.png
     ```
   </Tab>
 
-  <Tab title="プロパティ">
-    | プロパティ     | タイプ | 説明                                                    |
-    | --------- | --- | ----------------------------------------------------- |
-    | アクティブステップ | 数   | 現在アクティブなステップのインデックス。 これにより、どのステップを視覚的にハイライトするかが決まります。 |
+  <Tab title="Props">
+    | Props      | Type   | Description                                                                                       |
+    | ---------- | ------ | ------------------------------------------------------------------------------------------------- |
+    | activeStep | number | The index of the currently active step. This determines which step should be visually highlighted |
   </Tab>
 </Tabs>

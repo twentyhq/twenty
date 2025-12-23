@@ -1,12 +1,12 @@
 ---
-title: 機能フラグ
+title: Feature Flags
 ---
 
-機能フラグは試験的な機能を隠すために使用されます。 機能フラグは試験的な機能を隠すために使用されます。 Twentyでは、それらはワークスペースレベルで設定されており、ユーザーレベルではありません。 機能フラグは試験的な機能を隠すために使用されます。 Twentyでは、それらはワークスペースレベルで設定されており、ユーザーレベルではありません。
+Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
 
-## 新しい機能フラグの追加
+## Adding a new feature flag
 
-`FeatureFlagKey.ts`に機能フラグを追加します:
+In `FeatureFlagKey.ts` add the feature flag:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-また、`feature-flag.entity.ts`の列挙型にも追加します:
+Also add it to the enum in `feature-flag.entity.ts`:
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-**バックエンド**機能に機能フラグを適用するには、次を使用します:
+To apply a feature flag on a **backend** feature use:
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ enum FeatureFlagKeys {
 })
 ```
 
-**フロントエンド**機能に機能フラグを適用するには、次を使用します:
+To apply a feature flag on a **frontend** feature use:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## デプロイメント用の機能フラグを設定する
+## Configure feature flags for the deployment
 
-Table `core.featureFlag` 内の対応するレコードを変更します:
+Change the corresponding record in the Table `core.featureFlag`:
 
-| id   | キー                       | workspaceId | 値   |
-| ---- | ------------------------ | ----------- | --- |
-| ランダム | `IS_FEATURENAME_ENABLED` | WorkspaceID | `真` |
+| id     | key                      | workspaceId | value  |
+| ------ | ------------------------ | ----------- | ------ |
+| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |

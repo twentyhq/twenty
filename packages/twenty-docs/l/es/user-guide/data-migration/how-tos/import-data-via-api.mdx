@@ -3,7 +3,7 @@ title: Import Data via API
 description: When and how to use Twenty's APIs for large-scale data imports.
 ---
 
-## Resumen
+## Overview
 
 Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
 
@@ -25,7 +25,7 @@ Twenty provides both **GraphQL** and **REST APIs** for programmatic data import.
 
 Twenty enforces rate limits to ensure system stability:
 
-| Límite                     | Valor                 |
+| Limit                      | Value                 |
 | -------------------------- | --------------------- |
 | **Requests per minute**    | 100                   |
 | **Records per batch call** | 60                    |
@@ -57,7 +57,7 @@ Twenty enforces rate limits to ensure system stability:
 
 Twenty supports two API types:
 
-| API         | Best For                                                    | Documentación                                    |
+| API         | Best For                                                    | Documentation                                    |
 | ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
 | **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/es/developers/extend/capabilities/apis) |
 | **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/es/developers/extend/capabilities/apis) |
@@ -79,7 +79,7 @@ Just like CSV imports, **order matters** for relations:
 4. **Tasks/Notes** (can link to any of the above)
 5. **Custom objects** (following their dependencies)
 
-## Mejores prácticas
+## Best Practices
 
 ### Batch Your Requests
 
@@ -153,7 +153,7 @@ Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Im
   </Accordion>
 
   <Accordion title="Can I update existing records via API?">
-    ¡Sí! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+    Yes! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
   </Accordion>
 
   <Accordion title="How do I handle duplicates?">

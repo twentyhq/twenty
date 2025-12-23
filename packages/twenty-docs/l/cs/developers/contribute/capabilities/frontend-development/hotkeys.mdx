@@ -45,29 +45,29 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. Nastavte rozsah klávesových zkratek v useEffect
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // Vraťte se k předchozímu rozsahu klávesových zkratek, když se komponenta odpojí
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. Použijte hook useScopedHotkeys
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // Nějaká logika vykonaná na této stránce, když uživatel stiskne Enter
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>Moje stránka, která poslouchá Enter</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. Nastavte rozsah klávesových zkratek, když uživatel otevře modal
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,14 +95,14 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. Vraťte se k předchozímu rozsahu klávesových zkratek, když se modal zavře
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>Moje stránka s modálem</h1>
-    <button onClick={handleOpenModalClick}>Otevřít modal</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -112,9 +112,9 @@ Pak v komponentě modalu :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Použijte hook useScopedHotkeys k poslouchání Escape.
-  // Všimněte si, že escape je běžná klávesová zkratka, kterou může použít mnoho jiných komponent
-  // Je tedy důležité používat rozsah klávesových zkratek, aby se předešlo konfliktům
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,13 +123,13 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Moje komponenta modalu</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-Je důležité používat tento vzor, když si nejste jisti, že samotné použití useEffect pro nastavení a odebrání bude dostatečné k zabránění konfliktům.
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
-Tyto konflikty mohou být těžké ladit a mohou se vyskytovat častěji než ne u useEffects.
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
 ## Co je to hotkey scope?
 
@@ -143,20 +143,20 @@ Například rozsahy klávesových zkratek pro každou stránku jsou definovány 
 
 ```tsx
 export enum PageHotkeyScope {
-  Nastavení = 'settings',
-  VytvořitPracovníProstor = 'create-workspace',
-  PřihlášeníRegistrace = 'sign-in-up',
-  VytvořitProfil = 'create-profile',
-  PožadovánoPlán = 'plan-required',
-  ZobrazitStránku = 'show-page',
-  OsobníZobrazitStránku = 'person-show-page',
-  FiremníZobrazitStránku = 'company-show-page',
-  FirmyStránka = 'companies-page',
-  LidéStránka = 'people-page',
-  PříležitostiStránka = 'opportunities-page',
-  ProfilStránka = 'profile-page',
-  ČlenPracovníhoProstoruStránka = 'workspace-member-page',
-  ÚkolStránka = 'task-page',
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
 }
 ```
 

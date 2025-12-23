@@ -1,69 +1,69 @@
 ---
-title: Permisos
+title: Permissions
 description: Control access to objects, fields, and settings with role-based permissions.
 image: /images/user-guide/permissions/permissions.png
 ---
 
-El sistema de permisos de Twenty te permite controlar el acceso a tres áreas principales:
+Twenty's permission system allows you to control access to three main areas:
 
-* **Objetos y Campos**: Controla quién puede ver, editar o eliminar registros y campos individuales
-* **Configuraciones**: Gestiona el acceso a la configuración del espacio de trabajo y a las funciones administrativas
-* **Acciones**: Controla acciones generales del espacio de trabajo como importar datos o enviar correos electrónicos
+* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
+* **Settings**: Manage access to workspace configuration and administrative functions
+* **Actions**: Control general workspace actions like importing data or sending emails
 
 ## Create a Role
 
-Para crear un nuevo rol:
+To create a new role:
 
 1. Go to **Settings → Roles**
-2. En **Todos los Roles**, haz clic en **+ Crear Rol**
-3. Introduce un nombre para el rol
+2. Under **All Roles**, click on **+ Create Role**
+3. Enter a role name
 4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Haz clic en **Guardar** para finalizar
+5. Click **Save** to finish
 
 ## Delete a Role
 
-Para eliminar un rol:
+To delete a role:
 
 1. Go to **Settings → Roles**
-2. Haz clic en el rol que deseas eliminar
+2. Click on the role you want to remove
 3. Open the **Settings** tab, then click **Delete Role**
-4. Haz clic en **Confirmar** en el modal
+4. Click **Confirm** in the modal
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Todos excepto el rol **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado al rol **Admin**.
+  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
 </Note>
 
 ## Assign Roles to Members
 
-### Ver Asignaciones Actuales
+### View Current Assignments
 
 * Go to **Settings → Roles**
-* Ver todos los roles y cuántos miembros están asignados a cada uno
-* Ver qué miembros tienen qué roles
+* See all roles and how many members are assigned to each
+* View which members have which roles
 
 ### Assign a Role to a Member
 
 1. Go to **Settings → Roles**
-2. Haz clic en el rol que deseas asignar
-3. Abre la pestaña **Asignación**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
 4. Click **+ Assign to member**
-5. Selecciona al miembro del espacio de trabajo de la lista
-6. Confirma la asignación
+5. Select the workspace member from the list
+6. Confirm the assignment
 
 ### Set Default Role
 
 1. Go to **Settings → Roles**
-2. En la sección **Opciones**, encuentra **Rol Predeterminado**
-3. Selecciona qué rol deberían recibir automáticamente los nuevos miembros
-4. Los nuevos miembros del espacio de trabajo serán asignados a este rol cuando se unan
+2. In the **Options** section, find **Default Role**
+3. Select which role new members should automatically receive
+4. New workspace members will be assigned this role when they join
 
 <Note>
-  You can only assign roles to existing workspace members. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
+  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/es/user-guide/settings/capabilities/member-management).
 </Note>
 
-## Personalizar Permisos
+## Customize Permissions
 
-Los permisos determinan qué puede acceder o modificar cada rol dentro de tu espacio de trabajo, incluidos registros de objetos, configuraciones y acciones del espacio de trabajo.
+Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
 
 ### Object Permissions
 
@@ -73,12 +73,12 @@ The **Objects** section controls what this role can do with records across your 
 
 First, configure the baseline permissions that apply to **all objects** by default:
 
-| Permission                                  | Descripción                            |
-| ------------------------------------------- | -------------------------------------- |
-| **Ver registros en todos los objetos**      | View records in lists and detail pages |
-| **Editar registros en todos los objetos**   | Modify existing records                |
-| **Eliminar registros en todos los objetos** | Soft-delete records (can be restored)  |
-| **Destruir registros en todos los objetos** | Permanently delete records             |
+| Permission                         | Description                            |
+| ---------------------------------- | -------------------------------------- |
+| **See Records on All Objects**     | View records in lists and detail pages |
+| **Edit Records on All Objects**    | Modify existing records                |
+| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
+| **Destroy Records on All Objects** | Permanently delete records             |
 
 Select or unselect based on what should be the default behavior for this role.
 
@@ -103,7 +103,7 @@ Click **+ Add rule** and select an object to create an exception.
 
 Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
 
-| Permission     | Descripción                |
+| Permission     | Description                |
 | -------------- | -------------------------- |
 | **See Field**  | View the field value       |
 | **Edit Field** | Modify the field value     |
@@ -128,33 +128,33 @@ Permissions cascade from general to specific:
 
 More specific settings always take precedence.
 
-### Gestión de Excepciones de Permisos
+### Managing Permission Overrides
 
 To override inherited permissions:
 
-1. Haz clic en **X** para eliminar la regla heredada
+1. Click **X** to remove the inherited rule
 2. Select the specific permissions you want
-3. Haz clic en el ícono naranja de **Deshacer** (flecha circular) para revertir los cambios
+3. Click the orange **Undo** icon (circular arrow) to revert changes
 
-Cuando termines, haz clic en **Finalizar**, luego en **Guardar** una vez que seas redirigido a la página del rol.
+When done, click **Finish**, then **Save** once redirected to the role page.
 
-### Permisos de Configuraciones del Espacio de Trabajo
+### Workspace Settings Permissions
 
-Controla el acceso a configuraciones del espacio de trabajo de dos maneras:
+Control access to workspace settings in two ways:
 
-* Activa **Acceso Completo a Configuraciones** para otorgar acceso completo
+* Toggle **Settings All Access** to grant full access
 * Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
 
 <Note>
   **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
 </Note>
 
-### Permisos de Acción del Espacio de Trabajo
+### Workspace Action Permissions
 
-Controla el acceso a acciones generales del espacio de trabajo:
+Control access to general workspace actions:
 
-* Activa **Acceso Completo a la Aplicación** para otorgar permisos completos
-* O habilita acciones individuales como **Enviar Email**, **Importar CSV** y **Exportar CSV**
+* Toggle **Application All Access** to grant full permissions
+* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
 
 ## Assigning Roles to API Keys and AI Agents
 
@@ -170,11 +170,11 @@ Beyond workspace members, roles can also be assigned to **API Keys** and **AI Ag
 ### Assign a Role to an API Key
 
 1. Go to **Settings → Roles**
-2. Haz clic en el rol que deseas asignar
-3. Abre la pestaña **Asignación**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
 4. Under **API Keys**, click **+ Assign to API key**
 5. Select the API key from the list
-6. Confirma la asignación
+6. Confirm the assignment
 
 The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
 
@@ -185,11 +185,11 @@ The API key will now inherit all permissions defined by that role. Any API calls
 ### Assign a Role to an AI Agent
 
 1. Go to **Settings → Roles**
-2. Haz clic en el rol que deseas asignar
-3. Abre la pestaña **Asignación**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
 4. Under **AI Agents**, click **+ Assign to AI agent**
 5. Select the AI agent from the list
-6. Confirma la asignación
+6. Confirm the assignment
 
 The AI agent will only be able to access data and perform actions allowed by its assigned role.
 

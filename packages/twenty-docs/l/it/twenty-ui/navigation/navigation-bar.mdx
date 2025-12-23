@@ -12,8 +12,8 @@ Rende una barra di navigazione che contiene più componenti `NavigationBarItem`.
 <Tabs>
   <Tab title="Utilizzo">
     ```jsx
-    importa { IconHome, IconUser, IconSettings } da '@tabler/icons-react';
-    importa { NavigationBar } da "@/ui/navigation/navigation-bar/components/NavigationBar";
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
     export const MyComponent = () => {
 
@@ -21,17 +21,17 @@ Rende una barra di navigazione che contiene più componenti `NavigationBarItem`.
          {
            name: "Home",
            Icon: IconHome,
-           onClick: () => console.log("Home cliccato"),
+           onClick: () => console.log("Home clicked"),
          },
          {
-           name: "Profilo",
+           name: "Profile",
            Icon: IconUser,
-           onClick: () => console.log("Profilo cliccato"),
+           onClick: () => console.log("Profile clicked"),
          },
          {
-           name: "Impostazioni",
+           name: "Settings",
            Icon: IconSettings,
-           onClick: () => console.log("Impostazioni cliccate"),
+           onClick: () => console.log("Settings clicked"),
          },
        ];
 

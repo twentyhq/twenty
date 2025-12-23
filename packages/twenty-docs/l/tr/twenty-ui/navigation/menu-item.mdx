@@ -71,13 +71,13 @@ Klavye kısayollarını belirtmek için bir menü içinde komut tarzı bir menü
 
     export const MyComponent = () => {
       const handleCommandClick = () => {
-        console.log("Komut tıklandı!");
+        console.log("Command clicked!");
       };
 
       return (
         <MenuItemCommand
           LeftIcon={IconBell}
-          text="İlk Seçenek"
+          text="First Option"
           firstHotKey="⌘"
           secondHotKey="1"
           isSelected={true}
@@ -115,7 +115,7 @@ A draggable menu item component designed to be used in a menu or list where item
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menü öğesi tıklandı!", event);
+        console.log("Menu item clicked!", event);
       };
 
       return (
@@ -125,7 +125,7 @@ A draggable menu item component designed to be used in a menu or list where item
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={false}
           onClick={handleMenuItemClick}
-          text="Menü öğesi sürüklenebilir"
+          text="Menu item draggable"
           isDragDisabled={false}
           className
         />
@@ -163,7 +163,7 @@ Bir onay kutusu ile birlikte çoklu seçim işlevselliği sağlanır.
       return (
         <MenuItemMultiSelect
           LeftIcon={IconBell}
-          text="İlk Seçenek"
+          text="First Option"
           selected={false}
           className
         />
@@ -199,7 +199,7 @@ Bir avatar, bir seçim için onay kutusu ve metin içeriği ile bir çoklu seçi
       return (
         <MenuItemMultiSelectAvatar
           avatar={<img src={imageUrl} alt="Avatar" />}
-          text="İlk Seçenek"
+          text="First Option"
           selected={false}
           className
         />
@@ -231,13 +231,13 @@ Bir avatar, bir seçim için onay kutusu ve metin içeriği ile bir çoklu seçi
 
     export const MyComponent = () => {
       const handleNavigation = () => {
-        console.log("Başka bir sayfaya yönlendirin");
+        console.log("Navigate to another page");
       };
 
       return (
         <MenuItemNavigate
           LeftIcon={IconBell}
-          text="İlk Seçenek"
+          text="First Option"
           onClick={handleNavigation}
           className
         />
@@ -268,13 +268,13 @@ Seçilebilir bir menü öğesi, isteğe bağlı sol içerik (simgeler ve metin) 
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("Menü öğesi seçildi");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelect
           LeftIcon={IconBell}
-          text="İlk Seçenek"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -313,13 +313,13 @@ Bir avatar ve seçilmiş durum için gösterge (kontrol simgesi) ile beraber ist
         "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
       const handleSelection = () => {
-        console.log("Menü öğesi seçildi");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelectAvatar
           avatar={<img src={imageUrl} alt="Avatar" />}
-          text="İlk Seçenek"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -329,6 +329,7 @@ Bir avatar ve seçilmiş durum için gösterge (kontrol simgesi) ile beraber ist
         />
       );
     };
+
     ```
   </Tab>
 
@@ -357,16 +358,16 @@ Kullanıcıların bir menüden renk seçmelerini istediğiniz senaryolar için r
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("Menü öğesi seçildi");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelectColor
-          color="yeşil"
+          color="green"
           selected={true}
           disabled={false}
           hovered={true}
-          variant="varsayılan"
+          variant="default"
           onClick={handleSelection}
           className
         />
@@ -404,9 +405,9 @@ A menu item with an associated toggle switch to allow users to enable or disable
       return (
         <MenuItemToggle
           LeftIcon={IconBell}
-          text="İlk Seçenek"
+          text="First Option"
           toggled={true}
-          toggleSize="küçük"
+          toggleSize="small"
           className
         />
       );

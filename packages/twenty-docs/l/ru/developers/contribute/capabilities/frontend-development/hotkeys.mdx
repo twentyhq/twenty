@@ -45,29 +45,29 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. Установить область горячих клавиш в useEffect
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // Вернуться к предыдущей области горячих клавиш, когда компонент размонтирован
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. Используйте хук useScopedHotkeys
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // Логика, выполняемая на этой странице при нажатии пользователем клавиши Enter
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>Моя страница, прослушивающая Enter</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. Установите область горячих клавиш, когда пользователь открывает модальное окно
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,14 +95,14 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. Вернуться к предыдущей области горячих клавиш при закрытии модального окна
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>Моя страница с модальным окном</h1>
-    <button onClick={handleOpenModalClick}>Открыть модальное окно</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -112,9 +112,9 @@ const ExamplePageWithModal = () => {
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Используйте хук useScopedHotkeys для прослушивания Escape.
-  // Учтите, что Escape — это общая горячая клавиша, которая может использоваться многими другими компонентами
-  // Поэтому крайне важно использовать области горячих клавиш, чтобы избежать конфликтов
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,7 +123,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Мой компонент модального окна</div>;
+  return <div>My modal component</div>;
 };
 ```
 

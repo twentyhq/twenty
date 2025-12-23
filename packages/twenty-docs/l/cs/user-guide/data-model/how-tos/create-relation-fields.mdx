@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: Vytvoření relačních polí
+description: Návod krok za krokem k propojení objektů pomocí relačních polí.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+Relační pole propojují záznamy z různých objektů — například propojení lidí se společnostmi.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **Názvy relací nelze po vytvoření změnit** (ovlivňují rozhraní API). Názvy si pečlivě naplánujte.
 </Note>
 
 ## Než začnete
 
-Decide:
+Rozhodněte se:
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* Které objekty propojujete? (např. Lidé → Společnosti)
+* Která strana je „jedna“? (např. Společnost)
+* Která strana je „mnoho“? (např. Lidé — mnoho lidí pracuje v jedné společnosti)
+* Jak se má pole jmenovat na každé straně?
 
-See [Relation Fields](/l/cs/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+Viz [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) s vysvětlením typů relací.
 
-## Steps
+## Postup
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt, ve kterém chcete relaci (obvykle strana „mnoho“)
+3. Klikněte na **+ Přidat pole**
+4. Vyberte jako typ pole **Relace**
+5. Vyberte **cílový objekt**
+6. Vyberte **Jedna ku mnoha** nebo **Mnoho ku jedné**
+7. Zadejte názvy polí pro **obě strany** relace
 8. Klikněte na **Uložit**
 
-## Example: People → Companies
+## Příklad: Lidé → Společnosti
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* Přejděte do **Nastavení → Datový model → Lidé**
+* Přidejte relační pole
+* Cíl: **Společnosti**
+* Typ: **Mnoho ku jedné**
+* Pole u lidí: **Společnost**
+* Pole u společností: **Zaměstnanci**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+Nyní lze každou osobu propojit se společností a každá společnost zobrazuje své lidi.
 
-## Deleting a Relation
+## Smazání relace
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Přejděte do **Nastavení → Datový model**
+2. Najděte relační pole
+3. Klikněte na **⋮ → Deaktivovat**
 
-Links are preserved but hidden. Reactivate to restore.
+Propojení se zachovají, ale jsou skrytá. Znovu aktivujte pro obnovení.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **Smazání relace nemaže záznamy.** Odstraní se pouze propojení mezi nimi.
 </Note>
 
-## Related
+## Související
 
-* [Relation Fields](/l/cs/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) — typy a omezení
+* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — hromadný import propojených záznamů

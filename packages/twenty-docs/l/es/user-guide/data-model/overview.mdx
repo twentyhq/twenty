@@ -1,20 +1,20 @@
 ---
-title: Modelo de datos
+title: Data Model
 description: Learn what a data model is and how to design one that fits your business.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/custom_data_model.png" alt="Modelo de datos" />
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Data Model" />
 </Frame>
 
 ## What is a Data Model?
 
-Un modelo de datos es la estructura que define cómo se organiza la información en tu CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
 
 ## Key Concepts
 
-### Objetos
+### Objects
 
 **Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
 
@@ -28,25 +28,25 @@ Twenty comes with standard objects:
 
 You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
 
-### Campos
+### Fields
 
 **Fields** are the properties or attributes that describe each object. They store the actual information.
 
 For example, the **People** object has fields like:
 
-* Nombre
-* Correo electrónico
-* Teléfono
-* Título del puesto
+* Name
+* Email
+* Phone
+* Job Title
 * Company (a relation to the Companies object)
 
 Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
 
-### Registros
+### Records
 
 **Records** are the individual entries within an object — the actual data you create and manage.
 
-Por ejemplo:
+For example:
 
 * "John Smith" is a **record** in the People object
 * "Acme Corp" is a **record** in the Companies object
@@ -56,14 +56,14 @@ Por ejemplo:
 | Data Model Concept | Real-World Analogy                         |
 | ------------------ | ------------------------------------------ |
 | **Objects**        | Sections in a book (the categories)        |
-| **Campos**         | Columns in a spreadsheet (the properties)  |
+| **Fields**         | Columns in a spreadsheet (the properties)  |
 | **Records**        | Rows in a spreadsheet (the actual entries) |
 
 You design the data model (objects + fields) once, then create many records within that structure.
 
 ## Why Customize Your Data Model?
 
-Cada empresa funciona de manera diferente. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Every business works differently. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
 
 Twenty offers full flexibility:
 
@@ -107,7 +107,7 @@ If the concept has its own lifecycle, properties, or relationships, it deserves 
 * **Subscriptions** — connect companies, products, and invoices
 * **Events** — involve attendees and follow-up actions
 
-Estos van más allá de un solo campo porque tienen su propio conjunto de datos y relaciones.
+These go beyond a single field because they carry their own data and relationships.
 
 ### 4. Create an Object When Records Are Open-Ended
 
@@ -145,7 +145,7 @@ Start with fields. Move to new objects only when you feel the limits:
 
 ## Questions to Guide Your Choice
 
-Pregúntate:
+Ask yourself:
 
 <Check>Is this just a property of something I already have, or does it need its own properties?</Check>
 <Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
@@ -167,7 +167,7 @@ If the answer is "yes" to one or more, it's probably time for a new object.
   Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
 </Note>
 
-## Próximos Pasos
+## Next Steps
 
 Once you've planned your data model:
 
@@ -175,6 +175,6 @@ Once you've planned your data model:
 * [How to Create Custom Fields](/l/es/user-guide/data-model/how-tos/create-custom-fields)
 * [How to Create Relation Fields](/l/es/user-guide/data-model/how-tos/create-relation-fields)
 
-## ¿Necesitas Ayuda?
+## Need Help?
 
 Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/es/user-guide/getting-started/capabilities/implementation-services).

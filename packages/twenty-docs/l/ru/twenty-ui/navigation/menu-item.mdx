@@ -18,18 +18,18 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Пункт меню нажат!", event);
+        console.log("Menu item clicked!", event);
       };
 
       const handleButtonClick = (event) => {
-        console.log("Кнопка значка нажата!", event);
+        console.log("Icon button clicked!", event);
       };
 
       return (
         <MenuItem
           LeftIcon={IconBell}
           accent="default"
-          text="Текст пункта меню"
+          text="Menu item text"
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={true}
           testId="menu-item-1"
@@ -71,13 +71,13 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleCommandClick = () => {
-        console.log("Команда нажата!");
+        console.log("Command clicked!");
       };
 
       return (
         <MenuItemCommand
           LeftIcon={IconBell}
-          text="Первый вариант"
+          text="First Option"
           firstHotKey="⌘"
           secondHotKey="1"
           isSelected={true}
@@ -115,7 +115,7 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Пункт меню нажат!", event);
+        console.log("Menu item clicked!", event);
       };
 
       return (
@@ -125,7 +125,7 @@ image: /images/user-guide/kanban-views/kanban.png
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={false}
           onClick={handleMenuItemClick}
-          text="Перетаскиваемый пункт меню"
+          text="Menu item draggable"
           isDragDisabled={false}
           className
         />
@@ -163,7 +163,7 @@ image: /images/user-guide/kanban-views/kanban.png
       return (
         <MenuItemMultiSelect
           LeftIcon={IconBell}
-          text="Первый вариант"
+          text="First Option"
           selected={false}
           className
         />
@@ -198,8 +198,8 @@ image: /images/user-guide/kanban-views/kanban.png
 
       return (
         <MenuItemMultiSelectAvatar
-          avatar={<img src={imageUrl} alt="Аватар" />}
-          text="Первый вариант"
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
           selected={false}
           className
         />
@@ -231,13 +231,13 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleNavigation = () => {
-        console.log("Перейти на другую страницу");
+        console.log("Navigate to another page");
       };
 
       return (
         <MenuItemNavigate
           LeftIcon={IconBell}
-          text="Первый вариант"
+          text="First Option"
           onClick={handleNavigation}
           className
         />
@@ -268,13 +268,13 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("Пункт меню выбран");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelect
           LeftIcon={IconBell}
-          text="Первый вариант"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -313,13 +313,13 @@ image: /images/user-guide/kanban-views/kanban.png
         "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
       const handleSelection = () => {
-        console.log("Пункт меню выбран");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelectAvatar
-          avatar={<img src={imageUrl} alt="Аватар" />}
-          text="Первый вариант"
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -357,21 +357,21 @@ image: /images/user-guide/kanban-views/kanban.png
     import { MenuItemSelectColor } from "twenty-ui/display";
 
     export const MyComponent = () => {
-     const handleSelection = () => {
-     console.log("Пункт меню выбран");
-     };
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
 
-     return (
-     <MenuItemSelectColor
-     color="green"
-     selected={true}
-     disabled={false}
-     hovered={true}
-     variant="default"
-     onClick={handleSelection}
-     className
-     />
-     );
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
     };
     ```
   </Tab>
@@ -402,15 +402,15 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
 
-     return (
-     <MenuItemToggle
-     LeftIcon={IconBell}
-     text="Первый вариант"
-     toggled={true}
-     toggleSize="маленький"
-     className
-     />
-     );
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
     };
     ```
   </Tab>

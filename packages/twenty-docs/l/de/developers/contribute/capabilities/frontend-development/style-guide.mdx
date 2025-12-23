@@ -21,16 +21,16 @@ Verwenden Sie immer TSX-Funktionskomponenten.
 Vermeiden Sie `import` mit `const`, da es schwieriger zu lesen und schwerer mit Code-Vervollständigung zu importieren ist.
 
 ```tsx
-// ❌ Schlecht, schwerer zu lesen, schwerer zu importieren mit Code-Vervollständigung
-const MeineKomponente = () => {
-  return <div>Hallo Welt</div>;
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
 };
 
-export default MeineKomponente;
+export default MyComponent;
 
-// ✅ Gut, leicht zu lesen, leicht zu importieren mit Code-Vervollständigung
-export function MeineKomponente() {
-  return <div>Hallo Welt</div>;
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
 };
 ```
 
@@ -41,26 +41,27 @@ Erstellen Sie den Typ der Eigenschaften (props) und nennen Sie ihn `(ComponentNa
 Verwenden Sie Destrukturierung der Props.
 
 ```tsx
-// ❌ Schlecht, ohne Typ
-export const MeineKomponente = (props) => <div>Hallo {props.name}</div>;
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ Gut, mit Typ
-type MeineKomponenteProps = {
+// ✅ Good, type
+type MyComponentProps = {
   name: string;
 };
 
-export const MeineKomponente = ({ name }: MeineKomponenteProps) => <div>Hallo {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
 #### Vermeiden Sie die Verwendung von `React.FC` oder `React.FunctionComponent`, um Prop-Typen zu definieren
 
 ```tsx
-/* ❌ - Schlecht, definiert die Komponententyp-Anmerkungen mit `FC`
- *    - Mit `React.FC` akzeptiert die Komponente implizit ein `children`-Prop,
- *      selbst wenn es nicht im Prop-Typ definiert ist. Dies ist nicht immer gewünscht,
- *      insbesondere wenn die Komponente nicht beabsichtigt, Kinder zu rendern.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
-const EmailFeld: React.FC<{
+const EmailField: React.FC<{
   value: string;
 }> = ({ value }) => <TextInput value={value} disabled fullWidth />;
 ```
@@ -85,10 +86,10 @@ const EmailField = ({ value }: EmailFieldProps) => (
 Vermeiden Sie das Propspreading einzelner Variablen in JSX-Elementen, wie `{...props}`. Diese Praxis führt oft zu weniger lesbarem und schwer wartbarem Code, da unklar ist, welche Props die Komponente erhält.
 
 ```tsx
-/* ❌ - Schlecht, spreadet ein einzelnes Variablen-Prop in die darunterliegende Komponente
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
-const MeineKomponente = (props: EigeneProps) => {
-  return <AndereKomponente {...props} />;
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
 }
 ```
 
@@ -136,13 +137,13 @@ onClick?.();
 Verwenden Sie immer `type` anstelle von `interface`, da sie fast immer überlappen und `type` flexibler ist.
 
 ```tsx
-// ❌ Schlecht
-interface MeinInterface {
+// ❌ Bad
+interface MyInterface {
   name: string;
 }
 
-// ✅ Gut
-type MeinTyp = {
+// ✅ Good
+type MyType = {
   name: string;
 };
 ```
@@ -154,14 +155,14 @@ type MeinTyp = {
 Warum TypeScript empfiehlt, Enums zu vermeiden, sehen Sie [hier](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ Schlecht, verwendet ein Enum
-enum Farbe {
-  Rot = "red",
-  Grün = "green",
-  Blau = "blue",
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
 }
 
-let farbe = Farbe.Rot;
+let color = Color.Red;
 ```
 
 ```tsx
@@ -262,13 +263,13 @@ const StyledButton = styled.button`
 Vermeiden Sie Typ-Importe. Um diesen Standard durchzusetzen, überprüft eine ESLint-Regel alle Typ-Importe und meldet sie. Dies trägt zur Konsistenz und Lesbarkeit des TypeScript-Codes bei.
 
 ```tsx
-// ❌ Schlecht
+// ❌ Bad
 import { type Meta, type StoryObj } from '@storybook/react';
 
-// ❌ Schlecht
+// ❌ Bad
 import type { Meta, StoryObj } from '@storybook/react';
 
-// ✅ Gut
+// ✅ Good
 import { Meta, StoryObj } from '@storybook/react';
 ```
 

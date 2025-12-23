@@ -1,22 +1,22 @@
 ---
-title: 모범 사례
+title: Best Practices
 ---
 
-이 문서는 백엔드 작업 시 따를 모범 사례를 설명합니다.
+This document outlines the best practices you should follow when working on the backend.
 
-## 모듈형 접근법 따르기
+## Follow a modular approach
 
-백엔드는 NestJS로 작업할 때 기본 원칙 중 하나인 모듈형 접근법을 따릅니다. 코드베이스를 깔끔하고 체계적으로 유지하려면 코드를 재사용 가능한 모듈로 분리하십시오.
-각 모듈은 특정 기능을 캡슐화하고 명확하게 정의된 범위를 가져야 합니다. 이 모듈형 접근법은 관심사의 명확한 분리를 가능하게 하고 불필요한 복잡성을 제거합니다.
+The backend follows a modular approach, which is a fundamental principle when working with NestJS. Make sure you break down your code into reusable modules to maintain a clean and organized codebase.
+Each module should encapsulate a particular feature or functionality and have a well-defined scope. This modular approach enables clear separation of concerns and removes unnecessary complexities.
 
-## 모듈에서 사용할 서비스를 노출시키십시오.
+## Expose services to use in modules
 
-항상 명확하고 단일한 책임을 가진 서비스를 생성하여 코드 가독성과 유지보수성을 향상시킵니다. 서비스의 이름을 일관되게 설명적으로 지정하십시오.
+Always create services that have a clear and single responsibility, which enhances code readability and maintainability. Name the services descriptively and consistently.
 
-다른 모듈에서 사용하고자 하는 서비스를 노출해야 합니다. 다른 모듈에 서비스를 노출하는 것은 NestJS의 강력한 의존성 주입 시스템을 통해 가능하며, 구성 요소 간의 느슨한 결합을 촉진합니다.
+You should also expose services that you want to use in other modules. Exposing services to other modules is possible through NestJS's powerful dependency injection system, and promotes loose coupling between components.
 
-## `any` 타입 사용 피하기
+## Avoid using `any` type
 
-변수를 `any`로 선언하면 TypeScript의 타입 검사자가 타입 검사를 수행하지 않으므로 변수에 모든 유형의 값을 할당할 수 있게 됩니다. TypeScript는 값에 따라 변수의 타입을 추론하기 위해 타입 추론을 사용합니다. 이를 `any`로 선언하면 TypeScript는 더 이상 타입을 추론할 수 없습니다. 이는 개발 중 타입 관련 오류를 잡기 어렵게 만들어 런타임 오류로 이어지고, 코드의 유지보수성과 신뢰성이 떨어지며, 다른 사람이 이해하기도 어려워집니다.
+When you declare a variable as `any`, TypeScript's type checker doesn't perform any type checking, making it possible to assign any type of values to the variable. TypeScript uses type inference to determine the type of variable based on the value. By declaring it as `any`, TypeScript can no longer infer the type. This makes it hard to catch type-related errors during development, leading to runtime errors and makes the code less maintainable, less reliable, and harder to understand for others.
 
-이것이 모든 것이 타입을 가져야 하는 이유입니다. 따라서 이름(first name)과 성(last name)을 가진 새 개체를 만든다면, 다루는 개체의 구조를 정의하는 이름과 성을 포함한 인터페이스나 타입을 만들어야 합니다.
+This is why everything should have a type. So if you create a new object with a first name and last name, you should create an interface or type that contains a first name and last name that defines the shape of the object you are manipulating.

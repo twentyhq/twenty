@@ -1,0 +1,231 @@
+---
+title: Track How Long Opportunities Stay in Each Stage
+description: Monitor deal velocity by tracking when opportunities enter each stage.
+---
+
+<Tip>
+  This is an example of creating [Formula Fields](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows — specifically date calculations.
+</Tip>
+
+Tracking when opportunities enter each stage helps you identify bottlenecks and measure deal velocity.
+
+This guide walks you through setting up custom fields and a workflow to automatically record when an opportunity moves to each stage, and calculate how many days it spent in the previous stage.
+
+## Step 1: Create Custom Fields
+
+You need two types of fields for each stage:
+
+* **Date & Time fields**: Record when the opportunity entered each stage
+* **Number fields**: Store how many days the opportunity spent in each stage
+
+### Create the "Last Entered" Fields
+
+1. Go to **Settings → Data Model → Opportunities**
+2. For each stage, click **+ Add Field** and configure:
+   * **Name**: Last Entered [Stage Name] (e.g., "Last Entered New", "Last Entered Qualified")
+   * **Type**: Date & Time
+   * **Description**: Timestamp when opportunity entered this stage
+3. Click **Save**
+
+Create these fields:
+
+* Last Entered New
+* Last Entered Qualified
+* Last Entered Meeting
+* Last Entered Proposal
+* Last Entered Negotiation
+* Last Entered Closed Won
+* Last Entered Closed Lost
+
+### Create the "Days in Stage" Fields
+
+1. For each stage, click **+ Add Field** and configure:
+   * **Name**: Days in [Stage Name] (e.g., "Days in New", "Days in Qualified")
+   * **Type**: Number
+   * **Description**: Number of days spent in this stage
+2. Click **Save**
+
+Create these fields:
+
+* Days in New
+* Days in Qualified
+* Days in Meeting
+* Days in Proposal
+* Days in Negotiation
+
+<Note>
+  You don't need "Days in" fields for Closed Won and Closed Lost since those are final stages.
+</Note>
+
+### Optional: Make Fields Read-Only
+
+If you don't want users manually editing these calculated fields:
+
+1. Go to **Settings → Roles**
+2. Select the role to configure
+3. Find the Opportunities object
+4. Set the "Last Entered" and "Days in" fields to read-only
+
+## Step 2: Create the Workflow
+
+This single workflow handles both tasks:
+
+* Records the timestamp when entering a new stage
+* Calculates days spent in the previous stage
+
+### Create the Workflow
+
+1. Go to **Workflows**
+2. Click **+ New Workflow**
+3. Name it "Track Stage Time"
+
+### Configure the Trigger
+
+1. Add a **Record Updated** trigger
+2. Select **Opportunities** as the object
+3. Filter on: **Stage** field is updated
+
+### Add Branches for Each Stage
+
+<Note>
+  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+</Note>
+
+---
+
+**Branch 1: Stage = New (first stage)**
+
+Since this is the first stage, we only record the entry timestamp—no previous stage to calculate.
+
+1. Add a **Filter** node: Stage = New
+2. Add a **Code** action:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Field: Last Entered New
+   * Value: `now` from Code node
+
+---
+
+**Branch 2: Stage = Qualified**
+
+When moving to Qualified, record entry time AND calculate days spent in New.
+
+1. Add a **Filter** node: Stage = Qualified
+2. Add a **Code** action:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configure the Code node input: map `lastEnteredPreviousStage` to the **Last Entered New** field
+4. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Fields to update:
+     * Last Entered Qualified = `now`
+     * Days in New = `daysInPreviousStage`
+
+---
+
+**Branch 3: Stage = Meeting**
+
+When moving to Meeting, record entry time AND calculate days spent in Qualified.
+
+1. Add a **Filter** node: Stage = Meeting
+2. Add a **Code** action:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configure the Code node input: map `lastEnteredPreviousStage` to the **Last Entered Qualified** field
+4. Add an **Update Record** action:
+   * Record: The triggering Opportunity
+   * Fields to update:
+     * Last Entered Meeting = `now`
+     * Days in Qualified = `daysInPreviousStage`
+
+---
+
+**Continue for remaining stages:**
+
+| Stage       | Records                  | Calculates          |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
+| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+
+The branches do not need to rejoin—each runs independently when its stage condition is met.
+
+## Step 3: Analyze Time in Stage
+
+With timestamps and day counts recorded, you can now analyze deal velocity.
+
+### Create a "Slow Deals" View
+
+1. Create a Table view of Opportunities
+2. Add columns: Name, Stage, Days in [previous stage], Amount
+3. Sort by "Days in" field (descending)
+4. Filter by Stage to focus on one stage at a time
+
+Deals at the top spent the most time in the previous stage.
+
+### Use Aggregations
+
+In your pipeline Kanban view:
+
+1. Click the number next to a Stage name
+2. Select **Average**
+3. Choose a "Days in" field
+
+This shows the average time deals spend in each stage.
+
+## Summary
+
+| Component                | Purpose                                           |
+| ------------------------ | ------------------------------------------------- |
+| **Last Entered fields**  | Store when opportunity entered each stage         |
+| **Days in fields**       | Store how many days spent in each stage           |
+| **Workflow**             | Records timestamp AND calculates days in one pass |
+| **Views & Aggregations** | Analyze deal velocity and identify bottlenecks    |
+
+## Related
+
+* [Workflows](/l/zh/user-guide/workflows/overview) — automation basics
+* [How to Create Custom Fields](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — field configuration
+* [Kanban Views](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — aggregations

@@ -186,7 +186,7 @@ const [email, setEmail] = useState('');
 Названия обработчиков событий должны начинаться с `handle`, в то время как `on` используется как префикс для наименования событий в пропсах компонентов.
 
 ```tsx
-// ❌ Плохо
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
@@ -239,7 +239,7 @@ const Form = () => <EmailField value="username@email.com" />;
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// В MyComponent
+// In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -284,7 +284,7 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 **Использование**
 
 ```tsx
-// ❌ Плохо, указывает полный относительный путь
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';

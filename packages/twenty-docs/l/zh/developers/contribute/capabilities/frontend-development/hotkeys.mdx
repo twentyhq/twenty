@@ -1,42 +1,42 @@
 ---
-title: 快捷键
+title: Hotkeys
 ---
 
-## 介绍
+## Introduction
 
-当你需要监听一个快捷键时，通常会使用 `onKeyDown` 事件监听器。
+When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
 
-然而，在 `twenty-front` 中，你可能会遇到用于不同组件的相同快捷键之间的冲突，这些组件同时挂载。
+In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
 
-例如，如果你有一个页面监听回车键，而一个包含选择组件的模态框也监听回车键，在所有这些组件同时挂载时可能会发生冲突。
+For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
 
-## `useScopedHotkeys` hook
+## The `useScopedHotkeys` hook
 
-为了解决这个问题，我们有一个自定义的 hook，可以在不产生冲突的情况下监听快捷键。
+To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
 
-您可以将它放在组件中，它只会在组件挂载并且指定的 **快捷键范围** 激活时监听快捷键。
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
 
-## 在实践中如何监听快捷键？
+## How to listen for hotkeys in practice?
 
-设置快捷键监听涉及两个步骤：
+There are two steps involved in setting up hotkey listening :
 
-1. 设置将会监听快捷键的[快捷键范围](#what-is-a-hotkey-scope-)
-2. 使用 `useScopedHotkeys` hook 来监听快捷键
+1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
+2. Use the `useScopedHotkeys` hook to listen to hotkeys
 
-即使在简单的页面中，也需要设置快捷键范围，因为其他界面元素如左侧菜单或命令菜单也可能监听快捷键。
+Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
 
-## 快捷键的使用案例
+## Use cases for hotkeys
 
-通常情况下，会有两种需要快捷键的使用案例：
+In general, you'll have two use cases that require hotkeys :
 
-1. 在页面或页面中挂载的组件中
-2. 在由于用户操作而获得焦点的模态组件中
+1. In a page or a component mounted in a page
+2. In a modal-type component that takes the focus due to a user action
 
-第二种使用情况可以递归发生：例如，在模态框中的下拉框。
+The second use case can happen recursively : a dropdown in a modal for example.
 
-### 在页面中监听快捷键
+### Listening to hotkeys in a page
 
-示例：
+Example :
 
 ```tsx
 const PageListeningEnter = () => {
@@ -45,37 +45,37 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. 设置快捷键范围在 useEffect 中
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // 在组件卸载时恢复到先前的快捷键范围
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. 使用 useScopedHotkeys hook
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // 当用户按下回车键时，此页面上执行的一些逻辑
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>我的页面监听回车键</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
-### 在模态类型组件中监听快捷键
+### Listening to hotkeys in a modal-type component
 
-在这个示例中，我们将使用一个模态组件，该组件监听 Esc 键来告诉其父组件关闭自己。
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
 
-这里用户交互正在改变范围。
+Here the user interaction is changing the scope.
 
 ```tsx
 const ExamplePageWithModal = () => {
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. 当用户打开模态框时设置快捷键范围
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,26 +95,26 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. 当模态框关闭时恢复到先前的快捷键范围
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>我的页面有模态框</h1>
-    <button onClick={handleOpenModalClick}>打开模态框</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
 ```
 
-然后在模态组件中：
+Then in the modal component :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. 使用 useScopedHotkeys hook 来监听 Esc 键。
-  // 注意，esc 是许多其他组件可能使用的常见快捷键
-  // 因此，请务必使用快捷键范围以避免冲突
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,23 +123,23 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>我的模态组件</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-当你不确定只使用 useEffect 并且挂载/卸载操作是否足以避免冲突时，使用此模式很重要。
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
-这些冲突可能很难调试，而且可能会在使用useEffects时更频繁地发生。
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## 什么是快捷键范围？
+## What is a hotkey scope?
 
-快捷键范围是表示快捷键激活上下文的字符串。 通常编码为枚举。
+A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
 
-当你更改快捷键范围时，监听此范围的快捷键将启用，监听其他范围的快捷键将被禁用。
+When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
 
-一次只能设置一个范围。
+You can set only one scope at a time.
 
-例如，每个页面的快捷键范围在 `PageHotkeyScope` 枚举中定义：
+As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
 
 ```tsx
 export enum PageHotkeyScope {
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-在内部，当前选择的范围存储在整个应用程序共享的 Recoil 状态中：
+Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-但这个 Recoil 状态不应该手动处理！ 我们将在下一节中学习如何使用它。
+But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
 
-## 内部是如何运作的？
+## How is it working internally?
 
-我们在 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 之上制作了一个薄包装，使其性能更高并避免不必要的重新渲染。
+We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
 
-我们还创建了一个 Recoil 状态来处理快捷键范围状态，并使其在整个应用程序中可用。
+We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.

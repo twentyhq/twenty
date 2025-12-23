@@ -1,41 +1,41 @@
 ---
-title: フロントエンドコマンド
+title: Frontend Commands
 ---
 
-## 便利なコマンド
+## Useful commands
 
-### アプリの開始
+### Starting the app
 
 ```bash
 npx nx start twenty-front
 ```
 
-### APIのGraphQLスキーマに基づいてGraphQLスキーマを再生成する
+### Regenerate graphql schema based on API graphql schema
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-または
+OR
 
 ```bash
 npx nx run twenty-front:graphql:generate
 ```
 
-### リント
+### Lint
 
 ```bash
 npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## 翻訳
+## Translations
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### テスト
+### Test
 
 ```bash
 npx nx run twenty-front:test # run jest tests
@@ -44,11 +44,11 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## 技術スタック
+## Tech Stack
 
-プロジェクトは、最小限のボイラープレートコードを持つシンプルでクリーンなスタックを持っています。
+The project has a clean and simple stack, with minimal boilerplate code.
 
-**アプリ**
+**App**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,35 +56,35 @@ npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to 
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**テスト**
+**Testing**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**ツール**
+**Tooling**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
 * [ESLint](https://eslint.org/)
 
-## アーキテクチャ
+## Architecture
 
-### ルーティング
+### Routing
 
-[React Router](https://reactrouter.com/)はルーティングを処理します。
+[React Router](https://reactrouter.com/) handles the routing.
 
-不要な[再レンダリング](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders)を避けるために、すべてのルーティングロジックは`PageChangeEffect`内の`useEffect`にあります。
+To avoid unnecessary [re-renders](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### 状態管理
+### State Management
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts)は状態管理を処理します。
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
 
-状態管理に関する詳細な情報は[ベストプラクティス](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#state-management)を参照してください。
+See [best practices](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
 
-## テスト
+## Testing
 
-[Jest](https://jestjs.io/)はユニットテストのツールであり、[Storybook](https://storybook.js.org/)はコンポーネントテスト用です。
+[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
 
-Jestは主にユーティリティ関数のテスト用で、コンポーネントのテスト自体ではありません。
+Jest is mainly for testing utility functions, and not components themselves.
 
-Storybookは、独立したコンポーネントの挙動をテストし、デザインシステムを表示するためのものです。
+Storybook is for testing the behavior of isolated components, as well as displaying the design system.

@@ -1,5 +1,5 @@
 ---
-title: Ejecuciones de flujos de trabajo
+title: Workflow Runs
 description: Monitor and manage workflow executions.
 image: /images/user-guide/workflows/workflow.png
 ---
@@ -24,12 +24,12 @@ A **Run** is a record of a workflow execution. Every time a workflow is triggere
 
 ## Run Statuses
 
-| Estado           | Descripción                                                              |
-| ---------------- | ------------------------------------------------------------------------ |
-| **En ejecución** | Workflow is currently executing                                          |
-| **Completed**    | Workflow finished successfully                                           |
-| **Failed**       | Workflow encountered an error and stopped                                |
-| **Waiting**      | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Status        | Description                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| **Running**   | Workflow is currently executing                                          |
+| **Completed** | Workflow finished successfully                                           |
+| **Failed**    | Workflow encountered an error and stopped                                |
+| **Waiting**   | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
 
 ## Run Details
 
@@ -60,7 +60,7 @@ When a run fails:
 3. Check the error message for details
 4. Common issues:
    * Missing required fields
-   * Formato de datos no válido
+   * Invalid data format
    * External API errors
    * Permission issues
 

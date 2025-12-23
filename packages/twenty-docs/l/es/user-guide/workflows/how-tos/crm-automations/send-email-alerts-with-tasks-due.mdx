@@ -9,7 +9,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Send daily email reminders to each team member about their tasks due today.
 
-## Resumen
+## Overview
 
 This workflow runs on a schedule and:
 
@@ -85,9 +85,9 @@ export const main = async (params: {
 ### Step 6: Send Email (Inside Iterator)
 
 1. Add a **Send Email** action (still inside the iterator)
-2. Configurar:
+2. Configure:
 
-| Campo       | Valor                                                           |
+| Field       | Value                                                           |
 | ----------- | --------------------------------------------------------------- |
 | **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
 | **Subject** | Your Tasks Due Today                                            |

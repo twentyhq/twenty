@@ -21,16 +21,16 @@ Vždy používejte funkcionální komponenty TSX.
 Nepoužívejte implicitní `import` s `const`, protože je obtížnější číst a importovat s automatickým dokončováním kódu.
 
 ```tsx
-// ❌ Špatné, obtížnější číst a importovat s automatickým doplňkem kódu
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
-  return <div>Ahoj světe</div>;
+  return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ Dobré, snadné čtení a import s automatickým dokončováním kódu
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
-  return <div>Ahoj světe</div>;
+  return <div>Hello World</div>;
 };
 ```
 
@@ -41,25 +41,25 @@ Create the type of the props and call it `(ComponentName)Props` if there's no ne
 Use props destructuring.
 
 ```tsx
-// ❌ Špatné, žádný typ
-export const MyComponent = (props) => <div>Ahoj {props.name}</div>;
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ Dobré, typ
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Ahoj {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
 #### Upusťte od používání `React.FC` nebo `React.FunctionComponent` k definování typů rekvizit
 
 ```tsx
-/* ❌ - Špatné, definuje anotace typů komponent s `FC`
- *   - S `React.FC` komponent implicitně přijímá rekvizitu `children`
- *     i když není definována v typu rekvizity. To nemusí být vždy
- *     žádoucí, zejména pokud komponenta nemá v úmyslu vykreslovat
- *     podřízené komponenty.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
 const EmailField: React.FC<{
   value: string;
@@ -86,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 Avoid using single variable prop spreading in JSX elements, like `{...props}`. Tato praxe často vede k tomu, že kód je méně čitelný a obtížnější udržovat, protože není jasné, které rekvizity komponenta přijímá.
 
 ```tsx
-/* ❌ - Špatné, šíří jedinou proměnnou prop do základní komponenty
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -137,12 +137,12 @@ onClick?.();
 Vždy používejte `type` místo `interface`, protože se téměř vždy překrývají a `type` je flexibilnější.
 
 ```tsx
-// ❌ Špatné
+// ❌ Bad
 interface MyInterface {
   name: string;
 }
 
-// ✅ Dobré
+// ✅ Good
 type MyType = {
   name: string;
 };
@@ -155,7 +155,7 @@ type MyType = {
 Proč TypeScript doporučuje vyhnout se výčtům zjistíte [zde](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ Špatné, využívá výčet
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",
@@ -263,13 +263,13 @@ const StyledButton = styled.button`
 Vyhýbejte se typovým importům. K prosazení tohoto standardu pravidlo ESLint kontroluje a hlásí jakékoli typové importy. To pomáhá udržovat konzistenci a čitelnost v TypeScript kódu.
 
 ```tsx
-// ❌ Špatné
+// ❌ Bad
 import { type Meta, type StoryObj } from '@storybook/react';
 
-// ❌ Špatné
+// ❌ Bad
 import type { Meta, StoryObj } from '@storybook/react';
 
-// ✅ Dobré
+// ✅ Good
 import { Meta, StoryObj } from '@storybook/react';
 ```
 

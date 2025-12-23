@@ -1,5 +1,5 @@
 ---
-title: Bereiten Sie Ihre CSV-Dateien vor},{
+title: Prepare Your CSV Files
 description: Vollständige Schritt-für-Schritt-Anleitung zum Formatieren deiner Daten für den Import in Twenty.
 ---
 
@@ -87,114 +87,114 @@ Telefon ist ein **verschachteltes Feld**, das mehrere Spalten benötigt:
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Address Fields
+### Adressfelder
 
-Address is a **nested field** with multiple columns (some can be left empty):
+Adresse ist ein **verschachteltes Feld** mit mehreren Spalten (einige können leer bleiben):
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Adresse / Adresse 1**: Straßenadresse Zeile 1
+* **Adresse / Adresse 2**: Straßenadresse Zeile 2 (optional)
+* **Adresse / Stadt**: Stadtname
+* **Adresse / Bundesland**: Bundesstaat oder Provinz
+* **Adresse / Land**: Name des Landes
+* **Adresse / Postleitzahl**: Postleitzahl/ZIP-Code
 
-### Date Fields
+### Datumsfelder
 
-Use consistent formatting throughout your file:
+Verwenden Sie in Ihrer Datei ein einheitliches Format:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD` (empfohlen): `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### Zahlenfelder
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* Nur Zahlen (kein Text)
+* Verwenden Sie den Punkt für Dezimalstellen: `1234.56`
+* Keine Tausendertrennzeichen (nicht `1,234.56`)
 
-### Currency Fields
+### Währungsfelder
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+Währung ist ein **verschachteltes Feld** und erfordert zwei Spalten, die **beide ausgefüllt werden müssen**:
 
-| Column                | Beispiel  |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Spalte               | Beispiel  |
+| -------------------- | --------- |
+| **Betrag / Betrag**  | `1234.56` |
+| **Betrag / Währung** | `USD`     |
 
-### Boolean Fields
+### Boolesche Felder
 
-Use uppercase: `TRUE` or `FALSE`
+Großschreibung verwenden: `TRUE` oder `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>Kleinschreibung `true` oder `false` funktioniert nicht.</Warning>
 
 ### Auswahlfelder
 
-Use the **API name** of the option, not the display label.
+Verwenden Sie den **API-Namen** der Option, nicht den Anzeigenamen.
 
-**How to find API names:**
+**So finden Sie API-Namen:**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt und das Feld aus
+3. Aktivieren Sie den **Erweiterten Modus** (Schalter unten rechts)
+4. Kopieren Sie den API-Namen (z. B. `OPTION_1`, nicht "Option 1")
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>Neue Auswahloptionen werden nicht automatisch erstellt. Fügen Sie sie vor dem Import unter **Einstellungen → Datenmodell** hinzu.</Note>
 
-### Multi-Select Fields
+### Mehrfachauswahlfelder
 
-Use API names in array format:
+Verwenden Sie API-Namen im Array-Format:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### Array-Felder
 
-Use JSON array format:
+Verwenden Sie das JSON-Array-Format:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### Bewertungsfelder
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+Verwenden Sie das Format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` oder `RATING_5`
 
-### Links/URL Fields
+### Links/URL-Felder
 
-Fill both columns:
+Füllen Sie beide Spalten aus:
 
-* **Links / Link Label**: `Twenty`
-* **Links / Link URL**: `https://twenty.com`
+* **Links / Link-Label**: `Twenty`
+* **Links / Link-URL**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+Für sekundäre Links verwenden Sie die Spalte **Links / Sekundäre Links**:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### JSON-Felder
 
-Use valid JSON format:
+Verwenden Sie ein gültiges JSON-Format:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### ID-Felder
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **Optional**: Twenty erstellt IDs automatisch, wenn sie nicht angegeben werden
+* **Format**: UUID (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Anwendungsfall**: ID angeben, um bestehende Datensätze zu aktualisieren, statt neue zu erstellen
 
-## Step 5: Add Relation Columns (If Linking Records)
+## Schritt 5: Beziehungsspalten hinzufügen (bei Verknüpfung von Datensätzen)
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+Um Datensätze mit anderen Objekten zu verknüpfen (z. B. Personen mit Unternehmen), fügen Sie eine Spalte mit dem eindeutigen Bezeichner des zugehörigen Datensatzes hinzu.
 
-**Example**: Linking People to Companies
+**Beispiel**: Verknüpfung von Personen mit Unternehmen
 
-Add a column to your People CSV:
+Fügen Sie Ihrer Personen-CSV eine Spalte hinzu:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**Wichtige Regeln für Beziehungen:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* Der übergeordnete Datensatz muss bereits in Twenty vorhanden sein
+* Verwenden Sie das **Domain-URL**-Format (`https://domain.com`), nicht die Bezeichnung
+* Ordnen Sie nur EINEN eindeutigen Bezeichner zu (nicht sowohl `companyId` ALS AUCH `companyDomain`)
+* Für Workspace-Mitglieder verwenden Sie deren **E-Mail** (nicht den Namen)
 
 <Warning>
-  **Import Order Matters!**
+  **Die Importreihenfolge ist wichtig!**
 
-  Import the "one" side before the "many" side:
+  Importieren Sie die "One"-Seite vor der "Many"-Seite:
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. **Unternehmen** zuerst
+  2. **Personen** als Zweites (mit Unternehmensreferenz)
+  3. **Opportunities** als Drittes
 
-  The parent record must exist before you can reference it.
+  Der übergeordnete Datensatz muss vorhanden sein, bevor Sie darauf verweisen können.
 </Warning>
 
-See [How to Import Relations](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+Siehe [Beziehungen importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) für detaillierte Anleitungen.
 
-## Step 6: Ensure Fields Exist in Twenty
+## Schritt 6: Sicherstellen, dass Felder in Twenty vorhanden sind
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+Der Import erstellt **Datensätze**, nicht **Felder**. Alle Felder, die Sie importieren möchten, müssen bereits in Ihrem Datenmodell vorhanden sein.
 
-**Before importing:**
+**Vor dem Import:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr Objekt aus
+3. Erstellen Sie alle benötigten benutzerdefinierten Felder
+4. Notieren Sie die exakten Feldnamen (sie müssen mit Ihren Spaltenüberschriften übereinstimmen)
 
-## Step 7: Final Checklist
+## Schritt 7: Abschluss-Checkliste
 
-Before uploading your file, verify:
+Überprüfen Sie vor dem Hochladen Ihrer Datei:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>Datei ist im CSV-, XLSX- oder XLS-Format</Check>
+<Check>Datei enthält weniger als 10.000 Datensätze</Check>
+<Check>Zeichencodierung ist UTF-8</Check>
+<Check>Keine doppelten E-Mails (für Personen) oder Domains (für Unternehmen)</Check>
+<Check>Datumsangaben verwenden durchgehend ein einheitliches Format</Check>
+<Check>Domains verwenden das Format `https://domain.com`</Check>
+<Check>Boolesche Felder verwenden `TRUE` oder `FALSE` (Großschreibung)</Check>
+<Check>Auswahlfelder verwenden API-Namen, nicht Anzeigenamen</Check>
+<Check>Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell</Check>
+<Check>Übergeordnete Datensätze vor untergeordneten Datensätzen importiert</Check>
+<Check>Beziehungsspalten verweisen auf vorhandene Datensätze</Check>
 
-## Common Mistakes to Avoid
+## Häufige Fehler, die Sie vermeiden sollten
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| Fehler                                                | Lösung                                                         |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| Verwendung von `true` statt `TRUE`                    | Boolesche Werte müssen in Großbuchstaben sein                  |
+| Verwendung von Anzeigenamen für Auswahlfelder         | API-Namen in den Einstellungen suchen und verwenden            |
+| Import von Personen vor Unternehmen                   | Importieren Sie stets zuerst die übergeordneten Objekte        |
+| Fehlender Währungscode für Währungsfelder             | Sowohl die Spalte Betrag als auch die Spalte Währung ausfüllen |
+| Falsches Domain-Format                                | `https://domain.com` konsequent verwenden                      |
+| Zuordnung mehrerer eindeutiger Felder für Beziehungen | Nur EINES zuordnen (Domain ODER ID, nicht beides)              |
 
 ## Nächste Schritte
 
-Your file is ready! Now:
+Ihre Datei ist bereit! Jetzt:
 
-* [Import Companies](/l/de/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/de/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [Unternehmen importieren](/l/de/user-guide/data-migration/how-tos/import-companies-via-csv) (diese zuerst importieren)
+* [Kontakte importieren](/l/de/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Importfehler beheben](/l/de/user-guide/data-migration/how-tos/fix-import-errors)

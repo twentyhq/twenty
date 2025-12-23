@@ -5,16 +5,16 @@ description: Query and modify your CRM data programmatically using REST or Graph
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty fue creado para ser amigable con los desarrolladores, ofreciendo APIs potentes que se adaptan a tu modelo de datos personalizado. Proveemos cuatro tipos de API distintos para satisfacer diferentes necesidades de integración.
+Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
 
-## Enfoque centrado en el desarrollador
+## Developer-First Approach
 
 Twenty generates APIs specifically for your data model:
 
-* **No se requieren IDs largos**: Usa los nombres de tus objetos y campos directamente en los endpoints.
-* **Objetos estándar y personalizados tratados por igual**: Tus objetos personalizados reciben el mismo tratamiento de API que los incorporados.
-* **Endpoints dedicados**: Cada objeto y campo recibe su propio endpoint de API.
-* **Documentación personalizada**: Generada específicamente para el modelo de datos de tu espacio de trabajo.
+* **No long IDs required**: Use your object and field names directly in endpoints
+* **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
+* **Dedicated endpoints**: Each object and field gets its own API endpoint
+* **Custom documentation**: Generated specifically for your workspace's data model
 
 <Note>
   Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
@@ -22,45 +22,45 @@ Twenty generates APIs specifically for your data model:
 
 ## The Two API Types
 
-### API Principal
+### Core API
 
-Accesible en `/rest/` o `/graphql/`
+Accessed on `/rest/` or `/graphql/`
 
 Work with your actual **records** (the data):
 
 * Create, read, update, delete People, Companies, Opportunities, etc.
 * Query and filter data
-* Gestionar relaciones de registros
+* Manage record relationships
 
-### API de Metadatos
+### Metadata API
 
-Accesible en `/rest/metadata/` o `/metadata/`
+Accessed on `/rest/metadata/` or `/metadata/`
 
 Manage your **workspace and data model**:
 
-* Crear, modificar o eliminar objetos y campos
-* Configurar ajustes del espacio de trabajo
+* Create, modify, or delete objects and fields
+* Configure workspace settings
 * Define relationships between objects
 
 ## REST vs GraphQL
 
 Both Core and Metadata APIs are available in REST and GraphQL formats:
 
-| Formato     | Available Operations                                       |
+| Format      | Available Operations                                       |
 | ----------- | ---------------------------------------------------------- |
 | **REST**    | CRUD, batch operations, upserts                            |
 | **GraphQL** | Same + **batch upserts**, relationship queries in one call |
 
 Choose based on your needs — both formats access the same data.
 
-## Puntos de Acceso de API
+## API Endpoints
 
 | Environment     | Base URL                  |
 | --------------- | ------------------------- |
 | **Cloud**       | `https://api.twenty.com/` |
 | **Self-Hosted** | `https://{your-domain}/`  |
 
-## Autenticación
+## Authentication
 
 Every API request requires an API key in the header:
 
@@ -68,14 +68,14 @@ Every API request requires an API key in the header:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Crear una Clave de API
+### Create an API Key
 
-1. Ve a **Configuración → APIs y Webhooks**
+1. Go to **Settings → APIs & Webhooks**
 2. Click **+ Create key**
-3. Configurar:
+3. Configure:
    * **Name**: Descriptive name for the key
    * **Expiration Date**: When the key expires
-4. Haga clic en **Guardar**
+4. Click **Save**
 5. **Copy immediately** — the key is only shown once
 
 <VimeoEmbed videoId="928786722" title="Creating API key" />
@@ -90,13 +90,13 @@ For better security, assign a specific role to limit access:
 
 1. Go to **Settings → Roles**
 2. Click on the role to assign
-3. Abre la pestaña **Asignación**
+3. Open the **Assignment** tab
 4. Under **API Keys**, click **+ Assign to API key**
 5. Select the API key
 
 The key will inherit that role's permissions. See [Permissions](/l/es/user-guide/permissions-access/capabilities/permissions) for details.
 
-### Gestionar Claves de API
+### Manage API Keys
 
 **Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
 
@@ -108,7 +108,7 @@ Test your APIs directly in the browser with our built-in playground — availabl
 
 ### Access the Playground
 
-1. Ve a **Configuración → APIs y Webhooks**
+1. Go to **Settings → APIs & Webhooks**
 2. Create an API key (required)
 3. Click on **REST API** or **GraphQL API** to open the playground
 
@@ -121,11 +121,11 @@ Test your APIs directly in the browser with our built-in playground — availabl
 
 The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
 
-## Operaciones por Lotes
+## Batch Operations
 
 Both REST and GraphQL support batch operations:
 
-* **Tamaño del lote**: Hasta 60 registros por solicitud
+* **Batch size**: Up to 60 records per request
 * **Operations**: Create, update, delete multiple records
 
 **GraphQL-only features:**
@@ -137,7 +137,7 @@ Both REST and GraphQL support batch operations:
 
 API requests are throttled to ensure platform stability:
 
-| Límite         | Valor                |
+| Limit          | Value                |
 | -------------- | -------------------- |
 | **Requests**   | 100 calls per minute |
 | **Batch size** | 60 records per call  |

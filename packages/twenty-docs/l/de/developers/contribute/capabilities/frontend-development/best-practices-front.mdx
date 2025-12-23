@@ -18,21 +18,21 @@ Es ist eine gute Praxis, so viele Atome zu erstellen, wie Sie benötigen, um Ihr
 
 ```tsx
 export const myAtomState = atom({
- key: 'myAtomState',
- default: 'Standardwert',
+  key: 'myAtomState',
+  default: 'default value',
 });
 
 export const MyComponent = () => {
- const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
 
- return (
- <div>
- <input
- value={myAtom}
- onChange={(e) => setMyAtom(e.target.value)}
- />
- </div>
- );
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
 }
 ```
 
@@ -40,7 +40,7 @@ export const MyComponent = () => {
 
 Vermeiden Sie die Verwendung von `useRef`, um den Zustand zu speichern.
 
-Wenn Sie den Zustand speichern möchten, sollten Sie `useState` oder `useRecoilState` verwenden.
+If you want to store state, you should use `useState` or `useRecoilState`.
 
 Sehen Sie sich [an, wie Re-Renderings verwaltet werden können](#managing-re-renders), falls Sie das Gefühl haben, dass Sie `useRef` benötigen, um einige Re-Renderings zu verhindern.
 
@@ -56,23 +56,23 @@ Beachten Sie, dass Sie **immer** Re-Renderings vermeiden können, indem Sie dere
 
 Das Vermeiden von Re-Renderings in neuen Funktionen wird jetzt erleichtert, indem sie auf Root-Ebene eliminiert werden.
 
-Die `PageChangeEffect`-Sidecar-Komponente enthält nur einen `useEffect`-Hook, der die gesamte Logik für den Seitenwechsel enthält.
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 Auf diese Weise wissen Sie, dass es nur einen Ort gibt, der ein Re-Rendering auslösen kann.
 
-### Denken Sie immer zweimal nach, bevor Sie `useEffect` in Ihre Codebasis aufnehmen.
+### Always think twice before adding `useEffect` in your codebase
 
-Re-Renderings werden oft durch unnötige `useEffect`-Verwendungen verursacht.
+Re-renders are often caused by unnecessary `useEffect`.
 
-Sie sollten überlegen, ob Sie `useEffect` benötigen oder ob Sie die Logik in eine Event-Handler-Funktion verschieben können.
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-Es ist in der Regel einfach, die Logik in eine `handleClick` oder `handleChange`-Funktion zu verschieben.
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 Sie können sie auch in Bibliotheken wie Apollo finden: `onCompleted`, `onError`, usw.
 
-### Verwenden Sie eine Geschwisterkomponente, um `useEffect`- oder Datenabruf-Logik auszulagern.
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-Wenn Sie das Gefühl haben, Ihrer Root-Komponente einen `useEffect` hinzufügen zu müssen, sollten Sie erwägen, ihn in eine Sidecar-Komponente auszulagern.
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 
@@ -187,16 +187,16 @@ const [email, setEmail] = useState('');
 Ereignis-Handler-Namen sollten mit `handle` beginnen, während `on` als Präfix dient, um Ereignisse in Komponenten-Props zu benennen.
 
 ```tsx
-// ❌ Schlecht
+// ❌ Bad
 const onEmailChange = (val: string) => {
- // ...
+  // ...
 };
 ```
 
 ```tsx
-// ✅ Gut
+// ✅ Good
 const handleEmailChange = (val: string) => {
- // ...
+  // ...
 };
 ```
 
@@ -210,24 +210,24 @@ Betrachten Sie die unten definierte `EmailField`-Komponente:
 
 ```tsx
 type EmailFieldProps = {
- value: string;
- disabled?: boolean;
+  value: string;
+  disabled?: boolean;
 };
 
 const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
- <TextInput value={value} disabled={disabled} fullWidth />
+  <TextInput value={value} disabled={disabled} fullWidth />
 );
 ```
 
 **Verwendung**
 
 ```tsx
-// ❌ Schlecht, den gleichen Wert wie den Standardwert übergeben, fügt keinen Wert hinzu
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Gut, nimmt den Standardwert an
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -242,13 +242,13 @@ const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
 // In MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
- const theme = useTheme();
+  const theme = useTheme();
 
- return (
- <div>
- <MyIcon size={theme.icon.size.md}>
- </div>
- )
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
 };
 ```
 
@@ -274,28 +274,28 @@ Beim Importieren sollten Sie die vorgesehenen Aliase anstelle der vollständigen
 
 ```js
 {
- alias: {
- "~": path.resolve(__dirname, "src"),
- "@": path.resolve(__dirname, "src/modules"),
- "@testing": path.resolve(__dirname, "src/testing"),
- },
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
 }
 ```
 
 **Verwendung**
 
 ```tsx
-// ❌ Schlecht, gibt den vollständigen relativen Pfad an
+// ❌ Bad, specifies the entire relative path
 import {
- CatalogDecorator
+  CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
 import {
- ComponentDecorator
+  ComponentDecorator
 } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx
-// ✅ Gut, nutzt die vorgesehenen Aliase
+// ✅ Good, utilises the designated aliases
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
@@ -306,16 +306,16 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 ```js
 const validationSchema = z
- .object({
- exist: z.boolean(),
- email: z
- .string()
- .email('Email muss eine gültige E-Mail sein'),
- password: z
- .string()
- .regex(PASSWORD_REGEX, 'Passwort muss mindestens 8 Zeichen enthalten'),
- })
- .required();
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
 
 type Form = z.infer<typeof validationSchema>;
 ```

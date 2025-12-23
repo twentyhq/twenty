@@ -12,30 +12,30 @@ image: /images/user-guide/table-views/table.png
 <Tabs>
   <Tab title="استخدام">
     ```jsx
-    استيراد { IconHome, IconUser, IconSettings } من '@tabler/icons-react';
-    استيراد { NavigationBar } من "@/ui/navigation/navigation-bar/components/NavigationBar";
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
     export const MyComponent = () => {
 
        const navigationItems = [
          {
-           name: "الصفحة الرئيسية",
+           name: "Home",
            Icon: IconHome,
-           onClick: () => console.log("تم النقر على الصفحة الرئيسية"),
+           onClick: () => console.log("Home clicked"),
          },
          {
-           name: "الملف الشخصي",
+           name: "Profile",
            Icon: IconUser,
-           onClick: () => console.log("تم النقر على الملف الشخصي"),
+           onClick: () => console.log("Profile clicked"),
          },
          {
-           name: "الإعدادات",
+           name: "Settings",
            Icon: IconSettings,
-           onClick: () => console.log("تم النقر على الإعدادات"),
+           onClick: () => console.log("Settings clicked"),
          },
        ];
 
-      return <NavigationBar activeItemName="الصفحة الرئيسية" items={navigationItems}/>;
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
     };
     ```
   </Tab>

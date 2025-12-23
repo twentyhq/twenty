@@ -1,42 +1,41 @@
 ---
-title: 消息队列
+title: Message Queue
 ---
 
-队列支持异步操作的执行。 它们可用于执行后台任务，例如在注册时发送欢迎邮件。
-每个用例都将拥有一个继承自 `MessageQueueServiceBase` 的队列类。
+Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
+Each use case will have its own queue class extended from `MessageQueueServiceBase`.
 
-当前，我们仅支持使用 `bull-mq`[bull-mq](https://bullmq.io/) 作为队列驱动。
+Currently, we only support `bull-mq`[bull-mq](https://bullmq.io/) as the queue driver.
 
-## 创建和使用新队列的步骤
+## Steps to create and use a new queue
 
-1. 在枚举 `MESSAGE_QUEUES` 下为您的新队列添加队列名称。
-2. 提供以队列名称为依赖令牌的队列工厂实现。
-3. 在所需模块/服务中以队列名称作为依赖令牌注入您创建的队列。
-4. 添加与生产者相同令牌注入的工作类。
+1. Add a queue name for your new queue under enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+4. Add worker class with token based injection just like producer.
 
-### 示例用法
+### Example usage
 
 ```ts
-类 Resolver {
-  构造函数(@Inject(MESSAGE_QUEUES.custom) 私有队列: MessageQueueService) {}
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
 
-  异步某行为事件() {
-    //业务逻辑
+  async onSomeAction() {
+    //business logic
     await this.queue.add(someData);
   }
 }
 
-//异步工作者
-类 CustomWorker {
-  构造函数(@Inject(MESSAGE_QUEUES.custom) 私有队列: MessageQueueService) {
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
     this.initWorker();
   }
 
-  异步 initWorker() {
+  async initWorker() {
     await this.queue.work(async ({ id, data }) => {
-      //工作者逻辑
+      //worker logic
     });
   }
 }
-
 ```

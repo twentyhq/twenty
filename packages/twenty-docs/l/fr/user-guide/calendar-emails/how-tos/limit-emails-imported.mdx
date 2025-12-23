@@ -1,52 +1,52 @@
 ---
-title: Limiter les e-mails importés.
-description: Contrôlez quels e-mails sont importés dans Twenty.
+title: Limit Emails Imported
+description: Control which emails are imported into Twenty.
 ---
 
-## Vue d'ensemble
+## Overview
 
-Par défaut, Twenty synchronise tous les e-mails externes depuis votre boîte aux lettres connectée. Vous pouvez limiter ce qui est importé à l’aide de la **sélection de dossiers** et des **paramètres de visibilité**.
+By default, Twenty syncs all external emails from your connected mailbox. You can limit what gets imported using **folder selection** and **visibility settings**.
 
-## Méthode 1 : Sélection de dossiers (recommandée)
+## Method 1: Folder Selection (Recommended)
 
-Contrôlez quels dossiers e-mail sont synchronisés avec Twenty :
+Control which email folders sync with Twenty:
 
-1. Allez dans **Paramètres → Versions → Lab**
-2. Activez **Dossier de messages**
-3. Retournez à **Paramètres → Comptes**
-4. Sélectionnez votre compte e-mail connecté
-5. Choisissez quels dossiers synchroniser :
+1. Go to **Settings → Releases → Lab**
+2. Enable **Message Folder**
+3. Return to **Settings → Accounts**
+4. Select your connected email account
+5. Choose which folders to sync:
 
-| Dossier                    | Description                                  |
-| -------------------------- | -------------------------------------------- |
-| **Boîte de réception**     | E-mails entrants principaux                  |
-| **Envoyé**                 | E-mails sortants que vous avez envoyés       |
-| **Archive**                | Messages archivés                            |
-| **Dossiers personnalisés** | Tous les dossiers spécifiques de votre choix |
+| Folder             | Description                   |
+| ------------------ | ----------------------------- |
+| **Inbox**          | Primary incoming emails       |
+| **Sent**           | Outgoing emails you've sent   |
+| **Archive**        | Archived messages             |
+| **Custom Folders** | Any specific folders you want |
 
-6. Excluez les dossiers que vous ne voulez pas synchroniser (Spam, Corbeille, dossiers personnels)
+6. Exclude folders you don't want synced (Spam, Trash, personal folders)
 
-<Note>Cela vous donne un contrôle précis sur les e-mails qui apparaissent dans votre CRM sans tout synchroniser.</Note>
+<Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
 
-## Méthode 2 : Paramètres de création automatique de contacts
+## Method 2: Contact Auto-Creation Settings
 
-Contrôlez à quel moment les contacts sont créés à partir des e-mails :
+Control when contacts are created from emails:
 
-1. Allez dans **Paramètres → Comptes**
-2. Sélectionnez votre boîte aux lettres connectée
-3. Choisissez une option :
-   * **Désactivé** : Aucun contact n’est créé, mais les e-mails sont tout de même synchronisés avec les contacts existants.
-   * **Envoyés et reçus** : Créer des contacts à partir de tous les e-mails externes
-   * **Envoyés uniquement** : Créer des contacts uniquement à partir des e-mails que vous envoyez
+1. Go to **Settings → Accounts**
+2. Select your connected mailbox
+3. Choose an option:
+   * **Deactivated**: No contacts created, but emails still sync to existing contacts
+   * **Sent & Received**: Create contacts from all external emails
+   * **Sent Only**: Only create contacts from emails you send
 
-## Ce qui est toujours exclu
+## What's Always Excluded
 
-Ces e-mails ne sont jamais synchronisés, quels que soient les paramètres :
+These emails are never synced, regardless of settings:
 
-* **E-mails internes** : Messages entre collègues (même domaine)
-* **E-mails de groupe** : Listes de distribution et messages de groupe
-* **Spam/Corbeille** : Les dossiers système sont généralement exclus
+* **Internal emails**: Messages between colleagues (same domain)
+* **Group emails**: Distribution lists and group messages
+* **Spam/Trash**: System folders are typically excluded
 
-## Note importante
+## Important Note
 
-<Note>Nous ne fournissons pas d’adresse e-mail en CC pour une synchronisation sélective. Utilisez la fonctionnalité de sélection de dossiers ci-dessus pour obtenir le même niveau de contrôle.</Note>
+<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>

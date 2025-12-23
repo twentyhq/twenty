@@ -1,16 +1,16 @@
 ---
-title: Consejo de la aplicación
+title: App Tooltip
 image: /images/user-guide/tips/light-bulb.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tips/light-bulb.png" alt="Encabezado" />
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
 </Frame>
 
-Un breve mensaje que muestra información adicional cuando un usuario interactúa con un elemento.
+A brief message that displays additional information when a user interacts with an element.
 
 <Tabs>
-  <Tab title="Uso">
+  <Tab title="Usage">
     ```jsx
     import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
@@ -38,26 +38,26 @@ Un breve mensaje que muestra información adicional cuando un usuario interactú
   </Tab>
 
   <Tab title="Props">
-    | Props              | Tipo                                         | Descripción                                                                                                                                                                                                                                            |
-    | ------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | nombreDeClase      | cadena                                       | Clase CSS opcional para estilo adicional                                                                                                                                                                                                               |
-    | anchorSelect       | Selector CSS                                 | Selector para el ancla del consejo (el elemento que activa el consejo)                                                                                                                                                                                 |
-    | contenido          | cadena                                       | El contenido que desea mostrar dentro del consejo                                                                                                                                                                                                      |
-    | delayHide          | número                                       | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                                                                      |
-    | desplazamiento     | número                                       | El desplazamiento en píxeles para posicionar el consejo                                                                                                                                                                                                |
-    | sinFlecha          | booleano                                     | Si es `true`, oculta la flecha en el consejo                                                                                                                                                                                                           |
-    | estáAbierto        | booleano                                     | Si es `true`, el consejo está abierto por defecto                                                                                                                                                                                                      |
-    | lugar              | Cadena `PlacesType` de `react-tooltip`       | Especifica la colocación del consejo. Los valores incluyen `inferior`, `izquierda`, `derecha`, `superior`, `superior-inicio`, `superior-fin`, `derecha-inicio`, `derecha-fin`, `inferior-inicio`, `inferior-fin`, `izquierda-inicio` y `izquierda-fin` |
-    | estrategiaPosicion | Cadena `PositionStrategy` de `react-tooltip` | Estrategia de posición para el consejo. Tiene dos valores: `absoluto` y `fijo`                                                                                                                                                                         |
+    | Props            | Type                                           | Description                                                                                                                                                                                             |
+    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | string                                         | Optional CSS class for additional styling                                                                                                                                                               |
+    | anchorSelect     | CSS selector                                   | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                                 |
+    | content          | string                                         | The content you want to display within the tooltip                                                                                                                                                      |
+    | delayHide        | number                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                       |
+    | offset           | number                                         | The offset in pixels for positioning the tooltip                                                                                                                                                        |
+    | noArrow          | boolean                                        | If `true`, hides the arrow on the tooltip                                                                                                                                                               |
+    | isOpen           | boolean                                        | If `true`, the tooltip is open by default                                                                                                                                                               |
+    | place            | `PlacesType` string from `react-tooltip`       | Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
+    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Position strategy for the tooltip. Has two values: `absolute` and `fixed`                                                                                                                               |
   </Tab>
 </Tabs>
 
-## Texto Desbordante con Consejo
+## Overflowing Text with Tooltip
 
-Maneja texto desbordante y muestra un consejo cuando el texto se desborda.
+Handles overflowing text and displays a tooltip when the text overflows.
 
 <Tabs>
-  <Tab title="Uso">
+  <Tab title="Usage">
     ```jsx
     import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -71,8 +71,8 @@ Maneja texto desbordante y muestra un consejo cuando el texto se desborda.
   </Tab>
 
   <Tab title="Props">
-    | Props | Tipo   | Descripción                                                    |
-    | ----- | ------ | -------------------------------------------------------------- |
-    | texto | cadena | El contenido que desea mostrar en el área de texto desbordante |
+    | Props | Type   | Description                                                  |
+    | ----- | ------ | ------------------------------------------------------------ |
+    | text  | string | The content you want to display in the overflowing text area |
   </Tab>
 </Tabs>

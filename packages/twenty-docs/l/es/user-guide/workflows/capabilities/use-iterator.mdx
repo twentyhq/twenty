@@ -12,7 +12,7 @@ Iterator lets you loop through an array of records and perform actions on each o
 
 ## When to Use Iterator
 
-| Scenario                   | Ejemplo                                        |
+| Scenario                   | Example                                        |
 | -------------------------- | ---------------------------------------------- |
 | **Process search results** | Send email to each person found                |
 | **Handle webhook arrays**  | Create records for each item in order          |
@@ -62,7 +62,7 @@ Actions placed after Iterator run for each item:
 3. Subject: Hello `{{iterator.currentItem.firstName}}`!
 4. Body: Personalized message using current item fields
 
-### Resultado
+### Result
 
 If Search Records returns 5 people, the Iterator:
 
@@ -74,7 +74,7 @@ If Search Records returns 5 people, the Iterator:
 
 Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
-| Variable                                | Descripción                         |
+| Variable                                | Description                         |
 | --------------------------------------- | ----------------------------------- |
 | `{{iterator.currentItem}}`              | The entire current record object    |
 | `{{iterator.currentItem.id}}`           | Record ID                           |
@@ -125,7 +125,7 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
            - To: {{iterator.currentItem.email}}
 ```
 
-## Solución de Problemas
+## Troubleshooting
 
 ### "Iterator expects an array"
 
@@ -165,7 +165,7 @@ Filter: {{searchRecords.length}} > 0
 * **Limits**: Consider batching very large operations
 * **Rate limits**: External API calls may hit rate limits with many iterations
 
-## Mejores prácticas
+## Best Practices
 
 1. **Always check array length** before Iterator to avoid errors
 2. **Add filters inside loops** when not all items need processing

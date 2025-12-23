@@ -3,83 +3,83 @@ title: Mailbox
 description: Understanding email integration features in Twenty.
 ---
 
-**Nota**: Para conectar sus cuentas de correo electrónico y configurar los ajustes de sincronización, visite [Configuración de Correo Electrónico y Calendario](/l/es/user-guide/calendar-emails/overview).
+**Note**: To connect your email accounts and configure sync settings, visit [Email & Calendar Setup](/l/es/user-guide/calendar-emails/overview).
 
-## Cómo Funciona la Integración del Correo Electrónico
+## How Email Integration Works
 
-Twenty vincula automáticamente los correos electrónicos de sus buzones conectados a los registros CRM relevantes, manteniendo todo el historial de comunicación en un solo lugar.
+Twenty automatically links emails from your connected mailboxes to the relevant CRM records, keeping all communication history in one place.
 
 ### Objects Where Emails Can Be Found
 
-Las conversaciones de correo electrónico aparecen en tres objetos principales:
+Email conversations appear in three main objects:
 
-* **Personas**: Vea todos los correos electrónicos intercambiados con un contacto específico
-* **Empresas**: Vea todos los correos electrónicos relacionados con una empresa y sus empleados
-* **Oportunidades**: Acceda a hilos de correo electrónico relacionados con la empresa vinculada a esta oportunidad. Aún no se muestran los hilos de correo electrónico de personas individuales en la oportunidad.
+* **People**: View all emails exchanged with a specific contact
+* **Companies**: See all emails related to a company and its employees
+* **Opportunities**: Access email threads related to the company linked to this opportunity. Email threads from individual people on the opportunity are not shown yet.
 
-### Visualización de Conversaciones de Correo Electrónico
+### Viewing Email Threads
 
-1. **Navegue hacia un Registro**: Vaya a cualquier registro de Persona, Empresa u Oportunidad
-2. **Seleccione la Pestaña de Correos Electrónicos**: Haga clic en la pestaña `Correos Electrónicos` para ver los correos sincronizados
-3. **Abra un Hilo de Correo Electrónico**: Haga clic en cualquier correo electrónico para abrir y leer la conversación completa
-4. **Explorar el Historial**: Desplácese por el historial completo de correos electrónicos con ese contacto
+1. **Navigate to a Record**: Go to any Person, Company, or Opportunity record
+2. **Select the Emails Tab**: Click on the `Emails` tab to view synced emails
+3. **Open an Email Thread**: Click on any email to open and read the full conversation
+4. **Browse History**: Scroll through the complete email history with that contact
 
 <img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
 
-## Lo Que Verás
+## What You'll See
 
-### Vista de Hilo de Correo Electrónico
+### Email Thread View
 
-Cuando abres un hilo de correo electrónico, puedes:
+When you open an email thread, you can:
 
-* **Leer Conversaciones Completas**: Vea el intercambio completo de correos electrónicos
-* **Ver Participantes**: Vea a todas las personas involucradas en el hilo de correo electrónico
-* **Verificar Tiempos**: Sepa exactamente cuándo se envió cada correo electrónico
-* **Acceder al Contexto**: Comprenda todo el historial de comunicación
+* **Read Full Conversations**: See the complete email exchange
+* **View Participants**: See all people involved in the email thread
+* **Check Timestamps**: Know exactly when each email was sent
+* **Access Context**: Understand the full communication history
 
-### Visibilidad del Correo Electrónico
+### Email Visibility
 
-Dependiendo de las configuraciones de su buzón, puede ver:
+Depending on your mailbox settings, you might see:
 
-* **Contenido Completo**: Texto completo del correo electrónico y detalles
-* **Asunto + Metadata**: Línea de asunto, remitente, destinatario y hora
-* **Solo Metadata**: Información básica sin contenido de correo electrónico
+* **Full Content**: Complete email text and details
+* **Subject + Metadata**: Subject line, sender, recipient, and timestamp
+* **Metadata Only**: Basic information without email content
 
-## Comportamiento de Sincronización de Correos Electrónicos
+## Email Sync Behavior
 
-### Qué Se Sincroniza
+### What Gets Synced
 
-* **Correos Externos**: Todos los correos con contactos fuera de su organización
-* **Vinculación Automática**: Los correos se conectan a los registros de Personas y Empresas existentes
-* **Direcciones Múltiples**: Los correos de cualquier dirección se vinculan al mismo registro de contacto
-* **Actualizaciones**: Los nuevos correos aparecen en 5 minutos
+* **External Emails**: All emails with contacts outside your organization
+* **Automatic Linking**: Emails connect to existing People and Company records
+* **Multiple Addresses**: Emails from any address link to the same contact record
+* **Updates**: New emails appear within 5 minutes
 
-### Qué No Se Sincroniza
+### What Doesn't Get Synced
 
-* **Correos Internos**: Los correos entre colegas (mismo dominio) permanecen privados
-* **Correos Grupales**: No se incluyen las listas de distribución y correos grupales
-* **Carpetas Excluidas**: Carpetas que ha elegido no sincronizar (configuradas en Configuración → Cuentas → Correo Electrónico)
+* **Internal Emails**: Emails between colleagues (same domain) remain private
+* **Group Emails**: Distribution lists and group emails are excluded
+* **Excluded Folders**: Folders you've chosen not to sync (configured under Settings → Accounts → Email)
 
-### Sincronización Selectiva de Carpetas (Función de Laboratorio)
+### Selective Folder Sync (Lab Feature)
 
-Controle qué carpetas de correo electrónico se sincronizan con Twenty:
+Control which email folders sync with Twenty:
 
-1. Habilitar `Carpeta de Mensajes` en Configuración → Lanzamientos → Laboratorio
-2. Configure las carpetas en Configuración → Cuentas → Correo Electrónico
-3. Elija carpetas específicas para incluir o excluir (Bandeja de entrada, Enviados, Archivo, carpetas personalizadas)
+1. Enable `Message Folder` in Settings → Releases → Lab
+2. Configure folders under Settings → Accounts → Email
+3. Choose specific folders to include or exclude (Inbox, Sent, Archive, custom folders)
 
-## Resolución de Problemas de Sincronización de Correos Electrónicos
+## Troubleshooting Email Sync
 
-### Problemas Comunes de Sincronización
+### Common Sync Issues
 
-* **Retrasos en la Sincronización**: Los correos aparecen en 5 minutos, pero las importaciones iniciales tardan más
-* **Correos Faltantes**: Compruebe si:
-  * Las carpetas están excluidas en la configuración del Carpeta de Mensajes
-  * La creación automática de contactos está desactivada (los correos necesitan registros existentes de Twenty)
-  * El correo es de colegas (mismo dominio) o listas grupales
-  * El buzón aún está completando la sincronización inicial
+* **Sync Delays**: Emails appear within 5 minutes, but initial imports take longer
+* **Missing Emails**: Check if:
+  * Folders are excluded in Message Folder settings
+  * Contact auto-creation is disabled (emails need existing Twenty records)
+  * Email is from colleagues (same domain) or group lists
+  * Mailbox is still completing initial sync
 
-### Limitaciones del Correo Electrónico
+### Email Limitations
 
-* **Carpetas del Sistema**: Algunas carpetas de correo no están disponibles para sincronización
-* **Alias**: Solo se pueden conectar buzones verdaderos (no alias de correo electrónico)
+* **System Folders**: Some email folders may not be available for sync
+* **Aliases**: Only true mailboxes can be connected (not email aliases)

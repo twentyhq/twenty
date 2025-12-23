@@ -87,114 +87,114 @@ Telefon je **vnořené pole**, které vyžaduje více sloupců:
 | **Telefony / Kód země hlavního telefonu**              | `US`         |
 | **Telefony / Mezinárodní předvolba hlavního telefonu** | `+1`         |
 
-### Address Fields
+### Adresní pole
 
-Address is a **nested field** with multiple columns (some can be left empty):
+Adresa je **vnořené pole** s více sloupci (některé mohou zůstat prázdné):
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Adresa / Adresa 1**: Řádek adresy 1
+* **Adresa / Adresa 2**: Řádek adresy 2 (volitelné)
+* **Adresa / Město**: Název města
+* **Adresa / Stát**: Stát nebo provincie
+* **Adresa / Země**: Název země
+* **Adresa / PSČ**: Poštovní/ZIP kód
 
-### Date Fields
+### Datumová pole
 
-Use consistent formatting throughout your file:
+Používejte jednotný formát v celém souboru:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD` (doporučeno): `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### Číselná pole
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* Pouze čísla (bez textu)
+* Pro desetinná místa použijte tečku: `1234.56`
+* Bez oddělovačů tisíců (ne `1,234.56`)
 
-### Currency Fields
+### Měnová pole
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+Měna je **vnořené pole** vyžadující dva sloupce, které musí být oba vyplněny:
 
-| Column                | Příklad   |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Sloupec             | Příklad   |
+| ------------------- | --------- |
+| **Částka / Částka** | `1234.56` |
+| **Částka / Měna**   | `USD`     |
 
-### Boolean Fields
+### Booleovská pole
 
-Use uppercase: `TRUE` or `FALSE`
+Používejte velká písmena: `TRUE` nebo `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>Malá písmena `true` nebo `false` nebudou fungovat.</Warning>
 
 ### Výběrová Pole
 
-Use the **API name** of the option, not the display label.
+Použijte název API možnosti, nikoli zobrazovaný štítek.
 
-**How to find API names:**
+**Jak najít názvy API:**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt a pole
+3. Zapněte **Pokročilý režim** (přepínač vpravo dole)
+4. Zkopírujte název API (např. `OPTION_1`, nikoli "Option 1")
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>Nové možnosti výběru se nevytvářejí automaticky. Přidejte je v **Nastavení → Datový model** před importem.</Note>
 
-### Multi-Select Fields
+### Pole s vícenásobným výběrem
 
-Use API names in array format:
+Použijte názvy API ve formátu pole:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### Pole typu array
 
-Use JSON array format:
+Použijte formát JSON pole:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### Hodnoticí pole
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+Použijte formát: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` nebo `RATING_5`
 
-### Links/URL Fields
+### Pole odkazů/URL
 
-Fill both columns:
+Vyplňte oba sloupce:
 
-* **Links / Link Label**: `Twenty`
-* **Links / Link URL**: `https://twenty.com`
+* **Odkazy / Štítek odkazu**: `Twenty`
+* **Odkazy / URL odkazu**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+Pro sekundární odkazy použijte sloupec **Odkazy / Sekundární odkazy**:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### JSON pole
 
-Use valid JSON format:
+Použijte platný formát JSON:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### ID pole
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **Volitelné**: Twenty automaticky generuje ID, pokud nejsou zadána
+* **Formát**: UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Využití**: Zahrňte ID pro aktualizaci existujících záznamů místo vytváření nových
 
-## Step 5: Add Relation Columns (If Linking Records)
+## Krok 5: Přidejte relační sloupce (pokud propojujete záznamy)
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+Chcete-li propojit záznamy s jinými objekty (např. lidi se společnostmi), přidejte sloupec s jedinečným identifikátorem souvisejícího záznamu.
 
-**Example**: Linking People to Companies
+**Příklad**: Propojení lidí se společnostmi
 
-Add a column to your People CSV:
+Přidejte do svého souboru CSV s lidmi sloupec:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**Důležitá pravidla pro relace:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* Nadřazený záznam musí v Twenty již existovat
+* Použijte formát **Domain URL** (`https://domain.com`), nikoli štítek
+* Mapujte pouze JEDEN jedinečný identifikátor (nezahrnujte zároveň `companyId` i `companyDomain`)
+* U členů pracovního prostoru použijte jejich **e-mail** (ne jméno)
 
 <Warning>
-  **Import Order Matters!**
+  **Pořadí importu je důležité!**
 
-  Import the "one" side before the "many" side:
+  Importujte stranu "one" před stranou "many":
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. **Společnosti** jako první
+  2. **Lidé** jako druzí (s odkazem na společnost)
+  3. **Příležitosti** jako třetí
 
-  The parent record must exist before you can reference it.
+  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
 </Warning>
 
-See [How to Import Relations](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+Podrobné pokyny najdete v [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv).
 
-## Step 6: Ensure Fields Exist in Twenty
+## Krok 6: Ujistěte se, že pole v Twenty existují
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+Import vytváří záznamy, nikoli pole. Všechna pole, která chcete importovat, musí již existovat ve vašem datovém modelu.
 
-**Before importing:**
+**Před importem:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte požadovaný objekt
+3. Vytvořte všechna vlastní pole, která potřebujete
+4. Poznamenejte si přesné názvy polí (musí odpovídat názvům sloupců)
 
-## Step 7: Final Checklist
+## Krok 7: Závěrečný kontrolní seznam
 
-Before uploading your file, verify:
+Před nahráním souboru ověřte:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>Soubor je ve formátu CSV, XLSX nebo XLS</Check>
+<Check>Soubor obsahuje méně než 10 000 záznamů</Check>
+<Check>Kódování je UTF-8</Check>
+<Check>Žádné duplicitní e-maily (pro lidi) nebo domény (pro společnosti)</Check>
+<Check>Data používají jednotný formát v celém souboru</Check>
+<Check>Domény používají formát `https://domain.com`</Check>
+<Check>Booleovská pole používají `TRUE` nebo `FALSE` (velká písmena)</Check>
+<Check>Výběrová pole používají názvy API, nikoli zobrazované štítky</Check>
+<Check>Všechna vlastní pole existují v Nastavení → Datový model</Check>
+<Check>Nadřazené záznamy byly importovány před podřízenými</Check>
+<Check>Relační sloupce odkazují na existující záznamy</Check>
 
-## Common Mistakes to Avoid
+## Časté chyby, kterým se vyhnout
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| Chyba                                          | Řešení                                         |
+| ---------------------------------------------- | ---------------------------------------------- |
+| Použití `true` místo `TRUE`                    | Booleovské hodnoty musí být velkými písmeny    |
+| Použití zobrazovaných štítků u výběrových polí | V Nastavení najděte a používejte názvy API     |
+| Importování lidí před společnostmi             | Vždy nejprve importujte nadřazené objekty      |
+| Chybějící kód měny u měnových polí             | Vyplňte sloupce Částka i Měna                  |
+| Nesprávný formát domény                        | Používejte konzistentně `https://domain.com`   |
+| Mapování více jedinečných polí pro relace      | Mapujte pouze JEDNO (doména NEBO id, ne obojí) |
 
 ## Další kroky
 
-Your file is ready! Now:
+Váš soubor je připraven! Nyní:
 
-* [Import Companies](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv) (importujte je jako první)
+* [Importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
