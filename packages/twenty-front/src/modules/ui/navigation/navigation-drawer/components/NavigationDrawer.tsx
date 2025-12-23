@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -93,25 +93,22 @@ export const NavigationDrawer = ({
     setIsHovered(false);
   };
 
-  const handleCollapse = useCallback(() => {
+  const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
-  }, [setIsNavigationDrawerExpanded, setTableWidthResizeIsActive]);
+  };
 
-  const handleWidthChange = useCallback(
-    (width: number) => {
-      setNavigationDrawerWidth(width);
-      setIsResizing(false);
-      setTableWidthResizeIsActive(true);
-    },
-    [setNavigationDrawerWidth, setTableWidthResizeIsActive],
-  );
+  const handleWidthChange = (width: number) => {
+    setNavigationDrawerWidth(width);
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  };
 
-  const handleResizeStart = useCallback(() => {
+  const handleResizeStart = () => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
-  }, [setTableWidthResizeIsActive]);
+  };
 
   return (
     <>

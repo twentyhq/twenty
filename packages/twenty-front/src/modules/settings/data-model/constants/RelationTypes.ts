@@ -3,7 +3,7 @@ import {
   IllustrationIconOneToMany,
 } from 'twenty-ui/display';
 import { RelationType } from '~/generated-metadata/graphql';
-import OneToManySvg from '../assets/OneToMany.svg';
+import OneToManySvg from '@/modules/settings/data-model/assets/OneToMany.svg';
 
 export const RELATION_TYPES: Record<
   RelationType,

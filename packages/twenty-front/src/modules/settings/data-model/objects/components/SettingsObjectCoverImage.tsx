@@ -7,8 +7,8 @@ import { IconEye } from 'twenty-ui/display';
 import { FloatingButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 
-import DarkCoverImage from '../../assets/cover-dark.png';
-import LightCoverImage from '../../assets/cover-light.png';
+import DarkCoverImage from '@/modules/settings/data-model/assets/cover-dark.png';
+import LightCoverImage from '@/modules/settings/data-model/assets/cover-light.png';
 
 const StyledCoverImageContainer = styled(Card)`
   align-items: center;

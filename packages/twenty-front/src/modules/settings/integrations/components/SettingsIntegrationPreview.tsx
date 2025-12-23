@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 
-import PreviewBackgroundImage from '../assets/preview-background.svg';
-import SyncImage from '../assets/sync.svg?react';
+import PreviewBackgroundImage from '@/modules/settings/integrations/assets/preview-background.svg';
+import SyncImage from '@/modules/settings/integrations/assets/sync.svg?react';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsIntegrationPreviewProps = {
