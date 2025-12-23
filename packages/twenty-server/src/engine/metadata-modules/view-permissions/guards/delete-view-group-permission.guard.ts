@@ -45,6 +45,7 @@ export class DeleteViewGroupPermissionGuard implements CanActivate {
       viewId,
       request.userWorkspaceId,
       request.workspace.id,
+      request.apiKey?.id,
     );
   }
 }
