@@ -1,16 +1,21 @@
+import { getRelativeDateFilterTimeZoneAbbreviation } from '@/object-record/object-filter-dropdown/utils/getRelativeDateFilterTimeZoneAbbreviation';
 import { plural } from 'pluralize';
 
-import { capitalize, type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  capitalize,
+  isDefined,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 
 export const getRelativeDateDisplayValue = (
-  relativeDate: RelativeDateFilter | null,
+  relativeDate: RelativeDateFilter,
 ) => {
   if (!relativeDate) return '';
   const { direction, amount, unit } = relativeDate;
 
-  const directionStr = capitalize(direction.toLowerCase());
-  const amountStr = direction === 'THIS' ? '' : amount;
-  const unitStr =
+  const directionFormatted = capitalize(direction.toLowerCase());
+  const amountFormatted = direction === 'THIS' ? '' : amount;
+  let unitFormatted =
     direction === 'THIS'
       ? unit.toLowerCase()
       : amount
@@ -19,7 +24,14 @@ export const getRelativeDateDisplayValue = (
           : unit.toLowerCase()
         : undefined;
 
-  return [directionStr, amountStr, unitStr]
+  if (isDefined(relativeDate.timezone)) {
+    const timeZoneAbbreviation =
+      getRelativeDateFilterTimeZoneAbbreviation(relativeDate);
+
+    unitFormatted = `${unitFormatted ?? ''} (${timeZoneAbbreviation})`;
+  }
+
+  return [directionFormatted, amountFormatted, unitFormatted]
     .filter((item) => item !== undefined)
     .join(' ');
 };

@@ -7,6 +7,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
+// TODO: should be splitted in both validateDate and validateDateTime because both format are different even if Date parses them indeferrently
 export const validateDateAndDateTimeFieldOrThrow = (
   value: unknown,
   fieldName: string,

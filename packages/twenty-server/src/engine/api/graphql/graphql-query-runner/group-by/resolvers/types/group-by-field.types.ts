@@ -7,19 +7,24 @@ export type GroupByRegularField = {
   fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
 };
+
 export type GroupByDateField = {
   fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
   dateGranularity: ObjectRecordGroupByDateGranularity;
   weekStartDay?: FirstDayOfTheWeek;
+  timeZone?: string;
 };
+
 export type GroupByRelationField = {
   fieldMetadata: FlatFieldMetadata;
   nestedFieldMetadata: FlatFieldMetadata;
   nestedSubFieldName?: string;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   weekStartDay?: FirstDayOfTheWeek;
+  timeZone?: string;
 };
+
 export type GroupByField =
   | GroupByRegularField
   | GroupByDateField

@@ -5,6 +5,7 @@ import {
   type SupportedDateGranularity,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getDateGroupsFromData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { type GraphOrderBy } from '~/generated/graphql';
 
@@ -15,6 +16,7 @@ type OneDimensionalFillParams = {
   orderBy?: GraphOrderBy | null;
 };
 
+// TODO: should handle DATE and DATE_TIME here
 export const fillDateGapsInOneDimensionalBarChartData = ({
   data,
   keys,
@@ -22,7 +24,7 @@ export const fillDateGapsInOneDimensionalBarChartData = ({
   orderBy,
 }: OneDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
-  const parsedDates: Date[] = [];
+  const parsedDates: Temporal.PlainDate[] = [];
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
@@ -31,14 +33,10 @@ export const fillDateGapsInOneDimensionalBarChartData = ({
       continue;
     }
 
-    const parsedDate = new Date(String(dateValue));
-
-    if (isNaN(parsedDate.getTime())) {
-      continue;
-    }
+    const parsedDate = Temporal.PlainDate.from(String(dateValue));
 
     parsedDates.push(parsedDate);
-    existingDateGroupsMap.set(parsedDate.toISOString(), item);
+    existingDateGroupsMap.set(parsedDate.toString(), item);
   }
 
   if (parsedDates.length === 0) {
@@ -52,7 +50,7 @@ export const fillDateGapsInOneDimensionalBarChartData = ({
   });
 
   const filledData = allDates.map((date) => {
-    const key = date.toISOString();
+    const key = date.toString();
     const existingDateGroup = existingDateGroupsMap.get(key);
 
     return isDefined(existingDateGroup)
