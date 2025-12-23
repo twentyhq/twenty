@@ -2,6 +2,7 @@ import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/
 
 export const TEST_OBJECT_GQL_FIELDS = `
     id
+    position
     manyToOneRelationFieldId
     manyToOneRelationField {
         id

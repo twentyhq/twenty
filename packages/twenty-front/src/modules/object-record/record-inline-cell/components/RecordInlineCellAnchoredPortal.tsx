@@ -25,6 +25,7 @@ type RecordInlineCellAnchoredPortalProps = {
   recordId: string;
   instanceIdPrefix: string;
   children: React.ReactNode;
+  onCloseEditMode?: () => void;
 };
 
 export const RecordInlineCellAnchoredPortal = ({
@@ -33,6 +34,7 @@ export const RecordInlineCellAnchoredPortal = ({
   recordId,
   instanceIdPrefix,
   children,
+  onCloseEditMode,
 }: RecordInlineCellAnchoredPortalProps) => {
   const fieldInstanceId = getRecordFieldInputInstanceId({
     recordId,
@@ -87,6 +89,7 @@ export const RecordInlineCellAnchoredPortal = ({
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
           isRecordFieldReadOnly,
+          onCloseEditMode,
         }}
       >
         <>

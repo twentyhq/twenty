@@ -34,7 +34,7 @@ export const triggerAttachRelationOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   const sourceRecordTypeName = capitalize(sourceObjectNameSingular);
   const targetRecordTypeName = capitalize(
@@ -84,18 +84,20 @@ export const triggerAttachRelationOptimisticEffect = ({
             },
           ];
 
-          upsertRecordsInStore([
-            getRecordFromRecordNode({
-              recordNode: {
-                id: targetRecordId,
-                [fieldNameOnTargetRecord]: {
-                  ...targetRecordFieldValue,
-                  edges: nextEdges,
+          upsertRecordsInStore({
+            partialRecords: [
+              getRecordFromRecordNode({
+                recordNode: {
+                  id: targetRecordId,
+                  [fieldNameOnTargetRecord]: {
+                    ...targetRecordFieldValue,
+                    edges: nextEdges,
+                  },
+                  __typename: targetRecordTypeName,
                 },
-                __typename: targetRecordTypeName,
-              },
-            }),
-          ]);
+              }),
+            ],
+          });
 
           return {
             ...targetRecordFieldValue,
@@ -121,5 +123,5 @@ export const triggerAttachRelationOptimisticEffect = ({
     return;
   }
 
-  upsertRecordsInStore([newCachedRecord]);
+  upsertRecordsInStore({ partialRecords: [newCachedRecord] });
 };

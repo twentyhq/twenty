@@ -1,0 +1,80 @@
+---
+title: Workflows
+description: Learn how to build automations in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Workflows" />
+</Frame>
+
+## Warum Workflows wichtig sind
+
+Twenty wurde entwickelt, um den Nutzern maximale Flexibilität zu bieten. Rather than forcing you to adapt your business processes to rigid, pre-built features, workflows enable you to build automations that create the CRM that best supports your unique business use cases.
+
+Workflows are Twenty's in-app feature for building these automations. Sie bieten Ihnen die Bausteine, um genau das zu schaffen, was Ihr Unternehmen braucht, wann es das braucht.
+
+## Was kann ich mit Workflows machen?
+
+Wir empfehlen, Automatisierungen für zwei Hauptzwecke zu entwickeln:
+
+1. **Interne Automatisierungen, um den Alltag Ihres Teams zu erleichtern**: Reduzieren Sie die Menge manueller Eingaben und sich wiederholender Aufgaben, die Ihr Team verlangsamen.
+2. **Daten in und aus Twenty bringen**: Verbinden Sie Twenty über API-Aufrufe und Webhooks mit Ihrer Datenbank und anderen Werkzeugen.
+
+## Building Your First Workflow
+
+### Step 1: Create a New Workflow
+
+1. Go to **Workflows** accessible below the other objects
+2. Click **+ New Record**
+3. Give your workflow a name
+
+### Step 2: Add a Trigger
+
+Every workflow starts with a trigger. Choose from:
+
+* **Record events**: When a record is created, updated, or deleted
+* **Schedule**: Run at specific times (daily, weekly, etc.)
+* **Manual**: Triggered by a user action
+* **Webhook**: Triggered by a webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Step 3: Add Actions
+
+After your trigger, add one or more actions:
+
+* **Create Record**: Add new records to any object
+* **Update Record**: Modify existing record data
+* **Delete Record**: Remove records from objects
+* **Search Records**: Find records matching criteria
+* **Upsert Record**: Create or update based on matching criteria
+* **Iterator**: Loop through arrays of records
+* **Filter**: Control which records proceed
+* **Delay**: Wait before continuing (duration or scheduled date)
+* **Send Email**: Send emails via your connected account
+* **Code**: Run custom JavaScript
+* **HTTP Request**: Call external APIs
+* **Form**: Get inputs from users within Twenty UI at the time of execution
+* **AI Agent** (Coming soon): Run intelligent AI tasks
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Step 4: Test and Activate
+
+1. Use the **Test** button to run your workflow with sample data
+2. Review the results to ensure it works as expected
+3. Toggle the workflow **Active** when ready
+
+## Workflow Best Practices
+
+* **Schrittbezeichnungen bearbeiten**: Benennen Sie Ihre Workflow-Schritte um, um klar zu beschreiben, was jeder Schritt tut. Dies erleichtert die Wartung und die Übergabe an Kollegen
+* **Vorherige Schritt-Daten nutzen**: Sie können Felder aus Datensätzen verwenden, die von einem vorherigen Schritt in Ihrem Workflow zurückgegeben wurden.
+* **Einfach anfangen**: Beginnen Sie mit einfachen Workflows und erhöhen Sie die Komplexität im Laufe der Zeit, wenn Sie mit dem System vertrauter werden.
+* **Planen, bevor Sie loslegen**: Skizzieren Sie die Logik Ihres Workflows, bevor Sie beginnen, um zu vermeiden, dass Sie auf halbem Weg stecken bleiben.
+
+## Nächste Schritte
+
+* [Workflow Triggers](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow Actions](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Automations](/l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

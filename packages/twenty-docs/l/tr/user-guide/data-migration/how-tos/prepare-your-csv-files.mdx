@@ -1,0 +1,270 @@
+---
+title: CSV Dosyalarınızı Hazırlayın},{
+description: Verilerinizi Twenty'ye içe aktarmak için biçimlendirmeye yönelik eksiksiz adım adım kılavuz.
+---
+
+## Genel Bakış
+
+Bu kılavuz, başarılı bir içe aktarma için CSV dosyanızı hazırlamanızda size rehberlik eder. Hataları önlemek için bu adımları izleyin.
+
+## Adım 1: Dosya Gereksinimlerini Kontrol Edin
+
+Başlamadan önce dosyanızın şu gereksinimleri karşıladığından emin olun:
+
+| Gereksinim       | Ayrıntılar                      |
+| ---------------- | ------------------------------- |
+| **Biçim**        | CSV, XLSX veya XLS              |
+| **Boyut sınırı** | Dosya başına 10.000 kayıt       |
+| **Kodlama**      | UTF-8 önerilir                  |
+| **Yapı**         | Dosya başına tek bir nesne türü |
+
+<Note>10.000 kayıttan büyük veri kümeleri için, birden çok dosyaya bölün veya [API ile içe aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) kullanın.</Note>
+
+## Adım 2: Örnek Dosyayı İndirin
+
+**Bu en önemli adımdır.** Örnek dosya, Twenty'nin beklediği tam sütun adlarını ve biçimi gösterir.
+
+1. Nesne görünümüne gidin (Kişiler, Şirketler vb.)
+2. **⋮** üzerine tıklayın → **Kayıtları içe aktar**'ı seçin
+3. **Örnek dosyayı indir**'e tıklayın
+4. Bu dosyayı şablonunuz olarak kullanın
+
+<Note>**İpucu:** Bunun yerine birkaç mevcut kaydı dışa aktarın. Bu, verilerin nasıl biçimlendirilmesi gerektiğine dair gerçek örnekler sağlar ve içe aktarma sırasında sütun adları otomatik olarak eşleştirilir.</Note>
+
+## Adım 3: Yinelenen Değerleri Kaldırın
+
+Twenty bazı alanlarda benzersizliği zorunlu kılar. Yinelenenler içe aktarma hatalarına neden olur.
+
+| Nesne             | Benzersiz Alanlar                                                |
+| ----------------- | ---------------------------------------------------------------- |
+| **Kişiler**       | `id`, `email`                                                    |
+| **Şirketler**     | `id`, `domain`                                                   |
+| **Özel nesneler** | `id` ve benzersiz olarak işaretlediğiniz diğer herhangi bir alan |
+
+**İçe aktarmadan önce:**
+
+1. E-tablonuzu benzersiz alana göre sıralayın (e-posta veya alan adı)
+2. Yinelenen satırları kaldırın veya birleştirin
+3. Twenty'de zaten var olan yinelenen kayıtları kontrol edin
+
+<Warning>**Geçici olarak silinmiş kayıtlar benzersizliğe dahildir.** Komut Menüsü → Silinen kayıtları gör bölümündeki kayıtlar yinelenen hatalarına neden olur. Onları kalıcı olarak silin ya da geri yükleyip güncelleyin.</Warning>
+
+## Adım 4: Her Alan Türünü Doğru Biçimlendirin
+
+Farklı alan türleri belirli biçimler gerektirir. İşte eksiksiz başvuru:
+
+### Metin Alanları
+
+* Özel bir biçimlendirme gerekmez
+* Baştaki/sondaki boşluklar otomatik olarak kırpılır
+
+### E-posta Alanları
+
+* Geçerli e-posta biçiminde olmalıdır: `name@domain.com`
+* Benzersiz olmalıdır (dosyada veya Twenty'de yinelenen olmamalıdır)
+* Ek e-postalar için, **E-postalar / Ek E-postalar** sütununda şu biçimi kullanın:
+
+```
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+```
+
+### Alan Adı Alanları
+
+* **Önerilen biçim**: `https://domain.com`
+* Bu, posta kutusu/takvim eşitlemesinde kullanılan biçimle aynıdır (yinelenenleri önler)
+* Her iki sütunu da doldurun:
+  * **Alan Adı / Alan Adı Etiketi**: `domain.com`
+  * **Alan Adı / Alan Adı URL'si**: `https://domain.com`
+* Dosyanız içinde ve Twenty'de benzersiz olmalıdır
+
+### Telefon Alanları
+
+Telefon, birden çok sütun gerektiren **iç içe bir alan**dır:
+
+| Sütun                                        | Örnek        |
+| -------------------------------------------- | ------------ |
+| **Telefonlar / Birincil Telefon Numarası**   | `4159095555` |
+| **Telefonlar / Birincil Telefon Ülke Kodu**  | `US`         |
+| **Telefonlar / Birincil Telefon Arama Kodu** | `+1`         |
+
+### Address Fields
+
+Address is a **nested field** with multiple columns (some can be left empty):
+
+* **Address / Address 1**: Street address line 1
+* **Address / Address 2**: Street address line 2 (optional)
+* **Address / City**: City name
+* **Address / State**: State or province
+* **Address / Country**: Country name
+* **Address / Post Code**: Postal/ZIP code
+
+### Date Fields
+
+Use consistent formatting throughout your file:
+
+* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Number Fields
+
+* Numbers only (no text)
+* Use period for decimals: `1234.56`
+* No thousands separators (not `1,234.56`)
+
+### Currency Fields
+
+Currency is a **nested field** requiring two columns that **both must be filled**:
+
+| Column                | Örnek     |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+### Boolean Fields
+
+Use uppercase: `TRUE` or `FALSE`
+
+<Warning>Lowercase `true` or `false` will not work.</Warning>
+
+### Seçim Alanları
+
+Use the **API name** of the option, not the display label.
+
+**How to find API names:**
+
+1. Go to **Settings → Data Model**
+2. Select the object and field
+3. Enable **Advanced mode** (toggle at bottom right)
+4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+
+<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+
+### Multi-Select Fields
+
+Use API names in array format:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Array Fields
+
+Use JSON array format:
+
+```
+["value1","value2"]
+```
+
+### Rating Fields
+
+Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+
+### Links/URL Fields
+
+Fill both columns:
+
+* **Links / Link Label**: `Twenty`
+* **Links / Link URL**: `https://twenty.com`
+
+For secondary links, use the **Links / Secondary Links** column:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### JSON Fields
+
+Use valid JSON format:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### ID Fields
+
+* **Optional**: Twenty auto-generates IDs if not provided
+* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Use case**: Include ID to update existing records instead of creating new ones
+
+## Step 5: Add Relation Columns (If Linking Records)
+
+To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+
+**Example**: Linking People to Companies
+
+Add a column to your People CSV:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Important rules for relations:**
+
+* The parent record must already exist in Twenty
+* Use the **Domain URL** format (`https://domain.com`), not the label
+* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
+* For Workspace Members, use their **email** (not name)
+
+<Warning>
+  **Import Order Matters!**
+
+  Import the "one" side before the "many" side:
+
+  1. **Companies** first
+  2. **People** second (with company reference)
+  3. **Opportunities** third
+
+  The parent record must exist before you can reference it.
+</Warning>
+
+See [How to Import Relations](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+
+## Step 6: Ensure Fields Exist in Twenty
+
+The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+
+**Before importing:**
+
+1. Go to **Settings → Data Model**
+2. Select your object
+3. Create any custom fields you need
+4. Note the exact field names (they must match your column headers)
+
+## Step 7: Final Checklist
+
+Before uploading your file, verify:
+
+<Check>File is CSV, XLSX, or XLS format</Check>
+<Check>File has fewer than 10,000 records</Check>
+<Check>Encoding is UTF-8</Check>
+<Check>No duplicate emails (for People) or domains (for Companies)</Check>
+<Check>Dates use consistent format throughout</Check>
+<Check>Domains use `https://domain.com` format</Check>
+<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
+<Check>Select fields use API names, not display labels</Check>
+<Check>All custom fields exist in Settings → Data Model</Check>
+<Check>Parent records imported before child records</Check>
+<Check>Relation columns reference existing records</Check>
+
+## Common Mistakes to Avoid
+
+| Mistake                                      | Solution                              |
+| -------------------------------------------- | ------------------------------------- |
+| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
+| Using display labels for Select fields       | Find and use API names in Settings    |
+| Importing People before Companies            | Always import parent objects first    |
+| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
+| Wrong domain format                          | Use `https://domain.com` consistently |
+| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+
+## Sonraki Adımlar
+
+Your file is ready! Now:
+
+* [Import Companies](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
+* [Import Contacts](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Fix any import errors](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)

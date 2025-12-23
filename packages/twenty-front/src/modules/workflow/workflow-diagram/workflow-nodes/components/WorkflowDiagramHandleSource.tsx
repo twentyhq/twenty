@@ -43,6 +43,17 @@ const StyledHandle = styled(Handle, {
         border-color: ${colors.selected.borderColor};
       `;
     }}
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% + ${({ theme }) => theme.spacing(4)});
+      height: calc(100% + ${({ theme }) => theme.spacing(4)});
+    }
+
     transition:
       transform 0.1s ease-out,
       background 0.1s,

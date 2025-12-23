@@ -1,5 +1,5 @@
 ---
-title: 應用程式提示
+title: 应用程序提示
 image: /images/user-guide/tips/light-bulb.png
 ---
 
@@ -7,7 +7,7 @@ image: /images/user-guide/tips/light-bulb.png
   <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
 </Frame>
 
-當用戶與某一元素進行互動時，顯示額外信息的簡短訊息。
+当用户与一个元素互动时显示额外信息的简要信息。
 
 <Tabs>
 <Tab title="Usage">
@@ -41,25 +41,25 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-| 屬性               | 類型                                          | 描述                                                                                                                                                                       |
-| ---------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 類名稱              | 字串                                          | 用於額外樣式的可選 CSS 類                                                                                                                                                          |
-| anchorSelect     | CSS 選擇器                                     | 提示錨 (觸發提示的元素) 的選擇器                                                                                                                                    |
-| content          | 字串                                          | 您希望在工具提示中顯示的內容                                                                                                                                                           |
-| delayHide        | 數字                                          | 將滑鼠游標離開錨定後，工具提示隱藏的秒數延遲                                                                                                                                                   |
-| offset           | 數字                                          | 定位工具提示的像素偏移量                                                                                                                                                             |
-| noArrow          | 布爾值                                         | 如果為 `true`，則隱藏工具提示上的箭頭                                                                                                                                                   |
-| isOpen           | 布爾值                                         | 如果為 `true`，則默認情況下工具提示是開啟的                                                                                                                                                |
-| place            | 來自 `react-tooltip` 的 `PlacesType` 字符串       | 指定工具提示的位置。 指定工具提示的位置。 值包括 `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, 和 `left-end` |
-| positionStrategy | 來自 `react-tooltip` 的 `PositionStrategy` 字符串 | 工具提示的定位策略。 有兩個值：`absolute` 和 `fixed`                                                                                                                                     |
+| 属性               | 类型                                       | 描述                                                                                                                                                 |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 类名               | 字符串                                      | 用于额外样式的可选 CSS 类                                                                                                                                    |
+| anchorSelect     | CSS 选择器                                  | 工具提示的锚选择器（触发工具提示的元素）                                                                                                                               |
+| 内容               | 字符串                                      | 您希望在工具提示中显示的内容                                                                                                                                     |
+| delayHide        | 数字                                       | 在光标离开锚后隐藏工具提示的延迟时间（秒）                                                                                                                              |
+| offset           | 数字                                       | 工具提示定位的像素偏移量                                                                                                                                       |
+| noArrow          | 布尔值                                      | 如果为 `true`，则隐藏工具提示上的箭头                                                                                                                             |
+| isOpen           | 布尔值                                      | 如果为 `true`，工具提示默认打开                                                                                                                                |
+| place            | `PlacesType` 字符串来自 `react-tooltip`       | 指定工具提示的位置。 值包括 `bottom`、`left`、`right`、`top`、`top-start`、`top-end`、`right-start`、`right-end`、`bottom-start`、`bottom-end`、`left-start` 和 `left-end` |
+| positionStrategy | `PositionStrategy` 字符串来自 `react-tooltip` | 工具提示的位置策略。 有两个值： `absolute` 和 `fixed`                                                                                                              |
 
 </Tab>
 
 </Tabs>
 
-## 帶提示的溢出文本
+## 文本溢出与工具提示
 
-處理溢出文本並在文本溢出時顯示工具提示。
+处理文本溢出，并在文本溢出时显示工具提示。
 
 <Tabs>
 <Tab title="Usage">
@@ -79,9 +79,9 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-| 屬性 | 類型 | 描述               |
-| -- | -- | ---------------- |
-| 文本 | 字串 | 您希望在溢出文本區域中顯示的內容 |
+| 属性 | 类型  | 描述             |
+| -- | --- | -------------- |
+| 文本 | 字符串 | 想要在文本溢出区域显示的内容 |
 
 </Tab>
 

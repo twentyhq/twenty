@@ -3,7 +3,7 @@ import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/component
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,12 +41,12 @@ export const CommandMenuPageLayoutChartSettings = () => {
 
   return (
     <StyledContainer>
-      <GraphWidgetComponentInstanceContext.Provider
+      <WidgetComponentInstanceContext.Provider
         value={{ instanceId: widgetInEditMode.id }}
       >
         <ChartSettings widget={widgetInEditMode} />
         <WidgetSettingsFooter />
-      </GraphWidgetComponentInstanceContext.Provider>
+      </WidgetComponentInstanceContext.Provider>
     </StyledContainer>
   );
 };

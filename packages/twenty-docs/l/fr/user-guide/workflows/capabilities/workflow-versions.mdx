@@ -1,0 +1,85 @@
+---
+title: Versions de Workflow
+description: Gérer les versions et les brouillons de workflows.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## À propos des versions
+
+Chaque fois que vous activez un workflow, une nouvelle version est créée. Cela vous permet de suivre les modifications dans le temps et de revenir aux configurations précédentes si nécessaire.
+
+## Statuts des versions
+
+| Statut        | Description                                       |
+| ------------- | ------------------------------------------------- |
+| **Brouillon** | En cours d'édition, pas encore publié             |
+| **Actif**     | Version active répondant aux déclencheurs         |
+| **Désactivé** | Auparavant actif, mais arrêté manuellement        |
+| **Archivé**   | Versions antérieures conservées pour l'historique |
+
+## Travailler avec des brouillons
+
+Lorsque vous modifiez un workflow actif, vos modifications sont enregistrées en tant que **brouillon**. La version active continue de s'exécuter pendant que vous travaillez sur des mises à jour.
+
+Une fois vos modifications terminées, vous pouvez :
+
+* **Activer** : Publier le brouillon comme nouvelle version active (la version précédente est archivée)
+* **Abandonner** : Supprimer le brouillon et conserver la version active actuelle
+
+## Historique des versions
+
+### Afficher les versions précédentes
+
+1. Ouvrez le workflow
+2. Cliquez sur l'onglet **Versions**
+3. Affichez toutes les versions précédentes avec leurs horodatages
+
+### Restaurer une version
+
+1. Trouvez la version que vous souhaitez restaurer
+2. Cliquez sur **Utiliser comme brouillon**
+3. La version est copiée dans un nouveau brouillon
+4. Effectuez les mises à jour nécessaires
+5. Activez lorsque vous êtes prêt
+
+## Meilleures pratiques
+
+### Gestion des versions
+
+* N'activez que lorsque vous êtes prêt pour la mise en production
+* Conservez des modifications significatives d'une version à l'autre.
+* Documentez les modifications majeures dans les noms ou les descriptions de workflows
+* Testez en mode brouillon avant d'activer
+
+### Annulation des modifications
+
+* Si une nouvelle version pose des problèmes, restaurez la version précédente
+* Utilisez l'historique des versions pour suivre ce qui a changé
+* Testez toujours les versions restaurées avant de les activer
+
+## Workflows courants
+
+### Modification rapide
+
+1. Apportez des modifications mineures à un workflow actif
+2. Testez en mode brouillon
+3. Activez la nouvelle version
+
+### Révision majeure
+
+1. Utilisez la version précédente comme point de départ
+2. Apportez des modifications importantes dans un brouillon
+3. Testez minutieusement tous les scénarios
+4. Activez lorsque vous êtes confiant
+
+### Retour en arrière
+
+1. Identifiez le problème avec la version actuelle
+2. Trouvez la dernière version fonctionnelle dans l'historique
+3. Cliquez sur **Utiliser comme brouillon**
+4. Activez pour rétablir l'ancien comportement
+
+## Articles connexes
+
+* [Prise en main des workflows](/l/fr/user-guide/workflows/overview)
+* [Exécutions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-runs)

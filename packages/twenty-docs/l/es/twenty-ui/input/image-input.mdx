@@ -4,39 +4,31 @@ image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="Encabezado" />
 </Frame>
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import { SandpackEditor} from '@site/src/ui/SandpackEditor'
-import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
 
 Permite a los usuarios subir y eliminar una imagen.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
 
-```jsx
-import { ImageInput } from "@/ui/input/components/ImageInput";
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ImageInput/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| "Props"       | Tipo      | Descripción                                                                                                                |
-| ------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
-| foto          | "cadena"  | La URL de origen de la imagen                                                                                              |
-| onUpload      | función   | La función que se llama cuando un usuario sube una nueva imagen. Recibe el objeto `File` como un parámetro |
-| onRemove      | "función" | La función que se llama cuando el usuario hace clic en el botón eliminar                                                   |
-| onAbort       | función   | La función que se llama cuando un usuario hace clic en el botón de abortar durante la subida de imagen                     |
-| isUploading   | booleano  | Indica si una imagen se está cargando actualmente                                                                          |
-| errorMessage  | "cadena"  | Un mensaje de error opcional para mostrar debajo de la entrada de imagen                                                   |
-| "desactivado" | booleano  | Si es `true`, toda la entrada está deshabilitada y los botones no son clicables                                            |
-
-</Tab>
+  <Tab title="Props">
+    | Props         | Tipo     | Descripción                                                                                                |
+    | ------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+    | foto          | cadena   | La URL de origen de la imagen                                                                              |
+    | onUpload      | función  | La función que se llama cuando un usuario sube una nueva imagen. Recibe el objeto `File` como un parámetro |
+    | onRemove      | función  | La función que se llama cuando el usuario hace clic en el botón eliminar                                   |
+    | onAbort       | función  | La función que se llama cuando un usuario hace clic en el botón de abortar durante la subida de imagen     |
+    | isUploading   | booleano | Indica si una imagen se está cargando actualmente                                                          |
+    | errorMessage  | cadena   | Un mensaje de error opcional para mostrar debajo de la entrada de imagen                                   |
+    | "desactivado" | booleano | Si es `true`, toda la entrada está deshabilitada y los botones no son clicables                            |
+  </Tab>
 </Tabs>

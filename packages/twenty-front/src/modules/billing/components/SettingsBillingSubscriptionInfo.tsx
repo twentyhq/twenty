@@ -260,7 +260,7 @@ export const SettingsBillingSubscriptionInfo = ({
         message:
           oppositPlan === BillingPlanKey.ENTERPRISE
             ? t`Subscription has been switched to ${oppositPlan} Plan.`
-            : `Subscription will be switched to ${oppositPlan} Plan the ${beautifiedRenewDate}.`,
+            : t`Subscription will be switched to ${oppositPlan} Plan the ${beautifiedRenewDate}.`,
       });
     } catch {
       enqueueErrorSnackBar({

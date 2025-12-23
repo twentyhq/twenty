@@ -1,6 +1,9 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getChartDefaultOrderByForFieldType } from '@/command-menu/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,9 +41,9 @@ export const buildChartGroupByFieldConfigUpdate = <
     [subFieldNameKey]: subFieldName,
   };
 
-  const isBarChart = configuration.__typename === 'BarChartConfiguration';
-  const isLineChart = configuration.__typename === 'LineChartConfiguration';
-  const isPieChart = configuration.__typename === 'PieChartConfiguration';
+  const isBarChart = isBarChartConfiguration(configuration);
+  const isLineChart = isLineChartConfiguration(configuration);
+  const isPieChart = isPieChartConfiguration(configuration);
 
   const fieldMetadata = objectMetadataItem?.fields?.find(
     (field) => field.id === fieldId,

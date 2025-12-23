@@ -7,6 +7,7 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PAGE_LAYOUT_GRID_ITEM_Z_INDEX } from '@/page-layout/constants/PageLayoutGridItemZIndex';
 import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
 import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
@@ -52,6 +53,10 @@ const StyledGridContainer = styled.div`
 
   .react-grid-item:not(.react-draggable-dragging) {
     user-select: auto;
+  }
+
+  .react-grid-item {
+    z-index: ${PAGE_LAYOUT_GRID_ITEM_Z_INDEX};
   }
 
   .react-grid-item:hover .widget-card-resize-handle {

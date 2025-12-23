@@ -1,0 +1,155 @@
+---
+title: Preguntas Frecuentes del Modelo de Datos
+description: Frequently asked questions about Twenty's data model.
+---
+
+## Gestión de Objetos
+
+<AccordionGroup>
+  <Accordion title="Can I delete a custom object?">
+    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  </Accordion>
+
+  <Accordion title="¿Puedo eliminar objetos estándar (Personas, Empresas, etc.)?">
+    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+  </Accordion>
+
+  <Accordion title="How many custom objects can I create?">
+    You can create as many custom objects and fields as you need — the price doesn't change.
+  </Accordion>
+
+  <Accordion title="Can I rename a standard object?">
+    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  </Accordion>
+
+  <Accordion title="Can I change an object's icon?">
+    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  </Accordion>
+
+  <Accordion title="¿Puedo reorganizar objetos en la barra de navegación izquierda?">
+    Aún no. La ordenación de objetos en la navegación está actualmente fijada, pero esta función está prevista para una futura versión.
+  </Accordion>
+
+  <Accordion title="¿Puedo ocultar objetos de la barra de navegación izquierda?">
+    Todos los objetos activos aparecen en la navegación. Puedes desactivar los objetos que no necesites en **Configuración → Modelo de Datos**.
+  </Accordion>
+</AccordionGroup>
+
+## Capacidades de Campos
+
+<AccordionGroup>
+  <Accordion title="Can I change a field type after creation?">
+    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  </Accordion>
+
+  <Accordion title="¿Por qué necesito nombres singulares y plurales diferentes?">
+    Nuestra API de GraphQL usa ambas formas para diferentes operaciones:
+
+    * `createPerson` (singular) para acciones de registro único
+    * `createPeople` (plural) para operaciones en masa
+
+    Esto crea limitaciones cuando las formas singulares y plurales son iguales, pero mejora la experiencia del desarrollador.
+  </Accordion>
+
+  <Accordion title="¿Por qué algunos nombres de campos están protegidos?">
+    Ciertos nombres de campo como `Tipo` o `Aplicación` están reservados para uso del sistema. Elige nombres alternativos como `Categoría` o `Clasificación`.
+  </Accordion>
+
+  <Accordion title="What happens when I deactivate a field?">
+    * The field is hidden from the interface
+    * Existing data is preserved
+    * You can still access the field via API
+    * Existing relations remain but you can't create new ones
+    * You can reactivate the field later
+  </Accordion>
+
+  <Accordion title="Can I make a field required?">
+    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  </Accordion>
+
+  <Accordion title="What's the difference between unique and required?">
+    * **Unique**: No two records can have the same value in this field
+    * **Required**: The field must have a value (not currently supported for custom fields)
+  </Accordion>
+
+  <Accordion title="¿Puedo crear campos de fórmula?">
+    Los campos de fórmula llegarán en **Q1 2026**. Mientras tanto, puedes usar flujos de trabajo para calcular y actualizar automáticamente los valores de los campos.
+  </Accordion>
+
+  <Accordion title="¿Puedo tener campos anidados en mis objetos?">
+    Los campos anidados llegarán en **Q1 2026**. Actualmente, puedes usar flujos de trabajo para traer valores de campo de objetos relacionados. Por ejemplo, para mostrar la industria de una empresa en un registro de Persona, crea un campo personalizado en Personas y usa un flujo de trabajo para sincronizar el valor.
+  </Accordion>
+
+  <Accordion title="¿Puedo reorganizar campos en objetos?">
+    El reordenamiento de campos estará disponible con diseños personalizados en **Q4 2025**. Currently, fields appear in alphabetical order.
+  </Accordion>
+</AccordionGroup>
+
+## Relaciones
+
+<AccordionGroup>
+  <Accordion title="Can I have a relation pointing to the same object?">
+    ¡Sí! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  </Accordion>
+
+  <Accordion title="¿Puedo crear relaciones de muchos a muchos?">
+    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+
+    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+
+    * A relation to People (many assignments → one person)
+    * A relation to Projects (many assignments → one project)
+  </Accordion>
+
+  <Accordion title="What are relations to multiple object types (Morph relationships)?">
+    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+
+    Each Note links to one Person, one Company, and one Opportunity at the same time.
+
+    Learn more in [Relation Fields](/l/es/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Can I have multiple relations between the same objects?">
+    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  </Accordion>
+
+  <Accordion title="What happens to relations when I delete a record?">
+    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  </Accordion>
+
+  <Accordion title="Can I create circular relations?">
+    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  </Accordion>
+</AccordionGroup>
+
+## Acceso y Permisos
+
+<AccordionGroup>
+  <Accordion title="¿Dónde puedo ver y editar mi modelo de datos?">
+    Go to **Settings → Data Model** to view and edit all your objects and fields.
+  </Accordion>
+
+  <Accordion title="¿Por qué no puedo ver el Modelo de Datos en Configuración?">
+    Comunícate con tu administrador de espacio de trabajo. El acceso al modelo de datos suele estar restringido solo a administradores.
+  </Accordion>
+</AccordionGroup>
+
+## Data Management
+
+<AccordionGroup>
+  <Accordion title="Is there a limit to how many records I can have?">
+    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  </Accordion>
+
+  <Accordion title="Can I import data into custom objects?">
+    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/es/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Can I export my data model configuration?">
+    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  </Accordion>
+</AccordionGroup>
+
+## ¿Necesitas más ayuda?
+
+Check our [Implementation Services](/l/es/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.

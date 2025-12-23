@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   NumberDataType,
   RelationType,
@@ -11,7 +12,11 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { WorkspaceMemberNumberFormatEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
+  WorkspaceMemberNumberFormatEnum,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   now,
@@ -20,7 +25,10 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'workspaceMember'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'workspaceMember', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'workspaceMember'>,
   FlatFieldMetadata
 > => ({
@@ -55,7 +63,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -74,7 +82,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -92,7 +100,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -110,6 +118,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -127,6 +136,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Workspace member name',
       icon: 'IconCircleUser',
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -144,6 +154,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconColorSwatch',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'System'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -162,6 +173,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconLanguage',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'en'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -180,6 +192,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -197,6 +210,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconMail',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -215,6 +229,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 7,
       settings: {
         dataType: NumberDataType.INT,
@@ -236,6 +251,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCircleUsers',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -253,6 +269,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconTimezone',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'system'",
     },
     standardObjectMetadataRelatedEntityIds,
@@ -271,6 +288,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarEvent',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SYSTEM'",
       options: [
         { value: 'SYSTEM', label: 'System', position: 0, color: 'turquoise' },
@@ -305,6 +323,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconClock2',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SYSTEM'",
       options: [
         { value: 'SYSTEM', label: 'System', position: 0, color: 'sky' },
@@ -328,6 +347,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconNumbers',
       isSystem: true,
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: `'${WorkspaceMemberNumberFormatEnum.SYSTEM}'`,
       options: [
         {
@@ -378,6 +398,13 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_WORKSPACE_MEMBER,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -395,6 +422,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Tasks assigned to the workspace member',
       icon: 'IconCheckbox',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'assignee',
       settings: {
@@ -417,6 +445,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Favorites linked to the workspace member',
       icon: 'IconHeart',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'favorite',
       targetFieldName: 'forWorkspaceMember',
       settings: {
@@ -439,31 +468,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Account owner for companies',
       icon: 'IconBriefcase',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'accountOwner',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  authoredAttachments: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'authoredAttachments',
-      label: 'Authored attachments',
-      description: 'Attachments created by the workspace member',
-      icon: 'IconFileImport',
-      isSystem: true,
-      isNullable: false,
-      targetObjectName: 'attachment',
-      targetFieldName: 'author',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -484,6 +491,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Connected accounts',
       icon: 'IconAt',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'accountOwner',
       settings: {
@@ -506,6 +514,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -528,6 +537,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Blocklisted handles',
       icon: 'IconForbid2',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'blocklist',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -550,6 +560,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       description: 'Calendar Event Participants',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'workspaceMember',
       settings: {
@@ -573,6 +584,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workspaceMember',
       settings: {

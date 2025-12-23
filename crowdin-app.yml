@@ -1,0 +1,22 @@
+#
+# Crowdin CLI configuration for App translations (twenty-front, twenty-server, twenty-emails)
+# Project ID: 1
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+#
+
+"preserve_hierarchy": true
+
+files: [
+  {
+    #
+    # Source files filter - PO files for Lingui
+    #
+    "source": "**/en.po",
+
+    #
+    # Translation files path
+    #
+    "translation": "%original_path%/%locale%.po",
+  }
+]
+

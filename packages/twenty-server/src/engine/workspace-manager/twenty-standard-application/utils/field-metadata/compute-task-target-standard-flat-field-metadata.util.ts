@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'taskTarget'>, 'context'>): Record<
-  AllStandardObjectFieldName<'taskTarget'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'taskTarget', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'taskTarget'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -56,7 +57,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -77,7 +78,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -97,7 +98,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -118,6 +119,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget task',
       icon: 'IconCheckbox',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
       settings: {
@@ -142,6 +144,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget person',
       icon: 'IconUser',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
       settings: {
@@ -166,6 +169,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
       settings: {
@@ -190,6 +194,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: 'TaskTarget opportunity',
       icon: 'IconTargetArrow',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
       settings: {

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 export const gridPositionSchema = z.object({
   row: z.number().min(0).describe('Row position (0-based)'),

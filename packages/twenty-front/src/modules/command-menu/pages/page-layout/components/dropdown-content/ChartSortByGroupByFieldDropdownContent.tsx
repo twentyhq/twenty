@@ -9,6 +9,7 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
+import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
 import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -46,10 +47,9 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration'
-  ) {
+  const isBarOrLineChart = isBarOrLineChartConfiguration(configuration);
+
+  if (!isBarOrLineChart) {
     throw new Error('Invalid configuration type');
   }
 

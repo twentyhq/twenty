@@ -1,0 +1,48 @@
+---
+title: Unterstützte Dateiformate
+description: Unterstützte Dateiformate für den Datenimport in Twenty.
+---
+
+## Unterstützte Formate
+
+Twenty unterstützt drei Dateiformate für den Import:
+
+| Format             | Erweiterung | Notizen                      |
+| ------------------ | ----------- | ---------------------------- |
+| **CSV**            | .csv        | Empfohlen, am kompatibelsten |
+| **Excel**          | .xlsx       | Modernes Excel-Format        |
+| **Excel (Legacy)** | .xls        | Älteres Excel-Format         |
+
+## Datei-Anforderungen
+
+| Anforderung          | Wert                                                |
+| -------------------- | --------------------------------------------------- |
+| **Zeichenkodierung** | UTF-8 empfohlen                                     |
+| **Datensatzlimit**   | 10.000 Datensätze pro Datei                         |
+| **Struktur**         | Die erste Zeile muss Spaltenüberschriften enthalten |
+| **Inhalt**           | Ein Objekttyp pro Datei                             |
+
+## CSV: Beste Praktiken
+
+* **Trennzeichen**: Verwenden Sie Komma (`,`) oder Semikolon (`;`)
+* **Textbegrenzer**: Verwenden Sie doppelte Anführungszeichen (`\"`) für Text, der Kommas enthält
+* **Zeilenenden**: Sowohl Windows (CRLF) als auch Unix (LF) werden unterstützt
+* **Leere Werte**: Zellen leer lassen, nicht "NULL" oder "N/A" verwenden
+
+## Excel: Beste Praktiken
+
+Beim Export aus Excel:
+
+* Formeln entfernen (nur Werte exportieren)
+* Leere Zeilen am Ende löschen
+* Sicherstellen, dass keine zusammengeführten Zellen vorhanden sind
+* Nur das erste Tabellenblatt verwenden
+
+## Große Datensätze
+
+Für Datenmengen mit mehr als 10.000 Datensätzen:
+
+* In mehrere Dateien aufteilen
+* Oder den [API-Import](/l/de/user-guide/data-migration/how-tos/import-data-via-api) für unbegrenzte Datensätze verwenden
+
+<Note>Für sehr große Migrationen (über 100.000 Datensätze) ist die API deutlich schneller und zuverlässiger als CSV-Importe.</Note>

@@ -1,0 +1,76 @@
+---
+title: Créditos de Workflow
+description: Understand workflow credit consumption and management.
+---
+
+Los créditos de workflow potencian tus automatizaciones en Twenty. Comprender cómo funcionan te ayuda a optimizar costos y gestionar de manera efectiva tu presupuesto de automatización.
+
+## Credit Allocation
+
+Workflow credits are allocated based on your billing cycle, not your plan tier:
+
+| Billing Cycle            | Credits                     |
+| ------------------------ | --------------------------- |
+| **Monthly subscription** | 5 million credits per month |
+| **Yearly subscription**  | 50 million credits per year |
+
+<Note>
+  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+</Note>
+
+## Cómo Funciona el Consumo de Créditos
+
+Los créditos se consumen cuando se ejecutan los workflows, no cuando los creas. Cada acción de workflow consume créditos en base a su complejidad:
+
+### Consumo de Créditos por Tipo de Acción
+
+* **Operaciones internas básicas**: Consumo de créditos muy bajo
+  * Buscar Registros
+  * Crear Registro
+  * Actualizar Registro
+  * Eliminar Registro
+  * Acciones de formulario
+
+* **Operaciones complejas**: Mayor consumo de créditos
+  * Acciones de código (ejecución de JavaScript)
+  * Solicitudes HTTP a servicios externos
+
+* **AI features**: Higher credit consumption
+  * AI Agent actions consume credits based on the AI model used
+  * More complex prompts and longer outputs use more credits
+
+* **Delay actions**: Minimal credit consumption
+  * The Delay node consumes **1 credit** when it executes
+  * **No credits are consumed** during the wait period
+  * A 5-minute delay costs the same as a 5-day delay
+
+### Deducción en Tiempo Real
+
+Los créditos se deducen en tiempo real a medida que se ejecutan los workflows. Esto significa:
+
+* Los workflows en borrador no consumen créditos
+* Solo los workflows activos y en ejecución utilizan la asignación de créditos
+* Los workflows fallidos aún consumen créditos para los pasos completados
+
+## Gestión de Créditos
+
+### Verificar Uso de Créditos
+
+1. Ir a **Ajustes → Facturación**
+2. Ve tu consumo actual de créditos y saldo restante
+3. Monitorea patrones de uso para optimizar tus workflows
+
+### Adquirir Créditos Adicionales
+
+Si necesitas más créditos adicionales a la asignación de tu plan:
+
+1. Ir a **Ajustes → Facturación**
+2. Haz clic en la opción para adquirir créditos adicionales. Hay paquetes de diferentes tamaños disponibles.
+3. Los créditos se suman a tu saldo actual
+
+## Mejores prácticas
+
+* **Procesamiento en Lote**: Usa operaciones masivas y acciones de Iterador eficientemente
+* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
+* Optimiza acciones de Código para eficiencia
+* Agrupa operaciones para reducir llamadas individuales de acciones

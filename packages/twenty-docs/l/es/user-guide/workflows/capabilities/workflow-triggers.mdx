@@ -1,0 +1,136 @@
+---
+title: Disparadores de Flujos de Trabajo
+description: Learn about the different triggers that start your workflows.
+---
+
+## About Triggers
+
+Los flujos de trabajo siempre comienzan con un solo disparador que define cuándo debe ejecutarse la automatización.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+
+  * Miembros del espacio de trabajo
+  * Calendar Events
+  * Messages (Emails)
+  * Tasks, Notes, and many other system objects
+
+  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+</Tip>
+
+## Se crea un registro
+
+Inicia el flujo de trabajo cuando se crea un nuevo registro en un objeto seleccionado (Personas, Empresas, Oportunidades o cualquier objeto personalizado).
+
+**Configuración**: Selecciona el tipo de objeto para monitorear nuevos registros.
+
+<Note>
+  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
+  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
+    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+</Note>
+
+## Se actualiza un registro
+
+Inicia el flujo de trabajo cuando se realizan cambios en un registro existente.
+
+**Configuración**:
+
+* Selecciona el tipo de objeto
+* Opcionalmente especifica qué campos monitorear para cambios
+
+## Se actualiza o se crea un registro
+
+Inicia el flujo de trabajo cuando un registro es creado o actualizado en un objeto seleccionado.
+
+**¿Por qué esto es importante?**:
+
+* **Importaciones API/CSV**: Los registros se crean con todos los campos poblados inmediatamente
+* **Creación manual**: Los registros se crean primero, luego los campos se agregan en actualizaciones posteriores
+
+**Configuración**:
+
+* Selecciona el tipo de objeto para monitorear
+* Opcionalmente especifica qué campos monitorear para cambios
+* El flujo de trabajo se activará tanto en la creación inicial como en cualquier actualización posterior
+
+## Se elimina un registro
+
+Inicia el flujo de trabajo cuando un registro es eliminado de un objeto.
+
+**Configuración**: Selecciona el tipo de objeto para monitorear eliminaciones.
+
+## Manual Trigger
+
+Inicia el flujo de trabajo cuando es desencadenado por una acción del usuario. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Configuración de Disponibilidad**:
+Elige cómo debe manejar el flujo de trabajo la selección de registros:
+
+* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+
+* **Individual**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. The workflow will run from beginning to end as many times as there are records selected.
+
+  <Note>
+    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+  </Note>
+
+* **En masa**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. El flujo de trabajo se ejecutará una vez, proporcionando como entrada toda la lista de registros. This means the workflow needs to contain an [Iterator action](/l/es/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  This is more advanced, and best for people who want to optimize the number of workflow runs.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Configuración Adicional**:
+
+* Selecciona el objeto de destino (para disponibilidad individual y en masa)
+* Elige un ícono de comando para el disparador del flujo de trabajo
+* Configura la ubicación en la barra de navegación (fijado o no fijado)
+
+**Métodos de Acceso**:
+
+* `Cmd+K` menu to find and launch manual workflows
+* Botón personalizado en la barra de navegación superior (si está configurado)
+
+## Time-Based Trigger: On a Schedule
+
+Inicia el flujo de trabajo de forma recurrente según lo defina.
+
+**Configuración**:
+
+* Selecciona la unidad de tiempo (minutos, horas, días)
+* Ingresa un valor o usa expresiones cron personalizadas para una programación avanzada
+
+<Note>
+  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+</Note>
+
+## External Trigger: Webhook
+
+Inicia el flujo de trabajo cuando se recibe una solicitud GET o POST de un servicio externo.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Configuración**:
+
+* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
+* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
+* Configure authentication (coming soon).
+
+## Choosing the Right Trigger
+
+| Use Case                    | Recommended Trigger                |
+| --------------------------- | ---------------------------------- |
+| New leads need processing   | Se crea un registro                |
+| Data changes need sync      | Se actualiza un registro           |
+| Import/manual data handling | Se actualiza o se crea un registro |
+| Cleanup after deletion      | Se elimina un registro             |
+| User-initiated action       | Iniciar manualmente                |
+| Recurring reports           | Según una programación             |
+| External integration        | Webhook or On a Schedule           |

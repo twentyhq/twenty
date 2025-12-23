@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { IconCheck, IconX } from 'twenty-ui/display';
 import { THEME_COMMON } from 'twenty-ui/theme';
 
@@ -30,7 +31,7 @@ export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
     <StyledContainer>
       {isTrue ? <IconCheck size={iconSizeSm} /> : <IconX size={iconSizeSm} />}
       <StyledBooleanFieldValue>
-        {isTrue ? 'True' : 'False'}
+        {isTrue ? t`True` : t`False`}
       </StyledBooleanFieldValue>
     </StyledContainer>
   );

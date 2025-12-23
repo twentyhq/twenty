@@ -1,0 +1,109 @@
+---
+title: 폴더 아키텍처
+info: 우리의 폴더 아키텍처를 자세히 살펴보기
+---
+
+이 가이드에서는 프로젝트 디렉토리 구조의 세부 사항과 그것이 Twenty의 구조화와 유지관리성에 어떻게 기여하는지 살펴봅니다.
+
+이 폴더 아키텍처 관례를 따르면 특정 기능과 관련된 파일을 더 쉽게 찾을 수 있고, 애플리케이션의 확장성과 유지관리성을 보장하기가 쉬워집니다.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## 페이지
+
+애플리케이션 라우트로 정의된 최상위 컴포넌트를 포함합니다. 모듈 폴더에서 더 하위 수준의 컴포넌트를 가져옵니다(자세한 내용은 아래를 참조하세요).
+
+## 모듈
+
+각 모듈은 특정 컴포넌트, 상태 및 운영 로직을 포함하는 기능 또는 기능 그룹을 나타냅니다.
+모두 아래 구조를 따라야 합니다. 모듈 안에 모듈을 중첩할 수 있으며(이를 서브모듈이라고 하며), 동일한 규칙이 적용됩니다.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### 컨텍스트
+
+컨텍스트는 각 레벨에서 수동으로 props를 전달하지 않고, 컴포넌트 트리를 통해 데이터를 전달할 수 있는 방법입니다.
+
+자세한 내용은 [React Context](https://react.dev/reference/react#context-hooks)를 참조하세요.
+
+### GraphQL
+
+프래그먼트, 쿼리 및 뮤테이션이 포함됩니다.
+
+자세한 내용은 [GraphQL](https://graphql.org/learn/)을 참조하세요.
+
+* 프래그먼트
+
+프래그먼트는 쿼리의 재사용 가능한 조각으로, 여러 장소에서 사용할 수 있습니다. 프래그먼트를 사용하면 코드 중복을 피하기가 더 쉬워집니다.
+
+자세한 내용은 [GraphQL 프래그먼트](https://graphql.org/learn/queries/#fragments)를 참조하세요.
+
+* 쿼리
+
+자세한 내용은 [GraphQL 쿼리](https://graphql.org/learn/queries/)를 참조하세요.
+
+* 뮤테이션
+
+자세한 내용은 [GraphQL 뮤테이션](https://graphql.org/learn/queries/#mutations)을 참조하세요.
+
+### 훅
+
+자세한 내용은 [훅](https://react.dev/learn/reusing-logic-with-custom-hooks)을 참조하세요.
+
+### 상태
+
+상태 관리 로직이 포함되어 있습니다. [RecoilJS](https://recoiljs.org)가 이것을 처리합니다.
+
+* 셀렉터: 자세한 내용은 [RecoilJS 셀렉터](https://recoiljs.org/docs/basic-tutorial/selectors)를 참조하세요.
+
+React의 내장 상태 관리는 구성 요소 내에서의 상태를 여전히 처리합니다.
+
+### 유틸
+
+재사용 가능한 순수 함수를 포함해야 합니다. 그렇지 않으면 `hooks` 폴더에 커스텀 훅을 만들어야 합니다.
+
+## UI
+
+애플리케이션에서 사용되는 모든 재사용 가능한 UI 컴포넌트를 포함합니다.
+
+이 폴더는 `data`, `display`, `feedback`, `input`과 같은 특정 유형의 컴포넌트에 대한 하위 폴더를 포함할 수 있습니다. 각 컴포넌트는 자기 완결적이고 재사용 가능해야 하며, 애플리케이션의 다른 부분에서 사용할 수 있어야 합니다.
+
+`modules` 폴더의 다른 컴포넌트에서 UI 컴포넌트를 분리함으로써 일관된 디자인을 유지하고, 코드베이스의 다른 부분(비즈니스 로직)에 영향을 주지 않고 UI를 변경하기가 더 쉬워집니다.
+
+## 인터페이스 및 종속성
+
+`ui` 폴더를 제외한 모든 모듈에서 다른 모듈 코드를 가져올 수 있습니다. 이렇게 하면 코드를 쉽게 테스트할 수 있습니다.
+
+### 내부
+
+각 부분(훅, 상태, ...) 모듈의 각 부분은 모듈 내에서만 사용하는 `internal` 폴더를 가질 수 있습니다.

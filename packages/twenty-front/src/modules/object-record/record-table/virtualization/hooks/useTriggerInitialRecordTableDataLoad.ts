@@ -170,7 +170,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
 
         if (isDefined(records)) {
-          upsertRecordsInStore(records);
+          upsertRecordsInStore({ partialRecords: records });
 
           loadRecordsToVirtualRows({
             records,

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 
 import PreviewBackgroundImage from '../assets/preview-background.svg';
@@ -69,7 +70,7 @@ export const SettingsIntegrationPreview = ({
         <StyledSyncImage />
         <StyledTwentyLogo alt="" src="/images/integrations/twenty-logo.svg" />
       </StyledLogosContainer>
-      <StyledLabel>Import your tables as remote objects</StyledLabel>
+      <StyledLabel>{t`Import your tables as remote objects`}</StyledLabel>
     </StyledCardContent>
   </StyledCard>
 );

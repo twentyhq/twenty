@@ -40,13 +40,13 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
     },
     {
       title: 'should preserve special characters in path',
-      input: 'https://test.test/frédéric-destombes-22219837',
-      expected: 'https://test.test/frédéric-destombes-22219837',
+      input: 'https://test.test/edouard-ménard-22219837',
+      expected: 'https://test.test/edouard-ménard-22219837',
     },
     {
       title: 'should decode already encoded special characters in path',
-      input: 'https://test.test/fr%C3%A9d%C3%A9ric-destombes-22219837',
-      expected: 'https://test.test/frédéric-destombes-22219837',
+      input: 'https://test.test/edouard-m%C3%A9nard-22219837',
+      expected: 'https://test.test/edouard-ménard-22219837',
     },
     {
       title: 'should preserve special characters in query params',

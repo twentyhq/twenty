@@ -9,6 +9,9 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { filterSortOptionsByFieldType } from '@/command-menu/pages/page-layout/utils/filterSortOptionsByFieldType';
 import { getDefaultManualSortOrder } from '@/command-menu/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
+import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
+import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
+import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
 import { isSelectFieldType } from '@/command-menu/pages/page-layout/utils/isSelectFieldType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
@@ -49,11 +52,11 @@ export const ChartSortBySelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'PieChartConfiguration'
-  ) {
+  const isPieChart = isPieChartConfiguration(configuration);
+  const isLineChart = isLineChartConfiguration(configuration);
+  const isBarChart = isBarChartConfiguration(configuration);
+
+  if (!isBarChart && !isLineChart && !isPieChart) {
     throw new Error('Invalid configuration type');
   }
 
@@ -68,10 +71,6 @@ export const ChartSortBySelectionDropdownContent = () => {
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
-
-  const isPieChart = configuration.__typename === 'PieChartConfiguration';
-  const isLineChart = configuration.__typename === 'LineChartConfiguration';
-  const isBarChart = configuration.__typename === 'BarChartConfiguration';
 
   let currentOrderBy: GraphOrderBy | undefined;
   let groupByFieldMetadataId: string | undefined;

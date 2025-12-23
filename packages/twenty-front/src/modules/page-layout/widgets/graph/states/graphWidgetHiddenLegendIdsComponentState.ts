@@ -1,4 +1,4 @@
-import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const graphWidgetHiddenLegendIdsComponentState = createComponentState<
@@ -6,5 +6,5 @@ export const graphWidgetHiddenLegendIdsComponentState = createComponentState<
 >({
   key: 'graphWidgetHiddenLegendIdsComponentState',
   defaultValue: [],
-  componentInstanceContext: GraphWidgetComponentInstanceContext,
+  componentInstanceContext: WidgetComponentInstanceContext,
 });

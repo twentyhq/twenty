@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
+import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -537,7 +537,7 @@ export class ConfigVariables {
   @IsOptional()
   @CastToUpperSnakeCase()
   CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
-    CodeInterpreterDriverType.LOCAL;
+    CodeInterpreterDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -833,6 +833,22 @@ export class ConfigVariables {
     require_host: false,
   })
   PG_DATABASE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description: 'Database connection URL',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({
+    protocols: ['postgres', 'postgresql'],
+    require_tld: false,
+    allow_underscores: true,
+    require_host: false,
+  })
+  PG_DATABASE_REPLICA_URL: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1379,6 +1395,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable or disable workspace creation through v2 workspaceMigration',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_V2_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
@@ -1449,6 +1475,26 @@ export class ConfigVariables {
   })
   @IsOptional()
   AWS_SES_ACCOUNT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for primary database queries',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Timeout in milliseconds for replica database queries',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

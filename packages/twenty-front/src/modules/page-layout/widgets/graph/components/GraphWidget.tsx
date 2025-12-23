@@ -1,5 +1,4 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
@@ -10,6 +9,7 @@ import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWi
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType } from '~/generated/graphql';
+import { useCurrentWidget } from '../../hooks/useCurrentWidget';
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(
@@ -20,16 +20,16 @@ const GraphWidgetGaugeChart = lazy(() =>
 );
 
 export type GraphWidgetProps = {
-  widget: PageLayoutWidget;
   objectMetadataId: string;
   graphType: GraphType;
 };
 
 export const GraphWidget = ({
-  widget,
   objectMetadataId,
   graphType,
 }: GraphWidgetProps) => {
+  const widget = useCurrentWidget();
+
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
@@ -45,7 +45,7 @@ export const GraphWidget = ({
 
   switch (graphType) {
     case GraphType.AGGREGATE:
-      return <GraphWidgetAggregateChartRenderer widget={widget} />;
+      return <GraphWidgetAggregateChartRenderer />;
 
     case GraphType.GAUGE: {
       const gaugeData: any = getDefaultWidgetData(graphType);
@@ -70,14 +70,14 @@ export const GraphWidget = ({
     }
 
     case GraphType.PIE:
-      return <GraphWidgetPieChartRenderer widget={widget} />;
+      return <GraphWidgetPieChartRenderer />;
 
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:
-      return <GraphWidgetBarChartRenderer widget={widget} />;
+      return <GraphWidgetBarChartRenderer />;
 
     case GraphType.LINE:
-      return <GraphWidgetLineChartRenderer widget={widget} />;
+      return <GraphWidgetLineChartRenderer />;
 
     default:
       return null;

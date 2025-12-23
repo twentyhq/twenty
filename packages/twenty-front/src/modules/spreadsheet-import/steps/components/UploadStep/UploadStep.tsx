@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
@@ -49,7 +50,8 @@ export const UploadStep = ({
           maxRecords > 0 &&
           exceedsMaxRecords(workbook.Sheets[workbook.SheetNames[0]], maxRecords)
         ) {
-          onError(`Too many records. Up to ${maxRecords.toString()} allowed`);
+          const maxRecordsString = maxRecords.toString();
+          onError(t`Too many records. Up to ${maxRecordsString} allowed`);
           return;
         }
         try {

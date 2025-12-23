@@ -551,11 +551,6 @@ msgstr ""
 msgid "Associated User Id"
 msgstr ""
 
-#. js-lingui-id: scLx/y
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "At least one folder must be synced."
-msgstr ""
-
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
@@ -2647,12 +2642,12 @@ msgid "Invalid page layout data."
 msgstr ""
 
 #. js-lingui-id: 5qj/ud
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Invalid page layout tab data."
 msgstr ""
 
 #. js-lingui-id: mgipnr
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Invalid page layout widget data."
 msgstr ""
 
@@ -3246,11 +3241,6 @@ msgstr ""
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message folder import policy"
-msgstr ""
-
-#. js-lingui-id: aIgrkW
-#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
-msgid "Message folder not found"
 msgstr ""
 
 #. js-lingui-id: p4ANpY
@@ -3996,7 +3986,7 @@ msgid "Page layout tab not found"
 msgstr ""
 
 #. js-lingui-id: pOITp3
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception.ts
+#: src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception.ts
 msgid "Page layout tab not found."
 msgstr ""
 
@@ -4051,7 +4041,7 @@ msgid "Page layout widget is not deleted and cannot be restored"
 msgstr ""
 
 #. js-lingui-id: GcU04G
-#: src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception.ts
+#: src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception.ts
 msgid "Page layout widget not found."
 msgstr ""
 

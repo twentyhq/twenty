@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  UseFilters,
-  UseGuards,
-  UsePipes,
-} from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -12,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
@@ -36,7 +28,6 @@ export class ImapSmtpCaldavResolver {
   constructor(
     private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
@@ -78,19 +69,6 @@ export class ImapSmtpCaldavResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
-    const isImapSmtpCaldavFeatureFlagEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
-        workspace.id,
-      );
-
-    if (!isImapSmtpCaldavFeatureFlagEnabled) {
-      throw new HttpException(
-        'IMAP, SMTP, CalDAV feature is not enabled for this workspace',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
     const validatedParams = await this.validateAndTestConnectionParameters(
       connectionParameters,
       handle,

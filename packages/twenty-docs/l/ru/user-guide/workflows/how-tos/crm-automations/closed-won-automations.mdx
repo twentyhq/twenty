@@ -1,0 +1,179 @@
+---
+title: Closed Won Automations
+description: Automate post-win activities when opportunities close.
+---
+
+When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+
+## The Problem
+
+When an opportunity moves to "Closed Won":
+
+* Company type needs to change from "Prospect" to "Customer"
+* Onboarding tasks need to be created
+* Customer success team needs to be notified
+* Sales rep needs confirmation
+
+Doing this manually is time-consuming and error-prone.
+
+## The Solution
+
+Create a workflow that handles all post-win activities automatically.
+
+## Complete Workflow Setup
+
+### Step 1: Create the Workflow
+
+1. Go to **Settings → Workflows**
+2. Click **+ New Workflow**
+3. Name it "Deal Won - Post-Win Automation"
+
+### Step 2: Configure the Trigger
+
+1. Select **Record is Updated**
+2. Choose **Opportunities**
+3. Under "Fields to monitor", select **Stage**
+
+### Step 3: Add Stage Filter
+
+1. Add **Filter** action
+2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+
+### Step 4: Update Company Type
+
+1. Add **Update Record** action
+2. Настроить:
+
+| Поле                  | Значение                        |
+| --------------------- | ------------------------------- |
+| **Object**            | Компании                        |
+| **Record**            | `{{trigger.object.company.id}}` |
+| **Тип**               | Клиент                          |
+| **First Deal Date**   | `{{trigger.object.closedAt}}`   |
+| **Владелец аккаунта** | `{{trigger.object.owner.id}}`   |
+
+### Step 5: Create Onboarding Task
+
+1. Add **Create Record** action
+2. Настроить:
+
+| Поле                    | Значение                                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Object**              | Задачи                                                                                               |
+| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
+| **Assignee**            | Customer Success team member                                                                         |
+| **Due Date**            | 3 days from now                                                                                      |
+| **Priority**            | High                                                                                                 |
+| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
+| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
+| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+
+### Step 6: Notify Customer Success
+
+1. Add **Send Email** action
+2. Настроить:
+
+| Поле        | Значение                                           |
+| ----------- | -------------------------------------------------- |
+| **To**      | customer-success@yourcompany.com                   |
+| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **Body**    | See example below                                  |
+
+**Email body example**:
+
+```
+Hi CS Team,
+
+We have a new customer!
+
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
+
+An onboarding task has been created automatically.
+
+Let's give them a great start!
+```
+
+### Step 7: Confirm to Sales Rep
+
+1. Add another **Send Email** action
+2. Настроить:
+
+| Поле        | Значение                                                                                                             |
+| ----------- | -------------------------------------------------------------------------------------------------------------------- |
+| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
+| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
+| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+
+### Step 8: Test and Activate
+
+1. Test by moving a test opportunity to "Closed Won"
+2. Проверить:
+   * Company type changed to "Customer"
+   * Onboarding task created
+   * CS team received email
+   * Sales rep received confirmation
+3. Activate when ready
+
+## Handling Closed Lost
+
+Create a similar workflow for lost deals:
+
+### Триггер
+
+* Record is Updated (Opportunities, Stage = "Closed Lost")
+
+### Действия
+
+1. **Create Record**: Task for "Lost Deal Analysis"
+2. **Update Record**: Add lost reason to company record
+3. **Send Email**: Notify manager of lost deal
+
+## Advanced: Multi-Step Onboarding
+
+For complex onboarding, create multiple tasks:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Use **Iterator** to create each task from the array.
+
+## Customization Ideas
+
+### Keep your other tools up-to-date
+
+* Create customer in billing system with an **HTTP Request**
+
+### Conditional Actions
+
+Use **Filter** actions to:
+
+* Different onboarding for enterprise vs SMB
+* Different assignees based on region
+* Skip notifications for small deals
+
+### Include Deal Details
+
+Use **Code** action to format:
+
+* Deal summary documents
+* Handoff notes for CS team
+* Custom onboarding checklists
+
+## Related
+
+* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Send Emails from Workflows](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)

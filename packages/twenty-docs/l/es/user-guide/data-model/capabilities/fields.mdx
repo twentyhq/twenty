@@ -1,0 +1,122 @@
+---
+title: Campos
+description: Comprenda el papel de los campos y cómo gestionarlos.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Acerca de los Campos
+
+Los campos son como columnas en una hoja de cálculo. Almacenan diferentes tipos de datos como texto, números o fechas. Los campos pueden ser estándar (integrados) o personalizados (los que usted crea).
+
+### Campos Estándar
+
+Los campos estándar vienen integrados con Twenty para cubrir necesidades empresariales comunes.
+
+Por ejemplo, `Nombre` y `Apellido` son campos estándar en el objeto `Personas`. Almacenan datos de texto para nombres individuales.
+
+No puede eliminar campos estándar, pero puede desactivarlos si no los necesita.
+
+También puede personalizar las opciones de los campos estándar de tipo `SELECT`, por ejemplo, las opciones para la `Etapa` en Oportunidades.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Campos Personalizados
+
+Se pueden añadir campos personalizados a cualquier objeto. Puede almacenar texto, números, fechas, selecciones desplegables y más. Utilice campos personalizados para rastrear información específica de su negocio.
+
+Por ejemplo, un campo personalizado para SpaceX podría ser `Estado Activo del Cohete`, indicando si un cohete está operativo.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Tipos de campo
+
+Twenty admite varios tipos de campo:
+
+| Tipo               | Descripción                                                           | Ejemplo                         |
+| ------------------ | --------------------------------------------------------------------- | ------------------------------- |
+| Dirección          | Dirección estructurada con calle, ciudad, estado, país, código postal | Dirección de la oficina         |
+| Array              | Lista de valores de texto                                             | Etiquetas                       |
+| Booleano           | Casilla de verificación verdadero/falso                               | Activo                          |
+| Moneda             | Valor monetario con código de moneda                                  | Importe del acuerdo (USD)       |
+| Fecha              | Valores de fecha                                                      | Fecha de cierre                 |
+| Fecha y hora       | Fecha con hora                                                        | Hora de la reunión              |
+| Dominio            | Dominio del sitio web (usado para Empresas)                           | acme.com                        |
+| Correo electrónico | Direcciones de correo electrónico (con principal + adicionales)       | Correo electrónico del contacto |
+| JSON               | Datos JSON estructurados                                              | Metadatos personalizados        |
+| Enlaces            | URLs con etiquetas (principal + secundaria)                           | Sitio web, LinkedIn             |
+| Texto largo        | Texto multilínea                                                      | Descripción, notas              |
+| Selección múltiple | Varias opciones de una lista predefinida                              | Etiquetas, categorías           |
+| Número             | Valores numéricos (enteros o decimales)                               | Cantidad, puntuación            |
+| Teléfono           | Números de teléfono con código de país                                | Teléfono del trabajo            |
+| Valoración         | Valoración por estrellas (1-5)                                        | Prioridad, puntuación           |
+| Relación           | Enlaces a registros en otros objetos                                  | Empresa → Personas              |
+| Selección          | Una sola opción de una lista predefinida                              | Etapa, estado                   |
+| Texto              | Una sola línea de texto                                               | Nombre, título                  |
+
+## Crear un Campo Personalizado
+
+Para agregar un campo personalizado a cualquier objeto, siga estos pasos:
+
+1. Vaya a `Configuración` en la barra lateral izquierda.
+2. Vaya a `Modelo de Datos`, luego seleccione el objeto que desea personalizar.
+3. Proceda haciendo clic en `Agregar Campo`.
+4. Elija un nombre de campo y tipo que se adapten a sus requisitos. Considere agregar una descripción de campo para una mejor comprensión.
+
+Su nuevo campo creado ahora está disponible dentro de los campos de la aplicación. Para mostrarlo en una vista específica, haga clic en el menú de opciones, luego seleccione `Campos`.
+
+<VimeoEmbed videoId="927628219" title="Demostración en video" />
+
+**Forma rápida:** Haga clic en el botón **+** en la esquina superior derecha de cualquier tabla de objetos, luego seleccione `Personalizar campos`. Esto lo lleva directamente a la configuración del Modelo de Datos.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Desactivar un campo
+
+Puede desactivar un campo para ocultarlo de la aplicación sin perder sus datos. Piense en ello como ocultar el campo en lugar de eliminarlo.
+
+Así es como puede hacerlo:
+
+1. Encuentre el campo que desea desactivar en la configuración de su objeto.
+
+2. Haga clic en los tres puntos `⋮` junto al campo para abrir el menú.
+
+3. Seleccione `Desactivar` en el menú desplegable.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+¿Qué ocurre cuando desactiva un campo?
+
+1. **En la aplicación:** El campo desaparece y no puede añadir nuevos valores.
+
+2. **Relaciones existentes:** Si es un campo de relación, las conexiones existentes permanecen, pero no puede crear nuevas.
+
+3. **Acceso API:** Aún puede acceder al campo y sus datos a través de la API.
+
+Puede reactivar los Campos Estándar y Personalizados o tener la opción de eliminarlos permanentemente.
+
+## Hacer Campos Únicos
+
+Haga un campo único para asegurar que registros distintos no puedan tener el mismo valor. Por ejemplo, las direcciones de correo electrónico son únicas para cada persona.
+
+Si recibe un error al establecer la unicidad, verifique los valores duplicados en sus datos (incluso registros eliminados).
+
+## Mejores Prácticas de Configuración de Campos
+
+### Convenciones y Limitaciones de Nombres
+
+* **Los nombres singulares y plurales deben ser distintos**: Nuestra API GraphQL necesita nombres distintos para mutaciones
+* **Nombres de campos protegidos**: algunos nombres están reservados para uso del sistema (p. ej., `Type`, `Application`)
+
+### Campos de Moneda y Teléfono
+
+* **Moneda predeterminada:** se puede configurar a través del modelo de datos
+* **Códigos de país predeterminados:** se pueden configurar para campos de teléfono a través del modelo de datos
+
+### Campos de Selección
+
+* **Se puede seleccionar una opción predeterminada** para cada campo de Selección
+
+### Campos de Texto del Registro
+
+* **Cada objeto tiene un campo principal de visualización**: Este campo aparece en la columna más a la izquierda y representa el registro cuando se vincula a otros objetos. Debe ser un campo de texto. Por ejemplo, las Personas utilizan `Nombre` como el campo principal, por lo que cuando vincula una persona a una empresa, verá su nombre en la vista de la empresa.

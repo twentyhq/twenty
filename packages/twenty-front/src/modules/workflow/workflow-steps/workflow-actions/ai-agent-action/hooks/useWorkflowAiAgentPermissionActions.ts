@@ -85,7 +85,8 @@ export const useWorkflowAiAgentPermissionActions = ({
       workflowAiAgentActionAgent.label ??
       workflowAiAgentActionAgent.name ??
       t`Agent`;
-    const roleName = `${agentDisplayName} role (${workflowAiAgentActionAgent.id.substring(0, 8)})`;
+    const agentIdPrefix = workflowAiAgentActionAgent.id.substring(0, 8);
+    const roleName = t`${agentDisplayName} role (${agentIdPrefix})`;
     const generatedRoleId = v4();
 
     await createRole({
