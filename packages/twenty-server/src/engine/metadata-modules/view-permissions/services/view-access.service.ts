@@ -75,17 +75,29 @@ export class ViewAccessService {
     visibility: ViewVisibility,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
-    // For WORKSPACE visibility views, user must have VIEWS permission
-    if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        });
+    // For WORKSPACE visibility views, check VIEWS permission
+    if (visibility === ViewVisibility.WORKSPACE) {
+      let hasViewsPermission = false;
 
-      const hasViewsPermission =
-        permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+      if (isDefined(userWorkspaceId)) {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId,
+            workspaceId,
+          });
+
+        hasViewsPermission =
+          permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+      } else if (isDefined(apiKeyId)) {
+        hasViewsPermission =
+          await this.permissionsService.userHasWorkspaceSettingPermission({
+            workspaceId,
+            apiKeyId,
+            setting: PermissionFlagType.VIEWS,
+          });
+      }
 
       if (!hasViewsPermission) {
         throw new ViewException(
@@ -102,7 +114,7 @@ export class ViewAccessService {
       }
     }
 
-    // For UNLISTED views or users without userWorkspaceId, allow creation
+    // For UNLISTED views, allow creation
     return true;
   }
 
