@@ -323,22 +323,35 @@ export const SettingsObjectFieldEdit = () => {
                   },
                   {
                     children: `${applicationName}`,
-                    href: getSettingsPath(SettingsPath.ApplicationDetail, {
-                      applicationId,
-                    }),
+                    href: getSettingsPath(
+                      SettingsPath.ApplicationDetail,
+                      {
+                        applicationId,
+                      },
+                      undefined,
+                      'content',
+                    ),
+                  },
+                  {
+                    children: objectMetadataItem.labelPlural,
+                    href: getSettingsPath(
+                      SettingsPath.ApplicationObjectDetail,
+                      { objectNamePlural, applicationId },
+                    ),
                   },
                 ]
-              : []),
-            {
-              children: t`Objects`,
-              href: getSettingsPath(SettingsPath.Objects),
-            },
-            {
-              children: objectMetadataItem.labelPlural,
-              href: getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural,
-              }),
-            },
+              : [
+                  {
+                    children: t`Objects`,
+                    href: getSettingsPath(SettingsPath.Objects),
+                  },
+                  {
+                    children: objectMetadataItem.labelPlural,
+                    href: getSettingsPath(SettingsPath.ObjectDetail, {
+                      objectNamePlural,
+                    }),
+                  },
+                ]),
             {
               children: fieldMetadataItem.label,
             },

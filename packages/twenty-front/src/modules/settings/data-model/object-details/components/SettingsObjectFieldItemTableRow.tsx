@@ -33,6 +33,7 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
+  applicationId?: string;
   status: 'active' | 'disabled';
   mode: 'view' | 'new-field';
 };
@@ -86,6 +87,7 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsObjectFieldItemTableRow = ({
   settingsObjectDetailTableItem,
+  applicationId,
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
@@ -131,10 +133,28 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const canToggleField = !isLabelIdentifier;
 
-  const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldName: fieldMetadataItem.name,
-  });
+  const linkToNavigate = applicationId
+    ? getSettingsPath(SettingsPath.ApplicationFieldDetail, {
+        objectNamePlural: objectMetadataItem.namePlural,
+        fieldName: fieldMetadataItem.name,
+        applicationId,
+      })
+    : getSettingsPath(SettingsPath.ObjectFieldEdit, {
+        objectNamePlural: objectMetadataItem.namePlural,
+        fieldName: fieldMetadataItem.name,
+      });
+
+  const navigateToFieldEdit = () =>
+    applicationId
+      ? getSettingsPath(SettingsPath.ApplicationFieldDetail, {
+          objectNamePlural: objectMetadataItem.namePlural,
+          fieldName: fieldMetadataItem.name,
+          applicationId,
+        })
+      : navigate(SettingsPath.ObjectFieldEdit, {
+          objectNamePlural: objectMetadataItem.namePlural,
+          fieldName: fieldMetadataItem.name,
+        });
 
   const { activateMetadataField } = useFieldMetadataItem();
 
@@ -195,15 +215,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   return (
     <StyledObjectFieldTableRow
-      onClick={
-        mode === 'view'
-          ? () =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-          : undefined
-      }
+      onClick={mode === 'view' ? navigateToFieldEdit : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
         <StyledNameTableCell>
@@ -251,12 +263,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <StyledIconTableCell>
         {status === 'active' ? (
           mode === 'view' ? (
-            <UndecoratedLink
-              to={getSettingsPath(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })}
-            >
+            <UndecoratedLink to={linkToNavigate}>
               <StyledIconChevronRight
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.sm}
@@ -276,12 +283,7 @@ export const SettingsObjectFieldItemTableRow = ({
             isCustomField={fieldMetadataItem.isCustom === true}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
-            onEdit={() =>
-              navigate(SettingsPath.ObjectFieldEdit, {
-                objectNamePlural: objectMetadataItem.namePlural,
-                fieldName: fieldMetadataItem.name,
-              })
-            }
+            onEdit={navigateToFieldEdit}
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }

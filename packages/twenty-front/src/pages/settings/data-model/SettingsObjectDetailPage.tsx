@@ -146,7 +146,12 @@ export const SettingsObjectDetailPage = () => {
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
-        return <ObjectFields objectMetadataItem={objectMetadataItem} />;
+        return (
+          <ObjectFields
+            objectMetadataItem={objectMetadataItem}
+            applicationId={applicationId}
+          />
+        );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
         return (
           <ObjectSettings
@@ -184,13 +189,23 @@ export const SettingsObjectDetailPage = () => {
                 },
                 {
                   children: `${applicationName}`,
-                  href: getSettingsPath(SettingsPath.ApplicationDetail, {
-                    applicationId,
-                  }),
+                  href: getSettingsPath(
+                    SettingsPath.ApplicationDetail,
+                    {
+                      applicationId,
+                    },
+                    undefined,
+                    'content',
+                  ),
                 },
               ]
-            : []),
-          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
+            : [
+                {
+                  children: t`Objects`,
+                  href: getSettingsPath(SettingsPath.Objects),
+                },
+              ]),
+
           {
             children: objectMetadataItem.labelPlural,
           },

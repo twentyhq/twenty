@@ -171,11 +171,15 @@ export const SettingsServerlessFunctionDetail = () => {
           },
           {
             children: `${applicationName}`,
-            href: getSettingsPath(SettingsPath.ApplicationDetail, {
-              applicationId,
-            }),
+            href: getSettingsPath(
+              SettingsPath.ApplicationDetail,
+              {
+                applicationId,
+              },
+              undefined,
+              'content',
+            ),
           },
-          { children: t`Functions` },
           { children: `${serverlessFunction?.name}` },
         ]}
       >

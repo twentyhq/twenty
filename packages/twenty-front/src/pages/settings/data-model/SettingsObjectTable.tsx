@@ -24,7 +24,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArchive,
   IconChevronRight,
@@ -56,9 +56,11 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsObjectTable = ({
   objectMetadataItems,
+  applicationId,
   withSearchBar = true,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
+  applicationId?: string;
   withSearchBar?: boolean;
 }) => {
   const { t } = useLingui();
@@ -249,10 +251,16 @@ export const SettingsObjectTable = ({
               }
               link={
                 isActive
-                  ? getSettingsPath(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        objectSettingsItem.objectMetadataItem.namePlural,
-                    })
+                  ? isDefined(applicationId)
+                    ? getSettingsPath(SettingsPath.ApplicationObjectDetail, {
+                        objectNamePlural:
+                          objectSettingsItem.objectMetadataItem.namePlural,
+                        applicationId,
+                      })
+                    : getSettingsPath(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          objectSettingsItem.objectMetadataItem.namePlural,
+                      })
                   : undefined
               }
             />
