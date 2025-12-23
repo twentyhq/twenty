@@ -286,7 +286,7 @@ msgstr "العنوان"
 #. js-lingui-id: JiOJxf
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
-msgstr "<b>العنوان</b> (غير مستخدم)"
+msgstr "العنوان (غير مستخدم)"
 
 #. js-lingui-id: Knl3c9
 #: src/modules/company/standard-objects/company.workspace-entity.ts

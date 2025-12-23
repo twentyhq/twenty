@@ -1979,7 +1979,7 @@ msgstr "Çalışma Alanı Üyesiyle İlişkili Favoriler"
 #. js-lingui-id: GyXrE1
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites tied to the {label}"
-msgstr "<b>{label}</b> ile Bağlantılı Favoriler"
+msgstr ""
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
