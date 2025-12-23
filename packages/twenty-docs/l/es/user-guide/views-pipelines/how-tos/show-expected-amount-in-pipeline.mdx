@@ -1,0 +1,149 @@
+---
+title: Mostrar el Importe previsto en tu pipeline
+description: Calcula y muestra valores ponderados de las oportunidades según la probabilidad de la etapa.
+---
+
+El Importe previsto es un valor calculado: **Importe × Probabilidad**. Esto te ayuda a pronosticar ingresos ponderando las oportunidades según la probabilidad de que se cierren.
+
+<Tip>
+  Este es un ejemplo de creación de [Campos de fórmula](/l/es/user-guide/workflows/how-tos/crm-automations/formula-fields) usando flujos de trabajo.
+</Tip>
+
+Esta guía te acompaña para configurar los campos personalizados y los flujos de trabajo necesarios para calcular y mostrar importes previstos en tu pipeline.
+
+## Paso 1: Crear campos personalizados
+
+Necesitas dos campos personalizados en el objeto Oportunidades.
+
+### Crear el campo Probabilidad
+
+1. Ve a **Ajustes → Modelo de datos → Oportunidades**
+2. Haz clic en **+ Añadir campo**
+3. Configurar:
+   * **Nombre**: Probabilidad
+   * **Tipo**: Número
+   * **Descripción**: Probabilidad según etapa (0-100%)
+4. Haga clic en **Guardar**
+
+### Crear el campo Importe previsto
+
+1. Haz clic en **+ Añadir campo**
+2. Configurar:
+   * **Nombre**: Importe previsto
+   * **Tipo**: Moneda
+   * **Descripción**: Calculado: Importe × Probabilidad
+3. Haga clic en **Guardar**
+
+### Opcional: Hacer que los campos sean de solo lectura para los usuarios
+
+Si no quieres que los usuarios editen manualmente estos campos calculados:
+
+1. Ve a **Ajustes → Roles**
+2. Selecciona el rol a configurar
+3. Busca el objeto Oportunidades
+4. Establece los campos **Probabilidad** e **Importe previsto** como de solo lectura
+
+Esto garantiza que solo los flujos de trabajo puedan actualizar estos valores.
+
+## Paso 2: Crear el flujo de trabajo #1 — Actualizar la Probabilidad al cambiar de etapa
+
+Este flujo de trabajo establece automáticamente la Probabilidad cuando una oportunidad pasa a una nueva etapa.
+
+### Crear el flujo de trabajo
+
+1. Ve a **Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Ponle el nombre "Actualizar la Probabilidad al cambiar de etapa"
+
+### Configurar el desencadenador
+
+1. Añade un desencadenador **Registro creado o actualizado**
+2. Selecciona **Oportunidades** como objeto
+3. Filtrar en: se actualiza el campo **Etapa**
+
+### Añadir ramas para cada etapa
+
+Crea una rama para cada etapa con su probabilidad:
+
+| Etapa           | Probabilidad |
+| --------------- | ------------ |
+| Nuevo           | 10%          |
+| Calificado      | 25%          |
+| Reunión         | 40%          |
+| Propuesta       | 60%          |
+| Negociación     | 80%          |
+| Cerrado ganado  | 100%         |
+| Cerrado perdido | 0%           |
+
+<Note>
+  Para crear una nueva rama, haz clic derecho en el lienzo del flujo de trabajo y haz clic en **Nueva acción**. Luego, vincula esta acción al nodo anterior arrastrando la flecha desde el nodo anterior hasta esta nueva acción.
+</Note>
+
+Para cada etapa:
+
+1. Añade un nodo **Filtro**: Etapa = [nombre de la etapa]
+2. Añade una acción **Actualizar registro**:
+   * Registro: la Oportunidad desencadenante
+   * Campo: Probabilidad
+   * Valor: [probabilidad para esa etapa]
+
+### Calcular el Importe previsto
+
+Después de que las ramas se vuelvan a unir:
+
+1. Añade un nodo **Filtro**: el Importe no está vacío
+2. Añade una acción **Actualizar registro**:
+   * Registro: la Oportunidad desencadenante
+   * Campo: Importe previsto
+   * Valor: Importe × Probabilidad
+
+## Paso 3: Crear el flujo de trabajo #2 — Recalcular al cambiar el Importe
+
+Este flujo de trabajo actualiza el Importe previsto cuando cambia el Importe de la oportunidad.
+
+### Crear el flujo de trabajo
+
+1. Ve a **Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Ponle el nombre "Recalcular el Importe previsto al cambiar el Importe"
+
+### Configurar el desencadenador
+
+1. Añade un desencadenador **Registro creado o actualizado**
+2. Selecciona **Oportunidades** como objeto
+3. Filtrar en: se actualiza el campo **Importe**
+
+### Añadir la lógica
+
+1. Añade un nodo **Filtro**: el Importe no está vacío
+2. Añade una acción **Actualizar registro**:
+   * Registro: la Oportunidad desencadenante
+   * Campo: Importe previsto
+   * Valor: Importe × Probabilidad
+
+## Paso 4: Mostrarlo en tu pipeline
+
+Ahora muestra los totales de Importe previsto en tu vista Kanban:
+
+1. Abre tu vista Kanban de Pipeline de ventas
+2. Haz clic en el número junto al nombre de cualquier etapa en la parte superior de una columna
+3. Selecciona **Suma**
+4. Elige **Importe previsto**
+
+Cada columna ahora muestra el valor total ponderado del pipeline para esa etapa.
+
+## Resumen
+
+| Componente                    | Propósito                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| **Campo de Probabilidad**     | Almacena la probabilidad de ganar según la etapa                                       |
+| **Campo de Importe previsto** | Almacena Importe × Probabilidad                                                        |
+| **Flujo de trabajo #1**       | Actualiza la Probabilidad cuando cambia la Etapa y luego recalcula el Importe previsto |
+| **Flujo de trabajo #2**       | Recalcula el Importe previsto cuando cambia el Importe                                 |
+| **Agregación**                | Muestra la suma del Importe previsto por etapa                                         |
+
+## Relacionado
+
+* [Campos de fórmula](/l/es/user-guide/workflows/how-tos/crm-automations/formula-fields) — crea campos calculados usando flujos de trabajo
+* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones por columna
+* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields) — configuración de campos

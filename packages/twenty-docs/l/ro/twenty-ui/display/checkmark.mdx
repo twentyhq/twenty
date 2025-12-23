@@ -1,0 +1,58 @@
+---
+title: Bifă
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Antet" />
+</Frame>
+
+Reprezintă o acțiune reușită sau finalizată.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    Extinde `React.ComponentPropsWithoutRef<'div'>` și acceptă toate proprietățile unui element `div` obișnuit.
+  </Tab>
+</Tabs>
+
+## Bifă Animată
+
+Reprezintă o pictogramă de bifă cu caracteristica suplimentară de animație.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                   | Implicit     |
+    | ----------- | ------- | ------------------------------------------- | ------------ |
+    | isAnimating | boolean | Controls whether the checkmark is animating | fals         |
+    | culoare     | șir     | Culoarea bifei                              |              |
+    | durată      | număr   | Durata animației în secunde                 | 0,5 secunde  |
+    | dimensiune  | număr   | Dimensiunea bifei                           | 28 de pixeli |
+  </Tab>
+</Tabs>

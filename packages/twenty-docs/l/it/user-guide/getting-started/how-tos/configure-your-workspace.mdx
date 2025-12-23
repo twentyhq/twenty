@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Ogni azienda lavora in modo diverso. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. Ciò ti offre un valore immediato e aiuta il tuo team a vedere Twenty in azione con dati reali. You can do so under Settings → Accounts.</Note>
+
+## 1. Personalizza il tuo modello di dati
+
+Twenty offre la flessibilità necessaria per modellare il modello di dati che meglio supporterà la tua routine quotidiana.
+Create objects and fields of any type, including relations between your different objects. Puoi farlo sotto Impostazioni → Modello di Dati.
+Ecco alcuni suggerimenti:
+
+* **Non sei limitato nel numero di campi personalizzati né di oggetti personalizzati**. Aggiungere oggetti e campi personalizzati non comporterà l'aggiornamento del tuo piano.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. Si consiglia di utilizzarli il più possibile, aggiungendo campi per categorizzare i tuoi record se necessario. Ecco un esempio:
+  * È meglio utilizzare l'oggetto Persone per i tuoi potenziali clienti e partner, creando un campo nell'oggetto Persone chiamato `Tipo di Persona`, invece di creare un oggetto personalizzato Partner. Perché non potresti accedere alle email scambiate con questa persona dai record del Partner.
+  * Crea viste diverse sotto Persone, una per visualizzare i partner e una per visualizzare i potenziali clienti.
+* Due Persone non possono avere lo stesso indirizzo email. Due Aziende non possono avere lo stesso dominio.
+* Puoi disattivare i campi e gli oggetti standard che non vuoi utilizzare.
+* Puoi nascondere i campi dalle viste: non aver paura di creare campi, non dovrai mostrarli tutti.
+
+Leggi [questo articolo](/l/it/user-guide/data-model/overview) per imparare a progettare il tuo modello di dati.
+
+## 2. Importa i tuoi dati
+
+Importare i tuoi dati esistenti in Twenty dà al tuo team un contesto fin dall'inizio.
+
+### Connect your mailbox
+
+Se non lo hai fatto creando il tuo spazio di lavoro, collega il tuo **account Google o Microsoft** sotto Impostazioni → Account. Questo permette a Twenty di:
+
+* Importare i tuoi messaggi e incontri
+* Creare automaticamente i contatti basandosi sulle interazioni (opzionale)
+* Mantenere visibile la cronologia delle comunicazioni per il tuo team
+
+**Usi un altro provider?**
+Puoi aggiungere un'altra casella di posta tramite SMTP o un altro calendario tramite CalDAV. Dovrai attivare la funzionalità sotto Impostazioni → Rilasci → Lab, e poi tornare alla scheda Impostazioni → Account.
+
+### Importa dati via csv
+
+Usa il menu Comando (`Cmd + K` o `Ctrl + K`) per importare Persone, Aziende, Opportunità o qualsiasi oggetto personalizzato tramite CSV.
+
+**Linee guida principali**:
+
+* Scarica il file di esempio per capire il formato richiesto
+* Limita ogni file a 10k record
+* Rimuovi email duplicate per le Persone o domini duplicati per le Aziende
+* Rivedi e correggi gli errori (evidenziati in giallo) prima di importare
+
+Leggi [questo articolo](/l/it/user-guide/data-migration/overview) per saperne di più sull'importazione dei dati.
+
+## 3. Crea la tua prima vista
+
+Creare diverse viste è fondamentale per rendere i dati azionabili per il tuo team.
+Ecco come procedere:
+
+* **Aggiungi o nascondi colonne**
+  Gestisci i campi visibili in una determinata vista facendo clic su Opzioni → Campi (dall'angolo in alto a destra). Puoi mostrare/nascondere i campi da lì.
+
+* **Riorganizza i campi**
+  Riorganizza i campi in una determinata vista facendo clic su Opzioni → Campi (dall'angolo in alto a destra). Trascina e rilascia i campi per riorganizzarli.
+
+* **Filtra la tua vista**
+  Restringi i record visibili utilizzando i Filtri dalla parte in alto a destra.
+
+* **Ordina i record**
+  Riordina i record visualizzati utilizzando la funzione Ordina dalla parte in alto a destra, o cliccando direttamente sul nome della colonna.
+
+* **Scegli il layout**
+  Puoi passare a un layout **Kanban** o a un layout elenco **Raggruppa Per**, purché l'oggetto abbia un campo di selezione tipo `Stadio` o simile.
+
+* **Salva la tua vista come Preferiti**
+  Ciò può essere fatto utilizzando il menu a discesa che mostra le diverse viste.
+
+## Cosa c'è dopo?
+
+Inizia a creare automazioni usando [flussi di lavoro](/l/it/user-guide/workflows/overview).

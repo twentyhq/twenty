@@ -1,0 +1,85 @@
+---
+title: Versiones del flujo de trabajo
+description: Gestiona versiones y borradores de flujos de trabajo.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Acerca de las versiones
+
+Cada vez que activas un flujo de trabajo, se crea una nueva versión. Esto te permite hacer un seguimiento de los cambios a lo largo del tiempo y revertir a configuraciones anteriores si es necesario.
+
+## Estados de la versión
+
+| Estado          | Descripción                                    |
+| --------------- | ---------------------------------------------- |
+| **Borrador**    | En edición, aún no publicado                   |
+| **Activo**      | Versión en vivo respondiendo a activadores     |
+| **Desactivado** | Anteriormente activo pero detenido manualmente |
+| **Archivado**   | Versiones pasadas guardadas para historial     |
+
+## Trabajar con borradores
+
+Cuando editas un flujo de trabajo activo, tus cambios se guardan como un **borrador**. La versión activa sigue ejecutándose mientras trabajas en las actualizaciones.
+
+Cuando termines de editar, puedes:
+
+* **Activar**: Publica el borrador como la nueva versión activa (la versión anterior se archiva)
+* **Descartar**: Elimina el borrador y conserva la versión activa actual
+
+## Historial de versiones
+
+### Ver versiones anteriores
+
+1. Abre el flujo de trabajo
+2. Haz clic en la pestaña **Versiones**
+3. Consulta todas las versiones anteriores con marcas de tiempo
+
+### Restaurar una versión
+
+1. Encuentra la versión que quieres restaurar
+2. Haz clic en **Usar como borrador**
+3. La versión se copia a un nuevo borrador
+4. Realiza las actualizaciones necesarias
+5. Activa cuando esté lista
+
+## Mejores prácticas
+
+### Gestión de versiones
+
+* Activa solo cuando esté lista para producción
+* Mantén cambios significativos entre versiones
+* Documenta los cambios importantes en los nombres o descripciones de los flujos de trabajo
+* Prueba en modo borrador antes de activar
+
+### Revertir cambios
+
+* Si una nueva versión causa problemas, restaura la versión anterior
+* Usa el historial de versiones para ver qué cambió
+* Siempre prueba las versiones restauradas antes de activar
+
+## Flujos de Trabajo comunes
+
+### Edición rápida
+
+1. Realiza cambios menores en un flujo de trabajo activo
+2. Prueba en modo borrador
+3. Activa la nueva versión
+
+### Revisión importante
+
+1. Usa la versión anterior como punto de partida
+2. Realiza cambios significativos en el borrador
+3. Prueba a fondo todos los escenarios
+4. Activa cuando estés seguro
+
+### Reversión
+
+1. Identifica el problema con la versión actual
+2. Encuentra la última versión funcional en el historial
+3. Haz clic en **Usar como borrador**
+4. Activa para restaurar el comportamiento anterior
+
+## Relacionado
+
+* [Primeros pasos con Flujos de Trabajo](/l/es/user-guide/workflows/overview)
+* [Ejecuciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-runs)

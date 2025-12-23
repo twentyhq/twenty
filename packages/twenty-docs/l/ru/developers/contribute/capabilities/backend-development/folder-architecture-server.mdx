@@ -1,0 +1,125 @@
+---
+title: Архитектура папок
+info: A detailed look into our server folder architecture
+---
+
+Структура серверной директории следующая:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+Определяет разрешения и включает обработчики для каждого объекта.
+
+## Декораторы
+
+Определяет пользовательские декораторы в NestJS для расширенной функциональности.
+
+Смотрите [пользовательские декораторы](https://docs.nestjs.com/custom-decorators) для более подробной информации.
+
+## Фильтры
+
+Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+
+## Guards
+
+Смотрите [защиты](https://docs.nestjs.com/guards) для более подробной информации.
+
+## Health
+
+Включает общедоступный REST API (healthz), который возвращает JSON, чтобы подтвердить, что база данных работает должным образом.
+
+## Метаданные
+
+Определяет пользовательские объекты и предоставляет GraphQL API (graphql/metadata).
+
+## Рабочее пространство
+
+Генерирует и обслуживает пользовательскую GraphQL схему на основе метаданных.
+
+### Структура каталога рабочей области
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+Корень каталога рабочей области включает `workspace.factory.ts`, файл, содержащий функцию `createGraphQLSchema`. Эта функция генерирует схему, специфичную для рабочей области, используя метаданные для адаптации схемы для индивидуальных рабочих областей. Разделением построения схемы и резолвера, мы используем функцию `makeExecutableSchema`, которая объединяет эти отдельные элементы.
+
+This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+
+### Workspace Schema builder
+
+Генерирует GraphQL схему и включает:
+
+#### Фабрики:
+
+Специализированные конструкторы для генерации связанных с GraphQL конструкций.
+
+* Фабрика типов переводит метаданные поля в типы GraphQL, используя `TypeMapperService`.
+* Фабрика определения типов создает объекты ввода или вывода GraphQL на основе `objectMetadata`.
+
+#### Типы GraphQL
+
+Включает перечисления, входы, объекты и скаляры и служит строительными блоками для построения схемы.
+
+#### Интерфейсы и определение объектов
+
+Содержит чертежи для GraphQL сущностей и включает как предопределенные, так и пользовательские типы, такие как `MONEY` или `URL`.
+
+#### Сервисы
+
+Содержит сервис, ответственный за ассоциацию FieldMetadataType с соответствующим скаляром GraphQL или модификаторами запроса.
+
+#### Хранилище
+
+Включает класс `TypeDefinitionsStorage`, содержащий переиспользуемые определения типов, предотвращая дублирование GraphQL типов.
+
+### Конструктор резолверов рабочей области
+
+Создает функции резолверов для запроса и изменения схемы GraphQL.
+
+Каждая фабрика в этом каталоге отвечает за создание отдельного типа резолвера, как, например, `FindManyResolverFactory`, предназначенной для адаптируемого применения в различных таблицах.
+
+### Выполнители запросов рабочей области
+
+Выполняет сгенерированные запросы в базе данных и анализирует результат.

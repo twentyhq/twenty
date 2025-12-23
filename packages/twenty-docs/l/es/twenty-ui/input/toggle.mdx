@@ -1,0 +1,36 @@
+---
+title: Cambiar
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Encabezado" />
+</Frame>
+
+<Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
+
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Props&#x22;">
+    | "Props"         | Tipo     | Descripción                                                                                     | Predeterminado |
+    | --------------- | -------- | ----------------------------------------------------------------------------------------------- | -------------- |
+    | valor           | booleano | The current state of the toggle                                                                 | `falso`        |
+    | "onChange"      | función  | Callback function triggered when the toggle state changes                                       |                |
+    | color           | cadena   | Color of the toggle when it\                                                                    | s blue color   |
+    | tamañoConmutado | cadena   | Size of the toggle, affecting both height and weight. Tiene dos opciones: `pequeño` y `mediano` | mediano        |
+  </Tab>
+</Tabs>

@@ -1,0 +1,91 @@
+---
+title: Objetos
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standard Objects
+
+Objetos estándar son entidades predefinidas en tu espacio de trabajo para ayudarte a comenzar. Forman parte de un modelo de datos compartido accesible para todos los usuarios de Twenty. Puedes usarlos tal cual, personalizarlos o desactivarlos.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Personas
+
+El objeto `Personas` almacena tus contactos. Incluye detalles de contacto y el historial de interacciones, para que puedas ver todas tus interacciones con clientes en un solo lugar.
+
+### Empresa
+
+El objeto `Empresas` almacena las cuentas de tu negocio. Incluye detalles como industria, tamaño y ubicación. Las empresas se conectan tanto a los objetos `Personas` como `Oportunidades`.
+
+### Oportunidades
+
+El objeto `Oportunidades` almacena datos relacionados con acuerdos. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. Puedes ver tu canal de ventas en un diseño kanban.
+
+### Notas
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Tareas
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## Objetos personalizados
+
+Los objetos personalizados te permiten almacenar información que es única para tu organización y que los objetos estándar no pueden manejar. Por ejemplo, si eres SpaceX, puedes querer crear un objeto personalizado para Cohetes y Lanzamientos.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+Para crear un nuevo objeto personalizado:
+
+1. Ve a Configuración en la barra lateral a la izquierda.
+2. Under Workspace, go to Data model. Aquí podrás ver una visión general de todos tus objetos Estándar y Personalizados (tanto activos como desactivados).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Haz clic en `+ Nuevo objeto` en la parte superior. Ingresa el nombre (tanto singular como plural), elige un ícono y añade una descripción para tu objeto personalizado y presiona Guardar (en la parte superior derecha). Usando Listado como un ejemplo de objeto personalizado, el singular sería "listado" y el plural sería "listados" junto con una descripción como "Listados que los anfitriones crearon para mostrar sus propiedades."
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## Mejores prácticas
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

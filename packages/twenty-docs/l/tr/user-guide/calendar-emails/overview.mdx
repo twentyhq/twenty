@@ -1,0 +1,132 @@
+---
+title: Calendar & Emails
+description: Connect your email and calendar accounts to Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+</Frame>
+
+## Bağlantı Seçenekleri
+
+### Google Hesabı (Gmail & Google Takvim)
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. **Hesap ekle** butonuna tıklayın.
+3. **Google ile Devam Et** seçeneğini seçin.
+4. Twenty'nin Gmail ve Google Takvim hesabınıza erişmesine izin verin.
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. E-postalarınız ve takvim etkinlikleriniz otomatik olarak senkronize edilmeye başlayacaktır.
+
+### Microsoft Hesabı (Outlook & Microsoft Takvim)
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. **Hesap ekle** butonuna tıklayın.
+3. **Microsoft ile Devam Et** seçeneğini seçin.
+4. Twenty'nin Outlook ve Microsoft Takvim hesabınıza erişmesine izin verin.
+5. Configure email sync settings (visibility, auto-creation) → click **Next**
+6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
+7. E-postalarınız ve takvim etkinlikleriniz otomatik olarak senkronize edilmeye başlayacaktır.
+
+### SMTP/CalDAV Ayarları (Diğer Sağlayıcılar)
+
+Diğer e-posta ve takvim sağlayıcıları için:
+
+1. Özelliği etkinleştirmek için **Ayarlar → Yayınlar → Lab** bölümüne gidin.
+2. **Ayarlar → Hesaplar**'a geri dönün.
+3. E-posta için SMTP ayarlarını yapılandırın
+4. Takvim için CalDAV ayarlarını yapılandırın
+5. Bağlantıyı test edin
+
+### Birden Fazla Posta Kutusu
+
+* **Sınırsız Hesaplar**: Her kullanıcı için birden fazla e-posta hesabı bağlayın
+* **Hesap Yönetimi**: Farklı posta kutuları arasında geçiş yapın
+* **Senkronizasyon Ayarları**: Her posta kutusu için farklı ayarlar yapılandırın
+
+<Warning>
+  Yalnızca gerçek posta kutuları bağlanabilir (ör. support@domain.com kendi gelen kutusu ile). Başka bir posta kutusuna yönlendirilen e-posta takma adları Twenty'ye bağlanamaz.
+</Warning>
+
+## E-posta Yapılandırması
+
+### Mesaj Görünürlüğü
+
+E-postalarınız için farklı görünürlük seviyeleri seçin:
+
+* **Yalnızca Meta Veriler**: Sadece temel bilgileri paylaşın (gönderen, alıcı, tarih, saat)
+* **Konu ve Meta Veriler**: Konu satırını meta verilerle birlikte paylaşın
+* **Tüm E-posta İçeriği**: Ekler dahil tüm e-posta içeriğini paylaşın
+
+### Otomatik Kişi Oluşturma
+
+* **Devre Dışı**: Otomatik kişi oluşturma yok
+* **Gönderilen ve alınan mesajlar için**: Tüm dış e-posta etkileşimleri için kişiler oluşturun
+* **Yalnızca gönderilen mesajlar için**: Yalnızca gönderdiğiniz e-postalar için kişi oluşturun
+* **Not**: Gizliliği korumak için dahili e-postalar (aynı etki alanı) asla senkronize edilmez
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Mesaj Klasörü Seçimi (Lab Özelliği) ile hangi e-postaların senkronize edileceğini kontrol edin
+
+Hangi e-posta klasörlerinin Twenty ile senkronize edileceğini kontrol edin:
+
+1. **Ayarlar → Yayınlar → Lab** sekmesine gidin ve **Mesaj Klasörü** özellikleri etkinleştirin
+2. **Ayarlar → Hesaplar**'a dönün ve bağlı e-posta hesabınızı seçin
+3. Hangi klasörlerin senkronize edileceğini seçin:
+   * **Gelen Kutusu**: Ana gelen e-postalar
+   * **Gönderilenler**: Gönderdiğiniz çıkış e-postaları
+   * **Özel Klasörler**: Eklemek istediğiniz belli klasörler
+   * **Klasörleri Hariç Tut**: Spam, Çöp, ya da kişisel klasörleri atlayın
+
+Bu, her şeyi senkronize etmeden CRM'inizde hangi e-postaların görüneceği üzerinde hassas kontrol sağlar.
+
+**Neler Senkronize Edilir:**
+
+* **Dış E-postalar**: Seçilen klasörlerden dış iletişimlere sahip tüm e-postalar
+* **Dahili E-postalar**: Senkronize edilmez (aynı etki alanı e-postaları özel kalır)
+* **Ekler**: 2026 Yılında Gelecek
+
+**Not**: Selektif senkronizasyon için bir CC e-posta adresi sağlamıyoruz. Bunun yerine, Twenty ile hangi e-postaların senkronize edileceği konusunda aynı kontrol seviyesini elde etmek için yukarıdaki Mesaj Klasörü özelliğini kullanın.
+
+## Takvim Yapılandırması
+
+### Etkinlik Görünürlüğü
+
+Çalışma alanınızdaki diğer kullanıcılar için hangi bilgilerin görünür olacağını seçin:
+
+* **Her Şey**: Tüm etkinlik ayrıntıları ekibinizle paylaşılacaktır
+* **Meta Veriler**: Yalnızca tarih ve katılımcılar ekibinizle paylaşılacaktır
+
+### Toplantılar için Otomatik Kişi Oluşturma
+
+* **Evet**: CRM'inizde bulunmayan toplantı katılımcıları için otomatik olarak kişiler oluşturun
+* **Hayır**: Yalnızca mevcut kişilerle toplantıları bağlantılandırın
+
+<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+
+### Hangi etkinliklerin senkronize edileceğini kontrol edin
+
+* **Toplantı İçe Aktarma**: Takvim etkinliklerini otomatik olarak içe aktarın
+* **Kişi Bağlantısı**: Toplantıları Kişi ve Şirket kayıtlarına bağlayın
+
+**Neler Senkronize Edilir:**
+
+* **Toplantılar**: Dış katılımcıları olan takvim etkinlikleri
+* **Kişi Bağlantısı**: Etkinlikler otomatik olarak CRM kayıtlarına bağlanır
+* **Takım Etkinlikleri**: Paylaşılan takvim görünürlüğü
+
+## Senkronizasyon Sıklığı
+
+**Her 5 dakikada bir güncellenir**: Hem e-posta hem de takvim verileri ilk içe aktarmadan 5 dakika sonra otomatik olarak senkronize edilir.
+
+<Note>
+  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+</Note>
+
+## Sonraki Adımlar
+
+* [Mailbox capabilities](/l/tr/user-guide/calendar-emails/capabilities/mailbox)
+* [Troubleshoot missing emails](/l/tr/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

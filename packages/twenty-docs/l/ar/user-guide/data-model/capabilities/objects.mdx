@@ -1,0 +1,91 @@
+---
+title: كائنات
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standard Objects
+
+الكائنات القياسية هي كيانات مُعرّفة مسبقًا في مساحة العمل الخاصة بك لمساعدتك في البدء. هي جزء من نموذج بيانات مشترك يمكن الوصول إليه بواسطة جميع مستخدمي Twenty. يمكنك استخدامها كما هي أو تخصيصها أو تعطيلها.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### الأشخاص
+
+كائن "الأشخاص" يخزن جهات الاتصال الخاصة بك. يتضمن تفاصيل الاتصال وتاريخ التفاعل، مما يتيح لك رؤية جميع تفاعلات العملاء في مكان واحد.
+
+### الشركة
+
+كائن "الشركات" يخزن المعلومات المتعلقة بحسابات العمل الخاصة بك. يتضمن تفاصيل مثل الصناعة والحجم والموقع. الشركات تتصل بكائنات "الأشخاص" و "الفرص".
+
+### الفرص
+
+كائن "الفرص" يخزن البيانات المتعلقة بالصفقات. يتتبع تقدم المبيعات المحتملة من البداية إلى الإغلاق، مع تسجيل المراحل، أحجام الصفقات، الحساب المرتبط، وتاريخ الإغلاق المتوقع. يمكنك عرض مسار المبيعات الخاص بك في تخطيط كانبان.
+
+### الملاحظات
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### المهام
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## كائنات مخصصة
+
+تتيح لك الكائنات المخصصة تخزين المعلومات الفريدة لمنظمتك والتي لا يمكن للكائنات القياسية التعامل معها. على سبيل المثال، إذا كنت SpaceX، قد ترغب في إنشاء كائن مخصص للصواريخ والإطلاقات.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+لإنشاء كائن مخصص جديد:
+
+1. اذهب إلى الإعدادات في الشريط الجانبي الأيسر.
+2. تحت قسم مساحة العمل، انتقل إلى نموذج البيانات. هنا ستتمكن من رؤية نظرة عامة على جميع الكائنات القياسية والمخصصة الحالية (النشطة والمعطلة).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. انقر على "+ كائن جديد" في الأعلى. أدخل الاسم (مفرد وجمع)، اختر أيقونة، أضف وصفًا للكائن المخصص واضغط حفظ (في الزاوية العليا اليمنى). باستخدام القائمة كمثال للكائن المخصص، سيكون المفرد هو "قائمة" والجمع "قوائم" مع الوصف كمثل "قوائم قام المضيفون بإنشائها لعرض ممتلكاتهم."
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## أفضل الممارسات
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

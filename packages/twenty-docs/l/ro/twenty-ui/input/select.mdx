@@ -1,0 +1,51 @@
+---
+title: Selectați
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Antet" />
+</Frame>
+
+Permite utilizatorilor să aleagă o valoare dintr-o listă de opțiuni predefinite.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                                                                                                                                                                    |
+    | ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className   | șir     | Clasă CSS opțională pentru stilizare suplimentară                                                                                                                                            |
+    | dezactivat  | boolean | Când este setat la `true`, dezactivează interacțiunea utilizatorului cu componenta                                                                                                           |
+    | etichetă    | șir     | Eticheta care descrie scopul componentei `Select`                                                                                                                                            |
+    | laSchimbare | funcție | Funcția apelată când valorile selectate se schimbă                                                                                                                                           |
+    | opțiuni     | array   | Represents the options available for the `Selected` component. Este un tablou de obiecte unde fiecare obiect are un `value` (identificatorul unic), `label` (etichetă) și un `Icon` opțional |
+    | valoare     | şir     | Reprezintă valoarea momentan selectată. Ar trebui să corespundă uneia dintre proprietățile `value` din tabloul `opțiuni`.                                                                    |
+  </Tab>
+</Tabs>

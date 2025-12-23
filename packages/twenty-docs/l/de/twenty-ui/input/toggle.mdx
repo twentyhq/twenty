@@ -1,0 +1,36 @@
+---
+title: Umschalten
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Kopfzeile" />
+</Frame>
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
+
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                                             | Standard     |
+    | ------------- | ------------ | -------------------------------------------------------------------------------------------------------- | ------------ |
+    | wert          | boolesch     | Der aktuelle Zustand des Umschalters                                                                     | `falsch`     |
+    | onChange      | Funktion     | Callback-Funktion, die ausgelöst wird, wenn sich der Umschaltzustand ändert                              |              |
+    | farbe         | Zeichenkette | Farbe des Umschalters, wenn er                                                                           | s blue color |
+    | ToggleSize    | Zeichenkette | Größe des Umschalters, beeinflusst sowohl Höhe als auch Gewicht. Hat zwei Optionen: `klein` und `mittel` | mittel       |
+  </Tab>
+</Tabs>

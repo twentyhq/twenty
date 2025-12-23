@@ -1,0 +1,63 @@
+---
+title: Farbschema
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Kopfzeile" />
+</Frame>
+
+## Farbschema Karte
+
+Repräsentiert verschiedene Farbschemata und ist speziell für helle und dunkle Themen abgestimmt.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften    | Typ                                     | Beschreibung                                                                      | Standard |
+    | ---------------- | --------------------------------------- | --------------------------------------------------------------------------------- | -------- |
+    | Variante         | Zeichenkette                            | Die Variante des Farbschemas. Optionen umfassen `Dunkel`, `Hell` und `System`     | hell     |
+    | ausgewählt       | boolesch                                | Wenn `true`, wird ein Häkchen angezeigt, um das ausgewählte Farbschema anzuzeigen |          |
+    | additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` Elementeigenschaften                                          |          |
+  </Tab>
+</Tabs>
+
+## Farbschema-Auswahl
+
+Ermöglicht es den Benutzern, zwischen verschiedenen Farbschemata zu wählen.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                   |
+    | ------------- | ------------ | ------------------------------------------------------------------------------ |
+    | wert          | `Farbschema` | Das aktuell ausgewählte Farbschema                                             |
+    | onChange      | Funktion     | Die Rückruffunktion, die Sie beim Auswählen eines Farbschemas auslösen möchten |
+  </Tab>
+</Tabs>

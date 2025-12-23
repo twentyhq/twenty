@@ -1,0 +1,38 @@
+---
+title: Etiket
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Başlık" />
+</Frame>
+
+İçeriği görsel olarak kategorize etmek veya etiketlemek için bileşen.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
+
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür      | Açıklama                                                                                                                  |
+    | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+    | className  | dize     | Ek stil için isteğe bağlı isim                                                                                            |
+    | renk       | dize     | Etiketin rengi. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+    | metin      | dize     | Etiketin içeriği                                                                                                          |
+    | onClick    | function | Kullanıcı etikete tıkladığında çağrılan isteğe bağlı fonksiyon                                                            |
+  </Tab>
+</Tabs>

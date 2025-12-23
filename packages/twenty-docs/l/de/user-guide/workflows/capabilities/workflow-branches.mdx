@@ -1,0 +1,66 @@
+---
+title: Workflow-Verzweigungen
+description: Erstellen Sie parallele Pfade und bedingte Logik in Ihren Workflows.
+---
+
+Verzweigungen ermöglichen es Ihnen, Ihren Workflow in mehrere Pfade aufzuteilen, die abhängig von Ihren Daten gleichzeitig oder bedingt ausgeführt werden können.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## So funktionieren Verzweigungen
+
+Wenn Sie von einem einzelnen Knoten mehrere Verbindungen erstellen, wird jeder Pfad zu einer Verzweigung. Standardmäßig werden **alle Verzweigungen parallel ausgeführt**—sie warten nicht aufeinander.
+
+## Verzweigungen erstellen
+
+### Neue Verzweigung hinzufügen
+
+1. **Klicken Sie mit der rechten Maustaste auf die Hauptfläche** des Workflows (nicht auf einen vorhandenen Knoten)
+2. Klicken Sie auf **Knoten hinzufügen**
+3. Wählen Sie den Knotentyp für Ihre neue Verzweigung
+4. Ziehen Sie einen Pfeil vom unteren Rand des vorherigen Schritts zum oberen Rand dieser neuen Aktion
+5. Wiederholen Sie dies, um weitere Verzweigungen vom selben Knoten hinzuzufügen
+
+<Note>
+  Jede Verzweigung ist unabhängig. Das Hinzufügen einer Verzweigung wirkt sich nicht auf andere bestehende Pfade von diesem Knoten aus.
+</Note>
+
+### Visuelles Layout
+
+Verzweigungen erscheinen als parallele Pfade im Workflow-Editor. Sie können Knoten ziehen, um das visuelle Layout neu anzuordnen, ohne die Ausführung zu beeinflussen.
+
+## Bedingte Verzweigungen
+
+Da standardmäßig alle Verzweigungen ausgeführt werden, verwenden Sie **Filter**-Knoten, um zu steuern, welche Pfade tatsächlich ausgeführt werden:
+
+| Verzweigung | Filterbedingung       | Aktion                           |
+| ----------- | --------------------- | -------------------------------- |
+| A           | Phase = "Gewonnen"    | Glückwunsch-E-Mail senden        |
+| B           | Phase = "Verloren"    | Nachverfolgungsaufgabe erstellen |
+| C           | Phase = "Verhandlung" | Manager benachrichtigen          |
+
+1. Erstellen Sie Verzweigungen von Ihrem Trigger oder Ihrer Aktion aus
+2. Fügen Sie einen **Filter**-Knoten als ersten Schritt jeder Verzweigung hinzu
+3. Konfigurieren Sie jeden Filter mit sich gegenseitig ausschließenden Bedingungen
+4. Fügen Sie Ihre Aktionen nach jedem Filter hinzu
+
+Nur die Verzweigungen, bei denen die Filterbedingung erfüllt ist, werden weiter ausgeführt.
+
+## Verzweigungen zusammenführen
+
+**Verzweigungen werden nicht automatisch zusammengeführt.** Jede Verzweigung wird unabhängig ausgeführt, bis sie endet. Sie haben volle Flexibilität, wie Sie dies handhaben:
+
+* **Option 1: Verzweigungen getrennt halten**
+  Jede Verzweigung verarbeitet ihre eigenen Nachverfolgungsaktionen unabhängig. Dies ist der einfachste Ansatz, wenn Verzweigungen nicht zusammengeführt werden müssen.
+
+* **Option 2: Verzweigungen manuell zusammenführen**
+  Beim Erstellen Ihres Workflows können Sie mehrere Verzweigungen manuell mit derselben nachgelagerten Aktion verbinden. Ziehen Sie einfach Pfeile vom Ende jeder Verzweigung zu einem gemeinsamen Knoten.
+
+<Note>
+  Obwohl Sie einen [Delay](/l/de/user-guide/workflows/capabilities/workflow-actions#delay)-Knoten verwenden können, um die Ausführung zu pausieren, lässt er sich derzeit nicht so konfigurieren, dass er wartet, "bis eine andere Verzweigung endet".
+</Note>
+
+## Verwandte Inhalte
+
+* [So verwenden Sie Verzweigungen in Workflows](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows) - Schritt-für-Schritt-Anleitung
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) - Verfügbare Aktionen einschließlich Filter
