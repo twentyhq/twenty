@@ -23,10 +23,6 @@ export const useInlineCell = (
   const { instanceIdPrefix, onOpenEditMode, onCloseEditMode } =
     useRecordInlineCellContext();
 
-  if (instanceIdPrefix === undefined) {
-    console.log('in useInlineCell', { instanceIdPrefix, err: new Error() });
-  }
-
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
   const { goBackToPreviousDropdownFocusId } =
@@ -52,10 +48,8 @@ export const useInlineCell = (
       recordId,
       fieldMetadataId: fieldDefinition.fieldMetadataId,
       componentType: 'inline-cell',
-      instanceId: instanceIdPrefix ?? '',
+      instanceId: instanceIdPrefix,
     });
-
-    console.log('set focus id', { dropdownId, onOpenEditMode });
 
     setActiveDropdownFocusIdAndMemorizePrevious(dropdownId);
   };

@@ -3,7 +3,7 @@ import { type IconComponent } from 'twenty-ui/display';
 
 export type RecordInlineCellContextProps = {
   readonly?: boolean;
-  instanceIdPrefix?: string;
+  instanceIdPrefix: string;
   IconLabel?: IconComponent;
   label?: string;
   labelWidth?: number;
@@ -22,7 +22,7 @@ export type RecordInlineCellContextProps = {
 
 const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   readonly: false,
-  instanceIdPrefix: undefined,
+  instanceIdPrefix: '',
   IconLabel: undefined,
   label: '',
   labelWidth: 0,

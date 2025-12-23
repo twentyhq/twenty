@@ -28,7 +28,7 @@ import {
 
 type RecordInlineCellProps = {
   loading?: boolean;
-  instanceIdPrefix?: string;
+  instanceIdPrefix: string;
 };
 
 export const RecordInlineCell = ({
@@ -146,7 +146,7 @@ export const RecordInlineCell = ({
           recordId,
           fieldMetadataId: fieldDefinition.fieldMetadataId,
           componentType: 'inline-cell',
-          instanceId: instanceIdPrefix ?? '',
+          instanceId: instanceIdPrefix,
         });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
