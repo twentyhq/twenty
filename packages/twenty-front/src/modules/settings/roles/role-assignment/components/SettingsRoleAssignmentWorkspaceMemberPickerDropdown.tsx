@@ -8,7 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useState } from 'react';
-import { type PartialWorkspaceMember } from '@/modules/settings/roles/types/RoleWithPartialMembers';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];

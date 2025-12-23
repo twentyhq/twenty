@@ -1,6 +1,6 @@
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
 
-import { groupEventsByMonth } from '@/modules/activities/timeline-activities/utils/groupEventsByMonth';
+import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 
 describe('groupEventsByMonth', () => {
   it('should group activities by month', () => {

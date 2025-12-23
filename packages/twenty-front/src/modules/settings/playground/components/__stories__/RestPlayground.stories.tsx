@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { RestPlayground } from '@/modules/settings/playground/components/RestPlayground';
+import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);

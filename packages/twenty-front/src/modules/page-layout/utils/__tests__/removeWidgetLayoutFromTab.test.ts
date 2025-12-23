@@ -1,5 +1,5 @@
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
-import { removeWidgetLayoutFromTab } from '@/modules/page-layout/utils/removeWidgetLayoutFromTab';
+import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
 
 describe('removeWidgetLayoutFromTab', () => {
   const mockTabLayouts: TabLayouts = {

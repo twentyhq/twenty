@@ -9,7 +9,7 @@ import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ActivityTargetableObject } from '@/modules/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notesQueryVariables = useMemo(

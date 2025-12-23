@@ -6,7 +6,7 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionDropdownItem } from '@/modules/action-menu/actions/display/components/ActionDropdownItem';
+import { ActionDropdownItem } from '@/action-menu/actions/display/components/ActionDropdownItem';
 
 const meta: Meta<typeof ActionDropdownItem> = {
   title: 'Modules/ActionMenu/Actions/Display/ActionDropdownItem',

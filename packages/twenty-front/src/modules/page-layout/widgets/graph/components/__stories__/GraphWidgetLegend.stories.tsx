@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetLegend } from '@/modules/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 
 const meta: Meta<typeof GraphWidgetLegend> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLegend',

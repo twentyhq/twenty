@@ -3,9 +3,9 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { pageLayoutDraggedAreaComponentState } from '@/modules/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/modules/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useCreateWidgetFromClick } from '@/modules/page-layout/hooks/useCreateWidgetFromClick';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

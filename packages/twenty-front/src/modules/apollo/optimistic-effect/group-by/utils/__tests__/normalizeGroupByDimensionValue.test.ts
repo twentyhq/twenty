@@ -1,4 +1,4 @@
-import { normalizeGroupByDimensionValue } from '@/modules/apollo/optimistic-effect/group-by/utils/normalizeGroupByDimensionValue';
+import { normalizeGroupByDimensionValue } from '@/apollo/optimistic-effect/group-by/utils/normalizeGroupByDimensionValue';
 
 describe('normalizeGroupByDimensionValue', () => {
   it('should convert string to string', () => {

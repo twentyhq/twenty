@@ -1,5 +1,5 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type PageLayout } from '@/modules/page-layout/types/PageLayout';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 

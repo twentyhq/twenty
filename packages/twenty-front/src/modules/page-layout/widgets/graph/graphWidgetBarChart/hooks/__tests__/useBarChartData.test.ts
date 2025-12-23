@@ -2,7 +2,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { type BarDatum } from '@nivo/bar';
 import { renderHook } from '@testing-library/react';
-import { useBarChartData } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
+import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 
 const mockUseRecoilComponentValue = jest.fn();
 jest.mock(

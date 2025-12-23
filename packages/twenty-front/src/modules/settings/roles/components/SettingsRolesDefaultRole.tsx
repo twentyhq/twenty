@@ -13,7 +13,7 @@ import {
   type UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
-import { type RoleWithPartialMembers } from '@/modules/settings/roles/types/RoleWithPartialMembers';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 type SettingsRoleDefaultRoleProps = {
   roles: RoleWithPartialMembers[];

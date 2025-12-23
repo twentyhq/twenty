@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateAggregateQuery } from '@/modules/object-record/utils/generateAggregateQuery';
+import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 
 describe('generateAggregateQuery', () => {
   it('should generate correct aggregate query', () => {

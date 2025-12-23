@@ -15,10 +15,10 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { isBaseOutputSchemaV2 } from '@/modules/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
-import { isLinkOutputSchema } from '@/modules/workflow/workflow-variables/types/guards/isLinkOutputSchema';
-import { isRecordOutputSchemaV2 } from '@/modules/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
-import { getCurrentSubStepFromPath } from '@/modules/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
+import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
+import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 
 type UseVariableDropdownProps = {
   step: StepOutputSchemaV2;

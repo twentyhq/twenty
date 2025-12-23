@@ -8,7 +8,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type TableCellPosition } from '@/modules/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
 
 export const useFocusRecordTableCell = (recordTableId?: string) => {

@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { type MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
-import { type FixedLengthArray } from '@/modules/object-record/record-merge/types/FixedLengthArray';
+import { type FixedLengthArray } from '@/object-record/record-merge/types/FixedLengthArray';
 
 export const getPositionWordLabel = (index: number): string => {
   const labels: FixedLengthArray<string, typeof MUTATION_MAX_MERGE_RECORDS> = [

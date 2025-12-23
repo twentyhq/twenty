@@ -7,10 +7,10 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
-import { type FieldAddressValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
-import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldAddress } from '@/modules/object-record/record-field/ui/types/guards/isFieldAddress';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 
 export const useAddressField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

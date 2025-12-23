@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateGroupByAggregateQuery } from '@/modules/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 
 describe('generateGroupByQuery', () => {
   const testCases = [

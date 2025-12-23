@@ -1,10 +1,10 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldDefinition } from '@/modules/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldMetadata,
   type FieldRichTextV2Metadata,
-} from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const isFieldRichTextV2 = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

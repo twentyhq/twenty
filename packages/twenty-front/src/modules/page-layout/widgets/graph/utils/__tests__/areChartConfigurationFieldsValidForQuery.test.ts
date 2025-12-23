@@ -6,7 +6,7 @@ import {
   type AggregateChartConfiguration,
 } from '~/generated/graphql';
 
-import { areChartConfigurationFieldsValidForQuery } from '@/modules/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
+import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 
 describe('areChartConfigurationFieldsValidForQuery', () => {
   const createMockObjectMetadataItem = (

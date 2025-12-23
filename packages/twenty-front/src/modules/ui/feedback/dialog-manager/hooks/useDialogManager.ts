@@ -6,8 +6,8 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { dialogInternalComponentState } from '@/modules/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { type DialogOptions } from '@/modules/ui/feedback/dialog-manager/types/DialogOptions';
+import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
+import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 
 export const useDialogManager = () => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(

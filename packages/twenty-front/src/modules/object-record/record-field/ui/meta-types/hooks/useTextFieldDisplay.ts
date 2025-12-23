@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useTextFieldDisplay = () => {
   const { recordId, fieldDefinition, displayedMaxRows } =

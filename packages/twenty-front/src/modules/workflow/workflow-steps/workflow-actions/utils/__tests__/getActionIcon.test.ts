@@ -1,8 +1,8 @@
-import { AI_ACTIONS } from '@/modules/workflow/workflow-steps/workflow-actions/constants/AiActions';
-import { CORE_ACTIONS } from '@/modules/workflow/workflow-steps/workflow-actions/constants/CoreActions';
-import { HUMAN_INPUT_ACTIONS } from '@/modules/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
-import { RECORD_ACTIONS } from '@/modules/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { getActionIcon } from '@/modules/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
+import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 
 describe('getActionIcon', () => {
   it('should return correct icon for all action types', () => {

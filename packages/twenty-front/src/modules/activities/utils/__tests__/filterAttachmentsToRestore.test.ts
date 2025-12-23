@@ -1,5 +1,5 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
-import { filterAttachmentsToRestore } from '@/modules/activities/utils/filterAttachmentsToRestore';
+import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 
 describe('filterAttachmentsToRestore', () => {
   it('should not return any ids if there are no attachment paths to restore', () => {

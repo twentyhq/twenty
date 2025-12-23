@@ -21,7 +21,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { useVariableDropdown } from '@/modules/workflow/workflow-variables/hooks/useVariableDropdown';
+import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;

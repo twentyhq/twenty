@@ -1,6 +1,6 @@
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type DialogOptions } from '@/modules/ui/feedback/dialog-manager/types/DialogOptions';
+import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 
 type DialogState = {
   maxQueue: number;

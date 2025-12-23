@@ -15,7 +15,7 @@ import {
   mockedConnectedAccounts,
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionSendEmail } from '@/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
+import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 
 const DEFAULT_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),

@@ -1,5 +1,5 @@
 import { type BarDatum } from '@nivo/bar';
-import { calculateStackedBarChartValueRange } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
+import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 
 describe('calculateStackedBarChartValueRange (essential cases)', () => {
   it('returns minimum=0 and maximum=largest positive stack', () => {

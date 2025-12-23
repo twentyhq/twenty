@@ -1,6 +1,6 @@
 import { type Theme } from '@emotion/react';
 import { COLOR_LIGHT } from 'twenty-ui/theme';
-import { getTriggerIconColor } from '@/modules/workflow/workflow-trigger/utils/getTriggerIconColor';
+import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 
 describe('getTriggerIconColor', () => {
   const mockTheme: Theme = {

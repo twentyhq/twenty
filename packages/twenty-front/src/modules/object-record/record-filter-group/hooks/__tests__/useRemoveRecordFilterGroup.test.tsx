@@ -6,8 +6,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { act } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useRemoveRecordFilterGroup } from '@/modules/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
-import { useUpsertRecordFilterGroup } from '@/modules/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
+import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],

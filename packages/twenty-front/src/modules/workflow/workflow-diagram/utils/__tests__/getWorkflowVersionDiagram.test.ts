@@ -1,5 +1,5 @@
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
-import { getWorkflowVersionDiagram } from '@/modules/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),

@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { tokenPairState } from '@/modules/auth/states/tokenPairState';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 
 export const useIsLogged = (): boolean => {
   const [tokenPair] = useRecoilState(tokenPairState);

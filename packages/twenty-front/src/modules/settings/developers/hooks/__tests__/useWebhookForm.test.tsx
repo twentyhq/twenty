@@ -9,7 +9,7 @@ import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWe
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
-import { useWebhookForm } from '@/modules/settings/developers/hooks/useWebhookForm';
+import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSuccessSnackBar = jest.fn();

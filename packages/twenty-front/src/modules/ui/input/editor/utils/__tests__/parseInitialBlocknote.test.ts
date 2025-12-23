@@ -1,4 +1,4 @@
-import { parseInitialBlocknote } from '@/modules/ui/input/editor/utils/parseInitialBlocknote';
+import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
 
 describe('parseInitialBlocknote', () => {
   it('should parse valid JSON array string', () => {

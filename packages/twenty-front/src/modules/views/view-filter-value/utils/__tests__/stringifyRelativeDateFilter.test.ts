@@ -1,7 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
-import { stringifyRelativeDateFilter } from '@/modules/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 jest.mock('@/localization/utils/detection/detectCalendarStartDay');
 

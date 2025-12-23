@@ -1,7 +1,7 @@
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { WorkflowVisualizerComponentInstanceContext } from '@/modules/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockDuplicateWorkflowVersionStep = jest.fn().mockResolvedValue({

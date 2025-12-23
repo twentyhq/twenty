@@ -10,7 +10,7 @@ import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
-import { useNumberField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useNumberField';
+import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
 
 export const NumberFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useNumberField();

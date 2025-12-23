@@ -3,7 +3,7 @@ import { addHours } from 'date-fns';
 import {
   sortCalendarEventsAsc,
   sortCalendarEventsDesc,
-} from '@/modules/activities/calendar/utils/sortCalendarEvents';
+} from '@/activities/calendar/utils/sortCalendarEvents';
 
 const someDate = new Date(2000, 1, 1);
 const someDatePlusOneHour = addHours(someDate, 1);

@@ -10,7 +10,7 @@ import {
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useEmailThreadInCommandMenu } from '@/modules/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
+import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 
 const mocks = [
   {

@@ -1,5 +1,5 @@
 import { type BarDatum } from '@nivo/bar';
-import { calculateValueRangeFromBarChartKeys } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
+import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 
 describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
   it('returns minimum=0 and maximum=highest value for all positive values', () => {

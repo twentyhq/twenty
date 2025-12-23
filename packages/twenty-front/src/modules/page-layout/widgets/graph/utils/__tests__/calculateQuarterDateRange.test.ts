@@ -1,4 +1,4 @@
-import { calculateQuarterDateRange } from '@/modules/page-layout/widgets/graph/utils/calculateQuarterDateRange';
+import { calculateQuarterDateRange } from '@/page-layout/widgets/graph/utils/calculateQuarterDateRange';
 
 describe('calculateQuarterDateRange', () => {
   describe('Q1 (January - March)', () => {

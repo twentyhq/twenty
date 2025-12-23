@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormSelectFieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 
 const meta: Meta<typeof FormSelectFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormSelectFieldInput',

@@ -1,6 +1,6 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { areViewFiltersEqual } from '@/modules/views/utils/areViewFiltersEqual';
+import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
 
 describe('areViewFiltersEqual', () => {
   const baseFilter: ViewFilter = {

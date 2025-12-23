@@ -26,9 +26,9 @@ import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUni
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { cursorFamilyState } from '@/modules/object-record/states/cursorFamilyState';
-import { hasNextPageFamilyState } from '@/modules/object-record/states/hasNextPageFamilyState';
-import { isFetchingMoreRecordsFamilyState } from '@/modules/object-record/states/isFetchingMoreRecordsFamilyState';
+import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
+import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {

@@ -5,7 +5,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { useApolloFactory } from '@/modules/apollo/hooks/useApolloFactory';
+import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
 enableFetchMocks();
 

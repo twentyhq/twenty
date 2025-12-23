@@ -3,7 +3,7 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { getStepDefinitionOrThrow } from '@/modules/workflow/utils/getStepDefinitionOrThrow';
+import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 
 describe('getStepDefinitionOrThrow', () => {
   const mockTrigger: WorkflowTrigger = {

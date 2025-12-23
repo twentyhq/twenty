@@ -6,8 +6,8 @@ import { useDragSelectWithAutoScroll } from '@/ui/utilities/drag-select/hooks/us
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { type SelectionBox } from '@/modules/ui/utilities/drag-select/types/SelectionBox';
-import { isValidSelectionStart } from '@/modules/ui/utilities/drag-select/utils/selectionBoxValidation';
+import { type SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox';
+import { isValidSelectionStart } from '@/ui/utilities/drag-select/utils/selectionBoxValidation';
 
 type DragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement>;

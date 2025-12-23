@@ -7,7 +7,7 @@ import {
   GraphType,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { transformOneDimensionalGroupByToLineChartData } from '@/modules/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
+import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 
 describe('transformOneDimensionalGroupByToLineChartData', () => {
   const mockAggregateField: FieldMetadataItem = {

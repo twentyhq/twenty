@@ -7,7 +7,7 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionDisplay } from '@/modules/action-menu/actions/display/components/ActionDisplay';
+import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 
 type Story = StoryObj<typeof ActionDisplay>;
 

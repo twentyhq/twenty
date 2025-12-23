@@ -3,7 +3,7 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { renderHook } from '@testing-library/react';
 import { IconPlus } from 'twenty-ui/display';
-import { useFilterActionsWithCommandMenuSearch } from '@/modules/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
+import { useFilterActionsWithCommandMenuSearch } from '@/command-menu/hooks/useFilterActionsWithCommandMenuSearch';
 
 const MockComponent = <div>Mock Component</div>;
 

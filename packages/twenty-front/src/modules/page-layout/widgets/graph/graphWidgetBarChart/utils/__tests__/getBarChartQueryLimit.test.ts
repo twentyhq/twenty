@@ -4,7 +4,7 @@ import {
   type BarChartConfiguration,
   BarChartGroupMode,
 } from '~/generated-metadata/graphql';
-import { getBarChartQueryLimit } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
+import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
 
 describe('getBarChartQueryLimit', () => {
   it('should return one-dimensional limit for bar chart without secondary axis', () => {

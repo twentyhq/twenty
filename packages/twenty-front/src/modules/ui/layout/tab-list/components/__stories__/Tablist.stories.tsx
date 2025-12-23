@@ -10,7 +10,7 @@ import {
   IconUser,
 } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
-import { TabList } from '@/modules/ui/layout/tab-list/components/TabList';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 
 const tabs = [
   { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },

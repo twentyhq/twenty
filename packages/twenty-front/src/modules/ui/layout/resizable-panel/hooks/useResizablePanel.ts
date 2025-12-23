@@ -3,9 +3,9 @@ import { useCallback, useState } from 'react';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 
-import { RESIZE_DRAG_THRESHOLD_PX } from '@/modules/ui/layout/resizable-panel/constants/ResizeDragThresholdPx';
-import { type ResizablePanelConstraints } from '@/modules/ui/layout/resizable-panel/types/ResizablePanelConstraints';
-import { type ResizablePanelSide } from '@/modules/ui/layout/resizable-panel/types/ResizablePanelSide';
+import { RESIZE_DRAG_THRESHOLD_PX } from '@/ui/layout/resizable-panel/constants/ResizeDragThresholdPx';
+import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
+import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/ResizablePanelSide';
 
 type UseResizablePanelProps = {
   side: ResizablePanelSide;

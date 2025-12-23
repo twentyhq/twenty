@@ -2,7 +2,7 @@ import {
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
-import { generateWorkflowDiagram } from '@/modules/workflow/workflow-diagram/utils/generateWorkflowDiagram';
+import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 
 describe('generateWorkflowDiagram', () => {
   it('should generate a single trigger node when no step is provided', () => {

@@ -9,9 +9,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrecomputedJsonDraftValue } from '@/object-record/record-field/ui/meta-types/hooks/usePrecomputedJsonDraftValue';
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
-import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldRawJson } from '@/modules/object-record/record-field/ui/types/guards/isFieldRawJson';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 
 export const useJsonField = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);

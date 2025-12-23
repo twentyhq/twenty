@@ -1,5 +1,5 @@
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { groupThreadsByDate } from '@/modules/ai/utils/groupThreadsByDate';
+import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
   const baseThread: Omit<AgentChatThread, 'createdAt' | 'id'> = {

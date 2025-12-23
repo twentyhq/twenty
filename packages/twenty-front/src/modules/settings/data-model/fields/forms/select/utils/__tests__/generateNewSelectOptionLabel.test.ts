@@ -1,4 +1,4 @@
-import { generateNewSelectOptionLabel } from '@/modules/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
+import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
 
 describe('generateNewSelectOptionLabel', () => {
   it('generates a new select option label', () => {

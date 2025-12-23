@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type RatioAggregateConfig } from '~/generated/graphql';
 
-import { buildRatioNumeratorFilter } from '@/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
+import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
 
 describe('buildRatioNumeratorFilter', () => {
   const mockBooleanField = {

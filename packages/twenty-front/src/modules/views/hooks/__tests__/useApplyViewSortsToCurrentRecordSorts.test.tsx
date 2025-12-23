@@ -9,7 +9,7 @@ import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential'
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { useApplyViewSortsToCurrentRecordSorts } from '@/modules/views/hooks/useApplyViewSortsToCurrentRecordSorts';
+import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

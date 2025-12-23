@@ -5,7 +5,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { ANALYTICS_COOKIE_NAME, useEventTracker } from '@/modules/analytics/hooks/useEventTracker';
+import { ANALYTICS_COOKIE_NAME, useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { AnalyticsType } from '~/generated/graphql';
 
 // Mock document.cookie

@@ -21,7 +21,7 @@ import {
   mockedViewsData,
 } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/modules/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
+import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

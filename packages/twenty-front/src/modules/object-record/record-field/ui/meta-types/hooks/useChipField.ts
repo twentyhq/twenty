@@ -6,7 +6,7 @@ import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useChipField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

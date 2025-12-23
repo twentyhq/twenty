@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { SettingsObjectInactiveMenuDropDown } from '@/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
+import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();

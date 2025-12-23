@@ -15,8 +15,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
-import { REST_API_BASE_URL } from '@/modules/apollo/constant/rest-api-base-url';
-import { agentChatInputState } from '@/modules/ai/states/agentChatInputState';
+import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);

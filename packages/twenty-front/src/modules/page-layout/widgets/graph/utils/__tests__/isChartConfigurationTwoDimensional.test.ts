@@ -2,7 +2,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { isChartConfigurationTwoDimensional } from '@/modules/page-layout/widgets/graph/utils/isChartConfigurationTwoDimensional';
+import { isChartConfigurationTwoDimensional } from '@/page-layout/widgets/graph/utils/isChartConfigurationTwoDimensional';
 
 describe('isChartConfigurationTwoDimensional', () => {
   describe('BarChartConfiguration', () => {

@@ -1,5 +1,5 @@
-import { GRID_MIN_ROWS } from '@/modules/page-layout/constants/GridMinRows';
-import { calculateTotalGridRows } from '@/modules/page-layout/utils/calculateTotalGridRows';
+import { GRID_MIN_ROWS } from '@/page-layout/constants/GridMinRows';
+import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 
 describe('calculateTotalGridRows', () => {
   it('should return minimum rows for empty layouts', () => {

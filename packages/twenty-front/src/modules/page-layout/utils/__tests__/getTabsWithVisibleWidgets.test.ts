@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { WidgetType } from '~/generated/graphql';
-import { getTabsWithVisibleWidgets } from '@/modules/page-layout/utils/getTabsWithVisibleWidgets';
+import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 
 describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (

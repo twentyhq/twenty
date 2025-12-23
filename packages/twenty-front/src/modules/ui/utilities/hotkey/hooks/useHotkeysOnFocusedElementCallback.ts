@@ -5,7 +5,7 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
-import { currentFocusIdSelector } from '@/modules/ui/utilities/focus/states/currentFocusIdSelector';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 
 export const useHotkeysOnFocusedElementCallback = (
   dependencies?: OptionsOrDependencyArray,

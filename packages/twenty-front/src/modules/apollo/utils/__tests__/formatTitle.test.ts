@@ -1,6 +1,6 @@
 import { OperationType } from '@/apollo/types/operation-type';
 
-import formatTitle from '@/modules/apollo/utils/formatTitle';
+import formatTitle from '@/apollo/utils/formatTitle';
 
 describe('formatTitle', () => {
   it('should correctly format the title', () => {

@@ -1,4 +1,4 @@
-import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/modules/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 
 describe('getRightDrawerActionMenuDropdownIdFromActionMenuId', () => {
   it('should return the right drawer action menu dropdown id', () => {

@@ -1,6 +1,6 @@
 import { expect, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { FormNumberFieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 
 const meta: Meta<typeof FormNumberFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormNumberFieldInput',

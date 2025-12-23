@@ -4,7 +4,7 @@ import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormBooleanFieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormBooleanFieldInput',

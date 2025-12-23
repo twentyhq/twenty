@@ -7,7 +7,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldIconLabelForm } from '@/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 
 const StyledContainer = styled.div`
   flex: 1;

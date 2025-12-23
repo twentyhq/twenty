@@ -1,5 +1,5 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { getIsDescendantOfIterator } from '@/modules/workflow/workflow-steps/utils/getIsDescendantOfIterator';
+import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 
 describe('getIsDescendantOfIterator', () => {
   const iteratorStep: WorkflowStep = {

@@ -1,6 +1,6 @@
 import { CaptchaDriverType } from '~/generated/graphql';
 
-import { getCaptchaUrlByProvider } from '@/modules/captcha/utils/getCaptchaUrlByProvider';
+import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
 
 describe('getCaptchaUrlByProvider', () => {
   it('handles GoogleRecaptcha', async () => {

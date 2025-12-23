@@ -8,7 +8,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowStepFilterValueInput } from '@/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput';
+import { WorkflowStepFilterValueInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueInput';
 
 const TEXT_FILTER: StepFilter = {
   id: 'filter-1',

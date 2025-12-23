@@ -1,4 +1,4 @@
-import { truncateTickLabel } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
+import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 
 describe('truncateTickLabel', () => {
   it('should return the original string when it fits within maxLength', () => {

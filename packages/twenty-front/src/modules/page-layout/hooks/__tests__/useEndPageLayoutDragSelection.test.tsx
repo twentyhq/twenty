@@ -4,10 +4,10 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutDraggedAreaComponentState } from '@/modules/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { pageLayoutSelectedCellsComponentState } from '@/modules/page-layout/states/pageLayoutSelectedCellsComponentState';
-import { calculateGridBoundsFromSelectedCells } from '@/modules/page-layout/utils/calculateGridBoundsFromSelectedCells';
-import { useEndPageLayoutDragSelection } from '@/modules/page-layout/hooks/useEndPageLayoutDragSelection';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
+import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

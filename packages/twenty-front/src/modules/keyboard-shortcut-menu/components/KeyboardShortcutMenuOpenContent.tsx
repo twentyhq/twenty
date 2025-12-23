@@ -6,7 +6,7 @@ import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/Key
 import {
   KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
   useKeyboardShortcutMenu,
-} from '@/modules/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+} from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';

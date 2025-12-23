@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useAddressSettingsFormInitialValues } from '@/modules/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
+import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 
 jest.mock('react-hook-form', () => ({
   useFormContext: jest.fn(),

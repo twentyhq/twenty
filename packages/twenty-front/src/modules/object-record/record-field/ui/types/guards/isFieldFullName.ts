@@ -1,10 +1,10 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldDefinition } from '@/modules/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldFullNameMetadata,
   type FieldMetadata,
-} from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const isFieldFullName = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,

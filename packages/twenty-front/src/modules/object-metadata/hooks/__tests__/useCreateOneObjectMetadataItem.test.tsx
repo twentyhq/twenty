@@ -8,7 +8,7 @@ import {
   query,
   responseData,
   variables,
-} from '@/modules/object-metadata/hooks/__mocks__/useCreateOneObjectMetadataItem';
+} from '@/object-metadata/hooks/__mocks__/useCreateOneObjectMetadataItem';
 
 import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -16,7 +16,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
-} from '@/modules/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
+} from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [
   {

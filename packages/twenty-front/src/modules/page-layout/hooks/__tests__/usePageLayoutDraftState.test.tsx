@@ -5,7 +5,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { AggregateOperations, PageLayoutType } from '~/generated/graphql';
-import { usePageLayoutDraftState } from '@/modules/page-layout/hooks/usePageLayoutDraftState';
+import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

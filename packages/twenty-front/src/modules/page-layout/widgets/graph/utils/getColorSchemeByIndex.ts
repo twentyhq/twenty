@@ -1,5 +1,5 @@
-import { type GraphColorRegistry } from '@/modules/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type GraphColorScheme } from '@/modules/page-layout/widgets/graph/types/GraphColorScheme';
+import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 
 export const getColorSchemeByIndex = (
   registry: GraphColorRegistry,

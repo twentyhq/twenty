@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   type HttpRequestBody,
   type HttpRequestFormData,
-} from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+} from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 
 export type UseHttpRequestFormParams = {
   action: WorkflowHttpRequestAction;

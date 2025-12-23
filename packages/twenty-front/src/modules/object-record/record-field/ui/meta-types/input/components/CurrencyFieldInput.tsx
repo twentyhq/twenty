@@ -5,7 +5,7 @@ import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/F
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
 
-import { useCurrencyField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
+import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';

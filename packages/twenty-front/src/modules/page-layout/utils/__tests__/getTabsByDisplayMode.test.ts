@@ -1,7 +1,7 @@
 import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { PageLayoutType } from '~/generated/graphql';
-import { getTabsByDisplayMode } from '@/modules/page-layout/utils/getTabsByDisplayMode';
+import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 
 describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({

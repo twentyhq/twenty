@@ -19,7 +19,7 @@
 //   array.splice(low, 0, item);
 // };
 
-import { recordGroupSortedInsert } from '@/modules/object-record/record-group/utils/recordGroupSortedInsert';
+import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
 
 describe('recordGroupSortedInsert', () => {
   it('should insert an item into an empty array', () => {

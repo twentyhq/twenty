@@ -7,8 +7,8 @@ import { type ApiKeyForRole } from '~/generated/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
-} from '@/modules/settings/roles/types/RoleWithPartialMembers';
-import { type RoleMaps } from '@/modules/settings/roles/role-assignment/types/role-maps';
+} from '@/settings/roles/types/RoleWithPartialMembers';
+import { type RoleMaps } from '@/settings/roles/role-assignment/types/role-maps';
 
 export const ROLE_TARGET_CONFIG = {
   member: {

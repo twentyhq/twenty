@@ -8,7 +8,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 
-import { processGroupByConnectionWithRecords } from '@/modules/apollo/optimistic-effect/group-by/utils/processGroupByConnectionWithRecords';
+import { processGroupByConnectionWithRecords } from '@/apollo/optimistic-effect/group-by/utils/processGroupByConnectionWithRecords';
 
 describe('processGroupByConnectionWithRecords', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

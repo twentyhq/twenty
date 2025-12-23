@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldDefinition } from '@/modules/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldActorMetadata,
   type FieldAddressMetadata,
@@ -28,7 +28,7 @@ import {
   type FieldSelectMetadata,
   type FieldTextMetadata,
   type FieldUuidMetadata,
-} from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 type AssertFieldMetadataFunction = <
   E extends FieldMetadataType,

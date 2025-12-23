@@ -8,9 +8,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
-import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldNumber } from '@/modules/object-record/record-field/ui/types/guards/isFieldNumber';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 
 export const useNumberField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

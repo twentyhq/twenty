@@ -1,4 +1,4 @@
-import { calculateGridBoundsFromSelectedCells } from '@/modules/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
 
 describe('calculateGridBoundsFromSelectedCells', () => {
   it('should return null for empty array', () => {

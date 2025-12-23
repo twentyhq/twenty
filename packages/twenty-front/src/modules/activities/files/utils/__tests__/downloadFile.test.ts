@@ -1,4 +1,4 @@
-import { downloadFile } from '@/modules/activities/files/utils/downloadFile';
+import { downloadFile } from '@/activities/files/utils/downloadFile';
 
 global.fetch = jest.fn(() =>
   Promise.resolve({

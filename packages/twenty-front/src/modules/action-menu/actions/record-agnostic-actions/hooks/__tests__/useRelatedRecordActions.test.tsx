@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
-import { useRelatedRecordActions } from '@/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
+import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type FieldRichTextValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const richTextSchema: z.ZodType<FieldRichTextValue> = z.union([
   z.null(),

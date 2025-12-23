@@ -7,7 +7,7 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { classifyMetadataError } from '@/modules/metadata-error-handler/utils/classify-metadata-error.util';
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();

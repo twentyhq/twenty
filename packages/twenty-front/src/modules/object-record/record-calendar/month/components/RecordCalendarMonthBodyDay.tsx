@@ -9,7 +9,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 import { useState } from 'react';
 import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
-import { RecordCalendarAddNew } from '@/modules/object-record/record-calendar/components/RecordCalendarAddNew';
+import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;

@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { stepBarInternalState } from '@/modules/ui/navigation/step-bar/states/stepBarInternalState';
-import { useStepBar } from '@/modules/ui/navigation/step-bar/hooks/useStepBar';
+import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
+import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 const renderHooks = (initialStep: number) => {
   const { result } = renderHook(

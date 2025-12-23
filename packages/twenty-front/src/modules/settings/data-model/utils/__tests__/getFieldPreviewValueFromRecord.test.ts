@@ -1,7 +1,7 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getFieldPreviewValueFromRecord } from '@/modules/settings/data-model/utils/getFieldPreviewValueFromRecord';
+import { getFieldPreviewValueFromRecord } from '@/settings/data-model/utils/getFieldPreviewValueFromRecord';
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 );

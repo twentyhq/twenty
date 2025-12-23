@@ -1,4 +1,4 @@
-import { computeValueTickValues } from '@/modules/page-layout/widgets/graph/utils/computeValueTickValues';
+import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 
 describe('computeValueTickValues', () => {
   it('should return empty array for non-finite inputs', () => {

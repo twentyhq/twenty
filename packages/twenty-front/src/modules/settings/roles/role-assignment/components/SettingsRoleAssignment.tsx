@@ -22,10 +22,10 @@ import {
 } from '~/generated-metadata/graphql';
 import { FeatureFlagKey, type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { type PartialWorkspaceMember } from '@/modules/settings/roles/types/RoleWithPartialMembers';
-import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/modules/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
-import { ROLE_TARGET_CONFIG } from '@/modules/settings/roles/role-assignment/constants/RoleTargetConfig';
-import { buildRoleMaps } from '@/modules/settings/roles/role-assignment/utils/build-role-maps';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
+import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
+import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/build-role-maps';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;

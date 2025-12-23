@@ -1,4 +1,4 @@
-import { isStandaloneVariableString } from '@/modules/workflow/utils/isStandaloneVariableString';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 it('returns false if the provided value is not a string', () => {
   expect(isStandaloneVariableString(42)).toBe(false);

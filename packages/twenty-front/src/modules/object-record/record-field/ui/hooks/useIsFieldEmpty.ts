@@ -4,7 +4,7 @@ import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isField
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useIsFieldEmpty = () => {
   const { recordId, fieldDefinition, overridenIsFieldEmpty } =

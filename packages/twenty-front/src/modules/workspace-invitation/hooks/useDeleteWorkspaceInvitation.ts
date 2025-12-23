@@ -3,7 +3,7 @@ import {
   type DeleteWorkspaceInvitationMutationVariables,
   useDeleteWorkspaceInvitationMutation,
 } from '~/generated-metadata/graphql';
-import { workspaceInvitationsState } from '@/modules/workspace-invitation/states/workspaceInvitationsStates';
+import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
 
 export const useDeleteWorkspaceInvitation = () => {
   const [deleteWorkspaceInvitationMutation] =

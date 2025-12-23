@@ -1,4 +1,4 @@
-import { parseCellIdToCoordinates } from '@/modules/page-layout/utils/parseCellIdToCoordinates';
+import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
 
 describe('parseCellIdToCoordinates', () => {
   it('should parse cell ID correctly', () => {

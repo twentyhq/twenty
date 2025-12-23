@@ -6,7 +6,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import {
   displayedExportProgress,
   generateCsv,
-} from '@/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords';
+} from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 
 jest.useFakeTimers();
 

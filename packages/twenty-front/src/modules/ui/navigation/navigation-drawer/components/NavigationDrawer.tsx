@@ -9,12 +9,12 @@ import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/c
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { isNavigationDrawerExpandedState } from '@/modules/ui/navigation/states/isNavigationDrawerExpanded';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
-} from '@/modules/ui/navigation/states/navigationDrawerWidthState';
-import { NavigationDrawerWidthEffect } from '@/modules/ui/navigation/components/NavigationDrawerWidthEffect';
+} from '@/ui/navigation/states/navigationDrawerWidthState';
+import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 

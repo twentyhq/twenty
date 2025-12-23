@@ -7,7 +7,7 @@ import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeybo
 import { useEffect } from 'react';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { KeyboardShortcutMenu } from '@/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
+import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 
 const meta: Meta<typeof KeyboardShortcutMenu> = {
   title: 'Modules/KeyboardShortcutMenu/KeyboardShortcutMenu',

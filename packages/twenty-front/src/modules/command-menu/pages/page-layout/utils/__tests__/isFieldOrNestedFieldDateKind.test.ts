@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isFieldOrRelationNestedFieldDateKind } from '@/modules/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 
 describe('isFieldOrNestedFieldDateKind', () => {
   it('returns false when fieldId is null', () => {

@@ -3,7 +3,7 @@ import {
   PageLayoutTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 } from './PageLayoutTestWrapper';
-import { useDeletePageLayoutWidget } from '@/modules/page-layout/hooks/useDeletePageLayoutWidget';
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 
 describe('useDeletePageLayoutWidget', () => {
   it('should remove widget from all states', () => {

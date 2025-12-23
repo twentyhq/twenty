@@ -1,4 +1,4 @@
-import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/modules/page-layout/widgets/graph/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
+import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
 
 describe('applyCumulativeTransformToTwoDimensionalBarChartData', () => {
   const testCases = [

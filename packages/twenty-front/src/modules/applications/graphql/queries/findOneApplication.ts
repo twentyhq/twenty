@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { APPLICATION_FRAGMENT } from '@/modules/applications/graphql/fragments/applicationFragment';
+import { APPLICATION_FRAGMENT } from '@/applications/graphql/fragments/applicationFragment';
 
 export const FIND_ONE_APPLICATION = gql`
   ${APPLICATION_FRAGMENT}

@@ -7,7 +7,7 @@ import {
   type PieChartConfiguration,
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
-import { isChartConfiguration } from '@/modules/command-menu/pages/page-layout/utils/isChartConfiguration';
+import { isChartConfiguration } from '@/command-menu/pages/page-layout/utils/isChartConfiguration';
 
 describe('isChartConfiguration', () => {
   it('should return true for BarChartConfiguration', () => {

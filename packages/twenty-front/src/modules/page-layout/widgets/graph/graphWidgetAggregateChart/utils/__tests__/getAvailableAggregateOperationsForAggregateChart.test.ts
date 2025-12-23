@@ -1,7 +1,7 @@
 import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { getAvailableAggregateOperationsForAggregateChart } from '@/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAvailableAggregateOperationsForAggregateChart';
+import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAvailableAggregateOperationsForAggregateChart';
 
 describe('getAvailableAggregateOperationsForAggregateChart', () => {
   it('should include RATIO for BOOLEAN field', () => {

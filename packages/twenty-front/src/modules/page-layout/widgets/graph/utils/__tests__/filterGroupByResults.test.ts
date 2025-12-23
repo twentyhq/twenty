@@ -1,6 +1,6 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { filterGroupByResults } from '@/modules/page-layout/widgets/graph/utils/filterGroupByResults';
+import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 
 describe('filterGroupByResults', () => {
   const mockAggregateField = {

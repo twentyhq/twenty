@@ -32,7 +32,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '@/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabListComponentId';
+import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabListComponentId';
 import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
 
 export type WorkflowAiAgentTabId =

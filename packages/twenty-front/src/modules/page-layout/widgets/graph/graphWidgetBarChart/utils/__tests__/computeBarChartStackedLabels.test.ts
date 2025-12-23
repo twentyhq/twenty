@@ -1,5 +1,5 @@
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
-import { computeBarChartStackedLabels } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
+import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
 
 const createMockBar = (
   id: string,

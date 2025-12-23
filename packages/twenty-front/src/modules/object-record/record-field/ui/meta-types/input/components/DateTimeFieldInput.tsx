@@ -4,7 +4,7 @@ import { DateTimeInput } from '@/ui/field/input/components/DateTimeInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 import { type Nullable } from 'twenty-ui/utilities';
-import { useDateTimeField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
+import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
 
 export const DateTimeFieldInput = () => {
   const { fieldValue, setDraftValue } = useDateTimeField();

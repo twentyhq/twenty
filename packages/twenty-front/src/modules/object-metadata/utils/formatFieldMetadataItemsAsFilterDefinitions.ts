@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/modules/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const getRelationObjectMetadataNameSingular = ({
   field,

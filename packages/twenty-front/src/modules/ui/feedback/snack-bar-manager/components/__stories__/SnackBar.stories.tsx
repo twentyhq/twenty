@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { SnackBar, SnackBarVariant } from '@/modules/ui/feedback/snack-bar-manager/components/SnackBar';
+import { SnackBar, SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import {
   CatalogDecorator,
   type CatalogStory,

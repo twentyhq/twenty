@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getRecordNodeFromRecord } from '@/modules/object-record/cache/utils/getRecordNodeFromRecord';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 
 const peopleMock = getPeopleRecordConnectionMock();
 

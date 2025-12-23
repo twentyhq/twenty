@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   type FieldSelectMetadata,
   type FieldSelectValue,
-} from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const useSelectFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

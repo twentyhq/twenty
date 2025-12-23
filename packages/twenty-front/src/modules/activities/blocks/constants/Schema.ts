@@ -1,6 +1,6 @@
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
 
-import { FileBlock } from '@/modules/activities/blocks/components/FileBlock';
+import { FileBlock } from '@/activities/blocks/components/FileBlock';
 
 export const BLOCK_SCHEMA = BlockNoteSchema.create({
   blockSpecs: {

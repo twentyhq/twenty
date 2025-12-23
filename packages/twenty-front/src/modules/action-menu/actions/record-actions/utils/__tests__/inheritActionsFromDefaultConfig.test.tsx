@@ -6,7 +6,7 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { type DefaultRecordActionConfigKeys } from '@/action-menu/actions/types/DefaultRecordActionConfigKeys';
 import { IconHeart, IconPlus } from 'twenty-ui/display';
-import { inheritActionsFromDefaultConfig } from '@/modules/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
+import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 
 const MockComponent = <div>Mock Component</div>;
 

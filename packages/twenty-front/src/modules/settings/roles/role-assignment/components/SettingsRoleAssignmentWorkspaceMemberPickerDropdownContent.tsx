@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { type SearchRecord } from '~/generated-metadata/graphql';
-import { type PartialWorkspaceMember } from '@/modules/settings/roles/types/RoleWithPartialMembers';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;

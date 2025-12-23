@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import DarkCoverImage from '@/modules/settings/playground/assets/cover-dark.png';
-import LightCoverImage from '@/modules/settings/playground/assets/cover-light.png';
+import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
+import LightCoverImage from '@/settings/playground/assets/cover-light.png';
 import { Card } from 'twenty-ui/layout';
 
 export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`

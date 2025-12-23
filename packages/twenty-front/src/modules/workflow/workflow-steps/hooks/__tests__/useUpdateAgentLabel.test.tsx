@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useUpdateAgentLabel } from '@/modules/workflow/workflow-steps/hooks/useUpdateAgentLabel';
+import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 
 const mockUpdateAgent = jest.fn();
 const mockUseFindOneAgentQuery = jest.fn();

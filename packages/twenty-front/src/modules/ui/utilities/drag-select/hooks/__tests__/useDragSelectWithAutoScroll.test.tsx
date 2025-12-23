@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useDragSelectWithAutoScroll } from '@/modules/ui/utilities/drag-select/hooks/useDragSelectWithAutoScroll';
+import { useDragSelectWithAutoScroll } from '@/ui/utilities/drag-select/hooks/useDragSelectWithAutoScroll';
 
 jest.mock(
   '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext',

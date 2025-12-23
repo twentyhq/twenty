@@ -1,5 +1,5 @@
-import { getTokenPair } from '@/modules/apollo/utils/getTokenPair';
-import { hasTokenPair } from '@/modules/apollo/utils/hasTokenPair';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { hasTokenPair } from '@/apollo/utils/hasTokenPair';
 
 jest.mock('../getTokenPair');
 

@@ -1,4 +1,4 @@
-import { isObjectRecordConnectionWithRefs } from '@/modules/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 
 describe('isObjectRecordConnectionWithRefs', () => {
   it('should return true for valid connection with edges', () => {

@@ -1,4 +1,4 @@
-import { isLocationMatchingFavorite } from '@/modules/favorites/utils/isLocationMatchingFavorite';
+import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 
 describe('isLocationMatchingFavorite', () => {
   it('should return true if favorite link matches current path', () => {

@@ -1,5 +1,5 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { getPreviousSteps } from '@/modules/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
+import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 
 describe('getWorkflowPreviousSteps', () => {
   describe('using a simple workflow', () => {

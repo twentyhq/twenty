@@ -7,7 +7,7 @@ import {
   GraphType,
   type LineChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { transformTwoDimensionalGroupByToLineChartData } from '@/modules/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
+import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
 
 describe('transformTwoDimensionalGroupByToLineChartData', () => {
   const mockAggregateField: FieldMetadataItem = {

@@ -1,5 +1,5 @@
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
-import { convertOutputSchemaToJson } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/convertOutputSchemaToJson';
+import { convertOutputSchemaToJson } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/convertOutputSchemaToJson';
 
 describe('convertOutputSchemaToJson', () => {
   it('should convert simple object schema to JSON', () => {

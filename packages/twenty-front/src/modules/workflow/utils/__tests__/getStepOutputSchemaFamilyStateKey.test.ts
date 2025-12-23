@@ -1,4 +1,4 @@
-import { getStepOutputSchemaFamilyStateKey } from '@/modules/workflow/utils/getStepOutputSchemaFamilyStateKey';
+import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 
 describe('getStepOutputSchemaFamilyStateKey', () => {
   it('should concatenate workflowVersionId and stepId with a dash', () => {

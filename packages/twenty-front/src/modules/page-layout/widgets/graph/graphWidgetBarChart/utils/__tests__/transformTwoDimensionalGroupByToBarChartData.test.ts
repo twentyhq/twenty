@@ -8,7 +8,7 @@ import {
   GraphType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
-import { transformTwoDimensionalGroupByToBarChartData } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
+import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 
 describe('transformTwoDimensionalGroupByToBarChartData', () => {
   const mockGroupByFieldX = {

@@ -1,5 +1,5 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { mergeWorkflowDiagrams } from '@/modules/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
+import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 
 it('Preserves the properties defined in the previous version but not in the next one', () => {
   const previousDiagram: WorkflowDiagram = {

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useTrackPointer } from '@/modules/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 
 describe('useTrackPointer', () => {
   it('Should call onMouseDown when mouse down event is triggered', () => {

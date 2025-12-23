@@ -1,5 +1,5 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
-import { getTriggerHeaderType } from '@/modules/workflow/workflow-trigger/utils/getTriggerHeaderType';
+import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 
 describe('getTriggerHeaderType', () => {
   describe('DATABASE_EVENT triggers', () => {

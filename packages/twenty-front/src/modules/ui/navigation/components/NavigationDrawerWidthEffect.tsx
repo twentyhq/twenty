@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
-} from '@/modules/ui/navigation/states/navigationDrawerWidthState';
+} from '@/ui/navigation/states/navigationDrawerWidthState';
 
 export const NavigationDrawerWidthEffect = () => {
   const navigationDrawerWidth = useRecoilValue(navigationDrawerWidthState);

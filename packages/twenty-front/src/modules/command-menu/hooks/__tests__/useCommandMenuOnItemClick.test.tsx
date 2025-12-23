@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { useCommandMenuOnItemClick } from '@/modules/command-menu/hooks/useCommandMenuOnItemClick';
+import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>

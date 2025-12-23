@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetTooltip } from '@/modules/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 
 const meta: Meta<typeof GraphWidgetTooltip> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetTooltip',

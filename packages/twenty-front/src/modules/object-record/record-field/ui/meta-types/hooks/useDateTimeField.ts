@@ -6,9 +6,9 @@ import { type FieldDateTimeValue } from '@/object-record/record-field/ui/types/F
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
-import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldDateTime } from '@/modules/object-record/record-field/ui/types/guards/isFieldDateTime';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 
 export const useDateTimeField = () => {
   const { recordId, fieldDefinition, clearable } = useContext(FieldContext);

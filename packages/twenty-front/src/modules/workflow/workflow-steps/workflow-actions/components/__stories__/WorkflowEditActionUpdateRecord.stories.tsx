@@ -11,7 +11,7 @@ import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionUpdateRecord } from '@/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 
 const DEFAULT_ACTION = {
   id: getWorkflowNodeIdMock(),

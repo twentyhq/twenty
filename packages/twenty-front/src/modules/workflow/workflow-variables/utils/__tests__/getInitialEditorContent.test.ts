@@ -1,4 +1,4 @@
-import { getInitialEditorContent } from '@/modules/workflow/workflow-variables/utils/getInitialEditorContent';
+import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
 
 describe('getInitialEditorContent', () => {
   it('should handle single line text', () => {

@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type FieldMetadataItem } from '@/modules/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 type IsFieldMetadataAvailableForViewFieldArgs = {
   objectNameSingular: string;

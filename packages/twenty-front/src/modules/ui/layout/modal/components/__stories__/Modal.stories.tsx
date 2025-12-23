@@ -8,8 +8,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
-import { isModalOpenedComponentState } from '@/modules/ui/layout/modal/states/isModalOpenedComponentState';
-import { Modal } from '@/modules/ui/layout/modal/components/Modal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
 const initializeState = ({ set }: { set: SetRecoilState }) => {
   set(

@@ -5,8 +5,8 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isMergeInProgressState } from '@/modules/object-record/record-merge/states/mergeInProgressState';
-import { mergeSettingsState } from '@/modules/object-record/record-merge/states/mergeSettingsState';
+import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
+import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 
 type UseMergePreviewProps = {
   objectNameSingular: string;

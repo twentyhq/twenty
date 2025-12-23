@@ -2,7 +2,7 @@ import { act, fireEvent, renderHook } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
-import { useGoToHotkeys } from '@/modules/ui/utilities/hotkey/hooks/useGoToHotkeys';
+import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter

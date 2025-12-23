@@ -2,7 +2,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
-import { pageLayoutSelectedCellsComponentState } from '@/modules/page-layout/states/pageLayoutSelectedCellsComponentState';
+import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 
 export const useStartPageLayoutDragSelection = (
   pageLayoutIdFromProps?: string,

@@ -1,6 +1,6 @@
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { GraphOrderBy } from '~/generated/graphql';
-import { fillDateGapsInBarChartData } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
+import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
 
 describe('fillDateGapsInBarChartData', () => {
   describe('one-dimensional data', () => {

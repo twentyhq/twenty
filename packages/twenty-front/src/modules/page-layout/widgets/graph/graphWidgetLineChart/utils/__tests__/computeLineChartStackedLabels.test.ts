@@ -1,5 +1,5 @@
 import { type LineSeries, type Point } from '@nivo/line';
-import { computeLineChartStackedLabels } from '@/modules/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartStackedLabels';
+import { computeLineChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineChartStackedLabels';
 
 const createMockPoint = (
   seriesId: string,

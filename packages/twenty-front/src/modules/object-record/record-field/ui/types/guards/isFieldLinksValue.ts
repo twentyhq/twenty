@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type FieldLinksValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const linksSchema = z.object({
   primaryLinkLabel: z.string().nullable(),

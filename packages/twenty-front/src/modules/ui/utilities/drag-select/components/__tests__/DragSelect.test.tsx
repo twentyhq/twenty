@@ -3,8 +3,8 @@ import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
-import { useDragSelect } from '@/modules/ui/utilities/drag-select/hooks/useDragSelect';
-import { DragSelect } from '@/modules/ui/utilities/drag-select/components/DragSelect';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 
 jest.mock('../../hooks/useDragSelect');
 jest.mock('../../hooks/useDragSelectWithAutoScroll', () => ({

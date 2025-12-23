@@ -14,7 +14,7 @@ import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
-import { type ImportedStructuredRowMetadata } from '@/modules/spreadsheet-import/steps/components/ValidationStep/types';
+import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;

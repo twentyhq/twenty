@@ -1,7 +1,7 @@
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups';
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { type LineChartConfiguration } from '~/generated-metadata/graphql';
-import { getLineChartQueryLimit } from '@/modules/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
+import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
 
 describe('getLineChartQueryLimit', () => {
   it('should return one-dimensional limit for line chart without secondary axis', () => {

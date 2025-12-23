@@ -1,6 +1,6 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { getViewFiltersToCreate } from '@/modules/views/utils/getViewFiltersToCreate';
+import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 
 describe('getViewFiltersToCreate', () => {
   const baseFilter: ViewFilter = {

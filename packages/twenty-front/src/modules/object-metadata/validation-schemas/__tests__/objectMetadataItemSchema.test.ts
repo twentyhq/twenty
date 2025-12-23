@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { objectMetadataItemSchema } from '@/modules/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 
 describe('objectMetadataItemSchema', () => {
   it('validates a valid object metadata item', () => {

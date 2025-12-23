@@ -11,7 +11,7 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useMergeRecordsContainerTabs } from '@/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
+import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
 import { MergeRecordsFooter } from './MergeRecordsFooter';
