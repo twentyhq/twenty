@@ -126,6 +126,16 @@ export class ViewAccessService {
       return true;
     }
 
+    // API keys with VIEWS permission can manipulate workspace views
+    // (userWorkspaceId is undefined for API keys, and createdByUserWorkspaceId is null for workspace views created by API keys)
+    if (
+      !isDefined(userWorkspaceId) &&
+      !isDefined(view.createdByUserWorkspaceId) &&
+      view.visibility === ViewVisibility.WORKSPACE
+    ) {
+      return true;
+    }
+
     // Users without VIEWS permission can only manipulate their own unlisted views
     const canAccess =
       view.visibility === ViewVisibility.UNLISTED &&
