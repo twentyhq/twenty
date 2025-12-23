@@ -38,11 +38,11 @@ import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
-import { NavigationDrawer } from '../NavigationDrawer';
-import { NavigationDrawerItem } from '../NavigationDrawerItem';
-import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
-import { NavigationDrawerSection } from '../NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
+import { NavigationDrawer } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { NavigationDrawerItem } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItemGroup } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
+import { NavigationDrawerSection } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',

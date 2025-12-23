@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { type FieldRatingValue } from 'twenty-shared/types';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export const useRatingFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

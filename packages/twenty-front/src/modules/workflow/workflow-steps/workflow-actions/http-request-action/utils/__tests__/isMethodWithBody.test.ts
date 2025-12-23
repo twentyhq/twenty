@@ -1,5 +1,5 @@
-import { type HttpMethodWithBody } from '../../constants/HttpRequest';
-import { isMethodWithBody } from '../isMethodWithBody';
+import { type HttpMethodWithBody } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { isMethodWithBody } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 
 describe('isMethodWithBody', () => {
   it('should return false for null input', () => {

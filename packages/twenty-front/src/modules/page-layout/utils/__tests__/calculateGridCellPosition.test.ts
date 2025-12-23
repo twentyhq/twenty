@@ -1,4 +1,4 @@
-import { calculateGridCellPosition } from '../calculateGridCellPosition';
+import { calculateGridCellPosition } from '@/modules/page-layout/utils/calculateGridCellPosition';
 
 describe('calculateGridCellPosition', () => {
   it('should calculate correct position for first cell', () => {

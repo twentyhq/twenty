@@ -1,6 +1,6 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { findStepPosition } from '../findStepPosition';
+import { findStepPosition } from '@/modules/workflow/utils/findStepPosition';
 
 describe('findStepPosition', () => {
   const mockSteps: WorkflowStep[] = [

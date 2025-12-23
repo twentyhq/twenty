@@ -5,7 +5,7 @@ import {
   WidgetType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
-import { prepareGridLayoutItemsWithPlaceholders } from '../prepareGridLayoutItemsWithPlaceholders';
+import { prepareGridLayoutItemsWithPlaceholders } from '@/modules/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({

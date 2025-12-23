@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getFieldKey } from '../getFieldKey';
+import { getFieldKey } from '@/modules/page-layout/widgets/graph/utils/getFieldKey';
 
 describe('getFieldKey', () => {
   it('should return field name for non-composite field', () => {

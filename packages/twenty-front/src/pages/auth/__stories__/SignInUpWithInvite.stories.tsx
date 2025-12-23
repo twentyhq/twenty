@@ -15,7 +15,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { AppPath } from 'twenty-shared/types';
-import { SignInUp } from '../SignInUp';
+import { SignInUp } from '@/pages/auth/SignInUp';
 
 const CaptchaTokenSetterEffect = () => {
   const setCaptchaToken = useSetRecoilState(captchaTokenState);

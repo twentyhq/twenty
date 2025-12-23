@@ -26,8 +26,8 @@ import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';
-import { getClientConfig } from '../utils/getClientConfig';
+import { clientConfigApiStatusState } from '@/modules/client-config/states/clientConfigApiStatusState';
+import { getClientConfig } from '@/modules/client-config/utils/getClientConfig';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;

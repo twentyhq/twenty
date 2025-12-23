@@ -1,4 +1,4 @@
-import { getFileType } from '../getFileType';
+import { getFileType } from '@/modules/activities/files/utils/getFileType';
 
 describe('getFileType', () => {
   it('should return the correct file category for a given file name', () => {

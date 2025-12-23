@@ -1,4 +1,4 @@
-import { getDefaultWidgetPosition } from '../getDefaultWidgetPosition';
+import { getDefaultWidgetPosition } from '@/modules/page-layout/utils/getDefaultWidgetPosition';
 
 describe('getDefaultWidgetPosition', () => {
   it('should return dragged area when it meets minimum size', () => {

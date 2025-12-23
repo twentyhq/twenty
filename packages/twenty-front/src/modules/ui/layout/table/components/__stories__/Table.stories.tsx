@@ -1,10 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Table } from '../Table';
-import { TableCell } from '../TableCell';
-import { TableHeader } from '../TableHeader';
-import { TableRow } from '../TableRow';
-import { TableSection } from '../TableSection';
+import { Table } from '@/modules/ui/layout/table/components/Table';
+import { TableCell } from '@/modules/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/modules/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/modules/ui/layout/table/components/TableRow';
+import { TableSection } from '@/modules/ui/layout/table/components/TableSection';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Table> = {

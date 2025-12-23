@@ -1,4 +1,4 @@
-import { generateCellId } from '../generateCellId';
+import { generateCellId } from '@/modules/page-layout/utils/generateCellId';
 
 describe('generateCellId', () => {
   it('should generate cell ID with correct format', () => {

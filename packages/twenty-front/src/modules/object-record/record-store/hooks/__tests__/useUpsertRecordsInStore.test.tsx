@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useUpsertRecordsInStore } from '../useUpsertRecordsInStore';
+import { useUpsertRecordsInStore } from '@/modules/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>

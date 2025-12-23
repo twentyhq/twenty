@@ -10,7 +10,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { lastSelectedRowIndexComponentState } from '../../record-table-row/states/lastSelectedRowIndexComponentState';
+import { lastSelectedRowIndexComponentState } from '@/modules/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(

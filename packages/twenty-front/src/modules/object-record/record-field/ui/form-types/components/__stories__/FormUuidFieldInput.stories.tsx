@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormUuidFieldInput } from '../FormUuidFieldInput';
+import { FormUuidFieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
 
 const meta: Meta<typeof FormUuidFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormUuidFieldInput',

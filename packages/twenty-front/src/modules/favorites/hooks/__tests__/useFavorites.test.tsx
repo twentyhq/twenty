@@ -12,7 +12,7 @@ import {
   initialFavorites,
   mockWorkspaceMember,
   sortedFavorites,
-} from '../__mocks__/useFavorites';
+} from '@/modules/favorites/hooks/__mocks__/useFavorites';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],

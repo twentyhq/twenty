@@ -13,7 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { useCreateWorkspaceInvitation } from '@/modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`
   display: flex;

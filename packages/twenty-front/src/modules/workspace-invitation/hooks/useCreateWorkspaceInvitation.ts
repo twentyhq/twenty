@@ -3,7 +3,7 @@ import {
   type SendInvitationsMutationVariables,
   useSendInvitationsMutation,
 } from '~/generated-metadata/graphql';
-import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';
+import { workspaceInvitationsState } from '@/modules/workspace-invitation/states/workspaceInvitationsStates';
 
 export const useCreateWorkspaceInvitation = () => {
   const [sendInvitationsMutation] = useSendInvitationsMutation();

@@ -1,6 +1,6 @@
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
-import { calculateBarChartEndLineCoordinates } from '../calculateBarChartEndLineCoordinates';
+import { calculateBarChartEndLineCoordinates } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartEndLineCoordinates';
 describe('calculateBarChartEndLineCoordinates', () => {
   const createMockBar = (
     overrides?: Partial<ComputedBarDatum<BarDatum>>,

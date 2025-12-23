@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { parseSAMLMetadataFromXMLFile } from '../parseSAMLMetadataFromXMLFile';
+import { parseSAMLMetadataFromXMLFile } from '@/modules/settings/security/utils/parseSAMLMetadataFromXMLFile';
 
 describe('parseSAMLMetadataFromXMLFile', () => {
   it('should parse SAML metadata from XML file', () => {

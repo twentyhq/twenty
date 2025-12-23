@@ -1,7 +1,7 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { type Theme } from '@emotion/react';
 import { COLOR_LIGHT, GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
-import { getActionIconColorOrThrow } from '../getActionIconColorOrThrow';
+import { getActionIconColorOrThrow } from '@/modules/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 
 const mockTheme: Theme = {
   color: {

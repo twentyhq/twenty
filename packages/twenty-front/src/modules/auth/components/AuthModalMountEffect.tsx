@@ -1,7 +1,7 @@
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useEffect } from 'react';
 
-import { AUTH_MODAL_ID } from '../constants/AuthModalId';
+import { AUTH_MODAL_ID } from '@/modules/auth/constants/AuthModalId';
 
 // TODO: Remove this component when we refactor the auth modal to open it directly in the PageChangeEffect
 export const AuthModalMountEffect = () => {

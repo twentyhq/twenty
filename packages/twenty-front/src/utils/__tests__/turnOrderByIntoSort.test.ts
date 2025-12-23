@@ -1,4 +1,4 @@
-import { turnOrderByIntoSort } from '../turnOrderByIntoSort';
+import { turnOrderByIntoSort } from '@/utils/turnOrderByIntoSort';
 
 describe('turnOrderByIntoSort', () => {
   it('should be ok for "AscNullsFirst"', () => {

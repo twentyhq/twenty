@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { parseDate } from '../utils/date-utils';
+import { parseDate } from '@/utils/date-utils';
 
 export const sortFieldMetadataItem = (
   a: FieldMetadataItem,

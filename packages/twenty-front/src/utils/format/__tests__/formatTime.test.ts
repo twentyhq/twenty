@@ -1,4 +1,4 @@
-import { formatTime } from '../formatTime';
+import { formatTime } from '@/utils/format/formatTime';
 
 describe('formatTime', () => {
   it('should format 24-hour time', () => {

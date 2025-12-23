@@ -8,7 +8,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { SettingsNewObject } from '../SettingsNewObject';
+import { SettingsNewObject } from '@/pages/settings/data-model/SettingsNewObject';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',

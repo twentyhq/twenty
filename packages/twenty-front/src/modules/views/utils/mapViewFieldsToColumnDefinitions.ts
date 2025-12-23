@@ -5,7 +5,7 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type ViewField } from '../types/ViewField';
+import { type ViewField } from '@/modules/views/types/ViewField';
 
 export const mapViewFieldsToColumnDefinitions = ({
   columnDefinitions,

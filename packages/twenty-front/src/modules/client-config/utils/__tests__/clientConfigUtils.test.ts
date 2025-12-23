@@ -1,5 +1,5 @@
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { getClientConfig } from '../getClientConfig';
+import { getClientConfig } from '@/modules/client-config/utils/getClientConfig';
 
 global.fetch = jest.fn();
 

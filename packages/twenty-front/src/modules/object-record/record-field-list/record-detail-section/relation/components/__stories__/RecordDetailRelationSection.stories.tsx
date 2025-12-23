@@ -15,7 +15,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
+import { RecordDetailRelationSection } from '@/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
 
 const companiesMock = getCompaniesMock();
 

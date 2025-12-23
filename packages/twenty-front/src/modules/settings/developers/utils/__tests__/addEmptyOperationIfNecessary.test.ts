@@ -1,6 +1,6 @@
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { addEmptyOperationIfNecessary } from '../addEmptyOperationIfNecessary';
+import { addEmptyOperationIfNecessary } from '@/modules/settings/developers/utils/addEmptyOperationIfNecessary';
 
 describe('addEmptyOperationIfNecessary', () => {
   it('should add empty operation when no wildcard or null object operations exist', () => {

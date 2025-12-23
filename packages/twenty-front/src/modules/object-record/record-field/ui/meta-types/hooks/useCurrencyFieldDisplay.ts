@@ -4,8 +4,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FieldContext } from '../../contexts/FieldContext';
-import { type FieldCurrencyValue } from '../../types/FieldMetadata';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldCurrencyValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
 
 export const useCurrencyFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

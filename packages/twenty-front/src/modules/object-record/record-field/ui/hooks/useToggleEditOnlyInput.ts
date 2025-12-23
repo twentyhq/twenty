@@ -3,8 +3,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-import { FieldContext } from '../contexts/FieldContext';
-import { isFieldBoolean } from '../types/guards/isFieldBoolean';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldBoolean } from '@/modules/object-record/record-field/ui/types/guards/isFieldBoolean';
 
 export const useToggleEditOnlyInput = () => {
   const {

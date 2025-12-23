@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { EmailVerificationSent } from '../EmailVerificationSent';
+import { EmailVerificationSent } from '@/modules/auth/sign-in-up/components/EmailVerificationSent';
 
 // Wrap the component in Modal.Content to reflect how it's used in the app
 const RenderWithModal = (

@@ -1,5 +1,5 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
-import { validateAndExtractFolderId } from '../validateAndExtractFolderId';
+import { validateAndExtractFolderId } from '@/modules/favorites/utils/validateAndExtractFolderId';
 
 describe('validateAndExtractFolderId', () => {
   it('should return null for orphan favorites', () => {

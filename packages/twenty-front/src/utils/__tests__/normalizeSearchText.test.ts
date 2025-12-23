@@ -1,4 +1,4 @@
-import { normalizeSearchText } from '../normalizeSearchText';
+import { normalizeSearchText } from '@/utils/normalizeSearchText';
 
 describe('normalizeSearchText', () => {
   it('should handle basic ASCII text', () => {

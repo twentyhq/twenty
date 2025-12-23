@@ -1,5 +1,5 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
-import { createFolderDroppableId } from '../createFolderDroppableId';
+import { createFolderDroppableId } from '@/modules/favorites/utils/createFolderDroppableId';
 
 describe('createFolderDroppableId', () => {
   it('should create a valid folder droppable id', () => {

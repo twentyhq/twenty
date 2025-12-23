@@ -14,7 +14,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { NotFound } from '~/pages/not-found/NotFound';
-import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
+import { useImapSmtpCaldavConnectionForm } from '@/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
 
 const StyledLoadingContainer = styled.div`

@@ -19,7 +19,7 @@ import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
-import { getBarChartSettings } from '../getBarChartSettings';
+import { getBarChartSettings } from '@/modules/command-menu/pages/page-layout/utils/getBarChartSettings';
 
 describe('getBarChartSettings', () => {
   describe('Vertical bar chart', () => {

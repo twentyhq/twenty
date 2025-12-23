@@ -1,5 +1,5 @@
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getFavoriteSecondaryLabel } from '../getFavoriteSecondaryLabel';
+import { getFavoriteSecondaryLabel } from '@/modules/favorites/utils/getFavoriteSecondaryLabel';
 
 describe('getFavoriteSecondaryLabel', () => {
   it('should return "View" for view object', () => {

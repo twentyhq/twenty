@@ -1,5 +1,5 @@
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { createPhonesFromFieldValue } from '../phonesUtils';
+import { createPhonesFromFieldValue } from '@/modules/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 
 describe('createPhonesFromFieldValue test suite', () => {
   it('should return an empty array if fieldValue is undefined', () => {

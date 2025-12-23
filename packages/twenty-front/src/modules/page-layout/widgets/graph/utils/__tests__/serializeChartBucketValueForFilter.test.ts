@@ -1,6 +1,6 @@
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
-import { serializeChartBucketValueForFilter } from '../serializeChartBucketValueForFilter';
+import { serializeChartBucketValueForFilter } from '@/modules/page-layout/widgets/graph/utils/serializeChartBucketValueForFilter';
 
 describe('serializeChartBucketValueForFilter', () => {
   describe('fields requiring JSON array with IS operand', () => {

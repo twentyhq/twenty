@@ -1,4 +1,4 @@
-import { isNumericRange } from '../isNumericRange';
+import { isNumericRange } from '@/utils/validation/isNumericRange';
 
 describe('isNumericRange', () => {
   it('should detect numeric ranges', () => {

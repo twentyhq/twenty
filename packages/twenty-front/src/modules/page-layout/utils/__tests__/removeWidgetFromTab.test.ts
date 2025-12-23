@@ -4,8 +4,8 @@ import {
   GraphType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { removeWidgetFromTab } from '../removeWidgetFromTab';
+import { type PageLayoutTab } from '@/modules/page-layout/types/PageLayoutTab';
+import { removeWidgetFromTab } from '@/modules/page-layout/utils/removeWidgetFromTab';
 
 describe('removeWidgetFromTab', () => {
   const mockTabs: PageLayoutTab[] = [

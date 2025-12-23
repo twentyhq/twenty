@@ -6,8 +6,8 @@ import { RecoilRoot } from 'recoil';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAuth } from '../useAuth';
-import { useVerifyLogin } from '../useVerifyLogin';
+import { useAuth } from '@/modules/auth/hooks/useAuth';
+import { useVerifyLogin } from '@/modules/auth/hooks/useVerifyLogin';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';

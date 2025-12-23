@@ -1,6 +1,6 @@
 import { isBoolean } from '@sniptt/guards';
 
-import { type FieldBooleanValue } from '../FieldMetadata';
+import { type FieldBooleanValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
 
 // TODO: add zod
 export const isFieldBooleanValue = (

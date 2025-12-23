@@ -1,6 +1,6 @@
 import { type ThemeType } from 'twenty-ui/theme';
 
-import { type GraphColorRegistry } from '../types/GraphColorRegistry';
+import { type GraphColorRegistry } from '@/modules/page-layout/widgets/graph/types/GraphColorRegistry';
 
 export const createGraphColorRegistry = (
   theme: ThemeType,

@@ -7,7 +7,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowStepFilterAddRootStepFilterButton } from '../WorkflowStepFilterAddRootStepFilterButton';
+import { WorkflowStepFilterAddRootStepFilterButton } from '@/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterAddRootStepFilterButton';
 
 const meta: Meta<typeof WorkflowStepFilterAddRootStepFilterButton> = {
   title:

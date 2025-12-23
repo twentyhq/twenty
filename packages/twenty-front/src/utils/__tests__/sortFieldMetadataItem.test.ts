@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { sortFieldMetadataItem } from '../sortFieldMetadataItem';
+import { sortFieldMetadataItem } from '@/utils/sortFieldMetadataItem';
 
 describe('sortFieldMetadataItem', () => {
   it('should return an empty array for an empty array', () => {

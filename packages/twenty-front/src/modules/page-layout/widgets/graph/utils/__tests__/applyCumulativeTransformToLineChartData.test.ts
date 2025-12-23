@@ -1,4 +1,4 @@
-import { applyCumulativeTransformToLineChartData } from '../applyCumulativeTransformToLineChartData';
+import { applyCumulativeTransformToLineChartData } from '@/modules/page-layout/widgets/graph/utils/applyCumulativeTransformToLineChartData';
 
 describe('applyCumulativeTransformToLineChartData', () => {
   const testCases = [

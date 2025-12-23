@@ -3,7 +3,7 @@ import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useContext } from 'react';
-import { useBooleanField } from '../../hooks/useBooleanField';
+import { useBooleanField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useBooleanField';
 
 export type BooleanFieldInputProps = {
   testId?: string;

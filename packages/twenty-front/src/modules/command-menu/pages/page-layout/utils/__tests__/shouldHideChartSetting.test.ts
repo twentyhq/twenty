@@ -5,7 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconChartBar } from 'twenty-ui/display';
-import { shouldHideChartSetting } from '../shouldHideChartSetting';
+import { shouldHideChartSetting } from '@/modules/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 
 describe('shouldHideChartSetting', () => {
   const mockItemWithoutDependencies: ChartSettingsItem = {

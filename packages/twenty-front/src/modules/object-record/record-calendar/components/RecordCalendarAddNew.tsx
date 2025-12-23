@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useRecordCalendarContextOrThrow } from '../contexts/RecordCalendarContext';
+import { useRecordCalendarContextOrThrow } from '@/modules/object-record/record-calendar/contexts/RecordCalendarContext';
 
 const StyledButton = styled(Button)`
   padding: ${({ theme }) => theme.spacing(0.5)};

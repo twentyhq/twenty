@@ -10,7 +10,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
-import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
+import { useImapSmtpCaldavConnectionForm } from '@/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 
 export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();

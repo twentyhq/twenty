@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
-import { mergeSettingsState } from '../states/mergeSettingsState';
+import { mergeSettingsState } from '@/modules/object-record/record-merge/states/mergeSettingsState';
 
 export const useMergeRecordsSettings = () => {
   const [mergeSettings, setMergeSettings] = useRecoilState(mergeSettingsState);

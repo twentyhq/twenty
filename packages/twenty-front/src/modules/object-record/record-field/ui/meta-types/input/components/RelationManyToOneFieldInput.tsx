@@ -1,5 +1,5 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useRelationField } from '../../hooks/useRelationField';
+import { useRelationField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

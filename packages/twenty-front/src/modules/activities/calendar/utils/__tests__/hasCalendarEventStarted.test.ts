@@ -1,6 +1,6 @@
 import { addHours, subHours } from 'date-fns';
 
-import { hasCalendarEventStarted } from '../hasCalendarEventStarted';
+import { hasCalendarEventStarted } from '@/modules/activities/calendar/utils/hasCalendarEventStarted';
 
 describe('hasCalendarEventStarted', () => {
   it('returns true for an event with a past start date', () => {

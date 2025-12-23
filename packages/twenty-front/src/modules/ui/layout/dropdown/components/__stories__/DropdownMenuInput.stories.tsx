@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { DropdownMenuInput } from '../DropdownMenuInput';
+import { DropdownMenuInput } from '@/modules/ui/layout/dropdown/components/DropdownMenuInput';
 
 const meta: Meta<typeof DropdownMenuInput> = {
   title: 'UI/Layout/Dropdown/DropdownMenuInput',

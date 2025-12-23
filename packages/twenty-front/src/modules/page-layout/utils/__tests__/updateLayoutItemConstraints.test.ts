@@ -1,5 +1,5 @@
 import { type Layouts } from 'react-grid-layout';
-import { updateLayoutItemConstraints } from '../updateLayoutItemConstraints';
+import { updateLayoutItemConstraints } from '@/modules/page-layout/utils/updateLayoutItemConstraints';
 
 describe('updateLayoutItemConstraints', () => {
   it('should update constraints for the specified layout item in desktop layout', () => {

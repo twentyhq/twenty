@@ -5,7 +5,7 @@ import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { ActionButton } from '../ActionButton';
+import { ActionButton } from '@/modules/action-menu/actions/display/components/ActionButton';
 
 const meta: Meta<typeof ActionButton> = {
   title: 'Modules/ActionMenu/Actions/Display/ActionButton',

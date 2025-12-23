@@ -7,7 +7,7 @@ import {
   MOCK_ROLE_ID_REVOKES_ALL,
   rolesMockHookWrapper,
 } from '~/testing/mock-data/roles/roles-mock';
-import { useGetObjectPermissionDerivedStates } from '../useGetObjectPermissionDerivedStates';
+import { useGetObjectPermissionDerivedStates } from '@/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useGetObjectPermissionDerivedStates';
 
 describe('useGetObjectPermissionDerivedStates', () => {
   it('should return expected for object that revoke permissions', () => {

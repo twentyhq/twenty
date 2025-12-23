@@ -26,8 +26,8 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { cursorFamilyState } from '../states/cursorFamilyState';
-import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
+import { cursorFamilyState } from '@/modules/object-record/states/cursorFamilyState';
+import { hasNextPageFamilyState } from '@/modules/object-record/states/hasNextPageFamilyState';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {

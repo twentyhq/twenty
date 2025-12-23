@@ -9,7 +9,7 @@ import {
 } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
-import { RecordShowPage } from '../RecordShowPage';
+import { RecordShowPage } from '@/pages/object-record/RecordShowPage';
 
 const personRecord = allMockPersonRecords[0];
 const meta: Meta<PageDecoratorArgs> = {

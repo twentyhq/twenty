@@ -9,7 +9,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionFilter } from '../WorkflowEditActionFilter';
+import { WorkflowEditActionFilter } from '@/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 
 const DEFAULT_ACTION: WorkflowFilterAction = {
   id: getWorkflowNodeIdMock(),

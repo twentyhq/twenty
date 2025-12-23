@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 
 import { type IconComponent } from 'twenty-ui/display';
-import { FieldContext } from '../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export const useGetButtonIcon = (): IconComponent | undefined => {
   const { fieldDefinition } = useContext(FieldContext);

@@ -3,7 +3,7 @@ import {
   type LineChartConfiguration,
   type PieChartConfiguration,
 } from '~/generated/graphql';
-import { isBarOrLineChartConfiguration } from '../isBarOrLineChartConfiguration';
+import { isBarOrLineChartConfiguration } from '@/modules/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
 
 describe('isBarOrLineChartConfiguration', () => {
   it('should return true for BarChartConfiguration', () => {

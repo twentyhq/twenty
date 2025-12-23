@@ -1,4 +1,4 @@
-import { parseAndValidateVariableFriendlyStringifiedJson } from '../parseAndValidateVariableFriendlyStringifiedJson';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/modules/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 
 describe('parseAndValidateVariableFriendlyStringifiedJson', () => {
   describe('Valid JSON with variable-friendly keys', () => {

@@ -2,7 +2,7 @@ import { type WebhookFormValues } from '@/settings/developers/validation-schemas
 import {
   createWebhookCreateInput,
   createWebhookUpdateInput,
-} from '../createWebhookInput';
+} from '@/modules/settings/developers/utils/createWebhookInput';
 
 describe('createWebhookInput', () => {
   const mockFormValues: WebhookFormValues = {

@@ -14,8 +14,8 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { useNumberField } from '../../../hooks/useNumberField';
-import { NumberFieldInput } from '../NumberFieldInput';
+import { useNumberField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useNumberField';
+import { NumberFieldInput } from '@/modules/object-record/record-field/ui/meta-types/input/components/NumberFieldInput';
 
 const {
   FieldInputEventContextProviderWithJestMocks,

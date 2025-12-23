@@ -10,7 +10,7 @@ import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { ConfigVariableType } from '~/generated/graphql';
-import { type ConfigVariableOptions } from '../types/ConfigVariableOptions';
+import { type ConfigVariableOptions } from '@/modules/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {
   label: string;

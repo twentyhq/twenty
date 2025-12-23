@@ -1,6 +1,6 @@
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
-import { useTextField } from '../../hooks/useTextField';
+import { useTextField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useTextField';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';

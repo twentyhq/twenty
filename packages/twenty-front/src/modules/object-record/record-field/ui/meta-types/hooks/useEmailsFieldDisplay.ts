@@ -5,7 +5,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export const useEmailsFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

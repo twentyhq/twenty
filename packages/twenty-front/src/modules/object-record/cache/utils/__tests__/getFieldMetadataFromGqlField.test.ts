@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RelationType } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getFieldMetadataFromGqlField } from '../getFieldMetadataFromGqlField';
+import { getFieldMetadataFromGqlField } from '@/modules/object-record/cache/utils/getFieldMetadataFromGqlField';
 
 const objectMetadataItemGenerator = (relationType: RelationType) => {
   return {

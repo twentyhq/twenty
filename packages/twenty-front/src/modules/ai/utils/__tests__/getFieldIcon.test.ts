@@ -1,4 +1,4 @@
-import { getFieldIcon } from '../getFieldIcon';
+import { getFieldIcon } from '@/modules/ai/utils/getFieldIcon';
 
 describe('getFieldIcon', () => {
   describe('supported field types', () => {

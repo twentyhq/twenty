@@ -1,4 +1,4 @@
-import { filterRecordOnGqlFields } from '../filterRecordOnGqlFields';
+import { filterRecordOnGqlFields } from '@/modules/object-record/cache/utils/filterRecordOnGqlFields';
 
 describe('filterRecordOnGqlFields', () => {
   it('should filter fields based on recordGqlFields with true values', () => {

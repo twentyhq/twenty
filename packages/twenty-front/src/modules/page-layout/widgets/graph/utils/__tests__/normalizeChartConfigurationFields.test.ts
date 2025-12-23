@@ -4,7 +4,7 @@ import {
   GraphType,
   ObjectRecordGroupByDateGranularity,
 } from '~/generated-metadata/graphql';
-import { normalizeChartConfigurationFields } from '../normalizeChartConfigurationFields';
+import { normalizeChartConfigurationFields } from '@/modules/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 
 describe('normalizeChartConfigurationFields', () => {
   describe('Bar and Line charts (with primaryAxis prefix)', () => {

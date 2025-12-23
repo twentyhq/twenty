@@ -6,7 +6,7 @@ import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInt
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SpreadsheetImportStepperContainer } from '../SpreadsheetImportStepperContainer';
+import { SpreadsheetImportStepperContainer } from '@/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
 
 const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
   title: 'Modules/SpreadsheetImport/Steps',

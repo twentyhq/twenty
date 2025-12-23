@@ -1,4 +1,4 @@
-import { parseApolloStoreFieldName } from '../parseApolloStoreFieldName';
+import { parseApolloStoreFieldName } from '@/utils/parseApolloStoreFieldName';
 
 describe('parseApolloStoreFieldName', () => {
   it('returns an empty object if string is not a valid store field name', () => {

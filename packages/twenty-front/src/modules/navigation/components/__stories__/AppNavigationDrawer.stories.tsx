@@ -15,7 +15,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   AppNavigationDrawer,
   type AppNavigationDrawerProps,
-} from '../AppNavigationDrawer';
+} from '@/modules/navigation/components/AppNavigationDrawer';
 
 const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer = 'main',

@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
-import { viewableRichTextComponentState } from '../states/viewableRichTextComponentState';
+import { viewableRichTextComponentState } from '@/modules/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({

@@ -21,12 +21,12 @@ import { IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
   JSON_RESPONSE_PLACEHOLDER,
-} from '../constants/HttpRequest';
-import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
-import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
-import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
-import { useTestHttpRequest } from '../hooks/useTestHttpRequest';
-import { WorkflowHttpRequestTabId } from '../types/WorkflowHttpRequestTabId';
+} from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/constants/WorkflowHttpRequestTabListComponentId';
+import { useHttpRequestForm } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestForm';
+import { useHttpRequestOutputSchema } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useHttpRequestOutputSchema';
+import { useTestHttpRequest } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
+import { WorkflowHttpRequestTabId } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/types/WorkflowHttpRequestTabId';
 import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';

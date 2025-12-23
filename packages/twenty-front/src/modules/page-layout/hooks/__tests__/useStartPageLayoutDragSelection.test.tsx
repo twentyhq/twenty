@@ -2,8 +2,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
-import { useStartPageLayoutDragSelection } from '../useStartPageLayoutDragSelection';
+import { pageLayoutSelectedCellsComponentState } from '@/modules/page-layout/states/pageLayoutSelectedCellsComponentState';
+import { useStartPageLayoutDragSelection } from '@/modules/page-layout/hooks/useStartPageLayoutDragSelection';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

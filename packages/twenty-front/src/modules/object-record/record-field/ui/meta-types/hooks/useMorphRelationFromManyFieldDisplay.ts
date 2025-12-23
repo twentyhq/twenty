@@ -10,8 +10,8 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
 
 export const useMorphRelationFromManyFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);

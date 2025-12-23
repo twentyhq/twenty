@@ -1,6 +1,6 @@
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 
-import { doesRecordBelongToGroup } from '../doesRecordBelongToGroup';
+import { doesRecordBelongToGroup } from '@/modules/apollo/optimistic-effect/group-by/utils/doesRecordBelongToGroup';
 
 describe('doesRecordBelongToGroup', () => {
   it('should return true when groupByConfig is undefined', () => {

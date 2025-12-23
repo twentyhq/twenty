@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CronFieldType } from '../types/cronExpressionParts';
+import { type CronFieldType } from '@/modules/workflow/workflow-trigger/utils/cron-to-human/types/cronExpressionParts';
 
 type FieldRange = {
   min: number;

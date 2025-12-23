@@ -1,4 +1,4 @@
-import { getWorkflowVisualizerComponentInstanceId } from '../getWorkflowVisualizerComponentInstanceId';
+import { getWorkflowVisualizerComponentInstanceId } from '@/modules/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 
 describe('getWorkflowVisualizerComponentInstanceId', () => {
   it('should return the same recordId that was passed in', () => {

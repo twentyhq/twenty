@@ -4,7 +4,7 @@ import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorato
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldDescriptionForm } from '../SettingsDataModelFieldDescriptionForm';
+import { SettingsDataModelFieldDescriptionForm } from '@/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 
 const meta: Meta<typeof SettingsDataModelFieldDescriptionForm> = {
   title: 'Modules/Settings/DataModel/SettingsDataModelFieldDescriptionForm',

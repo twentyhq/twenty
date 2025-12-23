@@ -6,7 +6,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsRoleEdit } from '../SettingsRoleEdit';
+import { SettingsRoleEdit } from '@/pages/settings/roles/SettingsRoleEdit';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Roles/SettingsRoleEdit',

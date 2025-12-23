@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { WEBHOOK_FRAGMENT } from '../fragments/webhookFragment';
+import { WEBHOOK_FRAGMENT } from '@/modules/settings/developers/graphql/fragments/webhookFragment';
 
 export const GET_WEBHOOKS = gql`
   query GetWebhooks {

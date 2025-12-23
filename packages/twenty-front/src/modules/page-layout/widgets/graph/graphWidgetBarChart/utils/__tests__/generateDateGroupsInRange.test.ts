@@ -1,6 +1,6 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { generateDateGroupsInRange } from '../generateDateGroupsInRange';
+import { generateDateGroupsInRange } from '@/modules/page-layout/widgets/graph/graphWidgetBarChart/utils/generateDateGroupsInRange';
 
 describe('generateDateGroupsInRange', () => {
   it('generates daily date groups', () => {

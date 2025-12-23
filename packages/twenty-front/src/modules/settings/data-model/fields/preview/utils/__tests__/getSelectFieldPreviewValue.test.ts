@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getSelectFieldPreviewValue } from '../getSelectFieldPreviewValue';
+import { getSelectFieldPreviewValue } from '@/modules/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',

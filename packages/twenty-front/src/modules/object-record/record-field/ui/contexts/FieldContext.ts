@@ -1,8 +1,8 @@
 import { createContext, type MouseEvent } from 'react';
 
 import { type TriggerEventType } from 'twenty-ui/utilities';
-import { type FieldDefinition } from '../types/FieldDefinition';
-import { type FieldMetadata } from '../types/FieldMetadata';
+import { type FieldDefinition } from '@/modules/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
 
 export type RecordUpdateHookParams = {
   variables: {

@@ -1,4 +1,4 @@
-import { getHttpRequestOutputSchema } from '../getHttpRequestOutputSchema';
+import { getHttpRequestOutputSchema } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 
 describe('getHttpRequestOutputSchema', () => {
   it('should return empty object for null input', () => {

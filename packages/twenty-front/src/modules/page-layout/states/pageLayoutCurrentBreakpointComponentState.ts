@@ -1,5 +1,5 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type PageLayoutBreakpoint } from '../constants/PageLayoutBreakpoints';
+import { type PageLayoutBreakpoint } from '@/modules/page-layout/constants/PageLayoutBreakpoints';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 

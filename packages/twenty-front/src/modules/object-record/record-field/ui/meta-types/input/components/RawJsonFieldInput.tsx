@@ -13,7 +13,7 @@ import { IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useJsonField } from '../../hooks/useJsonField';
+import { useJsonField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useJsonField';
 
 const CONTAINER_HEIGHT = 300;
 

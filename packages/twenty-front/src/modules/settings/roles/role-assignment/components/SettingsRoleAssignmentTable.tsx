@@ -16,7 +16,7 @@ import { H2Title, IconSearch } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
+import { type PartialWorkspaceMember } from '@/modules/settings/roles/types/RoleWithPartialMembers';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

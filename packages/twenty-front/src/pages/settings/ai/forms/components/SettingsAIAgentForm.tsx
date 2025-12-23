@@ -8,8 +8,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { isDefined } from 'twenty-shared/utils';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '../../components/SettingsAgentModelCapabilities';
-import { type SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
+import { SettingsAgentModelCapabilities } from '@/pages/settings/ai/components/SettingsAgentModelCapabilities';
+import { type SettingsAIAgentFormValues } from '@/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
   display: flex;

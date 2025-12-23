@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-import { getDefaultFormFieldSettings } from '../getDefaultFormFieldSettings';
+import { getDefaultFormFieldSettings } from '@/modules/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'test-uuid-123'),

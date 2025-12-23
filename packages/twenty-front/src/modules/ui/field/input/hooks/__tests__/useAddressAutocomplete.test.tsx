@@ -2,8 +2,8 @@ import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { act, renderHook } from '@testing-library/react';
-import { useAddressAutocomplete } from '../useAddressAutocomplete';
-import { useCountryUtils } from '../useCountryUtils';
+import { useAddressAutocomplete } from '@/modules/ui/field/input/hooks/useAddressAutocomplete';
+import { useCountryUtils } from '@/modules/ui/field/input/hooks/useCountryUtils';
 
 // Mock dependencies
 jest.mock('@/geo-map/hooks/useGetPlaceApiData');

@@ -13,7 +13,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedState } from '@/modules/command-menu/states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();

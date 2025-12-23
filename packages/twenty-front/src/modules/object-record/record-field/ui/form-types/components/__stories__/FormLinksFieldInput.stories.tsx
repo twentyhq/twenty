@@ -2,7 +2,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
-import { FormLinksFieldInput } from '../FormLinksFieldInput';
+import { FormLinksFieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
 
 const meta: Meta<typeof FormLinksFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormLinksFieldInput',

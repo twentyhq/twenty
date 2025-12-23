@@ -13,7 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '../states/isRecordCalendarCardSelectedComponentFamilyState';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/modules/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;

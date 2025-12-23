@@ -1,4 +1,4 @@
-import { getForeignDataWrapperType } from '../getForeignDataWrapperType';
+import { getForeignDataWrapperType } from '@/modules/databases/utils/getForeignDataWrapperType';
 
 describe('getForeignDataWrapperType', () => {
   it('should handle postgres', () => {

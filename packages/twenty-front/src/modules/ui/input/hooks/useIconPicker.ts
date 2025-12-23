@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { iconPickerState } from '../states/iconPickerState';
+import { iconPickerState } from '@/modules/ui/input/states/iconPickerState';
 
 export const useIconPicker = () => {
   const [iconPicker, setIconPicker] = useRecoilState(iconPickerState);

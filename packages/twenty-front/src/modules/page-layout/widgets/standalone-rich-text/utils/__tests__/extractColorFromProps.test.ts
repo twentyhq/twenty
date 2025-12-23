@@ -1,4 +1,4 @@
-import { extractColorFromProps } from '../extractColorFromProps';
+import { extractColorFromProps } from '@/modules/page-layout/widgets/standalone-rich-text/utils/extractColorFromProps';
 
 describe('extractColorFromProps', () => {
   describe('text color extraction', () => {

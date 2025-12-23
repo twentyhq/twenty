@@ -22,7 +22,7 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { useCurrentWidget } from '../hooks/useCurrentWidget';
+import { useCurrentWidget } from '@/modules/page-layout/widgets/hooks/useCurrentWidget';
 
 export const WidgetActionFieldEdit = () => {
   const widget = useCurrentWidget();

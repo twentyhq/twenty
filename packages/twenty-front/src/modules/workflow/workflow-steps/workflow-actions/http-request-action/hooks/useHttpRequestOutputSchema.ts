@@ -3,8 +3,8 @@ import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/util
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
-import { convertOutputSchemaToJson } from '../utils/convertOutputSchemaToJson';
-import { getHttpRequestOutputSchema } from '../utils/getHttpRequestOutputSchema';
+import { convertOutputSchemaToJson } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/convertOutputSchemaToJson';
+import { getHttpRequestOutputSchema } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 
 type UseHttpRequestOutputSchemaProps = {
   action: WorkflowHttpRequestAction;

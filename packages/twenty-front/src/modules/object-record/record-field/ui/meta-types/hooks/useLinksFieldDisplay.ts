@@ -6,7 +6,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export const useLinksFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

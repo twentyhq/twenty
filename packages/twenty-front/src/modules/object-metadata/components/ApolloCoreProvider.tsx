@@ -1,6 +1,6 @@
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
-import { ApolloCoreClientContext } from '../contexts/ApolloCoreClientContext';
+import { ApolloCoreClientContext } from '@/modules/object-metadata/contexts/ApolloCoreClientContext';
 
 export const ApolloCoreProvider = ({
   children,

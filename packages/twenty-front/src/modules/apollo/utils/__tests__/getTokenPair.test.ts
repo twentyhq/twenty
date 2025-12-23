@@ -1,5 +1,5 @@
 import { cookieStorage } from '~/utils/cookie-storage';
-import { getTokenPair } from '../getTokenPair';
+import { getTokenPair } from '@/modules/apollo/utils/getTokenPair';
 
 jest.mock('~/utils/cookie-storage', () => ({
   cookieStorage: {

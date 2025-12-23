@@ -20,7 +20,7 @@ import { act } from 'react';
 import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useWorkflowCommandMenu } from '../useWorkflowCommandMenu';
+import { useWorkflowCommandMenu } from '@/modules/command-menu/hooks/useWorkflowCommandMenu';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),

@@ -16,7 +16,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 
-import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
+import { type RoleWithPartialMembers } from '@/modules/settings/roles/types/RoleWithPartialMembers';
 
 const StyledAssignedText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};

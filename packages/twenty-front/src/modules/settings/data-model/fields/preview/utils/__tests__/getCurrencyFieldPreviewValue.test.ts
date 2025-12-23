@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getCurrencyFieldPreviewValue } from '../getCurrencyFieldPreviewValue';
+import { getCurrencyFieldPreviewValue } from '@/modules/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
 import { CurrencyCode } from 'twenty-shared/constants';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(

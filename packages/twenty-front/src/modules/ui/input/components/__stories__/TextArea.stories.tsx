@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { expect, userEvent, within } from '@storybook/test';
-import { TextArea, type TextAreaProps } from '../TextArea';
+import { TextArea, type TextAreaProps } from '@/modules/ui/input/components/TextArea';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextAreaProps;

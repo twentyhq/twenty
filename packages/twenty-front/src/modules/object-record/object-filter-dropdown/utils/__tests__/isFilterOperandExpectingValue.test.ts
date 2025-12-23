@@ -1,6 +1,6 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 
-import { isFilterOperandExpectingValue } from '../isFilterOperandExpectingValue';
+import { isFilterOperandExpectingValue } from '@/modules/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
 
 describe('isFilterOperandExpectingValue', () => {
   const testCases = [

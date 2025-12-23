@@ -7,8 +7,8 @@ import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFiel
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
 
 export const useDateField = () => {
   const { recordId, fieldDefinition, clearable } = useContext(FieldContext);

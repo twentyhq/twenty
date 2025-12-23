@@ -3,7 +3,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { buildDateRangeFiltersForGranularity } from '../buildDateRangeFiltersForGranularity';
+import { buildDateRangeFiltersForGranularity } from '@/modules/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 
 describe('buildDateRangeFiltersForGranularity', () => {
   describe('WEEK granularity', () => {

@@ -1,6 +1,6 @@
 import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
+import { getWorkflowRunStepContext } from '@/modules/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 
 const mockFlow = {
   trigger: {

@@ -9,7 +9,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql, HttpResponse } from 'msw';
-import { SettingsRoles } from '../SettingsRoles';
+import { SettingsRoles } from '@/pages/settings/roles/SettingsRoles';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Roles/SettingsRoles',

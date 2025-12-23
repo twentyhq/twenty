@@ -2,7 +2,7 @@ import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldM
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
-import { type ObjectMetadataItem } from '../types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/modules/object-metadata/types/ObjectMetadataItem';
 
 type mapPaginatedObjectMetadataItemsToObjectMetadataItemsArgs = {
   pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;

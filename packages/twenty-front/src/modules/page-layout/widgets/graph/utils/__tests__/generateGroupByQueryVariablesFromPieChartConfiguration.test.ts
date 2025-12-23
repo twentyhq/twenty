@@ -7,7 +7,7 @@ import {
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { generateGroupByQueryVariablesFromPieChartConfiguration } from '../generateGroupByQueryVariablesFromPieChartConfiguration';
+import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/modules/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

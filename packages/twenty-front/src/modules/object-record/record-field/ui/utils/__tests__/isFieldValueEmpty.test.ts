@@ -11,7 +11,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldCurrencyMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { isFieldValueEmpty } from '../isFieldValueEmpty';
+import { isFieldValueEmpty } from '@/modules/object-record/record-field/ui/utils/isFieldValueEmpty';
 
 describe('isFieldValueEmpty', () => {
   it('should return correct value for boolean field', () => {

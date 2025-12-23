@@ -3,8 +3,8 @@ import {
   AggregateOperations,
   type PageLayoutWidget,
 } from '~/generated/graphql';
-import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { addWidgetToTab } from '../addWidgetToTab';
+import { type PageLayoutTab } from '@/modules/page-layout/types/PageLayoutTab';
+import { addWidgetToTab } from '@/modules/page-layout/utils/addWidgetToTab';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {

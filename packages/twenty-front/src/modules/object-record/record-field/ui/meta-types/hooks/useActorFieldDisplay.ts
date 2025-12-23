@@ -6,7 +6,7 @@ import { AuthContext } from '@/auth/contexts/AuthContext';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export type ActorFieldDisplayValue = {
   fieldValue: FieldActorValue;

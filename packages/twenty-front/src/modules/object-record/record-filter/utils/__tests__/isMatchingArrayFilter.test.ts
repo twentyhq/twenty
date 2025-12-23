@@ -1,4 +1,4 @@
-import { isMatchingArrayFilter } from '../isMatchingArrayFilter';
+import { isMatchingArrayFilter } from '@/modules/object-record/record-filter/utils/isMatchingArrayFilter';
 
 describe('isMatchingArrayFilter', () => {
   describe('is filter', () => {

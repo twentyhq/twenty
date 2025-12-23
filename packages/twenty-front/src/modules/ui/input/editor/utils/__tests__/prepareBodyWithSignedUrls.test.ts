@@ -1,4 +1,4 @@
-import { prepareBodyWithSignedUrls } from '../prepareBodyWithSignedUrls';
+import { prepareBodyWithSignedUrls } from '@/modules/ui/input/editor/utils/prepareBodyWithSignedUrls';
 
 describe('prepareBodyWithSignedUrls', () => {
   it('should return empty string as-is', () => {

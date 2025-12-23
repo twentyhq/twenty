@@ -6,7 +6,7 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { useRecoilValue } from 'recoil';
-import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/modules/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 
 export const useColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,

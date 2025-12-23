@@ -5,7 +5,7 @@ import {
   RecoilRootDecorator,
   RouterDecorator,
 } from 'twenty-ui/testing';
-import { Logo } from '../Logo';
+import { Logo } from '@/modules/auth/components/Logo';
 
 const logoUrl = 'https://picsum.photos/192/192';
 

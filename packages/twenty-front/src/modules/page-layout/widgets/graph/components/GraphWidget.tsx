@@ -9,7 +9,7 @@ import { GraphWidgetPieChartRenderer } from '@/page-layout/widgets/graph/graphWi
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType } from '~/generated/graphql';
-import { useCurrentWidget } from '../../hooks/useCurrentWidget';
+import { useCurrentWidget } from '@/modules/page-layout/widgets/hooks/useCurrentWidget';
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(

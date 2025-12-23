@@ -13,8 +13,8 @@ import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { useTextField } from '../../../hooks/useTextField';
-import { TextFieldInput } from '../TextFieldInput';
+import { useTextField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useTextField';
+import { TextFieldInput } from '@/modules/object-record/record-field/ui/meta-types/input/components/TextFieldInput';
 
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();

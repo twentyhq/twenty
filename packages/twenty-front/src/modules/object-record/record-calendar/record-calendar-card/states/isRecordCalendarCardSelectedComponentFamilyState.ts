@@ -1,5 +1,5 @@
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
-import { RecordCalendarComponentInstanceContext } from '../../states/contexts/RecordCalendarComponentInstanceContext';
+import { RecordCalendarComponentInstanceContext } from '@/modules/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 
 export const isRecordCalendarCardSelectedComponentFamilyState =
   createComponentFamilyState<boolean, string>({

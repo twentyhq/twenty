@@ -13,7 +13,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessTableWithoutGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithoutGroupRecordDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { selectedRowIdsComponentSelector } from '../../states/selectors/selectedRowIdsComponentSelector';
+import { selectedRowIdsComponentSelector } from '@/modules/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 
 export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   children,

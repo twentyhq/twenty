@@ -1,12 +1,12 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
+import { pageLayoutSelectedCellsComponentState } from '@/modules/page-layout/states/pageLayoutSelectedCellsComponentState';
 import {
   PageLayoutTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 } from './PageLayoutTestWrapper';
-import { useChangePageLayoutDragSelection } from '../useChangePageLayoutDragSelection';
+import { useChangePageLayoutDragSelection } from '@/modules/page-layout/hooks/useChangePageLayoutDragSelection';
 
 describe('useChangePageLayoutDragSelection', () => {
   it('should add cell to selection when selected is true', () => {

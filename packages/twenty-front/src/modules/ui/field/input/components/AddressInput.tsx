@@ -20,9 +20,9 @@ import { v4 } from 'uuid';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
-import { useAddressAutocomplete } from '../hooks/useAddressAutocomplete';
-import { useCountryUtils } from '../hooks/useCountryUtils';
-import { useFocusManagement } from '../hooks/useFocusManagement';
+import { useAddressAutocomplete } from '@/modules/ui/field/input/hooks/useAddressAutocomplete';
+import { useCountryUtils } from '@/modules/ui/field/input/hooks/useCountryUtils';
+import { useFocusManagement } from '@/modules/ui/field/input/hooks/useFocusManagement';
 
 const StyledAddressContainer = styled.div`
   padding: 4px 8px;

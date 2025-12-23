@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/react';
-import { parseEditorContent } from '../parseEditorContent';
+import { parseEditorContent } from '@/modules/workflow/workflow-variables/utils/parseEditorContent';
 
 describe('parseEditorContent', () => {
   it('should parse empty doc', () => {

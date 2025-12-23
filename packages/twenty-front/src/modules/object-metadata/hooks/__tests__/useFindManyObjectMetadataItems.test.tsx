@@ -9,7 +9,7 @@ import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manage
 import {
   query,
   responseData,
-} from '../__mocks__/useFindManyObjectMetadataItems';
+} from '@/modules/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [
   {

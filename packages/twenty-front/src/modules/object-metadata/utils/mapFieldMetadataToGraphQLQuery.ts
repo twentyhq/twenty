@@ -7,7 +7,7 @@ import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
-import { type FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/modules/object-metadata/types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];

@@ -6,7 +6,7 @@ import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchV
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilter } from '~/generated/graphql';
-import { type ViewFilter } from '../types/ViewFilter';
+import { type ViewFilter } from '@/modules/views/types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[] | CoreViewFilter[],

@@ -1,5 +1,5 @@
-import { type RoleWithPartialMembers } from '../../types/RoleWithPartialMembers';
-import { type RoleMaps } from '../types/role-maps';
+import { type RoleWithPartialMembers } from '@/modules/settings/roles/types/RoleWithPartialMembers';
+import { type RoleMaps } from '@/modules/settings/roles/role-assignment/types/role-maps';
 
 export const buildRoleMaps = (roles: RoleWithPartialMembers[]): RoleMaps => {
   const maps: RoleMaps = {

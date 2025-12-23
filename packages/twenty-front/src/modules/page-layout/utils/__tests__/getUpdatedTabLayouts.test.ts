@@ -1,5 +1,5 @@
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
-import { getUpdatedTabLayouts } from '../getUpdatedTabLayouts';
+import { getUpdatedTabLayouts } from '@/modules/page-layout/utils/getUpdatedTabLayouts';
 
 describe('getUpdatedTabLayouts', () => {
   const mockTabLayouts: TabLayouts = {

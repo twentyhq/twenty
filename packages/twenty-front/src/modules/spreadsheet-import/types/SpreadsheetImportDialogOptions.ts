@@ -6,7 +6,7 @@ import { type ImportedRow } from '@/spreadsheet-import/types/SpreadsheetImportIm
 import { type ImportedStructuredRow } from '@/spreadsheet-import/types/SpreadsheetImportImportedStructuredRow';
 import { type SpreadsheetImportRowHook } from '@/spreadsheet-import/types/SpreadsheetImportRowHook';
 import { type SpreadsheetImportTableHook } from '@/spreadsheet-import/types/SpreadsheetImportTableHook';
-import { type SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
+import { type SpreadsheetImportStep } from '@/modules/spreadsheet-import/steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions = {
   // callback when RSI is closed before final submit

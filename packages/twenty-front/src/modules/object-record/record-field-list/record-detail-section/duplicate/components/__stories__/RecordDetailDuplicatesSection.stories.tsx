@@ -8,7 +8,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { RecordDetailDuplicatesSection } from '../../components/RecordDetailDuplicatesSection';
+import { RecordDetailDuplicatesSection } from '@/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
 
 const companiesMock = getCompaniesMock();
 

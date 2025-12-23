@@ -6,7 +6,7 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { NavigationDrawerItem } from '../NavigationDrawerItem';
+import { NavigationDrawerItem } from '@/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const StyledContainer = styled.div`
   display: flex;

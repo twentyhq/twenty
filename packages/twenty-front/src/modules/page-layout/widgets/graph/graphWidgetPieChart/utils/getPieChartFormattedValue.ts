@@ -5,8 +5,8 @@ import {
 import { type ComputedDatum } from '@nivo/pie';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PieChartDataItem } from '../types/PieChartDataItem';
-import { type PieChartEnrichedData } from '../types/PieChartEnrichedData';
+import { type PieChartDataItem } from '@/modules/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartEnrichedData } from '@/modules/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 
 type GetPieChartFormattedValueParams = {
   datum: ComputedDatum<PieChartDataItem>;

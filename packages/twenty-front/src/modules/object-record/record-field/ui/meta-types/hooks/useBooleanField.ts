@@ -4,9 +4,9 @@ import { useRecoilState } from 'recoil';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldBoolean } from '@/modules/object-record/record-field/ui/types/guards/isFieldBoolean';
 
 export const useBooleanField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

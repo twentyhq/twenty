@@ -16,7 +16,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
+import { EmailVerificationSent } from '@/modules/auth/sign-in-up/components/EmailVerificationSent';
 
 export const VerifyEmailEffect = () => {
   const {

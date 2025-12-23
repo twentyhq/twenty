@@ -1,9 +1,9 @@
 import {
   type FieldMetadata,
   type FieldTsVectorMetadata,
-} from '../FieldMetadata';
+} from '@/modules/object-record/record-field/ui/types/FieldMetadata';
 
-import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldDefinition } from '@/modules/object-record/record-field/ui/types/FieldDefinition';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

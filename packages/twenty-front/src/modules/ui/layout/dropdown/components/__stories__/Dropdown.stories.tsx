@@ -24,13 +24,13 @@ import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { Dropdown } from '../Dropdown';
-import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuInput } from '../DropdownMenuInput';
-import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '../DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
-import { StyledDropdownMenuSubheader } from '../StyledDropdownMenuSubheader';
+import { Dropdown } from '@/modules/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuHeader } from '@/modules/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuInput } from '@/modules/ui/layout/dropdown/components/DropdownMenuInput';
+import { DropdownMenuItemsContainer } from '@/modules/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/modules/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/modules/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuSubheader } from '@/modules/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',

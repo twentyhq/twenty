@@ -10,7 +10,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { SettingsDataModelFieldPreviewWidget } from '../SettingsDataModelFieldPreviewWidget';
+import { SettingsDataModelFieldPreviewWidget } from '@/modules/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 const mockedCompanyObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('company');

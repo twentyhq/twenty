@@ -1,4 +1,4 @@
-import { computeEffectiveValueRange } from '../computeEffectiveValueRange';
+import { computeEffectiveValueRange } from '@/modules/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 
 describe('computeEffectiveValueRange', () => {
   describe('minimum value calculation', () => {

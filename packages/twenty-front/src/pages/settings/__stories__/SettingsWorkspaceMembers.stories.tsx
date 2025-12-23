@@ -9,7 +9,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 // TEMP_DISABLED_TEST: Removed unused import due to commented test
 // import { sleep } from '~/utils/sleep';
 
-import { SettingsWorkspaceMembers } from '../members/SettingsWorkspaceMembers';
+import { SettingsWorkspaceMembers } from '@/pages/settings/members/SettingsWorkspaceMembers';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspaceMembers',

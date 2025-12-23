@@ -1,6 +1,6 @@
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { formatDateByGranularity } from '../formatDateByGranularity';
+import { formatDateByGranularity } from '@/modules/page-layout/widgets/graph/utils/formatDateByGranularity';
 
 describe('formatDateByGranularity', () => {
   const testDate = new Date('2024-03-20T12:00:00Z');

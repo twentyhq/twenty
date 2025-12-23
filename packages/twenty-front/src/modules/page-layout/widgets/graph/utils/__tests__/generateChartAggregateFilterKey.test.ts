@@ -1,4 +1,4 @@
-import { generateChartAggregateFilterKey } from '../generateChartAggregateFilterKey';
+import { generateChartAggregateFilterKey } from '@/modules/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 
 describe('generateChartAggregateFilterKey', () => {
   it('should generate key with all values provided', () => {

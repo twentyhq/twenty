@@ -7,7 +7,7 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import type { PartialBlock } from '@blocknote/core';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 export const useRichTextFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

@@ -1,7 +1,7 @@
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { CustomError } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';
-import { useCurrentWidget } from '../hooks/useCurrentWidget';
+import { useCurrentWidget } from '@/modules/page-layout/widgets/hooks/useCurrentWidget';
 import { WidgetActionFieldEdit } from './WidgetActionFieldEdit';
 
 type WidgetActionRendererProps = {

@@ -1,5 +1,5 @@
 import { type FieldPermission, type Role } from '~/generated-metadata/graphql';
-import { getRoleWithUpsertedFieldPermission } from '../getRoleWithUpsertedFieldPermission';
+import { getRoleWithUpsertedFieldPermission } from '@/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithUpsertedFieldPermission';
 
 const BASE_ROLE_MOCK: Role = {
   canAccessAllTools: false,

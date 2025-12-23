@@ -9,7 +9,7 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowDiagramStepNodeEditableContent } from '../../workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
+import { WorkflowDiagramStepNodeEditableContent } from '@/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 
 const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',

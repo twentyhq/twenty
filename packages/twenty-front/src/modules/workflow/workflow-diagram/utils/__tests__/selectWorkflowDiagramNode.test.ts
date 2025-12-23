@@ -1,5 +1,5 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { selectWorkflowDiagramNode } from '../selectWorkflowDiagramNode';
+import { selectWorkflowDiagramNode } from '@/modules/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 
 describe('selectWorkflowDiagramNode', () => {
   it('should select the specified node', () => {

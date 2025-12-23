@@ -1,6 +1,6 @@
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type SnackBarProps } from '../components/SnackBar';
+import { type SnackBarProps } from '@/modules/ui/feedback/snack-bar-manager/components/SnackBar';
 
 export type SnackBarOptions = SnackBarProps & {
   id: string;

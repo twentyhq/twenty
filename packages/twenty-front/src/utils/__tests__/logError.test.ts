@@ -1,4 +1,4 @@
-import { logError } from '../logError';
+import { logError } from '@/utils/logError';
 
 describe('logError', () => {
   let consoleErrorSpy: jest.SpyInstance;

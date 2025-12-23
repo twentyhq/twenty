@@ -2,7 +2,7 @@ import {
   type BarChartConfiguration,
   type GaugeChartConfiguration,
 } from '~/generated/graphql';
-import { isGaugeChartConfiguration } from '../isGaugeChartConfiguration';
+import { isGaugeChartConfiguration } from '@/modules/command-menu/pages/page-layout/utils/isGaugeChartConfiguration';
 
 describe('isGaugeChartConfiguration', () => {
   it('should return true for GaugeChartConfiguration', () => {

@@ -1,4 +1,4 @@
-import { getActivityPreview } from '../getActivityPreview';
+import { getActivityPreview } from '@/modules/activities/utils/getActivityPreview';
 
 describe('getActivityPreview', () => {
   it('should work for empty body', () => {

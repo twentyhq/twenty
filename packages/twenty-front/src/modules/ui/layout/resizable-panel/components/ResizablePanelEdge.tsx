@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { RESIZE_EDGE_WIDTH_PX } from '../constants/ResizeEdgeWidthPx';
-import { useResizablePanel } from '../hooks/useResizablePanel';
-import { type ResizablePanelConstraints } from '../types/ResizablePanelConstraints';
-import { type ResizablePanelSide } from '../types/ResizablePanelSide';
+import { RESIZE_EDGE_WIDTH_PX } from '@/modules/ui/layout/resizable-panel/constants/ResizeEdgeWidthPx';
+import { useResizablePanel } from '@/modules/ui/layout/resizable-panel/hooks/useResizablePanel';
+import { type ResizablePanelConstraints } from '@/modules/ui/layout/resizable-panel/types/ResizablePanelConstraints';
+import { type ResizablePanelSide } from '@/modules/ui/layout/resizable-panel/types/ResizablePanelSide';
 
 type StyledEdgeProps = {
   isActive: boolean;

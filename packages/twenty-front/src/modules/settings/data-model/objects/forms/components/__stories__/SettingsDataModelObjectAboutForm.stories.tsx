@@ -7,7 +7,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { SettingsDataModelObjectAboutForm } from '../SettingsDataModelObjectAboutForm';
+import { SettingsDataModelObjectAboutForm } from '@/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',

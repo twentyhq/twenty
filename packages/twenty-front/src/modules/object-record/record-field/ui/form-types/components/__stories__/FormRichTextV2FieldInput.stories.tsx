@@ -11,7 +11,7 @@ import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormRichTextV2FieldInput } from '../FormRichTextV2FieldInput';
+import { FormRichTextV2FieldInput } from '@/modules/object-record/record-field/ui/form-types/components/FormRichTextV2FieldInput';
 
 const meta: Meta<typeof FormRichTextV2FieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRichTextV2FieldInput',

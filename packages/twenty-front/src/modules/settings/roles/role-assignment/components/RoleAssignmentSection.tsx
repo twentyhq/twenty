@@ -12,8 +12,8 @@ import { type ApiKeyForRole } from '~/generated/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
-} from '../../types/RoleWithPartialMembers';
-import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
+} from '@/modules/settings/roles/types/RoleWithPartialMembers';
+import { ROLE_TARGET_CONFIG } from '@/modules/settings/roles/role-assignment/constants/RoleTargetConfig';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;

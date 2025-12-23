@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 
-import { useKeyboardShortcutMenu } from '../useKeyboardShortcutMenu';
+import { useKeyboardShortcutMenu } from '@/modules/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 
 const mockPushFocusItemToFocusStack = jest.fn();
 const mockRemoveFocusItemFromFocusStackById = jest.fn();

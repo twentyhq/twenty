@@ -12,8 +12,8 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
-import { useDateTimeField } from '../../../hooks/useDateTimeField';
-import { DateTimeFieldInput } from '../DateTimeFieldInput';
+import { useDateTimeField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
+import { DateTimeFieldInput } from '@/modules/object-record/record-field/ui/meta-types/input/components/DateTimeFieldInput';
 
 const {
   FieldInputEventContextProviderWithJestMocks,

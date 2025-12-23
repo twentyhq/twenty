@@ -41,18 +41,18 @@ import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/gu
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isFieldBoolean } from '../types/guards/isFieldBoolean';
-import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
-import { isFieldCurrency } from '../types/guards/isFieldCurrency';
-import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
-import { isFieldDateTime } from '../types/guards/isFieldDateTime';
-import { isFieldDateTimeValue } from '../types/guards/isFieldDateTimeValue';
-import { isFieldNumber } from '../types/guards/isFieldNumber';
-import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
-import { isFieldRating } from '../types/guards/isFieldRating';
-import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
-import { isFieldText } from '../types/guards/isFieldText';
-import { isFieldTextValue } from '../types/guards/isFieldTextValue';
+import { isFieldBoolean } from '@/modules/object-record/record-field/ui/types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldBooleanValue';
+import { isFieldCurrency } from '@/modules/object-record/record-field/ui/types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
+import { isFieldDateTime } from '@/modules/object-record/record-field/ui/types/guards/isFieldDateTime';
+import { isFieldDateTimeValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldDateTimeValue';
+import { isFieldNumber } from '@/modules/object-record/record-field/ui/types/guards/isFieldNumber';
+import { isFieldNumberValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldNumberValue';
+import { isFieldRating } from '@/modules/object-record/record-field/ui/types/guards/isFieldRating';
+import { isFieldRatingValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldRatingValue';
+import { isFieldText } from '@/modules/object-record/record-field/ui/types/guards/isFieldText';
+import { isFieldTextValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldTextValue';
 
 export const usePersistField = ({
   objectMetadataItemId,

@@ -1,7 +1,7 @@
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { getDisplayNameFromParticipant } from '../getDisplayNameFromParticipant';
+import { getDisplayNameFromParticipant } from '@/modules/activities/emails/utils/getDisplayNameFromParticipant';
 
 describe('getDisplayNameFromParticipant', () => {
   const participantWithName: EmailThreadMessageParticipant = {

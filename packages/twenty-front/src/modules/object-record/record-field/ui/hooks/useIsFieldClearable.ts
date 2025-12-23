@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { FieldContext } from '../contexts/FieldContext';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
 
 // TODO: have a better clearable settings in metadata ?
 // We might want to define what's clearable in the metadata

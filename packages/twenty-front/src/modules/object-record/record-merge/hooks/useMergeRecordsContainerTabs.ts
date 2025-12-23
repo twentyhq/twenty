@@ -6,9 +6,9 @@ import { IconArrowMerge, IconSettings } from 'twenty-ui/display';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { MergeRecordsTabId } from '../types/MergeRecordsTabId';
-import { getPositionNumberIcon } from '../utils/getPositionNumberIcon';
-import { getPositionWordLabel } from '../utils/getPositionWordLabel';
+import { MergeRecordsTabId } from '@/modules/object-record/record-merge/types/MergeRecordsTabId';
+import { getPositionNumberIcon } from '@/modules/object-record/record-merge/utils/getPositionNumberIcon';
+import { getPositionWordLabel } from '@/modules/object-record/record-merge/utils/getPositionWordLabel';
 
 export const useMergeRecordsContainerTabs = (
   selectedRecords: ObjectRecord[],

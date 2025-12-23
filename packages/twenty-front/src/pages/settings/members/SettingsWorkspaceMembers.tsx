@@ -46,11 +46,11 @@ import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { TableCell } from '../../../modules/ui/layout/table/components/TableCell';
-import { TableRow } from '../../../modules/ui/layout/table/components/TableRow';
-import { useDeleteWorkspaceInvitation } from '../../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
-import { useResendWorkspaceInvitation } from '../../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
-import { workspaceInvitationsState } from '../../../modules/workspace-invitation/states/workspaceInvitationsStates';
+import { TableCell } from '@/modules/ui/layout/table/components/TableCell';
+import { TableRow } from '@/modules/ui/layout/table/components/TableRow';
+import { useDeleteWorkspaceInvitation } from '@/modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
+import { useResendWorkspaceInvitation } from '@/modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { workspaceInvitationsState } from '@/modules/workspace-invitation/states/workspaceInvitationsStates';
 
 const StyledButtonContainer = styled.div`
   align-items: center;

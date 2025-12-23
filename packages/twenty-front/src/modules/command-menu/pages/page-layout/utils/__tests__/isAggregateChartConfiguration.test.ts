@@ -2,7 +2,7 @@ import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
 } from '~/generated/graphql';
-import { isAggregateChartConfiguration } from '../isAggregateChartConfiguration';
+import { isAggregateChartConfiguration } from '@/modules/command-menu/pages/page-layout/utils/isAggregateChartConfiguration';
 
 describe('isAggregateChartConfiguration', () => {
   it('should return true for AggregateChartConfiguration', () => {

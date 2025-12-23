@@ -1,7 +1,7 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { capitalize } from 'twenty-shared/utils';
-import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
+import { getOperandLabel, getOperandLabelShort } from '@/modules/object-record/object-filter-dropdown/utils/getOperandLabel';
 
 describe('getOperandLabel', () => {
   const testCases = [

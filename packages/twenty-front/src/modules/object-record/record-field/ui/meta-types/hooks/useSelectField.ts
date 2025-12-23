@@ -7,11 +7,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldContext } from '../../contexts/FieldContext';
-import { type FieldSelectValue } from '../../types/FieldMetadata';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldSelect } from '../../types/guards/isFieldSelect';
-import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
+import { FieldContext } from '@/modules/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldSelectValue } from '@/modules/object-record/record-field/ui/types/FieldMetadata';
+import { assertFieldMetadata } from '@/modules/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldSelect } from '@/modules/object-record/record-field/ui/types/guards/isFieldSelect';
+import { isFieldSelectValue } from '@/modules/object-record/record-field/ui/types/guards/isFieldSelectValue';
 
 export const useSelectField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

@@ -1,4 +1,4 @@
-import { formatFileSize } from '../formatFileSize';
+import { formatFileSize } from '@/modules/file/utils/formatFileSize';
 
 describe('formatFileSize', () => {
   it('should format bytes correctly', () => {

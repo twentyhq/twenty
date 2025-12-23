@@ -1,6 +1,6 @@
 import { type Field } from '~/generated-metadata/graphql';
 
-import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
+import { formatFieldMetadataItemInput } from '@/modules/object-metadata/utils/formatFieldMetadataItemInput';
 
 import { type RelationCreationPayload } from 'twenty-shared/types';
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';

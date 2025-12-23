@@ -28,7 +28,7 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 as uuidv4 } from 'uuid';
-import { SETTINGS_AGENT_DETAIL_TABS } from '../constants/SettingsAgentDetailTabs';
+import { SETTINGS_AGENT_DETAIL_TABS } from '@/pages/settings/ai/constants/SettingsAgentDetailTabs';
 
 const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
 

@@ -1,5 +1,5 @@
-import { type HttpRequestBody } from '../../constants/HttpRequest';
-import { shouldDisplayRawJsonByDefault } from '../shouldDisplayRawJsonByDefault';
+import { type HttpRequestBody } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { shouldDisplayRawJsonByDefault } from '@/modules/workflow/workflow-steps/workflow-actions/http-request-action/utils/shouldDisplayRawJsonByDefault';
 
 describe('shouldDisplayRawJsonByDefault', () => {
   describe('when defaultValue is undefined', () => {

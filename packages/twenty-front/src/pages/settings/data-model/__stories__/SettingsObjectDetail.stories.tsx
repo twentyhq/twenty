@@ -8,7 +8,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
-import { SettingsObjectDetailPage } from '../SettingsObjectDetailPage';
+import { SettingsObjectDetailPage } from '@/pages/settings/data-model/SettingsObjectDetailPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectDetail',

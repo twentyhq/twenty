@@ -12,8 +12,8 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
-import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput } from '../RatingFieldInput';
+import { useRatingField } from '@/modules/object-record/record-field/ui/meta-types/hooks/useRatingField';
+import { RatingFieldInput } from '@/modules/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();

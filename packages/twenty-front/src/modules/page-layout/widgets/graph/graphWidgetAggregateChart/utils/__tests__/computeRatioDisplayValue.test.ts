@@ -1,4 +1,4 @@
-import { computeRatioDisplayValue } from '../computeRatioDisplayValue';
+import { computeRatioDisplayValue } from '@/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/computeRatioDisplayValue';
 
 describe('computeRatioDisplayValue', () => {
   it('should return "0%" when denominator is 0', () => {
