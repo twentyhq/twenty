@@ -129,13 +129,13 @@ msgstr "{0, plural, one {{1} loc de muncă nu a putut fi reluat} few {{2} locuri
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} zi} few {{days} zile} other {{days} zile}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} an} few {{years} ani} other {{years} ani}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -11157,8 +11157,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv întregul tău cont."
 
@@ -12210,11 +12209,9 @@ msgstr "Vă vom trimite un link pentru a verifica deținerea domeniului"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
-"Așteptăm o confirmare de la furnizorul nostru de plăți (Stripe).\n"
+msgstr "Așteptăm o confirmare de la furnizorul nostru de plăți (Stripe).\n"
 "Vă rugăm să încercați din nou peste câteva secunde."
 
 #. js-lingui-id: LnnVIT

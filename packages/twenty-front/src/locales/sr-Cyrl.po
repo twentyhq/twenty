@@ -11157,8 +11157,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш цео налог."
 
@@ -12210,11 +12209,9 @@ msgstr "Послаћемо вам линк за проверу власништ�
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
-"Чекамо потврду од нашег провајдера плаћања (Stripe).\n"
+msgstr "Чекамо потврду од нашег провајдера плаћања (Stripe).\n"
 "Покушајте поново за неколико секунди, извините."
 
 #. js-lingui-id: LnnVIT

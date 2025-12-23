@@ -129,13 +129,13 @@ msgstr "{0, plural, one {{1} trabajo no pudo ser reintento} other {{2} trabajos 
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr ""
+msgstr "{0, plural, one {{days} día} other {{days} días}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr ""
+msgstr "{0, plural, one {{years} año} other {{years} años}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -11157,11 +11157,9 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr ""
-"Esta acción no se puede deshacer. Esto eliminará permanentemente su\n"
+msgstr "Esta acción no se puede deshacer. Esto eliminará permanentemente su\n"
 "            cuenta completa."
 
 #. js-lingui-id: bNY3MH
@@ -12212,11 +12210,9 @@ msgstr "Te enviaremos un enlace para verificar la propiedad del dominio"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
-"Estamos esperando una confirmación de nuestro proveedor de pagos (Stripe).\n"
+msgstr "Estamos esperando una confirmación de nuestro proveedor de pagos (Stripe).\n"
 "Por favor, inténtalo de nuevo en unos segundos, disculpa."
 
 #. js-lingui-id: LnnVIT

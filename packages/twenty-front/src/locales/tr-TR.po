@@ -11157,8 +11157,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Bu işlem geri alınamaz. Bu, tüm hesabınızı kalıcı olarak silecek."
 
@@ -12210,11 +12209,9 @@ msgstr "Alan sahipliğini doğrulamak için bağlantı göndereceğiz"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
-"Ödeme sağlayıcımızdan (Stripe) onay bekliyoruz.\n"
+msgstr "Ödeme sağlayıcımızdan (Stripe) onay bekliyoruz.\n"
 "Lütfen birkaç saniye sonra tekrar deneyin, özür dileriz."
 
 #. js-lingui-id: LnnVIT

@@ -11157,8 +11157,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Aquesta acció no es pot desfer. Això esborrarà permanentment el teu compte."
 
@@ -12210,11 +12209,9 @@ msgstr "Et enviarem un enllaç per verificar la propietat del domini"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid ""
-"We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr ""
-"Estem esperant una confirmació del nostre proveïdor de pagaments (Stripe).\n"
+msgstr "Estem esperant una confirmació del nostre proveïdor de pagaments (Stripe).\n"
 "Torna-ho a provar d'aquí a uns segons, si us plau. Disculpa."
 
 #. js-lingui-id: LnnVIT
