@@ -1,0 +1,36 @@
+---
+title: تبديل
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="رأس الصفحة" />
+</Frame>
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
+
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص     | النوع       | الوصف                                                                       | الإعداد الافتراضي |
+    | ----------- | ----------- | --------------------------------------------------------------------------- | ----------------- |
+    | القيمة      | قيمة منطقية | The current state of the toggle                                             | `خاطئ`            |
+    | عند التغيير | دالة        | Callback function triggered when the toggle state changes                   |                   |
+    | اللون       | string      | لون التبديل عند كونه                                                        | لون أزرق          |
+    | حجم التبديل | نص          | حجم التبديل الذي يؤثر على كل من الطول والوزن. لديها خياران: `صغير` و`متوسط` | متوسط             |
+  </Tab>
+</Tabs>

@@ -1,0 +1,122 @@
+---
+title: Felder
+description: Verstehen Sie die Rolle von Feldern und wie Sie sie verwalten.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Über Felder
+
+Felder sind wie Spalten in einer Tabelle. Sie speichern verschiedene Datentypen wie Text, Zahlen oder Daten. Felder können standardmäßig (eingebaut) oder benutzerdefiniert (selbst erstellt) sein.
+
+### Standardfelder
+
+Standardfelder sind in Twenty integriert, um gängige geschäftliche Anforderungen abzudecken.
+
+Zum Beispiel sind `Vorname` und `Nachname` Standardfelder im `Personen` Objekt. Sie speichern Textdaten für individuelle Namen.
+
+Sie können Standardfelder nicht löschen, aber deaktivieren, wenn Sie sie nicht benötigen.
+
+Sie können auch die Optionen der standardmäßigen Felder vom Typ `SELECT` anpassen, zum Beispiel die Optionen für die `Stage` bei Deals.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Benutzerdefinierte Felder
+
+Benutzerdefinierte Felder können zu jedem Objekt hinzugefügt werden. Sie können Text, Zahlen, Daten, Dropdown-Auswahlen und mehr speichern. Verwenden Sie benutzerdefinierte Felder, um Informationen zu verfolgen, die für Ihr Unternehmen spezifisch sind.
+
+Ein benutzerdefiniertes Feld für SpaceX könnte zum Beispiel `Rakete Aktivstatus` sein, das anzeigt, ob eine Rakete in Betrieb ist.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Feldtypen
+
+Twenty unterstützt verschiedene Feldtypen:
+
+| Typ               | Beschreibung                                                            | Beispiel                     |
+| ----------------- | ----------------------------------------------------------------------- | ---------------------------- |
+| Adresse           | Strukturierte Adresse mit Straße, Stadt, Bundesland, Land, Postleitzahl | Büroadresse                  |
+| Array             | Liste von Textwerten                                                    | Tags                         |
+| Boolesch          | Ankreuzfeld für Wahr/Falsch                                             | Aktiv                        |
+| Währung           | Geldbetrag mit Währungscode                                             | Deal-Betrag (USD)            |
+| Datum             | Datumswerte                                                             | Abschlussdatum               |
+| Datum und Uhrzeit | Datum mit Uhrzeit                                                       | Besprechungszeit             |
+| Domäne            | Website-Domain (für Unternehmen verwendet)                              | acme.com                     |
+| E-Mail            | E-Mail-Adressen (mit primärer und zusätzlichen)                         | E-Mail des Kontakts          |
+| JSON              | Strukturierte JSON-Daten                                                | Benutzerdefinierte Metadaten |
+| Links             | URLs mit Bezeichnungen (primär + sekundär)                              | Website, LinkedIn            |
+| Langer Text       | Mehrzeiliger Text                                                       | Beschreibung, Notizen        |
+| Mehrfachauswahl   | Mehrere Optionen aus einer vordefinierten Liste                         | Tags, Kategorien             |
+| Nummer            | Numerische Werte (Ganzzahlen oder Dezimalzahlen)                        | Menge, Punktzahl             |
+| Telefon           | Telefonnummern mit Ländervorwahl                                        | Geschäftstelefon             |
+| Bewertung         | Sternebewertung (1–5)                                                   | Priorität, Punktzahl         |
+| Beziehung         | Verknüpfungen zu Datensätzen in anderen Objekten                        | Unternehmen → Personen       |
+| Auswahl           | Einzelauswahl aus einer vordefinierten Liste                            | Phase, Status                |
+| Text              | Einzeiliger Text                                                        | Name, Titel                  |
+
+## Ein benutzerdefiniertes Feld erstellen
+
+Um ein benutzerdefiniertes Feld zu einem Objekt hinzuzufügen, folgen Sie diesen Schritten:
+
+1. Gehen Sie zu `Einstellungen` in der linken Seitenleiste.
+2. Gehen Sie zu `Datenmodell`, und wählen Sie das Objekt, das Sie anpassen möchten.
+3. Fahren Sie fort, indem Sie auf `Feld hinzufügen` klicken.
+4. Wählen Sie einen Feldnamen und -typ, der Ihren Anforderungen entspricht. Erwägen Sie, eine Feldbeschreibung hinzuzufügen, um ein besseres Verständnis zu erzielen.
+
+Ihr neu erstelltes Feld ist jetzt in den Feldern der Applikation verfügbar. Um es in einer bestimmten Ansicht anzuzeigen, klicken Sie auf das Optionsmenü und wählen Sie dann `Felder`.
+
+<VimeoEmbed videoId="927628219" title="Video-Demonstration" />
+
+**Schnellweg:** Klicken Sie auf den **+**-Button oben rechts in einer Objekttabelle und wählen Sie dann `Felder anpassen`. Dies führt Sie direkt zu den Einstellungen des Datenmodells.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Ein Feld deaktivieren
+
+Sie können ein Feld deaktivieren, um es in der App zu verbergen, ohne Ihre Daten zu verlieren. Denken Sie an ein Verstecken des Feldes, anstatt es zu löschen.
+
+So können Sie es tun:
+
+1. Suchen Sie das Feld, das Sie in Ihren Objekteinstellungen deaktivieren möchten.
+
+2. Klicken Sie auf die drei Punkte `⋮` neben dem Feld, um das Menü zu öffnen.
+
+3. Wählen Sie `Deaktivieren` im Dropdown-Menü aus.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+Was passiert, wenn Sie ein Feld deaktivieren?
+
+1. **In der App:** Das Feld verschwindet und Sie können ihm keine neuen Werte hinzufügen.
+
+2. **Bestehende Beziehungen:** Wenn es ein Relationsfeld ist, bleiben bestehende Verbindungen bestehen, aber Sie können keine neuen anlegen.
+
+3. **API-Zugriff:** Sie können weiterhin über die API auf das Feld und seine Daten zugreifen.
+
+Sie können Standard- und benutzerdefinierte Felder reaktivieren oder sie dauerhaft löschen.
+
+## Felder einzigartig machen
+
+Machen Sie ein Feld einzigartig, um sicherzustellen, dass sich keine verschiedenen Datensätze mit demselben Wert befinden. sind E-Mail-Adressen für jede Person einzigartig.
+
+Wenn beim Einstellen der Einzigartigkeit ein Fehler auftritt, überprüfen Sie auf doppelte Werte in Ihren Daten (einschließlich gelöschter Datensätze).
+
+## Beste Praktiken zur Feldkonfiguration
+
+### Benennungskonventionen und Einschränkungen
+
+* **Singular und Pluralnamen müssen unterschiedlich sein**: Unser GraphQL API benötigt unterschiedliche Namen für Mutationen
+* **Geschützte Feldnamen**: Einige Namen sind für die Systemnutzung reserviert (z. B. `Type`, `Application`)
+
+### Währungs- und Telefonfelder
+
+* **Standardwährung**: kann über das Datenmodell konfiguriert werden
+* **Standardlandesvorwahlen**: können für Telefonfelder über das Datenmodell konfiguriert werden
+
+### Auswahlfelder
+
+* **Eine Standardoption kann ausgewählt werden** für jedes Auswahlfeld
+
+### Feld für Aufzeichnungstext
+
+* **Jedes Objekt hat ein Hauptanzeigefeld**: Dieses Feld erscheint in der ganz linken Spalte und stellt den Datensatz dar, wenn er mit anderen Objekten verknüpft ist. Es muss ein Textfeld sein. Zum Beispiel verwendet `Personen` `Name` als Hauptfeld, so dass Sie, wenn Sie eine Person mit einem Unternehmen verknüpfen, deren Namen in der Unternehmensansicht sehen.

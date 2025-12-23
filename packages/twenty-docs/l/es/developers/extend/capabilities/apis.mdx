@@ -1,0 +1,147 @@
+---
+title: APIs
+description: Query and modify your CRM data programmatically using REST or GraphQL.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty fue creado para ser amigable con los desarrolladores, ofreciendo APIs potentes que se adaptan a tu modelo de datos personalizado. Proveemos cuatro tipos de API distintos para satisfacer diferentes necesidades de integración.
+
+## Enfoque centrado en el desarrollador
+
+Twenty generates APIs specifically for your data model:
+
+* **No se requieren IDs largos**: Usa los nombres de tus objetos y campos directamente en los endpoints.
+* **Objetos estándar y personalizados tratados por igual**: Tus objetos personalizados reciben el mismo tratamiento de API que los incorporados.
+* **Endpoints dedicados**: Cada objeto y campo recibe su propio endpoint de API.
+* **Documentación personalizada**: Generada específicamente para el modelo de datos de tu espacio de trabajo.
+
+<Note>
+  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+</Note>
+
+## The Two API Types
+
+### API Principal
+
+Accesible en `/rest/` o `/graphql/`
+
+Work with your actual **records** (the data):
+
+* Create, read, update, delete People, Companies, Opportunities, etc.
+* Query and filter data
+* Gestionar relaciones de registros
+
+### API de Metadatos
+
+Accesible en `/rest/metadata/` o `/metadata/`
+
+Manage your **workspace and data model**:
+
+* Crear, modificar o eliminar objetos y campos
+* Configurar ajustes del espacio de trabajo
+* Define relationships between objects
+
+## REST vs GraphQL
+
+Both Core and Metadata APIs are available in REST and GraphQL formats:
+
+| Formato     | Available Operations                                       |
+| ----------- | ---------------------------------------------------------- |
+| **REST**    | CRUD, batch operations, upserts                            |
+| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+
+Choose based on your needs — both formats access the same data.
+
+## Puntos de Acceso de API
+
+| Environment     | Base URL                  |
+| --------------- | ------------------------- |
+| **Cloud**       | `https://api.twenty.com/` |
+| **Self-Hosted** | `https://{your-domain}/`  |
+
+## Autenticación
+
+Every API request requires an API key in the header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Crear una Clave de API
+
+1. Ve a **Configuración → APIs y Webhooks**
+2. Click **+ Create key**
+3. Configurar:
+   * **Name**: Descriptive name for the key
+   * **Expiration Date**: When the key expires
+4. Haga clic en **Guardar**
+5. **Copy immediately** — the key is only shown once
+
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+<Warning>
+  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+</Warning>
+
+### Assign a Role to an API Key
+
+For better security, assign a specific role to limit access:
+
+1. Go to **Settings → Roles**
+2. Click on the role to assign
+3. Abre la pestaña **Asignación**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key
+
+The key will inherit that role's permissions. See [Permissions](/l/es/user-guide/permissions-access/capabilities/permissions) for details.
+
+### Gestionar Claves de API
+
+**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+
+**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+
+## API Playground
+
+Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+
+### Access the Playground
+
+1. Ve a **Configuración → APIs y Webhooks**
+2. Create an API key (required)
+3. Click on **REST API** or **GraphQL API** to open the playground
+
+### What You Get
+
+* **Interactive documentation**: Generated for your specific data model
+* **Live testing**: Execute real API calls against your workspace
+* **Schema explorer**: Browse available objects, fields, and relationships
+* **Request builder**: Construct queries with autocomplete
+
+The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+
+## Operaciones por Lotes
+
+Both REST and GraphQL support batch operations:
+
+* **Tamaño del lote**: Hasta 60 registros por solicitud
+* **Operations**: Create, update, delete multiple records
+
+**GraphQL-only features:**
+
+* **Batch Upsert**: Create or update in one call
+* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+
+## Rate Limits
+
+API requests are throttled to ensure platform stability:
+
+| Límite         | Valor                |
+| -------------- | -------------------- |
+| **Requests**   | 100 calls per minute |
+| **Batch size** | 60 records per call  |
+
+<Tip>
+  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+</Tip>

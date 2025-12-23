@@ -1,10 +1,11 @@
 #
 # Crowdin CLI configuration for Documentation translations
-# Project ID: 2
 # See https://crowdin.github.io/crowdin-cli/configuration for more information
 #
 
+"project_id": 2
 "preserve_hierarchy": true
+"base_url": "https://twenty.api.crowdin.com"
 
 files: [
   {

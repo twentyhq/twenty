@@ -1,0 +1,34 @@
+---
+title: Intrare imagine
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Antet" />
+</Frame>
+
+Permite utilizatorilor să încarce și să elimine o imagine.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                                                                        |
+    | ----------- | ------- | ------------------------------------------------------------------------------------------------ |
+    | imagine     | șir     | URL-ul sursei imaginii                                                                           |
+    | onUpload    | funcție | Funcția apelată când un utilizator încarcă o imagine nouă. Primește obiectul `File` ca parametru |
+    | onRemove    | funcție | Funcția apelată când utilizatorul face clic pe butonul de eliminare                              |
+    | onAbort     | funcție | The function called when a user clicks on the abort button during image upload                   |
+    | isUploading | boolean | Indicates whether an image is currently being uploaded                                           |
+    | mesajEroare | şir     | Un mesaj de eroare opțional care să fie afișat sub intrarea imaginii                             |
+    | dezactivat  | boolean | Dacă este „adevărat”, întreaga intrare este dezactivată, iar butoanele nu sunt clicabile         |
+  </Tab>
+</Tabs>

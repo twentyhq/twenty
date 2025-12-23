@@ -1,0 +1,36 @@
+---
+title: Comutare
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Antet" />
+</Frame>
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { Toggle } from "twenty-ui/input";
+
+    export const MyComponent = () => {
+      return (
+        <Toggle
+        value = {true}
+        onChange = {()=>console.log('On Change event')}
+        color="green"
+        toggleSize = "medium"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                                                                               | Implicit         |
+    | ----------- | ------- | ------------------------------------------------------------------------------------------------------- | ---------------- |
+    | valoare     | boolean | Starea actuală a comutatorului                                                                          | `fals`           |
+    | onChange    | funcție | Callback function triggered when the toggle state changes                                               |                  |
+    | culoare     | șir     | Culoarea comutatorului când este \                                                                      | culoare albastră |
+    | toggleSize  | șir     | Dimensiunea comutatorului, afectând atât înălțimea cât și greutatea. Are două opțiuni: `mic` și `mediu` | mediu            |
+  </Tab>
+</Tabs>

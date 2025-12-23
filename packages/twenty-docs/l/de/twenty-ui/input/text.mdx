@@ -1,0 +1,137 @@
+---
+title: Text
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Kopfzeile" />
+</Frame>
+
+## Texteingabe
+
+Ermöglicht es den Benutzern, Text einzugeben und zu bearbeiten.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
+
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
+
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
+
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften  | Typ             | Beschreibung                                                                                                                                        |
+    | -------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className      | Zeichenkette    | Optionaler Name für zusätzliche Stile                                                                                                               |
+    | Beschriftung   | Zeichenkette    | Stellt die Beschriftung für das Eingabefeld dar                                                                                                     |
+    | onChange       | function        | Die Funktion, die aufgerufen wird, wenn sich der Eingabewert ändert                                                                                 |
+    | volle Breite   | boolesch        | Gibt an, ob die Eingabe 100 % der Breite einnehmen soll                                                                                             |
+    | disableHotkeys | boolesch        | Gibt an, ob Hotkeys für die Eingabe aktiviert sind                                                                                                  |
+    | fehler         | Zeichenkette    | Stellt die Fehlermeldung dar, die angezeigt werden soll. Wenn vorhanden, wird auch ein Fehler-Icon auf der rechten Seite des Eingabefelds angezeigt |
+    | onKeyDown      | Funktion        | Wird aufgerufen, wenn eine Taste gedrückt gehalten wird, während das Eingabefeld fokussiert ist. Erhält ein `React.KeyboardEvent` als Argument      |
+    | RightIcon      | Icon-Komponente | Eine optionale Ikonenkomponente, die auf der rechten Seite des Eingabefelds angezeigt wird                                                          |
+
+    Die Komponente akzeptiert auch andere HTML-Eingabeelement-Eigenschaften.
+  </Tab>
+</Tabs>
+
+## Autosize Text Input
+
+Textkomponente, die ihre Höhe automatisch anhand des Inhalts anpasst.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                             |
+    | ------------- | ------------ | ---------------------------------------------------------------------------------------- |
+    | onValidate    | Funktion     | Die Callback-Funktion, die Sie auslösen möchten, wenn der Benutzer die Eingabe validiert |
+    | minRows       | nummer       | Die minimale Anzahl von Zeilen für den Textbereich                                       |
+    | Platzhalter   | Zeichenkette | Der Platzhaltertext, den Sie anzeigen möchten, wenn der Textbereich leer ist             |
+    | onFocus       | Funktion     | Die Callback-Funktion, die Sie auslösen möchten, wenn der Textbereich den Fokus erlangt  |
+    | Variante      | Zeichenkette | Die Variante der Eingabe. Optionen umfassen: `Standard`, `Ikone` und `Schaltfläche`      |
+    | buttonTitle   | Zeichenkette | Der Titel für die Schaltfläche (nur für die Schaltflächenvariante anwendbar)             |
+    | wert          | Zeichenkette | Der Initialwert für den Textbereich                                                      |
+  </Tab>
+</Tabs>
+
+## Textbereich
+
+Ermöglicht es Ihnen, mehrzeilige Texteingaben zu erstellen.
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
+
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                 |
+    | ------------- | ------------ | ---------------------------------------------------------------------------- |
+    | deaktiviert   | boolesch     | Gibt an, ob der Textbereich deaktiviert ist                                  |
+    | minRows       | nummer       | Minimale Anzahl sichtbarer Zeilen für den Textbereich.                       |
+    | onChange      | Funktion     | Rückruffunktion wird ausgelöst, wenn sich der Inhalt des Textbereichs ändert |
+    | Platzhalter   | Zeichenkette | Platzhaltertext, der angezeigt wird, wenn der Textbereich leer ist           |
+    | wert          | Zeichenkette | Der aktuelle Wert des Textbereichs                                           |
+  </Tab>
+</Tabs>

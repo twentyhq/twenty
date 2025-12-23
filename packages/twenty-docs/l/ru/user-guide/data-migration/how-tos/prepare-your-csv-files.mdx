@@ -1,0 +1,270 @@
+---
+title: Подготовьте файлы CSV},{
+description: Полное пошаговое руководство по форматированию ваших данных для импорта в Twenty.
+---
+
+## Обзор
+
+Это руководство проведет вас через подготовку файла CSV для успешного импорта. Следуйте этим шагам, чтобы избежать ошибок.
+
+## Шаг 1: Проверьте требования к файлу
+
+Прежде чем начать, убедитесь, что ваш файл соответствует этим требованиям:
+
+| Требование              | Подробности              |
+| ----------------------- | ------------------------ |
+| **Формат**              | CSV, XLSX или XLS        |
+| **Ограничение размера** | 10 000 записей на файл   |
+| **Кодировка**           | Рекомендуется UTF-8      |
+| **Структура**           | Один тип объекта на файл |
+
+<Note>Для наборов данных более 10 000 записей разделите их на несколько файлов или используйте [импорт через API](/l/ru/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Шаг 2: Скачайте образец файла
+
+**Это самый важный шаг.** Образец файла показывает точные названия столбцов и формат, который ожидает Twenty.
+
+1. Перейдите к объекту (Люди, Компании и т. д.)
+2. Нажмите **⋮** → **Импортировать записи**
+3. Нажмите **Скачать образец файла**
+4. Используйте этот файл как шаблон
+
+<Note>**Профессиональный совет:** Экспортируйте несколько существующих записей. Это даст вам реальные примеры того, как должны быть отформатированы данные, а названия столбцов будут сопоставлены автоматически во время импорта.</Note>
+
+## Шаг 3: Удалите повторяющиеся значения
+
+Twenty требует уникальности для некоторых полей. Дубликаты вызовут ошибки импорта.
+
+| Объект                       | Уникальные поля                                              |
+| ---------------------------- | ------------------------------------------------------------ |
+| **Люди**                     | `id`, `email`                                                |
+| **Компании**                 | `id`, `domain`                                               |
+| **Пользовательские объекты** | `id`, а также любое поле, которое вы пометили как уникальное |
+
+**Перед импортом:**
+
+1. Отсортируйте таблицу по уникальному полю (email или домен)
+2. Удалите или объедините дублирующиеся строки
+3. Проверьте наличие дубликатов, которые уже существуют в Twenty
+
+<Warning>**Записи, помеченные как удалённые, учитываются при проверке уникальности.** Записи в Командном меню → Просмотреть удалённые записи вызовут ошибки из‑за дубликатов. Удалите их окончательно или восстановите и обновите.</Warning>
+
+## Шаг 4: Правильно отформатируйте каждый тип поля
+
+Разные типы полей требуют специфического формата. Полная справка:
+
+### Текстовые поля
+
+* Специальное форматирование не требуется
+* Начальные и конечные пробелы автоматически удаляются
+
+### Поля электронной почты
+
+* Должны быть в корректном формате email: `name@domain.com`
+* Должны быть уникальными (без дубликатов в файле и в Twenty)
+* Для дополнительных адресов используйте этот формат в столбце **Emails / Additional Emails**:
+
+```
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+```
+
+### Поля домена
+
+* **Рекомендуемый формат**: `https://domain.com`
+* Это соответствует формату, используемому синхронизацией почты/календаря (предотвращает дубликаты)
+* Заполните оба столбца:
+  * **Domain / Domain Label**: `domain.com`
+  * **Domain / Domain URL**: `https://domain.com`
+* Должны быть уникальными в вашем файле и в Twenty
+
+### Поля телефона
+
+Телефон — это **вложенное поле**, требующее нескольких столбцов:
+
+| Столбец                                 | Пример       |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Address Fields
+
+Address is a **nested field** with multiple columns (some can be left empty):
+
+* **Address / Address 1**: Street address line 1
+* **Address / Address 2**: Street address line 2 (optional)
+* **Address / City**: City name
+* **Address / State**: State or province
+* **Address / Country**: Country name
+* **Address / Post Code**: Postal/ZIP code
+
+### Date Fields
+
+Use consistent formatting throughout your file:
+
+* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Number Fields
+
+* Numbers only (no text)
+* Use period for decimals: `1234.56`
+* No thousands separators (not `1,234.56`)
+
+### Currency Fields
+
+Currency is a **nested field** requiring two columns that **both must be filled**:
+
+| Column                | Пример    |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+### Boolean Fields
+
+Use uppercase: `TRUE` or `FALSE`
+
+<Warning>Lowercase `true` or `false` will not work.</Warning>
+
+### Выбор полей
+
+Use the **API name** of the option, not the display label.
+
+**How to find API names:**
+
+1. Go to **Settings → Data Model**
+2. Select the object and field
+3. Enable **Advanced mode** (toggle at bottom right)
+4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+
+<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+
+### Multi-Select Fields
+
+Use API names in array format:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Array Fields
+
+Use JSON array format:
+
+```
+["value1","value2"]
+```
+
+### Rating Fields
+
+Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+
+### Links/URL Fields
+
+Fill both columns:
+
+* **Links / Link Label**: `Twenty`
+* **Links / Link URL**: `https://twenty.com`
+
+For secondary links, use the **Links / Secondary Links** column:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### JSON Fields
+
+Use valid JSON format:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### ID Fields
+
+* **Optional**: Twenty auto-generates IDs if not provided
+* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Use case**: Include ID to update existing records instead of creating new ones
+
+## Step 5: Add Relation Columns (If Linking Records)
+
+To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+
+**Example**: Linking People to Companies
+
+Add a column to your People CSV:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Important rules for relations:**
+
+* The parent record must already exist in Twenty
+* Use the **Domain URL** format (`https://domain.com`), not the label
+* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
+* For Workspace Members, use their **email** (not name)
+
+<Warning>
+  **Import Order Matters!**
+
+  Import the "one" side before the "many" side:
+
+  1. **Companies** first
+  2. **People** second (with company reference)
+  3. **Opportunities** third
+
+  The parent record must exist before you can reference it.
+</Warning>
+
+See [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+
+## Step 6: Ensure Fields Exist in Twenty
+
+The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+
+**Before importing:**
+
+1. Go to **Settings → Data Model**
+2. Select your object
+3. Create any custom fields you need
+4. Note the exact field names (they must match your column headers)
+
+## Step 7: Final Checklist
+
+Before uploading your file, verify:
+
+<Check>File is CSV, XLSX, or XLS format</Check>
+<Check>File has fewer than 10,000 records</Check>
+<Check>Encoding is UTF-8</Check>
+<Check>No duplicate emails (for People) or domains (for Companies)</Check>
+<Check>Dates use consistent format throughout</Check>
+<Check>Domains use `https://domain.com` format</Check>
+<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
+<Check>Select fields use API names, not display labels</Check>
+<Check>All custom fields exist in Settings → Data Model</Check>
+<Check>Parent records imported before child records</Check>
+<Check>Relation columns reference existing records</Check>
+
+## Common Mistakes to Avoid
+
+| Mistake                                      | Solution                              |
+| -------------------------------------------- | ------------------------------------- |
+| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
+| Using display labels for Select fields       | Find and use API names in Settings    |
+| Importing People before Companies            | Always import parent objects first    |
+| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
+| Wrong domain format                          | Use `https://domain.com` consistently |
+| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+
+## Следующие шаги
+
+Your file is ready! Now:
+
+* [Import Companies](/l/ru/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
+* [Import Contacts](/l/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Fix any import errors](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
