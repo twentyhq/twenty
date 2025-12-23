@@ -85,7 +85,7 @@ jobs:
           push_sources: false
           skip_untranslated_strings: false
           skip_untranslated_files: false
-          push_translations: true
+          push_translations: false
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
@@ -108,8 +108,6 @@ jobs:
           npx nx run twenty-emails:lingui:compile
           npx nx run twenty-front:lingui:compile
           git status
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@twenty.com'
           git add .
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile translations"

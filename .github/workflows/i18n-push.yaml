@@ -88,10 +88,7 @@ jobs:
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
         env:
-          # A numeric ID, found at https://crowdin.com/project/<projectName>/tools/api
-          CROWDIN_PROJECT_ID: 1
-
-          # Visit https://crowdin.com/settings#api-key to create this token
+          CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
       - name: Create a pull request
         if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'

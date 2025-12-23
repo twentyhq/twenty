@@ -7,10 +7,11 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: ['main', 'docs-localized-navigation']
+    branches: ['main']
     paths:
       - 'packages/twenty-docs/**/*.mdx'
-      - '!packages/twenty-docs/fr/**'
+      - '!packages/twenty-docs/l/**'
+      - 'packages/twenty-docs/navigation/navigation.template.json'
       - 'crowdin.yml'
 
 concurrency:
@@ -28,28 +29,8 @@ jobs:
           token: ${{ github.token }}
           ref: ${{ github.ref }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Generate navigation template for Crowdin
-        run: yarn docs:generate-navigation-template
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        uses: ./.github/workflows/actions/yarn-install
 
       - name: Generate navigation template for Crowdin
         run: yarn docs:generate-navigation-template
@@ -60,9 +41,9 @@ jobs:
           upload_sources: true
           upload_translations: false
           download_translations: false
-          localization_branch_name: i18n
+          localization_branch_name: i18n-docs
           base_url: 'https://twenty.api.crowdin.com'
         env:
-          CROWDIN_PROJECT_ID: 1
+          CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
