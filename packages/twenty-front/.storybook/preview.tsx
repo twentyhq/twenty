@@ -4,13 +4,14 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 //import { useDarkMode } from 'storybook-dark-mode';
 
+// eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
-
+// eslint-disable-next-line no-restricted-imports
+import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
-import { mockedUserJWT } from '../src/testing/mock-data/jwt';
-
+// eslint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 initialize({
