@@ -4,10 +4,10 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 //import { useDarkMode } from 'storybook-dark-mode';
 
-import { RootDecorator } from '@/testing/decorators/RootDecorator';
-import { mockedUserJWT } from '@/testing/mock-data/jwt';
+import { RootDecorator } from '../src/testing/decorators/RootDecorator';
+import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ClickOutsideListenerContext } from '../src/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';

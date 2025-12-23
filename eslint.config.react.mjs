@@ -693,6 +693,33 @@ export default [
     },
   },
 
+  // .storybook files - allow relative imports since @/ alias doesn't work outside src/
+  {
+    files: ['**/.storybook/**/*'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@tabler/icons-react'],
+              message: 'Please import icons from `twenty-ui`',
+            },
+            {
+              group: ['react-hotkeys-web-hook'],
+              importNames: ['useHotkeys'],
+              message: 'Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`',
+            },
+            {
+              group: ['lodash'],
+              message: "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // JavaScript specific configuration
   {
     files: ['*.{js,jsx}'],
