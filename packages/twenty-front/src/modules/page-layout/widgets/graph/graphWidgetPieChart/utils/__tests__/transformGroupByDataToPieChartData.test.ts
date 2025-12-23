@@ -1,6 +1,7 @@
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -20,6 +21,7 @@ const { formatPrimaryDimensionValues } = jest.requireMock(
 ) as { formatPrimaryDimensionValues: jest.Mock };
 
 describe('transformGroupByDataToPieChartData', () => {
+  const userTimezone = 'Europe/Paris';
   it('keeps null group buckets aligned with their aggregate values', () => {
     const groupByField = {
       id: 'group-by-field',
@@ -76,6 +78,8 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result.data).toEqual([
@@ -143,6 +147,8 @@ describe('transformGroupByDataToPieChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result.showLegend).toBe(false);

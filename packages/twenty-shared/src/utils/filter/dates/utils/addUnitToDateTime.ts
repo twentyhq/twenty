@@ -9,6 +9,7 @@ import {
   addYears,
 } from 'date-fns';
 
+/** @deprecated Use addUnitToZonedDateTime */
 export const addUnitToDateTime = (
   dateTime: Date,
   amount: number,
