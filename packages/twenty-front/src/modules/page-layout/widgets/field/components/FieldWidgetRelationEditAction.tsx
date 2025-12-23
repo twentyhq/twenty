@@ -17,6 +17,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
@@ -51,6 +52,8 @@ export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
+  const widget = useCurrentWidget();
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (item) =>
@@ -89,6 +92,7 @@ export const FieldWidgetRelationEditAction = ({
     getRecordFieldCardRelationPickerDropdownId({
       fieldDefinition,
       recordId,
+      instanceId: widget.id,
     });
 
   const isRelationSelectionDropdownOpen = useRecoilComponentValue(
@@ -110,6 +114,7 @@ export const FieldWidgetRelationEditAction = ({
         {isMorphRelation ? (
           <RecordDetailMorphRelationSectionDropdown
             loading={false}
+            instanceId={widget.id}
             dropdownTriggerClickableComponent={
               dropdownTriggerClickableComponent
             }
@@ -117,6 +122,7 @@ export const FieldWidgetRelationEditAction = ({
         ) : (
           <RecordDetailRelationSectionDropdown
             loading={false}
+            instanceId={widget.id}
             dropdownTriggerClickableComponent={
               dropdownTriggerClickableComponent
             }

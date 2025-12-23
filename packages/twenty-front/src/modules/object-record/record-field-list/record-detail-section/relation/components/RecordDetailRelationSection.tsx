@@ -39,10 +39,12 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
+  instanceId: string;
 };
 
 export const RecordDetailRelationSection = ({
   loading,
+  instanceId,
 }: RecordDetailRelationSectionProps) => {
   const { t } = useLingui();
 
@@ -95,6 +97,7 @@ export const RecordDetailRelationSection = ({
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId,
   });
 
   const isDropdownOpen = useRecoilComponentValue(
@@ -201,7 +204,10 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          <RecordDetailRelationSectionDropdown loading={loading} />
+          <RecordDetailRelationSectionDropdown
+            loading={loading}
+            instanceId={instanceId}
+          />
         }
       >
         {relationRecords.length > 0 && (
