@@ -69,33 +69,103 @@ jobs:
 
       # Pull docs translations from Crowdin one language at a time
       # This avoids build timeout issues when processing all languages at once
+      # If a language fails, retries with --export-only-approved=true to get approved translations
       - name: Pull translated docs from Crowdin
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
           LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
 
+          echo "========================================"
+          echo "Crowdin Docs Translation Download"
+          echo "========================================"
+          echo "Config: crowdin-docs.yml"
+          echo "Total: 13 languages"
+          echo "========================================"
+
+          SUCCEEDED=0
+          SUCCEEDED_APPROVED_ONLY=0
+          FAILED=0
+          FAILED_LANGS=""
+
           for lang in $LANGUAGES; do
-            echo "=== Pulling translations for $lang ==="
-            crowdin download \
+            echo "=== Downloading: $lang ==="
+            
+            # First try: download all translations
+            if crowdin download \
               --config crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
+              --project-id 2 \
               --base-url "https://twenty.api.crowdin.com" \
               --language "$lang" \
               --skip-untranslated-strings=false \
               --skip-untranslated-files=false \
               --export-only-approved=false \
-              --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
+              --verbose 2>&1; then
+              echo "✅ $lang: Success (all translations)"
+              SUCCEEDED=$((SUCCEEDED + 1))
+            else
+              echo "⚠️ $lang: Full download failed, trying approved-only..."
+              
+              # Fallback: try approved translations only
+              if crowdin download \
+                --config crowdin-docs.yml \
+                --token "$CROWDIN_PERSONAL_TOKEN" \
+                --project-id 2 \
+                --base-url "https://twenty.api.crowdin.com" \
+                --language "$lang" \
+                --skip-untranslated-strings=false \
+                --skip-untranslated-files=false \
+                --export-only-approved=true \
+                --verbose 2>&1; then
+                echo "✅ $lang: Success (approved only - some unapproved translations may have issues)"
+                SUCCEEDED_APPROVED_ONLY=$((SUCCEEDED_APPROVED_ONLY + 1))
+              else
+                echo "❌ $lang: Failed completely (continuing with other languages)"
+                FAILED=$((FAILED + 1))
+                FAILED_LANGS="$FAILED_LANGS $lang"
+              fi
+            fi
             echo ""
           done
 
-          echo "=== Download complete ==="
+          echo "========================================"
+          echo "Download Summary"
+          echo "========================================"
+          echo "✅ Succeeded (all): $SUCCEEDED"
+          echo "✅ Succeeded (approved only): $SUCCEEDED_APPROVED_ONLY"
+          echo "❌ Failed: $FAILED"
+          if [ $FAILED -gt 0 ]; then
+            echo "Failed languages:$FAILED_LANGS"
+          fi
+          if [ $SUCCEEDED_APPROVED_ONLY -gt 0 ]; then
+            echo ""
+            echo "::warning::$SUCCEEDED_APPROVED_ONLY language(s) fell back to approved-only mode due to build issues with unapproved translations"
+          fi
+          echo "========================================"
+
+          # Don't fail workflow if some languages failed but others succeeded
+          TOTAL_SUCCESS=$((SUCCEEDED + SUCCEEDED_APPROVED_ONLY))
+          if [ $TOTAL_SUCCESS -eq 0 ]; then
+            echo "::error::All language downloads failed"
+            exit 1
+          fi
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Fix file permissions
         if: github.event_name != 'pull_request'
         run: sudo chown -R runner:docker . || true
+
+      # Lint translated MDX files to catch issues early
+      - name: Lint translated MDX files
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Linting translated MDX files..."
+          npx eslint "packages/twenty-docs/l/**/*.mdx" --max-warnings 0 2>&1 || {
+            echo "::warning::Some translated MDX files have linting issues. See output above."
+          }
+        continue-on-error: true
 
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
