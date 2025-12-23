@@ -42,6 +42,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   if (isWorkflowStepPage && isDefined(pageChip.page?.pageId)) {
     return (
       <CommandMenuWorkflowStepInfo
+        key={pageChip.page.pageId}
         commandMenuPageInstanceId={pageChip.page.pageId}
       />
     );
