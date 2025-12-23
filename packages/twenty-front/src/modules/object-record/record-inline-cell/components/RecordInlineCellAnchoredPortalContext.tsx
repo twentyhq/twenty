@@ -11,7 +11,7 @@ import { useContext, type ReactNode } from 'react';
 import { useIcons } from 'twenty-ui/display';
 
 type RecordInlineCellAnchoredPortalContextProps = {
-  instanceIdPrefix?: string;
+  instanceIdPrefix: string;
   children: ReactNode;
 };
 

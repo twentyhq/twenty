@@ -212,6 +212,7 @@ export const RecordDetailRelationSection = ({
       >
         {relationRecords.length > 0 && (
           <RecordDetailRelationRecordsList
+            instanceId={instanceId}
             recordsWithObjectNameSingular={relationRecords.map(
               (relationRecord) => ({
                 value: relationRecord,

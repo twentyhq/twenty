@@ -27,15 +27,13 @@ import { useRecoilCallback } from 'recoil';
 
 type FieldWidgetInlineCellProps = {
   loading?: boolean;
-  instanceIdPrefix?: string;
+  instanceIdPrefix: string;
 };
 
 export const FieldWidgetInlineCell = ({
   loading,
   instanceIdPrefix,
 }: FieldWidgetInlineCellProps) => {
-  console.log('in FieldWidgetInlineCell', { instanceIdPrefix });
-
   const {
     fieldDefinition,
     recordId,
@@ -148,11 +146,6 @@ export const FieldWidgetInlineCell = ({
           fieldMetadataId: fieldDefinition.fieldMetadataId,
           componentType: 'inline-cell',
           instanceId: instanceIdPrefix ?? '',
-        });
-
-        console.log('in FieldWidgetInlineCell click outside', {
-          currentDropdownFocusId,
-          expectedDropdownFocusId,
         });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {

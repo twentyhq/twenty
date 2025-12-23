@@ -1,5 +1,5 @@
-import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -24,6 +24,7 @@ type ActivityTargetsInlineCellProps = {
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
   componentInstanceId: string;
+  instanceIdPrefix: string;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -32,6 +33,7 @@ export const ActivityTargetsInlineCell = ({
   maxWidth,
   activityObjectNameSingular,
   componentInstanceId,
+  instanceIdPrefix,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activityRecordId);
@@ -71,6 +73,7 @@ export const ActivityTargetsInlineCell = ({
         >
           <RecordInlineCellContext.Provider
             value={{
+              instanceIdPrefix: instanceIdPrefix,
               buttonIcon: IconPencil,
               IconLabel: showLabel ? IconArrowUpRight : undefined,
               showLabel: showLabel,

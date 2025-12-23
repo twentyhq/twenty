@@ -128,6 +128,7 @@ export const RecordDetailMorphRelationSection = ({
       >
         {relationRecordsCount > 0 && (
           <RecordDetailRelationRecordsList
+            instanceId={instanceId}
             recordsWithObjectNameSingular={recordsWithObjectNameSingular}
           />
         )}

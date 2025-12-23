@@ -133,6 +133,7 @@ export const RecordFieldList = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
+                    instanceIdPrefix={instanceId}
                     componentInstanceId={getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,

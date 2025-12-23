@@ -140,6 +140,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
             >
               <StopPropagationContainer>
                 <ActivityTargetsInlineCell
+                  instanceIdPrefix={componentInstanceId}
                   activityObjectNameSingular={CoreObjectNameSingular.Task}
                   activityRecordId={task.id}
                   showLabel={false}
