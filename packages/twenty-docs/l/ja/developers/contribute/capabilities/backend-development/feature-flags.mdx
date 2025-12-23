@@ -1,0 +1,46 @@
+---
+title: 機能フラグ
+---
+
+機能フラグは試験的な機能を隠すために使用されます。 機能フラグは試験的な機能を隠すために使用されます。 Twentyでは、それらはワークスペースレベルで設定されており、ユーザーレベルではありません。 機能フラグは試験的な機能を隠すために使用されます。 Twentyでは、それらはワークスペースレベルで設定されており、ユーザーレベルではありません。
+
+## 新しい機能フラグの追加
+
+`FeatureFlagKey.ts`に機能フラグを追加します:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+また、`feature-flag.entity.ts`の列挙型にも追加します:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+**バックエンド**機能に機能フラグを適用するには、次を使用します:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+**フロントエンド**機能に機能フラグを適用するには、次を使用します:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## デプロイメント用の機能フラグを設定する
+
+Table `core.featureFlag` 内の対応するレコードを変更します:
+
+| id   | キー                       | workspaceId | 値   |
+| ---- | ------------------------ | ----------- | --- |
+| ランダム | `IS_FEATURENAME_ENABLED` | WorkspaceID | `真` |

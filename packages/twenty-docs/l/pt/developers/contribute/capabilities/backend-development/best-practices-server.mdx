@@ -1,0 +1,22 @@
+---
+title: Melhores Práticas
+---
+
+Este documento descreve as melhores práticas que você deve seguir ao trabalhar no backend.
+
+## Siga uma abordagem modular
+
+O backend segue uma abordagem modular, que é um princípio fundamental ao trabalhar com NestJS. Certifique-se de dividir seu código em módulos reutilizáveis para manter uma base de código limpa e organizada.
+Cada módulo deve encapsular um recurso ou funcionalidade específico e ter um escopo bem definido. Esta abordagem modular permite uma clara separação de preocupações e remove complexidades desnecessárias.
+
+## Expor serviços para uso em módulos
+
+Sempre crie serviços que tenham uma responsabilidade clara e única, o que melhora a legibilidade e a manutenção do código. Nomeie os serviços de forma descritiva e consistente.
+
+Você também deve expor serviços que deseja usar em outros módulos. Expor serviços para outros módulos é possível através do poderoso sistema de injeção de dependências do NestJS e promove o acoplamento frouxo entre os componentes.
+
+## Evite usar o tipo `any`
+
+Quando você declara uma variável como `any`, o verificador de tipos do TypeScript não realiza nenhuma verificação de tipo, tornando possível atribuir qualquer tipo de valores à variável. O TypeScript usa inferência de tipos para determinar o tipo da variável com base no valor. Ao declará-lo como `any`, o TypeScript não pode mais inferir o tipo. Isso torna difícil capturar erros relacionados a tipos durante o desenvolvimento, levando a erros em tempo de execução e tornando o código menos mantenível, menos confiável e mais difícil de entender para os outros.
+
+Por isso, tudo deve ter um tipo. Assim, se você criar um novo objeto com um primeiro nome e um sobrenome, deve criar uma interface ou tipo que contenha um primeiro nome e um sobrenome que defina a forma do objeto que você está manipulando.
