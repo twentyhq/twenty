@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -6,7 +7,6 @@ import {
   GraphType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
@@ -86,6 +86,7 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
           groupBySubFieldName: null,
           dateGranularity: 'MONTH' as any,
         }),
+        userTimeZone: 'Europe/Paris',
       });
 
       expect(result).toMatchSnapshot();
@@ -157,11 +158,15 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
           groupByFieldMetadataId: relationField.id,
           groupBySubFieldName: 'createdAt',
         }),
+        userTimeZone: 'Europe/Paris',
       });
 
       expect(result.groupBy[0]).toEqual({
         company: {
-          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.DAY,
+            timeZone: 'Europe/Paris',
+          },
         },
       });
     });

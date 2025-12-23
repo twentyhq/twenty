@@ -1,14 +1,20 @@
 import { RecordCalendarCardDraggableContainer } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDraggableContainer';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 import { useState } from 'react';
-import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
+import { Temporal } from 'temporal-polyfill';
+import {
+  isDefined,
+  isPlainDateInSameMonth,
+  isPlainDateInWeekend,
+  isSamePlainDate,
+} from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 
 const StyledContainer = styled.div<{
@@ -94,34 +100,40 @@ const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
 `;
 
 type RecordCalendarMonthBodyDayProps = {
-  day: Date;
+  day: Temporal.PlainDate;
 };
 
 export const RecordCalendarMonthBodyDay = ({
   day,
 }: RecordCalendarMonthBodyDayProps) => {
+  const { userTimezone } = useUserTimezone();
+
   const recordCalendarSelectedDate = useRecoilComponentValue(
     recordCalendarSelectedDateComponentState,
   );
 
-  const dayKey = format(day, DATE_TYPE_FORMAT);
+  const dayKey = day.toString();
 
   const recordIds = useRecoilComponentFamilyValue(
     calendarDayRecordIdsComponentFamilySelector,
-    dayKey,
+    {
+      day: day,
+      timeZone: userTimezone,
+    },
   );
+
+  const todayInUserTimeZone =
+    Temporal.Now.zonedDateTimeISO(userTimezone).toPlainDate();
 
   const [hovered, setHovered] = useState(false);
 
-  const isToday = isSameDay(day, new Date());
+  const isToday = isSamePlainDate(day, todayInUserTimeZone);
 
-  const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
+  const isOtherMonth = isDefined(recordCalendarSelectedDate)
+    ? !isPlainDateInSameMonth(day, recordCalendarSelectedDate)
+    : false;
 
-  const isDayOfWeekend = isWeekend(day);
-
-  const utcDate = new Date(
-    Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()),
-  );
+  const isDayOfWeekend = isPlainDateInWeekend(day);
 
   return (
     <StyledContainer
@@ -131,11 +143,9 @@ export const RecordCalendarMonthBodyDay = ({
       onMouseLeave={() => setHovered(false)}
     >
       <StyledDayHeader>
-        {hovered && <RecordCalendarAddNew cardDate={utcDate.toISOString()} />}
+        {hovered && <RecordCalendarAddNew cardDate={day} />}
         <StyledDayHeaderDayContainer>
-          <StyledDayHeaderDay isToday={isToday}>
-            {day.getDate()}
-          </StyledDayHeaderDay>
+          <StyledDayHeaderDay isToday={isToday}>{day.day}</StyledDayHeaderDay>
         </StyledDayHeaderDayContainer>
       </StyledDayHeader>
       <Droppable droppableId={dayKey}>

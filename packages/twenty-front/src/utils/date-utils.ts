@@ -19,6 +19,8 @@ import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
 import { logError } from './logError';
 
+// TODO: review all of this with Temporal
+// - also break down this into small files
 export const parseDate = (dateToParse: Date | string | number): Date => {
   if (dateToParse === 'now') return new Date();
 

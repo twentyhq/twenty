@@ -1,176 +1,176 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: Сопоставление полей
+description: Как работает сопоставление полей при импорте данных.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## Как работает сопоставление полей
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+Когда вы загружаете файл, Twenty анализирует ваши столбцы и пытается сопоставить их с существующими полями.
 
-### Automatic Mapping
+### Автоматическое сопоставление
 
-Twenty tries to match columns based on:
+Twenty пытается сопоставлять столбцы на основе:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* Названий заголовков столбцов (точные или похожие совпадения)
+* Определения типа данных (даты, числа, адреса электронной почты)
+* Распространённых шаблонов полей
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**Небольшой совет:** Экспортируйте несколько строк из объекта, который вы хотите импортировать. Экспортированный файл будет содержать точные названия столбцов, которые ожидает Twenty, поэтому автоматическое сопоставление при импорте пройдёт без лишних действий.</Note>
 
-### Manual Mapping Options
+### Варианты ручного сопоставления
 
-For each column, you can:
+Для каждого столбца вы можете:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **Сопоставить с полем**: выберите соответствующее поле Twenty из выпадающего списка
+* **Не сопоставлять**: полностью пропустить столбец (данные не будут импортированы)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**Поля должны существовать до импорта.** Импорт создаёт записи, а не поля. Создайте настраиваемые поля в разделе **Настройки → Модель данных** перед импортом.</Note>
 
-## Field Type Compatibility
+## Совместимость типов полей
 
-All field types available in the Data Model are supported for import.
+Все типы полей, доступные в Модели данных, поддерживаются для импорта.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+Вы также можете импортировать значения `id`, чтобы назначать конкретный идентификатор новым записям или обновлять существующие.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## Требования к формату данных
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**У некоторых полей есть особый синтаксис.** Рекомендуем перед подготовкой импорта скачать образец файла, чтобы увидеть ожидаемый синтаксис для каждого типа поля.</Note>
 
-### Address Fields
+### Поля адреса
 
-Address is a nested field with multiple columns. Some can be left empty.
+Адрес — это вложенное поле с несколькими столбцами. Некоторые можно оставить пустыми.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Адрес / Адрес 1**: Первая строка адреса
+* **Адрес / Адрес 2**: Вторая строка адреса
+* **Адрес / Город**: Название города
+* **Адрес / Штат**: Штат или провинция
+* **Адрес / Страна**: Название страны
+* **Адрес / Почтовый индекс**: Почтовый индекс/ZIP-код
 
-### Array Fields
+### Поля массива
 
-Use the following format:
+Используйте следующий формат:
 
 ```
 ["value1","value2"]
 ```
 
-### Boolean Fields
+### Булевы поля
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+Используйте `TRUE` или `FALSE` (заглавными) — не `true` и не `false`
 
-### Currency Fields
+### Валютные поля
 
-Currency is a nested field with two columns that **both must be filled**:
+Валюта — это **вложенное поле** с двумя столбцами, которые **оба должны быть заполнены**:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Сумма / Сумма**: Числовое значение (например, `1234.56`)
+* **Сумма / Валюта**: Код валюты (например, `USD`, `EUR`)
 
-### Date Fields
+### Поля даты
 
-Supported formats:
+Поддерживаемые форматы:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD` (рекомендуется)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* Формат ISO 8601
 
-### Domain Fields
+### Поля доменов
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* Рекомендуется использовать формат `https://domain.com`, чтобы избежать создания дубликатов, так как именно этот формат используется для Companies, создаваемых синхронизациями почты и календаря
+* Можно заполнить `Domain Label` и `Domain URL`: лучшая практика — указать `domain.com` в метке и `https://domain.com` в URL
+* Домены должны быть уникальными в объекте Companies
+* **Домены должны быть уникальными внутри импортируемого файла**
 
-### Email Fields
+### Поля электронной почты
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
+* Должен быть корректный формат электронной почты
+* Адреса электронной почты должны быть уникальными в объекте People
+* **Адреса электронной почты должны быть уникальными внутри импортируемого файла**
+* Для дополнительных адресов: используйте **Emails / Primary Email** для основного адреса и **Emails / Additional Emails** в следующем формате:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Id Fields
+### Поля идентификаторов
 
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
+Указание `id` при импорте необязательно. Twenty автоматически сгенерирует его, если он не указан.
 
-Use cases for mapping an `id` column:
+Варианты использования сопоставления столбца `id`:
 
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
+* **Задать конкретный ID**: выберите UUID для создаваемых записей
+* **Обновить существующие записи**: сопоставьте с существующими записями, чтобы обновить их вместо создания дубликатов. В этом случае рекомендуется не сопоставлять другие уникальные поля: сопоставление только одного уникального поля обеспечивает более беспроблемный импорт.
 
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Если вы указываете `id`, он должен быть в формате UUID (например, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-### JSON Fields
+### Поля JSON
 
-Use valid JSON format:
+Используйте допустимый формат JSON:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### Links Fields
+### Поля ссылок
 
-Similar to Domain fields:
+Аналогично полям доменов:
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+* Заполните оба столбца — метку и URL: **Links / Link URL** и **Links / Link Label**
+* Используйте полный формат URL: `https://example.com`
+* Для дополнительных ссылок используйте столбец **Links / Secondary Links** со следующим форматом:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### Multi-Select Fields
+### Поля множественного выбора
 
-Use the **API names** (not the display labels) in the following format:
+Используйте имена API (а не отображаемые метки) в следующем формате:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+См. [здесь](#finding-api-names-for-select-fields), где найти имена API.
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+<Note>Новые варианты списка не будут созданы автоматически при импорте. Добавьте их в **Настройки → Модель данных** перед импортом.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **Импорт перезаписывает, а не добавляет.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  Если у записи уже выбраны `VALUE2` и `VALUE3`, а вы импортируете `[\"VALUE1\"]`, после импорта у записи останется только `VALUE1`. Предыдущие выбранные значения заменяются, а не объединяются.
 </Warning>
 
-### Number Fields
+### Числовые поля
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* Только числа
+* Десятичные дроби — через точку: `1234.56`
+* Без разделителей тысяч
 
-### Phone Fields
+### Поля телефона
 
-Phone is a nested field with multiple columns that **must be filled**
+Телефон — это **вложенное поле** с несколькими столбцами, которые **должны быть заполнены**
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Phones / Primary Phone Number**: Номер телефона (например, `4159095555`)
+* **Phones / Primary Phone Country Code**: Код страны (например, `US`)
+* **Phones / Primary Phone Calling Code**: Телефонный код (например, `+1`)
 
-### Rating Fields
+### Поля рейтинга
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+Используйте формат имени API: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
 
 ### Поля связи
 
-Please see our dedicated article: [Import Relations Between Objects](/l/ru/user-guide/data-migration/capabilities/import-relations)
+См. нашу отдельную статью: [Импорт связей между объектами](/l/ru/user-guide/data-migration/capabilities/import-relations)
 
 ### Выбор полей
 
-Use the **API name** of the option (not the display label):
+Используйте **имя API** варианта (а не отображаемую метку):
 
 ```
 VALUE1

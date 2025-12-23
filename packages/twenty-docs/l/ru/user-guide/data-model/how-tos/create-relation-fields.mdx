@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: Создание полей связи
+description: Пошаговое руководство по связыванию объектов с помощью полей связи.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+Поля связи соединяют записи из разных объектов — например, связывают контакты с компаниями.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **Имена связей нельзя изменить после создания** (они влияют на API). Тщательно продумайте имена.
 </Note>
 
 ## Перед началом
 
-Decide:
+Решите:
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* Какие объекты вы соединяете? (например, Контакты → Компании)
+* Какая сторона — «один»? (например, Компания)
+* Какая сторона — «многие»? (например, Контакты — много контактов работают в одной компании)
+* Как должно называться поле на каждой стороне?
 
-See [Relation Fields](/l/ru/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+См. [Поля связей](/l/ru/user-guide/data-model/capabilities/relation-fields) — там объясняются типы связей.
 
-## Steps
+## Шаги
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект, где нужна связь (обычно это сторона «многие»)
+3. Нажмите **+ Добавить поле**
+4. Выберите **Связь** как тип поля
+5. Выберите **целевой объект**
+6. Выберите **Один-ко-многим** или **Многие-к-одному**
+7. Введите названия полей для обеих сторон связи
 8. Нажмите **Сохранить**
 
-## Example: People → Companies
+## Пример: Контакты → Компании
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* Перейдите в **Настройки → Модель данных → Контакты**
+* Добавьте поле связи
+* Целевой объект: **Компании**
+* Тип: **Многие-к-одному**
+* Поле у Контактов: **Компания**
+* Поле у Компаний: **Сотрудники**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+Теперь каждый контакт может быть связан с компанией, и каждая компания показывает свои контакты.
 
-## Deleting a Relation
+## Удаление связи
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Перейдите в **Настройки → Модель данных**
+2. Найдите поле связи
+3. Нажмите **⋮ → Деактивировать**
 
-Links are preserved but hidden. Reactivate to restore.
+Связи сохраняются, но скрыты. Повторно активируйте, чтобы восстановить.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **Удаление связи не удаляет записи.** Удаляется только связь между ними.
 </Note>
 
-## Related
+## Связанные материалы
 
-* [Relation Fields](/l/ru/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [Поля связей](/l/ru/user-guide/data-model/capabilities/relation-fields) — типы и ограничения
+* [Как импортировать связи](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — массовый импорт связанных записей
