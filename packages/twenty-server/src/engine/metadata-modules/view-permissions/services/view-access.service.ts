@@ -26,6 +26,7 @@ export class ViewAccessService {
     viewId: string | null,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
     // If viewId is null, the entity doesn't exist - allow the operation
     // so the service can handle the NOT_FOUND error properly
@@ -43,13 +44,14 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId);
+    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
   }
 
   async canUserModifyViewByChildEntity(
     viewId: string | null,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
     // If viewId is null, the child entity doesn't exist
     // Allow through so the service can throw the proper entity-specific error
@@ -68,7 +70,7 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId);
+    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
   }
 
   async canUserCreateView(
@@ -122,29 +124,30 @@ export class ViewAccessService {
     view: ViewEntity,
     userWorkspaceId: string | undefined,
     workspaceId: string,
+    apiKeyId?: string,
   ): Promise<boolean> {
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
+    let hasViewsPermission = false;
+
+    if (isDefined(userWorkspaceId)) {
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
           workspaceId,
-        })
-      : null;
+        });
 
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    // Users with VIEWS permission can manipulate all views
-    if (hasViewsPermission) {
-      return true;
+      hasViewsPermission =
+        permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+    } else if (isDefined(apiKeyId)) {
+      hasViewsPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          workspaceId,
+          apiKeyId,
+          setting: PermissionFlagType.VIEWS,
+        });
     }
 
-    // API keys with VIEWS permission can manipulate workspace views
-    // (userWorkspaceId is undefined for API keys, and createdByUserWorkspaceId is null for workspace views created by API keys)
-    if (
-      !isDefined(userWorkspaceId) &&
-      !isDefined(view.createdByUserWorkspaceId) &&
-      view.visibility === ViewVisibility.WORKSPACE
-    ) {
+    // Users/API keys with VIEWS permission can manipulate all views
+    if (hasViewsPermission) {
       return true;
     }
 
