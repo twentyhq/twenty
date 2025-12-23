@@ -175,6 +175,7 @@ export const SettingsServerlessFunctionDetail = () => {
               applicationId,
             }),
           },
+          { children: t`Functions` },
           { children: `${serverlessFunction?.name}` },
         ]}
       >
