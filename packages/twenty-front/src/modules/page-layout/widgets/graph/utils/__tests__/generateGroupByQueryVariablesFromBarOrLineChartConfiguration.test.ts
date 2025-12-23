@@ -124,6 +124,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
               primaryAxisGroupBySubFieldName: null,
               primaryAxisDateGranularity: 'MONTH' as any,
             }),
+            userTimeZone: 'Europe/Paris',
           });
 
         expect(result).toMatchSnapshot();
@@ -199,11 +200,15 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             primaryAxisGroupByFieldMetadataId: relationField.id,
             primaryAxisGroupBySubFieldName: 'createdAt',
           }),
+          userTimeZone: 'Europe/Paris',
         });
 
       expect(result.groupBy[0]).toEqual({
         company: {
-          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.DAY,
+            timeZone: 'Europe/Paris',
+          },
         },
       });
     });
@@ -245,11 +250,15 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             primaryAxisGroupByFieldMetadataId: relationField.id,
             primaryAxisGroupBySubFieldName: 'createdAt',
           }),
+          userTimeZone: 'Europe/Paris',
         });
 
       expect(result.groupBy[0]).toEqual({
         company: {
-          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+          createdAt: {
+            granularity: ObjectRecordGroupByDateGranularity.DAY,
+            timeZone: 'Europe/Paris',
+          },
         },
       });
     });
@@ -299,6 +308,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
             primaryAxisGroupBySubFieldName: null,
             primaryAxisDateGranularity: 'MONTH' as any,
           }),
+          userTimeZone: 'Europe/Paris',
         });
 
       expect(result).toMatchSnapshot();

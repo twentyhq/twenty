@@ -2,7 +2,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.17",
-    "@date-fns/tz": "^1.4.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@floating-ui/react": "^0.24.3",
@@ -54,6 +53,7 @@
     "semver": "^7.5.4",
     "slash": "^5.1.0",
     "storybook-addon-mock-date": "^0.6.0",
+    "temporal-polyfill": "^0.3.0",
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.8.1",
     "type-fest": "4.10.1",
