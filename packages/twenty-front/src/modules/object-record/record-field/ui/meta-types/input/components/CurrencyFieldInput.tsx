@@ -5,8 +5,6 @@ import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/F
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
 
-import { useCurrencyField } from '../../hooks/useCurrencyField';
-
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
@@ -15,9 +13,11 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext } from 'react';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 export const CurrencyFieldInput = () => {
-  const { draftValue, setDraftValue, defaultValue } = useCurrencyField();
+  const { draftValue, setDraftValue, defaultValue, decimals } =
+    useCurrencyField();
 
   const { onClickOutside, onEnter, onEscape, onShiftTab, onTab } = useContext(
     FieldInputEventContext,
@@ -137,6 +137,7 @@ export const CurrencyFieldInput = () => {
       instanceId={instanceId}
       value={draftValue?.amount?.toString() ?? ''}
       currencyCode={currencyCode}
+      decimals={decimals}
       autoFocus
       placeholder={t`Currency`}
       onClickOutside={handleClickOutside}

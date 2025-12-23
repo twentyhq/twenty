@@ -37,6 +37,8 @@ export const useCurrencyField = () => {
 
   const defaultValue = fieldDefinition.defaultValue;
 
+  const decimals = fieldDefinition.metadata.settings?.decimals;
+
   return {
     fieldDefinition,
     fieldValue,
@@ -44,5 +46,6 @@ export const useCurrencyField = () => {
     setDraftValue,
     setFieldValue,
     defaultValue,
+    decimals,
   };
 };
