@@ -1,23 +1,26 @@
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { t } from '@lingui/core/macro';
 import { AppTooltip, Status } from 'twenty-ui/display';
+import { WidgetType } from '~/generated/graphql';
 
-type PageLayoutWidgetNoDataDisplayProps = {
-  widgetId: string;
-};
+export const PageLayoutWidgetNoDataDisplay = () => {
+  const widget = useCurrentWidget();
+  const tooltipId = `widget-incomplete-tooltip-${widget.id}`;
 
-export const PageLayoutWidgetNoDataDisplay = ({
-  widgetId,
-}: PageLayoutWidgetNoDataDisplayProps) => {
-  const tooltipId = `widget-incomplete-tooltip-${widgetId}`;
+  const text = widget.type === WidgetType.IFRAME ? t`Invalid URL` : t`No Data`;
+  const tooltipContent =
+    widget.type === WidgetType.IFRAME
+      ? t`Invalid URL. Click edit to configure this widget.`
+      : t`No data available. Click edit to configure this widget.`;
 
   return (
     <>
       <div id={tooltipId}>
-        <Status color="red" text={t`No Data`} />
+        <Status color="red" text={text} />
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
-        content={t`No data available. Click edit to configure this widget.`}
+        content={tooltipContent}
         place="top"
       />
     </>
