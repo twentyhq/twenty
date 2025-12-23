@@ -7,7 +7,7 @@ import {
   GraphType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
-import { generateGroupByQueryVariablesFromPieChartConfiguration } from '../generateGroupByQueryVariablesFromPieChartConfiguration';
+import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

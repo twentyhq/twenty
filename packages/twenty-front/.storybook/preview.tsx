@@ -4,13 +4,15 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { useEffect } from 'react';
 //import { useDarkMode } from 'storybook-dark-mode';
 
+// eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
+// eslint-disable-next-line no-restricted-imports
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
-
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+// eslint-disable-next-line no-restricted-imports
+import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
@@ -29,7 +31,7 @@ initialize({
       const requestBody = await request.json();
 
       // eslint-disable-next-line no-console
-      console.warn(`Unhandled ${request.method} request to ${request.url} 
+      console.warn(`Unhandled ${request.method} request to ${request.url}
         with payload ${JSON.stringify(requestBody)}\n
         This request should be mocked with MSW`);
     } catch (error) {

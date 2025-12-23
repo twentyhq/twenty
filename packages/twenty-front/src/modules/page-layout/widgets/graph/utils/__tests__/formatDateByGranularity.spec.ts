@@ -3,7 +3,7 @@ import {
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { formatDateByGranularity } from '../formatDateByGranularity';
+import { formatDateByGranularity } from '@/page-layout/widgets/graph/utils/formatDateByGranularity';
 
 describe('formatDateByGranularity', () => {
   const testDate = Temporal.PlainDate.from('2024-03-20');

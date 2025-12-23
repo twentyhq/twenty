@@ -3,7 +3,7 @@ import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-m
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectMetadataItem } from '../types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type enrichObjectMetadataItemsWithPermissionsArgs = {
   objectMetadataItems: Omit<

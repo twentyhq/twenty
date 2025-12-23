@@ -1,7 +1,7 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { generateDateGroupsInRange } from '../generateDateGroupsInRange';
+import { generateDateGroupsInRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/generateDateGroupsInRange';
 
 describe('generateDateGroupsInRange', () => {
   it('generates daily date groups', () => {

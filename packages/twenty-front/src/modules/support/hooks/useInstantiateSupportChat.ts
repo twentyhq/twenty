@@ -27,7 +27,7 @@ const insertScript = ({
   document.body.appendChild(script);
 };
 
-export const useSupportChat = () => {
+export const useInstantiateSupportChat = () => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);

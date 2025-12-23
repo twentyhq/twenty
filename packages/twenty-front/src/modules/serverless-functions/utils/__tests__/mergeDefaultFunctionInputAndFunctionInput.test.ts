@@ -1,4 +1,4 @@
-import { mergeDefaultFunctionInputAndFunctionInput } from '../mergeDefaultFunctionInputAndFunctionInput';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 
 describe('mergeDefaultFunctionInputAndFunctionInput', () => {
   it('should merge properly', () => {

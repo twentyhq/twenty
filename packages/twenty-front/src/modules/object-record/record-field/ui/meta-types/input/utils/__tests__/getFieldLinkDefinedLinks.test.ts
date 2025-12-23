@@ -1,4 +1,4 @@
-import { getFieldLinkDefinedLinks } from '../getFieldLinkDefinedLinks';
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 
 describe('getFieldLinkDefinedLinks', () => {
   describe('Primary link', () => {

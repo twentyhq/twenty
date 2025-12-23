@@ -4,7 +4,7 @@ import { getUserDevice } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRawJsonFieldInput',
