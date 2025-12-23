@@ -1,38 +1,34 @@
 ---
-title: 步驟欄
+title: 步骤条
 image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="标题" />
 </Frame>
 
-通過突出顯示當前步驟來顯示一系列編號步驟的進度。 它會渲染一個容器，其中的每個步驟由 `Step` 組件表示。
+通过突出显示活动步骤来显示一系列编号步骤的进度。 它呈现一个包含步骤的容器，每个步骤由 `Step` 组件表示。
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="**用法**">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-```jsx
-import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>步骤 1</StepBar.Step>
+          <StepBar.Step>步骤 2</StepBar.Step>
+          <StepBar.Step>步骤 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <StepBar activeStep={2}>
-      <StepBar.Step>Step 1</StepBar.Step>
-      <StepBar.Step>Step 2</StepBar.Step>
-      <StepBar.Step>Step 3</StepBar.Step>
-    </StepBar>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性         | 類型 | 描述                       |
-| ---------- | -- | ------------------------ |
-| activeStep | 數字 | 當前活躍步驟的索引。 這決定了應高亮顯示哪個步驟 |
-
-</Tab>
+  <Tab title="属性">
+    | 属性         | 类型 | 描述                        |
+    | ---------- | -- | ------------------------- |
+    | activeStep | 数字 | 当前活动步骤的索引。 这决定了应突出显示哪个步骤。 |
+  </Tab>
 </Tabs>

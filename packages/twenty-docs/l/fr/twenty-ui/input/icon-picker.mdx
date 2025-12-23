@@ -4,53 +4,49 @@ image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+  <img src="/images/user-guide/github/github-header.png" alt="En-tête" />
 </Frame>
 
 Un sélecteur d'icônes basé sur un menu déroulant qui permet aux utilisateurs de sélectionner une icône dans une liste.
 
 <Tabs>
+  <Tab title="Utilisation">
+    ```jsx
+    import { RecoilRoot } de "recoil";
+    import React, { useState } de "react";
+    import { IconPicker } de "@/ui/input/components/IconPicker";
 
-<Tab title="Usage">
+    export const MonComposant = () => {
 
-```jsx
-import { RecoilRoot } from "recoil";
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Icône sélectionnée:", iconKey);
+         setSelectedIcon(iconKey);
+       };
 
-export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
-
-  return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
-  );
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Propriétés      | Type     | Description                                                                                                                                                |
-| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| désactivé       | booléen  | Désactive le sélecteur d'icônes si défini sur `true`                                                                                                       |
-| onChange        | fonction | La fonction de rappel déclenchée lorsque l'utilisateur sélectionne une icône. Elle reçoit un objet avec les propriétés `iconKey` et `Icon` |
-| selectedIconKey | chaîne   | La clé de l'icône initialement sélectionnée                                                                                                                |
-| onClickOutside  | fonction | Fonction de rappel déclenchée lorsque l'utilisateur clique en dehors du menu déroulant                                                                     |
-| onClose         | fonction | Fonction de rappel déclenchée lorsque le menu déroulant est fermé                                                                                          |
-| onOpen          | fonction | Fonction de rappel déclenchée lorsque le menu déroulant est ouvert                                                                                         |
-| variante        | chaîne   | La variante de style visuel de l'icône cliquable. Les options incluent : `primaire`, `secondaire` et `tertiaire`           |
-
-</Tab>
+  <Tab title="Propriétés">
+    | Propriétés      | Type     | Description                                                                                                                                |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+    | désactivé       | booléen  | Désactive le sélecteur d'icônes si défini sur `true`                                                                                       |
+    | onChange        | fonction | La fonction de rappel déclenchée lorsque l'utilisateur sélectionne une icône. Elle reçoit un objet avec les propriétés `iconKey` et `Icon` |
+    | selectedIconKey | chaîne   | La clé de l'icône initialement sélectionnée                                                                                                |
+    | onClickOutside  | fonction | Fonction de rappel déclenchée lorsque l'utilisateur clique en dehors du menu déroulant                                                     |
+    | onClose         | fonction | Fonction de rappel déclenchée lorsque le menu déroulant est fermé                                                                          |
+    | onOpen          | fonction | Fonction de rappel déclenchée lorsque le menu déroulant est ouvert                                                                         |
+    | variante        | chaîne   | La variante de style visuel de l'icône cliquable. Les options incluent : `primaire`, `secondaire` et `tertiaire`                           |
+  </Tab>
 </Tabs>

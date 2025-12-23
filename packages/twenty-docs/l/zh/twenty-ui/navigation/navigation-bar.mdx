@@ -1,52 +1,49 @@
 ---
-title: 導航欄
+title: 导航栏
 image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="标题" />
 </Frame>
 
-渲染一個包含多個 `NavigationBarItem` 組件的導航欄。
+渲染一个包含多个`NavigationBarItem`组件的导航栏。
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="**用法**">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-```jsx
-import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+       const navigationItems = [
+         {
+           name: "主页",
+           Icon: IconHome,
+           onClick: () => console.log("主页被点击"),
+         },
+         {
+           name: "个人资料",
+           Icon: IconUser,
+           onClick: () => console.log("个人资料被点击"),
+         },
+         {
+           name: "设置",
+           Icon: IconSettings,
+           onClick: () => console.log("设置被点击"),
+         },
+       ];
 
-   const navigationItems = [
-     {
-       name: "Home",
-       Icon: IconHome,
-       onClick: () => console.log("Home clicked"),
-     },
-     {
-       name: "Profile",
-       Icon: IconUser,
-       onClick: () => console.log("Profile clicked"),
-     },
-     {
-       name: "Settings",
-       Icon: IconSettings,
-       onClick: () => console.log("Settings clicked"),
-     },
-   ];
+      return <NavigationBar activeItemName="主页" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
 
-  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 屬性             | 類型 | 描述                                                                      |
-| -------------- | -- | ----------------------------------------------------------------------- |
-| activeItemName | 字串 | 當前活動導航項的名稱                                                              |
-| 項目             | 數組 | 代表每個導航項的物件數組。 每個物件包含項目的 `name`，要顯示的 `Icon` 組件，和當項目被點擊時要調用的 `onClick` 函數 |
-
-</Tab>
+  <Tab title="属性">
+    | 属性             | 类型  | 描述                                                           |
+    | -------------- | --- | ------------------------------------------------------------ |
+    | activeItemName | 字符串 | 当前活跃导航项的名称                                                   |
+    | 项目             | 数组  | 表示每个导航项目的对象数组。 每个对象包含项目的`名称`、显示的`图标`组件以及项目被点击时调用的`onClick`函数 |
+  </Tab>
 </Tabs>

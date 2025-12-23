@@ -2,6 +2,7 @@ import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/us
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -23,6 +24,17 @@ export const useTimelineActivities = (
         nameSingular: targetableObject.targetObjectNameSingular,
       });
 
+  const { objectMetadataItem: timelineActivityMetadata } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+    });
+
+  const hasTimelineActivityField = timelineActivityMetadata.fields.some(
+    (field) =>
+      field.relation?.targetObjectMetadata?.nameSingular ===
+      targetableObject.targetObjectNameSingular,
+  );
+
   const { recordGqlFields: depthOneRecordGqlFields } =
     useGenerateDepthRecordGqlFieldsFromObject({
       objectNameSingular: CoreObjectNameSingular.TimelineActivity,
@@ -34,6 +46,7 @@ export const useTimelineActivities = (
     loading: loadingTimelineActivities,
     fetchMoreRecords,
   } = useFindManyRecords<TimelineActivity>({
+    skip: !hasTimelineActivityField,
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter: {
       [targetableObjectFieldIdName]: {
