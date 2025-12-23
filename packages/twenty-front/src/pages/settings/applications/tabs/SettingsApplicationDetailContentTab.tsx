@@ -39,11 +39,24 @@ export const SettingsApplicationDetailContentTab = ({
 
   return (
     <>
+      {shouldDisplayObjects && (
+        <Section>
+          <H2Title
+            title={t`Objects`}
+            description={t`Objects managed by this app`}
+          />
+          <SettingsObjectTable
+            objectMetadataItems={applicationObjectMetadataItems}
+            applicationId={application.id}
+            withSearchBar={false}
+          />
+        </Section>
+      )}
       {shouldDisplayServerlessFunctions && (
         <Section>
           <H2Title
-            title={t`Application serverless functions`}
-            description={t`Serverless functions created by application`}
+            title={t`Functions`}
+            description={t`Serverless functions powering this app`}
           />
           <SettingsServerlessFunctionsTable
             serverlessFunctions={serverlessFunctions}
@@ -53,23 +66,10 @@ export const SettingsApplicationDetailContentTab = ({
       {shouldDisplayAgents && (
         <Section>
           <H2Title
-            title={t`Application agents`}
-            description={t`Agents created by application`}
+            title={t`Agents`}
+            description={t`Agents powering this app`}
           />
           <SettingsAIAgentsTable />
-        </Section>
-      )}
-      {shouldDisplayObjects && (
-        <Section>
-          <H2Title
-            title={t`Application objects`}
-            description={t`Objects created by application`}
-          />
-          <SettingsObjectTable
-            objectMetadataItems={applicationObjectMetadataItems}
-            applicationId={application.id}
-            withSearchBar={false}
-          />
         </Section>
       )}
     </>
