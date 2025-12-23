@@ -29,7 +29,7 @@ initialize({
       const requestBody = await request.json();
 
       // eslint-disable-next-line no-console
-      console.warn(`Unhandled ${request.method} request to ${request.url} 
+      console.warn(`Unhandled ${request.method} request to ${request.url}
         with payload ${JSON.stringify(requestBody)}\n
         This request should be mocked with MSW`);
     } catch (error) {

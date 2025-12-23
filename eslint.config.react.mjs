@@ -693,9 +693,9 @@ export default [
     },
   },
 
-  // .storybook files - allow relative imports since @/ alias doesn't work outside src/
+  // .storybook files and twenty-emails - allow relative imports since @/ alias doesn't work there
   {
-    files: ['**/.storybook/**/*'],
+    files: ['**/.storybook/**/*', '**/twenty-emails/**/*'],
     rules: {
       'no-restricted-imports': [
         'error',
