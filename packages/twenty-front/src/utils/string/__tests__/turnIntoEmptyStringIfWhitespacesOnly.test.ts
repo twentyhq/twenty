@@ -1,4 +1,4 @@
-import { turnIntoEmptyStringIfWhitespacesOnly } from '@/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 describe('turnIntoEmptyStringIfWhitespacesOnly', () => {
   it('should return an empty string for whitespace-only input', () => {

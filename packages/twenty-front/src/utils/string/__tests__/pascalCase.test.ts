@@ -1,4 +1,4 @@
-import { pascalCase } from '@/utils/string/pascalCase';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 describe('pascalCase', () => {
   it('converts a string to pascal case', () => {

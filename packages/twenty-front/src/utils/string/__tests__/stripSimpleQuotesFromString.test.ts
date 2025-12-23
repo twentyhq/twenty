@@ -1,4 +1,4 @@
-import { stripSimpleQuotesFromString } from '@/utils/string/stripSimpleQuotesFromString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 describe('stripSimpleQuotesFromString', () => {
   it('removes surrounding single quotes from a string', () => {

@@ -1,4 +1,4 @@
-import { isStepValue } from '@/utils/validation/isStepValue';
+import { isStepValue } from '~/utils/validation/isStepValue';
 
 describe('isStepValue', () => {
   it('should detect step values', () => {

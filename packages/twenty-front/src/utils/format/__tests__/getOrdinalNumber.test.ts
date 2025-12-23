@@ -1,4 +1,4 @@
-import { getOrdinalNumber } from '@/utils/format/getOrdinalNumber';
+import { getOrdinalNumber } from '~/utils/format/getOrdinalNumber';
 
 describe('getOrdinalNumber', () => {
   it('should return correct ordinal numbers', () => {
