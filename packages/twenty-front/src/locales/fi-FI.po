@@ -11157,7 +11157,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa koko tilisi pysyvästi."
 
@@ -12209,9 +12210,11 @@ msgstr "Lähetämme sinulle linkin toimialueen omistajuuden varmistamiseksi"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "Odotamme vahvistusta maksupalveluntarjoajaltamme (Stripe).\n"
+msgstr ""
+"Odotamme vahvistusta maksupalveluntarjoajaltamme (Stripe).\n"
 "Yritä hetken kuluttua uudelleen."
 
 #. js-lingui-id: LnnVIT

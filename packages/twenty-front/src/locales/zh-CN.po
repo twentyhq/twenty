@@ -11157,7 +11157,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "此操作无法撤销。这将永久删除您的整个账户。"
 
@@ -12209,9 +12210,11 @@ msgstr "我们将发送您一个链接以验证域名所有权"
 
 #. js-lingui-id: X56YGk
 #: src/pages/onboarding/PaymentSuccess.tsx
-msgid "We're waiting for a confirmation from our payment provider (Stripe).\n"
+msgid ""
+"We're waiting for a confirmation from our payment provider (Stripe).\n"
 "Please try again in a few seconds, sorry."
-msgstr "我们正在等待支付服务提供商（Stripe）的确认。\n"
+msgstr ""
+"我们正在等待支付服务提供商（Stripe）的确认。\n"
 "请在几秒后重试，抱歉。"
 
 #. js-lingui-id: LnnVIT
