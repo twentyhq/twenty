@@ -5,15 +5,15 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 
-export const useOpenNewWorkflowTitleCell = () => {
+export const useOpenNewRecordTitleCell = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openNewWorkflowTitleCell = useRecoilCallback(
+  const openNewRecordTitleCell = useRecoilCallback(
     ({ set }) =>
-      ({ recordId }: { recordId: string }) => {
+      ({ recordId, fieldName }: { recordId: string; fieldName: string }) => {
         const instanceId = getRecordFieldInputInstanceId({
           recordId,
-          fieldName: 'name',
+          fieldName,
           prefix: RecordTitleCellContainerType.PageHeader,
         });
 
@@ -39,5 +39,5 @@ export const useOpenNewWorkflowTitleCell = () => {
     [pushFocusItemToFocusStack],
   );
 
-  return { openNewWorkflowTitleCell };
+  return { openNewRecordTitleCell };
 };

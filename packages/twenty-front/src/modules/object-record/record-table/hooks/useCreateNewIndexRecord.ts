@@ -101,9 +101,8 @@ export const useCreateNewIndexRecord = ({
             });
           }
         } else {
-          const isNewWorkflow =
-            objectMetadataItem.nameSingular === 'workflow' &&
-            !createdRecord.name;
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
           navigate(
             AppPath.RecordShowPage,
@@ -112,9 +111,14 @@ export const useCreateNewIndexRecord = ({
               objectRecordId: recordId,
             },
             undefined,
-            isNewWorkflow
-              ? { state: { isNewWorkflow: true, objectRecordId: recordId } }
-              : undefined,
+            {
+              state: {
+                isNewRecord: true,
+                objectRecordId: recordId,
+                labelIdentifierFieldName:
+                  labelIdentifierFieldMetadataItem?.name,
+              },
+            },
           );
         }
 

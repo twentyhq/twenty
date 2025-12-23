@@ -29,7 +29,7 @@ import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/ho
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useOpenNewWorkflowTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewWorkflowTitleCell';
+import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -101,7 +101,7 @@ export const PageChangeEffect = () => {
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
-  const { openNewWorkflowTitleCell } = useOpenNewWorkflowTitleCell();
+  const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
     closeCommandMenu();
@@ -171,10 +171,16 @@ export const PageChangeEffect = () => {
           },
         });
 
-        const isNewWorkflow = location.state?.isNewWorkflow === true;
+        const isNewRecord = location.state?.isNewRecord === true;
 
-        if (isNewWorkflow) {
-          openNewWorkflowTitleCell({ recordId: location.state.objectRecordId });
+        if (
+          isNewRecord &&
+          isDefined(location.state?.labelIdentifierFieldName)
+        ) {
+          openNewRecordTitleCell({
+            recordId: location.state.objectRecordId,
+            fieldName: location.state.labelIdentifierFieldName,
+          });
         }
         break;
       }
@@ -319,7 +325,7 @@ export const PageChangeEffect = () => {
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
-    openNewWorkflowTitleCell,
+    openNewRecordTitleCell,
   ]);
 
   useEffect(() => {
