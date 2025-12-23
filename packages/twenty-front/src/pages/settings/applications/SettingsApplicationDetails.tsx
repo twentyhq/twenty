@@ -39,8 +39,8 @@ export const SettingsApplicationDetails = () => {
 
   const tabs = [
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
-    { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'content', title: t`Content`, Icon: IconBroadcast },
+    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
   const renderActiveTabContent = () => {
