@@ -1,0 +1,52 @@
+---
+title: Limitați e-mailurile importate
+description: Controlați ce e-mailuri sunt importate în Twenty.
+---
+
+## Prezentare generală
+
+În mod implicit, Twenty sincronizează toate e-mailurile externe din căsuța poștală conectată. Puteți limita ce se importă folosind **selecția de dosare** și **setările de vizibilitate**.
+
+## Metoda 1: Selecția dosarelor (recomandată)
+
+Controlați care foldere de e-mail se sincronizează cu Twenty:
+
+1. Accesați **Setări → Lansări → Laborator**
+2. Activați **Dosarul de mesaje**
+3. Întoarceți-vă la **Setări → Conturi**
+4. Selectați contul de e-mail conectat
+5. Alegeți ce dosare să sincronizați:
+
+| Folder                   | Descriere                                |
+| ------------------------ | ---------------------------------------- |
+| **Inbox**                | E-mailuri primare primite                |
+| **Trimise**              | E-mailurile trimise de dvs.              |
+| **Arhivă**               | Mesaje arhivate                          |
+| **Dosare personalizate** | Orice dosare specifice pe care le doriți |
+
+6. Excludeți dosarele pe care nu doriți să le sincronizați (Spam, Coș de gunoi, dosare personale)
+
+<Note>Acest lucru vă oferă un control precis asupra e-mailurilor care apar în CRM-ul dvs., fără a sincroniza totul.</Note>
+
+## Metoda 2: Setări pentru crearea automată a contactelor
+
+Controlați când sunt create contactele din e-mailuri:
+
+1. Mergeți la **Setări → Conturi**
+2. Selectați căsuța poștală conectată
+3. Alegeți o opțiune:
+   * **Dezactivat**: Nu se creează contacte, dar e-mailurile se sincronizează în continuare cu contactele existente
+   * **Trimise și primite**: Creați contacte din toate e-mailurile externe
+   * **Doar trimise**: Creați contacte numai din e-mailurile pe care le trimiteți
+
+## Ce este întotdeauna exclus
+
+Aceste e-mailuri nu sunt niciodată sincronizate, indiferent de setări:
+
+* **E-mailuri interne**: Mesaje între colegi (același domeniu)
+* **E-mailuri de grup**: Liste de distribuție și mesaje de grup
+* **Spam/Coș de gunoi**: Dosarele de sistem sunt de obicei excluse
+
+## Notă importantă
+
+<Note>Nu oferim o adresă de e-mail CC pentru sincronizare selectivă. Utilizați funcția de selecție a dosarelor de mai sus pentru a obține același nivel de control.</Note>

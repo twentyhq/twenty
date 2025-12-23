@@ -1,0 +1,231 @@
+---
+title: Suivre la durée pendant laquelle les opportunités restent à chaque étape
+description: Surveillez la vélocité des affaires en suivant le moment où les opportunités entrent dans chaque étape.
+---
+
+<Tip>
+  Voici un exemple de création de [champs de formule](/l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields) à l'aide de Workflows — plus précisément des calculs de dates.
+</Tip>
+
+Suivre le moment où les opportunités entrent dans chaque étape vous aide à identifier les goulots d'étranglement et à mesurer la vélocité des affaires.
+
+Ce guide vous explique comment configurer des champs personnalisés et un workflow pour enregistrer automatiquement le moment où une opportunité passe à chaque étape, et calculer le nombre de jours passés dans l'étape précédente.
+
+## Étape 1 : Créez des champs personnalisés
+
+Vous avez besoin de deux types de champs pour chaque étape :
+
+* **Champs Date et heure** : Enregistrer le moment où l'opportunité est entrée dans chaque étape
+* **Champs numériques** : Stocker le nombre de jours que l'opportunité a passés dans chaque étape
+
+### Créez les champs "Dernière entrée"
+
+1. Allez dans **Paramètres → Modèle de données → Opportunités**
+2. Pour chaque étape, cliquez sur **+ Ajouter un champ** et configurez :
+   * **Nom** : Dernière entrée [Nom de l'étape] (par exemple, "Dernière entrée Nouveau", "Dernière entrée Qualifiée")
+   * **Type** : Date et heure
+   * **Description** : Horodatage du moment où l'opportunité est entrée dans cette étape
+3. Cliquez sur **Enregistrer**
+
+Créez ces champs :
+
+* Dernière entrée Nouveau
+* Dernière entrée Qualifiée
+* Dernière entrée Réunion
+* Dernière entrée Proposition
+* Dernière entrée Négociation
+* Dernière entrée Clôturée gagnée
+* Dernière entrée Clôturée perdue
+
+### Créez les champs "Jours dans l'étape"
+
+1. Pour chaque étape, cliquez sur **+ Ajouter un champ** et configurez :
+   * **Nom** : Jours dans [Nom de l'étape] (par exemple, "Jours dans Nouveau", "Jours dans Qualifiée")
+   * **Type** : Numérique
+   * **Description** : Nombre de jours passés dans cette étape
+2. Cliquez sur **Enregistrer**
+
+Créez ces champs :
+
+* Jours dans Nouveau
+* Jours dans Qualifiée
+* Jours dans Réunion
+* Jours dans Proposition
+* Jours dans Négociation
+
+<Note>
+  Vous n'avez pas besoin de champs "Jours dans" pour Clôturée gagnée et Clôturée perdue, car ce sont des étapes finales.
+</Note>
+
+### Facultatif : rendre les champs en lecture seule
+
+Si vous ne souhaitez pas que les utilisateurs modifient manuellement ces champs calculés :
+
+1. Allez dans **Paramètres → Rôles**
+2. Sélectionnez le rôle à configurer
+3. Trouvez l'objet Opportunités
+4. Définissez les champs "Dernière entrée" et "Jours dans" en lecture seule
+
+## Étape 2 : Créez le workflow
+
+Ce seul workflow gère les deux tâches :
+
+* Enregistre l'horodatage lors de l'entrée dans une nouvelle étape
+* Calcule le nombre de jours passés dans l'étape précédente
+
+### Créez le workflow
+
+1. Allez dans **Workflows**
+2. Cliquez sur **+ Nouveau workflow**
+3. Nommez-le "Suivre le temps par étape"
+
+### Configurez le déclencheur
+
+1. Ajoutez un déclencheur **Enregistrement mis à jour**
+2. Sélectionnez **Opportunités** comme objet
+3. Filtrer sur : le champ **Étape** est mis à jour
+
+### Ajoutez des branches pour chaque étape
+
+<Note>
+  Pour créer une nouvelle branche, faites un clic droit sur le canevas du workflow et cliquez sur **Nouvelle action**. Ensuite, reliez cette action au nœud précédent en faisant glisser la flèche du nœud précédent vers cette nouvelle action.
+</Note>
+
+---
+
+**Branche 1 : Étape = Nouveau (première étape)**
+
+Comme il s'agit de la première étape, nous enregistrons uniquement l'horodatage d'entrée — aucune étape précédente à calculer.
+
+1. Ajoutez un nœud **Filtre** : Étape = Nouveau
+2. Ajoutez une action **Code** :
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champ : Dernière entrée Nouveau
+   * Valeur : `now` depuis le nœud Code
+
+---
+
+**Branche 2 : Étape = Qualifiée**
+
+Lors du passage à Qualifiée, enregistrez l'heure d'entrée ET calculez les jours passés dans Nouveau.
+
+1. Ajoutez un nœud **Filtre** : Étape = Qualifiée
+2. Ajoutez une action **Code** :
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configurez l'entrée du nœud Code : associez `lastEnteredPreviousStage` au champ **Dernière entrée Nouveau**
+4. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champs à mettre à jour:
+     * Dernière entrée Qualifiée = `now`
+     * Jours dans Nouveau = `daysInPreviousStage`
+
+---
+
+**Branche 3 : Étape = Réunion**
+
+Lors du passage à Réunion, enregistrez l'heure d'entrée ET calculez les jours passés dans Qualifiée.
+
+1. Ajoutez un nœud **Filtre** : Étape = Réunion
+2. Ajoutez une action **Code** :
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configurez l'entrée du nœud Code : associez `lastEnteredPreviousStage` au champ **Dernière entrée Qualifiée**
+4. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champs à mettre à jour:
+     * Dernière entrée Réunion = `now`
+     * Jours dans Qualifiée = `daysInPreviousStage`
+
+---
+
+**Continuez pour les étapes restantes :**
+
+| Étape           | Enregistrements                 | Calcule                |
+| --------------- | ------------------------------- | ---------------------- |
+| Proposition     | Dernière entrée Proposition     | Jours dans Réunion     |
+| Négociation     | Dernière entrée Négociation     | Jours dans Proposition |
+| Clôturée gagnée | Dernière entrée Clôturée gagnée | Jours dans Négociation |
+| Clôturée perdue | Dernière entrée Clôturée perdue | Jours dans Négociation |
+
+Les branches n'ont pas besoin de se rejoindre — chacune s'exécute indépendamment lorsque sa condition d'étape est remplie.
+
+## Étape 3 : Analyser le temps par étape
+
+Avec les horodatages et les comptages de jours enregistrés, vous pouvez désormais analyser la vélocité des affaires.
+
+### Créez une vue "Affaires lentes"
+
+1. Créez une vue Tableau des Opportunités
+2. Ajoutez des colonnes : Nom, Étape, Jours dans [étape précédente], Montant
+3. Triez par le champ "Jours dans" (décroissant)
+4. Filtrez par Étape pour vous concentrer sur une étape à la fois
+
+Les affaires en haut ont passé le plus de temps dans l'étape précédente.
+
+### Utilisez les agrégations
+
+Dans votre vue Kanban du pipeline :
+
+1. Cliquez sur le nombre à côté du nom d'une étape
+2. Sélectionnez **Moyenne**
+3. Choisissez un champ "Jours dans"
+
+Cela affiche le temps moyen que les affaires passent à chaque étape.
+
+## Résumé
+
+| Composant                      | Objectif                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| **Champs « Dernière entrée »** | Stockent le moment où l'opportunité est entrée dans chaque étape           |
+| **Champs « Jours dans »**      | Stockent le nombre de jours passés dans chaque étape                       |
+| **Workflow**                   | Enregistre l'horodatage ET calcule les jours en un seul passage            |
+| **Vues et agrégations**        | Analysez la vélocité des affaires et identifiez les goulots d'étranglement |
+
+## Connexes
+
+* [Workflows](/l/fr/user-guide/workflows/overview) — principes de l'automatisation
+* [Comment créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields) — configuration des champs
+* [Vues Kanban](/l/fr/user-guide/views-pipelines/capabilities/kanban-views) — agrégations

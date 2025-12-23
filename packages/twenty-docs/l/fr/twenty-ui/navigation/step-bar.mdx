@@ -4,35 +4,31 @@ image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="En-tête" />
 </Frame>
 
 Affiche la progression à travers une séquence d'étapes numérotées en surlignant l'étape active. Il affiche un conteneur avec des étapes, chacune représentée par le composant `Step`.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-```jsx
-import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Étape 1</StepBar.Step>
+          <StepBar.Step>Étape 2</StepBar.Step>
+          <StepBar.Step>Étape 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <StepBar activeStep={2}>
-      <StepBar.Step>Step 1</StepBar.Step>
-      <StepBar.Step>Step 2</StepBar.Step>
-      <StepBar.Step>Step 3</StepBar.Step>
-    </StepBar>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Propriétés  | Type   | Description                                                                                                               |
-| ----------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| étapeActive | nombre | L'index de l'étape actuellement active. Cela détermine quelle étape doit être visuellement mise en valeur |
-
-</Tab>
+  <Tab title="Propriétés">
+    | Propriétés  | Type   | Description                                                                                               |
+    | ----------- | ------ | --------------------------------------------------------------------------------------------------------- |
+    | étapeActive | nombre | L'index de l'étape actuellement active. Cela détermine quelle étape doit être visuellement mise en valeur |
+  </Tab>
 </Tabs>

@@ -4,41 +4,38 @@ image: /images/user-guide/fields/field.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
+  <img src="/images/user-guide/fields/field.png" alt="En-tête" />
 </Frame>
 
 Affiche une barre de navigation en fil d'Ariane.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-```jsx
-import { BrowserRouter } from "react-router-dom";
-import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Accueil", href: "/" },
+        { children: "Catégorie", href: "/category" },
+        { children: "Sous-catégorie", href: "/category/subcategory" },
+        { children: "Page Actuelle" },
+      ];
 
-export const MyComponent = () => {
-  const breadcrumbLinks = [
-    { children: "Home", href: "/" },
-    { children: "Category", href: "/category" },
-    { children: "Subcategory", href: "/category/subcategory" },
-    { children: "Current Page" },
-  ];
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
 
-  return (
-    <BrowserRouter>
-      <Breadcrumb className links={breadcrumbLinks} />
-    </BrowserRouter>
-    )
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Propriétés  | Type    | Description                                                                                                                                                                                                                                                                                |
-| ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| nomDeClasse | chaîne  | Nom de classe facultatif pour un style supplémentaire                                                                                                                                                                                                                                      |
-| liens       | tableau | Un tableau d'objets, chacun représentant un lien de fil d'Ariane. Chaque objet a une propriété `children` (le contenu textuel du lien) et une propriété `href` facultative (l'URL vers laquelle naviguer lorsque le lien est cliqué) |
-
-</Tab>
+  <Tab title="Propriétés">
+    | Propriétés  | Type    | Description                                                                                                                                                                                                                          |
+    | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | nomDeClasse | chaîne  | Nom de classe facultatif pour un style supplémentaire                                                                                                                                                                                |
+    | liens       | tableau | Un tableau d'objets, chacun représentant un lien de fil d'Ariane. Chaque objet a une propriété `children` (le contenu textuel du lien) et une propriété `href` facultative (l'URL vers laquelle naviguer lorsque le lien est cliqué) |
+  </Tab>
 </Tabs>
