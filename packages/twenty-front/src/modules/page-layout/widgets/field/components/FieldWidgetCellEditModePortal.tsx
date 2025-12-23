@@ -32,11 +32,6 @@ export const FieldWidgetCellEditModePortal = ({
   });
   const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
 
-  console.log('FieldWidgetCellEditModePortal', {
-    expectedDropdownFocusId,
-    activeDropdownFocusId,
-  });
-
   const setIsHovered = useSetRecoilComponentState(
     fieldWidgetHoverComponentState,
   );
