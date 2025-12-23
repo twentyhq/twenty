@@ -4,34 +4,31 @@ image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="En-tête" />
 </Frame>
 
 Permet aux utilisateurs de télécharger et de supprimer une image.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
 
-```jsx
-import { ImageInput } from "@/ui/input/components/ImageInput";
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ImageInput/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Propriétés    | Type     | Description                                                                                                                                                     |
-| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| photo         | chaîne   | L'URL source de l'image                                                                                                                                         |
-| onUpload      | fonction | La fonction appelée lors du téléchargement d'une nouvelle image par un utilisateur. Elle reçoit l'objet `File` comme paramètre. |
-| onRemove      | fonction | La fonction appelée lorsque l'utilisateur clique sur le bouton supprimer.                                                                       |
-| onAbort       | fonction | La fonction appelée lorsque l'utilisateur clique sur le bouton annuler pendant le téléchargement de l'image.                                    |
-| isUploading   | booléen  | Indique si une image est en cours de téléchargement.                                                                                            |
-| messageErreur | chaîne   | Un message d'erreur facultatif à afficher sous l'entrée d'image.                                                                                |
-| désactivé     | booléen  | Si `true`, l'entrée entière est désactivée et les boutons ne sont pas cliquables.                                                               |
-
-</Tab>
+  <Tab title="Propriétés">
+    | Propriétés    | Type     | Description                                                                                                                     |
+    | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+    | photo         | chaîne   | L'URL source de l'image                                                                                                         |
+    | onUpload      | fonction | La fonction appelée lors du téléchargement d'une nouvelle image par un utilisateur. Elle reçoit l'objet `File` comme paramètre. |
+    | onRemove      | fonction | La fonction appelée lorsque l'utilisateur clique sur le bouton supprimer.                                                       |
+    | onAbort       | fonction | La fonction appelée lorsque l'utilisateur clique sur le bouton annuler pendant le téléchargement de l'image.                    |
+    | isUploading   | booléen  | Indique si une image est en cours de téléchargement.                                                                            |
+    | messageErreur | chaîne   | Un message d'erreur facultatif à afficher sous l'entrée d'image.                                                                |
+    | désactivé     | booléen  | Si `true`, l'entrée entière est désactivée et les boutons ne sont pas cliquables.                                               |
+  </Tab>
 </Tabs>

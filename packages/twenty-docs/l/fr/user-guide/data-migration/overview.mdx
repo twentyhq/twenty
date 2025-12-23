@@ -1,0 +1,89 @@
+---
+title: Migration de données},{
+description: Importez et exportez vos données CRM via des fichiers CSV ou l’API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Migration de données" />
+</Frame>
+
+## Méthodes d’import
+
+Twenty prend en charge deux méthodes principales d’import de données :
+
+| Méthode                 | Idéal pour                                   | Limite de volume                   |
+| ----------------------- | -------------------------------------------- | ---------------------------------- |
+| **Importation CSV**     | Migrations standard, mises à jour régulières | 10 000 enregistrements par fichier |
+| **Importation via API** | Migrations à grande échelle, automatisation  | Illimité                           |
+
+<Note>Pour des ensembles de données très volumineux (des centaines de milliers d’enregistrements), utilisez l’API. Nos [partenaires d’implémentation](/l/fr/user-guide/getting-started/capabilities/implementation-services) peuvent vous aider à exécuter ces scripts si nécessaire.</Note>
+
+## Principes de base de l’import CSV
+
+Vous pouvez importer des données pour n’importe quel objet à l’aide de fichiers CSV, XLSX ou XLS. Chaque fichier doit contenir **un seul type d’objet** (par exemple, uniquement des enregistrements Personnes).
+
+<Note>**Les champs doivent exister avant l’import.** Le téléversement d’un CSV crée des enregistrements, mais ne crée pas de champs. Si vous avez besoin de champs personnalisés, créez-les d’abord dans **Paramètres → Modèle de données**.</Note>
+
+### Étapes
+
+1. Accédez à l’objet dans lequel vous souhaitez importer des données
+2. Cliquez sur l’icône **⋮** en haut à droite (le menu Commande), puis cliquez sur **Importer des enregistrements**
+3. Téléchargez le fichier modèle pour garantir que vos données sont au format attendu
+4. Téléversez votre fichier CSV formaté
+5. Faites correspondre vos colonnes aux champs Twenty
+6. Passez en revue les erreurs (surlignées en jaune) et corrigez-les en les modifiant directement dans l’interface
+7. Confirmez l’importation
+
+### Importer des relations entre objets
+
+Vous pouvez importer des relations entre objets à l’aide de la fonction d’import CSV. Vous devez référencer l’objet lié en utilisant un champ unique de cet objet : l’`id`, l’`email` pour les Personnes et les membres de l’espace de travail, le `domain` pour les entreprises, tout autre champ défini comme unique dans le modèle de données pour tout autre objet.
+
+<Note>**Les enregistrements supprimés comptent pour l’unicité.** Les enregistrements supprimés de façon logique (visibles dans le menu Commande → Voir les enregistrements supprimés) sont inclus dans les vérifications d’unicité. Si vous importez un enregistrement ayant la même valeur unique qu’un enregistrement supprimé, l’enregistrement supprimé sera restauré.</Note>
+
+<Warning>
+  **L’ordre d’importation est important !**
+
+  Lors de l’import d’objets liés, téléversez les fichiers dans cet ordre :
+
+  1. **Entreprises** d’abord (le côté "un" des relations)
+  2. **Personnes** en second (liées aux entreprises via companyId)
+  3. **Opportunités** en troisième (liées aux entreprises/personnes)
+  4. **Objets personnalisés** avec relations en dernier
+
+  Pourquoi ? Le côté "un" d’une relation un-à-plusieurs doit exister avant que vous puissiez y faire référence. Par exemple, l’enregistrement Entreprise doit exister avant d’importer une Personne avec l’ID de cette entreprise.
+</Warning>
+
+Veuillez consulter [cet article](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pour un guide étape par étape sur la procédure à suivre.
+
+## Exporter des données
+
+Exportez les données de votre espace de travail pour des sauvegardes, des rapports ou des migrations.
+
+### Étapes
+
+1. Accédez à l’objet que vous souhaitez exporter
+2. Configurez la vue avec les colonnes dont vous avez besoin
+3. Cliquez sur **⋮** → **Exporter la vue**
+4. Enregistrez le fichier CSV
+
+<Note>**Seules les colonnes visibles sont exportées.** Le fichier CSV ne contiendra que les colonnes affichées dans votre vue actuelle. Ajoutez ou masquez des colonnes avant l’exportation pour contrôler les données incluses.</Note>
+
+<Note>**Limites d’exportation** : jusqu’à 20 000 enregistrements par export.</Note>
+
+## Autorisations
+
+L’import et l’export de données nécessitent des autorisations spécifiques :
+
+* **Importation** : nécessite l’autorisation "Import CSV"
+* **Exportation** : nécessite l’autorisation "Export CSV"
+
+Contactez l’administrateur de votre espace de travail si vous n’avez pas ces autorisations.
+
+## Prochaines étapes
+
+* [Préparez vos fichiers CSV](/l/fr/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Importer des relations entre objets](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Importer via API pour de grands ensembles de données](/l/fr/user-guide/data-migration/how-tos/import-data-via-api)
