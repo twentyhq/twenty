@@ -1,0 +1,34 @@
+---
+title: Image Input
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Kopfzeile" />
+</Frame>
+
+Ermöglicht Benutzern das Hochladen und Entfernen eines Bildes.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ          | Beschreibung                                                                                                   |
+    | --------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
+    | bild            | Zeichenkette | Die Bildquellen-URL                                                                                            |
+    | onUpload        | Funktion     | The function called when a user uploads a new image. Es erhält das `Datei` Objekt als Parameter                |
+    | onRemove        | Funktion     | Die Funktion wird aufgerufen, wenn der Benutzer auf die Entfernen-Schaltfläche klickt.                         |
+    | onAbort         | Funktion     | Die Funktion wird aufgerufen, wenn der Benutzer während des Bilduploads auf die Abbrechen-Schaltfläche klickt. |
+    | isUploading     | boolesch     | Gibt an, ob ein Bild derzeit hochgeladen wird                                                                  |
+    | Fehlermeldung   | Zeichenkette | Eine optionale Fehlermeldung, die unterhalb des Bildeingangs angezeigt wird.                                   |
+    | deaktiviert     | boolesch     | If `true`, the entire input is disabled, and the buttons are not clickable                                     |
+  </Tab>
+</Tabs>

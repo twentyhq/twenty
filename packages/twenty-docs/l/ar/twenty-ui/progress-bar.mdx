@@ -1,0 +1,66 @@
+---
+title: التغذية الراجعة
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="رأس الصفحة" />
+</Frame>
+
+يشير إلى تقدم أو عد تنازلي ويتحرك من اليمين إلى اليسار.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
+
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات         | النوع       | الوصف                                                                           | الإعداد الافتراضي |
+    | ---------------- | ----------- | ------------------------------------------------------------------------------- | ----------------- |
+    | المدة            | رقم         | إجمالي مدة الرسوم المتحركة لشريط التقدم بالميلي ثانية                           | 3                 |
+    | التأخير          | رقم         | The delay in starting the progress bar animation in milliseconds                | 0                 |
+    | التخفيف          | نص          | وظيفة التخفيف للرسوم المتحركة لشريط التقدم                                      | easeInOut         |
+    | ارتفاع الشريط    | رقم         | ارتفاع الشريط بالبكسل                                                           | 24                |
+    | لون الشريط       | نص          | لون الشريط                                                                      | gray80            |
+    | التشغيل التلقائي | قيمة منطقية | إذا كان `true`، فإن الرسوم المتحركة لشريط التقدم تبدأ تلقائيًا عند تحميل المكون | `صحيح`            |
+  </Tab>
+</Tabs>
+
+## شريط التقدم الدائري
+
+يشير إلى تقدم المهمة، ويستخدم غالباً في شاشات التحميل أو الأماكن التي ترغب فيها في إبلاغ العمليات الجارية إلى المستخدم.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص    | النوع | الوصف                   | الإعداد الافتراضي |
+    | ---------- | ----- | ----------------------- | ----------------- |
+    | الحجم      | رقم   | حجم شريط التقدم الدائري | 50                |
+    | عرض الشريط | رقم   | عرض خط شريط التقدم      | 5                 |
+    | لون الشريط | نص    | لون شريط التقدم         | currentColor      |
+  </Tab>
+</Tabs>

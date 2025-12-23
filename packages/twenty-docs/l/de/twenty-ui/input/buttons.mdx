@@ -1,0 +1,439 @@
+---
+title: Buttons
+image: /images/user-guide/views/filter.png
+---
+
+<Frame>
+  <img src="/images/user-guide/views/filter.png" alt="Kopfzeile" />
+</Frame>
+
+A list of buttons and button groups used throughout the app.
+
+## Button
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+
+    export const MyComponent = () => {
+      return (
+        <Button
+          className
+          Icon={null}
+          title="Title"
+          fullWidth={false}
+          variant="primary"
+          size="medium"
+          position="standalone"
+          accent="default"
+          soon={false}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ                   | Beschreibung                                                                                                         |
+    | ------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | className     | Zeichenkette          | Optionaler Klassenname für zusätzliche Stilierung                                                                    |
+    | Symbol        | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird                                       |
+    | titel         | Zeichenkette          | Der Textinhalt der Schaltfläche                                                                                      |
+    | volle Breite  | boolesch              | Definiert, ob die Schaltfläche die gesamte Breite ihres Containers einnehmen soll                                    |
+    | Variante      | Zeichenkette          | The visual style variant of the button. Optionen umfassen `primär`, `sekundär` und `tertiär`                         |
+    | größe         | Zeichenkette          | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                                                  |
+    | position      | Zeichenkette          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `rechts` und `mitte` |
+    | Akzent        | Zeichenkette          | Die Akzentfarbe der Schaltfläche. Optionen umfassen: `Standard`, `blau` und `Gefahr`                                 |
+    | bald          | boolesch              | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)                                    |
+    | deaktiviert   | boolesch              | Specifies whether the button is disabled or not                                                                      |
+    | Fokus         | boolesch              | Determines if the button has focus                                                                                   |
+    | beiKlick      | Funktion              | Eine Rückruffunktion, die ausgelöst wird, wenn der Benutzer auf die Schaltfläche klickt                              |
+  </Tab>
+</Tabs>
+
+## Button Group
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { Button } from "@/ui/input/button/components/Button";
+    import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+    export const MyComponent = () => {
+      return (
+        <ButtonGroup variant="primary" size="large" accent="blue" className>
+          <Button
+            className
+            Icon={null}
+            title="Button 1"
+            fullWidth={false}
+            variant="primary"
+            size="medium"
+            position="standalone"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 2"
+            fullWidth={false}
+            variant="secondary"
+            size="medium"
+            position="left"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+          <Button
+            className
+            Icon={null}
+            title="Button 3"
+            fullWidth={false}
+            variant="tertiary"
+            size="medium"
+            position="right"
+            accent="blue"
+            soon={false}
+            disabled={false}
+            focus={false}
+            onClick={() => console.log("click")}
+          />
+        </ButtonGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                                                   |
+    | ------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
+    | Variante      | Zeichenkette | The visual style variant of the buttons within the group. Optionen umfassen `primär`, `sekundär` und `tertiär` |
+    | größe         | Zeichenkette | The size of the buttons within the group. Hat zwei Optionen: `mittel` und `klein`                              |
+    | Akzent        | Zeichenkette | The accent color of the buttons within the group. Optionen umfassen: `Standard`, `blau` und `Gefahr`           |
+    | Klassenname   | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                              |
+    | Kinder        | ReactNode    | An array of React elements representing the individual buttons within the group                                |
+  </Tab>
+</Tabs>
+
+## Floating Button
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButton
+          className
+          Icon={IconSearch}
+          title="Title"
+          size="medium"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften    | Typ                   | Beschreibung                                                                                                      |
+    | ---------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+    | Klassenname      | Zeichenkette          | Optionaler Name für zusätzliche Stilierung                                                                        |
+    | Symbol           | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird                                    |
+    | titel            | Zeichenfolge          | Der Textinhalt der Schaltfläche                                                                                   |
+    | größe            | Zeichenfolge          | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                                               |
+    | position         | Zeichenkette          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `mitte`, `rechts` |
+    | SchattenAnwenden | boolesch              | Determines whether to apply shadow to a button                                                                    |
+    | applyBlur        | boolesch              | Determines whether to apply a blur effect to the button                                                           |
+    | deaktiviert      | boolesch              | Bestimmt, ob die Schaltfläche deaktiviert ist                                                                     |
+    | Fokus            | boolesch              | Gibt an, ob die Schaltfläche den Fokus hat                                                                        |
+  </Tab>
+</Tabs>
+
+## Floating Button Group
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+    import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingButtonGroup size="small">
+          <FloatingButton
+            className
+            Icon={IconClipboardText}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+            focus={true}
+          />
+          <FloatingButton
+            className
+            Icon={IconCheckbox}
+            title
+            size="small"
+            position="standalone"
+            applyShadow={true}
+            applyBlur={true}
+            disabled={false}
+          />
+        </FloatingButtonGroup>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ       | Beschreibung                                                                    | Standard |
+    | ------------- | --------- | ------------------------------------------------------------------------------- | -------- |
+    | größe         | string    | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`             | klein    |
+    | Kinder        | ReactNode | An array of React elements representing the individual buttons within the group |          |
+  </Tab>
+</Tabs>
+
+## Floating Icon Button
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <FloatingIconButton
+          className
+          Icon={IconSearch}
+          size="small"
+          position="standalone"
+          applyShadow={true}
+          applyBlur={true}
+          disabled={false}
+          focus={false}
+          onClick={() => console.log("click")}
+          isActive={true}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften    | Typ                   | Beschreibung                                                                                                         |
+    | ---------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+    | Klassenname      | string                | Optionaler Name für zusätzliche Stilierung                                                                           |
+    | Symbol           | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb des Knopfes angezeigt wird.                                           |
+    | größe            | string                | Die Größe des Knopfes. Hat zwei Optionen: `klein` und `mittel`                                                       |
+    | position         | Zeichenfolge          | Die Position des Knopfes in Bezug auf seine Geschwister. Optionen umfassen: `einzeln`, `links`, `rechts` und `mitte` |
+    | SchattenAnwenden | boolesch              | Determines whether to apply shadow to a button                                                                       |
+    | applyBlur        | boolesch              | Determines whether to apply a blur effect to the button                                                              |
+    | deaktiviert      | boolesch              | Bestimmt, ob der Knopf deaktiviert ist                                                                               |
+    | Fokus            | boolesch              | Gibt an, ob der Knopf im Fokus steht                                                                                 |
+    | onClick          | Funktion              | Eine Callback-Funktion, die ausgelöst wird, wenn der Benutzer auf den Knopf klickt.                                  |
+    | isActive         | boolesch              | Bestimmt, ob der Knopf in einem aktiven Zustand ist                                                                  |
+  </Tab>
+</Tabs>
+
+## Floating Icon Button Group
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+    import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      const iconButtons = [
+        {
+          Icon: IconClipboardText,
+          onClick: () => console.log("Button 1 clicked"),
+          isActive: true,
+        },
+        {
+          Icon: IconCheckbox,
+          onClick: () => console.log("Button 2 clicked"),
+          isActive: true,
+        },
+      ];
+
+      return (
+        <FloatingIconButtonGroup
+        className
+        size="small"
+        iconButtons={iconButtons} />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften | Typ          | Beschreibung                                                                                                                                                                                                                                                                                          |
+    | ------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Klassenname   | Zeichenkette | Optionaler Name für zusätzliche Stilierung                                                                                                                                                                                                                                                            |
+    | größe         | Zeichenfolge | Die Größe des Knopfes. Hat zwei Optionen: `klein` und `mittel`                                                                                                                                                                                                                                        |
+    | Symbolknöpfe  | Array        | Ein Array von Objekten, die jeweils einen Symbolknopf in der Gruppe darstellen. Jedes Objekt sollte die Symbolkomponente enthalten, die Sie im Knopf anzeigen möchten, die Funktion, die aufgerufen werden soll, wenn ein Benutzer auf den Knopf klickt, und ob der Knopf aktiv sein soll oder nicht. |
+  </Tab>
+</Tabs>
+
+## Leichter Knopf
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { LightButton } from "@/ui/input/button/components/LightButton";
+
+    export const MyComponent = () => {
+      return <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={()=>console.log('click')}
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Einstellungen">
+    | Einstellungen | Typ               | Beschreibung                                                                        |
+    | ------------- | ----------------- | ----------------------------------------------------------------------------------- |
+    | Klassenname   | Zeichenkette      | Optionaler Name für zusätzliche Stilierung                                          |
+    | symbol        | `React.ReactNode` | Das Symbol, das Sie im Knopf anzeigen möchten.                                      |
+    | titel         | Zeichenkette      | Der Textinhalt des Knopfes                                                          |
+    | Akzent        | Zeichenfolge      | Die Akzentfarbe des Knopfes. Optionen umfassen: `sekundär` und `tertiär`            |
+    | aktiv         | boolesch          | Bestimmt, ob der Knopf in einem aktiven Zustand ist                                 |
+    | deaktiviert   | boolesch          | Bestimmt, ob der Knopf deaktiviert ist                                              |
+    | Fokus         | boolesch          | Gibt an, ob der Knopf im Fokus steht                                                |
+    | beiKlick      | Funktion          | Eine Callback-Funktion, die ausgelöst wird, wenn der Benutzer auf den Knopf klickt. |
+  </Tab>
+</Tabs>
+
+## Light Icon Button
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <LightIconButton
+          className
+          testId="test1"
+          Icon={IconSearch}
+          title="Title"
+          size="small"
+          accent="secondary"
+          active={true}
+          disabled={false}
+          focus={true}
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props       | Typ                   | Beschreibung                                                                            |
+    | ----------- | --------------------- | --------------------------------------------------------------------------------------- |
+    | Klassenname | Zeichenkette          | Optionaler Name für zusätzliche Gestaltung                                              |
+    | TestId      | Zeichenkette          | Testidentifikator für die Schaltfläche                                                  |
+    | Symbol      | `React.ComponentType` | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird          |
+    | titel       | Zeichenfolge          | Der Textinhalt der Schaltfläche                                                         |
+    | größe       | Zeichenfolge          | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                     |
+    | Akzent      | Zeichenfolge          | Die Akzentfarbe der Schaltfläche. Optionen beinhalten: `sekundär` und `tertiär`         |
+    | aktiv       | boolesch              | Bestimmt, ob die Schaltfläche im aktiven Zustand ist                                    |
+    | deaktiviert | boolesch              | Bestimmt, ob die Schaltfläche deaktiviert ist                                           |
+    | Fokus       | boolesch              | Gibt an, ob die Schaltfläche den Fokus hat                                              |
+    | beiKlick    | Funktion              | Eine Rückruffunktion, die ausgelöst wird, wenn der Benutzer auf die Schaltfläche klickt |
+  </Tab>
+</Tabs>
+
+## Main Button
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { MainButton } from "@/ui/input/button/components/MainButton";
+    import { IconCheckbox } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <MainButton
+          title="Checkbox"
+          fullWidth={false}
+          variant="primary"
+          soon={false}
+          Icon={IconCheckbox}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften        | Typ                              | Beschreibung                                                                        |
+    | -------------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
+    | titel                | Zeichenkette                     | Der Textinhalt der Schaltfläche                                                     |
+    | volle Breite         | boolesch                         | Definiert, ob die Schaltfläche die gesamte Breite ihres Containers einnehmen soll   |
+    | Variante             | Zeichenkette                     | The visual style variant of the button. Optionen beinhalten `primär` und `sekundär` |
+    | bald                 | boolesch                         | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)   |
+    | Symbol               | `React.ComponentType`            | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird      |
+    | React `button` props | `React.ComponentProps<'button'>` | Alle Standard-HTML-Schaltflächeneigenschaften werden unterstützt                    |
+  </Tab>
+</Tabs>
+
+## Abgerundete Symbolschaltfläche
+
+<Tabs>
+  <Tab title="Verwendung">
+    ```jsx
+    import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+    import { IconSearch } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return (
+        <RoundedIconButton
+          Icon={IconSearch}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Eigenschaften">
+    | Eigenschaften        | Typ                                             | Beschreibung |
+    | -------------------- | ----------------------------------------------- | ------------ |
+    | Symbol               | `React.ComponentType`                           |              |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |              |
+  </Tab>
+</Tabs>

@@ -1,0 +1,430 @@
+---
+title: Fix Import Errors
+description: Complete troubleshooting guide for resolving CSV import errors.
+---
+
+## Prezentare generală
+
+Import not working? This guide helps you identify and fix common import errors step by step.
+
+## How Import Validation Works
+
+After uploading your file and mapping columns, Twenty validates your data:
+
+1. **Validation runs** — Twenty checks each row for errors
+2. **Errors are highlighted** — problematic rows appear in **yellow**
+3. **You can fix in-place** — edit cells directly in the import UI
+4. **Or remove rows** — skip problematic records entirely
+
+<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+
+## Step-by-Step Troubleshooting
+
+### Step 1: Identify the Error Type
+
+Click on a highlighted row to see the specific error message. Common error types:
+
+| Mesaj de eroare                                                       | What It Means                                                |
+| --------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
+| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
+| Required field highlighted                                            | A required field is empty                                    |
+| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
+| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+
+### Step 2: Fix the Error
+
+Follow the specific instructions below for each error type.
+
+---
+
+## Error: Duplicate Value
+
+### Ce veți vedea
+
+Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+
+### What It Means
+
+A unique field (email, domain) either:
+
+* Already exists in Twenty
+* Appears twice in your file
+
+### How to Fix
+
+**Option 1: Edit the duplicate value**
+
+1. Click the cell with the error
+2. Change to a unique value
+3. Continue with import
+
+**Option 2: Remove the duplicate row**
+
+1. Click the X next to the row
+2. The row will be skipped during import
+
+**Option 3: Let Twenty update the existing record**
+
+1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
+2. Map the unique identifier field
+3. Twenty will update the existing record instead of creating a duplicate
+
+<Note>
+  **You can update unique fields too.**
+
+  * If you keep the `id` but change the `email` → the email will be updated
+  * If you keep the `email` but change the `id` → the id will be updated
+
+  As long as one unique identifier matches, Twenty updates the record.
+</Note>
+
+### How to Prevent This Error
+
+Before importing:
+
+1. Sort your spreadsheet by the unique field
+2. Remove duplicate rows
+3. Check if records already exist in Twenty
+
+<Warning>
+  **Soft-deleted records count toward uniqueness.**
+
+  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+</Warning>
+
+For more details: [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+---
+
+## Error: Invalid Format
+
+### Ce veți vedea
+
+The cell value is highlighted in yellow. Hover over it to see the error message:
+
+```
+{field name} is not a valid {field type}
+```
+
+### What It Means
+
+The data doesn't match the expected format for that field type.
+
+### How to Fix — By Field Type
+
+#### Email
+
+**Problem:** Invalid email format
+**Solution:** Use format `name@domain.com`
+
+```
+❌ john.smith@
+❌ john smith@acme.com
+✓ john.smith@acme.com
+```
+
+#### Domeniu
+
+**Problem:** Inconsistent format may cause duplicates
+**Solution:** Use `https://domain.com` format (recommended)
+
+```
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
+```
+
+<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+
+#### Dată
+
+**Problem:** Unrecognized date format
+**Solution:** Use consistent format throughout file
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - recommended)
+✓ 03/15/2024        (MM/DD/YYYY)
+✓ 15/03/2024        (DD/MM/YYYY)
+```
+
+#### Telefon
+
+**Problem:** Missing required columns
+**Solution:** Include all phone columns
+
+| Column                                  | Exemplu      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+#### Boolean
+
+**Problem:** Wrong boolean value
+**Solution:** Use uppercase `TRUE` or `FALSE`
+
+```
+❌ true
+❌ yes
+❌ 1
+✓ TRUE
+✓ FALSE
+```
+
+#### Select / Multi-Select
+
+**Problem:** Value doesn't match existing options
+**Solution:** Use **API names**, not display labels
+
+How to find API names:
+
+1. Go to **Settings → Data Model**
+2. Select the object and field
+3. Enable **Advanced mode** (toggle at bottom right)
+4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+
+```
+❌ High Priority
+✓ HIGH_PRIORITY
+```
+
+#### Monedă
+
+**Problem:** Missing amount or currency code
+**Solution:** Fill both columns
+
+| Column                | Exemplu   |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+#### Număr
+
+**Problem:** Non-numeric characters
+**Solution:** Numbers only, period for decimals
+
+```
+❌ $1,234.56
+❌ 1,234.56
+✓ 1234.56
+```
+
+For complete format reference: [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+
+---
+
+## Error: Required Field Missing
+
+### Ce veți vedea
+
+The row is highlighted in yellow with the required field cell marked.
+
+### What It Means
+
+A required field is empty for this row.
+
+### How to Fix
+
+**Option 1: Enter a value**
+
+1. Click the empty cell
+2. Enter a value
+3. Continue with import
+
+**Option 2: Remove the row**
+
+1. If you don't have the data, click X to skip the row
+
+### How to Prevent This Error
+
+Before importing, identify required fields:
+
+1. Go to **Settings → Data Model**
+2. Select your object
+3. Check which fields are marked as required
+
+---
+
+## Error: Relation Not Found
+
+### Ce veți vedea
+
+This error appears **after the import starts** — the import fails with a message like:
+
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+This means there is no Company in Twenty with that specific identifier.
+
+<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+
+### What It Means
+
+You're trying to link to a record that doesn't exist in Twenty.
+
+### How to Fix
+
+**Option 1: Import parent records first**
+
+1. Cancel the current import
+2. Import the parent records (e.g., Companies)
+3. Then import the child records (e.g., People)
+
+**Option 2: Fix the reference value**
+
+1. Check the reference value in your file
+2. Ensure it exactly matches an existing record
+3. Verify format: domains should be `https://domain.com`
+
+**Option 3: Remove the relation**
+
+1. Clear the cell to import without the relation
+2. Add the relation manually later
+
+### How to Prevent This Error
+
+1. **Import in the correct order:**
+   * Companies first
+   * People second (with company references)
+   * Opportunities third
+
+2. **Verify reference values:**
+   * Export parent records to get exact identifiers
+   * Use domain format `https://domain.com`
+   * Check for typos and case sensitivity
+
+<Warning>
+  **Import will fail if a reference is made to a non-existent record.**
+
+  Always import parent objects before child objects.
+</Warning>
+
+For more details: [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Error: File Too Large
+
+### Ce veți vedea
+
+This error appears **when uploading your file** — the upload is blocked entirely:
+
+```
+Too many records. Up to 10000 allowed
+```
+
+You won't be able to proceed to the data review step until you reduce the file size.
+
+### What It Means
+
+Your file has more than 10,000 records.
+
+### How to Fix
+
+**Option 1: Split into multiple files**
+
+1. Divide your data into files of 10,000 records or fewer
+2. Import each file separately
+3. Maintain import order (Companies before People)
+
+**Option 2: Use API import**
+For very large datasets, use the API which has no record limit.
+See: [How to Import Data via API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Error: Field Not Recognized
+
+### What It Means
+
+A column in your file can't be mapped because the field doesn't exist in Twenty.
+
+### How to Fix
+
+1. Go to **Settings → Data Model**
+2. Select the object you're importing
+3. Click **+ Add field**
+4. Create the custom field with the appropriate type
+5. Re-upload your file
+
+<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+
+---
+
+## Error: User Relation Empty
+
+### What It Means
+
+You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
+
+### Common Causes
+
+1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
+2. **Using user ID from old system** — Twenty can't match IDs from another system
+3. **Wrong email format** — the email doesn't match the user's Twenty account
+
+### How to Fix
+
+1. Ensure all users have **accepted their invitation** to your Twenty workspace
+2. Use the user's **email address** (not their name or old system ID)
+3. Use the same email they used to join Twenty
+
+<Warning>
+  **Users must accept invitations before importing.**
+
+  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+</Warning>
+
+---
+
+## Pre-Import Checklist
+
+Avoid errors by checking these before importing:
+
+### File Requirements
+
+<Check>File is CSV, XLSX, or XLS format</Check>
+<Check>File has fewer than 10,000 records</Check>
+<Check>File uses UTF-8 encoding</Check>
+
+### Data Quality
+
+<Check>No duplicate emails (for People)</Check>
+<Check>No duplicate domains (for Companies)</Check>
+<Check>All dates use consistent format</Check>
+<Check>All domains use `https://domain.com` format</Check>
+
+### Field Formats
+
+<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
+<Check>Select fields use API names, not display labels</Check>
+<Check>Phone fields have all required columns</Check>
+<Check>Currency fields have both Amount and Currency Code</Check>
+
+### Relații
+
+<Check>Parent records imported before child records</Check>
+<Check>Relation columns reference existing records</Check>
+<Check>Domain format matches Twenty's format exactly</Check>
+
+### Model de date
+
+<Check>All custom fields exist in Settings → Data Model</Check>
+<Check>Select options exist before importing</Check>
+
+---
+
+## Still Having Issues?
+
+If you've tried the above solutions:
+
+1. **Download the sample file** — see the exact format Twenty expects
+2. **Export existing records** — compare your file to working data
+3. **Test with a small batch** — try 5-10 rows first
+4. **Check the reference articles:**
+   * [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+   * [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
+   * [Error Handling](/l/ro/user-guide/data-migration/capabilities/error-handling)

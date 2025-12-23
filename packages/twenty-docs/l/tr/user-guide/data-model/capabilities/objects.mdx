@@ -1,0 +1,91 @@
+---
+title: Nesneler
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standard Objects
+
+Standart nesneler, işe başlamanıza yardımcı olmak için çalışma alanınızda önceden tanımlanmış varlıklardır. Bunlar, Twenty kullanıcıları tarafından erişilebilen, paylaşılan bir veri modelinin parçasıdır. Onları olduğu gibi kullanabilir, özelleştirebilir veya devre dışı bırakabilirsiniz.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### İnsanlar
+
+`İnsanlar` nesnesi, kişilerinizi saklar. Bu nesne, iletişim detayları ve etkileşim geçmişini içerir, böylece tüm müşteri etkileşimlerinizi tek bir yerde görebilirsiniz.
+
+### Şirket
+
+`Şirketler` nesnesi, iş hesaplarınızı saklar. Endüstri, boyut ve konum gibi detayları içerir. Şirketler, hem `İnsanlar` hem de `Fırsatlar` nesnelerine bağlanır.
+
+### Fırsatlar
+
+`Fırsatlar` nesnesi, işle ilgili verileri saklar. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. Satış boru hattınızı kanban düzeninde görüntüleyebilirsiniz.
+
+### Notlar
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Görevler
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## Özel Nesneler
+
+Custom objects let you store information that's unique to your organization and that standard objects can't handle. Örneğin, SpaceX iseniz, Roketler ve Fırlatmalar için özel bir nesne oluşturmak isteyebilirsiniz.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+Yeni bir özel nesne oluşturmak için:
+
+1. Soldaki kenar çubuğundan Ayarlar'a gidin.
+2. Çalışma Alanı altında, Veri modeline gidin. Burada mevcut Standart ve Özel nesnelerinizin (aktif ve devre dışı) genel görünümünü görebilirsiniz.
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Üstteki `+ Yeni nesne` butonuna tıklayın. Adı (tekil ve çoğul olarak), bir simge seçip özel nesneniz için bir açıklama ekleyin ve Kaydet'e tıklayın (sağ üstte). Özel nesne olarak ilanı kullanarak, tekil "ilan" ve çoğul "ilanlar" olur, "Ev sahiplerinin mülklerini sergilemek için oluşturdukları ilanlar." gibi bir açıklamayla.
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## En İyi Uygulamalar
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

@@ -1,0 +1,51 @@
+---
+title: اختيار
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="رأس الصفحة" />
+</Frame>
+
+يتيح للمستخدمين اختيار قيمة من قائمة من الخيارات المحددة مسبقًا.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
+
+    import { Select } from '@/ui/input/components/Select';
+
+    export const MyComponent = () => {
+
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Select an option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات    | النوع       | الوصف                                                                                                                                               |
+    | ----------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | اسم الفئة   | نص          | فئة CSS اختيارية للتنسيق الإضافي                                                                                                                    |
+    | معطل        | قيمة منطقية | عند ضبطها على `true`، يتم تعطيل تفاعل المستخدم مع المكون                                                                                            |
+    | التسمية     | نص          | The label to describe the purpose of the `Select` component                                                                                         |
+    | عند التغيير | دالة        | The function called when the selected values change                                                                                                 |
+    | خيارات      | مصفوفة      | تمثل الخيارات المتاحة في مكون `الاختيار`. إنها مصفوفة من الكائنات حيث يحتوي كل كائن على `قيمة` (معرف فريد)، `تسمية` (معرف فريد)، و`أيقونة` اختيارية |
+    | القيمة      | نص          | تمثل القيمة المحددة حاليًا. يجب أن تطابق إحدى خصائص `القيمة` في مصفوفة `الخيارات`                                                                   |
+  </Tab>
+</Tabs>

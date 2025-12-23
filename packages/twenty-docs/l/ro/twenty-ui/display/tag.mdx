@@ -1,0 +1,38 @@
+---
+title: Etichetă
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Antet" />
+</Frame>
+
+Componentă pentru a categoriza vizual sau a eticheta conținutul.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
+
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                                                                                                     |
+    | ----------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+    | className   | șir     | Nume opțional pentru stilizare suplimentară                                                                                   |
+    | culoare     | șir     | Culoarea etichetei. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+    | text        | șir     | Conținutul etichetei                                                                                                          |
+    | onClick     | funcție | Funcție opțională apelată când un utilizator face clic pe etichetă                                                            |
+  </Tab>
+</Tabs>

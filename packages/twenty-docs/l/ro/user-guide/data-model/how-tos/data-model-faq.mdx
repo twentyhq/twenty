@@ -1,0 +1,155 @@
+---
+title: Întrebări frecvente despre modelul de date
+description: Frequently asked questions about Twenty's data model.
+---
+
+## Gestionarea obiectelor
+
+<AccordionGroup>
+  <Accordion title="Can I delete a custom object?">
+    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  </Accordion>
+
+  <Accordion title="Pot să șterg obiectele standard (Persoane, Companii, etc.)?">
+    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+  </Accordion>
+
+  <Accordion title="How many custom objects can I create?">
+    You can create as many custom objects and fields as you need — the price doesn't change.
+  </Accordion>
+
+  <Accordion title="Can I rename a standard object?">
+    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  </Accordion>
+
+  <Accordion title="Can I change an object's icon?">
+    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  </Accordion>
+
+  <Accordion title="Pot să rearanjez obiectele în bara de navigare din stânga?">
+    Încă nu. Ordinea obiectelor în navigare este momentan fixă, însă această funcționalitate este planificată pentru o versiune viitoare.
+  </Accordion>
+
+  <Accordion title="Pot să ascund obiectele din bara de navigare din stânga?">
+    Toate obiectele active apar în navigare. Poți dezactiva obiectele de care nu ai nevoie sub **Setări → Model de Date**.
+  </Accordion>
+</AccordionGroup>
+
+## Capabilitățile câmpurilor
+
+<AccordionGroup>
+  <Accordion title="Can I change a field type after creation?">
+    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  </Accordion>
+
+  <Accordion title="De ce am nevoie de nume diferite pentru singular și plural?">
+    API-ul nostru GraphQL folosește ambele forme pentru diferite operațiuni:
+
+    * `createPerson` (singular) pentru acțiuni cu un singur înregistrare
+    * `createPeople` (plural) pentru operațiuni în bloc
+
+    Aceasta creează limitări atunci când formele singular și plural sunt aceleași, dar îmbunătățește experiența dezvoltatorului.
+  </Accordion>
+
+  <Accordion title="De ce sunt unele nume de câmpuri protejate?">
+    Anumite nume de câmpuri, precum `Type` sau `Application`, sunt rezervate pentru utilizarea sistemului. Alege nume alternative precum `Category` sau `Classification`.
+  </Accordion>
+
+  <Accordion title="What happens when I deactivate a field?">
+    * The field is hidden from the interface
+    * Existing data is preserved
+    * You can still access the field via API
+    * Existing relations remain but you can't create new ones
+    * You can reactivate the field later
+  </Accordion>
+
+  <Accordion title="Can I make a field required?">
+    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  </Accordion>
+
+  <Accordion title="What's the difference between unique and required?">
+    * **Unique**: No two records can have the same value in this field
+    * **Required**: The field must have a value (not currently supported for custom fields)
+  </Accordion>
+
+  <Accordion title="Pot să creez câmpuri cu formule?">
+    Câmpurile cu formule vor fi disponibile în **T1 2026**. Între timp, poți folosi fluxuri de lucru pentru a calcula și actualiza automat valorile câmpurilor.
+  </Accordion>
+
+  <Accordion title="Pot să am câmpuri imbricate în obiectele mele?">
+    Câmpurile imbricate vor fi disponibile în **T1 2026**. În prezent, poți folosi fluxuri de lucru pentru a prelua valorile câmpurilor din obiectele înrudite. De exemplu, pentru a afișa industria unei companii pe un document despre o Persoană, creează un câmp personalizat la Persoane și folosește un flux de lucru pentru a sincroniza valoarea.
+  </Accordion>
+
+  <Accordion title="Pot să rearanjez câmpurile din obiecte?">
+    Rearanjarea câmpurilor va fi disponibilă cu machete personalizate în **T4 2025**. Currently, fields appear in alphabetical order.
+  </Accordion>
+</AccordionGroup>
+
+## Relații
+
+<AccordionGroup>
+  <Accordion title="Can I have a relation pointing to the same object?">
+    Da! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  </Accordion>
+
+  <Accordion title="Pot să creez relații de tip mulți-la-mulți?">
+    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+
+    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+
+    * A relation to People (many assignments → one person)
+    * A relation to Projects (many assignments → one project)
+  </Accordion>
+
+  <Accordion title="What are relations to multiple object types (Morph relationships)?">
+    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+
+    Each Note links to one Person, one Company, and one Opportunity at the same time.
+
+    Learn more in [Relation Fields](/l/ro/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Can I have multiple relations between the same objects?">
+    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  </Accordion>
+
+  <Accordion title="What happens to relations when I delete a record?">
+    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  </Accordion>
+
+  <Accordion title="Can I create circular relations?">
+    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  </Accordion>
+</AccordionGroup>
+
+## Acces și permisiuni
+
+<AccordionGroup>
+  <Accordion title="Unde pot vedea și edita modelul de date?">
+    Go to **Settings → Data Model** to view and edit all your objects and fields.
+  </Accordion>
+
+  <Accordion title="De ce nu pot să văd Modelul de Date sub Setări?">
+    Contactează-ți administratorul de spațiu de lucru. Accesul la modelul de date este de obicei restricționat doar la administratori.
+  </Accordion>
+</AccordionGroup>
+
+## Data Management
+
+<AccordionGroup>
+  <Accordion title="Is there a limit to how many records I can have?">
+    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  </Accordion>
+
+  <Accordion title="Can I import data into custom objects?">
+    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Can I export my data model configuration?">
+    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  </Accordion>
+</AccordionGroup>
+
+## Ai nevoie de mai mult ajutor?
+
+Check our [Implementation Services](/l/ro/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.

@@ -1,0 +1,125 @@
+---
+title: هيكلية المجلدات
+info: نظرة تفصيلية داخل هيكلية مجلدات الخادم
+---
+
+الهيكلية الدليلية للمكونات الخلفية كالتالي:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## قدرات
+
+تعريف الأذونات وتتضمن معالجات لكل كيان.
+
+## زخارف
+
+تعريف الزخارف المخصصة في NestJS لإضافة وظائف جديدة.
+
+شاهد [زخارف مخصصة](https://docs.nestjs.com/custom-decorators) لمزيد من التفاصيل.
+
+## الفلاتر
+
+تتضمن فلاتر استثناء لمعالجة الحالات الطارئة التي قد تحدث في نقاط GraphQL النهائية.
+
+## حمايات
+
+شاهد [الحمايات](https://docs.nestjs.com/guards) لمزيد من التفاصيل.
+
+## الصحة
+
+تتضمن واجهة برمجية متاحة للجميع (healthz) تعيد جيسون لتأكيد ما إذا كانت قاعدة البيانات تعمل كما هو متوقع.
+
+## البيانات الوصفية
+
+تعريف الأشياء المخصصة وتوفر واجهة برمجية GraphQL (graphql/metadata).
+
+## مساحة العمل
+
+توليد وتقديم مخطط GraphQL مخصص بناءً على البيانات الوصفية.
+
+### هيكلية دليل مساحة العمل
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+يحتوي الجذر في دليل مساحة العمل على `workspace.factory.ts`، ملف يحتوي على وظيفة `createGraphQLSchema`. تولّد هذه الوظيفة مخططًا خاصًا بمساحة العمل باستخدام البيانات الوصفية لتخصيص المخطط لمساحات العمل الفردية. من خلال فصل بناء المخطط والمستعرض، نستخدم وظيفة `makeExecutableSchema`، التي تجمع بين هذه العناصر المنفصلة.
+
+تعتمد هذه الاستراتيجية على التنظيم ولا تساعد فقط في التنظيم، لكنها أيضًا تحسن الأداء، مثل تخزين تعريفات النوع المولدة مؤقتًا لتعزيز الأداء والتوسع.
+
+### منشئ مخطط مساحة العمل
+
+يولد مخطط GraphQL، ويتضمن:
+
+#### مصانع:
+
+مصانع متخصصة لتوليد الإنشاءات المتعلقة بـ GraphQL.
+
+* المصنع النوعي يترجم بيانات الحقول الوصفية إلى أنواع GraphQL باستخدام `TypeMapperService`.
+* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+
+#### أنواع GraphQL
+
+يتضمن تعدادات، إدخالات، كائنات، وأشكال بسيطة، ويعمل كنقاط بناء للمخطط.
+
+#### واجهات وتعريفات الكائنات
+
+تحتوي على مخططات للكيانات GraphQL، وتشتمل على أنواع معرفة مسبقًا ومخصصة مثل `MONEY` أو `URL`.
+
+#### خدمات
+
+تحتوي على الخدمة المسؤولة عن ربط FieldMetadataType بنوع GraphQL المناسب أو أدوات التعديل الاستعلامية.
+
+#### التخزين
+
+يتضمن فئة `TypeDefinitionsStorage` التي تحتوي على تعريفات نوع قابلة لإعادة الاستخدام، مما يمنع تكرار أنواع GraphQL.
+
+### منشئ محلل مساحة العمل
+
+إنشاء وظائف المعالجات للاستعلام وتعديل مخطط GraphQL.
+
+كل مصنع في هذا الدليل مسؤول عن إنتاج نوع محلل مميز، مثل `FindManyResolverFactory`، المصمم للتطبيق المتكيف عبر جداول مختلفة.
+
+### مشغل استعلامات مساحة العمل
+
+يشغل الاستعلامات المولدة على قاعدة البيانات ويحلل النتيجة.

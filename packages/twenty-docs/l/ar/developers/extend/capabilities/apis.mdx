@@ -1,0 +1,147 @@
+---
+title: واجهات برمجة التطبيقات
+description: Query and modify your CRM data programmatically using REST or GraphQL.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+تم تصميم Twenty ليكون صديقًا للمطورين، حيث يوفر واجهات برمجة قوية تتكيف مع نموذج البيانات المخصص. نحن نوفر أربعة أنواع متميزة من واجهات برمجة التطبيقات لتلبية احتياجات التكامل المختلفة.
+
+## النموذج الأول للمطورين
+
+Twenty generates APIs specifically for your data model:
+
+* **لا حاجة إلى معرفات طويلة**: استخدم أسماء الكائنات والحقول مباشرة في نقاط النهاية
+* **معالجة متساوية للأشياء القياسية والمخصصة**: تحصل أشياؤك المخصصة على نفس معاملة واجهة برمجة التطبيقات كما هو الحال مع الأشياء المضمنة
+* **نقاط نهاية مخصصة**: يحصل كل كائن وحقل على نقطة نهاية API الخاصة به
+* **وثائق مخصصة**: يتم إنشاؤها خصيصًا لنموذج بيانات مساحة عملك
+
+<Note>
+  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+</Note>
+
+## The Two API Types
+
+### واجهة برمجة التطبيقات الأساسية
+
+يتم الوصول إليها عبر `/rest/` أو `/graphql/`
+
+Work with your actual **records** (the data):
+
+* Create, read, update, delete People, Companies, Opportunities, etc.
+* Query and filter data
+* إدارة العلاقات بين السجلات
+
+### واجهة برمجة البيانات الوصفية
+
+يتم الوصول إليها عبر `/rest/metadata/` أو `/metadata/`
+
+Manage your **workspace and data model**:
+
+* إنشاء أو تعديل أو حذف الكائنات والحقول
+* تكوين إعدادات مساحة العمل
+* Define relationships between objects
+
+## REST vs GraphQL
+
+Both Core and Metadata APIs are available in REST and GraphQL formats:
+
+| التنسيق     | Available Operations                                       |
+| ----------- | ---------------------------------------------------------- |
+| **REST**    | CRUD, batch operations, upserts                            |
+| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+
+Choose based on your needs — both formats access the same data.
+
+## نقاط نهاية API
+
+| Environment     | Base URL                  |
+| --------------- | ------------------------- |
+| **Cloud**       | `https://api.twenty.com/` |
+| **Self-Hosted** | `https://{your-domain}/`  |
+
+## المصادقة
+
+Every API request requires an API key in the header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### قم بإنشاء مفتاح API
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click **+ Create key**
+3. Configure:
+   * **Name**: Descriptive name for the key
+   * **Expiration Date**: When the key expires
+4. انقر على **حفظ**
+5. **Copy immediately** — the key is only shown once
+
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+<Warning>
+  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+</Warning>
+
+### Assign a Role to an API Key
+
+For better security, assign a specific role to limit access:
+
+1. اذهب إلى **الإعدادات → الأدوار**
+2. Click on the role to assign
+3. افتح علامة التبويب **التعيين**
+4. Under **API Keys**, click **+ Assign to API key**
+5. Select the API key
+
+The key will inherit that role's permissions. See [Permissions](/l/ar/user-guide/permissions-access/capabilities/permissions) for details.
+
+### إدارة مفاتيح API
+
+**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+
+**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+
+## API Playground
+
+Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+
+### Access the Playground
+
+1. Go to **Settings → APIs & Webhooks**
+2. Create an API key (required)
+3. Click on **REST API** or **GraphQL API** to open the playground
+
+### What You Get
+
+* **Interactive documentation**: Generated for your specific data model
+* **Live testing**: Execute real API calls against your workspace
+* **Schema explorer**: Browse available objects, fields, and relationships
+* **Request builder**: Construct queries with autocomplete
+
+The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+
+## عمليات المجموعة
+
+Both REST and GraphQL support batch operations:
+
+* **حجم المجموعة**: حتى 60 سجل لكل طلب
+* **Operations**: Create, update, delete multiple records
+
+**GraphQL-only features:**
+
+* **Batch Upsert**: Create or update in one call
+* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+
+## Rate Limits
+
+API requests are throttled to ensure platform stability:
+
+| Limit          | القيمة               |
+| -------------- | -------------------- |
+| **Requests**   | 100 calls per minute |
+| **Batch size** | 60 records per call  |
+
+<Tip>
+  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+</Tip>
