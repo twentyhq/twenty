@@ -1,30 +1,52 @@
 ---
-title: 图标选择器
+title: Icon Picker
 image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="标题" />
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
 </Frame>
 
-一个基于下拉菜单的图标选择器，允许用户从列表中选择图标。
+A dropdown-based icon picker that allows users to select an icon from a list.
 
 <Tabs>
-  <Tab title="**用法**">
+  <Tab title="Usage">
     ```jsx
-    import { RecoilRoot } from \"recoil\";\nimport React, { useState } from \"react\";\nimport { IconPicker } from \"@/ui/input/components/IconPicker\";\n\nexport const MyComponent = () => {\n\n   const [selectedIcon, setSelectedIcon] = useState(\"\");\n   const handleIconChange = ({ iconKey, Icon }) => {\n     console.log(\"Selected Icon:\", iconKey);\n     setSelectedIcon(iconKey);\n   };\n\n  return (\n    <RecoilRoot>\n      <IconPicker\n        disabled={false}\n        onChange={handleIconChange}\n        selectedIconKey={selectedIcon}\n        variant=\"primary\"\n      />\n    </RecoilRoot>\n  );\n};
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
     ```
   </Tab>
 
-  <Tab title="属性">
-    | 属性              | 类型  | 描述                                                     |
-    | --------------- | --- | ------------------------------------------------------ |
-    | 禁用              | 布尔值 | 如果设置为 `true`，则禁用图标选择器                                  |
-    | onChange        | 函数  | 当用户选择图标时触发的回调函数。 它接收一个具有 `iconKey` 和 `Icon` 属性的对象      |
-    | selectedIconKey | 字符串 | 初始选中的图标键                                               |
-    | onClickOutside  | 函数  | 当用户点击下拉菜单外部时触发的回调函数                                    |
-    | onClose         | 函数  | 当下拉菜单关闭时触发的回调函数                                        |
-    | onOpen          | 函数  | 当下拉菜单打开时触发的回调函数                                        |
-    | variant         | 字符串 | 可点击图标的视觉风格变体。 可选项包括：`primary`、`secondary` 和 `tertiary` |
+  <Tab title="Props">
+    | Props           | Type     | Description                                                                                                               |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+    | disabled        | boolean  | Disables the icon picker if set to `true`                                                                                 |
+    | onChange        | function | The callback function triggered when the user selects an icon. It receives an object with `iconKey` and `Icon` properties |
+    | selectedIconKey | string   | The key of the initially selected icon                                                                                    |
+    | onClickOutside  | function | Callback function triggered when the user clicks outside the dropdown                                                     |
+    | onClose         | function | Callback function triggered when the dropdown is closed                                                                   |
+    | onOpen          | function | Callback function triggered when the dropdown is opened                                                                   |
+    | variant         | string   | The visual style variant of the clickable icon. Options include: `primary`, `secondary`, and `tertiary`                   |
   </Tab>
 </Tabs>

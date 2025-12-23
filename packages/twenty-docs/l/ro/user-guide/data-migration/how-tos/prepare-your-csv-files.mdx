@@ -1,0 +1,270 @@
+---
+title: "Pregătiți fișierele CSV "
+description: Ghid complet, pas cu pas, pentru a formata datele pentru import în Twenty.
+---
+
+## Prezentare generală
+
+Acest ghid vă ghidează în pregătirea fișierului CSV pentru un import reușit. Urmați acești pași pentru a evita erorile.
+
+## Pasul 1: Verificați cerințele fișierului
+
+Înainte de a începe, asigurați-vă că fișierul îndeplinește aceste cerințe:
+
+| Cerință                  | Detalii                          |
+| ------------------------ | -------------------------------- |
+| **Format**               | CSV, XLSX sau XLS                |
+| **Limită de dimensiune** | 10.000 de înregistrări pe fișier |
+| **Codificare**           | UTF-8 recomandat                 |
+| **Structură**            | Un tip de obiect pe fișier       |
+
+<Note>Pentru seturi de date mai mari de 10.000 de înregistrări, împărțiți-le în mai multe fișiere sau folosiți [importul prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Pasul 2: Descărcați fișierul de mostră
+
+**Acesta este cel mai important pas.** Fișierul de mostră vă arată exact denumirile de coloane și formatul pe care îl așteaptă Twenty.
+
+1. Accesați vizualizarea obiectului (Persoane, Companii etc.)
+2. Faceți clic pe **⋮** → **Importați înregistrări**
+3. Faceți clic pe **Descărcați fișierul de mostră**
+4. Folosiți acest fișier ca șablon
+
+<Note>**Sfat util:** Exportați în schimb câteva înregistrări existente. Acest lucru vă oferă exemple reale despre cum ar trebui să fie formatate datele, iar denumirile coloanelor se vor asocia automat în timpul importului.</Note>
+
+## Pasul 3: Eliminați valorile duplicate
+
+Twenty impune unicitatea pentru anumite câmpuri. Valorile duplicate vor provoca erori la import.
+
+| Obiect                    | Câmpuri unice                                           |
+| ------------------------- | ------------------------------------------------------- |
+| **Persoane**              | `id`, `email`                                           |
+| **Companii**              | `id`, `domain`                                          |
+| **Obiecte personalizate** | `id`, precum și orice câmp pe care l-ați marcat ca unic |
+
+**Înainte de import:**
+
+1. Sortați foaia de calcul după câmpul unic (email sau domeniu)
+2. Eliminați sau îmbinați rândurile duplicate
+3. Verificați duplicatele care există deja în Twenty
+
+<Warning>**Înregistrările șterse temporar se iau în calcul pentru unicitate.** Înregistrările din Meniul Comenzi → Vezi înregistrările șterse vor provoca erori de duplicat. Ștergeți-le definitiv sau restaurați-le și actualizați-le.</Warning>
+
+## Pasul 4: Formatați corect fiecare tip de câmp
+
+Tipurile de câmpuri diferite necesită formate specifice. Iată referința completă:
+
+### Câmpuri text
+
+* Nu este necesară o formatare specială
+* Spațiile de la început/sfârșit sunt eliminate automat
+
+### Câmpuri e-mail
+
+* Trebuie să fie într-un format de e-mail valid: `name@domain.com`
+* Trebuie să fie unic (fără duplicate în fișier sau în Twenty)
+* Pentru adresele e-mail suplimentare, folosiți acest format în coloana **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Câmpuri domeniu
+
+* **Format recomandat**: `https://domain.com`
+* Acesta corespunde formatului folosit de sincronizarea căsuței poștale/calendarului (previne duplicatele)
+* Completați ambele coloane:
+  * **Domain / Domain Label**: `domain.com`
+  * **Domain / Domain URL**: `https://domain.com`
+* Trebuie să fie unic în fișierul dvs. și în Twenty
+
+### Câmpuri telefon
+
+Telefonul este un **câmp îmbricat** care necesită mai multe coloane:
+
+| Coloană                                 | Exemplu      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Câmpuri adresă
+
+Address is a **nested field** with multiple columns (some can be left empty):
+
+* **Address / Address 1**: Street address line 1
+* **Address / Address 2**: Street address line 2 (optional)
+* **Address / City**: City name
+* **Address / State**: State or province
+* **Address / Country**: Country name
+* **Address / Post Code**: Postal/ZIP code
+
+### Date Fields
+
+Use consistent formatting throughout your file:
+
+* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Number Fields
+
+* Numbers only (no text)
+* Use period for decimals: `1234.56`
+* No thousands separators (not `1,234.56`)
+
+### Currency Fields
+
+Currency is a **nested field** requiring two columns that **both must be filled**:
+
+| Column                | Exemplu   |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+### Boolean Fields
+
+Use uppercase: `TRUE` or `FALSE`
+
+<Warning>Lowercase `true` or `false` will not work.</Warning>
+
+### Câmpuri de selectare
+
+Use the **API name** of the option, not the display label.
+
+**How to find API names:**
+
+1. Go to **Settings → Data Model**
+2. Select the object and field
+3. Enable **Advanced mode** (toggle at bottom right)
+4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+
+<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+
+### Multi-Select Fields
+
+Use API names in array format:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Array Fields
+
+Use JSON array format:
+
+```
+["value1","value2"]
+```
+
+### Rating Fields
+
+Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+
+### Links/URL Fields
+
+Fill both columns:
+
+* **Links / Link Label**: `Twenty`
+* **Links / Link URL**: `https://twenty.com`
+
+For secondary links, use the **Links / Secondary Links** column:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### JSON Fields
+
+Use valid JSON format:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### ID Fields
+
+* **Optional**: Twenty auto-generates IDs if not provided
+* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Use case**: Include ID to update existing records instead of creating new ones
+
+## Step 5: Add Relation Columns (If Linking Records)
+
+To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+
+**Example**: Linking People to Companies
+
+Add a column to your People CSV:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Important rules for relations:**
+
+* The parent record must already exist in Twenty
+* Use the **Domain URL** format (`https://domain.com`), not the label
+* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
+* For Workspace Members, use their **email** (not name)
+
+<Warning>
+  **Import Order Matters!**
+
+  Import the "one" side before the "many" side:
+
+  1. **Companies** first
+  2. **People** second (with company reference)
+  3. **Opportunities** third
+
+  The parent record must exist before you can reference it.
+</Warning>
+
+See [How to Import Relations](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+
+## Step 6: Ensure Fields Exist in Twenty
+
+The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+
+**Before importing:**
+
+1. Go to **Settings → Data Model**
+2. Select your object
+3. Create any custom fields you need
+4. Note the exact field names (they must match your column headers)
+
+## Step 7: Final Checklist
+
+Before uploading your file, verify:
+
+<Check>File is CSV, XLSX, or XLS format</Check>
+<Check>File has fewer than 10,000 records</Check>
+<Check>Encoding is UTF-8</Check>
+<Check>No duplicate emails (for People) or domains (for Companies)</Check>
+<Check>Dates use consistent format throughout</Check>
+<Check>Domains use `https://domain.com` format</Check>
+<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
+<Check>Select fields use API names, not display labels</Check>
+<Check>All custom fields exist in Settings → Data Model</Check>
+<Check>Parent records imported before child records</Check>
+<Check>Relation columns reference existing records</Check>
+
+## Common Mistakes to Avoid
+
+| Mistake                                      | Solution                              |
+| -------------------------------------------- | ------------------------------------- |
+| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
+| Using display labels for Select fields       | Find and use API names in Settings    |
+| Importing People before Companies            | Always import parent objects first    |
+| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
+| Wrong domain format                          | Use `https://domain.com` consistently |
+| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+
+## Pașii următori
+
+Your file is ready! Now:
+
+* [Import Companies](/l/ro/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
+* [Import Contacts](/l/ro/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Fix any import errors](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)

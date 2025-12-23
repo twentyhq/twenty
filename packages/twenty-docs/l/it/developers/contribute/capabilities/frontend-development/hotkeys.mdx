@@ -45,29 +45,29 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. Imposta l'ambito del tasto di scelta rapida in un useEffect
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // Torna all'ambito del tasto di scelta rapida precedente quando il componente viene smontato
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. Usa l'hook useScopedHotkeys
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // Alcuna logica eseguita in questa pagina quando l'utente preme Invio
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>La mia pagina che ascolta per Invio</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. Imposta l'ambito del tasto di scelta rapida quando l'utente apre la modale
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,14 +95,14 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. Torna all'ambito del tasto di scelta rapida precedente quando la modale viene chiusa
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>La mia pagina con una modale</h1>
-    <button onClick={handleOpenModalClick}>Apri modale</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -112,9 +112,9 @@ Poi nel componente modale:
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Usa l'hook useScopedHotkeys per ascoltare per Esc.
-  // Nota che esc è un tasto di scelta rapida comune che potrebbe essere utilizzato da molti altri componenti
-  // Quindi è importante utilizzare un ambito di tasto di scelta rapida per evitare conflitti
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,7 +123,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Il mio componente modale</div>;
+  return <div>My modal component</div>;
 };
 ```
 

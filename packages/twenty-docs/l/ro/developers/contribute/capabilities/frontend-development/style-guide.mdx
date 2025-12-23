@@ -1,0 +1,290 @@
+---
+title: Ghid de stil
+---
+
+Acest document include regulile ce trebuie urmate la scrierea codului.
+
+Scopul aici este de a avea o bază de cod coerentă, ușor de citit și ușor de întreținut.
+
+Pentru aceasta, este mai bine să fie mai detaliat decât prea concis.
+
+Ține mereu minte că oamenii citesc codul mai des decât îl scriu, mai ales într-un proiect open-source, unde oricine poate contribui.
+
+Există multe reguli care nu sunt definite aici, dar care sunt verificate automat de linters.
+
+## React
+
+### Folosește componente funcționale
+
+Utilizează întotdeauna componente funcționale TSX.
+
+Nu folosi `import` implicit cu `const`, deoarece este mai greu de citit și mai greu de importat cu completarea de cod.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Proprietăți
+
+Creează tipul proprietăților și numește-l `(NumeComponentă)Props` dacă nu este necesar să o exporți.
+
+Folosește destructurarea props.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Ferește-te de utilizarea `React.FC` sau `React.FunctionComponent` pentru a defini tipurile props
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### Fără Împrăștierea de Proprietăți cu o singură variabilă în Elemente JSX
+
+Evită utilizarea împrăștierii de proprietăți cu o singură variabilă în elemente JSX, cum ar fi `{...props}`. Această practică adesea duce la cod mai puțin lizibil și mai greu de întreținut deoarece nu este clar ce proprietăți primește componenta.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Raționament:
+
+* La o privire rapidă, este mai evident ce proprietăți sunt transmise de cod, făcându-l mai ușor de înțeles și întreținut.
+* Ajută la prevenirea unei cuplări strânse între componente prin proprietățile lor.
+* Instrumentele de linting fac mai ușor să identifici proprietăți sprellate greșit sau neutilizate atunci când enumeri explicit proprietățile.
+
+## JavaScript
+
+### Utilizează operatorul de coalescență nulă `??`
+
+```tsx
+// ❌ Rău, poate returna `implicit` chiar dacă valoarea este 0 sau ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Bun, va returna `implicit` doar dacă valoarea este null sau nedefinit
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Folosește accesarea opțională `?.`
+
+```tsx
+// ❌ Bad
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Use `type` instead of `interface`
+
+Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Folosește litere de șir în loc de enum
+
+[Literele de șir](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) sunt metoda standard pentru manipularea valorilor similare cu enum în TypeScript. Sunt mai ușor de extins cu Pick și Omit, oferind o experiență mai bună dezvoltatorilor, mai ales cu completarea codului.
+
+Poți vedea de ce TypeScript recomandă evitarea enumurilor [aici](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Bun, utilizează o literă de șir
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL și biblioteci interne
+
+Ar trebui să folosești enumurile generate de GraphQL codegen.
+
+Este de asemenea mai bine să folosești un enum atunci când utilizezi o bibliotecă internă, astfel încât biblioteca internă să nu trebuiască să expose un tip de literă de șir care nu este legată de API-ul intern.
+
+Exemplu:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Stilizare
+
+### Folosește ComponentaStilizată
+
+Stilizează componentele cu [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Rău
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Bun
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Prefixează componentele stilizate cu „Styled” pentru a le diferenția de componentele „reale”.
+
+```tsx
+// ❌ Rău
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Bun
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Tematica
+
+Utilizarea temei pentru majoritatea stilizării componentelor este abordarea preferată.
+
+#### Unități de măsură
+
+Evită utilizarea directă a valorilor `px` sau `rem` în componentele stilizate. Valorile necesare sunt de regulă deja definite în temă, așa că este recomandat să utilizezi tema pentru aceste scopuri.
+
+#### Culori
+
+Abține-te să introduci culori noi; în schimb, folosește paleta existentă din temă. În situația în care paleta nu se potrivește, te rugăm să lași un comentariu pentru ca echipa să poată remedia acest aspect.
+
+```tsx
+// ❌ Rău, specifică stilul direct fără a utiliza tema
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Bun, utilizează tema
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Impunerea Neprecizării Importurilor de Tip
+
+Evită importurile de tip. Pentru a impune acest standard, o regulă ESLint verifică și raportează orice importuri de tip. Acest lucru ajută la menținerea consistenței și lizibilității în codul TypeScript.
+
+```tsx
+// ❌ Rău
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Rău
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Bun
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### De ce Fără Importuri de Tip
+
+* **Consistență**: Evitând importurile de tip și folosind o singură abordare atât pentru importurile de tip cât și de valoare, baza de cod rămâne consistentă în stilul său de import module.
+
+* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. Aceasta reduce ambiguitatea și face mai ușor de înțeles scopul simbolurilor importate.
+
+* **Întreținere**: Îmbunătățește întreținerea bazei de cod, deoarece dezvoltatorii pot identifica și localiza importurile doar de tip când revizuiesc sau modifică codul.
+
+### Regula ESLint
+
+O regulă ESLint, `@typescript-eslint/consistent-type-imports`, impune standardul fără importuri de tip. Această regulă va genera erori sau avertismente pentru orice încălcare a importurilor de tip.
+
+Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript descurajează el însuși această practică, așa cum este menționat în notele de lansare [TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). În majoritatea situațiilor, nu ar trebui să aveți nevoie de importuri doar de tip.
+
+To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.

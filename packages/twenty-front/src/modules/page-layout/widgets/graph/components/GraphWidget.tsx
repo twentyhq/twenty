@@ -40,7 +40,7 @@ export const GraphWidget = ({
   );
 
   if (!hasValidConfiguration) {
-    return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
+    return <PageLayoutWidgetNoDataDisplay />;
   }
 
   switch (graphType) {

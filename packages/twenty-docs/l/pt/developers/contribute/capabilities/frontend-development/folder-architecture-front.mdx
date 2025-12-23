@@ -1,11 +1,11 @@
 ---
-title: Arquitetura de Pastas
-info: Um olhar detalhado sobre nossa arquitetura de pastas
+title: Folder Architecture
+info: A detailed look into our folder architecture
 ---
 
-Neste guia, você explorará os detalhes da estrutura de diretórios do projeto e como isso contribui para a organização e manutenção do Twenty.
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
 
-Seguindo esta convenção de arquitetura de pastas, é mais fácil encontrar os arquivos relacionados a funcionalidades específicas e garantir que a aplicação seja escalável e manutenível.
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
 
 ```
 front
@@ -22,14 +22,14 @@ front
 └───...
 ```
 
-## Páginas
+## Pages
 
-Inclui os componentes de nível superior definidos pelas rotas da aplicação. Elas importam componentes de nível mais baixo da pasta `modules` (mais detalhes abaixo).
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
 
-## Módulos
+## Modules
 
-Cada módulo representa uma funcionalidade ou um grupo de funcionalidades, compreendendo seus componentes específicos, estados e lógica operacional.
-Todos devem seguir a estrutura abaixo. Você pode aninhar módulos dentro de módulos (referidos como submódulos) e as mesmas regras se aplicarão.
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
 
 ```
 module1
@@ -50,60 +50,60 @@ module1
   └───utils
 ```
 
-### Contextos
+### Contexts
 
-Um contexto é uma maneira de passar dados através da árvore de componentes sem ter que passar propriedades manualmente em cada nível.
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
 
-Veja [React Context](https://react.dev/reference/react#context-hooks) para mais detalhes.
+See [React Context](https://react.dev/reference/react#context-hooks) for more details.
 
 ### GraphQL
 
-Inclui fragmentos, consultas e mutações.
+Includes fragments, queries, and mutations.
 
-Veja [GraphQL](https://graphql.org/learn/) para mais detalhes.
+See [GraphQL](https://graphql.org/learn/) for more details.
 
-* Fragmentos
+* Fragments
 
-Um fragmento é uma parte reutilizável de uma consulta, que você pode usar em diferentes lugares. Usando fragmentos, é mais fácil evitar duplicar código.
+A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
 
-Veja [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) para mais detalhes.
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
 
-* Consultas
+* Queries
 
-Veja [GraphQL Queries](https://graphql.org/learn/queries/) para mais detalhes.
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
 
-* Mutações
+* Mutations
 
-Veja [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) para mais detalhes.
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
 
 ### Hooks
 
-Veja [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) para mais detalhes.
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
 
-### Estados
+### States
 
-Contém a lógica de gerenciamento de estado. [RecoilJS](https://recoiljs.org) lida com isso.
+Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
 
-* Seletores: Veja [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) para mais detalhes.
+* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
 
-O gerenciamento de estado embutido do React ainda lida com o estado dentro de um componente.
+React's built-in state management still handles state within a component.
 
-### Utilitários
+### Utils
 
-Deve conter apenas funções puras reutilizáveis. Caso contrário, crie hooks personalizados na pasta `hooks`.
+Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
 
 ## UI
 
-Contém todos os componentes reutilizáveis de UI usados na aplicação.
+Contains all the reusable UI components used in the application.
 
-Esta pasta pode conter subpastas, como `data`, `display`, `feedback` e `input` para tipos específicos de componentes. Cada componente deve ser autocontido e reutilizável, de modo que você possa usá-lo em diferentes partes da aplicação.
+This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
 
-Ao separar os componentes de UI dos outros componentes na pasta `modules`, é mais fácil manter um design consistente e fazer alterações na UI sem afetar outras partes (lógica de negócios) do código.
+By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
 
-## Interface e dependências
+## Interface and dependencies
 
-Você pode importar código de outros módulos, exceto da pasta `ui`. Isso manterá seu código fácil de testar.
+You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
 
-### Interno
+### Internal
 
-Cada parte (hooks, estados, ...) de um módulo pode ter uma pasta `internal`, que contém partes que são usadas apenas dentro do módulo.
+Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.

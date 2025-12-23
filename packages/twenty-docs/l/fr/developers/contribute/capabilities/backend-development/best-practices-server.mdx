@@ -1,22 +1,22 @@
 ---
-title: Meilleures pratiques
+title: Best Practices
 ---
 
-Ce document décrit les meilleures pratiques à suivre lors de travaux sur le backend.
+This document outlines the best practices you should follow when working on the backend.
 
-## Suivez une approche modulaire
+## Follow a modular approach
 
-Le backend suit une approche modulaire, qui est un principe fondamental lors de l'utilisation de NestJS. Assurez-vous de décomposer votre code en modules réutilisables pour maintenir une base de code propre et organisée.
-Chaque module doit encapsuler une fonctionnalité particulière et avoir un périmètre bien défini. Cette approche modulaire permet une séparation claire des préoccupations et supprime les complexités inutiles.
+The backend follows a modular approach, which is a fundamental principle when working with NestJS. Make sure you break down your code into reusable modules to maintain a clean and organized codebase.
+Each module should encapsulate a particular feature or functionality and have a well-defined scope. This modular approach enables clear separation of concerns and removes unnecessary complexities.
 
-## Exposez des services à utiliser dans les modules
+## Expose services to use in modules
 
-Créez toujours des services avec une responsabilité claire et unique, ce qui améliore la lisibilité et la maintenabilité du code. Nommez les services de manière descriptive et cohérente.
+Always create services that have a clear and single responsibility, which enhances code readability and maintainability. Name the services descriptively and consistently.
 
-Vous devez également exposer les services que vous souhaitez utiliser dans d'autres modules. Exposer des services à d'autres modules est possible grâce au puissant système d'injection de dépendance de NestJS, et favorise un couplage lâche entre les composants.
+You should also expose services that you want to use in other modules. Exposing services to other modules is possible through NestJS's powerful dependency injection system, and promotes loose coupling between components.
 
-## Évitez d'utiliser le type `any`
+## Avoid using `any` type
 
-Lorsque vous déclarez une variable comme `any`, le vérificateur de types de TypeScript ne procède à aucune vérification de type, ce qui permet d'affecter n'importe quel type de valeur à la variable. TypeScript utilise l'inférence de type pour déterminer le type d'une variable en fonction de sa valeur. En le déclarant comme `any`, TypeScript ne peut plus inférer le type. Cela rend difficile la détection des erreurs liées aux types pendant le développement, conduisant à des erreurs d'exécution et rendant le code moins maintenable, moins fiable et plus difficile à comprendre pour d'autres.
+When you declare a variable as `any`, TypeScript's type checker doesn't perform any type checking, making it possible to assign any type of values to the variable. TypeScript uses type inference to determine the type of variable based on the value. By declaring it as `any`, TypeScript can no longer infer the type. This makes it hard to catch type-related errors during development, leading to runtime errors and makes the code less maintainable, less reliable, and harder to understand for others.
 
-C'est pourquoi tout devrait avoir un type. Donc si vous créez un nouvel objet avec un prénom et un nom, vous devriez créer une interface ou un type contenant un prénom et un nom qui définit la forme de l'objet que vous manipulez.
+This is why everything should have a type. So if you create a new object with a first name and last name, you should create an interface or type that contains a first name and last name that defines the shape of the object you are manipulating.

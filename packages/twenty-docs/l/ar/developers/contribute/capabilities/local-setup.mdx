@@ -1,0 +1,333 @@
+---
+title: الإعداد المحلي
+description: The guide for contributors (or curious developers) who want to run Twenty locally.
+---
+
+## Prerequisites
+
+<Tabs>
+  <Tab title="Linux و MacOS">
+    قبل أن تتمكن من تثبيت واستخدام Twenty، تأكد من تثبيت الأمور التالية على جهاز الكمبيوتر الخاص بك:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. Yarn is now shipped with Node.js, so you don't need to install it separately.
+      عليك فقط تشغيل `corepack enable` لتفعيل Yarn إذا لم تقم بذلك بعد.
+    </Warning>
+  </Tab>
+
+  <Tab title="ويندوز (WSL)">
+    1. ثبّت WSL
+       افتح PowerShell كمسؤول ثم نفّذ:
+
+    ```powershell
+    wsl --install
+    ```
+
+    يجب أن ترى الآن مطالبة لإعادة تشغيل جهاز الكمبيوتر الخاص بك. إذا لم يكن كذلك، فأعد تشغيله يدويًا.
+
+    Upon restart, a powershell window will open and install Ubuntu. قد يستغرق هذا وقتًا طويلاً.
+    سترى مطالبة لإنشاء اسم المستخدم وكلمة المرور لتثبيت Ubuntu الخاص بك.
+
+    2. تثبيت وإعداد git
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Your Name"
+
+    git config --global user.email "youremail@domain.com"
+    ```
+
+    3. تثبيت nvm و node.js و yarn
+
+    <Warning>
+      استخدم `nvm` لتثبيت نسخة `node` الصحيحة. الملف `.nvmrc` يضمن استخدام جميع المشاركين لنفس النسخة.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    أغلق وأعد فتح برنامجك الطرفي لاستخدام nvm. ثم قم بتشغيل الأوامر التالية.
+
+    ```bash
+
+    nvm install # يثبت إصدار node الموصى به
+
+    nvm use # استخدم إصدار node الموصى به
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## الخطوة 1: استنساخ Git
+
+في الطرفية الخاصة بك، قم بتشغيل الأمر التالي.
+
+<Tabs>
+  <Tab title="SSH (موصى به)">
+    إذا لم تكن قد أعددت مفاتيح SSH بالفعل، يمكنك معرفة كيفية القيام بذلك [هنا](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## الخطوة 2: انتقل إلى جذر المشروع
+
+```bash
+cd twenty
+```
+
+يجب تشغيل جميع الأوامر في الخطوات التالية من جذر المشروع.
+
+## الخطوة 3: إعداد قاعدة بيانات PostgreSQL
+
+<Tabs>
+  <Tab title="Linux">
+    **الخيار 1 (المفضل):** لتوفير قاعدة بياناتك محليًا:
+    استخدم الرابط التالي لتثبيت Postgresql على جهاز Linux الخاص بك: [تثبيت Postgresql](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    ملاحظة: قد تحتاج إلى إضافة `sudo -u postgres` إلى الأمر قبل `psql` لتجنب أخطاء الإذن.
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="نظام Mac OS">
+    **الخيار 1 (المفضل):** لتوفير قاعدة بياناتك محليًا مع `brew`:
+
+    ```bash
+    brew install postgresql@16
+    export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+    brew services start postgresql@16
+    psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    يمكنك التحقق مما إذا كان خادم PostgreSQL يعمل بتنفيذ:
+
+    ```bash
+    brew services list
+    ```
+
+    المثبت قد لا ينشئ المستخدم `postgres` افتراضيًا عند التثبيت
+    عبر Homebrew على MacOS. بدلاً من ذلك، فإنه ينشئ دور PostgreSQL يطابق
+    اسم المستخدم الخاص بك في MacOS (مثل "john").
+    للتحقق وإنشاء المستخدم `postgres` إذا لزم الأمر، اتبع هذه الخطوات:
+
+    ```bash
+    # قم بالاتصال بPostgreSQL
+    psql postgres
+    أو
+    psql -U $(whoami) -d postgres
+    ```
+
+    بمجرد أن تكون عند مطالبة psql (postgres=#)، قم بتشغيل:
+
+    ```bash
+    # قائمة الأدوار الموجودة في PostgreSQL
+    \du
+    ```
+
+    سترى مخرجات مشابهة ل:
+
+    ```bash
+    اسم الأدوار | الخصائص | عضو في
+    -----------+-------------+-----------
+    john | مشرف نظام | {}
+    ```
+
+    إذا لم ترَ دور `postgres` مدرجًا، انتقل إلى الخطوة التالية.
+    قم بإنشاء دور `postgres` يدويًا:
+
+    ```bash
+    CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    يقوم هذا بإنشاء دور مشرف نظام باسم `postgres` مع إمكانية تسجيل الدخول.
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="ويندوز (WSL)">
+    يجب أن تُنفذ جميع الخطوات التالية في تيرمينال WSL (داخل جهازك الافتراضي)
+
+    **الخيار 1:** لتوفير قاعدة بيانات Postgresql الخاصة بك محليًا:
+    استخدم الرابط التالي لتثبيت Postgresql على جهاز Linux الافتراضي الخاص بك: [تثبيت Postgresql](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    ملاحظة: قد تحتاج إلى إضافة `sudo -u postgres` إلى الأمر قبل `psql` لتجنب أخطاء الإذن.
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+    تشغيل Docker على WSL يضيف طبقة إضافية من التعقيد.
+    استخدم هذا الخيار فقط إذا كنت مرتاحًا مع الخطوات الإضافية المتضمنة، بما في ذلك تشغيل [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+
+    ```bash
+    make postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+يمكنك الآن الوصول إلى قاعدة البيانات على [localhost:5432](localhost:5432)، مع المستخدم `postgres` وكلمة المرور `postgres`.
+
+## الخطوة 4: إعداد قاعدة بيانات Redis (للتخزين المؤقت)
+
+يتطلب Twenty مخزن بيانات Redis لتقديم أفضل أداء
+
+<Tabs>
+  <Tab title="Linux">
+    **الخيار 1:** لتوفير Redis الخاص بك محليًا:
+    استخدم الرابط التالي لتثبيت Redis على جهاز Linux: [تثبيت Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **الخيار 1 (المفضل):** لتوفير Redis الخاص بك محليًا مع `brew`:
+
+    ```bash
+    brew install redis
+    ```
+
+    ابدأ خادم redis الخاص بك:
+    `brew services start redis`
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="ويندوز (WSL)">
+    **الخيار 1:** لتوفير Redis الخاص بك محليًا:
+    استخدم الرابط التالي لتثبيت Redis على جهاز Linux الافتراضي الخاص بك: [تثبيت Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
+
+    ```bash
+    make redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+إذا كنت بحاجة إلى واجهة رسومية للعميل، نوصي بـ [redis insight](https://redis.io/insight/) (يتوفر إصدار مجاني)
+
+## الخطوة 5: إعداد متغيرات البيئة
+
+استخدم متغيرات البيئة أو ملفات `.env` لتكوين مشروعك. المزيد من المعلومات [هنا](/l/ar/developers/self-host/capabilities/setup)
+
+انسخ ملفات `.env.example` الموجودة في `/front` و`/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/ar/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+</Info>
+
+## الخطوة 6: تثبيت التبعيات
+
+لبناء خادم Twenty وزرع بعض البيانات في قاعدة البيانات الخاصة بك، قم بتشغيل الأمر التالي:
+
+```bash
+yarn
+```
+
+لاحظ أن `npm` أو `pnpm` لن تعملا
+
+## الخطوة 7: تشغيل المشروع
+
+<Tabs>
+  <Tab title="Linux">
+    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا.
+    إذا لم يكن كذلك، تحقق من [دليل تثبيت Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) لتوزيعتك.
+  </Tab>
+
+  <Tab title="نظام Mac OS">
+    من المفترض أن يكون Redis قد تم تشغيله بالفعل. إذا لم يكن كذلك، قم بتشغيل:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="ويندوز (WSL)">
+    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا.
+    إذا لم يكن كذلك، تحقق من [دليل تثبيت ريديس](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) لتوزيعتك.
+  </Tab>
+</Tabs>
+
+قم بضبط قاعدة بياناتك بالأمر التالي:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+ابدأ الخادم والخادم الثانوي وخدمات الواجهة الأمامية:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+بدلاً من ذلك، يمكنك بدء جميع الخدمات مرة واحدة:
+
+```bash
+npx nx start
+```
+
+## الخطوة الثامنة: استخدم Twenty
+
+**الواجهة الأمامية**
+
+ستكون واجهة Twenty الأمامية تعمل على  [http://localhost:3001](http://localhost:3001).
+يمكنك تسجيل الدخول باستخدام حساب العرض التوضيحي الافتراضي: `tim@apple.dev` (كلمة المرور: `tim@apple.dev`)
+
+**الخلفية**
+
+* سيكون خادم Twenty متصلاً ويعمل على [http://localhost:3000](http://localhost:3000)
+* يمكن الوصول إلى واجهة برمجة التطبيقات GraphQL في [http://localhost:3000/graphql](http://localhost:3000/graphql)
+* يمكن الوصول إلى واجهة برمجة التطبيقات REST في [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## استكشاف الأخطاء وإصلاحها
+
+إذا واجهت أي مشكلة، فارجع إلى [استكشاف الأخطاء وإصلاحها](/l/ar/developers/self-host/capabilities/troubleshooting) للحصول على الحلول.

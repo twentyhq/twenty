@@ -1,0 +1,149 @@
+---
+title: Zobrazte očekávanou částku ve své pipeline.
+description: Vypočítejte a zobrazte vážené hodnoty obchodů na základě pravděpodobnosti fáze.
+---
+
+Očekávaná částka je vypočítaná hodnota: **Částka × Pravděpodobnost**. To vám pomůže předpovídat tržby vážením obchodů podle toho, jak pravděpodobné je, že se uzavřou.
+
+<Tip>
+  Toto je příklad vytváření [Vzorcových polí](/l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields) pomocí pracovních postupů.
+</Tip>
+
+Tento průvodce vás provede nastavením vlastních polí a pracovních postupů potřebných k výpočtu a zobrazení očekávaných částek ve vaší pipeline.
+
+## Krok 1: Vytvořte vlastní pole
+
+Na objektu Příležitosti potřebujete dvě vlastní pole.
+
+### Vytvořte pole Pravděpodobnost
+
+1. Přejděte do **Nastavení → Datový model → Příležitosti**
+2. Klikněte na **+ Přidat pole**
+3. Nakonfigurujte:
+   * **Název**: Pravděpodobnost
+   * **Typ**: Číslo
+   * **Popis**: Pravděpodobnost podle fáze (0–100 %)
+4. Klikněte na **Uložit**
+
+### Vytvořte pole Očekávaná částka
+
+1. Klikněte na **+ Přidat pole**
+2. Nakonfigurujte:
+   * **Název**: Očekávaná částka
+   * **Typ**: Měna
+   * **Popis**: Vypočteno: Částka × Pravděpodobnost
+3. Klikněte na **Uložit**
+
+### Volitelné: Nastavte pole pro uživatele jen pro čtení
+
+Pokud nechcete, aby uživatelé ručně upravovali tato vypočtená pole:
+
+1. Přejděte na **Nastavení → Role**
+2. Vyberte roli k nastavení
+3. Najděte objekt Příležitosti
+4. Nastavte pole **Pravděpodobnost** a **Očekávaná částka** jako pouze pro čtení
+
+Tím zajistíte, že tyto hodnoty mohou aktualizovat pouze pracovní postupy.
+
+## Krok 2: Vytvořte pracovní postup č. 1 — Aktualizace pravděpodobnosti při změně fáze
+
+Tento pracovní postup automaticky nastaví Pravděpodobnost, když se příležitost přesune do nové fáze.
+
+### Vytvořte pracovní postup
+
+1. Přejděte do **Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte ho "Aktualizace pravděpodobnosti při změně fáze"
+
+### Nakonfigurujte spouštěč
+
+1. Přidejte spouštěč **Záznam vytvořen nebo aktualizován**
+2. Vyberte **Příležitosti** jako objekt
+3. Filtr: pole **Fáze** je aktualizováno
+
+### Přidejte větve pro každou fázi
+
+Vytvořte větev pro každou fázi s její pravděpodobností:
+
+| Fáze                | Pravděpodobnost |
+| ------------------- | --------------- |
+| Nový                | 10 %            |
+| Kvalifikovaný       | 25 %            |
+| Schůzka             | 40 %            |
+| Nabídka             | 60 %            |
+| Vyjednávání         | 80 %            |
+| Uzavřeno – vyhráno  | 100 %           |
+| Uzavřeno – prohráno | 0%              |
+
+<Note>
+  Chcete-li vytvořit novou větev, klikněte pravým tlačítkem na plátno pracovního postupu a klikněte na **Nová akce**. Poté propojte tuto akci s předchozím uzlem přetažením šipky z předchozího uzlu na tuto novou akci.
+</Note>
+
+Pro každou fázi:
+
+1. Přidejte uzel **Filtr**: Fáze = [název fáze]
+2. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí příležitost
+   * Pole: Pravděpodobnost
+   * Hodnota: [pravděpodobnost pro danou fázi]
+
+### Vypočítejte očekávanou částku
+
+Poté, co se větve znovu spojí:
+
+1. Přidejte uzel **Filtr**: Částka není prázdná
+2. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí příležitost
+   * Pole: Očekávaná částka
+   * Hodnota: Částka × Pravděpodobnost
+
+## Krok 3: Vytvořte pracovní postup č. 2 — Přepočet při změně částky
+
+Tento pracovní postup aktualizuje Očekávanou částku, když se změní Částka u obchodu.
+
+### Vytvořte pracovní postup
+
+1. Přejděte do **Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte ho "Přepočítat očekávanou částku při změně částky"
+
+### Nakonfigurujte spouštěč
+
+1. Přidejte spouštěč **Záznam vytvořen nebo aktualizován**
+2. Vyberte **Příležitosti** jako objekt
+3. Filtr: pole **Částka** je aktualizováno
+
+### Přidejte logiku
+
+1. Přidejte uzel **Filtr**: Částka není prázdná
+2. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí příležitost
+   * Pole: Očekávaná částka
+   * Hodnota: Částka × Pravděpodobnost
+
+## Krok 4: Zobrazte ve své pipeline
+
+Nyní zobrazte součty očekávané částky ve svém zobrazení Kanban:
+
+1. Otevřete si zobrazení Kanban pro svou prodejní pipeline
+2. Klikněte na **číslo** vedle názvu libovolné fáze v horní části sloupce
+3. Vyberte **Součet**
+4. Vyberte **Očekávaná částka**
+
+Každý sloupec nyní zobrazuje celkovou váženou hodnotu pipeline pro danou fázi.
+
+## Souhrn
+
+| Komponenta                | Účel                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| **Pole Pravděpodobnost**  | Ukládá pravděpodobnost výhry podle fáze                                       |
+| **Pole Očekávaná částka** | Ukládá Částka × Pravděpodobnost                                               |
+| **Pracovní postup č. 1**  | Aktualizuje Pravděpodobnost při změně Fáze a poté přepočítá Očekávanou částku |
+| **Pracovní postup č. 2**  | Přepočítá Očekávanou částku při změně Částky                                  |
+| **Agregace**              | Zobrazuje součet očekávané částky pro každou fázi                             |
+
+## Související
+
+* [Vzorcová pole](/l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields) — vytvářejte vypočtená pole pomocí pracovních postupů
+* [Zobrazení Kanban](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — agregace sloupců
+* [Jak vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/create-custom-fields) — konfigurace polí

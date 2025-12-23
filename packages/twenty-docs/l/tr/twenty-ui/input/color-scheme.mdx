@@ -1,0 +1,63 @@
+---
+title: Renk Şeması
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Başlık" />
+</Frame>
+
+## Color Scheme Card
+
+Farklı renk şemalarını temsil eder ve açık ve koyu temalar için özel olarak tasarlanmıştır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler       | Tür                                     | Açıklama                                                                                | Varsayılan |
+    | ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------- | ---------- |
+    | variant          | string                                  | The color scheme variant. Seçenekler arasında `Koyu`, `Açık` ve `Sistem` bulunmaktadır. | aydınlık   |
+    | seçili           | boolean                                 | Eğer `true` ise, seçilen renk şemasını belirtmek için bir onay işareti görüntüler.      |            |
+    | additional props | `React.ComponentPropsWithoutRef<'div'>` | Standart HTML `div` öğe özellikleri                                                     |            |
+  </Tab>
+</Tabs>
+
+## Color Scheme Picker
+
+Kullanıcıların farklı renk şemaları arasında seçim yapmasına olanak tanır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür           | Açıklama                                                                     |
+    | ---------- | ------------- | ---------------------------------------------------------------------------- |
+    | değer      | `Renk Şeması` | Şu anda seçili olan renk şeması                                              |
+    | onChange   | fonksiyon     | The callback function you want to trigger when a user selects a color scheme |
+  </Tab>
+</Tabs>

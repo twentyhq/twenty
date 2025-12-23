@@ -1,0 +1,34 @@
+---
+title: Image Input
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Intestazione" />
+</Frame>
+
+Consente agli utenti di caricare e rimuovere un'immagine.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { ImageInput } from "@/ui/input/components/ImageInput";
+
+    export const MyComponent = () => {
+      return <ImageInput/>;
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props             | Tipo     | Descrizione                                                                                                    |
+    | ----------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+    | immagine          | string   | L'URL di origine dell'immagine                                                                                 |
+    | onUpload          | funzione | La funzione chiamata quando un utente carica una nuova immagine. Riceve l'oggetto `File` come parametro        |
+    | onRemove          | funzione | La funzione chiamata quando l'utente clicca sul pulsante di rimozione                                          |
+    | onAbort           | funzione | La funzione chiamata quando un utente clicca sul pulsante di annullamento durante il caricamento dell'immagine |
+    | isUploading       | booleano | Indica se un'immagine è attualmente in fase di caricamento                                                     |
+    | messaggioDiErrore | stringa  | Un messaggio di errore opzionale da visualizzare sotto l'input dell'immagine                                   |
+    | disabilitato      | booleano | Se `vero`, l'intero input è disabilitato e i pulsanti non sono cliccabili                                      |
+  </Tab>
+</Tabs>

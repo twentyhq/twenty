@@ -1,0 +1,125 @@
+---
+title: SSO Configuration
+description: Configure Single Sign-On for secure enterprise authentication.
+---
+
+## About SSO
+
+Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+
+* **Centralized access control**: Manage access from one place
+* **Enhanced security**: Leverage your existing security policies
+* **Better user experience**: One set of credentials for all tools
+
+## Supported Providers
+
+Twenty supports SSO with:
+
+* **SAML 2.0**: Works with most enterprise identity providers
+* **Google Workspace**: For organizations using Google
+* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+
+## Setting Up SSO
+
+### Ön Gereksinimler
+
+* Organization plan (cloud and self-hosted workspaces)
+* Admin access to your identity provider
+* Admin access to Twenty workspace
+
+<Note>
+  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+</Note>
+
+### Configuration Steps
+
+#### 1. Access SSO Settings
+
+1. Go to **Settings → Security**
+2. Find the **SSO Configuration** section
+3. Click **Configure SSO**
+
+#### 2) Choose Your Provider
+
+Select your identity provider from the list or choose "Custom SAML" for other providers.
+
+#### 3. Configure Your Identity Provider
+
+You'll need to configure your identity provider with:
+
+* **Entity ID**: Provided by Twenty
+* **ACS URL**: The callback URL for authentication
+* **Certificate**: For secure communication
+
+#### 4. Enter Provider Details in Twenty
+
+* **SSO URL**: Login URL from your provider
+* **Entity ID**: Your provider's identifier
+* **Certificate**: X.509 certificate from your provider
+
+#### 5. Test and Enable
+
+1. Click **Test Configuration** to verify setup
+2. Enable SSO when testing is successful
+3. Configure user provisioning preferences
+
+## User Provisioning
+
+### Just-in-Time (JIT) Provisioning
+
+* Users are created automatically on first login
+* Assigned default role automatically
+* No manual user creation needed
+
+### Manual Provisioning
+
+* Invite users before they can log in
+* Pre-assign specific roles
+* More control over who can access
+
+## Managing SSO Users
+
+### Role Assignment
+
+SSO users can be assigned roles like regular users:
+
+1. **Ayarlar → Üyeler** bölümüne gidin
+2. Find the user
+3. Change their role as needed
+
+### Access Revocation
+
+To remove access for SSO users:
+
+* Remove them from your identity provider, or
+* Remove them from the Twenty workspace
+
+## En İyi Uygulamalar
+
+### Güvenlik
+
+* **Require SSO**: Disable password login for SSO users
+* **Regular audits**: Review access periodically
+* **Strong IdP policies**: Enforce MFA at the identity provider
+
+### User Management
+
+* **Clear naming**: Use consistent naming from your directory
+* **Group mapping**: Map IdP groups to Twenty roles (if available)
+* **Offboarding process**: Include Twenty in your deprovisioning workflow
+
+## Sorun Giderme
+
+### Common Issues
+
+* **Certificate errors**: Ensure certificate hasn't expired
+* **URL mismatches**: Verify ACS URL matches exactly
+* **User not found**: Check JIT provisioning settings
+
+### Yardım Almak
+
+If you encounter issues, contact support with:
+
+* Error messages received
+* Identity provider being used
+* Configuration details (without sensitive data)

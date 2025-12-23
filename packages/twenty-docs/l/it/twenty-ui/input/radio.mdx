@@ -1,0 +1,97 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Intestazione" />
+</Frame>
+
+Utilizzato quando gli utenti possono scegliere solo un'opzione da una serie di opzioni.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
+
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
+
+
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props              | Tipo                  | Descrizione                                                                                                  |
+    | ------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | stile              | proprietà `React.CSS` | Stili inline aggiuntivi per il componente                                                                    |
+    | nomeClasse         | stringa               | Classe CSS opzionale per uno stile aggiuntivo                                                                |
+    | selezionato        | booleano              | Indica se il pulsante di opzione è selezionato                                                               |
+    | valore             | stringa               | L'etichetta o il testo associato al pulsante di opzione                                                      |
+    | onChange           | funzione              | The function called when the selected radio button is changed                                                |
+    | onCheckedChange    | funzione              | La funzione chiamata quando cambia lo stato `selezionato` del pulsante di opzione                            |
+    | dimensione         | stringa               | La dimensione del pulsante di opzione. Le opzioni includono: `grande` e `piccolo`                            |
+    | disabilitato       | booleano              | Se `true`, il pulsante di opzione è disabilitato e non cliccabile                                            |
+    | posizioneEtichetta | stringa               | La posizione del testo dell'etichetta rispetto al pulsante di opzione. Ha due opzioni: `sinistra` e `destra` |
+  </Tab>
+</Tabs>
+
+## Gruppo di Radio
+
+Raggruppa insieme pulsanti di opzione correlati.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const [selectedValue, setSelectedValue] = useState("Option 1");
+
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietà">
+    | Proprietà     | Tipo              | Descrizione                                                                      |
+    | ------------- | ----------------- | -------------------------------------------------------------------------------- |
+    | valore        | stringa           | Il valore del pulsante di opzione attualmente selezionato                        |
+    | onChange      | funzione          | The callback function triggered when the radio button is changed                 |
+    | onValueChange | funzione          | La funzione di callback attivata quando cambia il valore selezionato nel gruppo. |
+    | figli         | `React.ReactNode` | Consente di passare componenti React (come Radio) come figli al Gruppo di Radio  |
+  </Tab>
+</Tabs>

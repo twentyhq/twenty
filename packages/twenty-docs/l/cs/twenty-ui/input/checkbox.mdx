@@ -1,0 +1,44 @@
+---
+title: Zaškrtávací políčko
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Hlavička" />
+</Frame>
+
+Používané, když uživatel potřebuje vybrat více hodnot z několika možností.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti      | Typ                | Popis                                                                                       |
+    | --------------- | ------------------ | ------------------------------------------------------------------------------------------- |
+    | zaškrtnuté      | booleovská hodnota | Ukazuje, zda je zaškrtávací políčko zaškrtnuté                                              |
+    | neurčitý stav   | booleovská hodnota | Ukazuje, zda je zaškrtávací políčko ve stavu neurčitosti (ani zaškrtnuté, ani nezaškrtnuté) |
+    | onChange        | funkce             | Callback funkce, kterou chcete spustit, když se změní stav zaškrtávacího políčka            |
+    | onCheckedChange | funkce             | Callback funkce, kterou chcete spustit, když se změní stav „zaškrtnutí“                     |
+    | varianta        | textový řetězec    | Vizuální stylová varianta boxu. Možnosti zahrnují: "primární", "sekundární" a "terciární"   |
+    | velikost        | řetězec            | Velikost zaškrtávacího políčka. Má dvě možnosti: "malý" a "velký"                           |
+    | tvar            | řetězec            | Tvar zaškrtávacího políčka. Má dvě možnosti: "čtvercový" a "zaoblený"                       |
+  </Tab>
+</Tabs>

@@ -1,0 +1,137 @@
+---
+title: Text
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Antet" />
+</Frame>
+
+## Introduceți text
+
+Permite utilizatorilor să introducă și să editeze text.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
+
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
+
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
+
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip              | Descriere                                                                                                                            |
+    | -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+    | numeClasa      | șir              | Nume opțional pentru stilizare suplimentară                                                                                          |
+    | etichetă       | string           | Reprezintă eticheta pentru intrare                                                                                                   |
+    | onChange       | funcție          | The function called when the input value changes                                                                                     |
+    | lățimeCompletă | boolean          | Indică dacă intrarea ar trebui să ocupe 100% din lățime                                                                              |
+    | disableHotkeys | boolean          | Indică dacă tastele rapide sunt activate pentru intrare                                                                              |
+    | eroare         | șir              | Reprezintă mesajul de eroare care să fie afișat. Când este oferit, adaugă și o pictogramă de eroare pe partea dreaptă a intrării     |
+    | onKeyDown      | funcție          | Apelează atunci când o tastă este apăsată în timp ce câmpul de intrare este focalizat. Primește un `React.KeyboardEvent` ca argument |
+    | RightIcon      | ComponentaIcoana | An optional icon component displayed on the right side of the input                                                                  |
+
+    Componenta acceptă și alte atribute de element HTML de intrare.
+  </Tab>
+</Tabs>
+
+## Autosize Text Input
+
+Componenta de intrare text care își ajustează automat înălțimea în funcție de conținut.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți   | Tip     | Descriere                                                                   |
+    | ------------- | ------- | --------------------------------------------------------------------------- |
+    | onValidate    | funcție | The callback function you want to trigger when the user validates the input |
+    | minRows       | număr   | Numărul minim de rânduri pentru aria textului                               |
+    | text sugestiv | string  | Text loc de plasare afișat când aria textului este goală                    |
+    | onFocus       | funcție | Funcția de apelare dorită când aria textului câștigă focalizare             |
+    | variantă      | string  | Varianta intrării. Opțiuni includ: `implicit`, `icon`, și `buton`           |
+    | buttonTitle   | string  | Titlul pentru buton (aplicabil doar pentru varianta butonului)              |
+    | valoare       | string  | Valoarea inițială pentru aria textului                                      |
+  </Tab>
+</Tabs>
+
+## Text Area
+
+Vă permite să creați intrări de text pe mai multe linii.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
+
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți   | Tip     | Descriere                                                      |
+    | ------------- | ------- | -------------------------------------------------------------- |
+    | dezactivat    | boolean | Indică dacă aria textului este dezactivată                     |
+    | minRows       | număr   | Numărul minim de rânduri vizibile pentru aria textului.        |
+    | onChange      | funcție | Callback function triggered when the text area content changes |
+    | text sugestiv | șir     | Placeholder text displayed when the text area is empty         |
+    | valoare       | șir     | Valoarea curentă a câmpului de text                            |
+  </Tab>
+</Tabs>
