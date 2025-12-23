@@ -16,7 +16,13 @@ import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manage
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
 import { SupportDriver } from '~/generated/graphql';
-import { email, mocks, password, results, token } from '@/auth/hooks/__mocks__/useAuth';
+import {
+  email,
+  mocks,
+  password,
+  results,
+  token,
+} from '@/auth/hooks/__mocks__/useAuth';
 
 const redirectSpy = jest.fn();
 
