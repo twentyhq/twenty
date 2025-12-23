@@ -9,6 +9,7 @@ import {
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -33,6 +34,8 @@ export const CurrencyDisplay = ({
 
   const format = fieldDefinition.metadata.settings?.format;
   const decimals = fieldDefinition.metadata.settings?.decimals;
+  const decimalsToUse = decimals ?? DEFAULT_DECIMAL_VALUE;
+
   const { formatNumber } = useNumberFormat();
 
   return (
@@ -49,7 +52,7 @@ export const CurrencyDisplay = ({
       {amountToDisplay !== null
         ? !isDefined(format) || format === 'short'
           ? formatToShortNumber(amountToDisplay)
-          : formatNumber(amountToDisplay, { decimals })
+          : formatNumber(amountToDisplay, { decimals: decimalsToUse })
         : null}
     </EllipsisDisplay>
   );

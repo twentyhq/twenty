@@ -1,7 +1,10 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type FieldCurrencyFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  fieldMetadataCurrencyFormat,
+  type FieldCurrencyFormat,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
 import { Separator } from '@/settings/components/Separator';
@@ -89,7 +92,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         control={control}
         defaultValue={initialSettingsValue}
         render={({ field: { onChange, value } }) => {
-          const format = value?.format ?? 'short';
+          const format = value?.format ?? fieldMetadataCurrencyFormat[0];
           const decimals = value?.decimals ?? DEFAULT_DECIMAL_VALUE;
 
           return (
@@ -106,7 +109,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
                     onChange({
                       format: newFormat,
                       decimals:
-                        newFormat === 'short'
+                        newFormat === fieldMetadataCurrencyFormat[0]
                           ? DEFAULT_DECIMAL_VALUE
                           : decimals,
                     })
@@ -114,8 +117,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   disabled={disabled}
                   dropdownId="object-field-format-select"
                   options={[
-                    { label: 'Short', value: 'short' },
-                    { label: 'Full', value: 'full' },
+                    { label: 'Short', value: fieldMetadataCurrencyFormat[0] },
+                    { label: 'Full', value: fieldMetadataCurrencyFormat[1] },
                   ]}
                   selectSizeVariant="small"
                   withSearchInput={false}
