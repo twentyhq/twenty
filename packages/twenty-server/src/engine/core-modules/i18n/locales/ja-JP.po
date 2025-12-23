@@ -3437,7 +3437,7 @@ msgstr "アップサート中に一致するレコードが複数見つかりま
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-msgstr "{conflictingFieldsValues} のために同一フィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
+msgstr "{ConflictingFieldsValues} のために同一フィールド値を持つ複数のレコードが見つかりました。どのレコードを更新するか判断できません。"
 
 #. js-lingui-id: B9dbXq
 #: src/engine/core-modules/billing/billing.exception.ts
