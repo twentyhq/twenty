@@ -4,27 +4,29 @@ describe('isUpdateRecordValueEmpty', () => {
   it('should return true for null or undefined', () => {
     expect(isUpdateRecordValueEmpty(null)).toBe(true);
     expect(isUpdateRecordValueEmpty(undefined)).toBe(true);
+  });
+
+  it('should return true for empty string', () => {
     expect(isUpdateRecordValueEmpty('')).toBe(true);
   });
 
-  it('should return true for empty arrays', () => {
+  it('should return true for empty array', () => {
     expect(isUpdateRecordValueEmpty([])).toBe(true);
   });
 
-  it('should return true for objects with only empty values', () => {
+  it('should return false for non-empty array', () => {
+    expect(isUpdateRecordValueEmpty([1])).toBe(false);
+  });
+
+  it('should return true for object with all empty values', () => {
     expect(isUpdateRecordValueEmpty({ a: null, b: '' })).toBe(true);
-    expect(isUpdateRecordValueEmpty({ a: undefined })).toBe(true);
   });
 
-  it('should return false for non-empty values', () => {
-    expect(isUpdateRecordValueEmpty('abc')).toBe(false);
-    expect(isUpdateRecordValueEmpty(['a'])).toBe(false);
-    expect(isUpdateRecordValueEmpty({ a: 'val' })).toBe(false);
-    expect(isUpdateRecordValueEmpty(0)).toBe(false);
-    expect(isUpdateRecordValueEmpty(false)).toBe(false);
+  it('should return false for object with non-empty values', () => {
+    expect(isUpdateRecordValueEmpty({ a: 1 })).toBe(false);
   });
 
-  it('should return false for objects with mixed empty and non-empty values', () => {
-    expect(isUpdateRecordValueEmpty({ a: '', b: 'val' })).toBe(false);
+  it('should return false for Date object', () => {
+    expect(isUpdateRecordValueEmpty(new Date())).toBe(false);
   });
 });

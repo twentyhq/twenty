@@ -7,6 +7,10 @@ export const isUpdateRecordValueEmpty = (value: any): boolean => {
     return value.length === 0;
   }
 
+  if (value instanceof Date) {
+    return false;
+  }
+
   if (typeof value === 'object') {
     return Object.values(value).every(
       (val) => val === null || val === undefined || val === '',
