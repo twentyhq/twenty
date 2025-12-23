@@ -62,32 +62,35 @@ jobs:
           git add .
           git stash || true
 
+      # Install Crowdin CLI for downloading translations
+      - name: Install Crowdin CLI
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: npm install -g @crowdin/cli
+
+      # Pull docs translations from Crowdin one language at a time
+      # This avoids build timeout issues when processing all languages at once
       - name: Pull translated docs from Crowdin
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        uses: crowdin/github-action@v2
-        with:
-          upload_sources: false
-          upload_translations: false
-          download_translations: true
-          source: 'packages/twenty-docs/**/*.mdx'
-          translation: 'packages/twenty-docs/l/%two_letters_code%/**/%original_file_name%'
-          export_only_approved: false
-          localization_branch_name: i18n-docs
-          base_url: 'https://twenty.api.crowdin.com'
-          skip_untranslated_strings: false
-          skip_untranslated_files: false
-          push_translations: false
-          create_pull_request: false
-          skip_ref_checkout: true
-          dryrun_action: false
-          config: 'crowdin-docs.yml'
-          # Only download languages supported by Mintlify (see supported-languages.ts)
-          # Using multiple -l flags since download_language only accepts single language
-          download_translations_args: '-l fr -l ar -l cs -l de -l es -l it -l ja -l ko -l pt -l ro -l ru -l tr -l zh-CN'
+        run: |
+          # Languages supported by Mintlify (see packages/twenty-docs/src/shared/supported-languages.ts)
+          LANGUAGES="fr ar cs de es it ja ko pt ro ru tr zh-CN"
+          
+          for lang in $LANGUAGES; do
+            echo "=== Pulling translations for $lang ==="
+            crowdin download \
+              --config crowdin-docs.yml \
+              --token "$CROWDIN_PERSONAL_TOKEN" \
+              --base-url "https://twenty.api.crowdin.com" \
+              --language "$lang" \
+              --skip-untranslated-strings=false \
+              --skip-untranslated-files=false \
+              --export-only-approved=false \
+              --verbose || echo "Warning: Failed to pull $lang, continuing with other languages..."
+            echo ""
+          done
+          
+          echo "=== Download complete ==="
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          # Docs translations project
-          CROWDIN_PROJECT_ID: '2'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Fix file permissions
