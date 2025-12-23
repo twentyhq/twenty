@@ -42,24 +42,24 @@ Create a workflow that handles all post-win activities automatically.
 ### Step 4: Update Company Type
 
 1. Add **Update Record** action
-2. Configurar:
+2. Configure:
 
-| Campo                        | Valor                           |
-| ---------------------------- | ------------------------------- |
-| **Object**                   | Empresas                        |
-| **Record**                   | `{{trigger.object.company.id}}` |
-| **Tipo**                     | Cliente                         |
-| **First Deal Date**          | `{{trigger.object.closedAt}}`   |
-| **Propietario de la cuenta** | `{{trigger.object.owner.id}}`   |
+| Field               | Value                           |
+| ------------------- | ------------------------------- |
+| **Object**          | Companies                       |
+| **Record**          | `{{trigger.object.company.id}}` |
+| **Type**            | Customer                        |
+| **First Deal Date** | `{{trigger.object.closedAt}}`   |
+| **Account Owner**   | `{{trigger.object.owner.id}}`   |
 
 ### Step 5: Create Onboarding Task
 
 1. Add **Create Record** action
-2. Configurar:
+2. Configure:
 
-| Campo                   | Valor                                                                                                |
+| Field                   | Value                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Object**              | Tareas                                                                                               |
+| **Object**              | Tasks                                                                                                |
 | **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
 | **Assignee**            | Customer Success team member                                                                         |
 | **Due Date**            | 3 days from now                                                                                      |
@@ -71,9 +71,9 @@ Create a workflow that handles all post-win activities automatically.
 ### Step 6: Notify Customer Success
 
 1. Add **Send Email** action
-2. Configurar:
+2. Configure:
 
-| Campo       | Valor                                              |
+| Field       | Value                                              |
 | ----------- | -------------------------------------------------- |
 | **To**      | customer-success@yourcompany.com                   |
 | **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
@@ -100,9 +100,9 @@ Let's give them a great start!
 ### Step 7: Confirm to Sales Rep
 
 1. Add another **Send Email** action
-2. Configurar:
+2. Configure:
 
-| Campo       | Valor                                                                                                                |
+| Field       | Value                                                                                                                |
 | ----------- | -------------------------------------------------------------------------------------------------------------------- |
 | **To**      | `{{trigger.object.owner.email}}`                                                                                     |
 | **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
@@ -111,7 +111,7 @@ Let's give them a great start!
 ### Step 8: Test and Activate
 
 1. Test by moving a test opportunity to "Closed Won"
-2. Verificar:
+2. Verify:
    * Company type changed to "Customer"
    * Onboarding task created
    * CS team received email
@@ -126,7 +126,7 @@ Create a similar workflow for lost deals:
 
 * Record is Updated (Opportunities, Stage = "Closed Lost")
 
-### Acciones
+### Actions
 
 1. **Create Record**: Task for "Lost Deal Analysis"
 2. **Update Record**: Add lost reason to company record

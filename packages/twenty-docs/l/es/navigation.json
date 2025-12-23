@@ -15,7 +15,7 @@
           }
         },
         "dataModel": {
-          "label": "Modelo de datos",
+          "label": "Data Model",
           "groups": {
             "dataModelCapabilities": {
               "label": "Capabilities"
@@ -48,7 +48,7 @@
           }
         },
         "workflows": {
-          "label": "Flujos de trabajo",
+          "label": "Workflows",
           "groups": {
             "workflowsCapabilities": {
               "label": "Capabilities"
@@ -73,7 +73,7 @@
           }
         },
         "ai": {
-          "label": "IA",
+          "label": "AI",
           "groups": {
             "aiCapabilities": {
               "label": "Capabilities"
@@ -95,7 +95,7 @@
           }
         },
         "dashboards": {
-          "label": "Tableros",
+          "label": "Dashboards",
           "groups": {
             "dashboardsCapabilities": {
               "label": "Capabilities"
@@ -117,7 +117,7 @@
           }
         },
         "billing": {
-          "label": "Facturación",
+          "label": "Billing",
           "groups": {
             "billingCapabilities": {
               "label": "Capabilities"
@@ -128,7 +128,7 @@
           }
         },
         "settings": {
-          "label": "Configuración",
+          "label": "Settings",
           "groups": {
             "settingsCapabilities": {
               "label": "Capabilities"
@@ -141,10 +141,10 @@
       }
     },
     "developers": {
-      "label": "Desarrolladores",
+      "label": "Developers",
       "groups": {
         "developersGroup": {
-          "label": "Desarrolladores"
+          "label": "Developers"
         },
         "extend": {
           "label": "Extend",
@@ -169,29 +169,29 @@
               "label": "Capabilities",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Desarrollo Frontend",
+                  "label": "Frontend Development",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Mostrar"
+                          "label": "Display"
                         },
                         "feedback": {
-                          "label": "Retroalimentación"
+                          "label": "Feedback"
                         },
                         "input": {
-                          "label": "Entrada"
+                          "label": "Input"
                         },
                         "navigation": {
-                          "label": "Navegación"
+                          "label": "Navigation"
                         }
                       }
                     }
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Desarrollo Backend"
+                  "label": "Backend Development"
                 }
               }
             }

@@ -3,11 +3,11 @@ title: Import Contacts via CSV
 description: Complete step-by-step guide to importing people/contacts into Twenty.
 ---
 
-## Resumen
+## Overview
 
 This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
 
-## Antes de empezar
+## Before You Start
 
 ### Prerequisites Checklist
 
@@ -41,15 +41,15 @@ This guide walks you through importing your contacts (People) into Twenty. **Imp
 
 ### Required and Recommended Fields
 
-| Campo                  | Required?   | Formato           | Notas                     |
-| ---------------------- | ----------- | ----------------- | ------------------------- |
-| **Correo Electrónico** | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**         | Recommended | Texto             |                           |
-| **Last Name**          | Recommended | Texto             |                           |
-| **Company**            | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**              | Optional    | Multiple columns  | See below                 |
-| **Job Title**          | Optional    | Texto             |                           |
-| **Custom fields**      | Optional    | Varies            | Must exist in Data Model  |
+| Field             | Required?   | Format            | Notes                     |
+| ----------------- | ----------- | ----------------- | ------------------------- |
+| **Email**         | Recommended | `name@domain.com` | Must be unique            |
+| **First Name**    | Recommended | Text              |                           |
+| **Last Name**     | Recommended | Text              |                           |
+| **Company**       | Optional    | Domain or ID      | Links to existing Company |
+| **Phone**         | Optional    | Multiple columns  | See below                 |
+| **Job Title**     | Optional    | Text              |                           |
+| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
 
 ### Email Format
 
@@ -65,7 +65,7 @@ This guide walks you through importing your contacts (People) into Twenty. **Imp
 
 Phone is a **nested field** requiring multiple columns:
 
-| Column                                  | Ejemplo      |
+| Column                                  | Example      |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
@@ -75,7 +75,7 @@ Phone is a **nested field** requiring multiple columns:
 
 Add a column with the Company's unique identifier:
 
-| Column Name     | Formato    | Ejemplo                                |
+| Column Name     | Format     | Example                                |
 | --------------- | ---------- | -------------------------------------- |
 | `companyDomain` | URL format | `https://acme.com`                     |
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
@@ -127,12 +127,12 @@ Twenty automatically tries to match your columns to fields. Review and adjust:
 
 ### Important Mapping Rules
 
-| Column Type        | Map To                         | Notas                              |
-| ------------------ | ------------------------------ | ---------------------------------- |
-| Company reference  | **Company** relation field     | Use domain OR id, not both         |
-| Correo electrónico | **Correo Electrónico**         | Primary email address              |
-| Additional emails  | **Emails / Additional Emails** | Array format                       |
-| Teléfono           | Separate columns               | Number, Country Code, Calling Code |
+| Column Type       | Map To                         | Notes                              |
+| ----------------- | ------------------------------ | ---------------------------------- |
+| Company reference | **Company** relation field     | Use domain OR id, not both         |
+| Email             | **Email**                      | Primary email address              |
+| Additional emails | **Emails / Additional Emails** | Array format                       |
+| Phone             | Separate columns               | Number, Country Code, Calling Code |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
@@ -225,7 +225,7 @@ See [How to Update Existing Records](/l/es/user-guide/data-migration/how-tos/upd
   </Accordion>
 
   <Accordion title="Can I import the ID from my previous CRM?">
-    ¡Sí! Create a custom field marked as "unique" in your data model to store the external ID. Note: the field name `id` is reserved for Twenty's internal ID.
+    Yes! Create a custom field marked as "unique" in your data model to store the external ID. Note: the field name `id` is reserved for Twenty's internal ID.
   </Accordion>
 
   <Accordion title="How do I fix 'relation not found' errors?">
@@ -233,7 +233,7 @@ See [How to Update Existing Records](/l/es/user-guide/data-migration/how-tos/upd
   </Accordion>
 </AccordionGroup>
 
-## Solución de Problemas
+## Troubleshooting
 
 Having issues? Check:
 

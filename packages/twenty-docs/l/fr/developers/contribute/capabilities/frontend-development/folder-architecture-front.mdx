@@ -1,22 +1,22 @@
 ---
-title: Architecture des Dossiers
-info: Un aperçu détaillé de notre architecture de dossiers
+title: Folder Architecture
+info: A detailed look into our folder architecture
 ---
 
-Dans ce guide, vous explorerez les détails de la structure du répertoire de projet et comment elle contribue à l'organisation et à la maintenabilité de Twenty.
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
 
-En suivant cette convention d'architecture de dossiers, il est plus facile de trouver les fichiers liés à des fonctionnalités spécifiques et de s'assurer que l'application est évolutive et maintenable.
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
 
 ```
 front
 └───modules
 │   └───module1
-│   │   └───sous-module1
+│   │   └───submodule1
 │   └───module2
 │   └───ui
-│   │   └───affichage
-│   │   └───entrées
-│   │   │   └───boutons
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
 │   │   └───...
 └───pages
 └───...
@@ -24,86 +24,86 @@ front
 
 ## Pages
 
-Comprend les composants de haut niveau définis par les routes de l'application. Ils importent des composants de plus bas niveau depuis le dossier `modules` (plus de détails ci-dessous).
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
 
 ## Modules
 
-Chaque module représente une fonctionnalité ou un groupe de fonctionnalités, comprenant ses composants spécifiques, ses états, et sa logique opérationnelle.
-Ils doivent tous suivre la structure ci-dessous. Vous pouvez imbriquer des modules dans des modules (appelés sous-modules) et les mêmes règles s'appliqueront.
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
 
 ```
 module1
-  └───composants
-  │   └───composant1
-  │   └───composant2
-  └───constantes
-  └───contextes
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
   └───graphql
   │   └───fragments
-  │   └───requêtes
+  │   └───queries
   │   └───mutations
   └───hooks
-  │   └───interne
-  └───états
-  │   └───sélecteurs
+  │   └───internal
+  └───states
+  │   └───selectors
   └───types
-  └───utilitaires
+  └───utils
 ```
 
-### Contextes
+### Contexts
 
-Un contexte est un moyen de transmettre des données à travers l'arborescence de composants sans avoir à transmettre les propriétés manuellement à chaque niveau.
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
 
-Voir [React Context](https://react.dev/reference/react#context-hooks) pour plus de détails.
+See [React Context](https://react.dev/reference/react#context-hooks) for more details.
 
 ### GraphQL
 
-Comprend des fragments, des requêtes et des mutations.
+Includes fragments, queries, and mutations.
 
-Voir [GraphQL](https://graphql.org/learn/) pour plus de détails.
+See [GraphQL](https://graphql.org/learn/) for more details.
 
 * Fragments
 
-Un fragment est une partie réutilisable d'une requête, que vous pouvez utiliser dans différents endroits. En utilisant des fragments, il est plus facile d'éviter de dupliquer du code.
+A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
 
-Voir [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) pour plus de détails.
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
 
-* Requêtes
+* Queries
 
-Voir [GraphQL Queries](https://graphql.org/learn/queries/) pour plus de détails.
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
 
 * Mutations
 
-Voir [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) pour plus de détails.
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
 
 ### Hooks
 
-Voir [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) pour plus de détails.
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
 
-### États
+### States
 
-Contient la logique de gestion des états. [RecoilJS](https://recoiljs.org) gère cela.
+Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
 
-* Sélecteurs : Voir [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) pour plus de détails.
+* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
 
-La gestion de l'état intégrée de React gère toujours l'état au sein d'un composant.
+React's built-in state management still handles state within a component.
 
-### Utilitaires
+### Utils
 
-Devrait juste contenir des fonctions pures réutilisables. Autrement, créez des hooks personnalisés dans le dossier `hooks`.
+Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
 
 ## UI
 
-Contient tous les composants d'interface utilisateur réutilisables utilisés dans l'application.
+Contains all the reusable UI components used in the application.
 
-Ce dossier peut contenir des sous-dossiers, comme `data`, `display`, `feedback`, et `input` pour des types de composants spécifiques. Chaque composant doit être autonome et réutilisable, de sorte que vous puissiez l'utiliser dans différentes parties de l'application.
+This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
 
-En séparant les composants UI des autres composants dans le dossier `modules`, il est plus facile de maintenir un design cohérent et d'effectuer des changements de l'interface utilisateur sans affecter d'autres parties (logique métier) de la base de code.
+By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
 
-## Interface et dépendances
+## Interface and dependencies
 
-Vous pouvez importer le code d'autres modules depuis n'importe quel module, sauf le dossier `ui`. Cela permettra de garder son code facile à tester.
+You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
 
-### Interne
+### Internal
 
-Chaque partie (hooks, états, ...) d'un module peut avoir un dossier `internal`, qui contient des parties utilisées uniquement au sein du module.
+Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.

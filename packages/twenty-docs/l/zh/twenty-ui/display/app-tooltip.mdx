@@ -1,5 +1,5 @@
 ---
-title: 应用程序提示
+title: App Tooltip
 image: /images/user-guide/tips/light-bulb.png
 ---
 
@@ -7,82 +7,72 @@ image: /images/user-guide/tips/light-bulb.png
   <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
 </Frame>
 
-当用户与一个元素互动时显示额外信息的简要信息。
+A brief message that displays additional information when a user interacts with an element.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
-```jsx
-import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+    export const MyComponent = () => {
+      return (
+        <>
+          <p id="hoverText" style={{ display: "inline-block" }}>
+            Customer Insights
+          </p>
+          <AppTooltip
+            className
+            anchorSelect="#hoverText"
+            content="Explore customer behavior and preferences"
+            delayHide={0}
+            offset={6}
+            noArrow={false}
+            isOpen={true}
+            place="bottom"
+            positionStrategy="absolute"
+          />
+        </>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <>
-      <p id="hoverText" style={{ display: "inline-block" }}>
-        Customer Insights
-      </p>
-      <AppTooltip
-        className
-        anchorSelect="#hoverText"
-        content="Explore customer behavior and preferences"
-        delayHide={0}
-        offset={6}
-        noArrow={false}
-        isOpen={true}
-        place="bottom"
-        positionStrategy="absolute"
-      />
-    </>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 属性               | 类型                                       | 描述                                                                                                                                                 |
-| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 类名               | 字符串                                      | 用于额外样式的可选 CSS 类                                                                                                                                    |
-| anchorSelect     | CSS 选择器                                  | 工具提示的锚选择器（触发工具提示的元素）                                                                                                                               |
-| 内容               | 字符串                                      | 您希望在工具提示中显示的内容                                                                                                                                     |
-| delayHide        | 数字                                       | 在光标离开锚后隐藏工具提示的延迟时间（秒）                                                                                                                              |
-| offset           | 数字                                       | 工具提示定位的像素偏移量                                                                                                                                       |
-| noArrow          | 布尔值                                      | 如果为 `true`，则隐藏工具提示上的箭头                                                                                                                             |
-| isOpen           | 布尔值                                      | 如果为 `true`，工具提示默认打开                                                                                                                                |
-| place            | `PlacesType` 字符串来自 `react-tooltip`       | 指定工具提示的位置。 值包括 `bottom`、`left`、`right`、`top`、`top-start`、`top-end`、`right-start`、`right-end`、`bottom-start`、`bottom-end`、`left-start` 和 `left-end` |
-| positionStrategy | `PositionStrategy` 字符串来自 `react-tooltip` | 工具提示的位置策略。 有两个值： `absolute` 和 `fixed`                                                                                                              |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props            | Type                                           | Description                                                                                                                                                                                             |
+    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | string                                         | Optional CSS class for additional styling                                                                                                                                                               |
+    | anchorSelect     | CSS selector                                   | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                                 |
+    | content          | string                                         | The content you want to display within the tooltip                                                                                                                                                      |
+    | delayHide        | number                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                       |
+    | offset           | number                                         | The offset in pixels for positioning the tooltip                                                                                                                                                        |
+    | noArrow          | boolean                                        | If `true`, hides the arrow on the tooltip                                                                                                                                                               |
+    | isOpen           | boolean                                        | If `true`, the tooltip is open by default                                                                                                                                                               |
+    | place            | `PlacesType` string from `react-tooltip`       | Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
+    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Position strategy for the tooltip. Has two values: `absolute` and `fixed`                                                                                                                               |
+  </Tab>
 </Tabs>
 
-## 文本溢出与工具提示
+## Overflowing Text with Tooltip
 
-处理文本溢出，并在文本溢出时显示工具提示。
+Handles overflowing text and displays a tooltip when the text overflows.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-```jsx
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+    export const MyComponent = () => {
+      const crmTaskDescription =
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
-export const MyComponent = () => {
-  const crmTaskDescription =
-    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+    };
+    ```
+  </Tab>
 
-  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 属性 | 类型  | 描述             |
-| -- | --- | -------------- |
-| 文本 | 字符串 | 想要在文本溢出区域显示的内容 |
-
-</Tab>
-
+  <Tab title="Props">
+    | Props | Type   | Description                                                  |
+    | ----- | ------ | ------------------------------------------------------------ |
+    | text  | string | The content you want to display in the overflowing text area |
+  </Tab>
 </Tabs>

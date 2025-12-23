@@ -133,7 +133,7 @@ export const main = async (params: { deals: any }) => {
 
 ### Common Transformations
 
-| Source Format        | Target Format    | Código                                   |
+| Source Format        | Target Format    | Code                                     |
 | -------------------- | ---------------- | ---------------------------------------- |
 | `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
 | `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
@@ -154,7 +154,7 @@ This loops through each product in the array.
 
 Inside the iterator, add an **Upsert Record** action:
 
-| Setting      | Valor                                  |
+| Setting      | Value                                  |
 | ------------ | -------------------------------------- |
 | **Object**   | Your custom Product object             |
 | **Match by** | External ID or SKU (unique identifier) |
@@ -168,7 +168,7 @@ Inside the iterator, add an **Upsert Record** action:
 
 ## Example Use Cases
 
-| Fuente                  | Datos                               |
+| Source                  | Data                                |
 | ----------------------- | ----------------------------------- |
 | **ERP system**          | Product catalog, pricing, inventory |
 | **E-commerce platform** | Orders, customers, product updates  |

@@ -1,50 +1,54 @@
 ---
-title: Commandes Frontend
+title: Frontend Commands
 ---
 
-## Commandes utiles
+## Useful commands
 
-### Lancement de l'application
+### Starting the app
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Régénérer le schéma GraphQL basé sur le schéma API GraphQL
+### Regenerate graphql schema based on API graphql schema
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-OU
+OR
 
 ```bash
 npx nx run twenty-front:graphql:generate
 ```
 
-### Analyse
+### Lint
 
 ```bash
-npx nx run twenty-front:lint # passez --fix pour corriger les erreurs de lint
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## Traductions
+## Translations
 
 ```bash
-npx nx run twenty-front:lingui:extract\nnpx nx run twenty-front:lingui:compile
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
 ```
 
 ### Test
 
 ```bash
-npx nx run twenty-front:test # exécuter les tests jest\nnpx nx run twenty-front:storybook:serve:dev # exécuter storybook\nnpx nx run twenty-front:storybook:test # exécuter les tests # (besoin de yarn storybook:serve:dev pour fonctionner)\nnpx nx run twenty-front:storybook:coverage # (besoin de yarn storybook:serve:dev pour fonctionner)
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Écosystème Tech
+## Tech Stack
 
-Le projet a une stack simple et propre, avec un code boilerplate minimal.
+The project has a clean and simple stack, with minimal boilerplate code.
 
-**Application**
+**App**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -52,12 +56,12 @@ Le projet a une stack simple et propre, avec un code boilerplate minimal.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Tests**
+**Testing**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Outils**
+**Tooling**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
@@ -65,22 +69,22 @@ Le projet a une stack simple et propre, avec un code boilerplate minimal.
 
 ## Architecture
 
-### Routage
+### Routing
 
-[React Router](https://reactrouter.com/) gère le routage.
+[React Router](https://reactrouter.com/) handles the routing.
 
-Pour éviter les [re-renders](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutiles, toute la logique de routage est dans un `useEffect` dans `PageChangeEffect`.
+To avoid unnecessary [re-renders](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### Gestion de l'État
+### State Management
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) gère la gestion de l'état.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
 
-Voir [les meilleures pratiques](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pour plus d'informations sur la gestion de l'état.
+See [best practices](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
 
-## Tests
+## Testing
 
-[Jest](https://jestjs.io/) sert de guide pour les tests unitaires tandis que [Storybook](https://storybook.js.org/) est utilisé pour les tests de composants.
+[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
 
-Jest est principalement utilisé pour tester les fonctions utilitaires, et non les composants eux-mêmes.
+Jest is mainly for testing utility functions, and not components themselves.
 
-Storybook est utilisé pour tester le comportement des composants isolés, ainsi que pour afficher le système de design.
+Storybook is for testing the behavior of isolated components, as well as displaying the design system.

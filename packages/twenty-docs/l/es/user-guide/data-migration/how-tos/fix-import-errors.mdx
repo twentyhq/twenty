@@ -3,7 +3,7 @@ title: Fix Import Errors
 description: Complete troubleshooting guide for resolving CSV import errors.
 ---
 
-## Resumen
+## Overview
 
 Import not working? This guide helps you identify and fix common import errors step by step.
 
@@ -24,7 +24,7 @@ After uploading your file and mapping columns, Twenty validates your data:
 
 Click on a highlighted row to see the specific error message. Common error types:
 
-| Mensaje de error                                                      | What It Means                                                |
+| Error Message                                                         | What It Means                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------------ |
 | Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
 | `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
@@ -40,7 +40,7 @@ Follow the specific instructions below for each error type.
 
 ## Error: Duplicate Value
 
-### Lo Que Verás
+### What You'll See
 
 Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
 
@@ -99,7 +99,7 @@ For more details: [Uniqueness Constraints](/l/es/user-guide/data-migration/capab
 
 ## Error: Invalid Format
 
-### Lo Que Verás
+### What You'll See
 
 The cell value is highlighted in yellow. Hover over it to see the error message:
 
@@ -113,7 +113,7 @@ The data doesn't match the expected format for that field type.
 
 ### How to Fix — By Field Type
 
-#### Correo electrónico
+#### Email
 
 **Problem:** Invalid email format
 **Solution:** Use format `name@domain.com`
@@ -124,7 +124,7 @@ The data doesn't match the expected format for that field type.
 ✓ john.smith@acme.com
 ```
 
-#### Dominio
+#### Domain
 
 **Problem:** Inconsistent format may cause duplicates
 **Solution:** Use `https://domain.com` format (recommended)
@@ -137,7 +137,7 @@ The data doesn't match the expected format for that field type.
 
 <Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
 
-#### Fecha
+#### Date
 
 **Problem:** Unrecognized date format
 **Solution:** Use consistent format throughout file
@@ -148,18 +148,18 @@ The data doesn't match the expected format for that field type.
 ✓ 15/03/2024        (DD/MM/YYYY)
 ```
 
-#### Teléfono
+#### Phone
 
 **Problem:** Missing required columns
 **Solution:** Include all phone columns
 
-| Column                                  | Ejemplo      |
+| Column                                  | Example      |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-#### Booleano
+#### Boolean
 
 **Problem:** Wrong boolean value
 **Solution:** Use uppercase `TRUE` or `FALSE`
@@ -189,17 +189,17 @@ How to find API names:
 ✓ HIGH_PRIORITY
 ```
 
-#### Moneda
+#### Currency
 
 **Problem:** Missing amount or currency code
 **Solution:** Fill both columns
 
-| Column                | Ejemplo   |
+| Column                | Example   |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
-#### Número
+#### Number
 
 **Problem:** Non-numeric characters
 **Solution:** Numbers only, period for decimals
@@ -216,7 +216,7 @@ For complete format reference: [Field Mapping](/l/es/user-guide/data-migration/c
 
 ## Error: Required Field Missing
 
-### Lo Que Verás
+### What You'll See
 
 The row is highlighted in yellow with the required field cell marked.
 
@@ -248,7 +248,7 @@ Before importing, identify required fields:
 
 ## Error: Relation Not Found
 
-### Lo Que Verás
+### What You'll See
 
 This error appears **after the import starts** — the import fails with a message like:
 
@@ -307,7 +307,7 @@ For more details: [Import Relations](/l/es/user-guide/data-migration/capabilitie
 
 ## Error: File Too Large
 
-### Lo Que Verás
+### What You'll See
 
 This error appears **when uploading your file** — the upload is blocked entirely:
 
@@ -403,13 +403,13 @@ Avoid errors by checking these before importing:
 <Check>Phone fields have all required columns</Check>
 <Check>Currency fields have both Amount and Currency Code</Check>
 
-### Relaciones
+### Relations
 
 <Check>Parent records imported before child records</Check>
 <Check>Relation columns reference existing records</Check>
 <Check>Domain format matches Twenty's format exactly</Check>
 
-### Modelo de datos
+### Data Model
 
 <Check>All custom fields exist in Settings → Data Model</Check>
 <Check>Select options exist before importing</Check>

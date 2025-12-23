@@ -5,13 +5,13 @@ description: Show data from related records (e.g., Company info on Opportunities
 
 Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
 
-## Casos de Uso Comunes
+## Common Use Cases
 
-| Fuente      | Destination | Fields to Copy                  |
+| Source      | Destination | Fields to Copy                  |
 | ----------- | ----------- | ------------------------------- |
-| Empresa     | Oportunidad | Industry, Company Size, ARR     |
-| Persona     | Oportunidad | Email, Phone, Title             |
-| Oportunidad | Empresa     | Last Deal Amount, Last Won Date |
+| Company     | Opportunity | Industry, Company Size, ARR     |
+| Person      | Opportunity | Email, Phone, Title             |
+| Opportunity | Company     | Last Deal Amount, Last Won Date |
 
 ## Basic Field Copy
 
@@ -26,7 +26,7 @@ Create the destination fields in **Settings → Data Model → Opportunities** b
 * Contact Email (type: Email)
 * Contact Phone (type: Phone)
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
 
@@ -48,7 +48,7 @@ Create the destination fields in **Settings → Data Model → Opportunities** b
 
 **Goal**: When company details change, update all related opportunities.
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Updated (Companies)
    * Fields: Industry, Company Size, Annual Revenue
@@ -79,7 +79,7 @@ Create the destination fields in **Settings → Data Model → Opportunities**:
 * Company Industry (type: Text)
 * Company Size (type: Number)
 
-### Configuración
+### Setup
 
 1. **Trigger**: Record is Created (Opportunities)
    * Filter: Company is not empty
@@ -144,7 +144,7 @@ export const main = async (params) => {
 };
 ```
 
-## Mejores prácticas
+## Best Practices
 
 ### Avoid Loops
 

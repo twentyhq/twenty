@@ -1,77 +1,77 @@
 ---
 title: Configure Your Workspace
-description: Cada empresa funciona de manera diferente. Start with these 3 steps to shape Twenty around your needs.
+description: Every business works differently. Start with these 3 steps to shape Twenty around your needs.
 ---
 
-<Note>**Quick Win**: Start with connecting your mailbox. Esto te brinda un valor inmediato y ayuda a tu equipo a ver Twenty en acción con datos reales. You can do so under Settings → Accounts.</Note>
+<Note>**Quick Win**: Start with connecting your mailbox. This gives you immediate value and helps your team see Twenty in action with real data. You can do so under Settings → Accounts.</Note>
 
-## 1. Personaliza tu modelo de datos
+## 1. Customize your data model
 
-Twenty ofrece la flexibilidad que necesitas para moldear el modelo de datos que mejor apoyará tu día a día.
-Crea objetos y campos de cualquier tipo, incluyendo relaciones entre tus diferentes objetos. Puedes hacerlo en Configuración → Modelo de Datos.
+Twenty offers the flexibility you need to shape the data model that will best support your day-to-day.
+Create objects and fields of any type, including relations between your different objects. You can do so under Settings → Data Model.
 Here are a few tips:
 
-* **No estás limitado en la cantidad de campos personalizados ni en los objetos personalizados**. Agregar objetos y campos personalizados no llevará a la actualización de tu plan.
-* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. Recomendamos usarlas tanto como sea posible, añadiendo campos para categorizar tus registros si es necesario. Aquí tienes un ejemplo:
-  * Es mejor usar el objeto Personas para tus prospectos y socios, creando un campo en el objeto Personas llamado `Tipo de Persona`, en lugar de crear un objeto personalizado Socio. Porque no podrías acceder a los correos electrónicos intercambiados con esta persona desde los registros de Socio.
-  * Crea diferentes vistas bajo Personas, una para mostrar socios y otra para mostrar prospectos.
-* Dos personas no pueden tener la misma dirección de correo electrónico. Dos empresas no pueden tener el mismo dominio.
-* Puedes desactivar campos y objetos estándar que no quieras usar.
-* Puedes ocultar campos de las vistas: no dudes en crear campos, no tendrás que mostrarlos todos.
+* **You are not limited in the number of custom fields nor custom objects**. Adding custom objects and fields will not lead to upgrading your plan.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
+  * It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Because you would not be able to access the emails exchanged with this person from the Partner records.
+  * Create different views under People, one to display partners and one to display prospects.
+* Two People cannot have the same email address. Two Companies cannot have the same domain.
+* You can deactivate standard fields and objects you do not want to use.
+* You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
 
-Lee [este artículo](/l/es/user-guide/data-model/overview) para aprender cómo diseñar tu modelo de datos.
+Read [this article](/l/es/user-guide/data-model/overview) to learn how to design your data model.
 
-## 2. Trae tus datos
+## 2. Bring your data in
 
-Llevar tus datos existentes a Twenty da a tu equipo contexto desde el principio.
+Bringing your existing data into Twenty gives your team context from the start.
 
-### Conecta tu buzón de correo
+### Connect your mailbox
 
-Si no lo hiciste al crear tu espacio de trabajo, conecta tu **cuenta de Google o Microsoft** en Configuración → Cuentas. Esto permite a Twenty:
+If you have not done so when creating your workspace, connect your **Google or Microsoft account** under Settings → Accounts. This allows Twenty to:
 
-* Importar tus mensajes y reuniones
-* Crear automáticamente contactos basados en interacciones (opcional)
-* Mantener el historial de comunicación visible para tu equipo
+* Import your messages and meetings
+* Auto-create contacts based on interactions (optional)
+* Keep communication history visible for your team
 
-**¿Usando otro proveedor?**
-Puedes agregar otro buzón de correo a través de SMTP o otro calendario a través de CalDAV. Necesitarás activar la función en Configuración → Lanzamientos → Laboratorio, y luego regresar a la pestaña Configuración → Cuentas.
+**Using another provider?**
+You can add another mailbox via SMTP or another calendar via CalDAV. You will need to activate the feature under Settings → Releases → Lab, and then go back to the Settings → Accounts tab.
 
 ### Import data via csv
 
-Usa el menú de comandos (`Cmd + K` o `Ctrl + K`) para importar Personas, Empresas, Oportunidades o cualquier objeto personalizado vía CSV.
+Use the Command menu (`Cmd + K` or `Ctrl + K`) to import People, Companies, Opportunities, or any custom objects via CSV.
 
-**Directrices clave**:
+**Key guidelines**:
 
-* Descarga el archivo de muestra para entender el formato esperado
-* Limita cada archivo a 10,000 registros
-* Elimina correos electrónicos duplicados para Personas o dominios duplicados para Empresas
-* Revisa y corrige errores (resaltados en amarillo) antes de importar
+* Download the sample file to understand the expected format
+* Limit each file to 10k records
+* Remove duplicate emails for People or duplicate domains for Companies
+* Review and fix errors (highlighted in yellow) before importing
 
-Lee [este artículo](/l/es/user-guide/data-migration/overview) para aprender más sobre la importación de datos.
+Read [this article](/l/es/user-guide/data-migration/overview) to learn more about data import.
 
-## 3. Crea tu primera vista
+## 3. Create your first view
 
-Crear diferentes vistas es clave para que los datos sean accionables para tu equipo.
+Creating different views is key to make the data actionable for your team.
 Here is how to proceed:
 
-* **Agregar u ocultar columnas**
-  Gestiona los campos visibles en una vista dada haciendo clic en Opciones → Campos (desde la parte superior derecha). Puedes mostrar/ocultar campos desde allí.
+* **Add or hide columns**
+  Manage the fields visible in a given view clicking on Options → Fields (from the top right). You can show/hide fields from there.
 
-* **Reordenar campos**
-  Reordena los campos de una vista dada haciendo clic en Opciones → Campos (desde la parte superior derecha). Arrastra y suelta los campos para reordenarlos.
+* **Reorder fields**
+  Reorder the fields from a given view clicking on Options → Fields (from the top right). Drag and drop the fields to reorder them.
 
-* **Filtra tu vista**
-  Reduce los registros mostrados usando los Filtros desde la parte superior derecha.
+* **Filter your view**
+  Narrow down the records displayed using the Filters from the top right.
 
-* **Ordena los registros**
-  Reordena los registros mostrados usando la función de Ordenar desde la parte superior derecha, o haciendo clic directamente en el nombre de la columna.
+* **Sort records**
+  Reorder records displayed using the Sort function from the top right, or by clicking directly on the column name.
 
-* **Elige el diseño**
-  Puedes cambiar a un diseño de **Kanban** o un diseño de lista **Agrupar por**, siempre que el objeto tenga un campo select type `Etapa` o similar.
+* **Choose the layout**
+  You can switch to a **Kanban layout** or a list **Group By** layout, as long as the object has a `Stage` or similar select-type field.
 
-* **Guarda tu vista como Favoritos**
-  Esto se puede hacer utilizando el menú desplegable que muestra las diferentes vistas.
+* **Save your view as Favorites**
+  This can be done using the dropdown menu showing the different views.
 
-## ¿Qué sigue?
+## What's next?
 
-Comienza a crear automatizaciones utilizando [flujos de trabajo](/l/es/user-guide/workflows/overview).
+Start creating automations using [workflows](/l/es/user-guide/workflows/overview).
