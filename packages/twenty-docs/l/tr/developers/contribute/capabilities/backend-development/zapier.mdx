@@ -1,0 +1,83 @@
+---
+title: Zapier Uygulaması
+---
+
+Zapier'i kullanarak Twenty'yi 3000+ uygulama ile zahmetsizce senkronize edin. Görevleri otomatikleştirin, verimliliği artırın ve müşteri ilişkilerinizi güçlendirin!
+
+## Zapier Hakkında
+
+Zapier, ekibinizin her gün kullandığı uygulamaları bağlayarak iş akışlarını otomatikleştirmenize olanak tanıyan bir araçtır. Zapier'in temel konsepti, Zaps olarak adlandırılan otomasyon iş akışlarıdır ve tetikleyiciler ile işlemleri içerir.
+
+Zapier'in nasıl çalıştığı hakkında daha fazla bilgi edinebilirsiniz [burada](https://zapier.com/how-it-works).
+
+## Kurulum
+
+### Adım 1: Zapier paketlerini yükleyin
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Adım 2: CLI ile giriş yapın
+
+Zapier kimlik bilgilerinizi kullanarak CLI ile oturum açın:
+
+```bash
+zapier login
+```
+
+### Adım 3: Çevre değişkenlerini ayarlayın
+
+`packages/twenty-zapier` klasöründen şunu çalıştırın:
+
+```bash
+cp .env.example .env
+```
+
+Uygulamayı yerel ortamda çalıştırın, [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) adresine gidin ve bir API anahtarı oluşturun.
+
+Yeni oluşturduğunuz API anahtarı ile `.env` dosyasındaki **YOUR_API_KEY** değerini değiştirin.
+
+## Geliştirme
+
+<Warning>
+  Herhangi bir `zapier` komutundan önce `yarn build` çalıştırdığınızdan emin olun.
+</Warning>
+
+### Test
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Kod düzenlerken izle ve derle
+
+```bash
+yarn watch
+```
+
+### Zapier uygulamanızı doğrulayın
+
+```bash
+yarn validate
+```
+
+### Zapier uygulamanızı dağıtın
+
+```bash
+yarn deploy
+```
+
+### Tüm Zapier CLI komutlarını listeleyin
+
+```bash
+zapier
+```

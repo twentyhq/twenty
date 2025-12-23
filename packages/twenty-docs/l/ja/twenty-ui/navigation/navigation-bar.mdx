@@ -4,49 +4,46 @@ image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="ヘッダー" />
 </Frame>
 
 複数の`NavigationBarItem`コンポーネントを含むナビゲーションバーをレンダリングします。
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="使用方法">
+    ```jsx
+    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-```jsx
-import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+       const navigationItems = [
+         {
+           name: "ホーム",
+           Icon: IconHome,
+           onClick: () => console.log("ホームがクリックされました"),
+         },
+         {
+           name: "プロフィール",
+           Icon: IconUser,
+           onClick: () => console.log("プロフィールがクリックされました"),
+         },
+         {
+           name: "設定",
+           Icon: IconSettings,
+           onClick: () => console.log("設定がクリックされました"),
+         },
+       ];
 
-   const navigationItems = [
-     {
-       name: "Home",
-       Icon: IconHome,
-       onClick: () => console.log("Home clicked"),
-     },
-     {
-       name: "Profile",
-       Icon: IconUser,
-       onClick: () => console.log("Profile clicked"),
-     },
-     {
-       name: "Settings",
-       Icon: IconSettings,
-       onClick: () => console.log("Settings clicked"),
-     },
-   ];
+      return <NavigationBar activeItemName="ホーム" items={navigationItems}/>;
+    };
+    ```
+  </Tab>
 
-  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ          | タイプ    | 説明                                                                                                                                                                                                                          |
-| -------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| activeItemName | string | 現在アクティブなナビゲーション項目の名前                                                                                                                                                                                                        |
-| アイテム           | array  | 各ナビゲーションアイテムを表すオブジェクトの配列。 各ナビゲーションアイテムを表すオブジェクトの配列。 各ナビゲーションアイテムを表すオブジェクトの配列。 各ナビゲーションアイテムを表すオブジェクトの配列。 各ナビゲーションアイテムを表すオブジェクトの配列。 各オブジェクトには、アイテムの `name`、表示する `Icon` コンポーネント、およびアイテムがクリックされたときに呼び出される `onClick` 関数が含まれています。 |
-
-</Tab>
+  <Tab title="プロパティ">
+    | プロパティ          | タイプ    | 説明                                                                                                                  |
+    | -------------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
+    | activeItemName | string | 現在アクティブなナビゲーション項目の名前                                                                                                |
+    | アイテム           | 配列     | 各ナビゲーションアイテムを表すオブジェクトの配列。 各オブジェクトには、アイテムの `name`、表示する `Icon` コンポーネント、およびアイテムがクリックされたときに呼び出される `onClick` 関数が含まれています。 |
+  </Tab>
 </Tabs>

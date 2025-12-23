@@ -1,0 +1,90 @@
+---
+title: Команды фронтенда
+---
+
+## Полезные команды
+
+### Запуск приложения
+
+```bash
+npx nx start twenty-front
+```
+
+### Перегенерировать схему graphql на основе схемы API graphql
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+ИЛИ
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Линт
+
+```bash
+npx nx run twenty-front:lint # используйте --fix для исправления ошибок линтинга
+```
+
+## Переводы
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Тест
+
+```bash
+npx nx run twenty-front:test # запуск тестов jest
+npx nx run twenty-front:storybook:serve:dev # запуск storybook
+npx nx run twenty-front:storybook:test # запуск тестов # (требуется yarn storybook:serve:dev для работы)
+npx nx run twenty-front:storybook:coverage # (требуется yarn storybook:serve:dev для работы)
+```
+
+## Технологический стек
+
+Проект имеет чистый и простой стек с минимальным кодом.
+
+**Приложение**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**Тестирование**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**Инструменты**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## Архитектура
+
+### Маршрутизация
+
+[React Router](https://reactrouter.com/) обрабатывает маршрутизацию.
+
+Чтобы избежать ненужных [перерисовок](/l/ru/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders), вся логика маршрутизации находится в `useEffect` в `PageChangeEffect`.
+
+### Управление состоянием
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) обрабатывает управление состоянием.
+
+[лучшие практики](/l/ru/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) для получения дополнительной информации об управлении состоянием.
+
+## Тестирование
+
+[Jest](https://jestjs.io/) служит инструментом для модульного тестирования, а [Storybook](https://storybook.js.org/) — для тестирования компонентов.
+
+Jest в основном используется для тестирования утилит, а не самих компонентов.
+
+Storybook предназначен для тестирования поведения изолированных компонентов, а также для отображения системы дизайна.

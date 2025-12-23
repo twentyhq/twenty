@@ -4,35 +4,31 @@ image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="Cabeçalho" />
 </Frame>
 
 Exibe o progresso por meio de uma sequência de passos numerados destacando o passo ativo. Ele renderiza um contêiner com passos, cada um representado pelo componente `Step`.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-```jsx
-import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+    export const MyComponent = () => {
+      return (
+        <StepBar activeStep={2}>
+          <StepBar.Step>Passo 1</StepBar.Step>
+          <StepBar.Step>Passo 2</StepBar.Step>
+          <StepBar.Step>Passo 3</StepBar.Step>
+        </StepBar>
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <StepBar activeStep={2}>
-      <StepBar.Step>Step 1</StepBar.Step>
-      <StepBar.Step>Step 2</StepBar.Step>
-      <StepBar.Step>Step 3</StepBar.Step>
-    </StepBar>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Propriedades | Tipo   | Descrição                                                                                                    |
-| ------------ | ------ | ------------------------------------------------------------------------------------------------------------ |
-| passoAtivo   | número | O índice do passo atualmente ativo. Isso determina qual passo deve ser visualmente destacado |
-
-</Tab>
+  <Tab title="Propriedades">
+    | Propriedades | Tipo   | Descrição                                                                                    |
+    | ------------ | ------ | -------------------------------------------------------------------------------------------- |
+    | passoAtivo   | número | O índice do passo atualmente ativo. Isso determina qual passo deve ser visualmente destacado |
+  </Tab>
 </Tabs>
