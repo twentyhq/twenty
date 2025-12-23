@@ -192,7 +192,7 @@ const needsMigration = (
 };
 
 @Command({
-  name: 'upgrade:1-14:migrate-page-layout-widget-configuration',
+  name: 'upgrade:1-15:migrate-page-layout-widget-configuration',
   description:
     'Migrate page layout widget configurations to use configurationType',
 })
