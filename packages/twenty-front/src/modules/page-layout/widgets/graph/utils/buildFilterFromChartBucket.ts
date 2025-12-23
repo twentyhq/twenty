@@ -36,16 +36,21 @@ const formatChartFilterValue = (
   fieldType: FieldMetadataType,
   bucketRawValue: unknown,
   operand: ViewFilterOperand,
+  subFieldName?: string | null,
 ): string => {
   const stringValue = String(bucketRawValue);
 
+  const isCurrencyCodeSubField =
+    fieldType === FieldMetadataType.CURRENCY && subFieldName === 'currencyCode';
+
   const needsJsonArray =
     operand === ViewFilterOperand.IS &&
-    [
+    ([
       FieldMetadataType.SELECT,
       FieldMetadataType.UUID,
       FieldMetadataType.RELATION,
-    ].includes(fieldType);
+    ].includes(fieldType) ||
+      isCurrencyCodeSubField);
 
   return needsJsonArray ? JSON.stringify([stringValue]) : stringValue;
 };
@@ -130,6 +135,7 @@ export const buildFilterFromChartBucket = ({
     fieldMetadataItem.type,
     bucketRawValue,
     operand,
+    subFieldName,
   );
 
   return [
