@@ -17,24 +17,24 @@ title: Очередь сообщений
 ### Пример использования
 
 ```ts
-класс Resolver {
+class Resolver {
   constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
 
   async onSomeAction() {
-    //бизнес логика
+    //business logic
     await this.queue.add(someData);
   }
 }
 
-//асинхронный работник
-класс CustomWorker {
+//async worker
+class CustomWorker {
   constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
     this.initWorker();
   }
 
   async initWorker() {
     await this.queue.work(async ({ id, data }) => {
-      //логика работника
+      //worker logic
     });
   }
 }

@@ -45,29 +45,29 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. تعيين نطاق المفتاح في استخدام التأثير
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // العودة إلى نطاق المفتاح السابق عند إلغاء تركيب المكون
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. استخدام خطاف useScopedHotkeys
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // بعض المنطق المنفذ في هذه الصفحة عند ضغط المستخدم على Enter
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>صفحتي التي تستمع لمفتاح Enter</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. تعيين نطاق المفتاح عند فتح المستخدم المودال
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,14 +95,14 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. العودة إلى نطاق المفتاح السابق عند إغلاق المودال
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>صفحتي التي تحتوي على مودال</h1>
-    <button onClick={handleOpenModalClick}>فتح المودال</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -112,9 +112,9 @@ const ExamplePageWithModal = () => {
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. استخدام خطاف useScopedHotkeys للاستماع لمفتاح Escape.
-  // لاحظ أن مفتاح Escape هو مفتاح اختصار شائع يمكن استخدامه من قبل مكونات أخرى كثيرة.
-  // لذلك من المهم استخدام نطاق مفتاح لتجنب التعارضات.
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,13 +123,13 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>مكون المودال الخاص بي</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-من المهم استخدام هذا النمط عندما لست متأكدًا من أن استخدام useEffect مع التركيب/إلغاء التركيب يكفي لتجنب التعارضات.
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
-تلك التعارضات يمكن أن تكون صعبة التصحيح، وربما تحدث بشكل متكرر مع useEffects.
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
 ## ما هو نطاق المفتاح؟
 

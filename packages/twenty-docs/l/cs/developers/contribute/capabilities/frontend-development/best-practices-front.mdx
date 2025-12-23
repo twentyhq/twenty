@@ -19,7 +19,7 @@ Je dobrým zvykem vytvořit tolik atomů, kolik potřebujete ke správě stavu.
 ```tsx
 export const myAtomState = atom({
   key: 'myAtomState',
-  výchozí: 'výchozí hodnota',
+  default: 'default value',
 });
 
 export const MyComponent = () => {
@@ -40,7 +40,7 @@ export const MyComponent = () => {
 
 Vyhněte se používání `useRef` k ukládání stavu.
 
-Pokud chcete ukládat stav, měli byste použít `useState` nebo `useRecoilState`.
+If you want to store state, you should use `useState` or `useRecoilState`.
 
 Podívejte se, jak spravovat překreslení, pokud máte pocit, že potřebujete `useRef`, abyste zabránili některým překreslením.
 
@@ -56,23 +56,23 @@ Pamatujte, že můžete **vždy** zabránit opakovanému renderování pochopen�
 
 Vyhýbání se překreslení v nových funkcích je nyní snadné tím, že je eliminujete na úrovni kořene.
 
-Komponenta sidecar `PageChangeEffect` obsahuje pouze jedno `useEffect`, kde drží veškerou logiku vykonávanou při změně stránky.
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
 Tímto způsobem víte, že existuje pouze jedno místo, které může spustit překreslování.
 
-### Vždy přemýšlejte dvakrát, než přidáte `useEffect` do svého kódu
+### Always think twice before adding `useEffect` in your codebase
 
-Překreslování je často způsobeno zbytečným `useEffect`.
+Re-renders are often caused by unnecessary `useEffect`.
 
-Měli byste přemýšlet, zda potřebujete `useEffect`, nebo jestli můžete logiku přesunout do funkce obsluhy událostí.
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
 
-Obecně budete snadno moci přesunout logiku do funkce `handleClick` nebo `handleChange`.
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
 Můžete je také najít v knihovnách jako Apollo: `onCompleted`, `onError` atd.
 
-### Použijte sourozenou komponentu k extrakci logiky `useEffect` nebo získávání dat
+### Use a sibling component to extract `useEffect` or data fetching logic
 
-Pokud máte pocit, že potřebujete přidat `useEffect` do svého základního komponentu, měli byste zvážit jeho extrakci do sidecar komponenty.
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
 Stejný postup můžete aplikovat na logiku získávání dat pomocí Apollo hooks.
 
@@ -168,12 +168,13 @@ Jména proměnných by měla přesně zobrazovat účel nebo funkci proměnné.
 Generická jména v programování nejsou ideální, protože postrádají specifikaci, což vede k nejednoznačnosti a snižuje čitelnost kódu. Taková jména neposkytnou informace o účelu proměnné nebo funkce, čímž ztěžují vývojářům pochopení záměru kódu bez hlubšího zkoumání. To může vést ke zvýšené době ladění, vyšší náchylnosti k chybám a obtížím při údržbě a spolupráci. Mezitím, použití popisných jmen činí kód samozřejmým a snadněji navigovatelným, čímž se zvyšuje jeho kvalita a produktivita vývojáře.
 
 ```tsx
-// ❌ Špatně, používá generický název, který jasně nekomunikuje svůj účel ani obsah
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Dobře, používá popisný název
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 
@@ -186,14 +187,14 @@ const [email, setEmail] = useState('');
 Jména obsluhovačů událostí by měla začínat `handle`, zatímco `on` je prefix používaný k pojmenování událostí v komponentech props.
 
 ```tsx
-// ❌ Špatně
+// ❌ Bad
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Dobře
+// ✅ Good
 const handleEmailChange = (val: string) => {
   // ...
 };
@@ -221,12 +222,12 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 **Použití**
 
 ```tsx
-// ❌ Špatně, předání stejné hodnoty jako výchozí nepřidává žádnou hodnotu
+// ❌ Bad, passing in the same value as the default value adds no value
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Dobře, předpokládá výchozí hodnotu
+// ✅ Good, assumes the default value
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -284,7 +285,7 @@ Při importu, upřednostněte určené aliasy před upřesňováním úplných �
 **Použití**
 
 ```tsx
-// ❌ Špatně, specifikuje celou relativní cestu
+// ❌ Bad, specifies the entire relative path
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -309,10 +310,10 @@ const validationSchema = z
     exist: z.boolean(),
     email: z
       .string()
-      .email('Email musí být platný email'),
+      .email('Email must be a valid email'),
     password: z
       .string()
-      .regex(PASSWORD_REGEX, 'Heslo musí obsahovat alespoň 8 znaků'),
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
   })
   .required();
 

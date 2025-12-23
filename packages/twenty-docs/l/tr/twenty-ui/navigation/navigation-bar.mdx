@@ -19,23 +19,23 @@ Birden fazla `NavigationBarItem` bileşeni içeren bir gezinti çubuğu oluştur
 
        const navigationItems = [
          {
-           name: "Ana Sayfa",
+           name: "Home",
            Icon: IconHome,
-           onClick: () => console.log("Ana Sayfa tıklandı"),
+           onClick: () => console.log("Home clicked"),
          },
          {
-           name: "Profil",
+           name: "Profile",
            Icon: IconUser,
-           onClick: () => console.log("Profil tıklandı"),
+           onClick: () => console.log("Profile clicked"),
          },
          {
-           name: "Ayarlar",
+           name: "Settings",
            Icon: IconSettings,
-           onClick: () => console.log("Ayarlar tıklandı"),
+           onClick: () => console.log("Settings clicked"),
          },
        ];
 
-      return <NavigationBar activeItemName="Ana Sayfa" items={navigationItems}/>;
+      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
     };
     ```
   </Tab>
