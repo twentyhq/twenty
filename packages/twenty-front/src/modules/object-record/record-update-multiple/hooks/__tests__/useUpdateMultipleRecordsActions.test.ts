@@ -82,6 +82,4 @@ describe('useUpdateMultipleRecordsActions', () => {
       result.current.updateRecords({ name: 'New Name' }),
     ).rejects.toThrow('Update failed');
   });
-
-
 });

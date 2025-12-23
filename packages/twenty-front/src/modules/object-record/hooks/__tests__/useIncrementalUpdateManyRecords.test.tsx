@@ -126,7 +126,9 @@ describe('useIncrementalUpdateManyRecords', () => {
   });
 
   it('should execute cleanup actions (refetch aggregates, register operation) even if processing fails', async () => {
-    mockIncrementalFetchAndMutate.mockRejectedValue(new Error('Process failed'));
+    mockIncrementalFetchAndMutate.mockRejectedValue(
+      new Error('Process failed'),
+    );
 
     const { result } = renderHook(() =>
       useIncrementalUpdateManyRecords({
@@ -138,11 +140,14 @@ describe('useIncrementalUpdateManyRecords', () => {
       result.current.incrementalUpdateManyRecords({ name: 'New Name' }),
     ).rejects.toThrow('Process failed');
 
-    expect(mockRegisterObjectOperation).toHaveBeenCalledWith(expect.anything(), {
-      type: 'update-many',
-      result: {
-        updateInputs: [],
+    expect(mockRegisterObjectOperation).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        type: 'update-many',
+        result: {
+          updateInputs: [],
+        },
       },
-    });
+    );
   });
 });
