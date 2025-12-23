@@ -41,7 +41,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  useFindOneApplicationQuery,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -76,9 +79,21 @@ export const SettingsObjectFieldEdit = () => {
     setShouldNavigateBackToMemorizedUrlOnSave,
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
-  const { objectNamePlural = '', fieldName = '' } = useParams();
+  const {
+    objectNamePlural = '',
+    fieldName = '',
+    applicationId = '',
+  } = useParams();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
+
+  const { data } = useFindOneApplicationQuery({
+    variables: { id: applicationId },
+    skip: !applicationId,
+  });
+
+  const applicationName = data?.findOneApplication?.name;
 
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
@@ -300,6 +315,20 @@ export const SettingsObjectFieldEdit = () => {
               children: t`Workspace`,
               href: getSettingsPath(SettingsPath.Workspace),
             },
+            ...(isDefined(applicationName)
+              ? [
+                  {
+                    children: t`Applications`,
+                    href: getSettingsPath(SettingsPath.Applications),
+                  },
+                  {
+                    children: `${applicationName}`,
+                    href: getSettingsPath(SettingsPath.ApplicationDetail, {
+                      applicationId,
+                    }),
+                  },
+                ]
+              : []),
             {
               children: t`Objects`,
               href: getSettingsPath(SettingsPath.Objects),

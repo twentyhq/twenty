@@ -34,6 +34,8 @@ export enum SettingsPath {
   Applications = 'applications',
   ApplicationDetail = 'applications/:applicationId',
   ApplicationServerlessFunctionDetail = 'applications/:applicationId/serverlessFunctions/:serverlessFunctionId',
+  ApplicationObjectDetail = 'applications/:applicationId/objects/:objectNamePlural',
+  ApplicationFieldDetail = 'applications/:applicationId/objects/:objectNamePlural/:fieldName',
   ServerlessFunctions = 'functions',
   NewServerlessFunction = 'functions/new',
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
