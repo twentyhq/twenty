@@ -153,7 +153,7 @@ async function addTranslation(
   // Success if added OR if identical already exists (meaning correct version is now active)
   if (response.ok) return true;
 
-  const data = await response.json();
+  const data = (await response.json()) as { errors?: Array<{ error?: { errors?: Array<{ message?: string }> } }> };
   const errorMsg = data?.errors?.[0]?.error?.errors?.[0]?.message || '';
 
   // "Identical translation already saved" means the correct version was already a suggestion
