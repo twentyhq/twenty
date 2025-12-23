@@ -7,7 +7,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { SettingsDevelopersWebhookDetail } from '@/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail';
+import { SettingsDevelopersWebhookDetail } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhookDetail',

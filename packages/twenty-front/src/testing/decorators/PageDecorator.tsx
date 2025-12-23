@@ -33,7 +33,7 @@ import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconsProvider } from 'twenty-ui/display';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { FullHeightStorybookLayout } from '@/testing/FullHeightStorybookLayout';
+import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 
 export type PageDecoratorArgs = {
   routePath: string;

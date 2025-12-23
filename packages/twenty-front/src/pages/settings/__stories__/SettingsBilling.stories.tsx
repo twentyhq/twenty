@@ -11,7 +11,7 @@ import { sleep } from '~/utils/sleep';
 
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import { SettingsBilling } from '@/pages/settings/SettingsBilling';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {

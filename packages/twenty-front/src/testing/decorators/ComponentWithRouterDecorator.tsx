@@ -12,7 +12,7 @@ import {
   isRouteParams,
 } from '~/testing/decorators/PageDecorator';
 
-import { ComponentStorybookLayout } from '@/testing/ComponentStorybookLayout';
+import { ComponentStorybookLayout } from '~/testing/ComponentStorybookLayout';
 
 interface StrictArgs {
   [name: string]: unknown;

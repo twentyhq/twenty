@@ -8,7 +8,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { within } from '@storybook/test';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import { SettingsExperience } from '@/pages/settings/profile/appearance/components/SettingsExperience';
+import { SettingsExperience } from '~/pages/settings/profile/appearance/components/SettingsExperience';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsExperience',
