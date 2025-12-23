@@ -43,7 +43,11 @@ const formatChartFilterValue = (
   const isCurrencyCodeSubField =
     fieldType === FieldMetadataType.CURRENCY && subFieldName === 'currencyCode';
 
-  const needsJsonArray =
+  const isAddressCountrySubField =
+    fieldType === FieldMetadataType.ADDRESS &&
+    subFieldName === 'addressCountry';
+
+  const needsJsonArrayWithIsOperand =
     operand === ViewFilterOperand.IS &&
     ([
       FieldMetadataType.SELECT,
@@ -51,6 +55,13 @@ const formatChartFilterValue = (
       FieldMetadataType.RELATION,
     ].includes(fieldType) ||
       isCurrencyCodeSubField);
+
+  const needsJsonArrayWithContainsOperand =
+    operand === ViewFilterOperand.CONTAINS &&
+    (fieldType === FieldMetadataType.MULTI_SELECT || isAddressCountrySubField);
+
+  const needsJsonArray =
+    needsJsonArrayWithIsOperand || needsJsonArrayWithContainsOperand;
 
   return needsJsonArray ? JSON.stringify([stringValue]) : stringValue;
 };
