@@ -1,176 +1,176 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: Maparea câmpurilor
+description: Cum funcționează maparea câmpurilor în timpul importului de date.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## Cum funcționează maparea câmpurilor
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+Când încărcați un fișier, Twenty analizează coloanele și încearcă să le potrivească cu câmpurile existente.
 
-### Automatic Mapping
+### Mapare automată
 
-Twenty tries to match columns based on:
+Twenty încearcă să potrivească coloanele pe baza:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* Numele antetelor de coloană (potriviri exacte sau similare)
+* Detecția tipului de date (date, numere, e-mailuri)
+* Tipare comune de câmp
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**Sfat rapid:** Exportați câteva rânduri din obiectul pe care doriți să-l importați. Fișierul exportat va avea exact numele de coloane pe care Twenty le așteaptă, ceea ce face ca maparea automată să fie fără probleme în timpul importului.</Note>
 
-### Manual Mapping Options
+### Opțiuni de mapare manuală
 
-For each column, you can:
+Pentru fiecare coloană, puteți:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **Mapați la un câmp**: Selectați câmpul Twenty corespunzător dintr-un meniu derulant
+* **Nu mapați**: Omiteți complet coloana (datele nu vor fi importate)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**Câmpurile trebuie să existe înainte de import.** Importul creează înregistrări, nu câmpuri. Creați câmpuri personalizate în **Setări → Model de date** înainte de import.</Note>
 
-## Field Type Compatibility
+## Compatibilitatea tipurilor de câmp
 
-All field types available in the Data Model are supported for import.
+Toate tipurile de câmp disponibile în Modelul de date sunt acceptate pentru import.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+Puteți importa și valori `id` pentru a atribui un ID specific înregistrărilor noi sau pentru a le actualiza pe cele existente.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## Cerințe privind formatul datelor
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**Unele câmpuri au o sintaxă specială.** Vă recomandăm să descărcați fișierul exemplu înainte de pregătirea importului, pentru a vedea sintaxa așteptată pentru fiecare tip de câmp.</Note>
 
-### Address Fields
+### Câmpuri de adresă
 
-Address is a nested field with multiple columns. Some can be left empty.
+Adresa este un câmp îmbricat cu mai multe coloane. Unele pot fi lăsate necompletate.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Adresă / Adresă 1**: Linia 1 a adresei stradale
+* **Adresă / Adresă 2**: Linia 2 a adresei stradale
+* **Adresă / Oraș**: Numele orașului
+* **Adresă / Stat**: Stat sau provincie
+* **Adresă / Țară**: Numele țării
+* **Adresă / Cod poștal**: Cod poștal/ZIP
 
-### Array Fields
+### Câmpuri de tip array
 
-Use the following format:
+Folosiți următorul format:
 
 ```
 ["value1","value2"]
 ```
 
-### Boolean Fields
+### Câmpuri booleene
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+Folosiți `TRUE` sau `FALSE` (cu majuscule) - nu `true` sau `false`
 
-### Currency Fields
+### Câmpuri de monedă
 
-Currency is a nested field with two columns that **both must be filled**:
+Moneda este un câmp îmbricat cu două coloane care trebuie ambele completate:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Sumă / Sumă**: Valoarea numerică (de ex., `1234.56`)
+* **Sumă / Monedă**: Codul monedei (de ex., `USD`, `EUR`)
 
-### Date Fields
+### Câmpuri de dată
 
-Supported formats:
+Formate acceptate:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD` (recomandat)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* Format ISO 8601
 
-### Domain Fields
+### Câmpuri de domeniu
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* Este recomandat să folosiți formatul `https://domain.com` pentru a evita crearea de duplicate, deoarece acesta este formatul folosit pentru Companiile create de sincronizările cu căsuța poștală și calendarul
+* Se pot completa un `Domain Label` și un `Domain URL`: cea mai bună practică este să completați `domain.com` în etichetă și `https://domain.com` în URL
+* Domeniile trebuie să fie unice în obiectul Companii
+* **Domeniile trebuie să fie unice în fișierul de importat**
 
-### Email Fields
+### Câmpuri de e-mail
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
+* Trebuie să fie în format de e-mail valid
+* E-mailurile trebuie să fie unice în obiectul Persoane
+* **E-mailurile trebuie să fie unice în fișierul de importat**
+* Pentru e-mailuri suplimentare: folosiți **E-mailuri / E-mail principal** pentru e-mailul principal și **E-mailuri / E-mailuri suplimentare** cu acest format:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Id Fields
+### Câmpuri ID
 
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
+Specificarea unui `id` în timpul importului este opțională. Twenty generează automat unul dacă nu este furnizat.
 
-Use cases for mapping an `id` column:
+Cazuri de utilizare pentru maparea unei coloane `id`:
 
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
+* **Setați un ID specific**: Alegeți UUID-ul pentru înregistrările nou create
+* **Actualizați înregistrările existente**: Potriviți cu înregistrările existente pentru a le actualiza în loc să creați duplicate. În acest caz, se recomandă să nu mapați celelalte câmpuri unice: maparea unui singur câmp unic asigură un import mai lin.
 
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Dacă furnizați un `id`, acesta trebuie să fie în format UUID (de ex., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-### JSON Fields
+### Câmpuri JSON
 
-Use valid JSON format:
+Folosiți un format JSON valid:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### Links Fields
+### Câmpuri pentru linkuri
 
-Similar to Domain fields:
+Similar cu câmpurile de domeniu:
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+* Completați ambele coloane, eticheta și URL-ul: **Linkuri / URL link** și **Linkuri / Etichetă link**
+* Folosiți formatul URL complet: `https://example.com`
+* Pentru linkurile secundare, folosiți coloana **Linkuri / Linkuri secundare** cu acest format:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### Multi-Select Fields
+### Câmpuri cu selecție multiplă
 
-Use the **API names** (not the display labels) in the following format:
+Folosiți **numele API** (nu etichetele de afișare) în următorul format:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+Consultați [aici](#finding-api-names-for-select-fields) unde puteți găsi numele API.
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+<Note>Opțiunile noi de selectare nu vor fi create automat de import. Acestea trebuie adăugate în **Setări → Model de date** înainte de import.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **Importul suprascrie, nu adaugă.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  Dacă o înregistrare are deja selectate `VALUE2` și `VALUE3`, iar importați `["VALUE1"]`, înregistrarea va avea doar `VALUE1` după import. Selecțiile anterioare sunt înlocuite, nu îmbinate.
 </Warning>
 
-### Number Fields
+### Câmpuri numerice
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* Doar numere
+* Zecimalele folosesc punctul: `1234.56`
+* Fără separatori pentru mii
 
-### Phone Fields
+### Câmpuri de telefon
 
-Phone is a nested field with multiple columns that **must be filled**
+Telefonul este un câmp îmbricat cu mai multe coloane care **trebuie completate**
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Telefoane / Număr de telefon principal**: Numărul de telefon (de ex., `4159095555`)
+* **Telefoane / Codul de țară al telefonului principal**: Codul de țară (de ex., `US`)
+* **Telefoane / Prefixul de apelare al telefonului principal**: Prefixul de apelare (de ex., `+1`)
 
-### Rating Fields
+### Câmpuri de rating
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+Folosiți formatul numelui API: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
 
 ### Câmpuri de relație
 
-Please see our dedicated article: [Import Relations Between Objects](/l/ro/user-guide/data-migration/capabilities/import-relations)
+Consultați articolul nostru dedicat: [Importul relațiilor dintre obiecte](/l/ro/user-guide/data-migration/capabilities/import-relations)
 
 ### Câmpuri de selectare
 
-Use the **API name** of the option (not the display label):
+Folosiți **numele API** al opțiunii (nu eticheta de afișare):
 
 ```
 VALUE1
