@@ -1,85 +1,85 @@
 ---
-title: Versions de Workflow
-description: Gérer les versions et les brouillons de workflows.
+title: Workflow Versions
+description: Manage workflow versions and drafts.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## À propos des versions
+## About Versions
 
-Chaque fois que vous activez un workflow, une nouvelle version est créée. Cela vous permet de suivre les modifications dans le temps et de revenir aux configurations précédentes si nécessaire.
+Every time you activate a workflow, a new version is created. This allows you to track changes over time and revert to previous configurations if needed.
 
-## Statuts des versions
+## Version Statuses
 
-| Statut        | Description                                       |
-| ------------- | ------------------------------------------------- |
-| **Brouillon** | En cours d'édition, pas encore publié             |
-| **Actif**     | Version active répondant aux déclencheurs         |
-| **Désactivé** | Auparavant actif, mais arrêté manuellement        |
-| **Archivé**   | Versions antérieures conservées pour l'historique |
+| Status          | Description                            |
+| --------------- | -------------------------------------- |
+| **Draft**       | Being edited, not yet published        |
+| **Active**      | Live version responding to triggers    |
+| **Deactivated** | Previously active but manually stopped |
+| **Archived**    | Past versions kept for history         |
 
-## Travailler avec des brouillons
+## Working with Drafts
 
-Lorsque vous modifiez un workflow actif, vos modifications sont enregistrées en tant que **brouillon**. La version active continue de s'exécuter pendant que vous travaillez sur des mises à jour.
+When you edit an active workflow, your changes are saved as a **draft**. The active version continues to run while you work on updates.
 
-Une fois vos modifications terminées, vous pouvez :
+Once you're done editing, you can:
 
-* **Activer** : Publier le brouillon comme nouvelle version active (la version précédente est archivée)
-* **Abandonner** : Supprimer le brouillon et conserver la version active actuelle
+* **Activate**: Publish the draft as the new active version (the previous version is archived)
+* **Discard**: Delete the draft and keep the current active version
 
-## Historique des versions
+## Version History
 
-### Afficher les versions précédentes
+### Viewing Past Versions
 
-1. Ouvrez le workflow
-2. Cliquez sur l'onglet **Versions**
-3. Affichez toutes les versions précédentes avec leurs horodatages
+1. Open the workflow
+2. Click the **Versions** tab
+3. See all previous versions with timestamps
 
-### Restaurer une version
+### Restoring a Version
 
-1. Trouvez la version que vous souhaitez restaurer
-2. Cliquez sur **Utiliser comme brouillon**
-3. La version est copiée dans un nouveau brouillon
-4. Effectuez les mises à jour nécessaires
-5. Activez lorsque vous êtes prêt
+1. Find the version you want to restore
+2. Click **Use as draft**
+3. The version is copied to a new draft
+4. Make any necessary updates
+5. Activate when ready
 
-## Meilleures pratiques
+## Best Practices
 
-### Gestion des versions
+### Version Management
 
-* N'activez que lorsque vous êtes prêt pour la mise en production
-* Conservez des modifications significatives d'une version à l'autre.
-* Documentez les modifications majeures dans les noms ou les descriptions de workflows
-* Testez en mode brouillon avant d'activer
+* Activate only when ready for production
+* Keep meaningful changes between versions
+* Document major changes in workflow names or descriptions
+* Test in draft mode before activating
 
-### Annulation des modifications
+### Reverting Changes
 
-* Si une nouvelle version pose des problèmes, restaurez la version précédente
-* Utilisez l'historique des versions pour suivre ce qui a changé
-* Testez toujours les versions restaurées avant de les activer
+* If a new version causes issues, restore the previous version
+* Use the version history to track what changed
+* Always test restored versions before activating
 
-## Workflows courants
+## Common Workflows
 
-### Modification rapide
+### Quick Edit
 
-1. Apportez des modifications mineures à un workflow actif
-2. Testez en mode brouillon
-3. Activez la nouvelle version
+1. Make minor changes to an active workflow
+2. Test in draft mode
+3. Activate the new version
 
-### Révision majeure
+### Major Revision
 
-1. Utilisez la version précédente comme point de départ
-2. Apportez des modifications importantes dans un brouillon
-3. Testez minutieusement tous les scénarios
-4. Activez lorsque vous êtes confiant
+1. Use the previous version as a starting point
+2. Make significant changes in draft
+3. Thoroughly test all scenarios
+4. Activate when confident
 
-### Retour en arrière
+### Rollback
 
-1. Identifiez le problème avec la version actuelle
-2. Trouvez la dernière version fonctionnelle dans l'historique
-3. Cliquez sur **Utiliser comme brouillon**
-4. Activez pour rétablir l'ancien comportement
+1. Identify the issue with the current version
+2. Find the last working version in history
+3. Click **Use as draft**
+4. Activate to restore the old behavior
 
-## Articles connexes
+## Related
 
-* [Prise en main des workflows](/l/fr/user-guide/workflows/overview)
-* [Exécutions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-runs)
+* [Getting Started with Workflows](/l/fr/user-guide/workflows/overview)
+* [Workflow Runs](/l/fr/user-guide/workflows/capabilities/workflow-runs)

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLString,
+} from 'graphql';
 import {
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
@@ -72,6 +76,11 @@ export class GroupByDateGranularityInputTypeGenerator {
           type: firstDayOfWeekEnum,
           description:
             'First day of the week (only applicable when granularity is WEEK). Defaults to MONDAY if not specified.',
+        },
+        timeZone: {
+          type: GraphQLString,
+          description:
+            'Timezone used to compute the aggregate value and in which is expressed the granular period, for example a day in UTC-12 is not the same period as a day in UTC+3, the requester needs to precise this otherwise the server will assume a timezone and the requester cannot know in which timezone the aggregate values are computed.',
         },
       },
     });

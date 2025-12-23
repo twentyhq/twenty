@@ -1,0 +1,428 @@
+---
+title: Menü Öğesi
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Başlık" />
+</Frame>
+
+Bir menü veya navigasyon listesinde kullanılmak üzere tasarlanmış çok yönlü bir menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
+
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler    | Tür           | Açıklama                                                                                      |
+    | ------------- | ------------- | --------------------------------------------------------------------------------------------- |
+    | Sol Simge     | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                                       |
+    | vurgula       | dize          | Menü öğesinin vurgu rengini belirtir. Options include: `default`, `danger`, and `placeholder` |
+    | metin         | dize          | Menü öğesinin metin içeriği                                                                   |
+    | simgeDüğmeler | dizi          | Menü öğesiyle ilgili ek simge düğmelerini temsil eden nesnelerin dizisi                       |
+    | isTooltipOpen | boolean       | Menü öğesiyle ilgili ipucu açıklamasının görünürlüğünü kontrol eder                           |
+    | testId        | string        | Test amaçları için data-testid özelliği                                                       |
+    | tıklandığında | fonksiyon     | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                                       |
+    | sınıfAdı      | dize          | Ek stil için isteğe bağlı isim                                                                |
+  </Tab>
+</Tabs>
+
+## Varyantlar
+
+Menü öğesi bileşeninin farklı varyantları şunları içerir:
+
+### Komut
+
+Klavye kısayollarını belirtmek için bir menü içinde komut tarzı bir menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
+
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler   | Tür           | Açıklama                                                                      |
+    | ------------ | ------------- | ----------------------------------------------------------------------------- |
+    | LeftIcon     | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                       |
+    | metin        | dize          | Menü öğesinin metin içeriği                                                   |
+    | firstHotKey  | dize          | Komutla ilişkilendirilmiş ilk klavye kısayolu                                 |
+    | secondHotKey | dize          | Komutla ilişkilendirilmiş ikinci klavye kısayolu                              |
+    | isSelected   | boolean       | Menü öğesinin seçilip seçilmediğini veya vurgulanıp vurgulanmadığını belirtir |
+    | onClick      | fonksiyon     | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                       |
+    | className    | dize          | Ek stil için isteğe bağlı isim                                                |
+  </Tab>
+</Tabs>
+
+### Draggable
+
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür           | Açıklama                                                                 |
+    | -------------- | ------------- | ------------------------------------------------------------------------ |
+    | LeftIcon       | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                  |
+    | accent         | dize          | Menü öğesinin vurgu rengi. `default`, `placeholder` ve `danger` olabilir |
+    | iconButtons    | dizi          | Menü öğesiyle ilgili ek simge düğmelerini temsil eden nesnelerin dizisi  |
+    | isTooltipOpen  | boolean       | Menü öğesiyle ilgili ipucu açıklamasının görünürlüğünü kontrol eder      |
+    | onClick        | fonksiyon     | Bağlantıya tıklandığında tetiklenecek callback işlevi                    |
+    | metin          | dize          | Menü öğesinin metin içeriği                                              |
+    | isDragDisabled | boolean       | Sürükleme işleminin devre dışı olup olmadığını belirtir                  |
+    | className      | dize          | Ek stil için isteğe bağlı isim                                           |
+  </Tab>
+</Tabs>
+
+### Çoklu Seçim
+
+Bir onay kutusu ile birlikte çoklu seçim işlevselliği sağlanır.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür           | Açıklama                                                                     |
+    | -------------- | ------------- | ---------------------------------------------------------------------------- |
+    | LeftIcon       | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                      |
+    | metin          | dize          | Menü öğesinin metin içeriği                                                  |
+    | selected       | boolean       | Menü öğesinin seçilip seçilmediğini (işaretlenip işaretlenmediğini) belirtir |
+    | onSelectChange | fonksiyon     | Onay kutusu durumu değiştiğinde tetiklenen geri çağırma işlevi               |
+    | className      | dize          | Ek stil için isteğe bağlı isim                                               |
+  </Tab>
+</Tabs>
+
+### Çoklu Seçim Avatar
+
+Bir avatar, bir seçim için onay kutusu ve metin içeriği ile bir çoklu seçim menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür         | Açıklama                                                                     |
+    | -------------- | ----------- | ---------------------------------------------------------------------------- |
+    | avatar         | `ReactNode` | Menü öğesinin sol tarafında görüntülenecek avatar veya simge                 |
+    | metin          | dize        | Menü öğesinin metin içeriği                                                  |
+    | selected       | boolean     | Menü öğesinin seçilip seçilmediğini (işaretlenip işaretlenmediğini) belirtir |
+    | onSelectChange | fonksiyon   | Onay kutusu durumu değiştiğinde tetiklenen geri çağırma işlevi               |
+    | className      | dize        | Ek stil için isteğe bağlı isim                                               |
+  </Tab>
+</Tabs>
+
+### Gezin
+
+İsteğe bağlı bir sol simge, metin içeriği ve sağda bir ok simgesi sunan bir menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
+
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür           | Açıklama                                                  |
+    | ---------- | ------------- | --------------------------------------------------------- |
+    | LeftIcon   | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge   |
+    | metin      | dize          | Menü öğesinin metin içeriği                               |
+    | onClick    | fonksiyon     | Menü öğesi tıklandığında tetiklenecek geri çağırma işlevi |
+    | className  | dize          | Ek stil için isteğe bağlı isim                            |
+  </Tab>
+</Tabs>
+
+### Seç
+
+Seçilebilir bir menü öğesi, isteğe bağlı sol içerik (simgeler ve metin) ve seçili durum için bir gösterge (kontrol simgesi) içerir.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür           | Açıklama                                                                     |
+    | ---------- | ------------- | ---------------------------------------------------------------------------- |
+    | LeftIcon   | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                      |
+    | metin      | dize          | Menü öğesinin metin içeriği                                                  |
+    | selected   | boolean       | Menü öğesinin seçilip seçilmediğini (işaretlenip işaretlenmediğini) belirtir |
+    | devre dışı | boolean       | Menü öğesinin devre dışı bırakılıp bırakılmadığını belirtir                  |
+    | hovered    | boolean       | Menü öğesinin üzerine gelinip gelinmediğini belirtir                         |
+    | onClick    | fonksiyon     | Menü öğesi tıklandığında tetiklenecek geri çağırma işlevi                    |
+    | className  | dize          | Ek stil için isteğe bağlı isim                                               |
+  </Tab>
+</Tabs>
+
+### Seç Avatar
+
+Bir avatar ve seçilmiş durum için gösterge (kontrol simgesi) ile beraber isteğe bağlı sol içerik (avatar ve metin) içeren bir seçilebilir menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür         | Açıklama                                                       |
+    | ---------- | ----------- | -------------------------------------------------------------- |
+    | avatar     | `ReactNode` | Menü öğesinin sol tarafında gösterilecek avatar veya simge     |
+    | metin      | dize        | Menü öğesinin metin içeriği                                    |
+    | seçili     | boolean     | Menü öğesinin seçili (işaretli) olup olmadığını gösterir       |
+    | devre dışı | boolean     | Menü öğesinin devre dışı olup olmadığını gösterir              |
+    | hovered    | boolean     | Menü öğesinin şu anda üzerinden geçilip geçilmediğini gösterir |
+    | testId     | dize        | Test amaçları için data-testid özelliği                        |
+    | onClick    | fonksiyon   | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi        |
+    | className  | dize        | Ek stil için isteğe bağlı isim                                 |
+  </Tab>
+</Tabs>
+
+### Renk Seçimi
+
+Kullanıcıların bir menüden renk seçmelerini istediğiniz senaryolar için renk örneğiyle birlikte seçilebilir bir menü öğesi.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler | Tür       | Açıklama                                                                                                                                                      |
+    | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | renk       | dize      | Menü öğesinde örnek olarak gösterilecek tema rengi. Seçenekler: `yeşil`, `turkuaz`, `gökyüzü`, `mavi`, `mor`, `pembe`, `kırmızı`, `turuncu`, `sarı`, ve `gri` |
+    | seçili     | boolean   | Menü öğesinin seçili (işaretli) olup olmadığını gösterir                                                                                                      |
+    | devre dışı | boolean   | Menü öğesinin devre dışı olup olmadığını gösterir                                                                                                             |
+    | hovered    | boolean   | Menü öğesinin şu anda üzerinden geçilip geçilmediğini gösterir                                                                                                |
+    | varyant    | dize      | Renk örneğinin varyantı. Ya `varsayılan` ya da `pipeline` olabilir                                                                                            |
+    | onClick    | fonksiyon | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                                                                                                       |
+    | className  | dize      | Ek stil için isteğe bağlı isim                                                                                                                                |
+  </Tab>
+</Tabs>
+
+### Toggle
+
+A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
+
+    import { MenuItemToggle } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler     | Tür           | Açıklama                                                                   |
+    | -------------- | ------------- | -------------------------------------------------------------------------- |
+    | Sol Simge      | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                    |
+    | metin          | dize          | Menü öğesinin metin içeriği                                                |
+    | toggled        | boolean       | Açma/kapatma anahtarının açık veya kapalı konumda olup olmadığını gösterir |
+    | onToggleChange | fonksiyon     | Açma/kapatma anahtarı durumu değiştiğinde tetiklenen geri çağırma işlevi   |
+    | toggleSize     | dize          | Anahtar değiştirme düğmesinin boyutu. It can be either \                   |
+    | className      | dize          | Ek stil için isteğe bağlı isim                                             |
+  </Tab>
+</Tabs>

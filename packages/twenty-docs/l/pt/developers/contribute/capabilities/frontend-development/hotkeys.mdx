@@ -1,42 +1,42 @@
 ---
-title: Teclas de atalho
+title: Hotkeys
 ---
 
-## Introdução
+## Introduction
 
-Quando você precisa ouvir uma tecla de atalho, normalmente usaria o listener de evento `onKeyDown`.
+When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
 
-No entanto, em `twenty-front`, você pode ter conflitos entre as mesmas teclas de atalho que são usadas em diferentes componentes, montados ao mesmo tempo.
+In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
 
-Por exemplo, se você tem uma página que escuta a tecla Enter, e um modal que escuta a tecla Enter, com um componente Select dentro desse modal que escuta a tecla Enter, você pode ter um conflito quando todos são montados ao mesmo tempo.
+For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
 
-## O hook `useScopedHotkeys`
+## The `useScopedHotkeys` hook
 
-Para lidar com esse problema, temos um hook personalizado que permite ouvir as teclas de atalho sem qualquer conflito.
+To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
 
-Você o coloca em um componente, e ele ouvirá as teclas de atalho somente quando o componente estiver montado E quando o **escopo da tecla de atalho** especificado estiver ativo.
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
 
-## Como ouvir teclas de atalho na prática?
+## How to listen for hotkeys in practice?
 
-Há dois passos envolvidos na configuração da escuta de teclas de atalho :
+There are two steps involved in setting up hotkey listening :
 
-1. Defina o [escopo da tecla de atalho](#what-is-a-hotkey-scope-) que ouvirá as teclas de atalho
-2. Use o hook `useScopedHotkeys` para ouvir as teclas de atalho
+1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
+2. Use the `useScopedHotkeys` hook to listen to hotkeys
 
-Configurar escopos de teclas de atalho é necessário mesmo em páginas simples, porque outros elementos de UI como o menu à esquerda ou o menu de comando também podem ouvir teclas de atalho.
+Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
 
-## Casos de uso para teclas de atalho
+## Use cases for hotkeys
 
-Em geral, você terá dois casos de uso que requerem teclas de atalho :
+In general, you'll have two use cases that require hotkeys :
 
-1. Em uma página ou um componente montado em uma página
-2. Em um componente do tipo modal que assume o foco devido a uma ação do usuário
+1. In a page or a component mounted in a page
+2. In a modal-type component that takes the focus due to a user action
 
-O segundo caso de uso pode ocorrer de forma recursiva : um dropdown em um modal, por exemplo.
+The second use case can happen recursively : a dropdown in a modal for example.
 
-### Ouvindo teclas de atalho em uma página
+### Listening to hotkeys in a page
 
-Exemplo :
+Example :
 
 ```tsx
 const PageListeningEnter = () => {
@@ -45,37 +45,37 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. Defina o escopo da tecla de atalho em um useEffect
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // Volte para o escopo de atalho anterior quando o componente for desmontado
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. Use o hook useScopedHotkeys
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // Alguma lógica executada nesta página quando o usuário pressiona Enter
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>Minha página que escuta Enter</div>
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
-### Ouvindo teclas de atalho em um componente do tipo modal
+### Listening to hotkeys in a modal-type component
 
-Neste exemplo, usaremos um componente modal que ouve a tecla Escape para informar ao pai que feche.
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
 
-Aqui, a interação do usuário está mudando o escopo.
+Here the user interaction is changing the scope.
 
 ```tsx
 const ExamplePageWithModal = () => {
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. Defina o escopo da tecla de atalho quando o usuário abrir o modal
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,26 +95,26 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. Volte para o escopo de atalho anterior quando o modal for fechado
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>Minha página com um modal</h1>
-    <button onClick={handleOpenModalClick}>Abrir modal</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
 ```
 
-Então no componente modal :
+Then in the modal component :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Use o hook useScopedHotkeys para ouvir o Escape.
-  // Note que Escape é uma tecla de atalho comum que pode ser usada por muitos outros componentes
-  // Portanto, é importante usar um escopo de tecla para evitar conflitos
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,23 +123,23 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Meu componente modal</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-É importante usar esse padrão quando você não está seguro de que apenas usar um useEffect com mount/unmount será suficiente para evitar conflitos.
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
-Esses conflitos podem ser difíceis de depurar, e pode acontecer com mais frequência do que o esperado com useEffects.
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## O que é um escopo de tecla de atalho?
+## What is a hotkey scope?
 
-Um escopo de tecla de atalho é uma string que representa um contexto no qual as teclas de atalho estão ativas. Geralmente é codificado como um enum.
+A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
 
-Quando você altera o escopo da tecla de atalho, as teclas associadas a esse escopo serão ativadas e as teclas associadas a outros escopos serão desativadas.
+When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
 
-Você pode definir apenas um escopo por vez.
+You can set only one scope at a time.
 
-Como exemplo, os escopos de tecla de atalho para cada página são definidos no enum `PageHotkeyScope`:
+As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
 
 ```tsx
 export enum PageHotkeyScope {
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internamente, o escopo atualmente selecionado é armazenado em um estado Recoil que é compartilhado por toda a aplicação :
+Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Mas esse estado Recoil nunca deve ser manipulado manualmente! Veremos como usá-lo na próxima seção.
+But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
 
-## Como funciona internamente?
+## How is it working internally?
 
-Criamos um wrapper leve em cima de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que o torna mais eficiente e evita renderizações desnecessárias.
+We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
 
-Também criamos um estado Recoil para gerenciar o estado do escopo da tecla de atalho e torná-lo disponível em toda a aplicação.
+We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.

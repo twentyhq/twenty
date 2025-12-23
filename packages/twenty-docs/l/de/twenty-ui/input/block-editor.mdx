@@ -1,0 +1,31 @@
+---
+title: Block Editor
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Kopfzeile" />
+</Frame>
+
+Verwendet einen blockbasierten Rich-Text-Editor von [BlockNote](https://www.blocknotejs.org/), um Benutzern das Bearbeiten und Anzeigen von Inhaltsblöcken zu ermöglichen.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
+
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften" | Typ               | Beschreibung                                |
+    | --------------- | ----------------- | ------------------------------------------- |
+    | Editor          | `BlockNoteEditor` | Instanz oder Konfiguration des Blockeditors |
+  </Tab>
+</Tabs>

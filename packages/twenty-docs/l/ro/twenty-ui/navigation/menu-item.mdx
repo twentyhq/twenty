@@ -1,0 +1,428 @@
+---
+title: Element de meniu
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Antet" />
+</Frame>
+
+Un element de meniu versatil, conceput pentru a fi utilizat într-un meniu sau listă de navigare.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
+
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți        | Tip              | Descriere                                                                                                     |
+    | ------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------- |
+    | IconaStânga        | ComponentaIcoana | O iconiță stângă opțională afișată înaintea textului în elementul de meniu                                    |
+    | accent             | șir              | Specifică culoarea accentului pentru elementul de meniu. Opțiuni includ: `default`, `danger` și `placeholder` |
+    | text               | șir              | Conținutul textului din elementul de meniu                                                                    |
+    | iconButtons        | array            | Un șir de obiecte care reprezintă butoane icon suplimentare asociate cu elementul de meniu                    |
+    | esteTooltipDeschis | boolean          | Controlează vizibilitatea tooltip-ului asociat cu elementul de meniu                                          |
+    | testId             | şir              | Atributul data-testid pentru scopuri de testare                                                               |
+    | laClick            | funcție          | Funcție de callback declanșată când se face clic pe elementul de meniu                                        |
+    | numeClasă          | string           | Nume opțional pentru stilizare suplimentară                                                                   |
+  </Tab>
+</Tabs>
+
+## Variante
+
+Diferitele variante ale componentei elementului de meniu includ următoarele:
+
+### Comandă
+
+Un element de meniu de tip comandă într-un meniu pentru a indica scurtăturile de la tastatură.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
+
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți  | Tip           | Descriere                                                               |
+    | ------------ | ------------- | ----------------------------------------------------------------------- |
+    | LeftIcon     | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
+    | text         | string        | Conținutul text al elementului de meniu                                 |
+    | firstHotKey  | șir           | Prima scurtătură de tastatură asociată cu comanda                       |
+    | secondHotKey | șir           | A doua scurtătură de tastatură asociată cu comanda                      |
+    | isSelected   | boolean       | Indică dacă elementul de meniu este selectat sau evidențiat             |
+    | onClick      | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
+    | className    | string        | Nume opțional pentru stilizare suplimentară                             |
+  </Tab>
+</Tabs>
+
+### Draggable
+
+Un element de meniu drag realizat pentru a fi utilizat într-un meniu sau listă unde elementele pot fi trase, iar acțiuni suplimentare pot fi efectuate prin butoanele de pictograme.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip           | Descriere                                                                                  |
+    | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
+    | LeftIcon       | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu                    |
+    | accent         | string        | Culoarea accentului elementului de meniu. Poate fi `default`, `placeholder`, și `danger`   |
+    | iconButtons    | array         | Un șir de obiecte care reprezintă butoane icon suplimentare asociate cu elementul de meniu |
+    | isTooltipOpen  | boolean       | Controlează vizibilitatea tooltip-ului asociat cu elementul de meniu                       |
+    | onClick        | funcție       | Funcție de callback declanșată când se face clic pe link                                   |
+    | text           | string        | Conținutul de text al elementului de meniu                                                 |
+    | isDragDisabled | boolean       | Indică dacă funcția de drag este dezactivată                                               |
+    | className      | string        | Nume opțional pentru stilizare suplimentară                                                |
+  </Tab>
+</Tabs>
+
+### Multi Select
+
+Oferă o modalitate de a implementa funcționalitatea multi-select cu un checkbox asociat.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip           | Descriere                                                               |
+    | -------------- | ------------- | ----------------------------------------------------------------------- |
+    | LeftIcon       | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
+    | text           | șir           | Conținutul de text al elementului de meniu                              |
+    | selected       | boolean       | Indică dacă elementul de meniu este selectat (bifat)                    |
+    | onSelectChange | funcție       | Funcție de callback declanșată când starea checkbox-ului se schimbă     |
+    | className      | string        | Nume opțional pentru stilizare suplimentară                             |
+  </Tab>
+</Tabs>
+
+### Multi Select Avatar
+
+Un element de meniu multi-select cu un avatar, un checkbox pentru selecție și conținut textual.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip         | Descriere                                                                          |
+    | -------------- | ----------- | ---------------------------------------------------------------------------------- |
+    | avatar         | `ReactNode` | Avatarul sau pictograma care va fi afișată în partea stângă a elementului de meniu |
+    | text           | string      | Conținutul de text al elementului de meniu                                         |
+    | selected       | boolean     | Indică dacă elementul de meniu este selectat (bifat)                               |
+    | onSelectChange | funcție     | Funcție de callback declanșată când starea checkbox-ului se schimbă                |
+    | className      | string      | Nume opțional pentru stilizare suplimentară                                        |
+  </Tab>
+</Tabs>
+
+### Navigate
+
+Un element de meniu care include o pictogramă opțională în stânga, conținut text și o pictogramă de săgeată la dreapta.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
+
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip           | Descriere                                                               |
+    | ----------- | ------------- | ----------------------------------------------------------------------- |
+    | LeftIcon    | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
+    | text        | string        | Conținutul de text al elementului de meniu                              |
+    | onClick     | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
+    | className   | string        | Nume opțional pentru stilizare suplimentară                             |
+  </Tab>
+</Tabs>
+
+### Selectați
+
+Un element de meniu selectabil, care include opțional părți la stânga (pictogramă și text) și un indicator (pictograma de bifare) pentru starea selectată.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip           | Descriere                                                               |
+    | ----------- | ------------- | ----------------------------------------------------------------------- |
+    | LeftIcon    | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
+    | text        | string        | Conținutul de text al elementului de meniu                              |
+    | selected    | boolean       | Indică dacă elementul de meniu este selectat (bifat)                    |
+    | dezactivat  | boolean       | Indică dacă elementul de meniu este dezactivat                          |
+    | hovered     | boolean       | Indică dacă elementul de meniu este în prezent trecut cu mouse-ul       |
+    | laClick     | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
+    | numeClasa   | string        | Nume opțional pentru stilizare suplimentară                             |
+  </Tab>
+</Tabs>
+
+### Selectați Avatar
+
+Un element de meniu selectabil cu un avatar, care include opțional părți la stânga (avatar și text) și un indicator (pictograma de bifare) pentru starea selectată.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip         | Descriere                                                                                     |
+    | ----------- | ----------- | --------------------------------------------------------------------------------------------- |
+    | avatar      | `ReactNode` | Avatarul sau pictograma care urmează să fie afișată pe partea stângă a elementului de meniu   |
+    | text        | string      | Conținutul text al elementului de meniu                                                       |
+    | selectat    | boolean     | Indică dacă elementul de meniu este selectat (bifat)                                          |
+    | dezactivat  | boolean     | Indică dacă elementul de meniu este dezactivat                                                |
+    | hovered     | boolean     | Indică dacă elementul de meniu este în prezent trecut cu mouse-ul                             |
+    | testId      | string      | Atributul data-testid pentru scopuri de testare                                               |
+    | laClick     | funcție     | Funcția de apel invers care urmează să fie declanșată când se face clic pe elementul de meniu |
+    | numeClasa   | string      | Nume opțional pentru stilizare suplimentară                                                   |
+  </Tab>
+</Tabs>
+
+### Selectați Culoarea
+
+Un element de meniu selectabil cu un eșantion de culoare pentru situațiile în care doriți ca utilizatorii să aleagă o culoare dintr-un meniu.
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți | Tip     | Descriere                                                                                                                                                                                       |
+    | ----------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | culoare     | string  | Culoarea temei care urmează să fie afișată ca eșantion în elementul de meniu. Opțiunile includ: `verde`, `turcoaz`, `cer`, `albastru`, `violet`, `roz`, `roșu`, `portocaliu`, `galben` și `gri` |
+    | selectat    | boolean | Indică dacă elementul de meniu este selectat (bifat)                                                                                                                                            |
+    | dezactivat  | boolean | Indică dacă elementul de meniu este dezactivat                                                                                                                                                  |
+    | hovered     | boolean | Indică dacă elementul de meniu este în prezent trecut cu mouse-ul                                                                                                                               |
+    | variant     | string  | Varianta eșantionului de culoare. Poate fi fie `default`, fie `pipeline`                                                                                                                        |
+    | laClick     | funcție | Funcția de apel invers care urmează să fie declanșată când se face clic pe elementul de meniu                                                                                                   |
+    | numeClasa   | string  | Nume opțional pentru stilizare suplimentară                                                                                                                                                     |
+  </Tab>
+</Tabs>
+
+### Comutare
+
+Un element de meniu cu un comutator asociat pentru a permite utilizatorilor să activeze sau să dezactiveze o caracteristică specifică
+
+<Tabs>
+  <Tab title="Utilizare">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
+
+    import { MenuItemToggle } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="Prima opțiune"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Proprietăți">
+    | Proprietăți    | Tip           | Descriere                                                                         |
+    | -------------- | ------------- | --------------------------------------------------------------------------------- |
+    | LeftIcon       | IconComponent | O pictogramă opțională la stânga afișată înaintea textului din elementul de meniu |
+    | text           | string        | Conținutul text al elementului de meniu                                           |
+    | comutat        | boolean       | Indică dacă comutatorul este în starea „activat” sau „dezactivat”                 |
+    | onToggleChange | funcție       | Callback function triggered when the toggle switch state changes                  |
+    | toggleSize     | string        | Dimensiunea comutatorului. It can be either \                                     |
+    | numeClasă      | string        | Nume opțional pentru stilizare suplimentară                                       |
+  </Tab>
+</Tabs>

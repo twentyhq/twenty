@@ -1,0 +1,52 @@
+---
+title: Selettore di icone
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Intestazione" />
+</Frame>
+
+Un selettore di icone basato su menu a tendina che consente agli utenti di scegliere un'icona da un elenco.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props                  | Tipo     | Descrizione                                                                                                                |
+    | ---------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
+    | disabilitato           | booleano | Disabilita il selettore di icone se impostato su `true`                                                                    |
+    | onChange               | funzione | La funzione di callback attivata quando l'utente seleziona un'icona. Riceve un oggetto con le proprietà `iconKey` e `Icon` |
+    | chiaveIconaSelezionata | stringa  | La chiave dell'icona inizialmente selezionata                                                                              |
+    | onClickOutside         | funzione | Funzione di callback attivata quando l'utente fa clic fuori dal menu a tendina                                             |
+    | onClose                | funzione | Funzione di callback attivata quando il menu a tendina viene chiuso                                                        |
+    | onOpen                 | funzione | Funzione di callback attivata quando il menu a tendina viene aperto                                                        |
+    | variante               | stringa  | La variante di stile visivo dell'icona cliccabile. Le opzioni includono: `primario`, `secondario` e `terziario`            |
+  </Tab>
+</Tabs>

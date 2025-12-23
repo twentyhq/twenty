@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Intestazione" />
+</Frame>
+
+Visualizza una barra di navigazione a briciole di pane.
+
+<Tabs>
+  <Tab title="Utilizzo">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="Props">
+    | Props        | Tipo   | Descrizione                                                                                                                                                                                                                               |
+    | ------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | nomeClasse   | string | Nome classe opzionale per uno styling aggiuntivo                                                                                                                                                                                          |
+    | collegamenti | array  | An array of objects, each representing a breadcrumb link. Ogni oggetto ha una proprietà `children` (il contenuto testuale del collegamento) e una proprietà `href` opzionale (l'URL a cui navigare quando il collegamento viene cliccato) |
+  </Tab>
+</Tabs>

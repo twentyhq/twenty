@@ -1,0 +1,138 @@
+---
+title: Çip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Başlık" />
+</Frame>
+
+A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="Clickable Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler   | Tür                                | Açıklama                                                                              |
+    | ------------ | ---------------------------------- | ------------------------------------------------------------------------------------- |
+    | linkToEntity | dize                               | Varlığın bağlantısı                                                                   |
+    | entityId     | dize                               | Varlık için benzersiz tanımlayıcı                                                     |
+    | i̇sim        | dize                               | Varlığın adı                                                                          |
+    | resimUrl     | dize                               | s resim","                                                                            |
+    | avatarTürü   | Avatar Türü                        | Göstermek istediğiniz avatarın türü. İki seçenek var: `yuvarlak` ve `kare`            |
+    | varyant      | `EntityChipVariant` numaralandırma | Göstermek istediğiniz varlık çipinin varyantı. İki seçenek var: `düzenli` ve `şeffaf` |
+    | Sol Simge    | IconComponent                      | Bir simgeyi temsil eden bir React bileşeni. Çipin sol tarafında görüntülenir          |
+  </Tab>
+</Tabs>
+
+## Örnekler
+
+### Şeffaf Devre Dışı Çip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br />
+
+### Araç İpucuyla Devre Dışı Çip
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Varlık Çipi
+
+Bir varlık hakkında bilgi göstermek için bir Çip benzeri öğe.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
+
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="Entity name"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler   | Tür                                | Açıklama                                                                              |
+    | ------------ | ---------------------------------- | ------------------------------------------------------------------------------------- |
+    | linkToEntity | dize                               | Varlığın bağlantısı                                                                   |
+    | entityId     | dize                               | Varlık için benzersiz tanımlayıcı                                                     |
+    | i̇sim        | dize                               | Varlığın adı                                                                          |
+    | resimUrl     | dize                               | s resim","                                                                            |
+    | avatarTürü   | Avatar Türü                        | Göstermek istediğiniz avatarın türü. İki seçenek var: `yuvarlak` ve `kare`            |
+    | varyant      | `EntityChipVariant` numaralandırma | Göstermek istediğiniz varlık çipinin varyantı. İki seçenek var: `düzenli` ve `şeffaf` |
+    | Sol Simge    | IconComponent                      | Bir simgeyi temsil eden bir React bileşeni. Çipin sol tarafında görüntülenir          |
+  </Tab>
+</Tabs>

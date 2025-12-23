@@ -1,0 +1,171 @@
+---
+title: Kendi Barındırma'dan Bulut'a Geçiş
+description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+---
+
+## Genel Bakış
+
+This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+
+<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+
+## Step 1: Create Your Cloud Workspace
+
+1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
+2. Complete the initial setup wizard
+3. Note your new workspace URL
+
+## Step 2: Recreate Your Data Model
+
+Before importing data, recreate your custom objects and fields:
+
+1. Go to **Settings → Data Model** in your cloud instance
+2. Create custom objects that match your self-hosted setup
+3. Add custom fields to standard and custom objects
+4. Configure field settings (unique, required, etc.)
+
+<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+
+## Step 3: Invite All Users
+
+<Warning>
+  **Critical: Invite users BEFORE importing data.**
+
+  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+</Warning>
+
+1. Go to **Settings → Members** in your cloud instance
+2. Invite all team members who had accounts on self-hosted
+3. **Wait for everyone to accept** their invitation
+4. Verify all users appear in your Members list
+
+## Step 4: Export Data from Self-Hosted
+
+Export each object from your self-hosted instance:
+
+1. Navigate to each object (Companies, People, Opportunities, etc.)
+2. Configure the view to show **all columns** you want to migrate
+3. Click **⋮ → Export view**
+4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+
+**Export in this order** (for reference when importing):
+
+1. Şirketler
+2. İnsanlar
+3. Fırsatlar
+4. Custom objects (following their dependencies)
+5. Tasks, Notes
+
+## Step 5: Update Workspace Member References
+
+The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+
+**For each CSV file with user references (Owner, Assignee, etc.):**
+
+1. Open the CSV in a spreadsheet application
+2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
+3. Fill in the **email address** of each user
+4. You can delete the old ID column or leave it (it will be skipped during import)
+
+**Example:**
+
+Önce:
+
+```csv
+name,domain,accountOwnerId
+Acme Corp,https://acme.com,old-uuid-123
+```
+
+Sonra:
+
+```csv
+name,domain,accountOwnerEmail
+Acme Corp,https://acme.com,john@yourcompany.com
+```
+
+<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+
+## Step 6: Plan Your Import Order
+
+Import files in the correct order to maintain relationships:
+
+1. **Companies** first (no dependencies)
+2. **People** second (link to Companies)
+3. **Opportunities** third (link to Companies and People)
+4. **Custom objects** (following their dependencies)
+5. **Tasks and Notes** last (link to other records)
+
+See [How to Import Relations](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+
+## Step 7: Import to Cloud
+
+For each CSV file, in order:
+
+1. Navigate to the object in your cloud instance
+2. Click **⋮ → Import records**
+3. Upload the CSV file
+4. Map columns to fields:
+   * Map user email columns to the appropriate relation fields
+   * Map other columns as usual
+5. Review and fix any errors
+6. Confirm the import
+7. Verify a few records before proceeding to the next file
+
+## Step 8: Recreate Configuration
+
+After importing data, manually recreate:
+
+### Görünümler
+
+* Recreate saved views with filters, sorts, and column configurations
+* Set up any kanban or calendar views
+
+### İş Akışları
+
+* Recreate automations in **Settings → Workflows**
+* Test each workflow before relying on it
+
+### Roles and Permissions
+
+* Configure roles in **Settings → Roles**
+* Assign users to appropriate roles
+
+### Entegrasyonlar
+
+* Reconnect email and calendar sync for each user
+* Reconfigure any API integrations with new API keys
+
+## Taşındıktan Sonra Kontrol Listesi
+
+<Check>All data imported successfully</Check>
+<Check>Relations between objects working correctly</Check>
+<Check>User assignments (Owner, Assignee) mapped correctly</Check>
+<Check>Views recreated</Check>
+<Check>Workflows recreated and tested</Check>
+<Check>Roles and permissions configured</Check>
+<Check>Email/calendar sync reconnected</Check>
+<Check>API integrations updated with new keys</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Can I migrate workflows automatically?">
+    Not currently. Workflows must be recreated manually in your cloud instance.
+  </Accordion>
+
+  <Accordion title="What about file attachments and images?">
+    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  </Accordion>
+
+  <Accordion title="Can I keep both instances running during migration?">
+    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  </Accordion>
+
+  <Accordion title="What if a user hasn't accepted their invitation yet?">
+    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  </Accordion>
+</AccordionGroup>
+
+## Yardıma mı ihtiyacınız var?
+
+For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/tr/user-guide/getting-started/capabilities/implementation-services).

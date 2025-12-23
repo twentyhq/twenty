@@ -1,0 +1,77 @@
+---
+title: Configure Your Workspace
+description: Jedes Unternehmen arbeitet anders. Start with these 3 steps to shape Twenty around your needs.
+---
+
+<Note>**Quick Win**: Start with connecting your mailbox. Dies bietet Ihnen sofortigen Mehrwert und hilft Ihrem Team, Twenty mit echten Daten in Aktion zu sehen. You can do so under Settings → Accounts.</Note>
+
+## 1. Passen Sie Ihr Datenmodell an
+
+Twenty bietet die Flexibilität, die Sie benötigen, um das Datenmodell zu gestalten, das Ihre täglichen Abläufe am besten unterstützt.
+Erstellen Sie Objekte und Felder jeder Art, einschließlich Beziehungen zwischen Ihren verschiedenen Objekten. Dies können Sie unter Einstellungen → Datenmodell tun.
+Hier sind ein paar Tipps:
+
+* **Es gibt keine Begrenzung für die Anzahl benutzerdefinierter Felder oder benutzerdefinierter Objekte**. Das Hinzufügen benutzerdefinierter Objekte und Felder führt nicht zu einer Änderung Ihres Plans.
+* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. Wir empfehlen, diese so oft wie möglich zu verwenden und bei Bedarf Feldern hinzuzufügen, um Ihre Einträge zu kategorisieren. Hier ist ein Beispiel:
+  * Es ist am besten, das Personen-Objekt für Ihre Interessenten und Partner zu verwenden, indem Sie ein Feld im Personen-Objekt mit dem Namen `Personentyp` erstellen, anstatt ein benutzerdefiniertes Partnerobjekt zu erstellen. Da Sie nicht in der Lage wären, auf die mit dieser Person ausgetauschten E-Mails aus den Partnerakten zuzugreifen.
+  * Erstellen Sie unter Personen verschiedene Ansichten, eine zur Anzeige von Partnern und eine zur Anzeige von Interessenten.
+* Zwei Personen können nicht die gleiche E-Mail-Adresse haben. Zwei Unternehmen können nicht die gleiche Domain haben.
+* Sie können Standardfelder und -objekte, die Sie nicht verwenden möchten, deaktivieren.
+* Sie können Felder aus Ansichten ausblenden: Scheuen Sie sich nicht, Felder zu erstellen; Sie müssen nicht alle anzeigen.
+
+Lesen [Sie diesen Artikel](/l/de/user-guide/data-model/overview), um zu erfahren, wie Sie Ihr Datenmodell entwerfen.
+
+## 2. Importieren Sie Ihre Daten
+
+Durch das Einbringen Ihrer vorhandenen Daten in Twenty erhält Ihr Team von Anfang an Kontext.
+
+### Verbinden Sie Ihr Postfach
+
+Falls Sie dies beim Erstellen Ihres Arbeitsbereichs nicht getan haben, verbinden Sie Ihr **Google oder Microsoft-Konto** unter Einstellungen → Konten. Dies erlaubt Twenty:
+
+* Ihre Nachrichten und Besprechungen importieren
+* Kontakte basierend auf Interaktionen automatisch erstellen (optional)
+* Den Kommunikationsverlauf für Ihr Team sichtbar halten
+
+**Verwenden Sie einen anderen Anbieter?**
+Sie können ein weiteres Postfach über SMTP oder einen weiteren Kalender über CalDAV hinzufügen. Sie müssen die Funktion unter Einstellungen → Versionen → Lab aktivieren und dann zum Tab Einstellungen → Konten zurückkehren.
+
+### Daten über CSV importieren
+
+Verwenden Sie das Befehlsmenü (`Cmd + K` oder `Ctrl + K`), um Personen, Unternehmen, Gelegenheiten oder benutzerdefinierte Objekte über CSV zu importieren.
+
+**Wichtige Richtlinien**:
+
+* Laden Sie die Beispieldatei herunter, um das erwartete Format zu verstehen
+* Begrenzen Sie jede Datei auf 10.000 Einträge
+* Entfernen Sie doppelte E-Mails für Personen oder doppelte Domains für Unternehmen
+* Überprüfen und korrigieren Sie Fehler (gelb hervorgehoben) vor dem Import
+
+Lesen [Sie diesen Artikel](/l/de/user-guide/data-migration/overview), um mehr über den Datenimport zu erfahren.
+
+## 3. Erstellen Sie Ihre erste Ansicht
+
+Das Erstellen verschiedener Ansichten ist der Schlüssel, um die Daten für Ihr Team nutzbar zu machen.
+Hier erfahren Sie, wie Sie vorgehen:
+
+* **Spalten hinzufügen oder ausblenden**
+  Verwalten Sie die in einer bestimmten Ansicht sichtbaren Felder, indem Sie auf Optionen → Felder (oben rechts) klicken. Sie können von dort aus Felder anzeigen/verbergen.
+
+* **Felder neu anordnen**
+  Ordnen Sie die Felder in einer bestimmten Ansicht neu an, indem Sie auf Optionen → Felder (oben rechts) klicken. Ziehen Sie die Felder per Drag & Drop, um sie neu anzuordnen.
+
+* **Ansicht filtern**
+  Begrenzen Sie die angezeigten Einträge mit den Filtern oben rechts.
+
+* **Einträge sortieren**
+  Sortieren Sie die angezeigten Einträge mit der Sortierfunktion oben rechts oder indem Sie direkt auf den Spaltennamen klicken.
+
+* **Layout wählen**
+  Sie können zu einem **Kanban-Layout** oder einem **Gruppieren-nach-Layout** wechseln, solange das Objekt ein `Phase`- oder ähnliches Auswahlfeld hat.
+
+* **Speichern Sie Ihre Ansicht als Favoriten**
+  Dies kann über das Dropdown-Menü erfolgen, das die verschiedenen Ansichten anzeigt.
+
+## Was kommt als Nächstes?
+
+Beginnen Sie mit der Erstellung von Automatisierungen mit [Workflows](/l/de/user-guide/workflows/overview).

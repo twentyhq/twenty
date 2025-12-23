@@ -173,6 +173,7 @@ export const parseGroupByRelationField = ({
       nestedFieldMetadata,
       dateGranularity: dateFieldDefinition.granularity,
       weekStartDay: dateFieldDefinition.weekStartDay,
+      timeZone: dateFieldDefinition.timeZone,
     });
 
     return;

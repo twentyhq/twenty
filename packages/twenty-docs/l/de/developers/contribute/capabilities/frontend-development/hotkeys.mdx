@@ -45,29 +45,29 @@ const PageListeningEnter = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // 1. Setze den Tastenkombinationsbereich in einem useEffect
+  // 1. Set the hotkey scope in a useEffect
   useEffect(() => {
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleEnterPage,
     );
 
-    // Zurückkehren zum vorherigen Tastenkombinationsbereich, wenn die Komponente entfernt wird
+    // Revert to the previous hotkey scope when the component is unmounted
     return () => {
       goBackToPreviousHotkeyScope();
     };
   }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
 
-  // 2. Verwenden Sie den useScopedHotkeys Hook
+  // 2. Use the useScopedHotkeys hook
   useScopedHotkeys(
     Key.Enter,
     () => {
-      // Eine Logik, die auf dieser Seite ausgeführt wird, wenn der Benutzer Enter drückt
+      // Some logic executed on this page when the user presses Enter
       // ...
     },
     ExampleHotkeyScopes.ExampleEnterPage,
   );
 
-  return <div>Meine Seite, die auf Enter hört</div>;
+  return <div>My page that listens for Enter</div>;
 };
 ```
 
@@ -87,7 +87,7 @@ const ExamplePageWithModal = () => {
   } = usePreviousHotkeyScope();
 
   const handleOpenModalClick = () => {
-    // 1. Setze den Tastenkombinationsbereich, wenn der Benutzer das Modal öffnet
+    // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
     setHotkeyScopeAndMemorizePreviousScope(
       ExampleHotkeyScopes.ExampleModal,
@@ -95,14 +95,14 @@ const ExamplePageWithModal = () => {
   };
 
   const handleModalClose = () => {
-    // 1. Zurückkehren zum vorherigen Tastenkombinationsbereich, wenn das Modal geschlossen wird
+    // 1. Revert to the previous hotkey scope when the modal is closed
     setShowModal(false);
     goBackToPreviousHotkeyScope();
   };
 
   return <div>
-    <h1>Meine Seite mit einem Modal</h1>
-    <button onClick={handleOpenModalClick}>Modal öffnen</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -112,9 +112,9 @@ Dann in der Modalkomponente:
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
-  // 2. Verwenden Sie den useScopedHotkeys Hook, um auf Escape zu hören.
-  // Beachten Sie, dass Escape eine gängige Tastenkombination ist, die von vielen anderen Komponenten verwendet werden könnte
-  // Daher ist es wichtig, einen Tastenkombinationsbereich zu verwenden, um Konflikte zu vermeiden
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -123,13 +123,13 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>Meine Modalkomponente</div>;
+  return <div>My modal component</div>;
 };
 ```
 
-Es ist wichtig, dieses Muster zu verwenden, wenn Sie sich nicht sicher sind, ob das einfache Benutzen eines useEffect bei Ein-/Ausbindung ausreicht, um Konflikte zu vermeiden.
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
 
-Diese Konflikte können schwer zu debuggen sein und treten möglicherweise häufiger auf, als man denkt, mit useEffects.
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
 ## Was ist ein Tastenkombinationsbereich?
 

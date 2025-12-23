@@ -10,7 +10,7 @@ type GraphWidgetRendererProps = {
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
   if (!widget.configuration || !('graphType' in widget.configuration)) {
-    return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
+    return <PageLayoutWidgetNoDataDisplay />;
   }
 
   const graphType = widget.configuration.graphType;
@@ -19,7 +19,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     !Object.values(GraphType).includes(graphType) ||
     !isDefined(widget.objectMetadataId)
   ) {
-    return <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />;
+    return <PageLayoutWidgetNoDataDisplay />;
   }
 
   return (

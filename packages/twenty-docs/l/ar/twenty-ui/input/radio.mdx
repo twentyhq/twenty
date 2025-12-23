@@ -1,0 +1,97 @@
+---
+title: راديو
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="رأس الصفحة" />
+</Frame>
+
+تستخدم عندما يمكن للمستخدمين اختيار خيار واحد فقط من سلسلة من الخيارات.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { Radio } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const handleRadioChange = (event) => {
+        console.log("Radio button changed:", event.target.checked);
+      };
+
+      const handleCheckedChange = (checked) => {
+        console.log("Checked state changed:", checked);
+      };
+
+
+      return (
+        <Radio
+          checked={true}
+          value="Option 1"
+          onChange={handleRadioChange}
+          onCheckedChange={handleCheckedChange}
+          size="large"
+          disabled={false}
+          labelPosition="right"
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات                 | النوع             | الوصف                                                                    |
+    | ------------------------ | ----------------- | ------------------------------------------------------------------------ |
+    | النمط                    | خصائص `React.CSS` | أنماط إضافية مضمنة للمكون                                                |
+    | اسم الفئة                | نص                | فئة CSS اختيارية لتصميم إضافي                                            |
+    | مختار                    | قيمة منطقية       | يشير إلى ما إذا كان زر الراديو محددًا                                    |
+    | القيمة                   | نص                | التسمية أو النص المرتبط بزر الراديو                                      |
+    | عند التغيير              | دالة              | The function called when the selected radio button is changed            |
+    | عند تغيير الحالة المحددة | دالة              | The function called when the `checked` state of the radio button changes |
+    | الحجم                    | نص                | حجم زر الراديو. Options include: `large` and `small`                     |
+    | معطل                     | قيمة منطقية       | If `true`, the radio button is disabled and not clickable                |
+    | موضع التسمية             | نص                | موضع نص التسمية بالنسبة لزر الراديو. Has two options: `left` and `right` |
+  </Tab>
+</Tabs>
+
+## مجموعة الراديو
+
+يجمع أزرار الراديو ذات الصلة معًا.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import React, { useState } from "react";
+    import { Radio, RadioGroup } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      const [selectedValue, setSelectedValue] = useState("Option 1");
+
+      const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+      };
+      
+      return (
+        <RadioGroup value={selectedValue} onChange={handleChange}>
+          <Radio value="Option 1" />
+          <Radio value="Option 2" />
+          <Radio value="Option 3" />
+        </RadioGroup>
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص       | النوع             | الوصف                                                                              |
+    | ------------- | ----------------- | ---------------------------------------------------------------------------------- |
+    | القيمة        | string            | قيمة زر الراديو المحدد حاليًا                                                      |
+    | عند التغيير   | دالة              | The callback function triggered when the radio button is changed                   |
+    | onValueChange | دالة              | The callback function triggered when the selected value in the group changes.      |
+    | الأبناء       | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+  </Tab>
+</Tabs>

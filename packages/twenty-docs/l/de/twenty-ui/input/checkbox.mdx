@@ -1,0 +1,44 @@
+---
+title: Kontrollkästchen
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Kopfzeile" />
+</Frame>
+
+Wird verwendet, wenn ein Benutzer mehrere Werte aus mehreren Optionen auswählen muss.
+
+<Tabs>
+  <Tab title="&#x22;Verwendung&#x22;">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="&#x22;Eigenschaften&#x22;">
+    | "Eigenschaften"        | Typ          | Beschreibung                                                                                                  |
+    | ---------------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
+    | markiert               | boolesch     | Gibt an, ob das Kontrollkästchen markiert ist                                                                 |
+    | unbestimmt             | boolesch     | Gibt an, ob sich das Kontrollkästchen in einem unbestimmten Zustand befindet (weder markiert noch unmarkiert) |
+    | beiÄnderung            | Funktion     | Die Rückruffunktion, die ausgelöst werden soll, wenn sich der Zustand des Kontrollkästchens ändert            |
+    | beiMarkierungsÄnderung | Funktion     | Die Rückruffunktion, die ausgelöst werden soll, wenn sich der `markiert` Zustand ändert                       |
+    | Variante               | Zeichenkette | Der visuelle Stil der Box. Optionen umfassen: `primary`, `secondary` und `tertiary`                           |
+    | größe                  | Zeichenkette | Die Größe des Kontrollkästchens. Has two options: `small` and `large`                                         |
+    | Form                   | Zeichenkette | Die Form des Kontrollkästchens. Hat zwei Optionen: `squared` und `rounded`                                    |
+  </Tab>
+</Tabs>

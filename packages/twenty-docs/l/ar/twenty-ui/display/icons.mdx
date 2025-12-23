@@ -1,0 +1,73 @@
+---
+title: الأيقونات
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="رأس الصفحة" />
+</Frame>
+
+قائمة بالأيقونات المستخدمة في جميع أنحاء تطبيقنا.
+
+## Tabler Icons
+
+نستخدم أيقونات Tabler لـ React في جميع أنحاء التطبيق.
+
+<Tabs>
+  <Tab title="التثبيت">
+    <br />
+
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
+
+  <Tab title="الإزاحة">
+    يمكنك استيراد كل أيقونة كمكون. إليك مثال:
+
+    <br />
+
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
+
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="الإزاحة">
+    | الإزاحة     | النوع  | الوصف                            | الإعداد الافتراضي |
+    | ----------- | ------ | -------------------------------- | ----------------- |
+    | الحجم       | رقم    | ارتفاع وعرض الأيقونة بالبكسل     | 24                |
+    | اللون       | string | لون الأيقونات                    | اللون الحالي      |
+    | الخط العريض | رقم    | عرض الخط العريض للأيقونة بالبكسل | 2                 |
+  </Tab>
+</Tabs>
+
+## أيقونات مخصصة
+
+بالإضافة إلى أيقونات Tabler، يستخدم التطبيق أيضًا بعض الأيقونات المخصصة.
+
+### أيقونة دفتر العناوين
+
+يعرض أيقونة دفتر العناوين.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
+
+  <Tab title="خصائص">
+    | خصائص       | النوع | الوصف                            | الإعداد الافتراضي |
+    | ----------- | ----- | -------------------------------- | ----------------- |
+    | الحجم       | رقم   | ارتفاع وعرض الأيقونة بالبكسل     | 24                |
+    | الخط العريض | رقم   | عرض الخط العريض للأيقونة بالبكسل | 2                 |
+  </Tab>
+</Tabs>

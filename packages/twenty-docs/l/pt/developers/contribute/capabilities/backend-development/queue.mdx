@@ -1,41 +1,41 @@
 ---
-title: Fila de Mensagens
+title: Message Queue
 ---
 
-Filas facilitam operações assíncronas a serem realizadas. Elas podem ser usadas para realizar tarefas em segundo plano, como enviar um email de boas-vindas ao se registrar.
-Cada caso de uso terá sua própria classe de fila estendida de `MessageQueueServiceBase`.
+Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
+Each use case will have its own queue class extended from `MessageQueueServiceBase`.
 
-Atualmente, só damos suporte ao `bull-mq`[bull-mq](https://bullmq.io/) como o driver de fila.
+Currently, we only support `bull-mq`[bull-mq](https://bullmq.io/) as the queue driver.
 
-## Passos para criar e usar uma nova fila
+## Steps to create and use a new queue
 
-1. Adicione um nome de fila para sua nova fila no enum `MESSAGE_QUEUES`.
-2. Forneça a implementação da fábrica da fila com o nome da fila como o token de dependência.
-3. Injete a fila que você criou no módulo/serviço necessário com o nome da fila como o token de dependência.
-4. Adicione uma classe de trabalhador com injeção baseada em token, assim como o produtor.
+1. Add a queue name for your new queue under enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+4. Add worker class with token based injection just like producer.
 
-### Exemplo de uso
+### Example usage
 
 ```ts
-classe Resolver {
- constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
 
- async onSomeAction() {
- //lógica de negócio
- await this.queue.add(someData);
- }
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
 }
 
-//trabalhador assíncrono
-classe CustomWorker {
- constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
- this.initWorker();
- }
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
 
- async initWorker() {
- await this.queue.work(async ({ id, data }) => {
- //lógica do trabalhador
- });
- }
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
 }
 ```

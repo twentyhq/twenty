@@ -1,0 +1,52 @@
+---
+title: Výběr Ikony
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Hlavička" />
+</Frame>
+
+Rozbalovací výběr ikon, který uživatelům umožňuje vybrat ikonu ze seznamu.
+
+<Tabs>
+  <Tab title="Použití">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import React, { useState } from "react";
+    import { IconPicker } from "@/ui/input/components/IconPicker";
+
+    export const MyComponent = () => {
+
+       const [selectedIcon, setSelectedIcon] = useState("");
+       const handleIconChange = ({ iconKey, Icon }) => {
+         console.log("Selected Icon:", iconKey);
+         setSelectedIcon(iconKey);
+       };
+
+      return (
+        <RecoilRoot>
+          <IconPicker
+            disabled={false}
+            onChange={handleIconChange}
+            selectedIconKey={selectedIcon}
+            variant="primary"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Vlastnosti">
+    | Vlastnosti      | Typ                | Popis                                                                                                         |
+    | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
+    | neaktivní       | booleovská hodnota | Deaktivuje výběr ikon, pokud je nastavena hodnota `true`                                                      |
+    | onChange        | funkce             | Vyvolá se funkce zpětného volání, když uživatel vybere ikonu. Přijímá objekt s vlastnostmi `iconKey` a `Icon` |
+    | selectedIconKey | textový řetězec    | The key of the initially selected icon                                                                        |
+    | onClickOutside  | funkce             | Funkce zpětného volání, vyvolaná, když uživatel klikne mimo rozbalovací nabídku.                              |
+    | onClose         | funkce             | Callback function triggered when the dropdown is closed                                                       |
+    | onOpen          | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka otevřena.                                       |
+    | varianta        | řetězec            | The visual style variant of the clickable icon. Možnosti zahrnují: "primární", "sekundární" a "terciární"     |
+  </Tab>
+</Tabs>

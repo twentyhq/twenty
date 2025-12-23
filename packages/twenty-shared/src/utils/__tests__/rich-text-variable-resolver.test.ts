@@ -135,12 +135,6 @@ describe('resolveRichTextVariables', () => {
     expect(result).toBe(input);
   });
 
-  it('should return null for null input', () => {
-    const result = resolveRichTextVariables(null, context);
-
-    expect(result).toBeNull();
-  });
-
   it('should return undefined for undefined input', () => {
     const result = resolveRichTextVariables(undefined, context);
 

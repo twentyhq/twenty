@@ -1,0 +1,44 @@
+---
+title: مربع اختيار
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="رأس الصفحة" />
+</Frame>
+
+يُستخدم عندما يحتاج المستخدم إلى اختيار قيم متعددة من بين عدة خيارات.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { Checkbox } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      return (
+        <Checkbox
+          checked={true}
+          indeterminate={false}
+          onChange={() => console.log("onChange function fired")}
+          onCheckedChange={() => console.log("onCheckedChange function fired")}
+          variant="primary"
+          size="small"
+          shape="squared"
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات                 | النوع       | الوصف                                                                                       |
+    | ------------------------ | ----------- | ------------------------------------------------------------------------------------------- |
+    | مختار                    | قيمة منطقية | يشير إلى ما إذا كان مربع الاختيار محددًا                                                    |
+    | indeterminate            | قيمة منطقية | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked) |
+    | عند التغيير              | دالة        | الدالة التي ترغب في تفعيلها عند تغيير حالة مربع الاختيار                                    |
+    | عند تغيير الحالة المحددة | دالة        | The callback function you want to trigger when the `checked` state changes                  |
+    | نموذج                    | نص          | النمط البصري للصندوق. تتضمن الخيارات: 'أساسي'، 'ثانوي'، و 'ثالثي'                           |
+    | الحجم                    | نص          | حجم مربع الاختيار. Has two options: `small` and `large`                                     |
+    | الشكل                    | نص          | شكل مربع الاختيار. لديه خياران: 'مربع' و 'مدور'                                             |
+  </Tab>
+</Tabs>

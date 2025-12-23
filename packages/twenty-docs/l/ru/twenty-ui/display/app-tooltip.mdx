@@ -18,12 +18,12 @@ image: /images/user-guide/tips/light-bulb.png
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Информация о клиенте
+            Customer Insights
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Исследуйте поведение и предпочтения клиентов"
+            content="Explore customer behavior and preferences"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -63,7 +63,7 @@ image: /images/user-guide/tips/light-bulb.png
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Свяжитесь с клиентом по поводу его недавнего запроса по продукту. Обсудите варианты цен, ответьте на любые вопросы и предоставьте дополнительную информацию о продукте. Запишите детали разговора в CRM для дальнейшего использования.';
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };

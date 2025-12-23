@@ -1,0 +1,38 @@
+---
+title: Тег
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Заголовок" />
+</Frame>
+
+Компонент для визуального категорирования или маркировки контента.
+
+<Tabs>
+  <Tab title="Использование">
+    ```jsx
+    import { Tag } from "@/ui/display/tag/components/Tag";
+
+    export const MyComponent = () => {
+      return (
+        <Tag
+          className
+          color="red"
+          text="Urgent"
+          onClick={() => console.log("click")}
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="Свойства">
+    | Свойства  | Тип     | Описание                                                                                                             |
+    | --------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+    | className | строка  | Необязательное имя для дополнительной стилизации                                                                     |
+    | цвет      | строка  | Цвет тега. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+    | текст     | строка  | Содержание тега                                                                                                      |
+    | onClick   | функция | Необязательная функция, вызываемая при нажатии пользователя на тег                                                   |
+  </Tab>
+</Tabs>

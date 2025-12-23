@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Başlık" />
+</Frame>
+
+Renders a breadcrumb navigation bar.
+
+<Tabs>
+  <Tab title="Kullanım">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
+
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
+
+  <Tab title="Özellikler">
+    | Özellikler  | Tür  | Açıklama                                                                                                                                                                                                                                                  |
+    | ----------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className   | dize | Ek stil için isteğe bağlı sınıf adı                                                                                                                                                                                                                       |
+    | bağlantılar | dizi | Her biri bir gezinme çubuğu bağlantısını temsil eden nesneler dizisi. Her nesne, bağlantının metin içeriğini tanımlayan bir `children` özelliğine ve isteğe bağlı olarak tıklanan bağlantının gidilecek URL'sini belirten bir `href` özelliğine sahiptir. |
+  </Tab>
+</Tabs>

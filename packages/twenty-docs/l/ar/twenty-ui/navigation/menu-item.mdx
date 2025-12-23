@@ -1,0 +1,428 @@
+---
+title: عنصر قائمة
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="رأس الصفحة" />
+</Frame>
+
+عنصر قائمة متعدد الاستخدامات مصمم للاستخدام في قائمة أو قائمة تنقل.
+
+<Tabs>
+  <Tab title="استخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItem } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      const handleButtonClick = (event) => {
+        console.log("Icon button clicked!", event);
+      };
+
+      return (
+        <MenuItem
+          LeftIcon={IconBell}
+          accent="default"
+          text="Menu item text"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={true}
+          testId="menu-item-1"
+          onClick={handleMenuItemClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="المحددات">
+    | المحددات       | النوع         | الوصف                                                                                     |
+    | -------------- | ------------- | ----------------------------------------------------------------------------------------- |
+    | أيقونة اليسار  | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة                                             |
+    | accent         | نص            | Specifies the accent color of the menu item. تشمل الخيارات: `افتراضي`, `خطر`, `موضع مؤقت` |
+    | نص             | نص            | المحتوى النصي لعنصر القائمة                                                               |
+    | أزرار الأيقونة | array         | مجموعة من الكائنات التي تمثل أيقونات إضافية مرتبطة بعنصر القائمة                          |
+    | isTooltipOpen  | قيمة منطقية   | Controls the visibility of the tooltip associated with the menu item                      |
+    | معرف الفحص     | نص            | السمة data-testid لأغراض الاختبار                                                         |
+    | عند النقر      | function      | دالة الاستدعاء يتم تنشيطها عند النقر فوق عنصر القائمة                                     |
+    | اسم الفئة      | نص            | اسم اختياري لتصميم إضافي                                                                  |
+  </Tab>
+</Tabs>
+
+## الأشكال
+
+تتضمن الأشكال المختلفة لمكون عنصر القائمة ما يلي:
+
+### أمر
+
+عنصر قائمة على نمط الأوامر داخل القائمة للإشارة إلى اختصارات لوحة المفاتيح.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemCommand } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleCommandClick = () => {
+        console.log("Command clicked!");
+      };
+
+      return (
+        <MenuItemCommand
+          LeftIcon={IconBell}
+          text="First Option"
+          firstHotKey="⌘"
+          secondHotKey="1"
+          isSelected={true}
+          onClick={handleCommandClick}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع         | الوصف                                                    |
+    | --------------- | ------------- | -------------------------------------------------------- |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية إذا ظهرت قبل النص في عنصر القائمة        |
+    | نص              | نص            | محتوى النص لعنصر القائمة                                 |
+    | firstHotKey     | string        | أول اختصار لوحة مفاتيح مرتبط بالأمر                      |
+    | secondHotKey    | string        | The second keyboard shortcut associated with the command |
+    | isSelected      | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة محددا أو مميزا          |
+    | عند النقر       | دالة          | دالة الاستدعاء يتم تنشيطها عند النقر فوق عنصر القائمة    |
+    | اسم الفئة       | نص            | اسم اختياري لإضافة التنسيق                               |
+  </Tab>
+</Tabs>
+
+### قابلة للسحب
+
+مكون عنصر قائمة قابل للسحب مصمم ليتم استخدامه في قائمة أو قائمة حيث يمكن سحب العناصر، ويتم تنفيذ إجراءات إضافية عبر أزرار الأيقونات.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { IconAlertCircle } from "@tabler/icons-react";
+    import { MenuItemDraggable } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleMenuItemClick = (event) => {
+        console.log("Menu item clicked!", event);
+      };
+
+      return (
+        <MenuItemDraggable
+          LeftIcon={IconBell}
+          accent="default"
+          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+          isTooltipOpen={false}
+          onClick={handleMenuItemClick}
+          text="Menu item draggable"
+          isDragDisabled={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع         | الوصف                                                                            |
+    | --------------- | ------------- | -------------------------------------------------------------------------------- |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة                                    |
+    | accent          | نص            | لون العنصر لهجة القائمة. It can either be `default`, `placeholder`, and `danger` |
+    | أزرار الأيقونات | array         | مصفوفة الكائنات التي تمثل أزرار الأيقونات الإضافية المرتبطة بعنصر القائمة        |
+    | isTooltipOpen   | قيمة منطقية   | Controls the visibility of the tooltip associated with the menu item             |
+    | عند_النقر       | دالة          | وظيفة استدعاء ليتم تشغيلها عند النقر فوق الرابط                                  |
+    | نص              | نص            | محتوى النص لعنصر القائمة                                                         |
+    | isDragDisabled  | قيمة منطقية   | يشير إلى ما إذا كان تم تعطيل السحب                                               |
+    | اسم الفئة       | نص            | اسم اختياري لإضافة التنسيق                                                       |
+  </Tab>
+</Tabs>
+
+### التحديد المتعدد
+
+يوفر طريقة لتنفيذ وظيفة التحديد المتعدد مع مربع اختيار مصاحب.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemMultiSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemMultiSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع         | الوصف                                                  |
+    | --------------- | ------------- | ------------------------------------------------------ |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة          |
+    | نص              | string        | محتوى النص لعنصر القائمة                               |
+    | المحدد          | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)        |
+    | onSelectChange  | دالة          | وظيفة استدعاء يتم تشغيلها عند تغيير حالة مربع الاختيار |
+    | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                            |
+  </Tab>
+</Tabs>
+
+### Multi Select Avatar
+
+عنصر قائمة متعدد الخيارات مع صورة رمزية، ومربع اختيار للتحديد، ومحتوى نصي.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      return (
+        <MenuItemMultiSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={false}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع       | الوصف                                                                |
+    | --------------- | ----------- | -------------------------------------------------------------------- |
+    | الصورة الرمزبية | `ReactNode` | الصورة الرمزبية أو الأيقونة لعرضها على الجانب الأيسر من عنصر القائمة |
+    | نص              | نص          | محتوى النص لعنصر القائمة                                             |
+    | المحدد          | قيمة منطقية | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)                      |
+    | onSelectChange  | دالة        | وظيفة استدعاء يتم تشغيلها عند تغيير حالة مربع الاختيار               |
+    | اسم الفئة       | نص          | اسم اختياري لتنسيقات إضافية                                          |
+  </Tab>
+</Tabs>
+
+### التنقل
+
+A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemNavigate } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleNavigation = () => {
+        console.log("Navigate to another page");
+      };
+
+      return (
+        <MenuItemNavigate
+          LeftIcon={IconBell}
+          text="First Option"
+          onClick={handleNavigation}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="العناصر">
+    | العناصر         | النوع         | الوصف                                                  |
+    | --------------- | ------------- | ------------------------------------------------------ |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة          |
+    | نص              | نص            | محتوى النص لعنصر القائمة                               |
+    | عند_النقر       | دالة          | وظيفة الاستدعاء يتم تنشيطها عند النقر على عنصر القائمة |
+    | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                            |
+  </Tab>
+</Tabs>
+
+### اختيار
+
+عنصر قائمة يمكن تحديده، مع شكل محتوى متاح (أيقونة ونص) ومُؤشر (أيقونة تحقق) لحالة الاختيار.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from "@tabler/icons-react";
+    import { MenuItemSelect } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelect
+          LeftIcon={IconBell}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع         | الوصف                                                      |
+    | --------------- | ------------- | ---------------------------------------------------------- |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة              |
+    | نص              | نص            | محتوى النص لعنصر القائمة                                   |
+    | المحدد          | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)            |
+    | تعطيل           | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة معطلا                     |
+    | معطل            | قيمة منطقية   | يشير إلى ما إذا كان يتم التحويم حاليًا على عنصر القائمة    |
+    | عند_النقر       | دالة          | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة |
+    | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                                |
+  </Tab>
+</Tabs>
+
+### Select Avatar
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const imageUrl =
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectAvatar
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
+          selected={true}
+          disabled={false}
+          hovered={false}
+          testId="menu-item-test"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص        | النوع        | الوصف                                                                        |
+    | -------------- | ------------ | ---------------------------------------------------------------------------- |
+    | الصورة الرمزية | `مكون React` | الصورة الرمزية أو الأيقونة التي سيتم عرضها على الجانب الأيسر من عنصر القائمة |
+    | نص             | نص           | محتوى النص في عنصر القائمة                                                   |
+    | المحدد         | قيمة منطقية  | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)                              |
+    | تعطيل          | قيمة منطقية  | يشير إلى ما إذا كان عنصر القائمة معطلاً                                      |
+    | معلق عليه      | قيمة منطقية  | يشير إلى ما إذا كان يتم التحويم حاليًا على عنصر القائمة                      |
+    | testId         | نص           | سمة data-testid لأغراض الاختبار                                              |
+    | عند_النقر      | دالة         | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة                   |
+    | اسم الفئة      | نص           | اسم اختياري للتنسيق الإضافي.                                                 |
+  </Tab>
+</Tabs>
+
+### اختيار اللون
+
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { MenuItemSelectColor } from "twenty-ui/display";
+
+    export const MyComponent = () => {
+      const handleSelection = () => {
+        console.log("Menu item selected");
+      };
+
+      return (
+        <MenuItemSelectColor
+          color="green"
+          selected={true}
+          disabled={false}
+          hovered={true}
+          variant="default"
+          onClick={handleSelection}
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص   | النوع       | الوصف                                                                                                                                             |
+    | --------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | اللون     | نص          | لون الثيم المعروض كعينة في عنصر القائمة. الخيارات تشمل: `أخضر`, `تركواز`, `سماوي`, `أزرق`, `أرجواني`, `وردي`, `أحمر`, `برتقالي`, `أصفر`, `رمادي`. |
+    | المحدد    | قيمة منطقية | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)                                                                                                   |
+    | تعطيل     | قيمة منطقية | يشير إلى ما إذا كان عنصر القائمة معطلاً                                                                                                           |
+    | معلق عليه | قيمة منطقية | يشير إلى ما إذا كان يتم التحويم حاليًا على عنصر القائمة                                                                                           |
+    | البديل    | نص          | The variant of the color sample. يمكن أن يكون إما `افتراضي` أو `خط أنابيب`                                                                        |
+    | عند_النقر | دالة        | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة                                                                                        |
+    | اسم الفئة | نص          | اسم اختياري للتنسيق الإضافي.                                                                                                                      |
+  </Tab>
+</Tabs>
+
+### تبديل
+
+عنصر قائمة مع مفتاح تبديل مرتبط للسماح للمستخدمين بتمكين أو تعطيل ميزة معينة
+
+<Tabs>
+  <Tab title="الاستخدام">
+    ```jsx
+    import { IconBell } from '@tabler/icons-react';
+
+    import { MenuItemToggle } from 'twenty-ui/display';
+
+    export const MyComponent = () => {
+
+      return (
+        <MenuItemToggle
+          LeftIcon={IconBell}
+          text="First Option"
+          toggled={true}
+          toggleSize="small"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
+
+  <Tab title="الخصائص">
+    | الخصائص         | النوع         | الوصف                                                        |
+    | --------------- | ------------- | ------------------------------------------------------------ |
+    | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تُعرض قبل النص في عنصر القائمة               |
+    | نص              | نص            | محتوى النص في عنصر القائمة                                   |
+    | مبدل            | قيمة منطقية   | يشير إلى ما إذا كان مفتاح التبديل في حالة "تشغيل" أو "إيقاف" |
+    | onToggleChange  | دالة          | دالة الاستدعاء التي يتم تحفيزها عند تغيير حالة مفتاح التبديل |
+    | حجم التبديل     | نص            | حجم مفتاح التبديل.  يمكن أن يكون إما \                       |
+    | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                                  |
+  </Tab>
+</Tabs>
