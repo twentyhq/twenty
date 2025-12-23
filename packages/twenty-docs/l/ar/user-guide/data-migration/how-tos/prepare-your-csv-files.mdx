@@ -87,114 +87,114 @@ description: دليل كامل خطوة بخطوة لتنسيق بياناتك �
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Address Fields
+### حقول العنوان
 
-Address is a **nested field** with multiple columns (some can be left empty):
+العنوان هو **حقل متداخل** يحتوي على أعمدة متعددة (يمكن ترك بعضها فارغًا):
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **العنوان / العنوان 1**: السطر الأول لعنوان الشارع
+* **العنوان / العنوان 2**: السطر الثاني لعنوان الشارع (اختياري)
+* **العنوان / المدينة**: اسم المدينة
+* **العنوان / الولاية**: ولاية أو مقاطعة
+* **العنوان / البلد**: اسم البلد
+* **العنوان / الرمز البريدي**: رمز بريدي/ZIP
 
-### Date Fields
+### حقول التاريخ
 
-Use consistent formatting throughout your file:
+استخدم تنسيقًا موحدًا في كامل ملفك:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD` (مُوصى به): `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### حقول الأرقام
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* أرقام فقط (بدون نص)
+* استخدم النقطة للفواصل العشرية: `1234.56`
+* بدون فواصل لآلاف الأرقام (ليس `1,234.56`)
 
-### Currency Fields
+### حقول العملة
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+العملة هي **حقل متداخل** يتطلب عمودين يجب **ملؤهما كليهما**:
 
-| Column                | مثال      |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| العمود              | مثال      |
+| ------------------- | --------- |
+| **المبلغ / المبلغ** | `1234.56` |
+| **المبلغ / العملة** | `USD`     |
 
-### Boolean Fields
+### حقول منطقية
 
-Use uppercase: `TRUE` or `FALSE`
+استخدم أحرفًا كبيرة: `TRUE` أو `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>الأحرف الصغيرة `true` أو `false` لن تعمل.</Warning>
 
 ### اختر الحقول
 
-Use the **API name** of the option, not the display label.
+استخدم **اسم واجهة برمجة التطبيقات (API)** للخيار، وليس اسم العرض.
 
-**How to find API names:**
+**كيفية العثور على أسماء واجهة برمجة التطبيقات (API):**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. انتقل إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن والحقل
+3. فعّل **الوضع المتقدم** (المبدّل في أسفل اليمين)
+4. انسخ اسم واجهة برمجة التطبيقات (مثال: `OPTION_1`، وليس "Option 1")
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>خيارات الاختيار الجديدة لا يتم إنشاؤها تلقائيًا. أضِفها في **الإعدادات → نموذج البيانات** قبل الاستيراد.</Note>
 
-### Multi-Select Fields
+### حقول متعددة الاختيار
 
-Use API names in array format:
+استخدم أسماء واجهة برمجة التطبيقات بصيغة المصفوفة:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### حقول المصفوفة
 
-Use JSON array format:
+استخدم صيغة مصفوفة JSON:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### حقول التقييم
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+استخدم الصيغة: `RATING_1` و`RATING_2` و`RATING_3` و`RATING_4` أو `RATING_5`
 
-### Links/URL Fields
+### حقول الروابط/عناوين URL
 
-Fill both columns:
+املأ كلا العمودين:
 
-* **Links / Link Label**: `Twenty`
-* **Links / Link URL**: `https://twenty.com`
+* **الروابط / تسمية الرابط**: `Twenty`
+* **الروابط / عنوان URL للرابط**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+بالنسبة للروابط الثانوية، استخدم عمود **الروابط / الروابط الثانوية**:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### حقول JSON
 
-Use valid JSON format:
+استخدم تنسيق JSON صالحًا:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### حقول المعرّف
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **اختياري**: يقوم Twenty بإنشاء المعرّفات تلقائيًا إذا لم تُوفَّر
+* **التنسيق**: UUID (مثلًا: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **حالة الاستخدام**: تضمين المعرّف لتحديث السجلات الموجودة بدلًا من إنشاء سجلات جديدة
 
-## Step 5: Add Relation Columns (If Linking Records)
+## الخطوة 5: إضافة أعمدة العلاقات (إذا كنت تربط السجلات)
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+لربط السجلات بكائنات أخرى (مثل الأشخاص بالشركات)، أضِف عمودًا يحتوي على المعرّف الفريد للسجل المرتبط.
 
-**Example**: Linking People to Companies
+**مثال**: ربط الأشخاص بالشركات
 
-Add a column to your People CSV:
+أضِف عمودًا إلى ملف CSV الخاص بالأشخاص:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**قواعد مهمة للعلاقات:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* يجب أن يكون السجل الأب موجودًا مسبقًا في Twenty
+* استخدم صيغة **عنوان المجال (Domain URL)** (`https://domain.com`) وليس التسمية
+* قم بربط مُعرّف فريد واحد فقط (لا تُدرج كلاً من `companyId` و`companyDomain`)
+* بالنسبة لأعضاء مساحة العمل، استخدم **البريد الإلكتروني** الخاص بهم (وليس الاسم)
 
 <Warning>
-  **Import Order Matters!**
+  **ترتيب الاستيراد مهم!**
 
-  Import the "one" side before the "many" side:
+  استورد طرف "الواحد" قبل طرف "الكثير":
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. **الشركات** أولاً
+  2. **الأشخاص** ثانيًا (مع مرجع الشركة)
+  3. **الفرص** ثالثًا
 
-  The parent record must exist before you can reference it.
+  يجب أن يوجد السجل الأب قبل أن تتمكن من الإشارة إليه.
 </Warning>
 
-See [How to Import Relations](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+اطلع على [كيفية استيراد العلاقات](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) للحصول على تعليمات مفصلة.
 
-## Step 6: Ensure Fields Exist in Twenty
+## الخطوة 6: تأكد من وجود الحقول في Twenty
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+تقوم عملية الاستيراد بإنشاء **سجلات**، وليس **حقولًا**. يجب أن تكون جميع الحقول التي تريد استيرادها موجودة مسبقًا في نموذج البيانات لديك.
 
-**Before importing:**
+**قبل الاستيراد:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. انتقل إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن الخاص بك
+3. أنشئ أي حقول مخصصة تحتاجها
+4. دوّن أسماء الحقول بدقة (يجب أن تتطابق مع عناوين أعمدتك)
 
-## Step 7: Final Checklist
+## الخطوة 7: قائمة التحقق النهائية
 
-Before uploading your file, verify:
+قبل رفع ملفك، تحقّق مما يلي:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>الملف بصيغة CSV أو XLSX أو XLS</Check>
+<Check>يحتوي الملف على أقل من 10,000 سجل</Check>
+<Check>الترميز UTF-8</Check>
+<Check>لا توجد رسائل بريد إلكتروني مكررة (للأشخاص) أو نطاقات (للشركات)</Check>
+<Check>التواريخ تستخدم تنسيقًا موحدًا طوال الملف</Check>
+<Check>النطاقات تستخدم الصيغة `https://domain.com`</Check>
+<Check>الحقول المنطقية تستخدم `TRUE` أو `FALSE` (أحرف كبيرة)</Check>
+<Check>حقول الاختيار تستخدم أسماء واجهة برمجة التطبيقات، وليس أسماء العرض</Check>
+<Check>جميع الحقول المخصصة موجودة في الإعدادات → نموذج البيانات</Check>
+<Check>تم استيراد السجلات الأصلية قبل السجلات الفرعية</Check>
+<Check>أعمدة العلاقات تشير إلى سجلات موجودة</Check>
 
-## Common Mistakes to Avoid
+## أخطاء شائعة يجب تجنبها
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| الخطأ                              | الحل                                                        |
+| ---------------------------------- | ----------------------------------------------------------- |
+| استخدام `true` بدلًا من `TRUE`     | يجب أن تكون القيم المنطقية بأحرف كبيرة                      |
+| استخدام أسماء العرض لحقول الاختيار | اعثر على أسماء واجهة برمجة التطبيقات في الإعدادات واستخدمها |
+| استيراد الأشخاص قبل الشركات        | احرص دائمًا على استيراد الكائنات الأصل أولًا                |
+| رمز العملة مفقود لحقول العملة      | املأ عمودي المبلغ والعملة معًا                              |
+| تنسيق نطاق غير صحيح                | استخدم `https://domain.com` بصورة متسقة                     |
+| ربط عدة حقول فريدة للعلاقات        | اربط حقلًا واحدًا فقط (النطاق أو المعرّف، وليس كليهما)      |
 
 ## الخطوات التالية
 
-Your file is ready! Now:
+ملفك جاهز! الآن:
 
-* [Import Companies](/l/ar/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/ar/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
+* [استيراد الشركات](/l/ar/user-guide/data-migration/how-tos/import-companies-via-csv) (قم باستيرادها أولًا)
+* [استيراد جهات الاتصال](/l/ar/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [إصلاح أي أخطاء في الاستيراد](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
