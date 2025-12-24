@@ -25,8 +25,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 interface RequestAndParams {
   request: Request | null;
-
-  params: any;
+  params: Record<string, string | undefined>;
 }
 
 const getErrorNameFromStatusCode = (statusCode: number) => {
@@ -69,12 +68,11 @@ export class HttpExceptionHandlerService {
 
   handleError = (
     exception: Error | HttpException,
-
-    response: Response<any, Record<string, any>>,
+    response: Response,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-  ): Response<any, Record<string, any>> | undefined => {
+  ): Response | undefined => {
     const params = this.request?.params;
 
     if (params?.workspaceId) {

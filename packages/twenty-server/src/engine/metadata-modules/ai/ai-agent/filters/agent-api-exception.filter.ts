@@ -6,7 +6,7 @@ import {
 
 import type { Response } from 'express';
 
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import type { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
   AgentException,
   AgentExceptionCode,
