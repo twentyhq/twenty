@@ -6,6 +6,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
+import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -14,14 +15,12 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CreateInput = Record<string, any>;
+export type RecordInput = Record<string, unknown>;
 
 @Injectable()
-export class CreatedByFromAuthContextService {
-  private readonly logger = new Logger(CreatedByFromAuthContextService.name);
+export class ActorFromAuthContextService {
+  private readonly logger = new Logger(ActorFromAuthContextService.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -29,10 +28,10 @@ export class CreatedByFromAuthContextService {
   ) {}
 
   async injectCreatedBy(
-    records: CreateInput[],
+    records: RecordInput[],
     objectMetadataNameSingular: string,
     authContext: AuthContext,
-  ): Promise<CreateInput[]> {
+  ): Promise<RecordInput[]> {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
@@ -78,33 +77,92 @@ export class CreatedByFromAuthContextService {
 
     const clonedRecords = structuredClone(records);
 
-    const createdBy = await this.buildCreatedBy(authContext);
+    const actorMetadata = await this.buildActorMetadata(authContext);
 
-    if (Array.isArray(clonedRecords)) {
-      for (const datum of clonedRecords) {
-        this.injectCreatedByToRecord(createdBy, datum);
-      }
-    } else {
-      this.injectCreatedByToRecord(createdBy, clonedRecords);
+    for (const record of clonedRecords) {
+      this.injectActorToRecord(actorMetadata, record, 'createdBy');
     }
 
     return clonedRecords;
   }
 
-  private injectCreatedByToRecord(
-    createdBy: ActorMetadata,
-    record: CreateInput,
+  async injectUpdatedBy(
+    records: RecordInput[],
+    objectMetadataNameSingular: string,
+    authContext: AuthContext,
+  ): Promise<RecordInput[]> {
+    const workspace = authContext.workspace;
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    this.logger.log(
+      `Injecting updatedBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
+    );
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+    const objectId = idByNameSingular[objectMetadataNameSingular];
+    const objectMetadata = objectId
+      ? flatObjectMetadataMaps.byId[objectId]
+      : undefined;
+
+    const fieldIdByName = objectMetadata
+      ? buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          objectMetadata,
+        ).fieldIdByName
+      : {};
+
+    if (!isDefined(fieldIdByName['updatedBy'])) {
+      this.logger.log(
+        `UpdatedBy field not found in object metadata, skipping injection`,
+      );
+
+      return records;
+    }
+
+    const clonedRecords = structuredClone(records);
+
+    const actorMetadata = await this.buildActorMetadata(authContext);
+
+    for (const record of clonedRecords) {
+      this.injectActorToRecord(actorMetadata, record, 'updatedBy');
+    }
+
+    return clonedRecords;
+  }
+
+  private injectActorToRecord(
+    actorMetadata: ActorMetadata,
+    record: RecordInput,
+    fieldName: 'createdBy' | 'updatedBy',
   ) {
-    // Front-end can fill the source field
-    if (createdBy && (!record.createdBy || !record.createdBy?.name)) {
-      record.createdBy = {
-        ...createdBy,
-        source: record.createdBy?.source ?? createdBy.source,
-      };
+    const existingValue = record[fieldName] as ActorMetadata | undefined;
+
+    // For createdBy: only inject if not already set
+    // For updatedBy: always overwrite with the latest actor
+    if (fieldName === 'createdBy') {
+      if (actorMetadata && (!existingValue || !existingValue.name)) {
+        record[fieldName] = {
+          ...actorMetadata,
+          source: existingValue?.source ?? actorMetadata.source,
+        };
+      }
+    } else {
+      record[fieldName] = actorMetadata;
     }
   }
 
-  private async buildCreatedBy(
+  private async buildActorMetadata(
     authContext: AuthContext,
   ): Promise<ActorMetadata> {
     const { workspace, user, apiKey, application } = authContext;
@@ -151,7 +209,7 @@ export class CreatedByFromAuthContextService {
     }
 
     throw new Error(
-      'Unable to build createdBy metadata - no valid actor information found in auth context',
+      'Unable to build actor metadata - no valid actor information found in auth context',
     );
   }
 }
