@@ -291,7 +291,6 @@ jobs:
       - name: Build frontend (if not available from front-build)
         if: needs.front-build.result == 'skipped'
         run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
-        rus-ons
 
       - name: Build server
         run: npx nx build twenty-server
