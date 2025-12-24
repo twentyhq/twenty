@@ -29,4 +29,3 @@ describe('isBillingCreditsExhaustedError', () => {
     expect(isBillingCreditsExhaustedError(undefined)).toBe(false);
   });
 });
-

@@ -104,4 +104,3 @@ export const AIChatBanner = ({
     </StyledBanner>
   );
 };
-

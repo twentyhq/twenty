@@ -29,4 +29,3 @@ describe('isApiKeyNotConfiguredError', () => {
     expect(isApiKeyNotConfiguredError(undefined)).toBe(false);
   });
 });
-

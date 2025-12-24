@@ -6,4 +6,3 @@ export const isApiKeyNotConfiguredError = (
 ): boolean => {
   return isAIChatErrorOfType(error, AIChatErrorCode.API_KEY_NOT_CONFIGURED);
 };
-

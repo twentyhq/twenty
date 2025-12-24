@@ -13,4 +13,3 @@ export const isAIChatErrorOfType = (
 
   return extractErrorCode(error) === errorCode;
 };
-

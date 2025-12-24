@@ -51,4 +51,3 @@ export const extractErrorCode = (error: unknown): string | undefined => {
 
   return undefined;
 };
-

@@ -19,4 +19,3 @@ export const AIChatErrorRenderer = ({ error }: AIChatErrorRendererProps) => {
 
   return <AIChatErrorMessage error={error} />;
 };
-

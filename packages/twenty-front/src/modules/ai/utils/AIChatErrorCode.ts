@@ -6,4 +6,3 @@ export const AIChatErrorCode = {
 
 export type AIChatErrorCodeType =
   (typeof AIChatErrorCode)[keyof typeof AIChatErrorCode];
-

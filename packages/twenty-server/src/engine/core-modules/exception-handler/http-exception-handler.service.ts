@@ -25,7 +25,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 interface RequestAndParams {
   request: Request | null;
-   
+
   params: any;
 }
 
@@ -69,12 +69,11 @@ export class HttpExceptionHandlerService {
 
   handleError = (
     exception: Error | HttpException,
-     
+
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-     
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
 
@@ -124,8 +123,7 @@ export class HttpExceptionHandlerService {
       statusCode,
       error: exception.name ?? getErrorNameFromStatusCode(statusCode),
       messages: [exception?.message],
-      code:
-        exception instanceof CustomException ? exception.code : undefined,
+      code: exception instanceof CustomException ? exception.code : undefined,
     });
   };
 }

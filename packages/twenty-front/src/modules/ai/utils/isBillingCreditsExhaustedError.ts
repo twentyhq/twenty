@@ -6,4 +6,3 @@ export const isBillingCreditsExhaustedError = (
 ): boolean => {
   return isAIChatErrorOfType(error, AIChatErrorCode.BILLING_CREDITS_EXHAUSTED);
 };
-

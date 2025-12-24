@@ -7,9 +7,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import type { Response } from 'express';
 import type { ExtendedUIMessage } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import {
@@ -37,7 +38,11 @@ import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-m
 
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
-@UseFilters(AgentRestApiExceptionFilter, BillingRestApiExceptionFilter, RestApiExceptionFilter)
+@UseFilters(
+  AgentRestApiExceptionFilter,
+  BillingRestApiExceptionFilter,
+  RestApiExceptionFilter,
+)
 export class AgentChatController {
   constructor(
     private readonly agentStreamingService: AgentChatStreamingService,

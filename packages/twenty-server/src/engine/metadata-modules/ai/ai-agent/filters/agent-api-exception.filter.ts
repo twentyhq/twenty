@@ -56,4 +56,3 @@ export class AgentRestApiExceptionFilter implements ExceptionFilter {
     }
   }
 }
-

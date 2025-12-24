@@ -9,9 +9,9 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/display';
 import {
-    PermissionFlagType,
-    SubscriptionStatus,
-    useBillingPortalSessionQuery,
+  PermissionFlagType,
+  SubscriptionStatus,
+  useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
 
 export const AIChatCreditsExhaustedMessage = () => {

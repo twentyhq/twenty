@@ -32,7 +32,9 @@ type AIChatStandaloneErrorProps = {
   error: Error;
 };
 
-export const AIChatStandaloneError = ({ error }: AIChatStandaloneErrorProps) => {
+export const AIChatStandaloneError = ({
+  error,
+}: AIChatStandaloneErrorProps) => {
   const theme = useTheme();
 
   return (
@@ -51,4 +53,3 @@ export const AIChatStandaloneError = ({ error }: AIChatStandaloneErrorProps) => 
     </StyledErrorContainer>
   );
 };
-
