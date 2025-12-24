@@ -13,7 +13,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(BillingException, Stripe.errors.StripeError)

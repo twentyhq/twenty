@@ -10,10 +10,13 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { type BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingService {
