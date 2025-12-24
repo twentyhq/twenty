@@ -1,5 +1,5 @@
 ---
-title: CSV Dosyalarınızı Hazırlayın},{
+title: Prepare Your CSV Files
 description: Verilerinizi Twenty'ye içe aktarmak için biçimlendirmeye yönelik eksiksiz adım adım kılavuz.
 ---
 
@@ -87,114 +87,114 @@ Telefon, birden çok sütun gerektiren **iç içe bir alan**dır:
 | **Telefonlar / Birincil Telefon Ülke Kodu**  | `US`         |
 | **Telefonlar / Birincil Telefon Arama Kodu** | `+1`         |
 
-### Address Fields
+### Adres Alanları
 
-Address is a **nested field** with multiple columns (some can be left empty):
+Adres, birden çok sütundan oluşan **iç içe bir alandır** (bazıları boş bırakılabilir):
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**: Sokak adresinin 1. satırı
+* **Address / Address 2**: Sokak adresinin 2. satırı (isteğe bağlı)
+* **Address / City**: Şehir adı
+* **Address / State**: Eyalet veya il
+* **Address / Country**: Ülke adı
+* **Address / Post Code**: Posta/ZIP kodu
 
-### Date Fields
+### Tarih Alanları
 
-Use consistent formatting throughout your file:
+Dosyanızın tamamında tutarlı bir biçim kullanın:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD` (önerilir): `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### Sayı Alanları
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* Yalnızca sayılar (metin yok)
+* Ondalıklar için nokta kullanın: `1234.56`
+* Binlik ayırıcı kullanmayın (şu değil: `1,234.56`)
 
-### Currency Fields
+### Para Birimi Alanları
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+Para birimi, **her ikisi de doldurulması gereken** iki sütun gerektiren **iç içe bir alandır**:
 
-| Column                | Örnek     |
+| Sütun                 | Örnek     |
 | --------------------- | --------- |
 | **Amount / Amount**   | `1234.56` |
 | **Amount / Currency** | `USD`     |
 
-### Boolean Fields
+### Boole Alanları
 
-Use uppercase: `TRUE` or `FALSE`
+Büyük harf kullanın: `TRUE` veya `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>Küçük harf `true` veya `false` çalışmaz.</Warning>
 
 ### Seçim Alanları
 
-Use the **API name** of the option, not the display label.
+**Görünen etiketi** değil, seçeneğin **API adını** kullanın.
 
-**How to find API names:**
+**API adları nasıl bulunur:**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi ve alanı seçin
+3. **Gelişmiş modu** etkinleştirin (sağ alttaki anahtarı kullanarak)
+4. API adını kopyalayın (ör., `OPTION_1`, "Option 1" değil)
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>Yeni seçim seçenekleri otomatik olarak oluşturulmaz. İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde ekleyin.</Note>
 
-### Multi-Select Fields
+### Çoklu Seçim Alanları
 
-Use API names in array format:
+Dizi biçiminde API adlarını kullanın:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### Dizi Alanları
 
-Use JSON array format:
+JSON dizi biçimini kullanın:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### Puanlama Alanları
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+Şu biçimi kullanın: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` veya `RATING_5`
 
-### Links/URL Fields
+### Bağlantı/URL Alanları
 
-Fill both columns:
+Her iki sütunu da doldurun:
 
 * **Links / Link Label**: `Twenty`
 * **Links / Link URL**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+İkincil bağlantılar için **Links / Secondary Links** sütununu kullanın:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### JSON Alanları
 
-Use valid JSON format:
+Geçerli JSON biçimini kullanın:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### ID Alanları
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **İsteğe bağlı**: Sağlanmazsa Twenty kimlikleri otomatik olarak oluşturur
+* **Biçim**: UUID (ör., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Kullanım durumu**: Yeni kayıtlar oluşturmak yerine mevcut kayıtları güncellemek için ID ekleyin
 
-## Step 5: Add Relation Columns (If Linking Records)
+## Adım 5: İlişki Sütunları Ekleyin (Kayıtları Birbirine Bağlıyorsanız)
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+Kayıtları diğer nesnelere (ör., Kişileri Şirketlere) bağlamak için, ilgili kaydın benzersiz tanımlayıcısını içeren bir sütun ekleyin.
 
-**Example**: Linking People to Companies
+**Örnek**: Kişileri Şirketlere bağlama
 
-Add a column to your People CSV:
+Kişiler CSV'nize bir sütun ekleyin:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**İlişkiler için önemli kurallar:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* Ana kaydın Twenty'de zaten mevcut olması gerekir
+* **Etiket**i değil, **Alan Adı URL'si** biçimini (`https://domain.com`) kullanın
+* Yalnızca TEK bir benzersiz tanımlayıcı eşleyin (hem `companyId` hem de `companyDomain` eklemeyin)
+* Çalışma Alanı Üyeleri için, ad yerine **e-postalarını** kullanın
 
 <Warning>
-  **Import Order Matters!**
+  **İçe Aktarma Sırası Önemlidir!**
 
-  Import the "one" side before the "many" side:
+  Önce "bir" tarafını, sonra "çok" tarafını içe aktarın:
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. **Şirketler** önce
+  2. **Kişiler** ikinci (şirket referansıyla)
+  3. **Fırsatlar** üçüncü
 
-  The parent record must exist before you can reference it.
+  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
 </Warning>
 
-See [How to Import Relations](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+Ayrıntılı talimatlar için [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bölümüne bakın.
 
-## Step 6: Ensure Fields Exist in Twenty
+## Adım 6: Alanların Twenty'de mevcut olduğundan emin olun
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+İçe aktarma **kayıtlar** oluşturur, **alanlar** değil. İçe aktarmak istediğiniz tüm alanlar veri modelinizde zaten mevcut olmalıdır.
 
-**Before importing:**
+**İçe aktarmadan önce:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin
+3. Gereksinim duyduğunuz özel alanları oluşturun
+4. Alan adlarını aynen not edin (sütun başlıklarınızla birebir eşleşmelidir)
 
-## Step 7: Final Checklist
+## Adım 7: Son Kontrol Listesi
 
-Before uploading your file, verify:
+Dosyanızı yüklemeden önce şunları doğrulayın:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>Dosya CSV, XLSX veya XLS biçiminde</Check>
+<Check>Dosyada 10.000'den az kayıt var</Check>
+<Check>Kodlama UTF-8</Check>
+<Check>Yinelenen e-postalar (Kişiler için) veya alan adları (Şirketler için) yok</Check>
+<Check>Tarihler her yerde tutarlı bir biçim kullanıyor</Check>
+<Check>Alan adları `https://domain.com` biçimini kullanıyor</Check>
+<Check>Boole alanları `TRUE` veya `FALSE` (büyük harf) kullanıyor</Check>
+<Check>Seçim alanları, görünen etiketler değil, API adlarını kullanıyor</Check>
+<Check>Tüm özel alanlar Ayarlar → Veri Modeli içinde mevcut</Check>
+<Check>Ana kayıtlar, alt kayıtlardan önce içe aktarıldı</Check>
+<Check>İlişki sütunları mevcut kayıtlara referans veriyor</Check>
 
-## Common Mistakes to Avoid
+## Kaçınılması Gereken Yaygın Hatalar
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| Hata                                                       | Çözüm                                                              |
+| ---------------------------------------------------------- | ------------------------------------------------------------------ |
+| `TRUE` yerine `true` kullanmak                             | Boole değerleri büyük harf olmalıdır                               |
+| Seçim alanlarında görünen etiketleri kullanmak             | Ayarlar'da API adlarını bulun ve kullanın                          |
+| Şirketlerden önce Kişileri içe aktarmak                    | Her zaman önce ana nesneleri içe aktarın                           |
+| Para Birimi alanları için para birimi kodunun eksik olması | Hem Amount hem de Currency sütunlarını doldurun                    |
+| Yanlış alan adı biçimi                                     | `https://domain.com` biçimini tutarlı şekilde kullanın             |
+| İlişkiler için birden fazla benzersiz alanı eşlemek        | Yalnızca TEK birini eşleyin (alan adı VEYA id, ikisi birden değil) |
 
 ## Sonraki Adımlar
 
-Your file is ready! Now:
+Dosyanız hazır! Şimdi:
 
-* [Import Companies](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Şirketleri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv) (bunları önce içe aktarın)
+* [Kişileri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [İçe aktarma hatalarını düzeltin](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)

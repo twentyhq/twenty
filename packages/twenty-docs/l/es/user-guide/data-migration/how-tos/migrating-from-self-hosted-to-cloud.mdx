@@ -1,9 +1,9 @@
 ---
-title: Migración de autogestionado a la nube
+title: Migrating from Self-Hosted to Cloud
 description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
 ---
 
-## Resumen
+## Overview
 
 This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
 
@@ -50,9 +50,9 @@ Export each object from your self-hosted instance:
 
 **Export in this order** (for reference when importing):
 
-1. Empresas
-2. Personas
-3. Oportunidades
+1. Companies
+2. People
+3. Opportunities
 4. Custom objects (following their dependencies)
 5. Tasks, Notes
 
@@ -69,14 +69,14 @@ The exported CSVs contain user IDs from your self-hosted instance. These IDs won
 
 **Example:**
 
-Antes:
+Before:
 
 ```csv
 name,domain,accountOwnerId
 Acme Corp,https://acme.com,old-uuid-123
 ```
 
-Después:
+After:
 
 ```csv
 name,domain,accountOwnerEmail
@@ -115,12 +115,12 @@ For each CSV file, in order:
 
 After importing data, manually recreate:
 
-### Vistas
+### Views
 
 * Recreate saved views with filters, sorts, and column configurations
 * Set up any kanban or calendar views
 
-### Flujos de trabajo
+### Workflows
 
 * Recreate automations in **Settings → Workflows**
 * Test each workflow before relying on it
@@ -130,12 +130,12 @@ After importing data, manually recreate:
 * Configure roles in **Settings → Roles**
 * Assign users to appropriate roles
 
-### Integraciones
+### Integrations
 
 * Reconnect email and calendar sync for each user
 * Reconfigure any API integrations with new API keys
 
-## Lista de verificación post-migración
+## Post-Migration Checklist
 
 <Check>All data imported successfully</Check>
 <Check>Relations between objects working correctly</Check>
@@ -166,6 +166,6 @@ After importing data, manually recreate:
   </Accordion>
 </AccordionGroup>
 
-## ¿Necesitas Ayuda?
+## Need Help?
 
 For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/es/user-guide/getting-started/capabilities/implementation-services).

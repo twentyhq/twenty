@@ -1,6 +1,7 @@
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import {
   FieldMetadataType,
+  FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -39,6 +40,8 @@ const { fillDateGapsInBarChartData } = jest.requireMock(
 ) as { fillDateGapsInBarChartData: jest.Mock };
 
 describe('transformGroupByDataToBarChartData', () => {
+  const userTimezone = 'Europe/Paris';
+
   it('fills date gaps when grouping by a relation date subfield with granularity', () => {
     const groupByField = {
       id: 'group-by-field',
@@ -91,6 +94,8 @@ describe('transformGroupByDataToBarChartData', () => {
       objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(fillDateGapsInBarChartData).toHaveBeenCalledTimes(1);

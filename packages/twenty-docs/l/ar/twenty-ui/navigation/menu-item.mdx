@@ -71,13 +71,13 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleCommandClick = () => {
-        console.log("تم النقر على الأمر!");
+        console.log("Command clicked!");
       };
 
       return (
         <MenuItemCommand
           LeftIcon={IconBell}
-          text="الخيار الأول"
+          text="First Option"
           firstHotKey="⌘"
           secondHotKey="1"
           isSelected={true}
@@ -115,7 +115,7 @@ image: /images/user-guide/kanban-views/kanban.png
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("تم النقر على عنصر القائمة!", event);
+        console.log("Menu item clicked!", event);
       };
 
       return (
@@ -125,7 +125,7 @@ image: /images/user-guide/kanban-views/kanban.png
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={false}
           onClick={handleMenuItemClick}
-          text="عنصر القائمة القابل للسحب"
+          text="Menu item draggable"
           isDragDisabled={false}
           className
         />
@@ -163,7 +163,7 @@ image: /images/user-guide/kanban-views/kanban.png
       return (
         <MenuItemMultiSelect
           LeftIcon={IconBell}
-          text="الخيار الأول"
+          text="First Option"
           selected={false}
           className
         />
@@ -198,8 +198,8 @@ image: /images/user-guide/kanban-views/kanban.png
 
       return (
         <MenuItemMultiSelectAvatar
-          avatar={<img src={imageUrl} alt="الصورة الرمزبية" />}
-          text="الخيار الأول"
+          avatar={<img src={imageUrl} alt="Avatar" />}
+          text="First Option"
           selected={false}
           className
         />
@@ -231,13 +231,13 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
 
     export const MyComponent = () => {
       const handleNavigation = () => {
-        console.log("التنقل إلى صفحة أخرى");
+        console.log("Navigate to another page");
       };
 
       return (
         <MenuItemNavigate
           LeftIcon={IconBell}
-          text="الخيار الأول"
+          text="First Option"
           onClick={handleNavigation}
           className
         />
@@ -268,13 +268,13 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("تم اختيار عنصر القائمة");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelect
           LeftIcon={IconBell}
-          text="الخيار الأول"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -354,20 +354,20 @@ A selectable menu item with a color sample for scenarios where you want users to
 <Tabs>
   <Tab title="الاستخدام">
     ```jsx
-    استيراد {MenuItemSelectColor} من "twenty-ui/display";
+    import { MenuItemSelectColor } from "twenty-ui/display";
 
-    تصدير المكون الخاص بي = () => {
+    export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("تم اختيار عنصر القائمة");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelectColor
-          color="أخضر"
+          color="green"
           selected={true}
           disabled={false}
           hovered={true}
-          variant="افتراضي"
+          variant="default"
           onClick={handleSelection}
           className
         />
@@ -396,18 +396,18 @@ A selectable menu item with a color sample for scenarios where you want users to
 <Tabs>
   <Tab title="الاستخدام">
     ```jsx
-    استيراد {IconBell} من '@tabler/icons-react';
+    import { IconBell } from '@tabler/icons-react';
 
-    استيراد {MenuItemToggle} من 'twenty-ui/display';
+    import { MenuItemToggle } from 'twenty-ui/display';
 
-    تصدير المكون الخاص بي = () => {
+    export const MyComponent = () => {
 
       return (
         <MenuItemToggle
           LeftIcon={IconBell}
-          text="الخيار الأول"
+          text="First Option"
           toggled={true}
-          toggleSize="صغير"
+          toggleSize="small"
           className
         />
       );

@@ -23,9 +23,9 @@ Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero,
 
 Add a **Filter** action to only continue when the deal is won:
 
-| Setting       | Valor                             |
+| Setting       | Value                             |
 | ------------- | --------------------------------- |
-| **Field**     | Etapa                             |
+| **Field**     | Stage                             |
 | **Condition** | Equals                            |
 | **Value**     | `CLOSED_WON` (or your stage name) |
 
@@ -37,9 +37,9 @@ Add a **Filter** action to only continue when the deal is won:
 
 The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
 
-| Setting      | Valor                                    |
+| Setting      | Value                                    |
 | ------------ | ---------------------------------------- |
-| **Object**   | Empresa                                  |
+| **Object**   | Company                                  |
 | **Match by** | ID equals `{{trigger.object.companyId}}` |
 
 This retrieves the full Company record with billing address, tax ID, etc.
@@ -88,7 +88,7 @@ export const main = async (params: {
 
 Add an **HTTP Request** action:
 
-| Setting     | Valor                                     |
+| Setting     | Value                                     |
 | ----------- | ----------------------------------------- |
 | **Method**  | POST                                      |
 | **URL**     | Your invoicing API endpoint               |
@@ -122,13 +122,13 @@ Body: {{code.invoice}}
 
 ## Complete Workflow Summary
 
-| Step | Acción                  | Purpose                              |
+| Step | Action                  | Purpose                              |
 | ---- | ----------------------- | ------------------------------------ |
 | 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filtro                  | Only proceed if Stage = Closed Won   |
+| 2    | Filter                  | Only proceed if Stage = Closed Won   |
 | 3    | Search Record           | Get full Company details for billing |
-| 4    | Código                  | Format data for invoicing API        |
-| 5    | Solicitud HTTP          | Create invoice in external system    |
+| 4    | Code                    | Format data for invoicing API        |
+| 5    | HTTP Request            | Create invoice in external system    |
 
 ## Tips
 

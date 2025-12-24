@@ -1,15 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with single groupBy field 1`] = `
-{
-  "groupBy": [
-    {
-      "stage": true,
-    },
-  ],
-}
-`;
-
 exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with composite field 1`] = `
 {
   "groupBy": [
@@ -28,6 +18,7 @@ exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configurat
     {
       "createdAt": {
         "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
       },
     },
   ],
@@ -62,3 +53,12 @@ exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configurat
 }
 `;
 
+exports[`generateGroupByQueryVariablesFromPieChartConfiguration Basic Configuration should generate variables with single groupBy field 1`] = `
+{
+  "groupBy": [
+    {
+      "stage": true,
+    },
+  ],
+}
+`;

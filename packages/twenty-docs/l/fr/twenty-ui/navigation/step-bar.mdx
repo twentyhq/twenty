@@ -1,34 +1,34 @@
 ---
-title: Barre d'étape
+title: Step Bar
 image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="En-tête" />
+  <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
 
-Affiche la progression à travers une séquence d'étapes numérotées en surlignant l'étape active. Il affiche un conteneur avec des étapes, chacune représentée par le composant `Step`.
+Displays progress through a sequence of numbered steps by highlighting the active step. It renders a container with steps, each represented by the `Step` component.
 
 <Tabs>
-  <Tab title="Utilisation">
+  <Tab title="Usage">
     ```jsx
     import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
     export const MyComponent = () => {
       return (
         <StepBar activeStep={2}>
-          <StepBar.Step>Étape 1</StepBar.Step>
-          <StepBar.Step>Étape 2</StepBar.Step>
-          <StepBar.Step>Étape 3</StepBar.Step>
+          <StepBar.Step>Step 1</StepBar.Step>
+          <StepBar.Step>Step 2</StepBar.Step>
+          <StepBar.Step>Step 3</StepBar.Step>
         </StepBar>
       );
     };
     ```
   </Tab>
 
-  <Tab title="Propriétés">
-    | Propriétés  | Type   | Description                                                                                               |
-    | ----------- | ------ | --------------------------------------------------------------------------------------------------------- |
-    | étapeActive | nombre | L'index de l'étape actuellement active. Cela détermine quelle étape doit être visuellement mise en valeur |
+  <Tab title="Props">
+    | Props      | Type   | Description                                                                                       |
+    | ---------- | ------ | ------------------------------------------------------------------------------------------------- |
+    | activeStep | number | The index of the currently active step. This determines which step should be visually highlighted |
   </Tab>
 </Tabs>

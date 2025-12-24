@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { SaveButton } from '../SaveAndCancelButtons/SaveButton';
+import { SaveButton } from '@/settings/components/SaveAndCancelButtons/SaveButton';
 
 const meta: Meta<typeof SaveButton> = {
   title: 'Modules/Settings/SaveButton',

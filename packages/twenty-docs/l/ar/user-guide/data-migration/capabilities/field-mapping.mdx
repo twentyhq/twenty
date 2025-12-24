@@ -1,198 +1,198 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: تعيين الحقول
+description: كيف يعمل تعيين الحقول أثناء استيراد البيانات.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## كيف يعمل تعيين الحقول
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+عند تحميل ملف، يقوم Twenty بتحليل أعمدتك ومحاولة مطابقتها مع الحقول الموجودة.
 
-### Automatic Mapping
+### التعيين التلقائي
 
-Twenty tries to match columns based on:
+يحاول Twenty مطابقة الأعمدة استنادًا إلى:
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* أسماء رؤوس الأعمدة (مطابقات دقيقة أو متشابهة)
+* اكتشاف نوع البيانات (تواريخ، أرقام، عناوين بريد إلكتروني)
+* أنماط الحقول الشائعة
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**نصيحة سريعة:** صدِّر بضعة صفوف من الكائن الذي تريد استيراده. سيحتوي الملف المصدَّر على أسماء الأعمدة الدقيقة التي يتوقعها Twenty، مما يجعل التعيين التلقائي سلسًا أثناء الاستيراد.</Note>
 
-### Manual Mapping Options
+### خيارات التعيين اليدوي
 
-For each column, you can:
+لكل عمود، يمكنك:
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **تعيين إلى حقل**: اختر الحقل المطابق في Twenty من قائمة منسدلة
+* **عدم التعيين**: تخطَّ العمود بالكامل (لن يتم استيراد البيانات)
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**يجب أن تكون الحقول موجودة قبل الاستيراد.** الاستيراد يُنشئ السجلات، لا الحقول. أنشئ الحقول المخصصة ضمن **الإعدادات → نموذج البيانات** قبل الاستيراد.</Note>
 
-## Field Type Compatibility
+## توافق أنواع الحقول
 
-All field types available in the Data Model are supported for import.
+جميع أنواع الحقول المتاحة في نموذج البيانات مدعومة للاستيراد.
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+يمكنك أيضًا استيراد قيم `id` إما لتعيين معرّف محدد للسجلات الجديدة أو لتحديث السجلات القائمة.
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## متطلبات تنسيق البيانات
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**لبعض الحقول صياغة خاصة.** نوصي بتنزيل الملف النموذجي قبل إعداد عملية الاستيراد للاطلاع على الصياغة المتوقعة لكل نوع حقل.</Note>
 
-### Address Fields
+### حقول العنوان
 
-Address is a nested field with multiple columns. Some can be left empty.
+العنوان حقل متداخل يضم عدة أعمدة. يمكن ترك بعضِها فارغًا.
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**: سطر عنوان الشارع 1
+* **Address / Address 2**: سطر عنوان الشارع 2
+* **Address / City**: اسم المدينة
+* **Address / State**: الولاية أو المقاطعة
+* **Address / Country**: اسم الدولة
+* **Address / Post Code**: الرمز البريدي/ZIP
 
-### Array Fields
+### حقول المصفوفة
 
-Use the following format:
+استخدم التنسيق التالي:
 
 ```
-["value1","value2"]
+[\"value1\",\"value2\"]
 ```
 
-### Boolean Fields
+### حقول القيم المنطقية
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+استخدم `TRUE` أو `FALSE` (أحرف كبيرة) - وليس `true` أو `false`
 
-### Currency Fields
+### حقول العملة
 
-Currency is a nested field with two columns that **both must be filled**:
+العملة حقل متداخل يحتوي على عمودين يجب **ملؤهما كلاهما**:
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Amount / Amount**: القيمة الرقمية (مثال: `1234.56`)
+* **Amount / Currency**: رمز العملة (مثال: `USD`، `EUR`)
 
-### Date Fields
+### حقول التاريخ
 
-Supported formats:
+التنسيقات المدعومة:
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD` (موصى به)
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* تنسيق ISO 8601
 
-### Domain Fields
+### حقول النطاق
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* يُوصى باستخدام التنسيق `https://domain.com` لتجنب إنشاء التكرارات، إذ إن هذا هو التنسيق المستخدم للشركات التي يتم إنشاؤها عبر مزامنة صندوق البريد والتقويم
+* يمكن ملء حقلي `Domain Label` و`Domain URL`: وأفضل ممارسة هي وضع `domain.com` في التسمية و`https://domain.com` في عنوان URL
+* يجب أن تكون النطاقات فريدة داخل كائن الشركات
+* **يجب أن تكون النطاقات فريدة داخل الملف المُراد استيراده**
 
-### Email Fields
+### حقول البريد الإلكتروني
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
+* يجب أن تكون بتنسيق بريد إلكتروني صحيح
+* يجب أن تكون عناوين البريد الإلكتروني فريدة داخل كائن الأشخاص
+* **يجب أن تكون عناوين البريد الإلكتروني فريدة داخل الملف المُراد استيراده**
+* للبريد الإلكتروني الإضافي: استخدم **Emails / Primary Email** للبريد الرئيسي، و**Emails / Additional Emails** بهذا التنسيق:
 
 ```
-["jane@twenty.com","jane.doe@twenty.com"]
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
 ```
 
-### Id Fields
+### حقول المعرّف
 
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
+تحديد `id` أثناء الاستيراد اختياري. يقوم Twenty بإنشاء واحد تلقائيًا إذا لم يتم توفيره.
 
-Use cases for mapping an `id` column:
+حالات استخدام لتعيين عمود `id`:
 
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
+* **تعيين معرّف محدد**: اختر UUID للسجلات التي سيتم إنشاؤها
+* **تحديث السجلات الحالية**: طابِق السجلات الحالية لتحديثها بدلاً من إنشاء تكرارات. في هذه الحالة، يُنصح بعدم تعيين الحقول الفريدة الأخرى: فاقتصار التعيين على حقل فريد واحد يضمن عملية استيراد أكثر سلاسة.
 
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>إذا قدّمت قيمة `id`، فيجب أن تكون بتنسيق UUID (مثال: `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-### JSON Fields
+### حقول JSON
 
-Use valid JSON format:
+استخدم تنسيق JSON صالحًا:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### Links Fields
+### حقول الروابط
 
-Similar to Domain fields:
+مشابه لحقول النطاق:
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
-
-```
-[{"url":"https://twenty.com","label":"Twenty"}]
-```
-
-### Multi-Select Fields
-
-Use the **API names** (not the display labels) in the following format:
+* املأ عمودي التسمية والرابط معًا: **Links / Link URL** و**Links / Link Label**
+* استخدم تنسيق الرابط الكامل: `https://example.com`
+* للروابط الثانوية، استخدم عمود **Links / Secondary Links** بهذا التنسيق:
 
 ```
-["VALUE1","VALUE2"]
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+### حقول التحديد المتعدد
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+استخدم **أسماء واجهة برمجة التطبيقات (API)** (وليس تسميات العرض) بالتنسيق التالي:
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+اطّلع [هنا](#finding-api-names-for-select-fields) لمعرفة مكان العثور على أسماء واجهة برمجة التطبيقات.
+
+<Note>لن يتم إنشاء خيارات التحديد الجديدة تلقائيًا بواسطة الاستيراد. يجب إضافتها ضمن **الإعدادات → نموذج البيانات** قبل الاستيراد.</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **الاستيراد يستبدل، لا يضيف.**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  إذا كان السجل يحتوي بالفعل على `VALUE2` و`VALUE3` محدّدين، ثم استوردت `[\"VALUE1\"]`، فسيحتوي السجل على `VALUE1` فقط بعد الاستيراد. يتم استبدال التحديدات السابقة، وليس دمجها.
 </Warning>
 
-### Number Fields
+### حقول الأرقام
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* أرقام فقط
+* تُكتب الكسور العشرية بنقطة: `1234.56`
+* من دون فواصل آلاف
 
-### Phone Fields
+### حقول الهاتف
 
-Phone is a nested field with multiple columns that **must be filled**
+الهاتف حقل متداخل يضم عدة أعمدة يجب **ملؤها**
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Phones / Primary Phone Number**: رقم الهاتف (مثال: `4159095555`)
+* **Phones / Primary Phone Country Code**: رمز الدولة (مثال: `US`)
+* **Phones / Primary Phone Calling Code**: رمز الاتصال (مثال: `+1`)
 
-### Rating Fields
+### حقول التقييم
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+استخدم تنسيق اسم واجهة برمجة التطبيقات: `RATING_1`، `RATING_2`، `RATING_3`، `RATING_4`، `RATING_5`
 
 ### حقول العلاقات
 
-Please see our dedicated article: [Import Relations Between Objects](/l/ar/user-guide/data-migration/capabilities/import-relations)
+يرجى الاطّلاع على مقالتنا المخصّصة: [استيراد العلاقات بين الكائنات](/l/ar/user-guide/data-migration/capabilities/import-relations)
 
 ### حقول الاختيار
 
-Use the **API name** of the option (not the display label):
+استخدم **اسم واجهة برمجة التطبيقات** للخيار (وليس تسمية العرض):
 
 ```
 VALUE1
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+اطلع [هنا](#finding-api-names-for-select-fields) على مكان العثور على أسماء واجهة برمجة التطبيقات.
+<Note>لن يتم إنشاء خيارات الاختيار الجديدة تلقائيًا بواسطة الاستيراد. يجب إضافتها ضمن **الإعدادات → نموذج البيانات** قبل الاستيراد.</Note>
 
-### Text Fields
+### الحقول النصية
 
-* No special formatting required
-* Leading/trailing spaces are trimmed
+* لا يلزم تنسيق خاص
+* تُزال المسافات في البداية والنهاية
 
-## Finding API Names
+## العثور على أسماء واجهة برمجة التطبيقات
 
-For Select, Multi-Select, and Array fields with predefined options, you must use the **API names**, not the display labels.
+بالنسبة لحقول الاختيار، والاختيار المتعدد، والمصفوفة ذات الخيارات المحددة مسبقًا، يجب استخدام **أسماء واجهة برمجة التطبيقات**، وليس تسميات العرض.
 
-### How to Find API Names
+### كيفية العثور على أسماء واجهة برمجة التطبيقات
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at the bottom right of the settings page)
-4. View the API name for each option
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اختر الكائن والحقل
+3. فعّل **الوضع المتقدم** (زر التبديل في أسفل يمين صفحة الإعدادات)
+4. اعرض اسم واجهة برمجة التطبيقات لكل خيار
 
-<VimeoEmbed videoId="1144910809" title="Video demonstration" />
+<VimeoEmbed videoId="1144910809" title="عرض توضيحي بالفيديو" />

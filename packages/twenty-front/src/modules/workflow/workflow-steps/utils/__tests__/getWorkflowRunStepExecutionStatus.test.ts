@@ -1,4 +1,4 @@
-import { getWorkflowRunStepExecutionStatus } from '../getWorkflowRunStepExecutionStatus';
+import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { StepStatus } from 'twenty-shared/workflow';
 
 describe('getWorkflowRunStepExecutionStatus', () => {

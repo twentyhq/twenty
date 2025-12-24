@@ -15,7 +15,7 @@ import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDi
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type FirstDayOfTheWeek, isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
 type TransformOneDimensionalGroupByToLineChartDataParams = {
@@ -26,6 +26,8 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformOneDimensionalGroupByToLineChartDataResult = {
@@ -42,6 +44,8 @@ export const transformOneDimensionalGroupByToLineChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformOneDimensionalGroupByToLineChartDataParams): TransformOneDimensionalGroupByToLineChartDataResult => {
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(
@@ -55,6 +59,8 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
@@ -75,6 +81,8 @@ export const transformOneDimensionalGroupByToLineChartData = ({
             dateGranularity:
               configuration.primaryAxisDateGranularity ?? undefined,
             subFieldName: primaryAxisSubFieldName ?? undefined,
+            userTimezone,
+            firstDayOfTheWeek,
           })
         : '';
 

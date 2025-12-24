@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Temporal } from 'temporal-polyfill';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -41,7 +42,7 @@ export const DateTimeDisplay = ({
       {isNonEmptyString(value) && (
         <>
           <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation date={new Date(value)} />
+          <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
         </>
       )}
     </EllipsisDisplay>

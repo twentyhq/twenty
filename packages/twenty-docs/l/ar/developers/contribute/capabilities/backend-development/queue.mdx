@@ -21,12 +21,12 @@ class Resolver {
   constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
 
   async onSomeAction() {
-    //منطق العمل
+    //business logic
     await this.queue.add(someData);
   }
 }
 
-//عامل غير متزامن
+//async worker
 class CustomWorker {
   constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
     this.initWorker();
@@ -34,7 +34,7 @@ class CustomWorker {
 
   async initWorker() {
     await this.queue.work(async ({ id, data }) => {
-      //منطق العامل
+      //worker logic
     });
   }
 }

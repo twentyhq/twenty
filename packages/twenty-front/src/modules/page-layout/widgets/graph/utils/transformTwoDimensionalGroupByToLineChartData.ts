@@ -16,7 +16,7 @@ import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManua
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type FirstDayOfTheWeek, isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToLineChartDataParams = {
@@ -28,6 +28,8 @@ type TransformTwoDimensionalGroupByToLineChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformTwoDimensionalGroupByToLineChartDataResult = {
@@ -45,18 +47,24 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformTwoDimensionalGroupByToLineChartDataParams): TransformTwoDimensionalGroupByToLineChartDataResult => {
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
   const yFormattedToRawLookup = new Map<string, RawDimensionValue>();
+
   const formattedValues = formatPrimaryDimensionValues({
     groupByRawResults: rawResults,
     primaryAxisGroupByField: groupByFieldX,
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
+
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
   let hasTooManyGroups = false;
 
@@ -72,6 +80,8 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       fieldMetadata: groupByFieldX,
       dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: primaryAxisSubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
@@ -98,6 +108,8 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
 
     if (isDefined(seriesRawValue)) {

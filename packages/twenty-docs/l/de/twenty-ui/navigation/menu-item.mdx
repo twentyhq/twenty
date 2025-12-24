@@ -18,18 +18,18 @@ Ein vielseitiger Menüpunkt, der in einem Menü oder einer Navigationsliste verw
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menüpunkt angeklickt!", event);
+        console.log("Menu item clicked!", event);
       };
 
       const handleButtonClick = (event) => {
-        console.log("Symbolschaltfläche angeklickt!", event);
+        console.log("Icon button clicked!", event);
       };
 
       return (
         <MenuItem
           LeftIcon={IconBell}
           accent="default"
-          text="Menüpunkttext"
+          text="Menu item text"
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={true}
           testId="menu-item-1"
@@ -71,13 +71,13 @@ Ein befehlsartiger Menüpunkt innerhalb eines Menüs zur Anzeige von Tastaturkü
 
     export const MyComponent = () => {
       const handleCommandClick = () => {
-        console.log("Befehl geklickt!");
+        console.log("Command clicked!");
       };
 
       return (
         <MenuItemCommand
           LeftIcon={IconBell}
-          text="Erste Option"
+          text="First Option"
           firstHotKey="⌘"
           secondHotKey="1"
           isSelected={true}
@@ -115,7 +115,7 @@ Ein verschiebbares Menüelement, das in einem Menü oder einer Liste verwendet w
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menüelement geklickt!", event);
+        console.log("Menu item clicked!", event);
       };
 
       return (
@@ -125,7 +125,7 @@ Ein verschiebbares Menüelement, das in einem Menü oder einer Liste verwendet w
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={false}
           onClick={handleMenuItemClick}
-          text="Menüelement verschiebbar"
+          text="Menu item draggable"
           isDragDisabled={false}
           className
         />
@@ -163,7 +163,7 @@ Bietet eine Möglichkeit, eine Mehrfachauswahl-Funktionalität mit einem zugehö
       return (
         <MenuItemMultiSelect
           LeftIcon={IconBell}
-          text="Erste Option"
+          text="First Option"
           selected={false}
           className
         />
@@ -199,7 +199,7 @@ Ein Mehrfachauswahl-Menüelement mit einem Avatar, einem Kontrollkästchen zur A
       return (
         <MenuItemMultiSelectAvatar
           avatar={<img src={imageUrl} alt="Avatar" />}
-          text="Erste Option"
+          text="First Option"
           selected={false}
           className
         />
@@ -231,13 +231,13 @@ Ein Menüelement mit einem optionalen linken Symbol, Textinhalt und einem nach r
 
     export const MyComponent = () => {
       const handleNavigation = () => {
-        console.log("Zu einer anderen Seite navigieren");
+        console.log("Navigate to another page");
       };
 
       return (
         <MenuItemNavigate
           LeftIcon={IconBell}
-          text="Erste Option"
+          text="First Option"
           onClick={handleNavigation}
           className
         />
@@ -268,13 +268,13 @@ Ein auswählbares Menüelement mit optionalem linken Inhalt (Symbol und Text) un
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("Menüelement ausgewählt");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelect
           LeftIcon={IconBell}
-          text="Erste Option"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -313,13 +313,13 @@ A selectable menu item with an avatar, featuring optional left content (avatar a
         "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
       const handleSelection = () => {
-        console.log("Menüpunkt ausgewählt");
+        console.log("Menu item selected");
       };
 
       return (
         <MenuItemSelectAvatar
           avatar={<img src={imageUrl} alt="Avatar" />}
-          text="Erste Option"
+          text="First Option"
           selected={true}
           disabled={false}
           hovered={false}
@@ -358,7 +358,7 @@ Ein wählbares Menüelement mit Farbbeispiel für Situationen, in denen Benutzer
 
     export const MyComponent = () => {
       const handleSelection = () => {
-        console.log("Menüpunkt ausgewählt");
+        console.log("Menu item selected");
       };
 
       return (
@@ -405,7 +405,7 @@ Ein Menüelement mit einem zugehörigen Umschalter, mit dem Benutzer eine bestim
       return (
         <MenuItemToggle
           LeftIcon={IconBell}
-          text="Erste Option"
+          text="First Option"
           toggled={true}
           toggleSize="small"
           className

@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Создайте коммерческое предложение или счёт из Twenty
+description: Автоматически создавайте счёта во внешних инструментах при закрытии сделок.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Автоматически отправляйте данные по сделке в вашу систему выставления счетов (Stripe, QuickBooks, Xero и т. д.). когда сделка выиграна.
 
-## Workflow Structure
+## Структура рабочего процесса
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Триггер**: Запись обновлена (объект 'Сделка')
+2. **Фильтр**: Этап = Закрыто — выиграно
+3. **Поиск записи**: Получить сведения о компании
+4. **Код** (необязательно): Сформатировать полезную нагрузку
+5. **HTTP-запрос**: Отправить в систему выставления счетов
 
-## Step 1: Set Up the Trigger
+## Шаг 1: Настройте триггер
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Создайте новый рабочий процесс
+2. Выберите триггер **Запись обновлена**
+3. Выберите **Сделка** в качестве объекта
 
-## Step 2: Filter for Closed Won
+## Шаг 2: Отфильтруйте по «Закрыто — выиграно»
 
-Add a **Filter** action to only continue when the deal is won:
-
-| Настройка     | Значение                          |
-| ------------- | --------------------------------- |
-| **Field**     | Этап                              |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
-
-<Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
-</Tip>
-
-## Step 3: Get Company Details
-
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Добавьте действие **Фильтр**, чтобы продолжать только когда сделка выиграна:
 
 | Настройка    | Значение                                 |
 | ------------ | ---------------------------------------- |
-| **Object**   | Компания                                 |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| **Поле**     | Этап                                     |
+| **Условие**  | Равно                                    |
+| **Значение** | `CLOSED_WON` (или название вашего этапа) |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+<Tip>
+  Триггер срабатывает при любом обновлении Сделки. Фильтр гарантирует, что рабочий процесс продолжится только когда этап изменится на «Закрыто — выиграно».
+</Tip>
 
-## Step 4: Format the Payload (Optional)
+## Шаг 3: Получите сведения о компании
 
-If your invoicing system expects a specific format, add a **Code** action:
+Запись Сделки может не содержать всех полей Компании, которые нужны для счёта. Добавьте действие **Поиск записи**:
+
+| Настройка            | Значение                                |
+| -------------------- | --------------------------------------- |
+| **Объект**           | Компания                                |
+| **Сопоставление по** | ID равен `{{trigger.object.companyId}}` |
+
+Это вернёт полную запись Компании с платёжным адресом, налоговым идентификатором и т. д.
+
+## Шаг 4: Сформатируйте полезную нагрузку (необязательно)
+
+Если ваша система выставления счетов ожидает определённый формат, добавьте действие **Код**:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Шаг 5: Отправьте в систему выставления счетов
 
-Add an **HTTP Request** action:
+Добавьте действие **HTTP-запрос**:
 
-| Настройка   | Значение                                  |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Настройка      | Значение                                            |
+| -------------- | --------------------------------------------------- |
+| **Метод**      | POST                                                |
+| **URL-адрес**  | Конечная точка API вашей системы выставления счетов |
+| **Заголовки**  | `Authorization: Bearer YOUR_API_KEY`                |
+| **Содержимое** | `{{code.invoice}}` или сопоставьте поля напрямую    |
 
-### Example: Stripe Invoice
+### Пример: счёт Stripe
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Пример: счёт QuickBooks
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Итоговая сводка рабочего процесса
 
-| Step | Действие                | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Фильтр                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Код                     | Format data for invoicing API        |
-| 5    | HTTP-запрос             | Create invoice in external system    |
+| Шаг | Действие                  | Назначение                                                |
+| --- | ------------------------- | --------------------------------------------------------- |
+| 1   | Триггер: запись обновлена | Срабатывает при любых изменениях в Сделке                 |
+| 2   | Фильтр                    | Продолжать только если Этап = Закрыто — выиграно          |
+| 3   | Поиск записи              | Получить полные сведения о компании для выставления счёта |
+| 4   | Код                       | Сформатировать данные для API выставления счетов          |
+| 5   | HTTP-запрос               | Создать счёт во внешней системе                           |
 
-## Tips
+## Советы
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Сохраняйте внешние ID**: Сохраните идентификатор счёта, возвращённый API, обратно в Сделку с помощью действия **Обновить запись**
+* **Обработка ошибок**: Добавьте ветку, чтобы отправлять уведомление, если HTTP-запрос завершится ошибкой
+* **Сначала протестируйте**: Используйте песочницу/тестовый режим вашей системы выставления счетов перед запуском в рабочую среду
 
-## Related
+## Связанные материалы
 
-* [Workflow Triggers](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/ru/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Автоматизации «Закрыто — выиграно»](/l/ru/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

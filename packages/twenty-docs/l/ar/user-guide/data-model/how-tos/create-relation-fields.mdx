@@ -1,60 +1,60 @@
 ---
 title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+description: دليل خطوة بخطوة لربط الكائنات باستخدام حقول العلاقة.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+تربط حقول العلاقة السجلات من كائنات مختلفة—على سبيل المثال، ربط الأشخاص بالشركات.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **لا يمكن تغيير أسماء العلاقات بعد إنشائها** (إذ تؤثر في واجهة برمجة التطبيقات API). خطط لأسماء العلاقات بعناية.
 </Note>
 
 ## قبل أن تبدأ
 
-Decide:
+قرّر:
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* ما الكائنات التي تقوم بربطها؟ (مثال: الأشخاص → الشركات)
+* أيّهما جانب "الواحد"؟ (مثال: شركة)
+* أيّهما جانب "المتعدد"؟ (مثال: الأشخاص — يعمل العديد من الأشخاص في شركة واحدة)
+* ما الاسم الذي يجب أن يحمله الحقل في كل جانب؟
 
-See [Relation Fields](/l/ar/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+راجع [حقول العلاقة](/l/ar/user-guide/data-model/capabilities/relation-fields) لشرح أنواع العلاقات.
 
-## Steps
+## الخطوات
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. حدّد الكائن الذي تريد فيه العلاقة (عادةً جانب "المتعدد")
+3. انقر **+ إضافة حقل**
+4. اختر **علاقة** كنوع الحقل
+5. اختر **الكائن المستهدف**
+6. اختر **واحد إلى متعدد** أو **متعدد إلى واحد**
+7. أدخل أسماء الحقول ل**كلا الجانبين** من العلاقة
 8. انقر على **حفظ**
 
-## Example: People → Companies
+## مثال: الأشخاص → الشركات
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* اذهب إلى **الإعدادات → نموذج البيانات → الأشخاص**
+* أضف حقل علاقة
+* الهدف: **الشركات**
+* النوع: **متعدد إلى واحد**
+* الحقل في الأشخاص: **الشركة**
+* الحقل في الشركات: **الموظفون**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+يمكن الآن ربط كل شخص بشركة، وتعرض كل شركة موظفيها.
 
-## Deleting a Relation
+## حذف علاقة
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. اذهب إلى **الإعدادات → نموذج البيانات**
+2. اعثر على حقل العلاقة
+3. انقر **⋮ → إلغاء التنشيط**
 
-Links are preserved but hidden. Reactivate to restore.
+تظل الروابط محفوظة لكنها مخفية. أعد التنشيط لاستعادتها.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **حذف العلاقة لا يحذف السجلات.** تتم إزالة الرابط بينهما فقط.
 </Note>
 
-## Related
+## ذات صلة
 
-* [Relation Fields](/l/ar/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [حقول العلاقة](/l/ar/user-guide/data-model/capabilities/relation-fields) — الأنواع والقيود
+* [كيفية استيراد العلاقات](/l/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — الاستيراد الدفعي للسجلات المرتبطة

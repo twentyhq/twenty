@@ -5,11 +5,11 @@ description: Complete step-by-step guide to exporting data from Twenty.
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Resumen
+## Overview
 
 Export your workspace data to CSV for backups, reporting, or migration.
 
-**Casos de uso:**
+**Use cases:**
 
 * **Regular backups** — keep copies of your data
 * **External reporting** — analyze data in Excel, Google Sheets, or BI tools
@@ -26,7 +26,7 @@ Export your workspace data to CSV for backups, reporting, or migration.
 
 <Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/es/developers/extend/capabilities/apis).</Note>
 
-### Permisos
+### Permissions
 
 You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
 
@@ -81,7 +81,7 @@ If you only need a subset of data:
 | Record IDs                       | File attachments       |
 | Relation IDs                     | Images                 |
 
-### Campos de Relación
+### Relation Fields
 
 Relation IDs are only exported on the **"many" side** of a relationship:
 
@@ -202,7 +202,7 @@ Exported files may contain sensitive data:
   </Accordion>
 </AccordionGroup>
 
-## Próximos Pasos
+## Next Steps
 
 * [How to Update Existing Records](/l/es/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
 * [How to Import Data via API](/l/es/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets

@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Работа с массивами в действиях Code
+description: Узнайте, как правильно обрабатывать входные массивы в действиях Code в рабочих процессах.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+При работе с массивами в действиях Code вы можете столкнуться с двумя распространёнными проблемами:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **Массивы, передаваемые как строки** — данные из внешних систем или предыдущих шагов приходят строкой, а не как настоящий массив
+2. **Невозможно выбрать отдельные элементы** — можно выбрать только весь массив, а не конкретные поля внутри него
 
-Both can be solved with a Code node.
+Обе проблемы решаются с помощью узла Code.
 
-## Parsing Arrays from Strings
+## Разбор массивов из строк
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Массивы часто передаются между шагами рабочего процесса как строки или JSON, а не как нативные массивы. Это происходит, когда:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* Получение данных из внешних API через HTTP Request
+* Обработка полезной нагрузки вебхуков
+* Передача данных между шагами рабочего процесса
 
-**Solution**: Add this pattern at the start of your Code action:
+**Решение**: Добавьте этот шаблон в начало вашего действия Code:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+Ключевая строка `typeof users === "string" ? JSON.parse(users) : users` проверяет, является ли входное значение строкой, парсит его при необходимости или использует напрямую, если это уже массив.
 
-## Extracting Individual Fields from Arrays
+## Извлечение отдельных полей из массивов
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Вебхук может вернуть массив вида `answers: [...]`, но на последующих шагах рабочего процесса вы сможете выбрать только **весь массив** — не отдельные элементы внутри него.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Решение**: Добавьте узел Code, чтобы извлечь нужные поля и вернуть их в виде структурированного объекта:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Узел Code возвращает структурированный объект вместо массива. На последующих шагах теперь можно выбирать отдельные поля, такие как `answer.firstname` и `answer.name`, в селекторе переменных.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Мы активно работаем над упрощением работы с массивами в будущих обновлениях.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Нажмите квадратный значок в правом верхнем углу редактора кода, чтобы отобразить его на весь экран — это полезно, поскольку ширина редактора по умолчанию ограничена.
 </Tip>

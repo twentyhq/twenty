@@ -21,14 +21,14 @@ The goal here is to have a consistent codebase, which is easy to read and easy t
 لا تستخدم `import` الافتراضي مع `const`، لأنه أصعب من حيث القراءة والدمج باستخدام إكمال التعليمات البرمجية.
 
 ```tsx
-// ❌ سيئ، أصعب في القراءة، أصعب في الدمج باستخدام إكمال التعليمات البرمجية
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
   return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ جيد، سهل القراءة، سهل الدمج باستخدام إكمال التعليمات البرمجية
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
 };
@@ -41,10 +41,10 @@ export function MyComponent() {
 استخدام تفكيك الخصائص.
 
 ```tsx
-// ❌ سيئ، لا يوجد نوع
+// ❌ Bad, no type
 export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ جيد، النوع
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
@@ -55,11 +55,11 @@ export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</di
 #### امتنع عن استخدام `React.FC` أو `React.FunctionComponent` لتحديد أنواع الخصائص
 
 ```tsx
-/* ❌ - سيئ، يحدد أنماط المكون باستخدام `FC`
- *    - باستخدام `React.FC`، يقبل المكون ضمنيًا خاصية `children`
- *      حتى لو لم تكن محددة في نوع الخاصية. قد لا يكون هذا دائمًا
- *      مرغوبًا فيه، خاصةً إذا لم يكن المكون ينوي عرض
- *      الأطفال.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
 const EmailField: React.FC<{
   value: string;
@@ -86,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 تجنب استخدام انتشار متغير فردي للخصائص في عناصر JSX، مثل `{...props}`. غالبًا ما تؤدي هذه الممارسة إلى شكل تعليمي أقل قابلية للقراءة وأصعب في الصيانة لأنه من غير الواضح أي الخصائص يتلقاها المكون.
 
 ```tsx
-/* ❌ - سيء، ينثر متغير فردي للخصائص في المكون الأساسي
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -137,12 +137,12 @@ onClick?.();
 استخدم دائمًا `type` بدلاً من `interface`، لأنهما تقريبًا دائمًا متداخلين، و `type` أكثر مرونة.
 
 ```tsx
-// ❌ سيء
+// ❌ Bad
 interface MyInterface {
   name: string;
 }
 
-// ✅ جيد
+// ✅ Good
 type MyType = {
   name: string;
 };
@@ -155,7 +155,7 @@ type MyType = {
 يمكنك معرفة السبب في أن TypeScript توصي بتجنب الأعداد [هنا](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
 ```tsx
-// ❌ سيء، يستخدم عدد مخصص
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",
@@ -263,13 +263,13 @@ const StyledButton = styled.button`
 تجنب استيراد الأنواع. للحد من هذه الممارسة، تتحقق قاعدة ESLint وتبلغ عن أي استيرادات من هذا النوع. يساعد هذا على الحفاظ على الاتساق وقابلية القراءة في كود TypeScript.
 
 ```tsx
-// ❌ سيء
+// ❌ Bad
 import { type Meta, type StoryObj } from '@storybook/react';
 
-// ❌ سيء
+// ❌ Bad
 import type { Meta, StoryObj } from '@storybook/react';
 
-// ✅ جيد
+// ✅ Good
 import { Meta, StoryObj } from '@storybook/react';
 ```
 

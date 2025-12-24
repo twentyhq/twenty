@@ -1,11 +1,11 @@
 ---
-title: 文件夹架构
-info: 深入了解我们的文件夹架构
+title: Folder Architecture
+info: A detailed look into our folder architecture
 ---
 
-在本指南中，您将探索项目目录结构的详细信息，以及它如何促进 Twenty 的组织和可维护性。
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
 
-遵循此文件夹架构约定，可以更轻松地找到与特定功能相关的文件，并确保应用程序的可扩展性和可维护性。
+By following this folder architecture convention, it's easier to find the files related to specific features and ensure that the application is scalable and maintainable.
 
 ```
 front
@@ -22,14 +22,14 @@ front
 └───...
 ```
 
-## 页面
+## Pages
 
-包含由应用程序路由定义的顶级组件。 它们从模块文件夹中导入更多低级组件（详细信息见下文）。
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
 
-## 模块
+## Modules
 
-每个模块代表一个功能或一组功能，包括其特定组件、状态和操作逻辑。
-它们都应遵循以下结构。 您可以在模块中嵌套模块（称为子模块），同样的规则将适用。
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+They should all follow the structure below. You can nest modules within modules (referred to as submodules) and the same rules will apply.
 
 ```
 module1
@@ -50,60 +50,60 @@ module1
   └───utils
 ```
 
-### 上下文
+### Contexts
 
-上下文是一种通过组件树传递数据的方法，不必在每个级别手动传 props。
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
 
-详情请参阅 [React Context](https://react.dev/reference/react#context-hooks)。
+See [React Context](https://react.dev/reference/react#context-hooks) for more details.
 
 ### GraphQL
 
-包含片段、查询和变更。
+Includes fragments, queries, and mutations.
 
-详情请参阅 [GraphQL](https://graphql.org/learn/)。
+See [GraphQL](https://graphql.org/learn/) for more details.
 
-* 片段
+* Fragments
 
-片段是查询的可重用部分，可以在不同地方使用。 使用片段可以更容易地避免代码重复。
+A fragment is a reusable piece of a query, which you can use in different places. By using fragments, it's easier to avoid duplicating code.
 
-详情请参阅 [GraphQL Fragments](https://graphql.org/learn/queries/#fragments)。
+See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
 
-* 查询
+* Queries
 
-详情请参阅 [GraphQL Queries](https://graphql.org/learn/queries/)。
+See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
 
-* 变更
+* Mutations
 
-详情请参阅 [GraphQL Mutations](https://graphql.org/learn/queries/#mutations)。
+See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
 
-### 钩子
+### Hooks
 
-详情请参阅 [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)。
+See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
 
-### 状态
+### States
 
-包含状态管理逻辑。 [RecoilJS](https://recoiljs.org) 处理这部分。
+Contains the state management logic. [RecoilJS](https://recoiljs.org) handles this.
 
-* 选择器：详情请参阅 [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors)。
+* Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
 
-React 内置状态管理仍然在组件内处理状态。
+React's built-in state management still handles state within a component.
 
-### 工具
+### Utils
 
-应仅包含可重用的纯函数。 否则，请在 `hooks` 文件夹中创建自定义钩子。
+Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
 
 ## UI
 
-包含应用程序中使用的所有可重用的 UI 组件。
+Contains all the reusable UI components used in the application.
 
-这个文件夹可以包含子文件夹，像 `data`、`display`、`feedback` 和 `input`，用于特定类型的组件。 每个组件都应是自包含和可重用的，以便您可以在应用程序的不同部分使用它。
+This folder can contain sub-folders, like `data`, `display`, `feedback`, and `input` for specific types of components. Each component should be self-contained and reusable, so that you can use it in different parts of the application.
 
-通过将 UI 组件与 `modules` 文件夹中的其他组件分开，可以更轻松地保持一致的设计，并在更改 UI 时不影响其他部分（业务逻辑）的代码库。
+By separating the UI components from the other components in the `modules` folder, it's easier to maintain a consistent design and to make changes to the UI without affecting other parts (business logic) of the codebase.
 
-## 接口和依赖关系
+## Interface and dependencies
 
-您可以从任何模块中导入其他模块代码，但 `ui` 文件夹除外。 这将使代码易于测试。
+You can import other module code from any module except for the `ui` folder. This will keep its code easy to test.
 
-### 内部
+### Internal
 
-模块的每个部分（钩子、状态等） 都可以有一个 `internal` 文件夹，其中包含仅在模块内使用的部分。
+Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.

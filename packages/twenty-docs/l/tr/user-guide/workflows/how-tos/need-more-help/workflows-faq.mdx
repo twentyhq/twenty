@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: İş Akışları SSS
+description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="Bir iş akışını neden etkinleştiremiyorum?">
+    Bu muhtemelen bir yetki sorunudur. İş akışlarını oluşturmak ve etkinleştirmek için iş akışlarına erişiminiz olmalıdır.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **Çözüm**: **Ayarlar → Roller** altında size iş akışı erişimi vermesi için çalışma alanı yöneticinizle iletişime geçin.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    Kenar çubuğunuzda İş Akışları bölümünü hiç görmüyorsanız, bunun bir yetki sorunu olduğunu doğrular.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="Üst gezinme çubuğunda manuel iş akışım düğmesini neden görmüyorum?">
+    Manuel iş akışları, doğru şekilde yapılandırılmışsa üst gezinme çubuğunda görünür:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. İş akışı **etkinleştirilmiş** olmalıdır (taslak modunda olmamalı)
+    2. Üst gezinme çubuğu konumu **Pinned** olarak ayarlanmış olmalıdır
+    3. Single/Bulk tetikleyiciler için, doğru nesne sayfasında olmanız gerekir
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **Kontrol etmek için**: iş akışını açın → tetikleyiciye tıklayın → "Navbar placement" alanının "Pinned" olarak ayarlandığını doğrulayın.
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    Üst gezinme çubuğu ayarlarından bağımsız olarak manuel iş akışlarına her zaman **Cmd + K** (veya **Ctrl + K**) ile erişebilirsiniz.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Tür | Records Required | İş Akışı Çalıştırmaları |
+  <Accordion title="Single, Global ve Bulk manuel tetikleyiciler arasındaki fark nedir?">
+    | Tür | Gerekli Kayıtlar | İş Akışı Çalıştırmaları |
     | --- | ---------------- | ----------------------- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | Yok | Bir kez, kayıt girişi olmadan |
+    \| **Single** | Bir veya daha fazlası seçili | Seçilen her kayıt için bir kez |
+    \| **Bulk** | Bir veya daha fazlası seçili | Bir kez, tüm kayıtlar dizi olarak |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: İş akışının herhangi bir kayıt bağlamına ihtiyaç duymadığı durumlarda kullanın (ör. bir rapor oluşturma)
+    * **Single**: Seçilen her kaydı bağımsız olarak işlemek istediğinizde kullanın (ör. bireysel e-postalar gönderme)
+    * **Bulk**: Kayıtları birlikte işlemeniz veya kredi kullanımını optimize etmeniz gerektiğinde kullanın (Iterator eylemi gerektirir)
 
-    See [Workflow Triggers](/l/tr/user-guide/workflows/capabilities/workflow-triggers) for details.
+    Ayrıntılar için [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers) bölümüne bakın.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. Ne yapmalıyım?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="Bir If/Else düğümü görmüyorum. Ne yapmalıyım?">
+    Açık bir If/Else düğümü henüz mevcut değil, ancak yol haritamızda yer alıyor.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **Geçici çözüm**: Adımınızdan birden fazla dal oluşturun; her biri bir **Filter** eylemiyle başlasın:
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    Yalnızca filtre koşulu geçen dal, sonraki eylemlerini çalıştırır.
 
-    See [How to Use Branches](/l/tr/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    Adım adım bir kılavuz için [Dalları Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/workflow-branches) bölümüne bakın.
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="İş akışı dalları paralel mi çalışıyor?">
+    **Evet**, dallar varsayılan olarak paralel çalışır.
 
-    If you want only one branch to execute:
+    Yalnızca bir dalın çalışmasını istiyorsanız:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * Her dalın başlangıcına bir **Filter** eylemi ekleyin
+    * Zıt koşullar ayarlayın (ör. Dal A: status = "Open", Dal B: status ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    Filtre koşulunu sağlamayan dallar çalışmayı durdurur, diğerleri devam eder.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="Dalları yeniden birleştirebilir miyim?">
+    **Evet**. Paralel dallarınız tamamlandıktan sonra, her iki dalın da bağlanacağı bir adım ekleyebilirsiniz.
 
-    In the workflow editor:
+    İş Akışı Düzenleyicisinde:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. Dallanmış eylemlerinizi tamamlayın
+    2. Dallardan sonra yeni bir adım ekleyin
+    3. Her dalın sonundan bu yeni adıma bağlantıları sürükleyin
 
-    The merged step will execute after all connected branches complete.
+    Birleştirilen adım, bağlı tüm dallar tamamlandıktan sonra çalışacaktır.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Search Records sonuçlarının sınırı nedir?">
+    **Search Records en fazla 200 kayıt döndürür.**
 
-    If you need to process more:
+    Daha fazlasını işlemeniz gerekiyorsa:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * Sonuçları azaltmak için daha spesifik filtreler ekleyin
+    * Toplu işlem yapmak için zamanlanmış iş akışlarını kullanın
+    * Toplu işlemler için API kullanmayı düşünün
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    Çoğu iş akışı için 200 kayıt yeterlidir. Bu sınıra düzenli olarak ulaşıyorsanız otomasyonunuzu yeniden yapılandırmayı düşünün.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="İş akışı e-postalarında kişileri CC'ye ekleyebilir miyim?">
+    **Henüz değil.** Send Email eylemi için CC ve BCC alanları yol haritamızda.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **Geçici çözüm**: Ek alıcılara göndermek için birden fazla Send Email eylemi ekleyin veya CC'yi destekleyen harici bir e-posta hizmeti üzerinden göndermek için bir HTTP Request kullanın.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="Önceki adımların çıktılarını nasıl kullanırım?">
+    Her eylem, sonraki adımlarda kullanılabilecek çıktı verileri üretir.
 
-    **To reference previous step data**:
+    **Önceki adım verilerine başvurmak için**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * Bir alanı yapılandırırken değişken seçiciyi kullanın
+    * Ya da doğrudan `{{stepName.fieldName}}` yazın
 
     **Örnekler**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * Tetikleyici verisi: `{{trigger.object.email}}`
+    * Arama sonuçları: `{{searchRecords[0].name}}`
+    * Kod çıktısı: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    Eylem yapılandırmasında herhangi bir alanın üzerine gelerek önceki adımlardan kullanılabilir değişkenleri görebilirsiniz.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="Iterator neden başarısız oluyor?">
+    **Iterator bir dizi girdisi gerektirir.** Yaygın sorunlar:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **Girdi bir dizi değil**: Search Records'tan veya bir dizi döndüren başka bir eylemden gelen sonuçları ilettiğinizden emin olun
+    2. **Dizi boş**: Iterator'dan önce `{{searchRecords.length}} > 0` kontrolü için bir filtre ekleyin
+    3. **Yanlış değişken seçildi**: Tek bir kayıt yerine dizinin kendisini seçtiğinizden emin olun
 
-    **Correct setup**:
+    **Doğru kurulum**:
 
-    1. Search Records (returns array)
+    1. Search Records (dizi döndürür)
     2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    3. Iterator: `{{searchRecords}}` öğesini seçin
+    4. Iterator içindeki eylemler `{{iterator.currentItem.fieldName}}` kullanır
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Code eylemleri için en uzun yürütme süresi nedir?">
+    Code eylemlerinin (sunucusuz fonksiyonlar) **varsayılan zaman aşımı 5 dakikadır** (300 saniye).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    Yapılandırılabilir en yüksek zaman aşımı **15 dakikadır** (900 saniye).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    Kodunuz bu sınırı aşarsa, eylem zaman aşımı hatasıyla başarısız olur.
 
-    **Tips to avoid timeouts**:
+    **Zaman aşımından kaçınma ipuçları**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * Büyük işlemleri Iterator kullanarak daha küçük parçalara bölün
+    * Ağır hesaplamalardan kaçının; yoğun işlemler için HTTP Request üzerinden harici hizmetler kullanın
+    * Yürütme süresini azaltmak için kodunuzu optimize edin
+    * Daha uzun işlemeye ihtiyacınız varsa, verileri toplu olarak işleyen zamanlanmış iş akışlarını kullanmayı düşünün
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="İş akışı çalıştırmalarını nasıl incelerim?">
+    İş akışı çalıştırmaları yürütme geçmişini gösterir ve sorunları ayıklamanıza yardımcı olur.
 
-    **Access runs**:
+    **Çalıştırmalara erişim**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * İş akışı düzenleyicisinde → sağdaki **Runs** paneli
+    * Ya da kenar çubuğunda **İş Akışı Çalıştırmaları**'na gidin
 
-    **Understanding a run**:
+    **Bir çalıştırmayı anlamak**:
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **Durum**: Running, Completed, Failed, Waiting
+    * **Adımlar**: Hangi adımların çalıştığını ve çıktısını görün
+    * **Hatalar**: Hata ile sonuçlanan adımlara tıklayarak hata mesajlarını görün
+    * **Veri**: Her adımda giriş/çıkış verilerini görüntüleyin
 
-    See [Workflow Runs](/l/tr/user-guide/workflows/capabilities/workflow-runs) for details.
+    Ayrıntılar için [İş Akışı Çalıştırmaları](/l/tr/user-guide/workflows/capabilities/workflow-runs) bölümüne bakın.
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="İş akışı çalıştırmalarımı neden görmüyorum?">
+    İş akışı çalıştırmaları hız sınırları nedeniyle anında başarısız oluyor olabilir.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **Katı sınır: çalışma alanı başına saatte 5.000 çalıştırma.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    Bu sınırı aşarsanız, iş akışları derhal başarısız olarak işaretlenir ve beklendiği gibi çalıştırma listenizde görünmez.
 
-    **Common scenarios that hit this limit**:
+    **Bu sınıra ulaşan yaygın senaryolar**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * Single manuel tetikleyici ile 5.000'den fazla kayıt seçmek
+    * Çalışma alanınız genelinde eşzamanlı olarak birden fazla iş akışının çalışması
+    * Yüksek frekanslı otomatik tetikleyiciler (ör. yoğun bir nesnede Record Updated)
 
     **Çözümler**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * Tek bir çalıştırmada birçok kaydı işlemek için Single yerine **Bulk** tetikleyicileri kullanın
+    * Büyük toplu işlemleri zamana yayın
+    * Tetikleyici frekansını azaltmak için filtreler kullanın
+    * Ağır iş akışlarını yoğun olmayan saatlerde zamanlayın
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="İş akışlarına ilişkin hız sınırları nelerdir?">
+    Twenty, sistem kararlılığını sağlamak için iki hız sınırına sahiptir:
 
-    | Limit | Değer | Behavior |
+    | Sınır | Değer | Davranış |
     | ----- | ----- | -------- |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Yumuşak sınır** | dakikada 100 çalıştırma | Çalıştırmalar "Not Started" durumunda kuyruğa alınır, kademeli olarak işlenir |
+    \| **Katı sınır** | saatte 5.000 çalıştırma | Çalıştırmalar anında başarısız olur |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Yumuşak sınır (100/dk)**: İş akışlarınız başarısız olmaz—sadece kuyruğa alınır ve zaman içinde işlenir. 100'den fazla kaydı tetikleyebilirsiniz; yürütme daha yavaş olacaktır.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Katı sınır (5.000/saat)**: Bu, tüm çalışma alanınız için geçerlidir. Tüm iş akışlarınız toplamda bir saat içinde 5.000 çalıştırmayı aşarsa, ilave çalıştırmalar anında başarısız olur.
 
-    **Tips to stay within limits**:
+    **Sınırlar içinde kalmak için ipuçları**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * Büyük toplu işlemler için Single tetikleyiciler yerine Iterator ile birlikte Bulk tetikleyicileri kullanın
+    * İlgili otomasyonları daha az sayıda iş akışında birleştirin
+    * Yükü zamana yaymak için zamanlanmış iş akışlarını kullanın
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="Başarısız olmuş bir iş akışı çalıştırmasını yeniden deneyebilir miyim?">
+    **Hayır, şu anda otomatik yeniden deneme işlevi yok.**
 
-    If a workflow run fails, you'll need to:
+    Bir iş akışı çalıştırması başarısız olursa şunları yapmanız gerekir:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. **Ayarlar → İş Akışları → [Your Workflow] → Runs** içinde hatayı inceleyin
+    2. Sorunu düzeltin (veri, yapılandırma veya harici hizmet)
+    3. Etkilenen kayıt(lar) üzerinde iş akışını manuel olarak yeniden tetikleyin
 
-    **Tips to reduce failures**:
+    **Hataları azaltmak için ipuçları**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * Eylemlerden önce veriyi doğrulamak için **Filter** düğümleri ekleyin
+    * İlgili kayıtların var olup olmadığını kontrol etmek için **Search Records** kullanın
+    * Toplu işlemlerden önce birkaç kayıtla kapsamlı şekilde test edin
 
-    Automatic retry functionality is on our roadmap for a future release.
+    Otomatik yeniden deneme işlevi gelecekteki bir sürüm için yol haritamızda.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="CSV içe aktarmalarından önce iş akışlarını devre dışı bırakmalı mıyım?">
+    **Evet, iş akışlarınız kayıt oluşturma veya güncellemelerle tetikleniyorsa.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    CSV ile veri içe aktardığınızda, oluşturulan veya güncellenen her kayıt iş akışlarını tetikleyebilir. Büyük bir içe aktarma (binlerce kayıt) şunlara yol açabilir:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * Saatte 5.000 çalıştırma sınırına ulaşmak
+    * Önemli miktarda iş akışı kredisi tüketmek
+    * Beklenmedik e-postalar veya bildirimler göndermek
+    * Yinelenen görevler veya kayıtlar oluşturmak
 
-    **Before a mass import**:
+    **Toplu bir içe aktarmadan önce**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. **Ayarlar → İş Akışları** bölümüne gidin
+    2. İçe aktardığınız nesne tarafından tetiklenen iş akışlarını belirleyin
+    3. Bunları geçici olarak **devre dışı bırakın**
+    4. CSV içe aktarmanızı çalıştırın
+    5. İşiniz bittiğinde iş akışlarını **yeniden etkinleştirin**
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **Alternatif**: İş akışlarının içe aktarılan veriler üzerinde çalışması gerekiyorsa, hız sınırları içinde kalmak için daha küçük partiler halinde içe aktarın.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="İş akışı yerleşimimi nasıl temizlerim?">
+    İş akışı tuvaliniz etrafa dağılmış düğümlerle dağınık görünüyorsa, onu otomatik olarak düzenleyebilirsiniz:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. İş akışı tuvalinde herhangi bir yere sağ tıklayın
+    2. **Tidy up workflow** öğesine tıklayın
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    Bu, tüm düğümleri otomatik olarak temiz ve düzenli bir yerleşime yeniden düzenleyecektir.
   </Accordion>
 </AccordionGroup>

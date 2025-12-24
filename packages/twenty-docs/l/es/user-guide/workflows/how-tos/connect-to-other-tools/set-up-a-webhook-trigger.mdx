@@ -8,7 +8,7 @@ Webhook triggers allow external services to start your workflows by sending data
 
 ## When to Use Webhooks
 
-| Use Case                | Ejemplo                                 |
+| Use Case                | Example                                 |
 | ----------------------- | --------------------------------------- |
 | **Web forms**           | Contact form submissions create leads   |
 | **Third-party apps**    | Stripe payment → create customer record |
@@ -62,12 +62,12 @@ Now add actions that use the webhook data:
 2. Select **People** object
 3. Map fields:
 
-| Campo              | Valor                                                |
-| ------------------ | ---------------------------------------------------- |
-| Nombre             | `{{trigger.body.firstName}}`                         |
-| Apellidos          | `{{trigger.body.lastName}}`                          |
-| Correo electrónico | `{{trigger.body.email}}`                             |
-| Empresa            | Search or create based on `{{trigger.body.company}}` |
+| Field      | Value                                                |
+| ---------- | ---------------------------------------------------- |
+| First Name | `{{trigger.body.firstName}}`                         |
+| Last Name  | `{{trigger.body.lastName}}`                          |
+| Email      | `{{trigger.body.email}}`                             |
+| Company    | Search or create based on `{{trigger.body.company}}` |
 
 ### Step 5: Test the Webhook
 

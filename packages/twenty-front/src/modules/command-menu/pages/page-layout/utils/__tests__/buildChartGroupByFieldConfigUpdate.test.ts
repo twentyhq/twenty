@@ -5,7 +5,7 @@ import {
   GraphOrderBy,
   type PieChartConfiguration,
 } from '~/generated/graphql';
-import { buildChartGroupByFieldConfigUpdate } from '../buildChartGroupByFieldConfigUpdate';
+import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 
 describe('buildChartGroupByFieldConfigUpdate', () => {
   it('sets default orderBy and dateGranularity for primary axis', () => {

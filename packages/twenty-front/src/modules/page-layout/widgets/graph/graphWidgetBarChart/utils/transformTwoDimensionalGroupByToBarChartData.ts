@@ -18,7 +18,7 @@ import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManua
 import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { type BarDatum } from '@nivo/bar';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, type FirstDayOfTheWeek } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
   GraphOrderBy,
@@ -34,6 +34,8 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
@@ -54,6 +56,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformTwoDimensionalGroupByToBarChartDataParams): TransformTwoDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
@@ -70,6 +74,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
@@ -84,13 +90,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       fieldMetadata: groupByFieldX,
       dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
+
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+      userTimezone,
+      firstDayOfTheWeek,
     });
 
     if (isDefined(dimensionValues[0])) {

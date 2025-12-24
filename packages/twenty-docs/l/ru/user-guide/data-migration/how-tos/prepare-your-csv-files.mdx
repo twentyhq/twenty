@@ -1,5 +1,5 @@
 ---
-title: Подготовьте файлы CSV},{
+title: Prepare Your CSV Files
 description: Полное пошаговое руководство по форматированию ваших данных для импорта в Twenty.
 ---
 
@@ -87,114 +87,114 @@ Twenty требует уникальности для некоторых пол�
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Address Fields
+### Поля адреса
 
-Address is a **nested field** with multiple columns (some can be left empty):
+Адрес — это **вложенное поле** с несколькими столбцами (некоторые можно оставить пустыми):
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2 (optional)
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Адрес / Адрес 1**: Первая строка адреса
+* **Адрес / Адрес 2**: Вторая строка адреса (необязательно)
+* **Адрес / Город**: Название города
+* **Адрес / Штат**: Штат или провинция
+* **Адрес / Страна**: Название страны
+* **Адрес / Почтовый индекс**: Почтовый индекс/ZIP-код
 
-### Date Fields
+### Поля даты
 
-Use consistent formatting throughout your file:
+Используйте единый формат по всему файлу:
 
-* `YYYY-MM-DD` (recommended): `2024-03-15`
+* `YYYY-MM-DD` (рекомендуется): `2024-03-15`
 * `MM/DD/YYYY`: `03/15/2024`
 * `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
-### Number Fields
+### Числовые поля
 
-* Numbers only (no text)
-* Use period for decimals: `1234.56`
-* No thousands separators (not `1,234.56`)
+* Только числа (без текста)
+* Используйте точку в качестве десятичного разделителя: `1234.56`
+* Без разделителей тысяч (не `1,234.56`)
 
-### Currency Fields
+### Валютные поля
 
-Currency is a **nested field** requiring two columns that **both must be filled**:
+Валюта — это **вложенное поле**, требующее двух столбцов, которые **оба должны быть заполнены**:
 
-| Column                | Пример    |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Столбец            | Пример    |
+| ------------------ | --------- |
+| **Сумма / Сумма**  | `1234.56` |
+| **Сумма / Валюта** | `USD`     |
 
-### Boolean Fields
+### Булевы поля
 
-Use uppercase: `TRUE` or `FALSE`
+Используйте верхний регистр: `TRUE` или `FALSE`
 
-<Warning>Lowercase `true` or `false` will not work.</Warning>
+<Warning>Строчные `true` или `false` не будут работать.</Warning>
 
 ### Выбор полей
 
-Use the **API name** of the option, not the display label.
+Используйте **имя API** варианта, а не отображаемую метку.
 
-**How to find API names:**
+**Как найти имена API:**
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект и поле
+3. Включите **Расширенный режим** (переключатель внизу справа)
+4. Скопируйте имя API (например, `OPTION_1`, а не "Option 1")
 
-<Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
+<Note>Новые варианты списка не создаются автоматически. Добавьте их в **Настройки → Модель данных** перед импортом.</Note>
 
-### Multi-Select Fields
+### Поля множественного выбора
 
-Use API names in array format:
+Используйте имена API в формате массива:
 
 ```
 ["VALUE1","VALUE2"]
 ```
 
-### Array Fields
+### Поля массива
 
-Use JSON array format:
+Используйте формат массива JSON:
 
 ```
 ["value1","value2"]
 ```
 
-### Rating Fields
+### Поля рейтинга
 
-Use the format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, or `RATING_5`
+Используйте формат: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` или `RATING_5`
 
-### Links/URL Fields
+### Поля ссылок/URL
 
-Fill both columns:
+Заполните оба столбца:
 
-* **Links / Link Label**: `Twenty`
-* **Links / Link URL**: `https://twenty.com`
+* **Ссылки / Метка ссылки**: `Twenty`
+* **Ссылки / URL ссылки**: `https://twenty.com`
 
-For secondary links, use the **Links / Secondary Links** column:
+Для дополнительных ссылок используйте столбец **Ссылки / Дополнительные ссылки**:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
 ```
 
-### JSON Fields
+### Поля JSON
 
-Use valid JSON format:
+Используйте допустимый формат JSON:
 
 ```
 {"key":"value","key2":"value2"}
 ```
 
-### ID Fields
+### Поля идентификаторов
 
-* **Optional**: Twenty auto-generates IDs if not provided
-* **Format**: UUID (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Use case**: Include ID to update existing records instead of creating new ones
+* **Необязательно**: Twenty автоматически генерирует идентификаторы, если они не указаны
+* **Формат**: UUID (например, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Сценарий использования**: укажите идентификатор, чтобы обновить существующие записи вместо создания новых
 
-## Step 5: Add Relation Columns (If Linking Records)
+## Шаг 5: Добавьте столбцы связей (если связываете записи)
 
-To link records to other objects (e.g., People to Companies), add a column with the unique identifier of the related record.
+Чтобы связать записи с другими объектами (например, контакты с компаниями), добавьте столбец с уникальным идентификатором связанной записи.
 
-**Example**: Linking People to Companies
+**Пример**: связывание контактов с компаниями
 
-Add a column to your People CSV:
+Добавьте столбец в CSV контактов:
 
 ```
 firstName,lastName,email,companyDomain
@@ -202,69 +202,69 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important rules for relations:**
+**Важные правила для связей:**
 
-* The parent record must already exist in Twenty
-* Use the **Domain URL** format (`https://domain.com`), not the label
-* Map only ONE unique identifier (don't include both `companyId` AND `companyDomain`)
-* For Workspace Members, use their **email** (not name)
+* Родительская запись должна уже существовать в Twenty
+* Используйте формат URL домена (`https://domain.com`), а не метку
+* Сопоставляйте только ОДИН уникальный идентификатор (не указывайте одновременно `companyId` И `companyDomain`)
+* Для участников рабочей области используйте их email (а не имя)
 
 <Warning>
-  **Import Order Matters!**
+  **Порядок импорта имеет значение!**
 
-  Import the "one" side before the "many" side:
+  Сначала импортируйте сторону «один», затем сторону «многие»:
 
-  1. **Companies** first
-  2. **People** second (with company reference)
-  3. **Opportunities** third
+  1. Сначала — **Компании**
+  2. Затем — **Контакты** (со ссылкой на компанию)
+  3. Третьими — **Возможности**
 
-  The parent record must exist before you can reference it.
+  Родительская запись должна существовать до того, как вы сможете на неё сослаться.
 </Warning>
 
-See [How to Import Relations](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for detailed instructions.
+См. [как импортировать связи](/l/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) для подробных инструкций.
 
-## Step 6: Ensure Fields Exist in Twenty
+## Шаг 6: Убедитесь, что поля существуют в Twenty
 
-The import creates **records**, not **fields**. All fields you want to import must already exist in your data model.
+Импорт создаёт записи, а не поля. Все поля, которые вы хотите импортировать, должны уже существовать в вашей модели данных.
 
-**Before importing:**
+**Перед импортом:**
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Create any custom fields you need
-4. Note the exact field names (they must match your column headers)
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите объект
+3. Создайте все необходимые пользовательские поля
+4. Запишите точные названия полей (они должны совпадать с заголовками столбцов)
 
-## Step 7: Final Checklist
+## Шаг 7: Итоговый контрольный список
 
-Before uploading your file, verify:
+Перед загрузкой файла убедитесь, что:
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>Encoding is UTF-8</Check>
-<Check>No duplicate emails (for People) or domains (for Companies)</Check>
-<Check>Dates use consistent format throughout</Check>
-<Check>Domains use `https://domain.com` format</Check>
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
+<Check>Файл в формате CSV, XLSX или XLS</Check>
+<Check>В файле менее 10 000 записей</Check>
+<Check>Кодировка — UTF-8</Check>
+<Check>Нет повторяющихся email-адресов (для контактов) или доменов (для компаний)</Check>
+<Check>Даты используют единый формат по всему файлу</Check>
+<Check>Домены в формате `https://domain.com`</Check>
+<Check>Булевы поля используют `TRUE` или `FALSE` (в верхнем регистре)</Check>
+<Check>Поля выбора используют имена API, а не отображаемые метки</Check>
+<Check>Все пользовательские поля существуют в Настройках → Модели данных</Check>
+<Check>Родительские записи импортированы до дочерних</Check>
+<Check>Столбцы связей ссылаются на существующие записи</Check>
 
-## Common Mistakes to Avoid
+## Распространённые ошибки, которых следует избегать
 
-| Mistake                                      | Solution                              |
-| -------------------------------------------- | ------------------------------------- |
-| Using `true` instead of `TRUE`               | Boolean values must be uppercase      |
-| Using display labels for Select fields       | Find and use API names in Settings    |
-| Importing People before Companies            | Always import parent objects first    |
-| Missing currency code for Currency fields    | Fill both Amount and Currency columns |
-| Wrong domain format                          | Use `https://domain.com` consistently |
-| Mapping multiple unique fields for relations | Map only ONE (domain OR id, not both) |
+| Ошибка                                               | Решение                                            |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| Использование `true` вместо `TRUE`                   | Логические значения должны быть в верхнем регистре |
+| Использование отображаемых меток для полей выбора    | Найдите и используйте имена API в Настройках       |
+| Импорт контактов раньше компаний                     | Всегда импортируйте сначала родительские объекты   |
+| Отсутствует код валюты для валютных полей            | Заполните столбцы «Сумма» и «Валюта»               |
+| Неверный формат домена                               | Последовательно используйте `https://domain.com`   |
+| Сопоставление нескольких уникальных полей для связей | Сопоставляйте только ОДИН (домен ИЛИ id, не оба)   |
 
 ## Следующие шаги
 
-Your file is ready! Now:
+Ваш файл готов! Теперь:
 
-* [Import Companies](/l/ru/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
-* [Import Contacts](/l/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Fix any import errors](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)
+* [Импорт компаний](/l/ru/user-guide/data-migration/how-tos/import-companies-via-csv) (сначала импортируйте их)
+* [Импорт контактов](/l/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Исправьте ошибки импорта](/l/ru/user-guide/data-migration/how-tos/fix-import-errors)

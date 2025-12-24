@@ -2,12 +2,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
 import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 import { isCyclicalDateGranularity } from '@/page-layout/widgets/graph/utils/isCyclicalDateGranularity';
 import { isTimeRangeDateGranularity } from '@/page-layout/widgets/graph/utils/isTimeRangeDateGranularity';
+import { serializeChartBucketValueForFilter } from '@/page-layout/widgets/graph/utils/serializeChartBucketValueForFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  type FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -15,8 +16,8 @@ import {
   getFilterTypeFromFieldType,
   isDefined,
   isFieldMetadataDateKind,
+  parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
   fieldName: string;
@@ -30,24 +31,7 @@ type BuildFilterFromChartBucketParams = {
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
   timezone?: string;
-};
-
-const formatChartFilterValue = (
-  fieldType: FieldMetadataType,
-  bucketRawValue: unknown,
-  operand: ViewFilterOperand,
-): string => {
-  const stringValue = String(bucketRawValue);
-
-  const needsJsonArray =
-    operand === ViewFilterOperand.IS &&
-    [
-      FieldMetadataType.SELECT,
-      FieldMetadataType.UUID,
-      FieldMetadataType.RELATION,
-    ].includes(fieldType);
-
-  return needsJsonArray ? JSON.stringify([stringValue]) : stringValue;
+  firstDayOfTheWeek?: FirstDayOfTheWeek;
 };
 
 export const buildFilterFromChartBucket = ({
@@ -56,6 +40,7 @@ export const buildFilterFromChartBucket = ({
   dateGranularity,
   subFieldName,
   timezone,
+  firstDayOfTheWeek,
 }: BuildFilterFromChartBucketParams): ChartFilter[] => {
   const fieldName = isNonEmptyString(subFieldName)
     ? `${fieldMetadataItem.name}.${subFieldName}`
@@ -79,36 +64,64 @@ export const buildFilterFromChartBucket = ({
   }
 
   if (isFieldMetadataDateKind(fieldMetadataItem.type)) {
-    const parsedBucketDate = new Date(String(bucketRawValue));
-
-    if (isNaN(parsedBucketDate.getTime())) {
-      return [];
-    }
-
     if (isCyclicalDateGranularity(dateGranularity)) {
       return [];
     }
 
-    if (
+    const shouldAssumeDayRangeFilter =
       !isDefined(dateGranularity) ||
       dateGranularity === ObjectRecordGroupByDateGranularity.DAY ||
-      dateGranularity === ObjectRecordGroupByDateGranularity.NONE
-    ) {
-      return buildDateFilterForDayGranularity(
-        parsedBucketDate,
+      dateGranularity === ObjectRecordGroupByDateGranularity.NONE;
+
+    if (shouldAssumeDayRangeFilter) {
+      if (!isNonEmptyString(timezone)) {
+        throw new Error(
+          `Timezone should be defined for date granularity group by day`,
+        );
+      }
+
+      if (!isDefined(firstDayOfTheWeek)) {
+        throw new Error(
+          `First day of the week should be defined for date granularity group by day`,
+        );
+      }
+
+      const parsedZonedDateTime = parseToPlainDateOrThrow(
+        String(bucketRawValue),
+      ).toZonedDateTime(timezone);
+
+      return buildDateRangeFiltersForGranularity(
+        parsedZonedDateTime,
+        ObjectRecordGroupByDateGranularity.DAY,
         fieldMetadataItem.type,
         fieldName,
-        timezone,
+        firstDayOfTheWeek,
       );
     }
 
     if (isTimeRangeDateGranularity(dateGranularity)) {
+      if (!isNonEmptyString(timezone)) {
+        throw new Error(
+          `Timezone should be defined for date granularity group by`,
+        );
+      }
+
+      if (!isDefined(firstDayOfTheWeek)) {
+        throw new Error(
+          `First day of the week should be defined for date granularity group by`,
+        );
+      }
+
+      const parsedDateTime = parseToPlainDateOrThrow(
+        String(bucketRawValue),
+      ).toZonedDateTime(timezone);
+
       return buildDateRangeFiltersForGranularity(
-        parsedBucketDate,
+        parsedDateTime,
         dateGranularity,
         fieldMetadataItem.type,
         fieldName,
-        timezone,
+        firstDayOfTheWeek,
       );
     }
 
@@ -126,11 +139,12 @@ export const buildFilterFromChartBucket = ({
 
   const operand = availableOperands[0];
 
-  const value = formatChartFilterValue(
-    fieldMetadataItem.type,
+  const value = serializeChartBucketValueForFilter({
+    fieldType: fieldMetadataItem.type,
     bucketRawValue,
     operand,
-  );
+    subFieldName,
+  });
 
   return [
     {

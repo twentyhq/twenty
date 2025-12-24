@@ -1,25 +1,28 @@
-import { addDays, addMonths, startOfDay, subMonths } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
+import { isPlainDateAfter, isPlainDateBefore } from 'twenty-shared/utils';
 
-export const getHighlightedDates = (highlightedDateRange?: {
-  start: Date;
-  end: Date;
-}): Date[] => {
-  if (!highlightedDateRange) return [];
-  const { start, end } = highlightedDateRange;
+export const getHighlightedDates = (
+  start: Temporal.PlainDate,
+  end: Temporal.PlainDate,
+  timeZone: string,
+): Temporal.PlainDate[] => {
+  const highlightedDates: Temporal.PlainDate[] = [];
 
-  const highlightedDates: Date[] = [];
-  const currentDate = startOfDay(new Date());
-  const minDate = subMonths(currentDate, 2);
-  const maxDate = addMonths(currentDate, 2);
+  const currentDate = Temporal.Now.zonedDateTimeISO(timeZone)
+    .startOfDay()
+    .toPlainDate();
 
-  const startDate = start < minDate ? minDate : start;
-  const lastDate = end > maxDate ? maxDate : end;
+  const minDate = currentDate.subtract({ months: 2 });
+  const maxDate = currentDate.add({ months: 2 });
 
-  let dateToHighlight = new Date(startDate);
+  const startDate = isPlainDateBefore(start, minDate) ? minDate : start;
+  const lastDate = isPlainDateAfter(end, maxDate) ? maxDate : end;
 
-  while (dateToHighlight <= lastDate) {
+  let dateToHighlight = startDate;
+
+  while (isPlainDateBefore(dateToHighlight, lastDate.add({ days: 1 }))) {
     highlightedDates.push(dateToHighlight);
-    dateToHighlight = addDays(dateToHighlight, 1);
+    dateToHighlight = dateToHighlight.add({ days: 1 });
   }
 
   return highlightedDates;

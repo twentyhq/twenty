@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: Импорт контактов через CSV
+description: Полное пошаговое руководство по импорту людей/контактов в Twenty.
 ---
 
 ## Обзор
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Это руководство проведет вас через процесс импорта ваших контактов (People) в Twenty. **Сначала импортируйте Компании**, если хотите связать Людей с Компаниями.
 
 ## Перед началом
 
-### Prerequisites Checklist
+### Контрольный список предварительных требований
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Ваш файл в формате CSV, XLSX или XLS
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  В файле менее 10 000 записей
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  В вашем файле нет повторяющихся адресов электронной почты
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Компании импортированы первыми** (если вы связываете Людей с Компаниями)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Все пользовательские поля созданы в **Настройки → Модель данных**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Импортируйте Компании перед импортом Людей**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Если вы хотите связать Людей с Компаниями, сначала импортируйте Компании. Компания должна существовать до того, как вы сможете на неё сослаться.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Шаг 1: Подготовьте данные контактов
 
-### Required and Recommended Fields
+### Обязательные и рекомендуемые поля
 
-| Поле                  | Required?   | Формат            | Заметки                   |
-| --------------------- | ----------- | ----------------- | ------------------------- |
-| **Электронная почта** | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**        | Recommended | Текст             |                           |
-| **Last Name**         | Recommended | Текст             |                           |
-| **Company**           | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**             | Optional    | Multiple columns  | See below                 |
-| **Job Title**         | Optional    | Текст             |                           |
-| **Custom fields**     | Optional    | Varies            | Must exist in Data Model  |
+| Поле                      | Обязательно?  | Формат             | Заметки                             |
+| ------------------------- | ------------- | ------------------ | ----------------------------------- |
+| **Электронная почта**     | Рекомендуется | `name@domain.com`  | Должен быть уникальным              |
+| **Имя**                   | Рекомендуется | Текст              |                                     |
+| **Фамилия**               | Рекомендуется | Текст              |                                     |
+| **Компания**              | Необязательно | Домен или ID       | Связывает с существующей Компанией  |
+| **Телефон**               | Необязательно | Несколько столбцов | См. ниже                            |
+| **Должность**             | Необязательно | Текст              |                                     |
+| **Пользовательские поля** | Необязательно | Различается        | Должны существовать в модели данных |
 
-### Email Format
+### Формат электронной почты
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Должен быть корректный формат электронной почты: `name@domain.com`
+* **Должен быть уникальным** — без дубликатов в вашем файле или в Twenty
+* Для дополнительных адресов используйте столбец **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Формат телефона
 
-Phone is a **nested field** requiring multiple columns:
+Телефон — это **вложенное поле**, требующее нескольких столбцов:
 
-| Column                                  | Пример       |
+| Столбец                                 | Пример       |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### Связывание с компаниями
 
-Add a column with the Company's unique identifier:
+Добавьте столбец с уникальным идентификатором компании:
 
-| Column Name     | Формат     | Пример                                 |
-| --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
-| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Название столбца | Формат     | Пример                                 |
+| ---------------- | ---------- | -------------------------------------- |
+| `companyDomain`  | Формат URL | `https://acme.com`                     |
+| `companyId`      | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Используйте формат URL домена** (`https://acme.com`), а не метку. Это соответствует тому, как Компании хранятся в Twenty.
 </Note>
 
-### Sample CSV Structure
+### Пример структуры CSV
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,56 +93,56 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **Совет профессионала:** Нажмите **Download sample file** во время импорта или экспортируйте несколько существующих Людей, чтобы увидеть точные названия столбцов, которые ожидает Twenty.
 </Note>
 
-## Step 2: Access the Import Feature
+## Шаг 2: Откройте функцию импорта
 
-**Option 1: From the People View**
+**Вариант 1: Из представления Люди**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Перейдите к разделу **Люди** в левой боковой панели
+2. Нажмите значок **⋮** в правом верхнем углу
+3. Выберите **Импорт записей**
 
-**Option 2: Using Command Menu**
+**Вариант 2: Через командное меню**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Нажмите `Cmd + K` (Mac) или `Ctrl + K` (Windows)
+2. Введите "import"
+3. Выберите **Импорт записей**
+4. Выберите **Люди**
 
-## Step 3: Upload Your File
+## Шаг 3: Загрузите свой файл
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. Нажмите **Выбрать файл**
+2. Выберите свой файл CSV, XLSX или XLS
+3. Подождите, пока Twenty проанализирует ваш файл
 
-## Step 4: Map Your Columns
+## Шаг 4: Сопоставьте ваши столбцы
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty автоматически пытается сопоставить ваши столбцы с полями. Проверьте и при необходимости скорректируйте:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Проверьте автоматические сопоставления** — убедитесь, что они верны
+2. **Исправьте неверные сопоставления** — нажмите на раскрывающийся список, чтобы выбрать нужное поле
+3. **Пропустите столбцы** — выберите **Do not map** для столбцов, которые вы не хотите импортировать
 
-### Important Mapping Rules
+### Важные правила сопоставления
 
-| Column Type       | Map To                         | Заметки                            |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Электронная почта | **Электронная почта**          | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Телефон           | Separate columns               | Number, Country Code, Calling Code |
+| Тип столбца                             | Сопоставить с                  | Заметки                           |
+| --------------------------------------- | ------------------------------ | --------------------------------- |
+| Ссылка на Компанию                      | Поле связи **Компания**        | Используйте домен ИЛИ id, не оба  |
+| Электронная почта                       | **Электронная почта**          | Основной адрес электронной почты  |
+| Дополнительные адреса электронной почты | **Emails / Additional Emails** | Формат массива                    |
+| Телефон                                 | Отдельные столбцы              | Номер, код страны, телефонный код |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Сопоставление связи с Компанией
 
-When mapping the company column:
+При сопоставлении столбца компании:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Найдите столбец ссылки на компанию (например, `companyDomain`)
+2. Сопоставьте его с полем связи **Компания**
+3. Twenty свяжет каждого человека с соответствующей Компанией
 
 <Warning>
   **Map only ONE unique identifier for relations.**

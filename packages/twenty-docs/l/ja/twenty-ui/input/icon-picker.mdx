@@ -1,16 +1,16 @@
 ---
-title: アイコンピッカー
+title: Icon Picker
 image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="ヘッダー" />
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
 </Frame>
 
-ドロップダウンベースのアイコンピッカーで、ユーザーがリストからアイコンを選択できます。
+A dropdown-based icon picker that allows users to select an icon from a list.
 
 <Tabs>
-  <Tab title="使用方法">
+  <Tab title="Usage">
     ```jsx
     import { RecoilRoot } from "recoil";
     import React, { useState } from "react";
@@ -20,7 +20,7 @@ image: /images/user-guide/github/github-header.png
 
        const [selectedIcon, setSelectedIcon] = useState("");
        const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("選択されたアイコン:", iconKey);
+         console.log("Selected Icon:", iconKey);
          setSelectedIcon(iconKey);
        };
 
@@ -38,15 +38,15 @@ image: /images/user-guide/github/github-header.png
     ```
   </Tab>
 
-  <Tab title="プロパティ">
-    | プロパティ           | タイプ    | 説明                                                                             |
-    | --------------- | ------ | ------------------------------------------------------------------------------ |
-    | 無効              | ブール型   | `true` に設定されるとアイコンピッカーは無効になります                                                 |
-    | onChange        | 関数     | ユーザーがアイコンを選択したときにトリガーされるコールバック関数。 それは `iconKey` と `Icon` プロパティを持つオブジェクトを受け取ります |
-    | selectedIconKey | string | 最初に選択されたアイコンのキー                                                                |
-    | onClickOutside  | 関数     | ユーザーがドロップダウン外をクリックしたときにトリガーされるコールバック関数                                         |
-    | onClose         | 関数     | ドロップダウンが閉じられたときにトリガーされるコールバック関数                                                |
-    | onOpen          | 関数     | ドロップダウンが開かれたときにトリガーされるコールバック関数                                                 |
-    | バリアント           | string | クリック可能なアイコンのビジュアルスタイルバリアント。 オプションには `primary`、 `secondary`、 `tertiary` が含まれます  |
+  <Tab title="Props">
+    | Props           | Type     | Description                                                                                                               |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+    | disabled        | boolean  | Disables the icon picker if set to `true`                                                                                 |
+    | onChange        | function | The callback function triggered when the user selects an icon. It receives an object with `iconKey` and `Icon` properties |
+    | selectedIconKey | string   | The key of the initially selected icon                                                                                    |
+    | onClickOutside  | function | Callback function triggered when the user clicks outside the dropdown                                                     |
+    | onClose         | function | Callback function triggered when the dropdown is closed                                                                   |
+    | onOpen          | function | Callback function triggered when the dropdown is opened                                                                   |
+    | variant         | string   | The visual style variant of the clickable icon. Options include: `primary`, `secondary`, and `tertiary`                   |
   </Tab>
 </Tabs>

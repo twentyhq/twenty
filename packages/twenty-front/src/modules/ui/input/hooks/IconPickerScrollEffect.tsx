@@ -1,7 +1,7 @@
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
+import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 
 type IconPickerScrollEffectProps = {
   sentinelId: string;

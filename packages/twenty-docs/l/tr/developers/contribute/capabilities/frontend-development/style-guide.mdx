@@ -21,16 +21,16 @@ Her zaman TSX fonksiyonel bileşenlerini kullanın.
 Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
 
 ```tsx
-// ❌ Kötü, okumak zor, kod tamamlama ile ithal etmek zor
+// ❌ Bad, harder to read, harder to import with code completion
 const MyComponent = () => {
-  return <div>Merhaba Dünya</div>;
+  return <div>Hello World</div>;
 };
 
 export default MyComponent;
 
-// ✅ İyi, okumak kolay, kod tamamlama ile ithal etmek kolay
+// ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
-  return <div>Merhaba Dünya</div>;
+  return <div>Hello World</div>;
 };
 ```
 
@@ -41,23 +41,25 @@ Create the type of the props and call it `(ComponentName)Props` if there's no ne
 Use props destructuring.
 
 ```tsx
-// ❌ Kötü, tür yok
-export const MyComponent = (props) => <div>Merhaba {props.name}</div>;
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
 
-// ✅ İyi, tür
+// ✅ Good, type
 type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Merhaba {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
 #### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
 
 ```tsx
-/* ❌ - Kötü, bileşen tür notlarını `FC` ile tanımlıyor
- *  - `React.FC` ile, bileşen prop türünde tanımlanmamış olsa bile bir `children` prop kabul eder
- *    Bu her zaman istenmeyen sonuçlara neden olabilir, özellikle bileşen çocukları render etmeyi düşünmüyorsa.
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
  */
 const EmailField: React.FC<{
   value: string;
@@ -84,7 +86,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 JSX elemanlarında tek değişkenli prop yayılımını, örneğin `{...props}` kullanmaktan kaçının. Bu uygulama, bileşenin hangi prop'ları aldığını belirsizleştirdiği için okunması zor ve bakımı güç kodlara yol açar.
 
 ```tsx
-/* ❌ - Kötü, tek değişkenli bir prop'un alttaki bileşene yayılmasını sağlar
+/* ❌ - Bad, spreads a single variable prop into the underlying component
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
@@ -135,12 +137,12 @@ onClick?.();
 Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
 
 ```tsx
-// ❌ Kötü
+// ❌ Bad
 interface MyInterface {
   name: string;
 }
 
-// ✅ İyi
+// ✅ Good
 type MyType = {
   name: string;
 };
@@ -153,7 +155,7 @@ type MyType = {
 TypeScript, enum'ların neden kaçınılması gereken bir seçenek olduğunu [burada](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums) açıklamaktadır.
 
 ```tsx
-// ❌ Kötü, bir enum kullanıyor
+// ❌ Bad, utilizes an enum
 enum Color {
   Red = "red",
   Green = "green",

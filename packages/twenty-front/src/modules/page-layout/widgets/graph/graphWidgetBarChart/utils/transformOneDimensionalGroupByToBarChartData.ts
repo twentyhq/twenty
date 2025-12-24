@@ -16,7 +16,7 @@ import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { sortChartData } from '@/page-layout/widgets/graph/utils/sortChartData';
 import { type BarDatum } from '@nivo/bar';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type FirstDayOfTheWeek, isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
 type TransformOneDimensionalGroupByToBarChartDataParams = {
@@ -27,6 +27,8 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
   primaryAxisSubFieldName?: string | null;
+  userTimezone: string;
+  firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
@@ -46,6 +48,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   aggregateOperation,
   objectMetadataItem,
   primaryAxisSubFieldName,
+  userTimezone,
+  firstDayOfTheWeek,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
@@ -69,6 +73,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+    userTimezone,
+    firstDayOfTheWeek,
   });
 
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
@@ -84,6 +90,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
             configuration.primaryAxisDateGranularity ?? undefined,
           subFieldName:
             configuration.primaryAxisGroupBySubFieldName ?? undefined,
+          userTimezone,
+          firstDayOfTheWeek,
         })
       : '';
 

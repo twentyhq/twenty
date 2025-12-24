@@ -16,18 +16,18 @@ image: /images/user-guide/fields/field.png
     import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
     export const MyComponent = () => {
-     const breadcrumbLinks = [
-     { children: "Домой", href: "/" },
-     { children: "Категория", href: "/category" },
-     { children: "Подкатегория", href: "/category/subcategory" },
-     { children: "Текущая страница" },
-     ];
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
 
-     return (
-     <BrowserRouter>
-     <Breadcrumb className links={breadcrumbLinks} />
-     </BrowserRouter>
-     )
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
     };
     ```
   </Tab>

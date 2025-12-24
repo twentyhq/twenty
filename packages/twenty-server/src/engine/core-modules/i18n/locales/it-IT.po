@@ -3387,6 +3387,11 @@ msgstr "Campi richiesti mancanti: almeno un vincolo unico deve essere completame
 msgid "Missing required system field."
 msgstr "Manca un campo di sistema obbligatorio."
 
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr ""
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts

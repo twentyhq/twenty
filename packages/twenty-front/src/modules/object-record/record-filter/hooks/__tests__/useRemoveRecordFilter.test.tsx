@@ -7,8 +7,8 @@ import { act } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useRemoveRecordFilter } from '../useRemoveRecordFilter';
-import { useUpsertRecordFilter } from '../useUpsertRecordFilter';
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],

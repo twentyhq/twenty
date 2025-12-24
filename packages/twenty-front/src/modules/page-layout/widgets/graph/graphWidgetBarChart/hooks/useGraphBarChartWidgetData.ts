@@ -6,6 +6,8 @@ import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBa
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -43,6 +45,9 @@ export const useGraphBarChartWidgetData = ({
   });
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const { userTimezone } = useUserTimezone();
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+
   const limit = getBarChartQueryLimit(configuration);
 
   const {
@@ -64,6 +69,8 @@ export const useGraphBarChartWidgetData = ({
         objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
+        firstDayOfTheWeek: userFirstDayOfTheWeek,
       }),
     [
       groupByData,
@@ -71,6 +78,8 @@ export const useGraphBarChartWidgetData = ({
       objectMetadataItems,
       configuration,
       aggregateOperation,
+      userTimezone,
+      userFirstDayOfTheWeek,
     ],
   );
 

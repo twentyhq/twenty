@@ -2,7 +2,7 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
 import { lazy, Suspense } from 'react';
-import { useCurrentWidget } from '../../../hooks/useCurrentWidget';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 
 const GraphWidgetAggregateChart = lazy(() =>
   import(

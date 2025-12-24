@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import {
   COMMAND_MENU_WIDTH_VAR,
   commandMenuWidthState,
-} from '../states/commandMenuWidthState';
+} from '@/command-menu/states/commandMenuWidthState';
 
 export const CommandMenuWidthEffect = () => {
   const commandMenuWidth = useRecoilValue(commandMenuWidthState);

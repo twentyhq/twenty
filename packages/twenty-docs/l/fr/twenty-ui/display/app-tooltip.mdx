@@ -1,16 +1,16 @@
 ---
-title: Info-bulle de l'application
+title: App Tooltip
 image: /images/user-guide/tips/light-bulb.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tips/light-bulb.png" alt="En-tête" />
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
 </Frame>
 
-Un message bref qui affiche des informations supplémentaires lorsqu'un utilisateur interagit avec un élément.
+A brief message that displays additional information when a user interacts with an element.
 
 <Tabs>
-  <Tab title="Utilisation">
+  <Tab title="Usage">
     ```jsx
     import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
@@ -18,12 +18,12 @@ Un message bref qui affiche des informations supplémentaires lorsqu'un utilisat
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Aperçus client
+            Customer Insights
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Explorez le comportement et les préférences des clients"
+            content="Explore customer behavior and preferences"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -37,42 +37,42 @@ Un message bref qui affiche des informations supplémentaires lorsqu'un utilisat
     ```
   </Tab>
 
-  <Tab title="Propriétés">
-    | Propriétés              | Type                                         | Description                                                                                                                                                                                                 |
-    | ----------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nomDeClasse             | chaîne                                       | Classe CSS facultative pour le style supplémentaire                                                                                                                                                         |
-    | sélecteurAncre          | Sélecteur CSS                                | Sélecteur pour l'ancre de l'info-bulle (l'élément qui déclenche l'info-bulle)                                                                                                                               |
-    | contenu                 | chaîne                                       | Le contenu que vous souhaitez afficher dans l'info-bulle                                                                                                                                                    |
-    | délaiMasquer            | nombre                                       | Le délai avant de masquer l'info-bulle après que le curseur ait quitté l'ancre                                                                                                                              |
-    | décalage                | nombre                                       | Le décalage en pixels pour positionner l'info-bulle                                                                                                                                                         |
-    | pasDeFlèche             | booléen                                      | Si `vrai`, masque la flèche sur l'info-bulle                                                                                                                                                                |
-    | estOuvert               | booléen                                      | Si `vrai`, l'info-bulle est ouverte par défaut                                                                                                                                                              |
-    | emplacement             | Chaîne `PlacesType` de `react-tooltip`       | Spécifie le placement de l'info-bulle. Les valeurs incluent `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, et `left-end` |
-    | stratégiePositionnement | Chaîne `PositionStrategy` de `react-tooltip` | Stratégie de positionnement pour l'info-bulle. A deux valeurs : `absolute` et `fixed`                                                                                                                       |
+  <Tab title="Props">
+    | Props            | Type                                           | Description                                                                                                                                                                                             |
+    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | string                                         | Optional CSS class for additional styling                                                                                                                                                               |
+    | anchorSelect     | CSS selector                                   | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                                 |
+    | content          | string                                         | The content you want to display within the tooltip                                                                                                                                                      |
+    | delayHide        | number                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                       |
+    | offset           | number                                         | The offset in pixels for positioning the tooltip                                                                                                                                                        |
+    | noArrow          | boolean                                        | If `true`, hides the arrow on the tooltip                                                                                                                                                               |
+    | isOpen           | boolean                                        | If `true`, the tooltip is open by default                                                                                                                                                               |
+    | place            | `PlacesType` string from `react-tooltip`       | Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
+    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Position strategy for the tooltip. Has two values: `absolute` and `fixed`                                                                                                                               |
   </Tab>
 </Tabs>
 
-## Texte débordant avec info-bulle
+## Overflowing Text with Tooltip
 
-Gère le texte débordant et affiche une info-bulle lorsque le texte déborde.
+Handles overflowing text and displays a tooltip when the text overflows.
 
 <Tabs>
-  <Tab title="Utilisation">
+  <Tab title="Usage">
     ```jsx
     import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Suivre avec le client concernant son enquête récente sur le produit. Discuter des options de prix, répondre à toute préoccupation et fournir des informations additionnelles sur le produit. Enregistrer les détails de la conversation dans le CRM pour référence future.';
+        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };
     ```
   </Tab>
 
-  <Tab title="Propriétés">
-    | Propriétés | Type   | Description                                                             |
-    | ---------- | ------ | ----------------------------------------------------------------------- |
-    | texte      | chaîne | Le contenu que vous souhaitez afficher dans la zone de texte débordante |
+  <Tab title="Props">
+    | Props | Type   | Description                                                  |
+    | ----- | ------ | ------------------------------------------------------------ |
+    | text  | string | The content you want to display in the overflowing text area |
   </Tab>
 </Tabs>

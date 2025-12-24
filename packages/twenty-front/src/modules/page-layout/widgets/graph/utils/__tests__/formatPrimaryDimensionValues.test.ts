@@ -1,6 +1,7 @@
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import {
   FieldMetadataType,
+  FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 
@@ -14,6 +15,8 @@ const { formatDimensionValue } = jest.requireMock(
   '@/page-layout/widgets/graph/utils/formatDimensionValue',
 ) as { formatDimensionValue: jest.Mock };
 
+const userTimezone = 'Europe/Paris';
+
 describe('formatPrimaryDimensionValues', () => {
   it('includes buckets where the primary dimension value is null', () => {
     const result = formatPrimaryDimensionValues({
@@ -25,6 +28,8 @@ describe('formatPrimaryDimensionValues', () => {
         name: 'status',
         type: FieldMetadataType.TEXT,
       } as any,
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(result).toHaveLength(2);
@@ -46,13 +51,20 @@ describe('formatPrimaryDimensionValues', () => {
       } as any,
       primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
       primaryAxisGroupBySubFieldName: 'createdAt',
+      userTimezone,
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
 
     expect(formatDimensionValue).toHaveBeenCalledWith({
       value: '2024-01-15T00:00:00.000Z',
-      fieldMetadata: expect.objectContaining({ name: 'createdAt' }),
+      fieldMetadata: expect.objectContaining({
+        name: 'createdAt',
+        type: FieldMetadataType.DATE_TIME,
+      }),
       dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
       subFieldName: 'createdAt',
+      userTimezone: 'Europe/Paris',
+      firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
     });
   });
 });

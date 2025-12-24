@@ -7,7 +7,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsObjects } from '../SettingsObjects';
+import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjects',

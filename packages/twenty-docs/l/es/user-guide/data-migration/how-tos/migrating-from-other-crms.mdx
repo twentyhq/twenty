@@ -1,9 +1,9 @@
 ---
-title: Migración desde otros CRM
+title: Migrating from Other CRMs
 description: Step-by-step guide to migrate your data from any CRM to Twenty.
 ---
 
-## Resumen
+## Overview
 
 This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
 
@@ -72,7 +72,7 @@ Before importing data, prepare your Twenty workspace:
   If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
 </Warning>
 
-1. Ir a **Ajustes → Miembros**
+1. Go to **Settings → Members**
 2. Invite all team members
 3. **Wait for everyone to accept** their invitation
 4. Verify all users appear in your Members list
@@ -92,7 +92,7 @@ Export your data from your current CRM:
 2. Contacts / People
 3. Deals / Opportunities
 4. Notes and Activities
-5. Objetos personalizados
+5. Custom objects
 
 ## Step 5: Clean and Format Your Data
 
@@ -106,14 +106,14 @@ Open each exported CSV in a spreadsheet application and prepare it for Twenty.
 
 ### Format Fields Correctly
 
-| Field Type             | Required Format                                   |
-| ---------------------- | ------------------------------------------------- |
-| **Domain**             | `https://domain.com`                              |
-| **Correo Electrónico** | `name@domain.com` (must be unique)                |
-| **Date**               | `YYYY-MM-DD`                                      |
-| **Phone**              | Three columns: Number, Country Code, Calling Code |
-| **Boolean**            | `TRUE` or `FALSE` (uppercase)                     |
-| **Select fields**      | Use API names, not display labels                 |
+| Field Type        | Required Format                                   |
+| ----------------- | ------------------------------------------------- |
+| **Domain**        | `https://domain.com`                              |
+| **Email**         | `name@domain.com` (must be unique)                |
+| **Date**          | `YYYY-MM-DD`                                      |
+| **Phone**         | Three columns: Number, Country Code, Calling Code |
+| **Boolean**       | `TRUE` or `FALSE` (uppercase)                     |
+| **Select fields** | Use API names, not display labels                 |
 
 <Warning>
   **Domain format is critical.**
@@ -207,7 +207,7 @@ After importing data, complete your workspace configuration:
 * Set up saved views with filters, sorts, and column configurations
 * Create any kanban or calendar views you need
 
-### Recrear flujos de trabajo
+### Recreate Workflows
 
 * Rebuild your automations in **Settings → Workflows**
 * Start with the most critical workflows
@@ -229,7 +229,7 @@ After importing data, complete your workspace configuration:
 * Walk through the new interface together
 * Document any team-specific processes
 
-## Problemas Comunes y Soluciones
+## Common Issues and Solutions
 
 | Issue                   | Cause                       | Solution                                                                             |
 | ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
@@ -241,7 +241,7 @@ After importing data, complete your workspace configuration:
 
 See [How to Fix Import Errors](/l/es/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
 
-## Lista de verificación post-migración
+## Post-Migration Checklist
 
 ### Data Integrity
 
@@ -251,7 +251,7 @@ See [How to Fix Import Errors](/l/es/user-guide/data-migration/how-tos/fix-impor
 <Check>Custom fields populated</Check>
 <Check>No unexpected duplicates</Check>
 
-### Configuración
+### Configuration
 
 <Check>Views recreated</Check>
 <Check>Workflows recreated and tested</Check>
@@ -283,7 +283,7 @@ See [How to Fix Import Errors](/l/es/user-guide/data-migration/how-tos/fix-impor
   </Accordion>
 </AccordionGroup>
 
-## ¿Necesitas Ayuda?
+## Need Help?
 
 For complex migrations or large datasets:
 
