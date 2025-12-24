@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import {
+  type DatabaseEventPayload,
+  type FunctionConfig,
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-sdk';
+import Twenty, { type Person } from '../generated';
 
-const TWENTY_API_URL: string =
-  process.env.TWENTY_API_URL !== '' && process.env.TWENTY_API_URL !== undefined
-    ? `${process.env.TWENTY_API_URL}/rest`
-    : 'https://api.twenty.com/rest';
-const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const MAILCHIMP_API_URL: string =
   process.env.MAILCHIMP_SERVER_PREFIX !== '' &&
   process.env.MAILCHIMP_SERVER_PREFIX !== undefined
@@ -82,28 +83,26 @@ type twentyPerson = {
   companyId: string | null;
 };
 
+type DatabaseEvent =
+  | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
+  | DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
+
 const fetchCompanyData = async (companyId: string): Promise<twentyCompany> => {
-  const options = {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${TWENTY_API_KEY}`,
+  const { company } = await new Twenty().query({
+    company: {
+      __args: { filter: { id: { eq: companyId } } },
+      name: true,
+      address: {
+        addressStreet1: true,
+        addressStreet2: true,
+        addressState: true,
+        addressPostcode: true,
+        addressCity: true,
+        addressCountry: true,
+      },
     },
-    url: `${TWENTY_API_URL}/company/${companyId}`,
-  };
-  try {
-    const response = await axios.request(options);
-    return response.status === 200
-      ? ({
-          name: response.data.name as string,
-          address: response.data.address as twentyAddress,
-        } as twentyCompany)
-      : ({} as twentyCompany);
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw error;
-    }
-    throw error;
-  }
+  });
+  return company as unknown as twentyCompany;
 };
 
 const checkAddress = (address: twentyAddress): mailchimpAddress => {
@@ -290,11 +289,9 @@ const updateTwentyPersonInMailchimp = async (
   }
 };
 
-export const main = async (params: {
-  properties: Record<string, any>;
-  recordId: string;
-  userId: string;
-}): Promise<object | undefined> => {
+export const main = async (
+  params: DatabaseEvent,
+): Promise<object | undefined> => {
   if (!IS_EMAIL_CONSTRAINT && !IS_PHONE_CONSTRAINT) {
     console.warn(
       'Function exited as there are no constraints to email nor phone number',
@@ -307,10 +304,6 @@ export const main = async (params: {
     MAILCHIMP_AUDIENCE_ID === ''
   ) {
     console.warn('Missing Mailchimp required parameters');
-    return {};
-  }
-  if (IS_COMPANY_CONSTRAINT && TWENTY_API_KEY === '') {
-    console.warn('Missing Twenty related parameters');
     return {};
   }
 
@@ -436,7 +429,7 @@ export const main = async (params: {
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '83319670-775b-4862-b133-5c353e594151',
   name: 'mailchimp-synchronizer',
   triggers: [
