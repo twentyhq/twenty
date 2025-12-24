@@ -52,7 +52,6 @@ export const SettingsBillingCreditsSection = ({
     unitPriceCents,
   } = getWorkflowNodeExecutionUsage();
 
-  // Use totalGrantedCredits (base + rollover) for progress calculation
   const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
   const displayedProgressBarValue = progressBarValue < 3 ? 3 : progressBarValue;
 
