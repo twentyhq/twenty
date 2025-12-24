@@ -21,9 +21,9 @@ export const sortLineChartSeries = ({
 }): LineChartSeries[] => {
   switch (orderByY) {
     case GraphOrderBy.FIELD_ASC:
-      return series.toSorted((a, b) => b.id.localeCompare(a.id));
-    case GraphOrderBy.FIELD_DESC:
       return series.toSorted((a, b) => a.id.localeCompare(b.id));
+    case GraphOrderBy.FIELD_DESC:
+      return series.toSorted((a, b) => b.id.localeCompare(a.id));
     case GraphOrderBy.FIELD_POSITION_ASC:
       if (
         !isDefined(selectFieldOptions) ||
