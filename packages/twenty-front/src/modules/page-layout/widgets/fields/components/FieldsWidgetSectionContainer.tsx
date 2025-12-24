@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';
 
-const StyledRecordDetailSectionContainer = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+const StyledFieldsWidgetSectionContainer = styled(Section)`
   padding-top: ${({ theme }) => theme.spacing(3)};
   padding-bottom: ${({ theme }) => theme.spacing(3)};
   width: auto;
@@ -39,13 +38,12 @@ const StyledLink = styled(Link)`
   color: ${({ theme }) => theme.font.color.light};
   text-decoration: none;
   font-size: ${({ theme }) => theme.font.size.sm};
-
   :hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
 `;
 
-type RecordDetailSectionContainerProps = {
+type FieldsWidgetSectionContainerProps = {
   children: React.ReactNode;
   title: string;
   link?: { to: string; label: string };
@@ -55,7 +53,7 @@ type RecordDetailSectionContainerProps = {
   dataTestId?: string;
 };
 
-export const RecordDetailSectionContainer = ({
+export const FieldsWidgetSectionContainer = ({
   children,
   title,
   link,
@@ -63,10 +61,10 @@ export const RecordDetailSectionContainer = ({
   hideRightAdornmentOnMouseLeave = true,
   areRecordsAvailable = false,
   dataTestId,
-}: RecordDetailSectionContainerProps) => {
+}: FieldsWidgetSectionContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
-    <StyledRecordDetailSectionContainer>
+    <StyledFieldsWidgetSectionContainer>
       <StyledHeader
         areRecordsAvailable={areRecordsAvailable}
         onMouseEnter={() => setIsHovered(true)}
@@ -82,6 +80,6 @@ export const RecordDetailSectionContainer = ({
           : rightAdornment}
       </StyledHeader>
       {children}
-    </StyledRecordDetailSectionContainer>
+    </StyledFieldsWidgetSectionContainer>
   );
 };
