@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: Importa contatti tramite CSV
+description: Guida completa passo per passo all'importazione di persone/contatti in Twenty.
 ---
 
 ## Panoramica
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Questa guida ti accompagna nell'importazione dei tuoi contatti (Persone) in Twenty. **Importa prima le Aziende** se vuoi collegare le Persone alle Aziende.
 
 ## Prima di Iniziare
 
-### Prerequisites Checklist
+### Lista di controllo dei prerequisiti
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Il file è in formato CSV, XLSX o XLS
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  Il file contiene meno di 10.000 record
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  Nessun indirizzo email duplicato nel file
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Aziende importate per prime** (se colleghi Persone ad Aziende)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Tutti i campi personalizzati esistono in **Impostazioni → Modello dati**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Importa le Aziende prima delle Persone**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Se vuoi collegare le Persone alle Aziende, importa prima le Aziende. L'Azienda deve esistere prima di potervi fare riferimento.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Passo 1: Prepara i tuoi dati di contatto
 
-### Required and Recommended Fields
+### Campi obbligatori e consigliati
 
-| Campo             | Required?   | Formato           | Note                      |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **Email**         | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Testo             |                           |
-| **Last Name**     | Recommended | Testo             |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Testo             |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| Campo                    | Obbligatorio? | Formato           | Note                           |
+| ------------------------ | ------------- | ----------------- | ------------------------------ |
+| **Email**                | Consigliato   | `name@domain.com` | Deve essere univoco            |
+| **Nome**                 | Consigliato   | Testo             |                                |
+| **Cognome**              | Consigliato   | Testo             |                                |
+| **Azienda**              | Facoltativo   | Dominio o ID      | Collega a un'Azienda esistente |
+| **Telefono**             | Facoltativo   | Più colonne       | Vedi sotto                     |
+| **Titolo di lavoro**     | Facoltativo   | Testo             |                                |
+| **Campi personalizzati** | Facoltativo   | Varia             | Deve esistere nel Modello dati |
 
-### Email Format
+### Formato email
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Deve avere un formato email valido: `name@domain.com`
+* **Deve essere univoca** — nessun duplicato nel tuo file o in Twenty
+* Per email aggiuntive, usa la colonna **Email / Email aggiuntive**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Formato telefono
 
-Phone is a **nested field** requiring multiple columns:
+Telefono è un **campo annidato** che richiede più colonne:
 
-| Column                                  | Esempio      |
-| --------------------------------------- | ------------ |
-| **Phones / Primary Phone Number**       | `4159095555` |
-| **Phones / Primary Phone Country Code** | `US`         |
-| **Phones / Primary Phone Calling Code** | `+1`         |
+| Colonna                                                    | Esempio      |
+| ---------------------------------------------------------- | ------------ |
+| **Telefoni / Numero di telefono principale**               | `4159095555` |
+| **Telefoni / Codice paese del telefono principale**        | `US`         |
+| **Telefoni / Prefisso telefonico del telefono principale** | `+1`         |
 
-### Linking to Companies
+### Collegamento alle Aziende
 
-Add a column with the Company's unique identifier:
+Aggiungi una colonna con l'identificatore univoco dell'Azienda:
 
-| Column Name     | Formato    | Esempio                                |
-| --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
-| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| Nome colonna    | Formato     | Esempio                                |
+| --------------- | ----------- | -------------------------------------- |
+| `companyDomain` | Formato URL | `https://acme.com`                     |
+| `companyId`     | UUID        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Usa il formato URL del dominio** (`https://acme.com`), non l'etichetta. Questo corrisponde al modo in cui le Aziende sono memorizzate in Twenty.
 </Note>
 
-### Sample CSV Structure
+### Esempio di struttura CSV
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,59 +93,59 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante l'importazione oppure esporta alcune Persone esistenti per vedere i nomi di colonna esatti che Twenty si aspetta.
 </Note>
 
-## Step 2: Access the Import Feature
+## Passo 2: Accedi alla funzione di importazione
 
-**Option 1: From the People View**
+**Opzione 1: dalla vista Persone**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Vai a **Persone** nella barra laterale sinistra
+2. Fai clic sull'icona **⋮** in alto a destra
+3. Seleziona **Importa record**
 
-**Option 2: Using Command Menu**
+**Opzione 2: tramite Menu Comandi**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Premi `Cmd + K` (Mac) o `Ctrl + K` (Windows)
+2. Digita "import"
+3. Seleziona **Importa record**
+4. Scegli **Persone**
 
-## Step 3: Upload Your File
+## Passo 3: Carica il tuo file
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. Fai clic su **Seleziona file**
+2. Scegli il tuo file CSV, XLSX o XLS
+3. Attendi che Twenty analizzi il tuo file
 
-## Step 4: Map Your Columns
+## Passo 4: Mappa le tue colonne
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty tenta automaticamente di associare le tue colonne ai campi. Verifica e regola:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Controlla le mappature automatiche** — verifica che siano corrette
+2. **Correggi le mappature errate** — fai clic sul menu a discesa per selezionare il campo corretto
+3. **Salta colonne** — seleziona **Non mappare** per le colonne che non vuoi importare
 
-### Important Mapping Rules
+### Regole importanti di mappatura
 
-| Column Type       | Map To                         | Note                               |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Email             | **Email**                      | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Telefono          | Separate columns               | Number, Country Code, Calling Code |
+| Tipo di colonna         | Mappa su                       | Note                                          |
+| ----------------------- | ------------------------------ | --------------------------------------------- |
+| Riferimento all'Azienda | Campo di relazione **Azienda** | Usa il dominio O l'ID, non entrambi           |
+| Email                   | **Email**                      | Indirizzo email principale                    |
+| Email aggiuntive        | **Email / Email aggiuntive**   | Formato array                                 |
+| Telefono                | Colonne separate               | Numero, Codice paese, Prefisso internazionale |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Mappare la relazione con l'Azienda
 
-When mapping the company column:
+Quando mappi la colonna dell'azienda:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Trova la tua colonna di riferimento dell'azienda (ad es., `companyDomain`)
+2. Mappala al campo di relazione **Azienda**
+3. Twenty collegherà ogni Persona all'Azienda corrispondente
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **Mappa un solo identificatore univoco per le relazioni.**
 
   Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
 </Warning>
