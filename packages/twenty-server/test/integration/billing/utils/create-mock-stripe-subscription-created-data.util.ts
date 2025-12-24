@@ -94,8 +94,8 @@ export const createMockStripeSubscriptionCreatedData = (
     billing_cycle_anchor: 0,
     billing_cycle_anchor_config: null,
     billing_mode: {
-      type: 'classic',
-      flexible: null,
+      type: 'flexible',
+      flexible: {},
     },
     billing_thresholds: null,
     cancel_at: null,

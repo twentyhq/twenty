@@ -46,6 +46,9 @@ export class StripeCreditGrantService {
       `Creating credit grant for customer ${customerId}: ${creditUnits} credits = ${monetaryAmount} cents`,
     );
 
+    // Add 60 seconds buffer to ensure effective_at is in the future when Stripe processes it
+    const effectiveAt = Math.floor(Date.now() / 1000) + 60;
+
     return this.stripe.billing.creditGrants.create({
       customer: customerId,
       amount: {
@@ -56,7 +59,7 @@ export class StripeCreditGrantService {
         scope: { price_type: 'metered' },
       },
       category: 'promotional',
-      effective_at: Math.floor(Date.now() / 1000),
+      effective_at: effectiveAt,
       expires_at: Math.floor(expiresAt.getTime() / 1000),
       name: 'Rollover credits',
       metadata,

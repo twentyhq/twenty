@@ -17,8 +17,8 @@ export const mockStripeSubscriptionUpdatedEventWithoutUpdatedItem: Stripe.Custom
           liability: null,
         },
         billing_mode: {
-          type: 'classic',
-          flexible: null,
+          type: 'flexible',
+          flexible: {},
         },
         billing_thresholds: null,
         cancel_at: null,
@@ -173,8 +173,8 @@ export const mockStripeSubscriptionUpdatedEventWithUpdatedItemOnly: Stripe.Custo
           liability: null,
         },
         billing_mode: {
-          type: 'classic',
-          flexible: null,
+          type: 'flexible',
+          flexible: {},
         },
         billing_thresholds: null,
         cancel_at: null,
@@ -396,8 +396,8 @@ export const mockStripeSubscriptionUpdatedEventWithDeletedItem: Stripe.CustomerS
           liability: null,
         },
         billing_mode: {
-          type: 'classic',
-          flexible: null,
+          type: 'flexible',
+          flexible: {},
         },
         billing_thresholds: null,
         cancel_at: null,
