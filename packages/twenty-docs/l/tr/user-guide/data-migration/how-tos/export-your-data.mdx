@@ -1,209 +1,209 @@
 ---
-title: Export Your Data
-description: Complete step-by-step guide to exporting data from Twenty.
+title: Verilerinizi Dışa Aktarın
+description: Twenty'den veri dışa aktarmaya yönelik eksiksiz, adım adım kılavuz.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Genel Bakış
 
-Export your workspace data to CSV for backups, reporting, or migration.
+Yedekleme, raporlama veya geçiş için çalışma alanı verilerinizi CSV'ye dışa aktarın.
 
 **Kullanım alanları:**
 
-* **Regular backups** — keep copies of your data
-* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
-* **Migration** — move data to another system
-* **Bulk updates** — export, edit, and re-import to update records
+* **Düzenli yedeklemeler** — verilerinizin kopyalarını saklayın
+* **Harici raporlama** — verileri Excel, Google Sheets veya BI araçlarında analiz edin
+* **Geçiş** — verileri başka bir sisteme taşıyın
+* **Toplu güncellemeler** — kayıtları güncellemek için dışa aktarın, düzenleyin ve yeniden içe aktarın
 
-## What You Need to Know
+## Bilmeniz Gerekenler
 
-### Export Limits
+### Dışa Aktarma Sınırları
 
-* **Maximum 20,000 records** per export
-* Only **visible columns** are exported
-* Only **filtered records** are exported (based on your current view)
+* Dışa aktarma başına **en fazla 20.000 kayıt**
+* Yalnızca **görünür sütunlar** dışa aktarılır
+* Yalnızca **filtrelenmiş kayıtlar** dışa aktarılır (mevcut görünümünüze göre)
 
-<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/tr/developers/extend/capabilities/apis).</Note>
+<Note>Daha büyük dışa aktarmalar için (20.000+ kayıt), toplu halde dışa aktarmak üzere filtreleri kullanın veya [API](/l/tr/developers/extend/capabilities/apis)'yi kullanın.</Note>
 
 ### İzinler
 
-You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+Verileri dışa aktarmak için **"Export CSV"** iznine ihtiyacınız var. Bu seçeneğiniz yoksa çalışma alanı yöneticinizle iletişime geçin.
 
-## Step 1: Navigate to the Object
+## Adım 1: Nesneye gidin
 
-Go to the object you want to export:
+Dışa aktarmak istediğiniz nesneye gidin:
 
-* **People** — for contacts
-* **Companies** — for organizations
-* **Opportunities** — for deals
-* **Custom objects** — any object you've created
+* **People** — kişiler için
+* **Companies** — kuruluşlar için
+* **Opportunities** — anlaşmalar için
+* **Özel nesneler** — oluşturduğunuz herhangi bir nesne
 
-## Step 2: Configure Your View
+## Adım 2: Görünümünüzü yapılandırın
 
-**Important:** The export includes only what's visible in your current view.
+**Önemli:** Dışa aktarma, yalnızca mevcut görünümünüzde görünenleri içerir.
 
-### Add/Remove Columns
+### Sütun Ekle/Kaldır
 
-1. Click **Options → Fields** (or the **+** at the end of columns)
-2. Check the fields you want to export
-3. Uncheck fields you don't need
+1. **Options → Fields**'a tıklayın (veya sütunların sonundaki **+** simgesine)
+2. Dışa aktarmak istediğiniz alanları işaretleyin
+3. Gerek duymadığınız alanların işaretini kaldırın
 
-### Filter Records (Optional)
+### Kayıtları Filtrele (İsteğe bağlı)
 
-If you only need a subset of data:
+Yalnızca verilerin bir alt kümesine ihtiyacınız varsa:
 
-1. Click **Filter**
-2. Add filter conditions (e.g., "Created date > January 1, 2024")
-3. Only matching records will be exported
+1. **Filter**'a tıklayın
+2. Filtre koşulları ekleyin (ör. "Created date > January 1, 2024")
+3. Yalnızca eşleşen kayıtlar dışa aktarılır
 
-### Sort Records (Optional)
+### Kayıtları Sırala (İsteğe bağlı)
 
-1. Click a column header to sort
-2. The export will follow your sort order
+1. Sıralamak için bir sütun başlığına tıklayın
+2. Dışa aktarma, sıralama düzeninizi takip eder
 
-<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+<Note>**Dışa aktarma için özel bir görünüm oluşturun.** Her seferinde yeniden yapılandırmamak için özellikle dışa aktarmaya göre yapılandırılmış bir görünümü kaydedin.</Note>
 
-## Step 3: Export the Data
+## Adım 3: Verileri dışa aktarın
 
-1. Click the **⋮** icon on the top right of the table
-2. Select **Export view**
-3. Choose where to save the CSV file
-4. Wait for the download to complete
+1. Tablonun sağ üst köşesindeki **⋮** simgesine tıklayın
+2. **Export view**'i seçin
+3. CSV dosyasının nereye kaydedileceğini seçin
+4. İndirmenin tamamlanmasını bekleyin
 
-## What Gets Exported
+## Neler Dışa Aktarılır
 
-| Included                         | Not Included           |
-| -------------------------------- | ---------------------- |
-| All visible columns              | Hidden columns         |
-| Records matching current filters | Filtered-out records   |
-| Custom field values              | Fields not in the view |
-| Record IDs                       | File attachments       |
-| Relation IDs                     | Images                 |
+| Dahil                               | Dahil Değil                      |
+| ----------------------------------- | -------------------------------- |
+| Tüm görünür sütunlar                | Gizli sütunlar                   |
+| Mevcut filtrelerle eşleşen kayıtlar | Filtreyle hariç tutulan kayıtlar |
+| Özel alan değerleri                 | Görünümde olmayan alanlar        |
+| Kayıt ID'leri                       | Dosya ekleri                     |
+| İlişki ID'leri                      | Görseller                        |
 
 ### İlişki Alanları
 
-Relation IDs are only exported on the **"many" side** of a relationship:
+İlişki ID'leri yalnızca bir ilişkinin **"çok" tarafında** dışa aktarılır:
 
-* **People export** includes a `companyId` column (People → Company relation)
-* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+* **People dışa aktarması**, `companyId` sütununu içerir (People → Company ilişkisi)
+* **Companies dışa aktarması**, `peopleIds` içermez (Companies ilişkide "tek" taraftır)
 
-This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+Bu, Company bağlantısını koruyarak yeniden içe aktarmak için People dışa aktarmasını kullanabileceğiniz anlamına gelir; ancak ilişkileri yeniden oluşturmak için Companies'ten sonra People'ı yeniden içe aktarmanız gerekir.
 
-## Exporting for Specific Purposes
+## Belirli Amaçlar İçin Dışa Aktarma
 
-### For Backups
+### Yedeklemeler İçin
 
-1. Create a view with **all fields** visible
-2. Remove all filters to include all records
-3. Export each object type separately
-4. Store exports in a secure location
-5. Set a recurring reminder (weekly/monthly)
+1. **Tüm alanların** görünür olduğu bir görünüm oluşturun
+2. Tüm kayıtları dahil etmek için tüm filtreleri kaldırın
+3. Her nesne türünü ayrı ayrı dışa aktarın
+4. Dışa aktarmaları güvenli bir konumda saklayın
+5. Tekrarlayan bir hatırlatıcı ayarlayın (haftalık/aylık)
 
-### For External Reporting
+### Harici Raporlama İçin
 
-1. Include only the fields you need for analysis
-2. Apply filters to focus on relevant data
-3. Consider sorting by the field you'll analyze
+1. Analiz için yalnızca ihtiyaç duyduğunuz alanları dahil edin
+2. İlgili verilere odaklanmak için filtreler uygulayın
+3. Analiz edeceğiniz alana göre sıralamayı düşünün
 
-### For Bulk Updates
+### Toplu Güncellemeler İçin
 
-1. Export the records you want to update
-2. Include the unique identifier (`email`, `domain`, or `id`)
-3. Edit the exported file
-4. Re-import to update records
-   See: [How to Update Existing Records](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import)
+1. Güncellemek istediğiniz kayıtları dışa aktarın
+2. Benzersiz tanımlayıcıyı dahil edin (`email`, `domain` veya `id`)
+3. Dışa aktarılan dosyayı düzenleyin
+4. Kayıtları güncellemek için yeniden içe aktarın
+   Bkz: [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import)
 
-### For Migration
+### Geçiş İçin
 
-If you're exporting to migrate to another system:
+Başka bir sisteme geçiş yapmak için dışa aktarıyorsanız:
 
-1. **Export each object separately** — People, Companies, Opportunities, etc.
-2. **Include ID fields** — these help maintain relationships
-3. **Document field mappings** — note how Twenty fields map to your target system
+1. **Her nesneyi ayrı ayrı dışa aktarın** — People, Companies, Opportunities, vb.
+2. **ID alanlarını dahil edin** — bunlar ilişkilerin korunmasına yardımcı olur
+3. **Alan eşlemelerini belgeleyin** — Twenty alanlarının hedef sisteminize nasıl eşlendiğini not edin
 
-## Handling Large Datasets (20,000+ Records)
+## Büyük Veri Kümelerini Yönetme (20.000+ Kayıt)
 
-The export limit is 20,000 records. For larger datasets:
+Dışa aktarma sınırı 20.000 kayıttır. Daha büyük veri kümeleri için:
 
-### Option 1: Export in Batches
+### Seçenek 1: Partiler halinde dışa aktarma
 
-1. Add a filter (e.g., "Created date" ranges)
-2. Export the first batch
-3. Change the filter
-4. Export the next batch
-5. Combine files in your spreadsheet
+1. Bir filtre ekleyin (ör. "Created date" aralıkları)
+2. İlk partiyi dışa aktarın
+3. Filtreyi değiştirin
+4. Sonraki partiyi dışa aktarın
+5. Dosyaları hesap tablonuzda birleştirin
 
-**Example filters for batching:**
+**Partiler için örnek filtreler:**
 
-* By date range (January, February, March...)
-* By owner (Team member A, Team member B...)
-* By status (Active, Inactive...)
+* Tarih aralığına göre (Ocak, Şubat, Mart...)
+* Sahibine göre (Ekip üyesi A, Ekip üyesi B...)
+* Duruma göre (Aktif, Pasif...)
 
-### Option 2: Use the API
+### Seçenek 2: API'yi kullanın
 
-The API has no record limit:
+API'nin kayıt sınırı yoktur:
 
-1. Get your API key from **Settings → Developers**
-2. Use the GraphQL API to query records
-3. Process results in your application
+1. API anahtarınızı **Settings → Developers** bölümünden alın
+2. Kayıtları sorgulamak için GraphQL API'sini kullanın
+3. Sonuçları uygulamanızda işleyin
 
-See: [API Documentation](/l/tr/developers/extend/capabilities/apis)
+Bkz: [API Belgeleri](/l/tr/developers/extend/capabilities/apis)
 
-## Tips and Best Practices
+## İpuçları ve En İyi Uygulamalar
 
-### Create Export Views
+### Dışa Aktarma Görünümleri Oluşturun
 
-Save views configured specifically for exports:
+Özellikle dışa aktarma için yapılandırılmış görünümleri kaydedin:
 
-1. Configure columns and filters
-2. Click **View options** → **Save as new view**
-3. Name it "Export - [Purpose]"
+1. Sütunları ve filtreleri yapılandırın
+2. **View options** → **Save as new view** seçeneğine tıklayın
+3. Adını "Export - [Purpose]" olarak verin
 
-### Secure Your Exports
+### Dışa Aktarmalarınızı Güvenceye Alın
 
-Exported files may contain sensitive data:
+Dışa aktarılan dosyalar hassas veriler içerebilir:
 
-* Store in secure locations
-* Delete old exports when no longer needed
-* Be careful sharing export files
+* Güvenli konumlarda depolayın
+* Artık gerekmediğinde eski dışa aktarmaları silin
+* Dışa aktarma dosyalarını paylaşırken dikkatli olun
 
-### Check Before Exporting
+### Dışa Aktarmadan Önce Kontrol Edin
 
-<Check>Correct columns are visible</Check>
-<Check>Filters are set correctly (or removed for full export)</Check>
-<Check>You have Export permission</Check>
+<Check>Doğru sütunlar görünür</Check>
+<Check>Filtreler doğru ayarlanmış (veya tam dışa aktarma için kaldırılmış)</Check>
+<Check>Dışa aktarma iznine sahipsiniz</Check>
 
-## FAQ
+## SSS
 
 <AccordionGroup>
-  <Accordion title="Why are some columns missing from my export?">
-    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  <Accordion title="Dışa aktarmamda bazı sütunlar neden eksik?">
+    Yalnızca görünür sütunlar dışa aktarılır. Dışa aktarmadan önce ihtiyaç duyduğunuz sütunları **Options → Fields** üzerinden ekleyin.
   </Accordion>
 
-  <Accordion title="Why doesn't my export have all records?">
-    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  <Accordion title="Dışa aktarmamda neden tüm kayıtlar yok?">
+    Filtrelerinizi kontrol edin. Dışa aktarma, yalnızca mevcut görünüm filtrelerinizle eşleşen kayıtları içerir. Tüm kayıtları dışa aktarmak için filtreleri kaldırın.
   </Accordion>
 
-  <Accordion title="Can I export more than 20,000 records?">
-    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  <Accordion title="20.000'den fazla kayıt dışa aktarabilir miyim?">
+    Tek bir dışa aktarmada mümkün değil. Partiler halinde dışa aktarmak için filtreleri kullanın veya daha büyük veri kümeleri için API'yi kullanın.
   </Accordion>
 
-  <Accordion title="What format is the export file?">
-    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  <Accordion title="Dışa aktarma dosyasının biçimi nedir?">
+    CSV (Virgülle Ayrılmış Değerler). Excel, Google Sheets veya herhangi bir hesap tablosu uygulamasında açılır.
   </Accordion>
 
-  <Accordion title="Are relation IDs included?">
-    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  <Accordion title="İlişki ID'leri dahil mi?">
+    Evet, ancak yalnızca ilişkilerin "çok" tarafında. Örneğin, bir People dışa aktarması `companyId` içerir, ancak bir Companies dışa aktarması people ID'lerini içermez.
   </Accordion>
 
-  <Accordion title="Can I automate exports?">
-    Not directly through the UI. Use the API to build automated export workflows.
+  <Accordion title="Dışa aktarmaları otomatikleştirebilir miyim?">
+    Doğrudan UI üzerinden değil. Otomatik dışa aktarma iş akışları oluşturmak için API'yi kullanın.
   </Accordion>
 </AccordionGroup>
 
 ## Sonraki Adımlar
 
-* [How to Update Existing Records](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
-* [How to Import Data via API](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
-* [API Documentation](/l/tr/developers/extend/capabilities/apis) — build custom export workflows
+* [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-migration/how-tos/update-existing-records-via-import) — dışa aktarmanızı düzenleyin ve yeniden içe aktarın
+* [API ile Veri Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) — büyük veri kümeleri için
+* [API Belgeleri](/l/tr/developers/extend/capabilities/apis) — özel dışa aktarma iş akışları oluşturun
