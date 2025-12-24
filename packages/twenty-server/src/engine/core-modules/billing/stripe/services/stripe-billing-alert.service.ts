@@ -41,7 +41,7 @@ export class StripeBillingAlertService {
 
     await this.stripe.billing.alerts.create({
       alert_type: 'usage_threshold',
-      title: `Trial usage cap for customer ${customerId}`,
+      title: `Usage cap for customer ${customerId}`,
       usage_threshold: {
         gte,
         meter: meter.id,

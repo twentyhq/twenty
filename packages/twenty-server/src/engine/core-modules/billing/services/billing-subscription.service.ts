@@ -39,6 +39,7 @@ import { BillingPlanService } from 'src/engine/core-modules/billing/services/bil
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -81,6 +82,7 @@ export class BillingSubscriptionService {
     private readonly billingSubscriptionPhaseService: BillingSubscriptionPhaseService,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
+    private readonly stripeBillingAlertService: StripeBillingAlertService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -221,10 +223,35 @@ export class BillingSubscriptionService {
       { workspaceId },
     );
 
-    await this.updateSubscription(billingSubscription.id, {
+    const subscriptionUpdate = {
       type: SubscriptionUpdateType.METERED_PRICE,
       newMeteredPriceId: meteredPriceId,
-    });
+    } as const;
+
+    const isScheduledForPeriodEnd =
+      await this.shouldUpdateAtSubscriptionPeriodEnd(
+        billingSubscription,
+        subscriptionUpdate,
+      );
+
+    await this.updateSubscription(billingSubscription.id, subscriptionUpdate);
+
+    // If it's an immediate upgrade (not scheduled for period end),
+    // reset the cap flag and create an alert at the new tier cap
+    if (!isScheduledForPeriodEnd) {
+      await this.billingSubscriptionItemRepository.update(
+        { stripeSubscriptionId: billingSubscription.stripeSubscriptionId },
+        { hasReachedCurrentPeriodCap: false },
+      );
+
+      const newTierCap =
+        await this.getWorkflowTierCapFromPriceId(meteredPriceId);
+
+      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+        billingSubscription.stripeCustomerId,
+        newTierCap,
+      );
+    }
   }
 
   async cancelSwitchMeteredPrice(workspace: WorkspaceEntity): Promise<void> {
@@ -272,6 +299,16 @@ export class BillingSubscriptionService {
     await this.billingSubscriptionItemRepository.update(
       { stripeSubscriptionId: updatedSubscription.id },
       { hasReachedCurrentPeriodCap: false },
+    );
+
+    // Create billing alert at the paid tier cap (not trial cap)
+    const tierCap = await this.getWorkflowTierCapForSubscription(
+      billingSubscription.id,
+    );
+
+    await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+      billingSubscription.stripeCustomerId,
+      tierCap,
     );
 
     return {
@@ -511,6 +548,59 @@ export class BillingSubscriptionService {
           : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
       ),
     );
+  }
+
+  async getWorkflowTierCapForSubscription(
+    subscriptionId: string,
+  ): Promise<number> {
+    const subscription = await this.billingSubscriptionRepository.findOneOrFail(
+      {
+        where: { id: subscriptionId },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
+
+    const workflowItem = subscription.billingSubscriptionItems.find(
+      (item) =>
+        item.billingProduct.metadata.productKey ===
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+
+    if (!isDefined(workflowItem)) {
+      throw new BillingException(
+        'Workflow subscription item not found',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    const matchingPrice = workflowItem.billingProduct.billingPrices.find(
+      (price) => price.stripePriceId === workflowItem.stripePriceId,
+    );
+
+    if (!isDefined(matchingPrice)) {
+      throw new BillingException(
+        `Cannot find price for product ${workflowItem.stripeProductId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(matchingPrice.tiers);
+
+    return matchingPrice.tiers[0].up_to;
+  }
+
+  async getWorkflowTierCapFromPriceId(meteredPriceId: string): Promise<number> {
+    const price = await this.billingPriceRepository.findOneOrFail({
+      where: { stripePriceId: meteredPriceId },
+    });
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return price.tiers[0].up_to;
   }
 
   private async runSubscriptionUpdate({
