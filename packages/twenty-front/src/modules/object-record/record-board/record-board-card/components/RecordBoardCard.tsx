@@ -14,12 +14,14 @@ import { RecordBoardCardBody } from '@/object-record/record-board/record-board-c
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RecordBoardCardMultiDragStack } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragStack';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -151,34 +153,40 @@ export const RecordBoardCard = () => {
         instanceId: `record-board-card-${recordId}`,
       }}
     >
-      <StyledBoardCardWrapper
-        data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-        onContextMenu={handleContextMenuOpen}
+      <RecordFieldsScopeContextProvider
+        value={{ scopeInstanceId: RECORD_BOARD_CARD_INPUT_ID_PREFIX }}
       >
-        <StyledCardContainer isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}>
-          {isRecordIdPrimaryDragMultiple && <RecordBoardCardMultiDragStack />}
-          <RecordCard
-            data-selected={isCurrentCardSelected}
-            data-focused={isCurrentCardFocused}
-            data-active={isCurrentCardActive}
-            onMouseLeave={onMouseLeaveBoard}
-            onClick={handleCardClick}
+        <StyledBoardCardWrapper
+          data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
+          onContextMenu={handleContextMenuOpen}
+        >
+          <StyledCardContainer
             isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
-            isSecondaryDragged={isRecordIdSecondaryDragMultiple}
-            isDragging={isDraggingThisCard}
           >
-            <RecordBoardCardHeader />
-            <AnimatedEaseInOut
-              isOpen={isCardExpanded || !isCompactModeActive}
-              initial={false}
+            {isRecordIdPrimaryDragMultiple && <RecordBoardCardMultiDragStack />}
+            <RecordCard
+              data-selected={isCurrentCardSelected}
+              data-focused={isCurrentCardFocused}
+              data-active={isCurrentCardActive}
+              onMouseLeave={onMouseLeaveBoard}
+              onClick={handleCardClick}
+              isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
+              isSecondaryDragged={isRecordIdSecondaryDragMultiple}
+              isDragging={isDraggingThisCard}
             >
-              <RecordBoardCardBody />
-            </AnimatedEaseInOut>
-          </RecordCard>
-        </StyledCardContainer>
-        <RecordBoardCardCellHoveredPortal />
-        <RecordBoardCardCellEditModePortal />
-      </StyledBoardCardWrapper>
+              <RecordBoardCardHeader />
+              <AnimatedEaseInOut
+                isOpen={isCardExpanded || !isCompactModeActive}
+                initial={false}
+              >
+                <RecordBoardCardBody />
+              </AnimatedEaseInOut>
+            </RecordCard>
+          </StyledCardContainer>
+          <RecordBoardCardCellHoveredPortal />
+          <RecordBoardCardCellEditModePortal />
+        </StyledBoardCardWrapper>
+      </RecordFieldsScopeContextProvider>
     </RecordBoardCardComponentInstanceContext.Provider>
   );
 };
