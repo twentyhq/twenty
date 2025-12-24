@@ -16,13 +16,19 @@ export enum PageLayoutExceptionMessageKey {
   TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION = 'TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION',
 }
 
-const pageLayoutExceptionUserFriendlyMessages: Record<
-  PageLayoutExceptionCode,
-  MessageDescriptor
-> = {
-  [PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND]: msg`Page layout not found.`,
-  [PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA]: msg`Invalid page layout data.`,
-  [PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION]: msg`Tab not found for widget duplication.`,
+const getPageLayoutExceptionUserFriendlyMessage = (
+  code: PageLayoutExceptionCode,
+) => {
+  switch (code) {
+    case PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND:
+      return msg`Page layout not found.`;
+    case PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA:
+      return msg`Invalid page layout data.`;
+    case PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
+      return msg`Tab not found for widget duplication.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class PageLayoutException extends CustomException<PageLayoutExceptionCode> {
@@ -33,7 +39,7 @@ export class PageLayoutException extends CustomException<PageLayoutExceptionCode
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? pageLayoutExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getPageLayoutExceptionUserFriendlyMessage(code),
     });
   }
 }

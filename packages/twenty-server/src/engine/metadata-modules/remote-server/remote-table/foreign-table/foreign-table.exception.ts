@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,17 @@ export enum ForeignTableExceptionCode {
   INVALID_FOREIGN_TABLE_INPUT = 'INVALID_FOREIGN_TABLE_INPUT',
 }
 
-const foreignTableExceptionUserFriendlyMessages: Record<
-  ForeignTableExceptionCode,
-  MessageDescriptor
-> = {
-  [ForeignTableExceptionCode.FOREIGN_TABLE_MUTATION_NOT_ALLOWED]: msg`This foreign table cannot be modified.`,
-  [ForeignTableExceptionCode.INVALID_FOREIGN_TABLE_INPUT]: msg`Invalid foreign table input.`,
+const getForeignTableExceptionUserFriendlyMessage = (
+  code: ForeignTableExceptionCode,
+) => {
+  switch (code) {
+    case ForeignTableExceptionCode.FOREIGN_TABLE_MUTATION_NOT_ALLOWED:
+      return msg`This foreign table cannot be modified.`;
+    case ForeignTableExceptionCode.INVALID_FOREIGN_TABLE_INPUT:
+      return msg`Invalid foreign table input.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class ForeignTableException extends CustomException<ForeignTableExceptionCode> {
@@ -24,7 +30,7 @@ export class ForeignTableException extends CustomException<ForeignTableException
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? foreignTableExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getForeignTableExceptionUserFriendlyMessage(code),
     });
   }
 }

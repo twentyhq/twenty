@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -7,11 +8,15 @@ export enum FeatureFlagExceptionCode {
   INVALID_FEATURE_FLAG_KEY = 'INVALID_FEATURE_FLAG_KEY',
 }
 
-const featureFlagExceptionUserFriendlyMessages: Record<
-  FeatureFlagExceptionCode,
-  MessageDescriptor
-> = {
-  [FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY]: msg`Invalid feature flag key.`,
+const getFeatureFlagExceptionUserFriendlyMessage = (
+  code: FeatureFlagExceptionCode,
+) => {
+  switch (code) {
+    case FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY:
+      return msg`Invalid feature flag key.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class FeatureFlagException extends CustomException<FeatureFlagExceptionCode> {
@@ -22,7 +27,7 @@ export class FeatureFlagException extends CustomException<FeatureFlagExceptionCo
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? featureFlagExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getFeatureFlagExceptionUserFriendlyMessage(code),
     });
   }
 }

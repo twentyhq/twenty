@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,15 @@ export enum AuditExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
 }
 
-const auditExceptionUserFriendlyMessages: Record<
-  AuditExceptionCode,
-  MessageDescriptor
-> = {
-  [AuditExceptionCode.INVALID_TYPE]: msg`Invalid audit type.`,
-  [AuditExceptionCode.INVALID_INPUT]: msg`Invalid audit input.`,
+const getAuditExceptionUserFriendlyMessage = (code: AuditExceptionCode) => {
+  switch (code) {
+    case AuditExceptionCode.INVALID_TYPE:
+      return msg`Invalid audit type.`;
+    case AuditExceptionCode.INVALID_INPUT:
+      return msg`Invalid audit input.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class AuditException extends CustomException<AuditExceptionCode> {
@@ -24,7 +28,7 @@ export class AuditException extends CustomException<AuditExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? auditExceptionUserFriendlyMessages[code],
+        userFriendlyMessage ?? getAuditExceptionUserFriendlyMessage(code),
     });
   }
 }

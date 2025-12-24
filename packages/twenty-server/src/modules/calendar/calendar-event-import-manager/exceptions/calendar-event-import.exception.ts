@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -8,12 +9,17 @@ export enum CalendarEventImportExceptionCode {
   UNKNOWN = 'UNKNOWN',
 }
 
-const calendarEventImportExceptionUserFriendlyMessages: Record<
-  CalendarEventImportExceptionCode,
-  MessageDescriptor
-> = {
-  [CalendarEventImportExceptionCode.PROVIDER_NOT_SUPPORTED]: msg`Calendar provider is not supported.`,
-  [CalendarEventImportExceptionCode.UNKNOWN]: msg`An unknown calendar error occurred.`,
+const getCalendarEventImportExceptionUserFriendlyMessage = (
+  code: CalendarEventImportExceptionCode,
+) => {
+  switch (code) {
+    case CalendarEventImportExceptionCode.PROVIDER_NOT_SUPPORTED:
+      return msg`Calendar provider is not supported.`;
+    case CalendarEventImportExceptionCode.UNKNOWN:
+      return msg`An unknown calendar error occurred.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class CalendarEventImportException extends CustomException<CalendarEventImportExceptionCode> {
@@ -25,7 +31,7 @@ export class CalendarEventImportException extends CustomException<CalendarEventI
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        calendarEventImportExceptionUserFriendlyMessages[code],
+        getCalendarEventImportExceptionUserFriendlyMessage(code),
     });
   }
 }
