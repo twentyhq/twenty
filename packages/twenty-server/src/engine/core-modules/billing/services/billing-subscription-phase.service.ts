@@ -14,8 +14,8 @@ import type Stripe from 'stripe';
 
 import { type BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
-import { type BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()

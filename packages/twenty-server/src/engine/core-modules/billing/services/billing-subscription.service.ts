@@ -585,13 +585,13 @@ export class BillingSubscriptionService {
         subscription.stripeSubscriptionId,
       );
 
-    const shouldBeUpdatedAtSubscriptionPeriodEnd =
-      await this.checkIfShouldBeUpdatedAtSubscriptionPeriodEnd(
+    const shouldUpdateAtSubscriptionPeriodEnd =
+      await this.shouldUpdateAtSubscriptionPeriodEnd(
         subscription,
         subscriptionUpdate,
       );
 
-    if (shouldBeUpdatedAtSubscriptionPeriodEnd) {
+    if (shouldUpdateAtSubscriptionPeriodEnd) {
       if (!isDefined(schedule)) {
         const { schedule, currentPhase } =
           await this.stripeSubscriptionScheduleService.createSubscriptionSchedule(
@@ -740,7 +740,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  private async checkIfShouldBeUpdatedAtSubscriptionPeriodEnd(
+  private async shouldUpdateAtSubscriptionPeriodEnd(
     subscription: BillingSubscriptionEntity,
     update: SubscriptionUpdate,
   ): Promise<boolean> {
