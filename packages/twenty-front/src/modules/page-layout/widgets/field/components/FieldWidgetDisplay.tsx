@@ -19,7 +19,6 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
