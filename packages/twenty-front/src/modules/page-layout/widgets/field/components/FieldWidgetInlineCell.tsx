@@ -27,7 +27,7 @@ import { useRecoilCallback } from 'recoil';
 
 type FieldWidgetInlineCellProps = {
   loading?: boolean;
-  instanceIdPrefix: string;
+  instanceIdPrefix?: string;
 };
 
 export const FieldWidgetInlineCell = ({
@@ -145,7 +145,6 @@ export const FieldWidgetInlineCell = ({
           recordId,
           fieldMetadataId: fieldDefinition.fieldMetadataId,
           componentType: 'inline-cell',
-          instanceId: instanceIdPrefix ?? '',
         });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
@@ -171,7 +170,6 @@ export const FieldWidgetInlineCell = ({
   );
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    instanceIdPrefix: instanceIdPrefix,
     readonly: isReadOnly,
     buttonIcon: buttonIcon,
     editModeContent: <FieldInput />,

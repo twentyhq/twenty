@@ -28,7 +28,6 @@ export const FieldWidgetCellHoveredPortal = ({
     recordId,
     fieldMetadataId: fieldMetadataItem.id,
     componentType: 'inline-cell',
-    instanceId,
   });
   const isEditing = activeDropdownFocusId === expectedDropdownFocusId;
 

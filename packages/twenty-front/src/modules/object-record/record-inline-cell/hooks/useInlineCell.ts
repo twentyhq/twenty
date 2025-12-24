@@ -20,8 +20,7 @@ export const useInlineCell = (
     recordFieldComponentInstanceIdFromProps,
   );
 
-  const { instanceIdPrefix, onOpenEditMode, onCloseEditMode } =
-    useRecordInlineCellContext();
+  const { onOpenEditMode, onCloseEditMode } = useRecordInlineCellContext();
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();

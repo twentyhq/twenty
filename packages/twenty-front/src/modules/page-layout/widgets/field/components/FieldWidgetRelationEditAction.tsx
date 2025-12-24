@@ -92,7 +92,6 @@ export const FieldWidgetRelationEditAction = ({
     getRecordFieldCardRelationPickerDropdownId({
       fieldDefinition,
       recordId,
-      instanceId: widget.id,
     });
 
   const isRelationSelectionDropdownOpen = useRecoilComponentValue(
@@ -114,7 +113,6 @@ export const FieldWidgetRelationEditAction = ({
         {isMorphRelation ? (
           <RecordDetailMorphRelationSectionDropdown
             loading={false}
-            instanceId={widget.id}
             dropdownTriggerClickableComponent={
               dropdownTriggerClickableComponent
             }
@@ -122,7 +120,6 @@ export const FieldWidgetRelationEditAction = ({
         ) : (
           <RecordDetailRelationSectionDropdown
             loading={false}
-            instanceId={widget.id}
             dropdownTriggerClickableComponent={
               dropdownTriggerClickableComponent
             }

@@ -161,7 +161,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
             recordId,
             fieldMetadataId: fieldDefinition.fieldMetadataId,
             componentType: 'table-cell',
-            instanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
           }),
         );
       },

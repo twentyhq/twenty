@@ -99,9 +99,7 @@ export const RecordInlineCellAnchoredPortal = ({
                 instanceId: fieldInstanceId,
               }}
             >
-              <RecordInlineCellAnchoredPortalContext
-                instanceIdPrefix={instanceIdPrefix}
-              >
+              <RecordInlineCellAnchoredPortalContext>
                 {children}
 
                 <RecordInlineCellCloseOnCommandMenuOpeningEffect />

@@ -11,12 +11,10 @@ import { useContext, type ReactNode } from 'react';
 import { useIcons } from 'twenty-ui/display';
 
 type RecordInlineCellAnchoredPortalContextProps = {
-  instanceIdPrefix: string;
   children: ReactNode;
 };
 
 export const RecordInlineCellAnchoredPortalContext = ({
-  instanceIdPrefix,
   children,
 }: RecordInlineCellAnchoredPortalContextProps) => {
   const {
@@ -32,7 +30,6 @@ export const RecordInlineCellAnchoredPortalContext = ({
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    instanceIdPrefix,
     readonly: isRecordFieldReadOnly,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName

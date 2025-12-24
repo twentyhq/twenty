@@ -28,7 +28,7 @@ import {
 
 type RecordInlineCellProps = {
   loading?: boolean;
-  instanceIdPrefix: string;
+  instanceIdPrefix?: string;
 };
 
 export const RecordInlineCell = ({
