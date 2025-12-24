@@ -37,6 +37,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => (
           <TextInput
+            key={editedEnvVariable.key}
             label={editedEnvVariable.key}
             value={editedEnvVariable.value}
             onChange={(newValue) => {
