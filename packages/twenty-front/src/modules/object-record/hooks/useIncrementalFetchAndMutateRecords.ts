@@ -15,6 +15,7 @@ type MutateRecordsBatchParams = {
   recordIds: string[];
   totalFetchedCount: number;
   totalCount: number;
+  abortSignal: AbortSignal;
 };
 
 export const useIncrementalFetchAndMutateRecords = <T>({
@@ -28,6 +29,9 @@ export const useIncrementalFetchAndMutateRecords = <T>({
   const [progress, setProgress] = useState<ObjectRecordQueryProgress>({
     displayType: 'number',
   });
+
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   const { fetchMoreRecordsLazy, findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular,
@@ -50,6 +54,8 @@ export const useIncrementalFetchAndMutateRecords = <T>({
 
     try {
       setIsProcessing(true);
+      const controller = new AbortController();
+      setAbortController(controller);
 
       const findManyRecordsDataResult = await findManyRecordsLazy();
 
@@ -73,6 +79,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
           recordIds: firstPageRecordIds,
           totalFetchedCount,
           totalCount,
+          abortSignal: controller.signal,
         });
       }
 
@@ -81,7 +88,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
       let lastCursor = firstQueryResult?.pageInfo.endCursor ?? null;
 
       for (let pageIndex = 0; pageIndex < remainingPages; pageIndex++) {
-        if (lastCursor === null) {
+        if (lastCursor === null || controller.signal.aborted) {
           break;
         }
 
@@ -89,7 +96,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
           break;
         }
 
-        const rawResult = await fetchMoreRecordsLazy();
+        const rawResult = await fetchMoreRecordsLazy(limit);
         const fetchMoreResult = rawResult?.data;
 
         const currentPageRecordIds =
@@ -102,6 +109,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
             recordIds: currentPageRecordIds,
             totalFetchedCount,
             totalCount,
+            abortSignal: controller.signal,
           });
         }
 
@@ -111,12 +119,23 @@ export const useIncrementalFetchAndMutateRecords = <T>({
 
         lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
       }
+    } catch (error) {
+      if ((error as any).name === 'AbortError') {
+        return;
+      }
+
+      throw error;
     } finally {
       setIsProcessing(false);
       setProgress({
         displayType: 'number',
       });
+      setAbortController(null);
     }
+  };
+
+  const cancel = () => {
+    abortController?.abort();
   };
 
   const updateProgress = (
@@ -135,5 +154,6 @@ export const useIncrementalFetchAndMutateRecords = <T>({
     isProcessing,
     incrementalFetchAndMutate,
     updateProgress,
+    cancel,
   };
 };

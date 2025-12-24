@@ -33,6 +33,9 @@ export type UpdateManyRecordsProps<T extends ObjectRecord = ObjectRecord> = {
   updateOneRecordInput: Partial<Omit<T, 'id'>>;
   skipOptimisticEffect?: boolean;
   delayInMsBetweenRequests?: number;
+  skipRegisterObjectOperation?: boolean;
+  skipRefetchAggregateQueries?: boolean;
+  abortSignal?: AbortSignal;
 };
 
 export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -83,6 +86,9 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
     updateOneRecordInput,
     delayInMsBetweenRequests,
     skipOptimisticEffect = false,
+    skipRegisterObjectOperation = false,
+    skipRefetchAggregateQueries = false,
+    abortSignal,
   }: UpdateManyRecordsProps<T>) => {
     const numberOfBatches = Math.ceil(
       recordIdsToUpdate.length / mutationPageSize,
@@ -177,6 +183,11 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
             filter: { id: { in: batchedIdsToUpdate } },
             data: sanitizedInput,
           },
+          context: {
+            fetchOptions: {
+              signal: abortSignal,
+            },
+          },
         })
         .catch((error: Error) => {
           if (skipOptimisticEffect) {
@@ -249,17 +260,21 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
       }
     }
 
-    await refetchAggregateQueries();
+    if (!skipRefetchAggregateQueries) {
+      await refetchAggregateQueries();
+    }
 
-    registerObjectOperation(objectMetadataItem, {
-      type: 'update-many',
-      result: {
-        updateInputs: recordIdsToUpdate.map((id) => ({
-          id,
-          ...updateOneRecordInput,
-        })),
-      },
-    });
+    if (!skipRegisterObjectOperation) {
+      registerObjectOperation(objectMetadataItem, {
+        type: 'update-many',
+        result: {
+          updateInputs: recordIdsToUpdate.map((id) => ({
+            id,
+            ...updateOneRecordInput,
+          })),
+        },
+      });
+    }
 
     return updatedRecords;
   };

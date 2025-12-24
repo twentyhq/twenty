@@ -10,6 +10,7 @@ import { CommandMenuPageLayoutTabSettings } from '@/command-menu/pages/page-layo
 import { CommandMenuPageLayoutWidgetTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect';
 import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuMergeRecordPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
+import { CommandMenuUpdateMultipleRecords } from '@/command-menu/pages/record-page/components/CommandMenuUpdateMultipleRecords';
 import { CommandMenuEditRichTextPage } from '@/command-menu/pages/rich-text-page/components/CommandMenuEditRichTextPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
 import { CommandMenuWorkflowCreateStep } from '@/command-menu/pages/workflow/step/create/components/CommandMenuWorkflowCreateStep';
@@ -27,6 +28,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.Root, <CommandMenu />],
   [CommandMenuPages.ViewRecord, <CommandMenuRecordPage />],
   [CommandMenuPages.MergeRecords, <CommandMenuMergeRecordPage />],
+  [CommandMenuPages.UpdateRecords, <CommandMenuUpdateMultipleRecords />],
   [CommandMenuPages.ViewEmailThread, <CommandMenuMessageThreadPage />],
   [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],

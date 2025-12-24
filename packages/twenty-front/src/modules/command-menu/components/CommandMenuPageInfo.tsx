@@ -1,3 +1,4 @@
+import { CommandMenuMultipleRecordsInfo } from '@/command-menu/components/CommandMenuMultipleRecordsInfo';
 import { CommandMenuPageLayoutInfo } from '@/command-menu/components/CommandMenuPageLayoutInfo';
 import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuRecordInfo';
 import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
@@ -59,6 +60,17 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
 
   if (isPageLayoutPage) {
     return <CommandMenuPageLayoutInfo />;
+  }
+
+  const isMultipleRecordsPage =
+    pageChip.page?.page === CommandMenuPages.UpdateRecords;
+
+  if (isMultipleRecordsPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <CommandMenuMultipleRecordsInfo
+        commandMenuPageInstanceId={pageChip.page.pageId}
+      />
+    );
   }
 
   return (

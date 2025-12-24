@@ -35,6 +35,7 @@ export {
   IconBookmark,
   IconBookmarkPlus,
   IconBox,
+  IconBoxMultiple,
   IconBrackets,
   IconBracketsAngle,
   IconBracketsContain,

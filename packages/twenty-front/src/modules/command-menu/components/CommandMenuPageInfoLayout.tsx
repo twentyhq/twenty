@@ -29,6 +29,7 @@ export const StyledPageInfoTextContainer = styled.div`
 export const StyledPageInfoTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  padding-inline: ${({ theme }) => theme.spacing(1)};
   min-width: 0;
   max-width: 150px;
 `;
