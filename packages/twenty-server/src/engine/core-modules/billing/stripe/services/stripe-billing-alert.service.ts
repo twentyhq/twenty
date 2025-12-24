@@ -91,7 +91,7 @@ export class StripeBillingAlertService {
 
     for (const alert of customerAlerts) {
       await this.stripe.billing.alerts.archive(alert.id);
-      this.logger.log(`Archived billing alert ${alert.id} for customer ${customerId}`);
+      this.logger.log(`Archived alert ${alert.id} for customer ${customerId}`);
     }
   }
 }
