@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
@@ -21,6 +22,7 @@ export const useInlineCell = (
   );
 
   const { onOpenEditMode, onCloseEditMode } = useRecordInlineCellContext();
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
@@ -47,7 +49,7 @@ export const useInlineCell = (
       recordId,
       fieldMetadataId: fieldDefinition.fieldMetadataId,
       componentType: 'inline-cell',
-      instanceId: instanceIdPrefix,
+      instanceId: scopeInstanceId,
     });
 
     setActiveDropdownFocusIdAndMemorizePrevious(dropdownId);

@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldContext,
   type GenericFieldContextType,
@@ -114,14 +115,16 @@ export const WidgetActionFieldEdit = () => {
   } satisfies GenericFieldContextType;
 
   return (
-    <RecordFieldComponentInstanceContext.Provider
-      value={{
-        instanceId: recordFieldInputInstanceId,
-      }}
-    >
-      <FieldContext.Provider value={fieldContextValue}>
-        <FieldWidgetEditAction />
-      </FieldContext.Provider>
-    </RecordFieldComponentInstanceContext.Provider>
+    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: recordFieldInputInstanceId,
+        }}
+      >
+        <FieldContext.Provider value={fieldContextValue}>
+          <FieldWidgetEditAction />
+        </FieldContext.Provider>
+      </RecordFieldComponentInstanceContext.Provider>
+    </RecordFieldsScopeContextProvider>
   );
 };

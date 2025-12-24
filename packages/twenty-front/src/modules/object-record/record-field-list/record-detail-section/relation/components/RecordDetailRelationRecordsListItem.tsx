@@ -12,6 +12,10 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
+import {
+  RecordFieldsScopeContextProvider,
+  useRecordFieldsScopeContextOrThrow,
+} from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListItemContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListItemContainer';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -27,6 +31,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { t } from '@lingui/core/macro';
@@ -47,7 +52,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 
 const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
   isDropdownOpen?: boolean;
@@ -99,6 +103,7 @@ export const RecordDetailRelationRecordsListItem = ({
   relationObjectMetadataNameSingular,
   relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const {
     fieldDefinition,
     recordId,
@@ -162,7 +167,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
-    instanceId,
+    instanceId: scopeInstanceId,
   });
   const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
     singleRecordPickerSelectedIdComponentState,
@@ -285,15 +290,21 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <RecordFieldList
-          instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
-          objectNameSingular={relationObjectMetadataNameSingular}
-          objectRecordId={relationRecord.id}
-          showDuplicatesSection={false}
-          showRelationSections={false}
-          excludeCreatedAtAndUpdatedAt={true}
-          excludeFieldMetadataIds={[relationFieldMetadataId]}
-        />
+        <RecordFieldsScopeContextProvider
+          value={{
+            scopeInstanceId: `record-detail-relation-${relationRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`,
+          }}
+        >
+          <RecordFieldList
+            instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
+            objectNameSingular={relationObjectMetadataNameSingular}
+            objectRecordId={relationRecord.id}
+            showDuplicatesSection={false}
+            showRelationSections={false}
+            excludeCreatedAtAndUpdatedAt={true}
+            excludeFieldMetadataIds={[relationFieldMetadataId]}
+          />
+        </RecordFieldsScopeContextProvider>
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal

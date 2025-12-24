@@ -3,6 +3,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
@@ -103,93 +104,97 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   }
 
   return (
-    <StyledContainer>
-      <RecordFieldListComponentInstanceContext.Provider
-        value={{
-          instanceId,
-        }}
-      >
-        {sectionsWithFieldIndices.map((section) => (
-          <RecordDetailSectionContainer key={section.id} title={section.title}>
-            <PropertyBox>
-              {isPrefetchLoading ? (
-                <PropertyBoxSkeletonLoader />
-              ) : (
-                <>
-                  {section.fields.map(
-                    ({ field: fieldMetadataItem, globalIndex }) => {
-                      return (
-                        <FieldContext.Provider
-                          key={targetRecord.id + fieldMetadataItem.id}
-                          value={{
-                            recordId: targetRecord.id,
-                            maxWidth: 200,
-                            isLabelIdentifier: false,
-                            fieldDefinition:
-                              formatFieldMetadataItemAsColumnDefinition({
-                                field: fieldMetadataItem,
-                                position: globalIndex,
-                                objectMetadataItem,
-                                showLabel: true,
-                                labelWidth: 90,
-                              }),
-                            useUpdateRecord: useUpdateOneObjectRecordMutation,
-                            isDisplayModeFixHeight: true,
-                            isRecordFieldReadOnly: isRecordFieldReadOnly({
-                              isRecordReadOnly,
-                              objectPermissions:
-                                getObjectPermissionsFromMapByObjectMetadataId({
-                                  objectPermissionsByObjectMetadataId,
-                                  objectMetadataId: objectMetadataItem.id,
-                                }),
-                              fieldMetadataItem: {
-                                id: fieldMetadataItem.id,
-                                isUIReadOnly:
-                                  fieldMetadataItem.isUIReadOnly ?? false,
-                              },
-                            }),
-                            onMouseEnter: () =>
-                              setRecordFieldListHoverPosition(globalIndex),
-                            anchorId: `${getRecordFieldInputInstanceId({
-                              recordId: targetRecord.id,
-                              fieldName: fieldMetadataItem.name,
-                              prefix: instanceId,
-                            })}`,
-                          }}
-                        >
-                          <RecordFieldComponentInstanceContext.Provider
+    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+      <StyledContainer>
+        <RecordFieldListComponentInstanceContext.Provider
+          value={{
+            instanceId,
+          }}
+        >
+          {sectionsWithFieldIndices.map((section) => (
+            <RecordDetailSectionContainer
+              key={section.id}
+              title={section.title}
+            >
+              <PropertyBox>
+                {isPrefetchLoading ? (
+                  <PropertyBoxSkeletonLoader />
+                ) : (
+                  <>
+                    {section.fields.map(
+                      ({ field: fieldMetadataItem, globalIndex }) => {
+                        return (
+                          <FieldContext.Provider
+                            key={targetRecord.id + fieldMetadataItem.id}
                             value={{
-                              instanceId: getRecordFieldInputInstanceId({
+                              recordId: targetRecord.id,
+                              maxWidth: 200,
+                              isLabelIdentifier: false,
+                              fieldDefinition:
+                                formatFieldMetadataItemAsColumnDefinition({
+                                  field: fieldMetadataItem,
+                                  position: globalIndex,
+                                  objectMetadataItem,
+                                  showLabel: true,
+                                  labelWidth: 90,
+                                }),
+                              useUpdateRecord: useUpdateOneObjectRecordMutation,
+                              isDisplayModeFixHeight: true,
+                              isRecordFieldReadOnly: isRecordFieldReadOnly({
+                                isRecordReadOnly,
+                                objectPermissions:
+                                  getObjectPermissionsFromMapByObjectMetadataId(
+                                    {
+                                      objectPermissionsByObjectMetadataId,
+                                      objectMetadataId: objectMetadataItem.id,
+                                    },
+                                  ),
+                                fieldMetadataItem: {
+                                  id: fieldMetadataItem.id,
+                                  isUIReadOnly:
+                                    fieldMetadataItem.isUIReadOnly ?? false,
+                                },
+                              }),
+                              onMouseEnter: () =>
+                                setRecordFieldListHoverPosition(globalIndex),
+                              anchorId: `${getRecordFieldInputInstanceId({
                                 recordId: targetRecord.id,
                                 fieldName: fieldMetadataItem.name,
                                 prefix: instanceId,
-                              }),
+                              })}`,
                             }}
                           >
-                            <RecordInlineCell
-                              loading={recordLoading}
-                              instanceIdPrefix={instanceId}
-                            />
-                          </RecordFieldComponentInstanceContext.Provider>
-                        </FieldContext.Provider>
-                      );
-                    },
-                  )}
-                </>
-              )}
-            </PropertyBox>
-          </RecordDetailSectionContainer>
-        ))}
+                            <RecordFieldComponentInstanceContext.Provider
+                              value={{
+                                instanceId: getRecordFieldInputInstanceId({
+                                  recordId: targetRecord.id,
+                                  fieldName: fieldMetadataItem.name,
+                                  prefix: instanceId,
+                                }),
+                              }}
+                            >
+                              <RecordInlineCell loading={recordLoading} />
+                            </RecordFieldComponentInstanceContext.Provider>
+                          </FieldContext.Provider>
+                        );
+                      },
+                    )}
+                  </>
+                )}
+              </PropertyBox>
+            </RecordDetailSectionContainer>
+          ))}
 
-        <FieldsWidgetCellHoveredPortal
-          objectMetadataItem={objectMetadataItem}
-          recordId={targetRecord.id}
-        />
-        <FieldsWidgetCellEditModePortal
-          objectMetadataItem={objectMetadataItem}
-          recordId={targetRecord.id}
-        />
-      </RecordFieldListComponentInstanceContext.Provider>
-    </StyledContainer>
+          <FieldsWidgetCellHoveredPortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={targetRecord.id}
+          />
+          <FieldsWidgetCellEditModePortal
+            objectMetadataItem={objectMetadataItem}
+            recordId={targetRecord.id}
+          />
+        </RecordFieldListComponentInstanceContext.Provider>
+      </StyledContainer>
+    </RecordFieldsScopeContextProvider>
   );
 };
