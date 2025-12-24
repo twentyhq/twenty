@@ -6444,6 +6444,11 @@ msgstr "Sinulla ei ole lupaa luoda työtila-tason näkymiä."
 msgid "You don't have permission to modify this view."
 msgstr "Sinulla ei ole lupaa muokata tätä näkymää."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

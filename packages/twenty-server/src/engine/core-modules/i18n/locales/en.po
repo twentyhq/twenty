@@ -6439,6 +6439,11 @@ msgstr "You don't have permission to create workspace-level views."
 msgid "You don't have permission to modify this view."
 msgstr "You don't have permission to modify this view."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr "You have exhausted your credits. Please upgrade your plan to continue."
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

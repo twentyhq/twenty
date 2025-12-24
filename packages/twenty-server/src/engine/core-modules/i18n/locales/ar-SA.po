@@ -6444,6 +6444,11 @@ msgstr "ليس لديك الإذن بإنشاء عروض على مستوى مس�
 msgid "You don't have permission to modify this view."
 msgstr "ليس لديك إذن لتعديل هذا العرض."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

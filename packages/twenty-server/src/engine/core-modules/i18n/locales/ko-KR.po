@@ -6444,6 +6444,11 @@ msgstr "작업 공간 수준의 보기를 생성할 권한이 없습니다."
 msgid "You don't have permission to modify this view."
 msgstr "이 보기를 수정할 권한이 없습니다."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
