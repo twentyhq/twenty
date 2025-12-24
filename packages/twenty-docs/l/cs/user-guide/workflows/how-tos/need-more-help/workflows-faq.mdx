@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: Často kladené otázky k pracovním postupům.
+description: Často kladené otázky k pracovním postupům v Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="Proč nemohu aktivovat pracovní postup?">
+    Pravděpodobně jde o problém s oprávněními. K vytváření a aktivaci potřebujete přístup k pracovním postupům.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **Řešení**: Kontaktujte správce pracovního prostoru, aby vám v **Settings → Roles** udělil přístup k pracovním postupům.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    Pokud v postranním panelu vůbec nevidíte sekci Pracovní postupy, potvrzuje to, že jde o problém s oprávněními.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="Proč nevidím tlačítko ručního pracovního postupu v horní navigační liště?">
+    Ruční pracovní postupy se v navigační liště zobrazují jen při správné konfiguraci:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. Pracovní postup musí být **aktivní** (ne v režimu konceptu)
+    2. Umístění v navigační liště musí být nastaveno na **Pinned**
+    3. Pro spouštěče Single/Bulk musíte být na správné stránce objektu
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **Jak ověřit**: Otevřete pracovní postup → klikněte na spouštěč → ověřte, že "Navbar placement" je nastaveno na "Pinned".
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    K ručním pracovním postupům se vždy dostanete přes **Cmd + K** (nebo **Ctrl + K**) bez ohledu na nastavení navigační lišty.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Typ | Records Required | Běhy průběhu práce |
-    | --- | ---------------- | ------------------ |
+  <Accordion title="Jaký je rozdíl mezi ručními spouštěči Single, Global a Bulk?">
+    | Typ | Požadované záznamy | Běhy průběhu práce |
+    | --- | ------------------ | ------------------ |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | Žádné | Jednou, bez vstupu záznamu |
+    \| **Single** | Jeden nebo více vybraných | Jednou na každý vybraný záznam |
+    \| **Bulk** | Jeden nebo více vybraných | Jednou, se všemi záznamy jako pole |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: Použijte, když pracovní postup nepotřebuje kontext žádného záznamu (např. vygenerování reportu)
+    * **Single**: Použijte, když chcete zpracovat každý vybraný záznam samostatně (např. poslat jednotlivé e-maily)
+    * **Bulk**: Použijte, když potřebujete zpracovávat záznamy společně nebo optimalizovat využití kreditů (vyžaduje akci Iterator)
 
-    See [Workflow Triggers](/l/cs/user-guide/workflows/capabilities/workflow-triggers) for details.
+    Podrobnosti viz [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers).
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. Co mám dělat?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="Nevidím uzel If/Else. Co mám dělat?">
+    Explicitní uzel If/Else zatím není dostupný, ale je na naší roadmapě.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **Aktuální řešení**: Vytvořte z kroku více větví, každou začněte akcí **Filter**:
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    Pouze větev, ve které podmínka filtru projde, provede své následné akce.
 
-    See [How to Use Branches](/l/cs/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    Viz [Jak používat větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) pro podrobný návod.
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="Běží větve pracovního postupu paralelně?">
+    **Ano**, větve ve výchozím nastavení běží paralelně.
 
-    If you want only one branch to execute:
+    Pokud chcete spustit pouze jednu větev:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * Na začátek každé větve přidejte akci **Filter**
+    * Nastavte opačné podmínky (např. Větev A: status = "Open", Větev B: status ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    Větve, které nesplní podmínku filtru, se zastaví, ostatní pokračují.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="Mohu větve znovu sloučit dohromady?">
+    **Ano**. Po dokončení paralelních větví můžete přidat krok, na který se obě větve napojí.
 
-    In the workflow editor:
+    V editoru pracovního postupu:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. Dokončete akce ve větvích
+    2. Přidejte nový krok za větve
+    3. Přetáhněte spojení z konce každé větve do tohoto nového kroku
 
-    The merged step will execute after all connected branches complete.
+    Sloučený krok se provede po dokončení všech připojených větví.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Jaký je limit výsledků akce Search Records?">
+    **Search Records vrací maximálně 200 záznamů.**
 
-    If you need to process more:
+    Pokud potřebujete zpracovat více:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * Přidejte konkrétnější filtry pro zmenšení výsledků
+    * Použijte plánované pracovní postupy ke zpracování po dávkách
+    * Zvažte použití API pro hromadné operace
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    Pro většinu pracovních postupů je 200 záznamů dostačující. Pokud na tento limit narážíte pravidelně, zvažte přepracování své automatizace.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="Mohu přidávat adresáty do kopie (CC) v e-mailech z pracovních postupů?">
+    **Zatím ne.** Pole CC a BCC pro akci Send Email jsou na naší roadmapě.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **Aktuální řešení**: Přidejte více akcí Send Email pro odeslání dalším příjemcům nebo použijte HTTP Request k odeslání přes externí e-mailovou službu, která podporuje CC.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="Jak použiji výstupy z předchozích kroků?">
+    Každá akce vytváří výstupní data, která lze použít v následujících krocích.
 
-    **To reference previous step data**:
+    **Jak odkazovat na data z předchozích kroků**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * Při konfiguraci pole použijte výběr proměnné
+    * Nebo napište přímo `{{stepName.fieldName}}`
 
     **Příklady**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * Data spouštěče: `{{trigger.object.email}}`
+    * Výsledky hledání: `{{searchRecords[0].name}}`
+    * Výstup kódu: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    Najetím myší na libovolné pole v konfiguraci akce uvidíte dostupné proměnné z předchozích kroků.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="Proč můj Iterator selhává?">
+    **Iterator vyžaduje vstup typu pole (array).** Časté problémy:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **Vstup není pole (array)**: Ujistěte se, že předáváte výsledky z akce Search Records nebo jiné akce, která vrací pole
+    2. **Pole je prázdné**: Před Iterator přidejte filtr pro kontrolu `{{searchRecords.length}} > 0`
+    3. **Zvolená špatná proměnná**: Ujistěte se, že vybíráte samotné pole, ne jeden záznam
 
-    **Correct setup**:
+    **Správné nastavení**:
 
-    1. Search Records (returns array)
-    2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    1. Search Records (vrací pole)
+    2. Filtr: length > 0
+    3. Iterator: vyberte `{{searchRecords}}`
+    4. Akce uvnitř iteratoru používají `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Jaký je maximální čas spuštění pro akce Code?">
+    Akce Code (serverless funkce) mají **výchozí časový limit 5 minut** (300 sekund).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    Maximální nastavitelný časový limit je **15 minut** (900 sekund).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    Pokud váš kód tento limit překročí, akce selže s chybou vypršení časového limitu.
 
-    **Tips to avoid timeouts**:
+    **Tipy, jak se vyhnout vypršení časových limitů**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * Rozdělte velké operace na menší části pomocí Iteratoru
+    * Vyhněte se náročným výpočtům; pro intenzivní zpracování použijte externí služby přes HTTP Request
+    * Optimalizujte svůj kód pro zkrácení doby běhu
+    * Pokud potřebujete delší zpracování, zvažte použití plánovaných pracovních postupů, které zpracovávají data po dávkách
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="Jak číst spuštění pracovních postupů?">
+    Spuštění pracovních postupů zobrazují historii provádění a pomáhají s laděním problémů.
 
-    **Access runs**:
+    **Přístup ke spuštěním**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * V editoru pracovního postupu → panel **Runs** vpravo
+    * Nebo přejděte v postranním panelu do **Workflow Runs**
 
-    **Understanding a run**:
+    **Porozumění spuštění**:
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **Stav**: Running, Completed, Failed, Waiting
+    * **Kroky**: Zobrazte, které kroky se provedly, a jejich výstup
+    * **Chyby**: Klikněte na neúspěšné kroky a zobrazíte chybové zprávy
+    * **Data**: Zobrazte vstupní/výstupní data v jednotlivých krocích
 
-    See [Workflow Runs](/l/cs/user-guide/workflows/capabilities/workflow-runs) for details.
+    Podrobnosti viz [Spuštění pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-runs).
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="Proč nevidím svá spuštění pracovních postupů?">
+    Spuštění pracovních postupů mohou selhávat okamžitě kvůli limitům rychlosti.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **Pevný limit: 5 000 spuštění za hodinu na pracovní prostor.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    Pokud tento limit překročíte, pracovní postupy jsou okamžitě označeny jako neúspěšné a v seznamu spuštění se nezobrazí podle očekávání.
 
-    **Common scenarios that hit this limit**:
+    **Běžné scénáře, které tento limit překročí**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * Výběr více než 5 000 záznamů pomocí ručního spouštěče Single
+    * Současné spuštění více pracovních postupů napříč vaším pracovním prostorem
+    * Časté automatické spouštěče (např. Record Updated na vytíženém objektu)
 
     **Řešení**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * Použijte spouštěče **Bulk** místo Single pro zpracování mnoha záznamů v jednom spuštění
+    * Rozložte velké dávkové operace v čase
+    * Používejte filtry ke snížení frekvence spouštění
+    * Náročné pracovní postupy plánujte mimo špičku
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="Jaké jsou limity rychlosti pro pracovní postupy?">
+    Twenty má dva limity rychlosti pro zajištění stability systému:
 
-    | Limit | Hodnota | Behavior |
-    | ----- | ------- | -------- |
+    | Limit | Hodnota | Chování |
+    | ----- | ------- | ------- |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Soft limit** | 100 spuštění/minuta | Spuštění se zařadí do fronty se stavem "Not Started" a jsou zpracovávána postupně |
+    \| **Hard limit** | 5 000 spuštění/hodina | Spuštění okamžitě selžou |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Soft limit (100/min)**: Vaše pracovní postupy neselžou—pouze čekají ve frontě a jsou postupně zpracovávány. Můžete spustit více než 100 záznamů; provádění bude pomalejší.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Hard limit (5 000/hod)**: Týká se celého vašeho pracovního prostoru. Pokud všechny vaše pracovní postupy dohromady překročí 5 000 spuštění za hodinu, další spuštění okamžitě selžou.
 
-    **Tips to stay within limits**:
+    **Tipy, jak zůstat v rámci limitů**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * Pro velké dávky použijte spouštěče Bulk s Iterator místo spouštěčů Single
+    * Kombinujte související automatizace do menšího počtu pracovních postupů
+    * Používejte plánované pracovní postupy k rozložení zátěže v čase
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="Mohu znovu spustit neúspěšné spuštění pracovního postupu?">
+    **Ne, v tuto chvíli není k dispozici automatická funkce opakování.**
 
-    If a workflow run fails, you'll need to:
+    Pokud spuštění pracovního postupu selže, je potřeba:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. Zkontrolujte chybu v **Settings → Workflows → [Your Workflow] → Runs**
+    2. Opravte problém (data, konfigurace nebo externí služba)
+    3. Ručně znovu spusťte pracovní postup u dotčených záznamů
 
-    **Tips to reduce failures**:
+    **Tipy, jak snížit počet selhání**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * Přidejte uzly **Filter** pro ověření dat před akcemi
+    * Použijte **Search Records** ke kontrole, zda existují související záznamy
+    * Před hromadnými operacemi důkladně otestujte s několika záznamy
 
-    Automatic retry functionality is on our roadmap for a future release.
+    Funkce automatického opakování je v našem plánu pro budoucí vydání.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="Mám před importy CSV deaktivovat pracovní postupy?">
+    **Ano, pokud se vaše pracovní postupy spouštějí vytvořením nebo aktualizací záznamu.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    Při importu dat pomocí CSV může každý vytvořený nebo aktualizovaný záznam spustit pracovní postupy. Velký import (tisíce záznamů) může:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * Dosáhnout limitu 5 000 spuštění/hodinu
+    * Spotřebovat značné množství kreditů pracovních postupů
+    * Odeslat neočekávané e-maily nebo oznámení
+    * Vytvořit duplicitní úkoly nebo záznamy
 
-    **Before a mass import**:
+    **Před hromadným importem**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. Přejděte na **Nastavení → Pracovní postupy**
+    2. Identifikujte pracovní postupy spouštěné objektem, který importujete
+    3. **Deaktivujte** je dočasně
+    4. Spusťte import CSV
+    5. **Znovu aktivujte** pracovní postupy po dokončení
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **Alternativa**: Pokud potřebujete, aby se pracovní postupy spouštěly na importovaných datech, importujte v menších dávkách, abyste zůstali v rámci limitů.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="Jak vyčistit rozvržení pracovního postupu?">
+    Pokud vaše plátno pracovního postupu vypadá nepořádně a uzly jsou rozházené, můžete jej automaticky uspořádat:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. Klikněte pravým tlačítkem kamkoli na plátno pracovního postupu
+    2. Klikněte na **Tidy up workflow**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    Tím se všechny uzly automaticky přeuspořádají do čistého, uspořádaného rozvržení.
   </Accordion>
 </AccordionGroup>

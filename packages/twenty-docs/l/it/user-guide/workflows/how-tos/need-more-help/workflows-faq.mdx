@@ -1,254 +1,254 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: FAQ sui flussi di lavoro
+description: Domande frequenti sui flussi di lavoro in Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="Perché non riesco ad attivare un flusso di lavoro?">
+    È probabilmente un problema di permessi. Hai bisogno dell'accesso ai flussi di lavoro per crearli e attivarli.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **Soluzione**: Contatta l'amministratore dello spazio di lavoro per concederti l'accesso ai flussi di lavoro in **Impostazioni → Ruoli**.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    Se non vedi affatto la sezione Flussi di lavoro nella barra laterale, ciò conferma che è un problema di permessi.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="Perché non vedo il pulsante del flusso di lavoro manuale nella barra di navigazione superiore?">
+    I flussi di lavoro manuali compaiono nella barra di navigazione solo se configurati correttamente:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. Il flusso di lavoro deve essere **attivato** (non in modalità bozza)
+    2. Il posizionamento nella barra di navigazione deve essere impostato su **Pinned**
+    3. Per i trigger Single/Bulk, devi trovarti nella pagina dell'oggetto corretta
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **Per verificare**: Apri il flusso di lavoro → fai clic sul trigger → verifica che "Navbar placement" sia impostato su "Pinned".
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    Puoi sempre accedere ai flussi di lavoro manuali tramite **Cmd + K** (o **Ctrl + K**) indipendentemente dalle impostazioni della barra di navigazione.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Tipo | Records Required | Esecuzioni del workflow |
+  <Accordion title="Qual è la differenza tra i trigger manuali Single, Global e Bulk?">
+    | Tipo | Record richiesti | Esecuzioni del workflow |
     | ---- | ---------------- | ----------------------- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | Nessuno | Una volta, senza input di record |
+    \| **Single** | Uno o più selezionati | Una volta per ogni record selezionato |
+    \| **Bulk** | Uno o più selezionati | Una volta, con tutti i record come array |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: Usalo quando il flusso di lavoro non richiede alcun contesto di record (ad es., generare un report)
+    * **Single**: Usalo quando vuoi elaborare ogni record selezionato in modo indipendente (ad es., inviare email singole)
+    * **Bulk**: Usalo quando devi elaborare i record insieme o ottimizzare l'uso dei crediti (richiede l'azione Iterator)
 
-    See [Workflow Triggers](/l/it/user-guide/workflows/capabilities/workflow-triggers) for details.
+    Vedi [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers) per i dettagli.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. Cosa devo fare?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="Non vedo un nodo If/Else. Cosa devo fare?">
+    Un nodo If/Else esplicito non è ancora disponibile ma è nella nostra roadmap.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **Soluzione temporanea**: Crea più diramazioni dal tuo passaggio, ciascuna iniziando con un'azione **Filtro**:
 
     ```
-    Step 1
+    Passaggio 1
        │
-       ├── Branch A: Filter (condition = true) → Actions...
+       ├── Diramazione A: Filtro (condizione = true) → Azioni...
        │
-       └── Branch B: Filter (condition = false) → Actions...
+       └── Diramazione B: Filtro (condizione = false) → Azioni...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    Solo la diramazione in cui la condizione del filtro è soddisfatta eseguirà le azioni successive.
 
-    See [How to Use Branches](/l/it/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    Consulta [Come usare le diramazioni](/l/it/user-guide/workflows/capabilities/workflow-branches) per una guida passo passo.
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="Le diramazioni del flusso di lavoro vengono eseguite in parallelo?">
+    **Sì**, le diramazioni vengono eseguite in parallelo per impostazione predefinita.
 
-    If you want only one branch to execute:
+    Se vuoi che venga eseguita solo una diramazione:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * Aggiungi un'azione **Filtro** all'inizio di ogni diramazione
+    * Imposta condizioni opposte (ad es., Diramazione A: stato = "Open", Diramazione B: stato ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    Le diramazioni che non soddisfano la loro condizione di filtro interrompono l'esecuzione, mentre le altre continuano.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="Posso riunire le diramazioni?">
+    **Sì**. Dopo che le diramazioni parallele sono state completate, puoi aggiungere un passaggio a cui si colleghino entrambe.
 
-    In the workflow editor:
+    Nell'editor dei flussi di lavoro:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. Completa le azioni nelle diramazioni
+    2. Aggiungi un nuovo passaggio dopo le diramazioni
+    3. Trascina le connessioni dalla fine di ciascuna diramazione verso questo nuovo passaggio
 
-    The merged step will execute after all connected branches complete.
+    Il passaggio unificato verrà eseguito dopo il completamento di tutte le diramazioni collegate.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Qual è il limite dei risultati di Search Records?">
+    **Search Records restituisce un massimo di 200 record.**
 
-    If you need to process more:
+    Se devi elaborarne di più:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * Aggiungi filtri più specifici per ridurre i risultati
+    * Usa flussi di lavoro pianificati per elaborare in lotti
+    * Valuta di usare le API per operazioni in blocco
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    Per la maggior parte dei flussi di lavoro, 200 record sono sufficienti. Se raggiungi regolarmente questo limite, valuta di ristrutturare l'automazione.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="Posso mettere in CC persone nelle email dei flussi di lavoro?">
+    **Non ancora.** I campi CC e BCC per l'azione Send Email sono nella nostra roadmap.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **Soluzione temporanea**: Aggiungi più azioni Send Email per inviare ad altri destinatari, oppure usa una HTTP Request per inviare tramite un servizio email esterno che supporti CC.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="Come si usano gli output dai passaggi precedenti?">
+    Ogni azione produce dati di output che possono essere utilizzati nei passaggi successivi.
 
-    **To reference previous step data**:
+    **Per fare riferimento ai dati del passaggio precedente**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * Usa il selettore di variabili durante la configurazione di un campo
+    * Oppure digita `{{stepName.fieldName}}` direttamente
 
     **Esempi**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * Dati del trigger: `{{trigger.object.email}}`
+    * Risultati della ricerca: `{{searchRecords[0].name}}`
+    * Output del codice: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    Passa il mouse su qualsiasi campo nella configurazione dell'azione per vedere le variabili disponibili dai passaggi precedenti.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="Perché il mio Iterator non riesce?">
+    **Iterator richiede un input di tipo array.** Problemi comuni:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **L'input non è un array**: Assicurati di passare i risultati di Search Records o di un'altra azione che restituisce un array
+    2. **L'array è vuoto**: Aggiungi un filtro prima di Iterator per verificare `{{searchRecords.length}} > 0`
+    3. **Variabile sbagliata selezionata**: Assicurati di selezionare l'array stesso, non un singolo record
 
-    **Correct setup**:
+    **Configurazione corretta**:
 
-    1. Search Records (returns array)
-    2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    1. Search Records (restituisce un array)
+    2. Filtro: length > 0
+    3. Iterator: seleziona `{{searchRecords}}`
+    4. Le azioni all'interno di Iterator usano `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Qual è il tempo massimo di esecuzione per le azioni di codice?">
+    Le azioni di codice (funzioni serverless) hanno un **timeout predefinito di 5 minuti** (300 secondi).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    Il timeout massimo configurabile è di **15 minuti** (900 secondi).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    Se il tuo codice supera questo limite, l'azione non riuscirà con un errore di timeout.
 
-    **Tips to avoid timeouts**:
+    **Suggerimenti per evitare timeout**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * Suddividi le operazioni grandi in parti più piccole usando Iterator
+    * Evita elaborazioni pesanti; usa servizi esterni tramite HTTP Request per processi intensivi
+    * Ottimizza il tuo codice per ridurre il tempo di esecuzione
+    * Se hai bisogno di elaborazioni più lunghe, valuta l'uso di flussi di lavoro pianificati che elaborano i dati in lotti
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="Come leggere le esecuzioni dei flussi di lavoro?">
+    Le esecuzioni dei flussi di lavoro mostrano la cronologia di esecuzione e ti aiutano a eseguire il debug dei problemi.
 
-    **Access runs**:
+    **Accesso alle esecuzioni**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * Nell'editor dei flussi di lavoro → pannello **Runs** a destra
+    * Oppure vai a **Workflow Runs** nella barra laterale
 
-    **Understanding a run**:
+    **Comprendere un'esecuzione**:
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **Stato**: In esecuzione, Completato, Non riuscito, In attesa
+    * **Passaggi**: Vedi quali passaggi sono stati eseguiti e il loro output
+    * **Errori**: Fai clic sui passaggi non riusciti per vedere i messaggi di errore
+    * **Dati**: Visualizza i dati di input/output a ogni passaggio
 
-    See [Workflow Runs](/l/it/user-guide/workflows/capabilities/workflow-runs) for details.
+    Vedi [Esecuzioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-runs) per i dettagli.
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="Perché non vedo le esecuzioni dei miei flussi di lavoro?">
+    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **Limite hard: 5.000 esecuzioni all'ora per spazio di lavoro.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    Se superi questo limite, i flussi di lavoro vengono contrassegnati immediatamente come non riusciti e non appariranno nell'elenco delle esecuzioni come previsto.
 
-    **Common scenarios that hit this limit**:
+    **Scenari comuni che raggiungono questo limite**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * Selezionare più di 5.000 record con un trigger manuale Single
+    * Più flussi di lavoro in esecuzione simultaneamente nel tuo spazio di lavoro
+    * Trigger automatici ad alta frequenza (ad es., Record Updated su un oggetto molto attivo)
 
     **Soluzioni**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * Usa i trigger **Bulk** invece di Single per elaborare molti record in un'unica esecuzione
+    * Scagliona nel tempo le operazioni in grandi batch
+    * Usa filtri per ridurre la frequenza dei trigger
+    * Pianifica i flussi di lavoro pesanti nelle ore di minore traffico
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="Quali sono i limiti di frequenza dei flussi di lavoro?">
+    Twenty ha due limiti di frequenza per garantire la stabilità del sistema:
 
-    | Limit | Valore | Behavior |
-    | ----- | ------ | -------- |
+    | Limite | Valore | Comportamento |
+    | ------ | ------ | ------------- |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Soft limit** | 100 esecuzioni/minuto | Le esecuzioni vanno in coda con stato "Not Started", elaborate gradualmente |
+    \| **Hard limit** | 5.000 esecuzioni/ora | Le esecuzioni falliscono immediatamente |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Limite soft (100/min)**: I tuoi flussi di lavoro non falliranno: semplicemente attendono in coda e vengono elaborati nel tempo. Puoi attivare più di 100 record; l'esecuzione sarà più lenta.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Limite hard (5.000/ora)**: Si applica all'intero spazio di lavoro. Se tutti i tuoi flussi di lavoro combinati superano 5.000 esecuzioni in un'ora, le esecuzioni aggiuntive falliranno immediatamente.
 
-    **Tips to stay within limits**:
+    **Suggerimenti per rimanere entro i limiti**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * Usa trigger Bulk con Iterator invece dei trigger Single per grandi batch
+    * Combina automazioni correlate in un numero minore di flussi di lavoro
+    * Usa flussi di lavoro pianificati per distribuire il carico nel tempo
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="Posso ritentare un'esecuzione di flusso di lavoro non riuscita?">
+    **No, al momento non esiste una funzionalità di ritentativo automatico.**
 
-    If a workflow run fails, you'll need to:
+    Se un'esecuzione di flusso di lavoro non riesce, dovrai:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. Rivedi l'errore in **Impostazioni → Flussi di lavoro → [Il tuo flusso di lavoro] → Runs**
+    2. Risolvi il problema (dati, configurazione o servizio esterno)
+    3. Attiva manualmente di nuovo il flusso di lavoro sui record interessati
 
-    **Tips to reduce failures**:
+    **Suggerimenti per ridurre gli errori**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * Aggiungi nodi **Filtro** per convalidare i dati prima delle azioni
+    * Usa **Search Records** per verificare se esistono record correlati
+    * Esegui test accurati con pochi record prima delle operazioni in blocco
 
-    Automatic retry functionality is on our roadmap for a future release.
+    La funzionalità di ritentativo automatico è nella nostra roadmap per un rilascio futuro.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="Devo disattivare i flussi di lavoro prima delle importazioni CSV?">
+    **Sì, se i tuoi flussi di lavoro sono attivati dalla creazione o dall'aggiornamento dei record.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    Quando importi dati tramite CSV, ogni record creato o aggiornato può attivare flussi di lavoro. Una grande importazione (migliaia di record) potrebbe:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * Raggiungere il limite di 5.000 esecuzioni/ora
+    * Consumare una quantità significativa di crediti dei flussi di lavoro
+    * Inviare email o notifiche inattese
+    * Creare attività o record duplicati
 
-    **Before a mass import**:
+    **Prima di un'importazione massiva**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. Vai a **Impostazioni → Flussi di lavoro**
+    2. Identifica i flussi di lavoro attivati dall'oggetto che stai importando
+    3. **Disattivali** temporaneamente
+    4. Esegui l'importazione CSV
+    5. **Riattiva** i flussi di lavoro al termine
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **Alternativa**: Se hai bisogno che i flussi di lavoro vengano eseguiti sui dati importati, importa in batch più piccoli per rimanere entro i limiti di frequenza.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="Come posso pulire il layout del mio flusso di lavoro?">
+    Se il canvas del flusso di lavoro sembra disordinato, con nodi sparsi, puoi organizzarli automaticamente:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. Fai clic con il pulsante destro in un punto qualsiasi del canvas del flusso di lavoro
+    2. Fai clic su **Tidy up workflow**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    Questo riorganizzerà automaticamente tutti i nodi in un layout pulito e ordinato.
   </Accordion>
 </AccordionGroup>

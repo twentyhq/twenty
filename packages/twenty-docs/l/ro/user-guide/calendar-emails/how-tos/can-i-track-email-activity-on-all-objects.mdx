@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: Pot urmări activitatea e-mailurilor pe toate obiectele?
+description: Înțelegerea urmăririi activității e-mailurilor în cadrul diferitelor obiecte.
 ---
 
-## Supported Objects
+## Obiecte acceptate
 
-Email activity is currently available on **three standard objects**:
+Urmărirea activității e-mailurilor este disponibilă în prezent pe **trei obiecte standard**:
 
-| Obiect           | What You See                                                     |
-| ---------------- | ---------------------------------------------------------------- |
-| **People**       | All emails exchanged with that specific contact                  |
-| **Companii**     | All emails with anyone from that company (based on email domain) |
-| **Oportunități** | Emails related to the company linked to the opportunity          |
+| Obiect           | Ce veți vedea                                                                 |
+| ---------------- | ----------------------------------------------------------------------------- |
+| **Persoane**     | Toate e-mailurile schimbate cu respectivul contact                            |
+| **Companii**     | Toate e-mailurile cu oricine din acea companie (pe baza domeniului de e-mail) |
+| **Oportunități** | Toate e-mailurile legate de compania asociată oportunității                   |
 
-## Why Only These Objects?
+## De ce doar aceste obiecte?
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+Persoane, Companii și Oportunități sunt obiectele esențiale de relație în care contextul e-mailului aduce cea mai mare valoare. Conversațiile prin e-mail sunt asociate automat pe baza:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **Adresă de e-mail** → asociată cu înregistrările din Persoane
+* **Domeniu de e-mail** → asociat cu înregistrările din Companii
+* **Relație cu compania** → legată de Oportunități
 
 ## Obiecte personalizate
 
-**Email tracking is not available on custom objects** at this time.
+**Urmărirea e-mailurilor nu este disponibilă pe obiectele personalizate** în acest moment.
 
-If you need email context on a custom object, consider:
+Dacă aveți nevoie de contextul e-mailului pe un obiect personalizat, luați în considerare:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* Folosirea unui câmp de relație pentru a lega obiectul personalizat de Persoane sau Companii
+* Vizualizarea istoricului e-mailurilor în înregistrarea Persoane/Companie asociată
 
-## Future Plans
+## Planuri viitoare
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+Se ia în considerare extinderea vizibilității e-mailurilor la obiectele personalizate. Împărtășiți cazul dvs. de utilizare în [discuțiile noastre pe GitHub](https://github.com/twentyhq/twenty/discussions) pentru a ajuta la prioritizarea acestei funcționalități.
