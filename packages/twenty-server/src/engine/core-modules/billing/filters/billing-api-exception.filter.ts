@@ -13,7 +13,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(BillingException, Stripe.errors.StripeError)
@@ -65,6 +65,12 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
           exception,
           response,
           400,
+        );
+      case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          402,
         );
       default:
         return this.httpExceptionHandlerService.handleError(
