@@ -299,13 +299,8 @@ export class BillingSubscriptionService {
       { hasReachedCurrentPeriodCap: false },
     );
 
-    const tierCap = await this.getWorkflowTierCapForSubscription(
-      billingSubscription.id,
-    );
-
-    await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+    await this.createBillingAlertForCustomer(
       billingSubscription.stripeCustomerId,
-      tierCap,
     );
 
     return {
@@ -598,6 +593,31 @@ export class BillingSubscriptionService {
     billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
 
     return price.tiers[0].up_to;
+  }
+
+  async createBillingAlertForCustomer(
+    stripeCustomerId: string,
+  ): Promise<void> {
+    const subscription = await this.getCurrentBillingSubscription({
+      stripeCustomerId,
+    });
+
+    if (!isDefined(subscription)) {
+      this.logger.warn(
+        `Cannot create billing alert: subscription not found for stripeCustomerId ${stripeCustomerId}`,
+      );
+
+      return;
+    }
+
+    const tierCap = await this.getWorkflowTierCapForSubscription(
+      subscription.id,
+    );
+
+    await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+      stripeCustomerId,
+      tierCap,
+    );
   }
 
   private async runSubscriptionUpdate({
