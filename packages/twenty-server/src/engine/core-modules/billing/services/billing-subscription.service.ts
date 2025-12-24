@@ -595,9 +595,7 @@ export class BillingSubscriptionService {
     return price.tiers[0].up_to;
   }
 
-  async createBillingAlertForCustomer(
-    stripeCustomerId: string,
-  ): Promise<void> {
+  async createBillingAlertForCustomer(stripeCustomerId: string): Promise<void> {
     const subscription = await this.getCurrentBillingSubscription({
       stripeCustomerId,
     });
