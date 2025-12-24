@@ -2,7 +2,7 @@ import {
   type BarChartConfiguration,
   type IframeConfiguration,
 } from '~/generated/graphql';
-import { isIframeConfiguration } from '../isIframeConfiguration';
+import { isIframeConfiguration } from '@/command-menu/pages/page-layout/utils/isIframeConfiguration';
 
 describe('isIframeConfiguration', () => {
   it('should return true for IframeConfiguration', () => {

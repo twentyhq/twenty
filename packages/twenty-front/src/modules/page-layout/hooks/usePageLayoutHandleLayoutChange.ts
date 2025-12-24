@@ -6,9 +6,9 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
 export const usePageLayoutHandleLayoutChange = (
   pageLayoutIdFromProps?: string,

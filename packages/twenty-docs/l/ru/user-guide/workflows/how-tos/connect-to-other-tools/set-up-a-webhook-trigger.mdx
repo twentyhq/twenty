@@ -1,44 +1,44 @@
 ---
-title: Set Up a Webhook Trigger
-description: Receive data from external services to trigger workflows.
+title: Настройка триггера вебхука
+description: Получайте данные из внешних сервисов, чтобы запускать рабочие процессы.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Webhook triggers allow external services to start your workflows by sending data to a unique URL. Use them to connect forms, third-party apps, and custom integrations.
+Триггеры вебхуков позволяют внешним сервисам запускать ваши рабочие процессы, отправляя данные на уникальный URL. Используйте их для подключения форм, сторонних приложений и пользовательских интеграций.
 
-## When to Use Webhooks
+## Когда использовать вебхуки
 
-| Use Case                | Пример                                  |
-| ----------------------- | --------------------------------------- |
-| **Web forms**           | Contact form submissions create leads   |
-| **Third-party apps**    | Stripe payment → create customer record |
-| **Custom integrations** | Your app → Twenty automation            |
-| **No-code tools**       | Zapier, Make, n8n connections           |
+| Сценарий использования          | Пример                                     |
+| ------------------------------- | ------------------------------------------ |
+| **Веб-формы**                   | Отправки формы обратной связи создают лиды |
+| **Сторонние приложения**        | Платеж в Stripe → создать запись клиента   |
+| **Пользовательские интеграции** | Ваше приложение → автоматизация Twenty     |
+| **Инструменты без кода**        | Подключения Zapier, Make, n8n              |
 
-## Step-by-Step Setup
+## Пошаговая настройка
 
-### Step 1: Create the Workflow
+### Шаг 1: Создайте рабочий процесс
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it (e.g., "Website Form Submission")
+1. Перейдите в **Настройки → Рабочие процессы**
+2. Нажмите **+ Новый рабочий процесс**
+3. Дайте ему имя (например, "Отправка формы на сайте")
 
-### Step 2: Configure the Webhook Trigger
+### Шаг 2: Настройте триггер вебхука
 
-1. Click on the trigger block
-2. Select **Webhook**
-3. You'll receive a unique webhook URL like:
+1. Нажмите на блок триггера
+2. Выберите **Вебхук**
+3. Вы получите уникальный URL вебхука, например:
    ```
    https://api.twenty.com/webhooks/workflow/abc123...
    ```
-4. Copy this URL—you'll need it for your external service
+4. Скопируйте этот URL — он понадобится вашему внешнему сервису
 
-### Step 3: Define Expected Data Structure
+### Шаг 3: Определите ожидаемую структуру данных
 
-For **POST** requests, define the expected body structure:
+Для **POST**-запросов определите ожидаемую структуру тела:
 
-1. Click **Define expected body**
-2. Enter a sample JSON that matches what your service will send:
+1. Нажмите **Определить ожидаемое тело**
+2. Введите пример JSON, который ваш сервис будет отправлять:
 
 ```json
 {
@@ -50,30 +50,30 @@ For **POST** requests, define the expected body structure:
 }
 ```
 
-3. Click **Save**—this creates variables you can use in subsequent steps
+3. Нажмите **Сохранить** — это создаст переменные, которые можно использовать на следующих шагах
 
-### Step 4: Add Actions
+### Шаг 4: Добавьте действия
 
-Now add actions that use the webhook data:
+Теперь добавьте действия, которые используют данные вебхука:
 
-**Example: Create a Person record**
+**Пример: Создать запись Person**
 
-1. Add **Create Record** action
-2. Select **People** object
-3. Map fields:
+1. Добавьте действие **Создать запись**
+2. Выберите объект **People**
+3. Сопоставьте поля:
 
-| Поле              | Значение                                             |
-| ----------------- | ---------------------------------------------------- |
-| Имя               | `{{trigger.body.firstName}}`                         |
-| Фамилия           | `{{trigger.body.lastName}}`                          |
-| Электронная почта | `{{trigger.body.email}}`                             |
-| Компания          | Search or create based on `{{trigger.body.company}}` |
+| Поле              | Значение                                                  |
+| ----------------- | --------------------------------------------------------- |
+| Имя               | `{{trigger.body.firstName}}`                              |
+| Фамилия           | `{{trigger.body.lastName}}`                               |
+| Электронная почта | `{{trigger.body.email}}`                                  |
+| Компания          | Найдите или создайте на основе `{{trigger.body.company}}` |
 
-### Step 5: Test the Webhook
+### Шаг 5: Протестируйте вебхук
 
-Before activating, test your webhook:
+Перед активацией протестируйте вебхук:
 
-**Using cURL**:
+**С помощью cURL**:
 
 ```bash
 curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
@@ -81,22 +81,22 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
   -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
 ```
 
-**Using Postman or similar**:
+**С помощью Postman или аналогов**:
 
-1. Create a POST request to your webhook URL
-2. Set Content-Type header to `application/json`
-3. Add your test JSON body
-4. Send and check workflow runs
+1. Создайте POST-запрос на URL вашего вебхука
+2. Установите заголовок Content-Type в `application/json`
+3. Добавьте тестовое тело JSON
+4. Отправьте и проверьте запуски рабочего процесса
 
-### Step 6: Activate
+### Шаг 6: Активируйте
 
-Once tested, click **Activate** to make the workflow live.
+После тестирования нажмите **Активировать**, чтобы сделать рабочий процесс активным.
 
-## Handling Different Data Structures
+## Обработка разных структур данных
 
-### Nested Data
+### Вложенные данные
 
-If your webhook sends nested data:
+Если ваш вебхук отправляет вложенные данные:
 
 ```json
 {
@@ -108,11 +108,11 @@ If your webhook sends nested data:
 }
 ```
 
-Reference with: `{{trigger.body.contact.email}}`
+Обращайтесь так: `{{trigger.body.contact.email}}`
 
-### Arrays
+### Массивы
 
-If data includes arrays:
+Если данные включают массивы:
 
 ```json
 {
@@ -123,11 +123,11 @@ If data includes arrays:
 }
 ```
 
-How you handle arrays depends on your use case:
+То, как обрабатывать массивы, зависит от сценария использования:
 
-**Unknown number of items → Use Iterator**
+**Неизвестное количество элементов → Используйте Iterator**
 
-If you need to process each item in the array (e.g., create a record for each), add a **Code** action to parse the array, then use **Iterator**:
+Если нужно обработать каждый элемент массива (например, создать запись для каждого), добавьте действие **Code** для разбора массива, затем используйте **Iterator**:
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -138,11 +138,11 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Then use Iterator to loop through: `{{code.items}}`
+Затем используйте Iterator для перебора: `{{code.items}}`
 
-**Known/specific fields → Extract to named fields**
+**Известные/конкретные поля → Извлеките в именованные поля**
 
-If the array contains specific fields you want to access individually (e.g., form answers where position 0 is always "first name", position 1 is always "last name"), add a **Code** action to extract them:
+Если массив содержит конкретные поля, к которым нужно обращаться по отдельности (например, ответы формы, где позиция 0 — всегда "имя", позиция 1 — всегда "фамилия"), добавьте действие **Code** для их извлечения:
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -159,13 +159,13 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Now you can select `product.name` and `product.qty` individually in subsequent steps.
+Теперь вы можете выбирать `product.name` и `product.qty` по отдельности на следующих шагах.
 
 <Tip>
-  For more details on handling arrays, see [Handle Arrays in Code Actions](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  Для получения подробностей об обработке массивов см. [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
-## Related
+## Связанные материалы
 
-* [Workflow Triggers](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)

@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: Могу ли я отслеживать активность электронной почты на всех объектах?
+description: Как работает отслеживание активности электронной почты на разных объектах.
 ---
 
-## Supported Objects
+## Поддерживаемые объекты
 
-Email activity is currently available on **three standard objects**:
+Активность электронной почты в настоящее время доступна на **трёх стандартных объектах**:
 
-| Объект          | What You See                                                     |
-| --------------- | ---------------------------------------------------------------- |
-| **People**      | All emails exchanged with that specific contact                  |
-| **Компании**    | All emails with anyone from that company (based on email domain) |
-| **Возможности** | Emails related to the company linked to the opportunity          |
+| Объект          | Что вы увидите                                                                                 |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| **Люди**        | Все электронные письма, которыми обменивались с этим контактом                                 |
+| **Компании**    | Все электронные письма с любым контактом из этой компании (на основе домена электронной почты) |
+| **Возможности** | Электронные письма, связанные с компанией, привязанной к возможности                           |
 
-## Why Only These Objects?
+## Почему только эти объекты?
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+Люди, Компании и Возможности — это ключевые объекты отношений, где контекст электронной почты даёт наибольшую ценность. Цепочки писем автоматически связываются на основании:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **Адрес электронной почты** → сопоставляется с записями Людей
+* **Домен электронной почты** → сопоставляется с записями Компаний
+* **Связь с компанией** → сопоставляется с Возможностями
 
 ## Пользовательские объекты
 
-**Email tracking is not available on custom objects** at this time.
+**Отслеживание электронной почты недоступно на пользовательских объектах** в настоящее время.
 
-If you need email context on a custom object, consider:
+Если вам нужен контекст электронной почты в пользовательском объекте, рассмотрите:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* Использование поля связи для привязки вашего пользовательского объекта к Людям или Компаниям
+* Просмотр истории электронной почты в связанной записи человека/компании
 
-## Future Plans
+## Планы на будущее
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+Рассматривается расширение видимости электронной почты на пользовательские объекты. Поделитесь своим сценарием использования в наших [обсуждениях на GitHub](https://github.com/twentyhq/twenty/discussions), чтобы помочь расставить приоритеты для этой функции.

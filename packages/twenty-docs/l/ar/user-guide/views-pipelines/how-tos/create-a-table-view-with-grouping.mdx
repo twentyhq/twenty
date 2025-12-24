@@ -1,51 +1,51 @@
 ---
-title: Create a Table View with Grouping
-description: Organize your records into collapsible groups by field value.
+title: إنشاء عرض الجدول مع التجميع
+description: نظم سجلاتك في مجموعات قابلة للطي حسب قيمة الحقل.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Group your table view by a Select field to organize records into collapsible sections.
+قم بتجميع عرض الجدول حسب حقل الاختيار لتنظيم السجلات في أقسام قابلة للطي.
 
 <img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
 
-## Steps
+## الخطوات
 
-1. Navigate to the object (People, Companies, etc.)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Companies by Type")
-4. Click **Create**
-5. Click **Options → Group**
-6. Choose a Select field to group by
+1. انتقل إلى الكائن (الأشخاص، الشركات، إلخ)
+2. انقر على القائمة المنسدلة لطريقة العرض → **+ إضافة طريقة عرض**
+3. قم بتسمية العرض (مثلا: "الشركات حسب النوع")
+4. انقر على **إنشاء**
+5. انقر على **الخيارات → التجميع**
+6. اختر حقل الاختيار للتجميع حسبه
 7. انقر على **حفظ**
 
-## Configure Group Order
+## تكوين ترتيب المجموعات
 
-Under **Options → Group → Sort**, choose how groups are ordered:
+ضمن **الخيارات → التجميع → الفرز**، اختر كيفية ترتيب المجموعات:
 
-| الخيار                   | الوصف                                         |
-| ------------------------ | --------------------------------------------- |
-| **Alphabetical**         | A to Z                                        |
-| **Reverse alphabetical** | Z to A                                        |
-| **Manual order**         | Drag groups to reorder under "Visible groups" |
+| الخيار         | الوصف                                                 |
+| -------------- | ----------------------------------------------------- |
+| **أبجدي**      | من A إلى Z                                            |
+| **أبجدي عكسي** | من Z إلى A                                            |
+| **ترتيب يدوي** | اسحب المجموعات لإعادة ترتيبها ضمن "المجموعات المرئية" |
 
-Click the **eye icon** next to a group to hide it from the view.
+انقر على **أيقونة العين** بجانب مجموعة لإخفائها من العرض.
 
 <Note>
-  **For best performance, limit to 10-15 visible groups.** If you need more, consider using a Dashboard instead.
+  **لأفضل أداء، احصر العدد في 10-15 مجموعة مرئية.** إذا احتجت إلى المزيد، فكر في استخدام لوحة المعلومات بدلا من ذلك.
 </Note>
 
-## Example: Companies by Industry
+## مثال: الشركات حسب الصناعة
 
-1. Go to **Companies**
-2. Create a new view named "By Industry"
-3. Click **Options → Group**
-4. Select the **Industry** field
+1. اذهب إلى **الشركات**
+2. أنشئ عرضا جديدا باسم "حسب الصناعة"
+3. انقر على **الخيارات → التجميع**
+4. اختر حقل **الصناعة**
 5. حفظ
 
-Now your companies are organized by industry, making it easy to focus on one segment at a time.
+الآن أصبحت شركاتك منظمة حسب الصناعة، مما يسهل التركيز على شريحة واحدة في كل مرة.
 
-## Related
+## ذات صلة
 
-* [Table Views](/l/ar/user-guide/views-pipelines/capabilities/table-views) — all table view features
-* [Filters and Sorting](/l/ar/user-guide/views-pipelines/capabilities/filters-and-sorting) — combine grouping with filters
+* [عروض الجدول](/l/ar/user-guide/views-pipelines/capabilities/table-views) — جميع ميزات عرض الجدول
+* [عوامل التصفية والفرز](/l/ar/user-guide/views-pipelines/capabilities/filters-and-sorting) — اجمع بين التجميع وعوامل التصفية

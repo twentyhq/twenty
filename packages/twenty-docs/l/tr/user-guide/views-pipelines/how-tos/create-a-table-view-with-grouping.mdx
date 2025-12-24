@@ -1,51 +1,51 @@
 ---
-title: Create a Table View with Grouping
-description: Organize your records into collapsible groups by field value.
+title: Gruplama ile Tablo Görünümü oluşturun
+description: Kayıtlarınızı alan değerine göre daraltılabilir gruplar halinde düzenleyin.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Group your table view by a Select field to organize records into collapsible sections.
+Kayıtları daraltılabilir bölümler halinde düzenlemek için tablo görünümünüzü bir Select alanına göre gruplayın.
 
 <img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
 
-## Steps
+## Adımlar
 
-1. Navigate to the object (People, Companies, etc.)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Companies by Type")
-4. Click **Create**
-5. Click **Options → Group**
-6. Choose a Select field to group by
+1. Nesneye gidin (Kişiler, Şirketler vb.)
+2. Görünüm açılır menüsüne tıklayın → **+ Görünüm ekle**
+3. Görünümünüze ad verin (örn. "Türe Göre Şirketler")
+4. **Oluştur**'a tıklayın
+5. **Seçenekler → Grupla**'ya tıklayın
+6. Gruplamak için bir Select alanı seçin
 7. **Kaydet**'e tıklayın
 
-## Configure Group Order
+## Grup Sırasını Yapılandırın
 
-Under **Options → Group → Sort**, choose how groups are ordered:
+**Seçenekler → Grupla → Sırala** altında, grupların nasıl sıralanacağını seçin:
 
-| Seçenek                  | Açıklama                                      |
-| ------------------------ | --------------------------------------------- |
-| **Alphabetical**         | A to Z                                        |
-| **Reverse alphabetical** | Z to A                                        |
-| **Manual order**         | Drag groups to reorder under "Visible groups" |
+| Seçenek             | Açıklama                                                             |
+| ------------------- | -------------------------------------------------------------------- |
+| **Alfabetik**       | A'dan Z'ye                                                           |
+| **Ters alfabetik**  | Z'den A'ya                                                           |
+| **El ile sıralama** | "Görünür gruplar" altında grupları yeniden sıralamak için sürükleyin |
 
-Click the **eye icon** next to a group to hide it from the view.
+Bir grubu görünümden gizlemek için yanındaki **göz simgesine** tıklayın.
 
 <Note>
-  **For best performance, limit to 10-15 visible groups.** If you need more, consider using a Dashboard instead.
+  **En iyi performans için görünür grupları 10-15 ile sınırlandırın.** Daha fazlasına ihtiyacınız varsa, bunun yerine bir Dashboard kullanmayı düşünün.
 </Note>
 
-## Example: Companies by Industry
+## Örnek: Sektöre Göre Şirketler
 
-1. Go to **Companies**
-2. Create a new view named "By Industry"
-3. Click **Options → Group**
-4. Select the **Industry** field
+1. **Şirketler**'e gidin
+2. "Sektöre Göre" adlı yeni bir görünüm oluşturun
+3. **Seçenekler → Grupla**'ya tıklayın
+4. **Sektör** alanını seçin
 5. Kaydet
 
-Now your companies are organized by industry, making it easy to focus on one segment at a time.
+Artık şirketleriniz sektöre göre düzenlendi; böylece tek bir segmente odaklanmanız kolaylaşır.
 
-## Related
+## İlgili
 
-* [Table Views](/l/tr/user-guide/views-pipelines/capabilities/table-views) — all table view features
-* [Filters and Sorting](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — combine grouping with filters
+* [Tablo Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/table-views) — tüm tablo görünümü özellikleri
+* [Filtreler ve Sıralama](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — gruplamayı filtrelerle birleştirin

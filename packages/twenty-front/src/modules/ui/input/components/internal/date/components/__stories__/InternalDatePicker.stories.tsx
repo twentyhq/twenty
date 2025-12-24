@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { Temporal } from 'temporal-polyfill';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { DateTimePicker } from '../DateTimePicker';
+import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 
 const meta: Meta<typeof DateTimePicker> = {
   title: 'UI/Input/Internal/InternalDatePicker',

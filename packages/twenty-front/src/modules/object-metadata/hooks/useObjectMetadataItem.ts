@@ -5,7 +5,7 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
+import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 
 export const useObjectMetadataItem = ({
   objectNameSingular,

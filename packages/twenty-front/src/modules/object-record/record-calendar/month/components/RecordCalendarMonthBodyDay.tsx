@@ -15,7 +15,7 @@ import {
   isPlainDateInWeekend,
   isSamePlainDate,
 } from 'twenty-shared/utils';
-import { RecordCalendarAddNew } from '../../components/RecordCalendarAddNew';
+import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
