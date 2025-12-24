@@ -15,6 +15,9 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 
 const StyledButtonContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(2)} 0;
@@ -22,6 +25,8 @@ const StyledButtonContainer = styled.div`
 
 export const SettingsApplications = () => {
   const { t } = useLingui();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { data } = useFindManyApplicationsQuery();
 
@@ -73,7 +78,10 @@ export const SettingsApplications = () => {
               title={t`Read documentation`}
               onClick={() =>
                 window.open(
-                  'https://docs.twenty.com/developers/extend/capabilities/apps',
+                  getDocumentationUrl({
+                    locale: currentWorkspaceMember?.locale,
+                    path: '/developers/extend/capabilities/apps',
+                  }),
                   '_blank',
                 )
               }

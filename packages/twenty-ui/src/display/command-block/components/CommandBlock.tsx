@@ -12,11 +12,21 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCommandContain = styled.div`
-  font-family: 'DM Mono', 'Inter', sans-serif;
+  font-family: ${({ theme }) => theme.code.font.family};
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
+`;
+
+const StyledLineContainer = styled.div``;
+
+const StyledLineStartSpan = styled.span`
+  color: ${({ theme }) => theme.code.text.orange};
+`;
+
+const StyledLineSpan = styled.span`
+  color: ${({ theme }) => theme.code.text.green};
 `;
 
 type CommandBlockProps = {
@@ -28,18 +38,14 @@ export const CommandBlock = ({ commands, button }: CommandBlockProps) => {
   return (
     <StyledContainer>
       <StyledCommandContain>
-        <pre style={{ margin: 0 }}>
-          <code>
-            {commands.map((line, i) => (
-              <div key={i}>
-                {/* eslint-disable-next-line @nx/workspace-no-hardcoded-colors */}
-                <span style={{ color: '#d19a66' }}>{'> '}</span>
-                {/* eslint-disable-next-line @nx/workspace-no-hardcoded-colors */}
-                <span style={{ color: '#98C379' }}>{line}</span>
-              </div>
-            ))}
-          </code>
-        </pre>
+        <>
+          {commands.map((line, i) => (
+            <StyledLineContainer key={i}>
+              <StyledLineStartSpan>{'> '}</StyledLineStartSpan>
+              <StyledLineSpan>{line}</StyledLineSpan>
+            </StyledLineContainer>
+          ))}
+        </>
       </StyledCommandContain>
       {button && <StyledButtonContainer>{button}</StyledButtonContainer>}
     </StyledContainer>
