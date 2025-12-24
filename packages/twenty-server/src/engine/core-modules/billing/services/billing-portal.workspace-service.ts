@@ -17,15 +17,15 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
-import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
+import { type StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 
 @Injectable()
@@ -105,7 +105,7 @@ export class BillingPortalWorkspaceService {
       );
     }
 
-    const subscription =
+    const stripeSubscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
         workspace,
@@ -120,7 +120,7 @@ export class BillingPortalWorkspaceService {
     const createdBillingSubscription =
       await this.billingSubscriptionService.syncSubscriptionToDatabase(
         workspace.id,
-        subscription,
+        stripeSubscription.id,
       );
 
     await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
