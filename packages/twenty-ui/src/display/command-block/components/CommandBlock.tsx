@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCommandContain = styled.div`
-  font-family: 'DM Mono;
+  font-family: 'DM Mono', 'Inter', sans-serif;
 `;
 
 const StyledButtonContainer = styled.div`

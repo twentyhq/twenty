@@ -58,7 +58,7 @@ export const SettingsApplicationsTable = ({
       <StyledSearchInput
         instanceId="env-var-search"
         LeftIcon={IconSearch}
-        placeholder={t`Search a variable`}
+        placeholder={t`Search an application`}
         value={searchTerm}
         onChange={setSearchTerm}
       />
