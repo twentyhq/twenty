@@ -65,11 +65,10 @@ export const RecordBoardQueryEffect = () => {
     useTriggerRecordBoardInitialQuery();
 
   const recordGroupdIds = useRecoilComponentValue(recordGroupIdsComponentState);
-  const recordGroupIdsHaveChanged =
-    isDeeplyEqual(
-      [...recordGroupdIds].sort(),
-      [...lastRecordGroupIds].sort(),
-    ) !== true; // to remove
+  const recordGroupIdsHaveChanged = !isDeeplyEqual(
+    [...recordGroupdIds].sort(),
+    [...lastRecordGroupIds].sort(),
+  );
 
   useEffect(() => {
     if (
