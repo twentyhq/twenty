@@ -48,7 +48,7 @@ export const usePageLayoutHandleLayoutChange = (
 
         set(pageLayoutCurrentLayoutsState, {
           ...currentTabLayouts,
-          [activeTabId]: allLayouts,
+          [activeTabId]: structuredClone(allLayouts),
         });
 
         const pageLayoutDraft = snapshot

@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: Importați contacte via CSV
+description: Ghid complet, pas cu pas, pentru importul persoanelor/contactelor în Twenty.
 ---
 
 ## Prezentare generală
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Acest ghid vă arată cum să importați contactele (Persoane) în Twenty. **Importați Companiile mai întâi** dacă doriți să legați Persoanele de Companii.
 
 ## Înainte de a începe
 
-### Prerequisites Checklist
+### Listă de verificare a condițiilor prealabile
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Fișierul este în format CSV, XLSX sau XLS
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  Fișierul are mai puțin de 10.000 de înregistrări
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  Nicio adresă de e-mail duplicată în fișier
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Companiile importate mai întâi** (dacă legați Persoane de Companii)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Toate câmpurile personalizate există în **Setări → Model de date**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Importați Companiile înaintea Persoanelor**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Dacă doriți să legați Persoane de Companii, importați mai întâi Companiile. Compania trebuie să existe înainte de a o putea referi.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Pasul 1: Pregătiți datele de contact
 
-### Required and Recommended Fields
+### Câmpuri obligatorii și recomandate
 
-| Câmp              | Required?   | Format            | Notițe                    |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **Email**         | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Text              |                           |
-| **Last Name**     | Recommended | Text              |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Text              |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| Câmp                      | Obligatoriu? | Format            | Notițe                               |
+| ------------------------- | ------------ | ----------------- | ------------------------------------ |
+| **Email**                 | Recomandat   | `name@domain.com` | Trebuie să fie unică                 |
+| **Prenume**               | Recomandat   | Text              |                                      |
+| **Nume de familie**       | Recomandat   | Text              |                                      |
+| **Companie**              | Opțional     | Domeniu sau ID    | Leagă de Compania existentă          |
+| **Telefon**               | Opțional     | Mai multe coloane | Consultați mai jos                   |
+| **Funcție**               | Opțional     | Text              |                                      |
+| **Câmpuri personalizate** | Opțional     | Variază           | Trebuie să existe în Modelul de date |
 
-### Email Format
+### Format e-mail
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Trebuie să fie în format de e-mail valid: `name@domain.com`
+* **Trebuie să fie unică** — fără duplicate în fișierul dvs. sau în Twenty
+* Pentru e-mailuri suplimentare, folosiți coloana **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Format telefon
 
-Phone is a **nested field** requiring multiple columns:
+Telefonul este un **câmp îmbricat** care necesită mai multe coloane:
 
-| Column                                  | Exemplu      |
+| Coloană                                 | Exemplu      |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### Conectarea la Companii
 
-Add a column with the Company's unique identifier:
+Adăugați o coloană cu identificatorul unic al Companiei:
 
-| Column Name     | Format     | Exemplu                                |
+| Nume coloană    | Format     | Exemplu                                |
 | --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
+| `companyDomain` | Format URL | `https://acme.com`                     |
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Folosiți formatul URL de domeniu** (`https://acme.com`), nu eticheta. Acest lucru corespunde modului în care Companiile sunt stocate în Twenty.
 </Note>
 
-### Sample CSV Structure
+### Exemplu de structură CSV
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,59 +93,59 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **Sfat profesional:** Faceți clic pe **Download sample file** în timpul importului sau exportați câteva Persoane existente pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă Twenty.
 </Note>
 
-## Step 2: Access the Import Feature
+## Pasul 2: Accesați funcția de import
 
-**Option 1: From the People View**
+**Opțiunea 1: Din vizualizarea Persoane**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Navigați la **Persoane** în bara laterală stângă
+2. Faceți clic pe pictograma **⋮** din dreapta sus
+3. Selectați **Importă înregistrări**
 
-**Option 2: Using Command Menu**
+**Opțiunea 2: Folosind meniul de comenzi**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Apăsați `Cmd + K` (Mac) sau `Ctrl + K` (Windows)
+2. Tastați "import"
+3. Selectați **Importă înregistrări**
+4. Alegeți **Persoane**
 
-## Step 3: Upload Your File
+## Pasul 3: Încărcați fișierul
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. Faceți clic pe **Select file**
+2. Alegeți fișierul CSV, XLSX sau XLS
+3. Așteptați ca Twenty să analizeze fișierul
 
-## Step 4: Map Your Columns
+## Pasul 4: Mapați coloanele
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty încearcă automat să potrivească coloanele cu câmpurile. Revizuiți și ajustați:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Verificați mapările automate** — confirmați că sunt corecte
+2. **Corectați mapările incorecte** — faceți clic pe lista derulantă pentru a selecta câmpul corect
+3. **Omiteți coloanele** — selectați **Do not map** pentru coloanele pe care nu doriți să le importați
 
-### Important Mapping Rules
+### Reguli importante de mapare
 
-| Column Type       | Map To                         | Notițe                             |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Email             | **Email**                      | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Telefon           | Separate columns               | Number, Country Code, Calling Code |
+| Tip coloană            | Mapați la                      | Notițe                                 |
+| ---------------------- | ------------------------------ | -------------------------------------- |
+| Referință companie     | Câmpul de relație **Company**  | Folosiți domeniul SAU id-ul, nu ambele |
+| Email                  | **Email**                      | Adresă de e-mail principală            |
+| E-mailuri suplimentare | **Emails / Additional Emails** | Format de array                        |
+| Telefon                | Coloane separate               | Număr, Codul țării, Prefix de apelare  |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Maparea relației de Companie
 
-When mapping the company column:
+Când mapați coloana companiei:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Găsiți coloana de referință a companiei (de ex., `companyDomain`)
+2. Mapați-o la câmpul de relație **Company**
+3. Twenty va lega fiecare Persoană de Compania corespunzătoare
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **Mapați un singur identificator unic pentru relații.**
 
   Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
 </Warning>
