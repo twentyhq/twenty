@@ -5,32 +5,33 @@ import {
   Headers,
   Logger,
   Post,
-  RawBodyRequest,
+  type RawBodyRequest,
   Req,
   Res,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 import Stripe from 'stripe';
 
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
-import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
-import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
-import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
-import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
-import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
-import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
-import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
+import { type BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
+import { type BillingWebhookCreditGrantService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-credit-grant.service';
+import { type BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
+import { type BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
+import { type BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
+import { type BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
+import { type BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
+import { type BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
+import { type BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -50,6 +51,7 @@ export class BillingWebhookController {
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
+    private readonly billingWebhookCreditGrantService: BillingWebhookCreditGrantService,
   ) {}
 
   @Post(['webhooks/stripe'])
@@ -150,6 +152,27 @@ export class BillingWebhookController {
           event,
         );
       }
+
+      case BillingWebhookEvent.CREDIT_GRANT_CREATED:
+      case BillingWebhookEvent.CREDIT_GRANT_UPDATED: {
+        const customer = event.data.object.customer;
+        // customer can be string ID, Customer object, or DeletedCustomer object
+        const stripeCustomerId =
+          typeof customer === 'string' ? customer : customer?.id;
+
+        if (stripeCustomerId) {
+          return await this.billingWebhookCreditGrantService.processStripeEvent(
+            stripeCustomerId,
+          );
+        }
+
+        this.logger.warn(
+          `Credit grant event ${event.type} missing customer ID, skipping`,
+        );
+
+        return {};
+      }
+
       default:
         return {};
     }

@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -13,12 +13,13 @@ import {
 import { type BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { type BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { type StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingUsageService {
@@ -30,6 +31,7 @@ export class BillingUsageService {
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
+    private readonly stripeCreditGrantService: StripeCreditGrantService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
@@ -123,15 +125,25 @@ export class BillingUsageService {
             periodEnd,
           );
 
+        const grantedCredits =
+          subscription.status === SubscriptionStatus.Trialing
+            ? item.freeTrialQuantity
+            : item.tierQuantity;
+
+        const rolloverCredits =
+          await this.stripeCreditGrantService.getCustomerCreditBalance(
+            subscription.stripeCustomerId,
+            item.unitPriceCents,
+          );
+
         return {
           productKey: item.productKey,
           periodStart,
           periodEnd,
           usedCredits: meterEventsSum,
-          grantedCredits:
-            subscription.status === SubscriptionStatus.Trialing
-              ? item.freeTrialQuantity
-              : item.tierQuantity,
+          grantedCredits,
+          rolloverCredits,
+          totalGrantedCredits: grantedCredits + rolloverCredits,
           unitPriceCents: item.unitPriceCents,
         };
       }),

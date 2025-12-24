@@ -44,15 +44,21 @@ export const SettingsBillingCreditsSection = ({
 
   const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
 
-  const { usedCredits, grantedCredits, unitPriceCents } =
-    getWorkflowNodeExecutionUsage();
+  const {
+    usedCredits,
+    grantedCredits,
+    rolloverCredits,
+    totalGrantedCredits,
+    unitPriceCents,
+  } = getWorkflowNodeExecutionUsage();
 
-  const progressBarValue = (usedCredits / grantedCredits) * 100;
+  // Use totalGrantedCredits (base + rollover) for progress calculation
+  const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
   const displayedProgressBarValue = progressBarValue < 3 ? 3 : progressBarValue;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
-  const extraCreditsUsed = Math.max(0, usedCredits - grantedCredits);
+  const extraCreditsUsed = Math.max(0, usedCredits - totalGrantedCredits);
 
   const costPer1kExtraCredits = (unitPriceCents / 100) * 1000;
 
@@ -74,7 +80,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(totalGrantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={displayedProgressBarValue}
@@ -87,6 +93,32 @@ export const SettingsBillingCreditsSection = ({
 
           {!isTrialing && (
             <>
+              <StyledLineSeparator />
+              <SettingsBillingLabelValueItem
+                label={t`Base Credits`}
+                value={formatNumber(grantedCredits, {
+                  abbreviate: true,
+                  decimals: 2,
+                })}
+              />
+              {rolloverCredits > 0 && (
+                <SettingsBillingLabelValueItem
+                  label={t`Rollover Credits`}
+                  value={formatNumber(rolloverCredits, {
+                    abbreviate: true,
+                    decimals: 2,
+                  })}
+                />
+              )}
+              {rolloverCredits > 0 && (
+                <SettingsBillingLabelValueItem
+                  label={t`Total Available`}
+                  value={formatNumber(totalGrantedCredits, {
+                    abbreviate: true,
+                    decimals: 2,
+                  })}
+                />
+              )}
               <StyledLineSeparator />
               <SettingsBillingLabelValueItem
                 label={t`Extra Credits Used`}

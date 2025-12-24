@@ -15,7 +15,6 @@ export const createMockStripeSubscriptionCreatedData = (
             id: 'plan_default',
             object: 'plan',
             active: true,
-            aggregate_usage: null,
             amount_decimal: '0',
             billing_scheme: 'per_unit',
             interval_count: 1,
@@ -37,6 +36,8 @@ export const createMockStripeSubscriptionCreatedData = (
           object: 'subscription_item',
           billing_thresholds: null,
           created: 0,
+          current_period_end: 1672531200,
+          current_period_start: 1672531200,
           discounts: [],
           metadata: {},
           price: {
@@ -53,7 +54,6 @@ export const createMockStripeSubscriptionCreatedData = (
             nickname: null,
             product: 'prod_default',
             recurring: {
-              aggregate_usage: null,
               interval: 'month',
               interval_count: 1,
               meter: null,
@@ -77,8 +77,6 @@ export const createMockStripeSubscriptionCreatedData = (
     },
     cancel_at_period_end: false,
     currency: 'usd',
-    current_period_end: 1672531200,
-    current_period_start: 1672531200,
     metadata: { workspaceId: '3b8e6458-5fc1-4e63-8563-008ccddaa6db' },
     trial_end: null,
     trial_start: null,
@@ -87,6 +85,7 @@ export const createMockStripeSubscriptionCreatedData = (
     application: null,
     application_fee_percent: null,
     automatic_tax: {
+      disabled_reason: null,
       enabled: true,
       liability: {
         type: 'self',
@@ -94,6 +93,10 @@ export const createMockStripeSubscriptionCreatedData = (
     },
     billing_cycle_anchor: 0,
     billing_cycle_anchor_config: null,
+    billing_mode: {
+      type: 'classic',
+      flexible: null,
+    },
     billing_thresholds: null,
     cancel_at: null,
     cancellation_details: null,
@@ -103,7 +106,6 @@ export const createMockStripeSubscriptionCreatedData = (
     default_payment_method: null,
     default_source: null,
     description: null,
-    discount: null,
     discounts: [],
     ended_at: null,
     invoice_settings: {

@@ -24847,7 +24847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:>=13.7.0, @types/node@npm:>=8.1.0, @types/node@npm:^24.0.0":
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:>=13.7.0, @types/node@npm:^24.0.0":
   version: 24.3.1
   resolution: "@types/node@npm:24.3.1"
   dependencies:
@@ -55067,13 +55067,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stripe@npm:17.3.1":
-  version: 17.3.1
-  resolution: "stripe@npm:17.3.1"
+"stripe@npm:19.3.1":
+  version: 19.3.1
+  resolution: "stripe@npm:19.3.1"
   dependencies:
-    "@types/node": "npm:>=8.1.0"
     qs: "npm:^6.11.0"
-  checksum: 10c0/96c9595428775d3bb5d619f770dd4775357ec778be4033915d629ef6033d29a70ec4d916311cc2e1e5e5e45646d9b53fcef6215e60e1ea183d89554bd61e7055
+  peerDependencies:
+    "@types/node": ">=16"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/986b42cf25993ad7ee6aa378bac581dc6b403b8424cfb0363595062c0d4afcf79b5a15f05ee08dc9b9e93d3559c3ec9f300f786c61a3be1fdb89851660f8af8d
   languageName: node
   linkType: hard
 
@@ -56953,7 +56957,7 @@ __metadata:
     rxjs: "npm:7.8.1"
     semver: "npm:7.6.3"
     sharp: "npm:0.32.6"
-    stripe: "npm:17.3.1"
+    stripe: "npm:19.3.1"
     transliteration: "npm:2.3.5"
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.1.5"

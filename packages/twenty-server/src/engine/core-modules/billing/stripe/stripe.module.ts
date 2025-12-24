@@ -15,6 +15,7 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
+import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-sdk/stripe-sdk.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
@@ -38,6 +39,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     StripeProductService,
     StripeBillingMeterEventService,
     StripeBillingAlertService,
+    StripeCreditGrantService,
   ],
   exports: [
     StripeWebhookService,
@@ -52,6 +54,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     StripeBillingMeterEventService,
     StripeSubscriptionScheduleService,
     StripeBillingAlertService,
+    StripeCreditGrantService,
   ],
 })
 export class StripeModule {}

@@ -4,10 +4,10 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { type StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
+import { type StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 
 @Injectable()
@@ -32,10 +32,11 @@ export class StripeBillingAlertService {
   async createUsageThresholdAlertForCustomerMeter(
     customerId: string,
     tierCap: number,
+    creditBalance: number = 0,
   ): Promise<void> {
     const meter = (await this.stripeBillingMeterService.getAllMeters()).find(
-      (meter) => {
-        return meter.event_name === BillingMeterEventName.WORKFLOW_NODE_RUN;
+      (meterItem) => {
+        return meterItem.event_name === BillingMeterEventName.WORKFLOW_NODE_RUN;
       },
     );
 
@@ -49,7 +50,8 @@ export class StripeBillingAlertService {
         customerId,
       );
 
-    const dynamicThreshold = cumulativeUsage + tierCap;
+    // Include credit balance (rollover credits) in the threshold
+    const dynamicThreshold = cumulativeUsage + tierCap + creditBalance;
 
     await this.stripe.billing.alerts.create({
       alert_type: 'usage_threshold',
@@ -68,7 +70,7 @@ export class StripeBillingAlertService {
     });
 
     this.logger.log(
-      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (cumulative=${cumulativeUsage} + tierCap=${tierCap})`,
+      `Created billing alert for customer ${customerId}: threshold=${dynamicThreshold} (cumulative=${cumulativeUsage} + tierCap=${tierCap} + creditBalance=${creditBalance})`,
     );
   }
 

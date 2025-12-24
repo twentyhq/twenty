@@ -4,7 +4,23 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import graphqlTypeJson from 'graphql-type-json';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
+
+// Simplified types for JSONB storage - avoids TypeORM's DeepPartialEntity issues with complex Stripe types
+type AutomaticTaxJson = {
+  disabled_reason?: string | null;
+  enabled: boolean;
+  liability?: {
+    type: string;
+    account?: string;
+  } | null;
+};
+
+type CancellationDetailsJson = {
+  comment?: string | null;
+  feedback?: string | null;
+  reason?: string | null;
+};
 import {
   Column,
   CreateDateColumn,
@@ -14,7 +30,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -136,10 +152,10 @@ export class BillingSubscriptionEntity {
   canceledAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  automaticTax: Stripe.Subscription.AutomaticTax | null;
+  automaticTax: AutomaticTaxJson | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  cancellationDetails: Stripe.Subscription.CancellationDetails | null;
+  cancellationDetails: CancellationDetailsJson | null;
 
   @Column({
     nullable: false,

@@ -25,6 +25,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -78,12 +79,14 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingUsageService,
     BillingPriceService,
+    BillingCreditRolloverService,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
+    BillingCreditRolloverService,
   ],
 })
 export class BillingModule {}

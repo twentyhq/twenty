@@ -35,14 +35,15 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
-import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
-import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { type BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { type BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { type BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { type BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { type StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { type StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
+import { type StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
@@ -52,7 +53,7 @@ import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/cor
 import { getCurrentMeteredBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-metered-billing-subscription-item-or-throw.util';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { getSubscriptionPricesFromSchedulePhase } from 'src/engine/core-modules/billing/utils/get-subscription-prices-from-schedule-phase.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type SubscriptionStripePrices = {
@@ -83,6 +84,7 @@ export class BillingSubscriptionService {
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
     private readonly stripeBillingAlertService: StripeBillingAlertService,
+    private readonly stripeCreditGrantService: StripeCreditGrantService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -608,14 +610,72 @@ export class BillingSubscriptionService {
       return;
     }
 
-    const tierCap = await this.getWorkflowTierCapForSubscription(
-      subscription.id,
-    );
+    const workflowPricingInfo =
+      await this.getWorkflowPricingInfoForSubscription(subscription.id);
+
+    if (!isDefined(workflowPricingInfo)) {
+      this.logger.warn(
+        `Cannot create billing alert: workflow pricing info not found for subscription ${subscription.id}`,
+      );
+
+      return;
+    }
+
+    const creditBalance =
+      await this.stripeCreditGrantService.getCustomerCreditBalance(
+        stripeCustomerId,
+        workflowPricingInfo.unitPriceCents,
+      );
 
     await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
       stripeCustomerId,
-      tierCap,
+      workflowPricingInfo.tierCap,
+      creditBalance,
     );
+  }
+
+  async getWorkflowPricingInfoForSubscription(
+    subscriptionId: string,
+  ): Promise<{ tierCap: number; unitPriceCents: number } | null> {
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: { id: subscriptionId },
+      relations: [
+        'billingSubscriptionItems',
+        'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
+      ],
+    });
+
+    if (!isDefined(subscription)) {
+      return null;
+    }
+
+    const workflowItem = subscription.billingSubscriptionItems.find(
+      (item) =>
+        item.billingProduct.metadata.productKey ===
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+
+    if (!isDefined(workflowItem)) {
+      return null;
+    }
+
+    const matchingPrice = workflowItem.billingProduct.billingPrices.find(
+      (price) => price.stripePriceId === workflowItem.stripePriceId,
+    );
+
+    if (!isDefined(matchingPrice)) {
+      return null;
+    }
+
+    if (!billingValidator.isMeteredTiersSchema(matchingPrice.tiers)) {
+      return null;
+    }
+
+    return {
+      tierCap: matchingPrice.tiers[0].up_to,
+      unitPriceCents: Number(matchingPrice.tiers[1].unit_amount_decimal),
+    };
   }
 
   private async runSubscriptionUpdate({
