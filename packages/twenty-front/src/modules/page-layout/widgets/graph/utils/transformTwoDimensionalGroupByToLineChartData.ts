@@ -12,9 +12,12 @@ import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/bui
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
+import { sortByManualOrder } from '@/page-layout/widgets/graph/utils/sortByManualOrder';
+import { sortBySelectOptionPosition } from '@/page-layout/widgets/graph/utils/sortBySelectOptionPosition';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { type FirstDayOfTheWeek, isDefined } from 'twenty-shared/utils';
-import { type LineChartConfiguration } from '~/generated/graphql';
+import { type LineChartConfiguration, GraphOrderBy } from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToLineChartDataParams = {
   rawResults: GroupByRawResult[];
@@ -50,6 +53,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
+  const yFormattedToRawLookup = new Map<string, RawDimensionValue>();
 
   const formattedValues = formatPrimaryDimensionValues({
     groupByRawResults: rawResults,
@@ -108,6 +112,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       firstDayOfTheWeek,
     });
 
+    if (isDefined(seriesRawValue)) {
+      yFormattedToRawLookup.set(seriesKey, seriesRawValue as RawDimensionValue);
+    }
+
     const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
       aggregateField,
@@ -126,9 +134,57 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
   });
 
+  let sortedXValues = allXValues;
+
+  if (isDefined(configuration.primaryAxisOrderBy)) {
+    if (configuration.primaryAxisOrderBy === GraphOrderBy.MANUAL) {
+      if (isDefined(configuration.primaryAxisManualSortOrder)) {
+        sortedXValues = sortByManualOrder({
+          items: allXValues,
+          manualSortOrder: configuration.primaryAxisManualSortOrder,
+          getRawValue: (formattedValue) => {
+            const rawValue = formattedToRawLookup.get(formattedValue);
+
+            return isDefined(rawValue) ? String(rawValue) : formattedValue;
+          },
+        });
+      }
+    } else if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC
+    ) {
+      sortedXValues = [...allXValues].sort((a, b) => {
+        if (configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC) {
+          return a.localeCompare(b);
+        } else {
+          return b.localeCompare(a);
+        }
+      });
+    } else if (
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC ||
+      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_DESC
+    ) {
+      if (
+        isDefined(groupByFieldX.options) &&
+        groupByFieldX.options.length > 0
+      ) {
+        sortedXValues = sortBySelectOptionPosition({
+          items: allXValues,
+          options: groupByFieldX.options,
+          formattedToRawLookup,
+          getFormattedValue: (item) => item,
+          direction:
+            configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_POSITION_ASC
+              ? 'ASC'
+              : 'DESC',
+        });
+      }
+    }
+  }
+
   const unsortedSeries: LineChartSeries[] = Array.from(seriesMap.entries()).map(
     ([seriesKey, xToYMap]) => {
-      const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
+      const data: LineChartDataPoint[] = sortedXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
       }));
@@ -150,9 +206,18 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     },
   );
 
+  const isSecondaryAxisSelectField =
+    groupByFieldY.type === FieldMetadataType.SELECT ||
+    groupByFieldY.type === FieldMetadataType.MULTI_SELECT;
+
   const series = sortLineChartSeries({
     series: unsortedSeries,
     orderByY: configuration.secondaryAxisOrderBy,
+    manualSortOrder: configuration.secondaryAxisManualSortOrder,
+    formattedToRawLookup: yFormattedToRawLookup,
+    selectFieldOptions: isSecondaryAxisSelectField
+      ? groupByFieldY.options
+      : undefined,
   });
 
   return {

@@ -1,4 +1,5 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { getChartDefaultOrderByForFieldType } from '@/command-menu/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
 import { isBarChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarChartConfiguration';
 import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 import { isLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isLineChartConfiguration';
@@ -44,6 +45,14 @@ export const buildChartGroupByFieldConfigUpdate = <
   const isLineChart = isLineChartConfiguration(configuration);
   const isPieChart = isPieChartConfiguration(configuration);
 
+  const fieldMetadata = objectMetadataItem?.fields?.find(
+    (field) => field.id === fieldId,
+  );
+
+  const defaultOrderBy = isDefined(fieldMetadata?.type)
+    ? getChartDefaultOrderByForFieldType(fieldMetadata?.type)
+    : GraphOrderBy.FIELD_ASC;
+
   if (isPrimaryAxis) {
     const existingOrderBy =
       isBarChart || isLineChart ? configuration.primaryAxisOrderBy : null;
@@ -73,8 +82,8 @@ export const buildChartGroupByFieldConfigUpdate = <
     const shouldResetOrderBy = isNewFieldDateType && isCurrentOrderByValueBased;
 
     const newOrderBy = shouldResetOrderBy
-      ? GraphOrderBy.FIELD_ASC
-      : (existingOrderBy ?? GraphOrderBy.FIELD_ASC);
+      ? defaultOrderBy
+      : (existingOrderBy ?? defaultOrderBy);
 
     return {
       ...baseConfig,
@@ -107,8 +116,8 @@ export const buildChartGroupByFieldConfigUpdate = <
     const shouldResetOrderBy = isNewFieldDateType && isCurrentOrderByValueBased;
 
     const newOrderBy = shouldResetOrderBy
-      ? GraphOrderBy.FIELD_ASC
-      : (existingOrderBy ?? GraphOrderBy.FIELD_ASC);
+      ? defaultOrderBy
+      : (existingOrderBy ?? defaultOrderBy);
 
     return {
       ...baseConfig,
@@ -127,7 +136,7 @@ export const buildChartGroupByFieldConfigUpdate = <
     return {
       ...baseConfig,
       secondaryAxisOrderBy: isDefined(fieldId)
-        ? (configuration.secondaryAxisOrderBy ?? GraphOrderBy.FIELD_ASC)
+        ? (configuration.secondaryAxisOrderBy ?? defaultOrderBy)
         : null,
       secondaryAxisGroupByDateGranularity: isDefined(fieldId)
         ? (configuration.secondaryAxisGroupByDateGranularity ??
@@ -143,7 +152,7 @@ export const buildChartGroupByFieldConfigUpdate = <
     return {
       ...baseConfig,
       secondaryAxisOrderBy: isDefined(fieldId)
-        ? (configuration.secondaryAxisOrderBy ?? GraphOrderBy.FIELD_ASC)
+        ? (configuration.secondaryAxisOrderBy ?? defaultOrderBy)
         : null,
       secondaryAxisGroupByDateGranularity: isDefined(fieldId)
         ? (configuration.secondaryAxisGroupByDateGranularity ??
