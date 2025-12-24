@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +9,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 
 export const validateRatingAndSelectFieldOrThrow = (
   value: unknown,
@@ -20,6 +22,7 @@ export const validateRatingAndSelectFieldOrThrow = (
     throw new CommonQueryRunnerException(
       `Invalid options for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
@@ -27,6 +30,7 @@ export const validateRatingAndSelectFieldOrThrow = (
     throw new CommonQueryRunnerException(
       `Invalid value ${inspect(value)} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      { userFriendlyMessage: msg`Invalid value for select.` },
     );
   }
 

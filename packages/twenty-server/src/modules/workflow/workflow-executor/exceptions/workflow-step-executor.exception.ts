@@ -24,7 +24,7 @@ export class WorkflowStepExecutorException extends CustomException<WorkflowStepE
   constructor(
     message: string,
     code: WorkflowStepExecutorExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
   ) {
     super(message, code, {
       userFriendlyMessage:

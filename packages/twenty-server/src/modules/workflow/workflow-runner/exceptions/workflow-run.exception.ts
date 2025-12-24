@@ -28,11 +28,10 @@ export class WorkflowRunException extends CustomException<WorkflowRunExceptionCo
   constructor(
     message: string,
     code: WorkflowRunExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
   ) {
     super(message, code, {
-      userFriendlyMessage:
-        userFriendlyMessage ?? workflowRunExceptionUserFriendlyMessages[code],
+      userFriendlyMessage,
     });
   }
 }

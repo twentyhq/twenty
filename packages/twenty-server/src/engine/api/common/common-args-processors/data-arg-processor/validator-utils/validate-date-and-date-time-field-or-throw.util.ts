@@ -1,5 +1,6 @@
 import { inspect } from 'util';
 
+import { msg } from '@lingui/core/macro';
 import { isDate, isNull, isNumber, isString } from '@sniptt/guards';
 
 import {
@@ -23,5 +24,6 @@ export const validateDateAndDateTimeFieldOrThrow = (
   throw new CommonQueryRunnerException(
     `Invalid value ${inspect(value)} for date or date-time field "${fieldName}"`,
     CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+    { userFriendlyMessage: msg`Invalid value for date.` },
   );
 };

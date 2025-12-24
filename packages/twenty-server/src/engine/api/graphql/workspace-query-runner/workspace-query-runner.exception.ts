@@ -37,7 +37,7 @@ export class WorkspaceQueryRunnerException extends CustomException<
   constructor(
     message: string,
     code: keyof typeof WorkspaceQueryRunnerExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
   ) {
     super(message, code, {
       userFriendlyMessage:

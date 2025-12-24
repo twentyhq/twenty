@@ -24,7 +24,7 @@ export class WorkflowVersionStepException extends CustomException<WorkflowVersio
   constructor(
     message: string,
     code: WorkflowVersionStepExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
   ) {
     super(message, code, {
       userFriendlyMessage:

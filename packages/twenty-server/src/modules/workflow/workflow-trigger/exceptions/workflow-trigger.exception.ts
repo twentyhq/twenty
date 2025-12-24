@@ -32,7 +32,7 @@ export class WorkflowTriggerException extends CustomException<WorkflowTriggerExc
   constructor(
     message: string,
     code: WorkflowTriggerExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
   ) {
     super(message, code, {
       userFriendlyMessage:
