@@ -93,6 +93,10 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
       return;
     }
 
+    if (configuration.secondaryAxisOrderBy === GraphOrderBy.MANUAL) {
+      configToUpdate.secondaryAxisManualSortOrder = null;
+    }
+
     updateCurrentWidgetConfig({ configToUpdate });
     closeDropdown();
   };

@@ -138,6 +138,13 @@ export const ChartSortBySelectionDropdownContent = () => {
       return;
     }
 
+    if (currentOrderBy === GraphOrderBy.MANUAL) {
+      const manualSortOrderKey = isPieChart
+        ? 'manualSortOrder'
+        : 'primaryAxisManualSortOrder';
+      configToUpdate[manualSortOrderKey] = null;
+    }
+
     if (isPieChart) {
       configToUpdate.orderBy = orderBy;
     } else {
