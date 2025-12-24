@@ -64,6 +64,7 @@ const mockWorkspace = {
   },
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
+  allowExternalRequests: true,
   fastModel: DEFAULT_FAST_MODEL,
   smartModel: DEFAULT_SMART_MODEL,
   routerModel: 'auto',

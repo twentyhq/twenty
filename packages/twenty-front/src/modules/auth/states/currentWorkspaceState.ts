@@ -35,6 +35,7 @@ export type CurrentWorkspace = Pick<
   | 'fastModel'
   | 'smartModel'
   | 'editableProfileFields'
+  | 'allowExternalRequests'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
