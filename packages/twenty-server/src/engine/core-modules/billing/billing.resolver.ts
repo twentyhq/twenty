@@ -16,7 +16,7 @@ import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { type BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { type BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
