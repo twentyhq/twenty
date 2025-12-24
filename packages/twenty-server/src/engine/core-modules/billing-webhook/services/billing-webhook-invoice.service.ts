@@ -33,8 +33,9 @@ export class BillingWebhookInvoiceService {
     } = data.object;
 
     // In Stripe SDK v19+, subscription moved from invoice.subscription to invoice.parent.subscription_details.subscription
-    const stripeSubscriptionId =
-      parent?.subscription_details?.subscription as string | undefined;
+    const stripeSubscriptionId = parent?.subscription_details?.subscription as
+      | string
+      | undefined;
     const stripeCustomerId = customer as string | undefined;
 
     if (

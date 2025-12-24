@@ -118,4 +118,3 @@ export class StripeCreditGrantService {
     return Math.round(monetaryAmountCents / unitPriceCents);
   }
 }
-
