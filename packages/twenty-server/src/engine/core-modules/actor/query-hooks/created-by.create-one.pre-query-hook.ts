@@ -9,8 +9,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
-  CreatedByFromAuthContextService,
-  type CreateInput,
+  ActorFromAuthContextService,
+  type RecordInput,
 } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
@@ -19,14 +19,14 @@ export class CreatedByCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly createdByFromAuthContextService: CreatedByFromAuthContextService,
+    private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
   async execute(
     authContext: AuthContext,
     objectName: string,
-    payload: CreateOneResolverArgs<CreateInput>,
-  ): Promise<CreateOneResolverArgs<CreateInput>> {
+    payload: CreateOneResolverArgs<RecordInput>,
+  ): Promise<CreateOneResolverArgs<RecordInput>> {
     if (!isDefined(payload.data)) {
       throw new GraphqlQueryRunnerException(
         'Payload data is required',
@@ -35,7 +35,7 @@ export class CreatedByCreateOnePreQueryHook
     }
 
     const [recordToCreateData] =
-      await this.createdByFromAuthContextService.injectCreatedBy(
+      await this.actorFromAuthContextService.injectCreatedBy(
         [payload.data],
         objectName,
         authContext,
