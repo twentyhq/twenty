@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: إنشاء عرض سعر أو فاتورة من Twenty
+description: إنشاء فواتير تلقائياً في الأدوات الخارجية عند إغلاق الصفقات.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+إرسال بيانات الصفقة تلقائياً إلى نظام الفوترة لديك (Stripe وQuickBooks وXero، إلخ) عند ربح فرصة.
 
-## Workflow Structure
+## بنية سير العمل
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **المحفّز**: يتم تحديث السجل (الفرصة)
+2. **التصفية**: المرحلة = Closed Won
+3. **Search Record**: الحصول على تفاصيل الشركة
+4. **Code** (اختياري): تنسيق الحمولة
+5. **HTTP Request**: الإرسال إلى نظام الفوترة
 
-## Step 1: Set Up the Trigger
+## الخطوة 1: إعداد المُحفّز
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. إنشاء سير عمل جديد
+2. اختر المُحفّز **Record is Updated**
+3. اختر **Opportunity** بوصفه الكائن
 
-## Step 2: Filter for Closed Won
+## الخطوة 2: التصفية من أجل Closed Won
 
-Add a **Filter** action to only continue when the deal is won:
+أضف إجراء **Filter** للمتابعة فقط عند ربح الصفقة:
 
-| Setting       | القيمة                            |
-| ------------- | --------------------------------- |
-| **Field**     | المرحلة                           |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| الإعداد    | القيمة                             |
+| ---------- | ---------------------------------- |
+| **الحقل**  | المرحلة                            |
+| **الشرط**  | يساوي                              |
+| **القيمة** | `CLOSED_WON` (أو اسم المرحلة لديك) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  يتم تشغيل المُحفّز عند أي تحديث للفرصة. تضمن التصفية أن يستمر سير العمل فقط عندما تتغير المرحلة إلى Closed Won.
 </Tip>
 
-## Step 3: Get Company Details
+## الخطوة 3: الحصول على تفاصيل الشركة
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+قد لا يتضمن سجل الفرصة جميع حقول الشركة التي تحتاجها للفاتورة. أضف إجراء **Search Record**:
 
-| Setting      | القيمة                                   |
-| ------------ | ---------------------------------------- |
-| **Object**   | الشركة                                   |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| الإعداد          | القيمة                                       |
+| ---------------- | -------------------------------------------- |
+| **الكائن**       | الشركة                                       |
+| **المطابقة حسب** | المعرّف يساوي `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+يؤدي ذلك إلى استرجاع سجل الشركة الكامل متضمناً عنوان الفوترة، ومعرّف الضريبة، وما إلى ذلك.
 
-## Step 4: Format the Payload (Optional)
+## الخطوة 4: تنسيق الحمولة (اختياري)
 
-If your invoicing system expects a specific format, add a **Code** action:
+إذا كان نظام الفوترة لديك يتطلب تنسيقاً محدداً، فأضف إجراء **Code**:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## الخطوة 5: الإرسال إلى نظام الفوترة
 
-Add an **HTTP Request** action:
+أضف إجراء **HTTP Request**:
 
-| Setting     | القيمة                                    |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| الإعداد       | القيمة                                           |
+| ------------- | ------------------------------------------------ |
+| **الطريقة**   | POST                                             |
+| **عنوان URL** | نقطة نهاية واجهة برمجة تطبيقات الفوترة الخاصة بك |
+| **الرؤوس**    | `Authorization: Bearer YOUR_API_KEY`             |
+| **المحتوى**   | `{{code.invoice}}` أو قم بربط الحقول مباشرةً     |
 
-### Example: Stripe Invoice
+### مثال: فاتورة Stripe
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### مثال: فاتورة QuickBooks
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## الملخص الكامل لسير العمل
 
-| Step | Action                  | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| ٢    | تصفية                   | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | كود                     | Format data for invoicing API        |
-| 5    | طلب HTTP                | Create invoice in external system    |
+| الخطوة | الإجراء              | الغرض                                           |
+| ------ | -------------------- | ----------------------------------------------- |
+| 1      | المحفّز: تحديث السجل | يتم تشغيله عند حدوث أي تغيير في أي فرصة         |
+| ٢      | تصفية                | المتابعة فقط إذا كانت المرحلة = Closed Won      |
+| 3      | البحث عن سجل         | الحصول على تفاصيل الشركة الكاملة لأغراض الفوترة |
+| 4      | كود                  | تنسيق البيانات لواجهة برمجة تطبيقات الفوترة     |
+| 5      | طلب HTTP             | إنشاء فاتورة في نظام خارجي                      |
 
-## Tips
+## نصائح
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **تخزين المعرّفات الخارجية**: احفظ معرّف الفاتورة الذي تُرجعه واجهة برمجة التطبيقات إلى الفرصة باستخدام إجراء **Update Record**
+* **التعامل مع الأخطاء**: أضف فرعاً لإرسال إشعار إذا فشل طلب HTTP
+* **اختبر أولاً**: استخدم وضع sandbox/test في نظام الفوترة قبل الإطلاق
 
-## Related
+## ذات صلة
 
-* [Workflow Triggers](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [أتمتة Closed Won](/l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: استيراد جهات الاتصال عبر CSV
+description: دليل كامل خطوة بخطوة لاستيراد الأشخاص/جهات الاتصال إلى Twenty.
 ---
 
 ## نظرة عامة
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+يرشدك هذا الدليل خلال عملية استيراد جهات الاتصال (الأشخاص) إلى Twenty. **استورد الشركات أولًا** إذا كنت تريد ربط الأشخاص بالشركات.
 
 ## قبل أن تبدأ
 
-### Prerequisites Checklist
+### قائمة المتطلبات المسبقة
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  يجب أن يكون ملفك بتنسيق CSV أو XLSX أو XLS
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  يحتوي الملف على أقل من 10,000 سجل
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  لا توجد عناوين بريد إلكتروني مكررة في ملفك
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **استيراد الشركات أولًا** (إذا كنت تربط الأشخاص بالشركات)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  جميع الحقول المخصصة موجودة في **Settings → Data Model**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **استيراد الشركات قبل الأشخاص**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  إذا كنت تريد ربط الأشخاص بالشركات، فاستورد الشركات أولًا. يجب أن تكون الشركة موجودة قبل أن تتمكن من الإشارة إليها.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## الخطوة 1: جهّز بيانات جهات الاتصال الخاصة بك
 
-### Required and Recommended Fields
+### الحقول المطلوبة والمُوصى بها
 
-| الحقل                 | Required?   | التنسيق           | الملاحظات                 |
-| --------------------- | ----------- | ----------------- | ------------------------- |
-| **البريد الإلكتروني** | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**        | Recommended | نص                |                           |
-| **Last Name**         | Recommended | نص                |                           |
-| **Company**           | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**             | Optional    | Multiple columns  | See below                 |
-| **Job Title**         | Optional    | نص                |                           |
-| **Custom fields**     | Optional    | Varies            | Must exist in Data Model  |
+| الحقل                 | هل هو مطلوب؟ | التنسيق           | الملاحظات                        |
+| --------------------- | ------------ | ----------------- | -------------------------------- |
+| **البريد الإلكتروني** | مُوصى به     | `name@domain.com` | يجب أن يكون فريدًا               |
+| **الاسم الأول**       | مُوصى به     | نص                |                                  |
+| **الاسم الأخير**      | مُوصى به     | نص                |                                  |
+| **الشركة**            | اختياري      | النطاق أو المعرّف | يرتبط بشركة موجودة               |
+| **هاتف**              | اختياري      | أعمدة متعددة      | انظر أدناه                       |
+| **المسمى الوظيفي**    | اختياري      | نص                |                                  |
+| **الحقول المخصصة**    | اختياري      | يختلف             | يجب أن تكون موجودة في Data Model |
 
-### Email Format
+### تنسيق البريد الإلكتروني
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* يجب أن يكون بتنسيق بريد إلكتروني صالح: `name@domain.com`
+* **يجب أن يكون فريدًا** — لا تكرارات في ملفك أو في Twenty
+* للعناوين الإضافية للبريد الإلكتروني، استخدم عمود **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### تنسيق الهاتف
 
-Phone is a **nested field** requiring multiple columns:
+الهاتف هو **حقل متداخل** يتطلب أعمدة متعددة:
 
-| Column                                  | مثال         |
+| العمود                                  | مثال         |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### الربط بالشركات
 
-Add a column with the Company's unique identifier:
+أضف عمودًا يضم المعرّف الفريد للشركة:
 
-| Column Name     | التنسيق    | مثال                                   |
-| --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
-| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| اسم العمود      | التنسيق         | مثال                                   |
+| --------------- | --------------- | -------------------------------------- |
+| `companyDomain` | تنسيق عنوان URL | `https://acme.com`                     |
+| `companyId`     | UUID            | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **استخدم تنسيق عنوان URL للنطاق** (`https://acme.com`)، وليس التسمية. هذا يطابق كيفية تخزين الشركات في Twenty.
 </Note>
 
-### Sample CSV Structure
+### بنية CSV نموذجية
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,59 +93,59 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **نصيحة احترافية:** انقر **Download sample file** أثناء الاستيراد أو صدّر عددًا قليلًا من الأشخاص الموجودين للاطلاع على أسماء الأعمدة الدقيقة التي تتوقعها Twenty.
 </Note>
 
-## Step 2: Access the Import Feature
+## الخطوة 2: الوصول إلى ميزة الاستيراد
 
-**Option 1: From the People View**
+**الخيار 1: من عرض People**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. انتقل إلى **People** في الشريط الجانبي الأيسر
+2. انقر على أيقونة **⋮** في أعلى اليمين
+3. اختر **Import records**
 
-**Option 2: Using Command Menu**
+**الخيار 2: باستخدام قائمة الأوامر**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. اضغط `Cmd + K` (Mac) أو `Ctrl + K` (Windows)
+2. اكتب "import"
+3. اختر **Import records**
+4. اختر **People**
 
-## Step 3: Upload Your File
+## الخطوة 3: حمّل ملفك
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. انقر فوق **Select file**
+2. اختر ملف CSV أو XLSX أو XLS الخاص بك
+3. انتظر حتى يقوم Twenty بتحليل ملفك
 
-## Step 4: Map Your Columns
+## الخطوة 4: طابق أعمدتك
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+يحاول Twenty تلقائيًا مطابقة أعمدتك مع الحقول. راجع وعدّل:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **تحقق من المطابقات التلقائية** — تأكد من أنها صحيحة
+2. **أصلح المطابقات غير الصحيحة** — انقر على القائمة المنسدلة لاختيار الحقل الصحيح
+3. **تخطَّ الأعمدة** — اختر **Do not map** للأعمدة التي لا تريد استيرادها
 
-### Important Mapping Rules
+### قواعد مطابقة مهمة
 
-| Column Type       | Map To                         | الملاحظات                          |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| البريد الإلكتروني | **البريد الإلكتروني**          | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| هاتف              | Separate columns               | Number, Country Code, Calling Code |
+| نوع العمود                  | التعيين إلى                    | الملاحظات                             |
+| --------------------------- | ------------------------------ | ------------------------------------- |
+| مرجع الشركة                 | حقل علاقة **Company**          | استخدم النطاق أو المعرّف، وليس كليهما |
+| البريد الإلكتروني           | **البريد الإلكتروني**          | عنوان البريد الإلكتروني الأساسي       |
+| عناوين بريد إلكتروني إضافية | **Emails / Additional Emails** | تنسيق المصفوفة                        |
+| هاتف                        | أعمدة منفصلة                   | الرقم، رمز الدولة، رمز الاتصال        |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### مطابقة علاقة الشركة
 
-When mapping the company column:
+عند مطابقة عمود الشركة:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. اعثر على عمود مرجع الشركة (مثلًا، `companyDomain`)
+2. طابقه مع حقل علاقة **Company**
+3. سيقوم Twenty بربط كل شخص بالشركة المطابقة
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **طابق معرّفًا فريدًا واحدًا فقط للعلاقات.**
 
   Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
 </Warning>

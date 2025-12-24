@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: التعامل مع المصفوفات في إجراءات Code
+description: تعلّم كيفية التعامل بشكل صحيح مع مُدخلات المصفوفات في إجراءات Code في سير العمل.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+عند العمل مع المصفوفات في إجراءات Code، قد تواجه تحديين شائعين:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **مصفوفات مُمرَّرة كسلاسل نصية** — تصل البيانات من الأنظمة الخارجية أو من الخطوات السابقة كسلسلة نصية بدلاً من أن تكون مصفوفة فعلية
+2. **لا يمكن تحديد عناصر فردية** — يمكنك تحديد المصفوفة كاملة فقط، وليس الحقول المحددة داخلها
 
-Both can be solved with a Code node.
+يمكن حل كلا الأمرين باستخدام عقدة Code.
 
-## Parsing Arrays from Strings
+## تحليل المصفوفات من السلاسل النصية
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+غالباً ما تُمرَّر المصفوفات بين خطوات سير العمل كسلاسل نصية أو JSON بدلاً من مصفوفات أصلية. يحدث هذا عندما:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* استقبال البيانات من واجهات برمجة التطبيقات الخارجية عبر HTTP Request
+* معالجة حمولات خطافات الويب
+* تمرير البيانات بين خطوات سير العمل
 
-**Solution**: Add this pattern at the start of your Code action:
+**الحل**: أضف هذا النمط في بداية إجراء Code الخاص بك:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+السطر الأساسي `typeof users === "string" ? JSON.parse(users) : users` يتحقق مما إذا كان الإدخال سلسلة نصية، ويُجري تحليله إذا لزم الأمر، أو يستخدمه مباشرة إذا كان مصفوفة بالفعل.
 
-## Extracting Individual Fields from Arrays
+## استخراج الحقول الفردية من المصفوفات
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+قد يُرجِع خطّاف ويب مصفوفةً مثل `answers: [...]`، ولكن في خطوات سير العمل اللاحقة يمكنك تحديد **المصفوفة بأكملها** فقط — وليس العناصر الفردية داخلها.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**الحل**: أضف عقدة Code لاستخراج حقول محددة وإرجاعها ككائن منظَّم:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+تعيد عقدة Code كائناً منظَّماً بدلاً من مصفوفة. في الخطوات اللاحقة، يمكنك الآن تحديد حقول فردية مثل `answer.firstname` و`answer.name` من منتقي المتغيرات.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  نعمل بنشاط على جعل التعامل مع المصفوفات أسهل في التحديثات المستقبلية.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  انقر على أيقونة المربع في أعلى يمين محرر الكود لعرضه بملء الشاشة — فهذا مفيد لأن عرض المحرر الافتراضي محدود.
 </Tip>
