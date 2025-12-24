@@ -36,7 +36,6 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -59,17 +58,10 @@ export const SettingsObjectDetailPage = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const { objectNamePlural = '', applicationId = '' } = useParams();
+  const { objectNamePlural = '' } = useParams();
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
-
-  const { data } = useFindOneApplicationQuery({
-    variables: { id: applicationId },
-    skip: !applicationId,
-  });
-
-  const applicationName = data?.findOneApplication?.name;
 
   const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilState(
     updatedObjectNamePluralState,
@@ -146,12 +138,7 @@ export const SettingsObjectDetailPage = () => {
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
-        return (
-          <ObjectFields
-            objectMetadataItem={objectMetadataItem}
-            applicationId={applicationId}
-          />
-        );
+        return <ObjectFields objectMetadataItem={objectMetadataItem} />;
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
         return (
           <ObjectSettings
@@ -181,31 +168,10 @@ export const SettingsObjectDetailPage = () => {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          ...(isDefined(applicationName)
-            ? [
-                {
-                  children: t`Applications`,
-                  href: getSettingsPath(SettingsPath.Applications),
-                },
-                {
-                  children: `${applicationName}`,
-                  href: getSettingsPath(
-                    SettingsPath.ApplicationDetail,
-                    {
-                      applicationId,
-                    },
-                    undefined,
-                    'content',
-                  ),
-                },
-              ]
-            : [
-                {
-                  children: t`Objects`,
-                  href: getSettingsPath(SettingsPath.Objects),
-                },
-              ]),
-
+          {
+            children: t`Objects`,
+            href: getSettingsPath(SettingsPath.Objects),
+          },
           {
             children: objectMetadataItem.labelPlural,
           },

@@ -21,13 +21,9 @@ const StyledDiv = styled.div`
 
 type ObjectFieldsProps = {
   objectMetadataItem: ObjectMetadataItem;
-  applicationId?: string;
 };
 
-export const ObjectFields = ({
-  objectMetadataItem,
-  applicationId,
-}: ObjectFieldsProps) => {
+export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
@@ -46,7 +42,6 @@ export const ObjectFields = ({
       />
       <SettingsObjectFieldTable
         objectMetadataItem={objectMetadataItem}
-        applicationId={applicationId}
         mode="view"
       />
       {!readonly && (

@@ -33,7 +33,6 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
-  applicationId?: string;
   status: 'active' | 'disabled';
   mode: 'view' | 'new-field';
 };
@@ -87,7 +86,6 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsObjectFieldItemTableRow = ({
   settingsObjectDetailTableItem,
-  applicationId,
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
@@ -133,28 +131,17 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const canToggleField = !isLabelIdentifier;
 
-  const linkToNavigate = applicationId
-    ? getSettingsPath(SettingsPath.ApplicationFieldDetail, {
-        objectNamePlural: objectMetadataItem.namePlural,
-        fieldName: fieldMetadataItem.name,
-        applicationId,
-      })
-    : getSettingsPath(SettingsPath.ObjectFieldEdit, {
-        objectNamePlural: objectMetadataItem.namePlural,
-        fieldName: fieldMetadataItem.name,
-      });
+  const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
+    objectNamePlural: objectMetadataItem.namePlural,
+    fieldName: fieldMetadataItem.name,
+  });
 
+  // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
   const navigateToFieldEdit = () =>
-    applicationId
-      ? getSettingsPath(SettingsPath.ApplicationFieldDetail, {
-          objectNamePlural: objectMetadataItem.namePlural,
-          fieldName: fieldMetadataItem.name,
-          applicationId,
-        })
-      : navigate(SettingsPath.ObjectFieldEdit, {
-          objectNamePlural: objectMetadataItem.namePlural,
-          fieldName: fieldMetadataItem.name,
-        });
+    navigate(SettingsPath.ObjectFieldEdit, {
+      objectNamePlural: objectMetadataItem.namePlural,
+      fieldName: fieldMetadataItem.name,
+    });
 
   const { activateMetadataField } = useFieldMetadataItem();
 

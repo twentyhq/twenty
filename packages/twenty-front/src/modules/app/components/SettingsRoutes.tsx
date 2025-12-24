@@ -579,14 +579,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApplicationServerlessFunctionDetail}
           element={<SettingsServerlessFunctionDetail />}
         />
-        <Route
-          path={SettingsPath.ApplicationObjectDetail}
-          element={<SettingsObjectDetailPage />}
-        />
-        <Route
-          path={SettingsPath.ApplicationFieldDetail}
-          element={<SettingsObjectFieldEdit />}
-        />
       </Route>
 
       <Route

@@ -47,7 +47,6 @@ export const SettingsApplicationDetailContentTab = ({
           />
           <SettingsObjectTable
             objectMetadataItems={applicationObjectMetadataItems}
-            applicationId={application.id}
             withSearchBar={false}
           />
         </Section>

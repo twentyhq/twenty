@@ -96,14 +96,12 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: ObjectMetadataItem;
-  applicationId?: string;
   mode: 'view' | 'new-field';
 };
 
 // TODO: find another way than using mode which feels like it could be replaced by another pattern
 export const SettingsObjectFieldTable = ({
   objectMetadataItem,
-  applicationId,
   mode,
 }: SettingsObjectFieldTableProps) => {
   const { t } = useLingui();
@@ -222,7 +220,6 @@ export const SettingsObjectFieldTable = ({
             <SettingsObjectFieldItemTableRow
               key={objectSettingsDetailItem.fieldMetadataItem.id}
               settingsObjectDetailTableItem={objectSettingsDetailItem}
-              applicationId={applicationId}
               status={status}
               mode={mode}
             />
