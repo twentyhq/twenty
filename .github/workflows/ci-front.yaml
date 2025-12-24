@@ -196,7 +196,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04-8
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
     steps:
@@ -291,6 +291,7 @@ jobs:
       - name: Build frontend (if not available from front-build)
         if: needs.front-build.result == 'skipped'
         run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
+        rus-ons
 
       - name: Build server
         run: npx nx build twenty-server
@@ -328,12 +329,6 @@ jobs:
           path: packages/twenty-e2e-testing/run_results/
           retention-days: 30
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: packages/twenty-e2e-testing/playwright-report/
-          retention-days: 30
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
