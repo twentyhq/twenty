@@ -52,7 +52,6 @@ export const AIChatCreditsExhaustedMessage = () => {
     const result = await endTrialPeriod();
     setIsProcessing(false);
 
-    // If no payment method, redirect to billing portal to add one
     if (!result.success) {
       openBillingPortal();
     }
