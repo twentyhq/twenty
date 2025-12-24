@@ -682,7 +682,6 @@ msgstr "Ενέργειες χρηστών που μπορούν να εκτελ�
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Activate"
 msgstr "Ενεργοποίηση"
@@ -1158,6 +1157,11 @@ msgstr "Μοντέλο AI"
 #. js-lingui-id: tGx4Zn
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "AI Models"
+msgstr ""
+
+#. js-lingui-id: Sfwld8
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
 msgstr ""
 
 #. js-lingui-id: jwOWhc
@@ -2738,6 +2742,11 @@ msgstr ""
 msgid "Contact auto-creation"
 msgstr "Αυτόματη δημιουργία επαφής"
 
+#. js-lingui-id: cByGGA
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "Contact your admin to continue using Workflow or AI features."
+msgstr ""
+
 #. js-lingui-id: /5mghO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Contains"
@@ -3159,6 +3168,16 @@ msgstr "Χρήση Πιστώσεων"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
 msgstr "Πιστώσεις ανά περίοδο"
+
+#. js-lingui-id: EABlI0
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Please contact your workspace admin to upgrade."
+msgstr ""
+
+#. js-lingui-id: JIXvMy
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Credits exhausted. Upgrade your plan to get more credits."
+msgstr ""
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -4428,6 +4447,16 @@ msgstr "Ενεργοποίηση επιλογών παράκαμψης"
 msgid "Enable model-specific features"
 msgstr "Ενεργοποιήστε τις λειτουργίες συγκεκριμένου μοντέλου"
 
+#. js-lingui-id: k1i50B
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End Trial Period"
+msgstr ""
+
+#. js-lingui-id: QEUZoG
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "End trial period to continue using Workflow or AI features."
+msgstr ""
+
 #. js-lingui-id: T3juzf
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
@@ -5527,6 +5556,11 @@ msgstr "τέταρτος"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
 msgstr "Τέταρτος"
+
+#. js-lingui-id: aUj1gh
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
+msgstr ""
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -7829,16 +7863,6 @@ msgstr "Δεν βρέθηκαν φάκελοι"
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
 msgstr "Δεν βρέθηκαν φάκελοι για αυτόν το λογαριασμό"
-
-#. js-lingui-id: xlUOps
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. End trial period and activate your billing to continue."
-msgstr "Δωρεάν εκτελέσεις ροών εργασιών δεν απομένουν. Τέλος δοκιμαστικής περιόδου, ενεργοποιήστε την πληρωμή σας για να συνεχίσετε."
-
-#. js-lingui-id: pxYUeX
-#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
-msgid "No free workflow executions left. Please contact your admin."
-msgstr "Δεν απομένουν δωρεάν εκτελέσεις ροών εργασιών. Παρακαλώ επικοινωνήστε με τον διαχειριστή σας."
 
 #. js-lingui-id: gIrKyO
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
@@ -10727,6 +10751,7 @@ msgstr "Εγγραφείτε"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "Εγγραφείτε Τώρα"
 
@@ -11852,6 +11877,11 @@ msgstr "Ενημερώσεις"
 msgid "Upgrade"
 msgstr "Αναβάθμιση"
 
+#. js-lingui-id: 7aHRdp
+#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+msgid "Upgrade Plan"
+msgstr ""
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -12081,6 +12111,11 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Προβολή λεπτομερειών χρέωσης"
+
+#. js-lingui-id: SXCuo2
+#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+msgid "View Docs"
+msgstr ""
 
 #. js-lingui-id: Mv1YVf
 #: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts

@@ -6444,6 +6444,11 @@ msgstr "Bạn không có quyền tạo các chế độ xem cấp không gian l�
 msgid "You don't have permission to modify this view."
 msgstr "Bạn không có quyền sửa đổi chế độ xem này."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
