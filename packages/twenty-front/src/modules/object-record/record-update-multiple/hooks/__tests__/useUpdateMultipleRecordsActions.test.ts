@@ -5,7 +5,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { renderHook } from '@testing-library/react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useUpdateMultipleRecordsActions } from '../useUpdateMultipleRecordsActions';
+import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
 
 jest.mock('@/context-store/utils/computeContextStoreFilters');
 jest.mock('@/object-record/hooks/useIncrementalUpdateManyRecords');

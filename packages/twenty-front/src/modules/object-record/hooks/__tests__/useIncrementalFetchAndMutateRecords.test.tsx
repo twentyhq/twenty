@@ -1,8 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { renderHook } from '@testing-library/react';
-
-import { useIncrementalFetchAndMutateRecords } from '../useIncrementalFetchAndMutateRecords';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/hooks/useLazyFindManyRecords');

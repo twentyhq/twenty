@@ -1,9 +1,9 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
+import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { renderHook } from '@testing-library/react';
-import { useIncrementalUpdateManyRecords } from '../useIncrementalUpdateManyRecords';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/hooks/useRegisterObjectOperation');

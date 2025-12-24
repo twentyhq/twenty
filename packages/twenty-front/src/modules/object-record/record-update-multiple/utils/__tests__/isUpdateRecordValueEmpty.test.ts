@@ -1,4 +1,4 @@
-import { isUpdateRecordValueEmpty } from '../isUpdateRecordValueEmpty';
+import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 
 describe('isUpdateRecordValueEmpty', () => {
   it('should return true for null or undefined', () => {
