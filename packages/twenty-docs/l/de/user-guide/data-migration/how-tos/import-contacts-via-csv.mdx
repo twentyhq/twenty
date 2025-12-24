@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: Kontakte über CSV importieren
+description: Vollständige Schritt-für-Schritt-Anleitung zum Importieren von Personen/Kontakten in Twenty.
 ---
 
 ## Übersicht
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Diese Anleitung führt Sie durch den Import Ihrer Kontakte (Personen) in Twenty. **Importieren Sie zuerst Unternehmen**, wenn Sie Personen mit Unternehmen verknüpfen möchten.
 
 ## Bevor Sie beginnen
 
-### Prerequisites Checklist
+### Checkliste der Voraussetzungen
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Ihre Datei ist im CSV-, XLSX- oder XLS-Format
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  Die Datei enthält weniger als 10.000 Datensätze
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  Keine doppelten E-Mail-Adressen in Ihrer Datei
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Unternehmen zuerst importiert** (wenn Personen mit Unternehmen verknüpft werden)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Alle benutzerdefinierten Felder existieren in **Einstellungen → Datenmodell**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Unternehmen vor Personen importieren**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Wenn Sie Personen mit Unternehmen verknüpfen möchten, importieren Sie zuerst Unternehmen. Das Unternehmen muss existieren, bevor Sie darauf verweisen können.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Schritt 1: Bereiten Sie Ihre Kontaktdaten vor
 
-### Required and Recommended Fields
+### Erforderliche und empfohlene Felder
 
-| Feld              | Required?   | Format            | Notizen                   |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **E-Mail**        | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Text              |                           |
-| **Last Name**     | Recommended | Text              |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Text              |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| Feld                          | Erforderlich? | Format            | Notizen                               |
+| ----------------------------- | ------------- | ----------------- | ------------------------------------- |
+| **E-Mail**                    | Empfohlen     | `name@domain.com` | Muss eindeutig sein                   |
+| **Vorname**                   | Empfohlen     | Text              |                                       |
+| **Nachname**                  | Empfohlen     | Text              |                                       |
+| **Unternehmen**               | Optional      | Domain oder ID    | Verknüpft mit vorhandenem Unternehmen |
+| **Telefon**                   | Optional      | Mehrere Spalten   | Siehe unten                           |
+| **Berufsbezeichnung**         | Optional      | Text              |                                       |
+| **Benutzerdefinierte Felder** | Optional      | Variiert          | Muss im Datenmodell existieren        |
 
-### Email Format
+### E-Mail-Format
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Muss ein gültiges E-Mail-Format haben: `name@domain.com`
+* **Muss eindeutig sein** — keine Duplikate in Ihrer Datei oder in Twenty
+* Für zusätzliche E-Mails verwenden Sie die Spalte **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Telefonformat
 
-Phone is a **nested field** requiring multiple columns:
+Telefon ist ein **verschachteltes Feld**, das mehrere Spalten erfordert:
 
-| Column                                  | Beispiel     |
+| Spalte                                  | Beispiel     |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### Verknüpfung mit Unternehmen
 
-Add a column with the Company's unique identifier:
+Fügen Sie eine Spalte mit dem eindeutigen Bezeichner des Unternehmens hinzu:
 
-| Column Name     | Format     | Beispiel                               |
+| Spaltenname     | Format     | Beispiel                               |
 | --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
+| `companyDomain` | URL-Format | `https://acme.com`                     |
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Domain-URL-Format verwenden** (`https://acme.com`), nicht die Bezeichnung. Dies entspricht der Art, wie Unternehmen in Twenty gespeichert werden.
 </Note>
 
-### Sample CSV Structure
+### Beispielhafte CSV-Struktur
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,59 +93,59 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **Profi-Tipp:** Klicken Sie während des Imports auf **Beispieldatei herunterladen** oder exportieren Sie einige vorhandene Personen, um die genauen Spaltennamen zu sehen, die Twenty erwartet.
 </Note>
 
-## Step 2: Access the Import Feature
+## Schritt 2: Zugriff auf die Importfunktion
 
-**Option 1: From the People View**
+**Option 1: Aus der Personenansicht**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Navigieren Sie zu **Personen** in der linken Seitenleiste
+2. Klicken Sie auf das Symbol **⋮** oben rechts
+3. Wählen Sie **Datensätze importieren**
 
-**Option 2: Using Command Menu**
+**Option 2: Über das Befehlsmenü**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Drücken Sie `Cmd + K` (Mac) oder `Strg + K` (Windows)
+2. Geben Sie "import" ein
+3. Wählen Sie **Datensätze importieren**
+4. Wählen Sie **Personen**
 
-## Step 3: Upload Your File
+## Schritt 3: Laden Sie Ihre Datei hoch
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. Klicken Sie auf **Datei auswählen**
+2. Wählen Sie Ihre CSV-, XLSX- oder XLS-Datei aus
+3. Warten Sie, bis Twenty Ihre Datei analysiert
 
-## Step 4: Map Your Columns
+## Schritt 4: Ordnen Sie Ihre Spalten zu
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty versucht automatisch, Ihre Spalten den Feldern zuzuordnen. Prüfen und anpassen:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Automatische Zuordnungen prüfen** — vergewissern Sie sich, dass sie korrekt sind
+2. **Falsche Zuordnungen korrigieren** — klicken Sie auf das Dropdown, um das richtige Feld auszuwählen
+3. **Spalten überspringen** — wählen Sie **Do not map** für Spalten, die Sie nicht importieren möchten
 
-### Important Mapping Rules
+### Wichtige Zuordnungsregeln
 
-| Column Type       | Map To                         | Notizen                            |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| E-Mail            | **E-Mail**                     | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Telefon           | Separate columns               | Number, Country Code, Calling Code |
+| Spaltentyp           | Zuordnen zu                    | Notizen                                    |
+| -------------------- | ------------------------------ | ------------------------------------------ |
+| Unternehmensreferenz | **Company**-Beziehungsfeld     | Verwenden Sie Domain ODER ID, nicht beides |
+| E-Mail               | **E-Mail**                     | Primäre E-Mail-Adresse                     |
+| Zusätzliche E-Mails  | **Emails / Additional Emails** | Array-Format                               |
+| Telefon              | Getrennte Spalten              | Nummer, Ländercode, Telefonvorwahl         |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Zuordnung der Unternehmensbeziehung
 
-When mapping the company column:
+Beim Zuordnen der Unternehmensspalte:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Suchen Sie Ihre Unternehmensreferenzspalte (z. B. `companyDomain`)
+2. Ordnen Sie sie dem **Company**-Beziehungsfeld zu
+3. Twenty verknüpft jede Person mit dem passenden Unternehmen
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **Ordnen Sie für Beziehungen nur EINEN eindeutigen Bezeichner zu.**
 
   Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
 </Warning>

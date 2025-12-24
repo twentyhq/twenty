@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: Importujte kontakty pomocí CSV
+description: Kompletní podrobný návod krok za krokem k importu osob/kontaktů do Twenty.
 ---
 
 ## Přehled
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Tento průvodce vás provede importem vašich kontaktů (People) do Twenty. **Nejprve importujte Společnosti**, pokud chcete propojovat osoby se Společnostmi.
 
 ## Než začnete
 
-### Prerequisites Checklist
+### Kontrolní seznam předpokladů
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Váš soubor je ve formátu CSV, XLSX nebo XLS
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  Soubor obsahuje méně než 10 000 záznamů
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  Žádné duplicitní e-mailové adresy ve vašem souboru
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Společnosti importovány jako první** (pokud propojujete osoby se Společnostmi)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Všechna vlastní pole existují v **Settings → Data Model**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Importujte Společnosti před osobami**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti. Společnost musí existovat dříve, než na ni můžete odkazovat.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Krok 1: Připravte si data kontaktů
 
-### Required and Recommended Fields
+### Povinná a doporučená pole
 
-| Pole              | Required?   | Formát            | Poznámky                  |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **Email**         | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Text              |                           |
-| **Last Name**     | Recommended | Text              |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Text              |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| Pole                | Povinné?   | Formát            | Poznámky                          |
+| ------------------- | ---------- | ----------------- | --------------------------------- |
+| **Email**           | Doporučeno | `name@domain.com` | Musí být jedinečné                |
+| **Jméno**           | Doporučeno | Text              |                                   |
+| **Příjmení**        | Doporučeno | Text              |                                   |
+| **Společnost**      | Volitelné  | Doména nebo ID    | Odkazuje na existující Společnost |
+| **Telefon**         | Volitelné  | Více sloupců      | Viz níže                          |
+| **Pracovní pozice** | Volitelné  | Text              |                                   |
+| **Vlastní pole**    | Volitelné  | Různé             | Musí existovat v Data Model       |
 
-### Email Format
+### Formát e-mailu
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Musí mít platný formát e-mailu: `name@domain.com`
+* **Musí být jedinečná** — žádné duplicity ve vašem souboru ani v Twenty
+* Pro další e-mailové adresy použijte sloupec **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Formát telefonu
 
-Phone is a **nested field** requiring multiple columns:
+Telefon je **vnořené pole**, které vyžaduje více sloupců:
 
-| Column                                  | Příklad      |
+| Sloupec                                 | Příklad      |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### Propojení se Společnostmi
 
-Add a column with the Company's unique identifier:
+Přidejte sloupec s jedinečným identifikátorem Společnosti:
 
-| Column Name     | Formát     | Příklad                                |
+| Název sloupce   | Formát     | Příklad                                |
 | --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
+| `companyDomain` | Formát URL | `https://acme.com`                     |
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá způsobu, jakým jsou Společnosti uloženy v Twenty.
 </Note>
 
-### Sample CSV Structure
+### Ukázková struktura CSV
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,59 +93,59 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **Tip pro profíky:** Během importu klikněte na **Download sample file** nebo vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců, které Twenty očekává.
 </Note>
 
-## Step 2: Access the Import Feature
+## Krok 2: Přejděte na funkci importu
 
-**Option 1: From the People View**
+**Možnost 1: Z pohledu People**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Přejděte na **People** v levém postranním panelu
+2. Klikněte na ikonu **⋮** vpravo nahoře
+3. Vyberte **Import records**
 
-**Option 2: Using Command Menu**
+**Možnost 2: Pomocí příkazové nabídky**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Stiskněte `Cmd + K` (Mac) nebo `Ctrl + K` (Windows)
+2. Napište "import"
+3. Vyberte **Import records**
+4. Zvolte **People**
 
-## Step 3: Upload Your File
+## Krok 3: Nahrajte svůj soubor
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. Klikněte na **Select file**
+2. Vyberte svůj soubor CSV, XLSX nebo XLS
+3. Počkejte, až Twenty analyzuje váš soubor
 
-## Step 4: Map Your Columns
+## Krok 4: Namapujte své sloupce
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty se automaticky pokusí přiřadit vaše sloupce k polím. Zkontrolujte a upravte:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Zkontrolujte automatická mapování** — ověřte, že jsou správná
+2. **Opravte nesprávná mapování** — klikněte na rozbalovací nabídku a vyberte správné pole
+3. **Přeskočte sloupce** — vyberte **Do not map** u sloupců, které nechcete importovat
 
-### Important Mapping Rules
+### Důležitá pravidla mapování
 
-| Column Type       | Map To                         | Poznámky                           |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Email             | **Email**                      | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Telefon           | Separate columns               | Number, Country Code, Calling Code |
+| Typ sloupce             | Mapovat na                     | Poznámky                             |
+| ----------------------- | ------------------------------ | ------------------------------------ |
+| Reference na Společnost | Relační pole **Společnost**    | Použijte doménu NEBO ID, ne obojí    |
+| Email                   | **Email**                      | Primární e-mailová adresa            |
+| Další e-mailové adresy  | **Emails / Additional Emails** | Formát pole                          |
+| Telefon                 | Samostatné sloupce             | Číslo, kód země, telefonní předvolba |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Mapování relace Společnost
 
-When mapping the company column:
+Při mapování sloupce společnosti:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Najděte svůj referenční sloupec společnosti (např. `companyDomain`)
+2. Namapujte jej na relační pole **Společnost**
+3. Twenty propojí každou osobu s odpovídající Společností
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **Pro relace mapujte pouze JEDEN jedinečný identifikátor.**
 
   Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
 </Warning>
