@@ -35,14 +35,14 @@ import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-pl
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
-import { type BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { type BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { type BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
-import { type StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
@@ -52,7 +52,7 @@ import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/cor
 import { getCurrentMeteredBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-metered-billing-subscription-item-or-throw.util';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { getSubscriptionPricesFromSchedulePhase } from 'src/engine/core-modules/billing/utils/get-subscription-prices-from-schedule-phase.util';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
