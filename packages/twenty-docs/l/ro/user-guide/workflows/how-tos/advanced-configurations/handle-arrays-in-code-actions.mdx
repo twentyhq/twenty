@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Gestionarea tablourilor în acțiunile de cod
+description: Aflați cum să gestionați corect intrările de tip tablou în acțiunile de cod din fluxurile de lucru.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Când lucrați cu tablouri în acțiunile de cod, este posibil să întâmpinați două provocări frecvente:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **Tablouri transmise ca șiruri** — datele din sisteme externe sau din pașii anteriori sosesc ca un șir în loc de un tablou propriu-zis
+2. **Nu puteți selecta elemente individuale** — puteți selecta doar întregul tablou, nu câmpuri specifice din interiorul lui
 
-Both can be solved with a Code node.
+Ambele pot fi rezolvate cu un nod de cod.
 
-## Parsing Arrays from Strings
+## Analizarea tablourilor din șiruri
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Tablourile sunt adesea transmise între pașii unui flux de lucru ca șiruri sau JSON, mai degrabă decât ca tablouri native. Acest lucru se întâmplă când:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* Primirea de date de la API-uri externe prin HTTP Request
+* Procesarea payload-urilor de webhook
+* Transmiterea datelor între pașii fluxului de lucru
 
-**Solution**: Add this pattern at the start of your Code action:
+**Soluție**: Adăugați acest tipar la începutul acțiunii dvs. de cod:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+Linia esențială `typeof users === \"string\" ? JSON.parse(users) : users` verifică dacă intrarea este un șir, o parsează dacă este necesar sau o folosește direct dacă este deja un tablou.
 
-## Extracting Individual Fields from Arrays
+## Extragerea câmpurilor individuale din tablouri
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Un webhook poate returna un tablou de forma `answers: [...]`, dar în pașii următori ai fluxului de lucru puteți selecta doar **întregul tablou** — nu și elemente individuale din interiorul lui.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Soluție**: Adăugați un nod de cod pentru a extrage câmpuri specifice și a le returna ca obiect structurat:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Nodul de cod returnează un obiect structurat în locul unui tablou. În pașii următori, acum puteți selecta câmpuri individuale precum `answer.firstname` și `answer.name` din selectorul de variabile.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Lucrăm activ pentru a simplifica gestionarea tablourilor în actualizările viitoare.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
 </Tip>
