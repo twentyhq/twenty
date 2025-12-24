@@ -36,6 +36,10 @@ export class BillingCreditRolloverService {
     tierQuantity: number;
     unitPriceCents: number;
   }): Promise<void> {
+    // Void any existing rollover grants before creating a new one
+    // This ensures only one rollover grant is active at a time
+    await this.voidExistingRolloverGrants(stripeCustomerId);
+
     const usedCredits =
       await this.stripeBillingMeterEventService.sumMeterEvents(
         stripeMeterId,
@@ -76,6 +80,29 @@ export class BillingCreditRolloverService {
         subscriptionId,
       },
     });
+  }
+
+  private async voidExistingRolloverGrants(
+    stripeCustomerId: string,
+  ): Promise<void> {
+    const existingGrants =
+      await this.stripeCreditGrantService.listCreditGrants(stripeCustomerId);
+
+    const rolloverGrants = existingGrants.filter(
+      (grant) => grant.metadata?.type === 'rollover' && !grant.voided_at,
+    );
+
+    if (rolloverGrants.length === 0) {
+      return;
+    }
+
+    this.logger.log(
+      `Voiding ${rolloverGrants.length} existing rollover grant(s) for customer ${stripeCustomerId}`,
+    );
+
+    for (const grant of rolloverGrants) {
+      await this.stripeCreditGrantService.voidCreditGrant(grant.id);
+    }
   }
 
   async getWorkflowRolloverParameters(subscriptionId: string): Promise<{
