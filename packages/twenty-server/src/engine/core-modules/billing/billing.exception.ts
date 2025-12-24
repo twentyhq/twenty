@@ -30,6 +30,7 @@ export enum BillingExceptionCode {
   BILLING_PRICE_INVALID = 'BILLING_PRICE_INVALID',
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
+  BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
 }
 
 const billingExceptionUserFriendlyMessages: Record<
@@ -60,6 +61,7 @@ const billingExceptionUserFriendlyMessages: Record<
   [BillingExceptionCode.BILLING_PRICE_INVALID]: msg`Invalid price.`,
   [BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND]: msg`Subscription phase not found.`,
   [BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND]: msg`Multiple subscriptions found where one was expected.`,
+  [BillingExceptionCode.BILLING_CREDITS_EXHAUSTED]: msg`You have exhausted your credits. Please upgrade your plan to continue.`,
 };
 
 export class BillingException extends CustomException<BillingExceptionCode> {
