@@ -10,6 +10,16 @@
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
   "dependencies": {
     "axios": "^1.13.1",
-    "twenty-sdk": "^0.0.4"
+    "twenty-sdk": "0.2.4"
+  },
+  "scripts": {
+    "auth": "twenty auth login",
+    "generate": "twenty app generate",
+    "dev": "twenty app dev",
+    "sync": "twenty app sync",
+    "uninstall": "twenty app uninstall",
+    "logs": "twenty app logs",
+    "create-entity": "twenty app add",
+    "help": "twenty --help"
   }
 }

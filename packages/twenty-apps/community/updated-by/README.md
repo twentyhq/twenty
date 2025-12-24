@@ -10,9 +10,9 @@ Updates Updated by field with details of person behind newest update
 
 1. Add application
 ```bash
-twenty auth login
-cd packages/twenty-apps/updated-by
-twenty app sync
+cd packages/twenty-apps/community/updated-by
+yarn auth
+yarn sync
 ```
 
 2. Configure **TWENTY_API_KEY**
@@ -32,5 +32,5 @@ send requests to Twenty.
 
 ## Notes
 
-- Updated by field shouldn't be changed by users, only by extension 
+- Updated by field shouldn't be changed by users, only by extension (it'll be changed in future once extending existing objects will be possible)
 - Amount of API requests is reduced to possible minimum

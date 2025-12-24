@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -163,7 +163,7 @@ export const main = async (params: {
   try {
     const { properties, objectMetadata, recordId, workspaceMemberId } = params;
     if (objectsNotForUpdate.includes(objectMetadata.namePlural)) {
-      console.log('Updated object is immutable system object');
+      console.log(`Updated record belongs to ${objectMetadata.namePlural} immutable system object`);
       return {};
     }
 
@@ -180,7 +180,7 @@ export const main = async (params: {
       return {}; // if last update was updatedBy field, don't update
     }
 
-    if (objectMetadata.fieldIdByJoinColumnName.updatedById === undefined) {
+    if (properties.after.updatedById === undefined) {
       const workspaceMemberObjectId: string =
         await returnWorkspaceMemberObjectId();
 
@@ -224,7 +224,7 @@ export const main = async (params: {
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '47005bbc-ed0d-4d04-b53b-e94f5c38656d',
   name: 'updated-by',
   triggers: [
