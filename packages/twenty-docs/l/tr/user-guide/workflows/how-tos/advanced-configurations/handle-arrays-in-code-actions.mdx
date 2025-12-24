@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Code Eylemlerinde Dizileri İşleme
+description: İş akışındaki Code eylemlerinde dizi girdilerini doğru şekilde nasıl ele alacağınızı öğrenin.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Code eylemlerinde dizilerle çalışırken iki yaygın sorunla karşılaşabilirsiniz:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **String olarak iletilen diziler** — harici sistemlerden veya önceki adımlardan gelen veriler gerçek bir dizi yerine string olarak gelir
+2. **Tekil öğeleri seçememe** — içindeki belirli alanları değil, yalnızca tüm diziyi seçebilirsiniz
 
-Both can be solved with a Code node.
+Her ikisi de bir Code düğümüyle çözülebilir.
 
-## Parsing Arrays from Strings
+## Stringlerden Dizileri Ayrıştırma
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Diziler, iş akışı adımları arasında sıklıkla yerel diziler yerine string veya JSON olarak iletilir. Şu durumlarda gerçekleşir:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* HTTP Request aracılığıyla harici API'lerden veri alma
+* Webhook yüklerini işleme
+* İş akışı adımları arasında veri aktarma
 
-**Solution**: Add this pattern at the start of your Code action:
+**Çözüm**: Bu kalıbı Code eyleminizin başına ekleyin:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+Önemli satır `typeof users === "string" ? JSON.parse(users) : users` girdinin bir string olup olmadığını kontrol eder, gerekirse ayrıştırır veya zaten bir dizi ise doğrudan kullanır.
 
-## Extracting Individual Fields from Arrays
+## Dizilerden Tekil Alanlar Çıkarma
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Bir webhook `answers: [...]` gibi bir dizi döndürebilir, ancak sonraki iş akışı adımlarında içindeki tek tek öğeleri değil — yalnızca tüm diziyi seçebilirsiniz.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Çözüm**: Belirli alanları çıkarmak ve bunları yapılandırılmış bir nesne olarak döndürmek için bir Code düğümü ekleyin:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Code düğümü bir dizi yerine yapılandırılmış bir nesne döndürür. Sonraki adımlarda, değişken seçiciden `answer.firstname` ve `answer.name` gibi tekil alanları artık seçebilirsiniz.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Gelecek güncellemelerde diziyle çalışmayı kolaylaştırmak için aktif olarak çalışıyoruz.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
 </Tip>

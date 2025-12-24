@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: CSV ile Kişileri İçe Aktarın
+description: Twenty'ye kişileri içe aktarmaya yönelik eksiksiz, adım adım kılavuz.
 ---
 
 ## Genel Bakış
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+Bu kılavuz, kişilerinizi (Kişiler) Twenty'ye içe aktarma sürecinde size yol gösterir. **Önce Şirketleri içe aktarın**, Kişileri Şirketlere bağlamak istiyorsanız.
 
 ## Başlamadan Önce
 
-### Prerequisites Checklist
+### Ön Koşul Kontrol Listesi
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  Dosyanız CSV, XLSX veya XLS biçiminde
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  Dosyada 10.000'den az kayıt var
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  Dosyanızda yinelenen e-posta adresi yok
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **Şirketler önce içe aktarılmış** (Kişileri Şirketlere bağlayacaksanız)
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  Tüm özel alanlar **Ayarlar → Veri Modeli**'nde mevcut
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **Kişilerden Önce Şirketleri İçe Aktarın**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  Kişileri Şirketlere bağlamak istiyorsanız, önce Şirketleri içe aktarın. Şirkete referans verebilmeden önce şirketin mevcut olması gerekir.
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## Adım 1: Kişi Verinizi Hazırlayın
 
-### Required and Recommended Fields
+### Zorunlu ve Önerilen Alanlar
 
-| Alan              | Required?   | Biçim             | Notlar                    |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **E-posta**       | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Metin             |                           |
-| **Last Name**     | Recommended | Metin             |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Metin             |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| Alan             | Zorunlu mu?  | Biçim             | Notlar                        |
+| ---------------- | ------------ | ----------------- | ----------------------------- |
+| **E-posta**      | Önerilen     | `name@domain.com` | Benzersiz olmalı              |
+| **Ad**           | Önerilen     | Metin             |                               |
+| **Soyadı**       | Önerilen     | Metin             |                               |
+| **Şirket**       | İsteğe bağlı | Alan adı veya ID  | Mevcut bir Şirkete bağlanır   |
+| **Telefon**      | İsteğe bağlı | Birden çok sütun  | Aşağıya bakın                 |
+| **İş Unvanı**    | İsteğe bağlı | Metin             |                               |
+| **Özel Alanlar** | İsteğe bağlı | Değişir           | Veri Modeli'nde mevcut olmalı |
 
-### Email Format
+### E-posta Biçimi
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* Geçerli e-posta biçiminde olmalıdır: `name@domain.com`
+* **Benzersiz olmalı** — dosyanızda veya Twenty'de yinelenen olmamalı
+* Ek e-postalar için **Emails / Additional Emails** sütununu kullanın:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### Telefon Biçimi
 
-Phone is a **nested field** requiring multiple columns:
+Telefon, birden çok sütun gerektiren **iç içe bir alan**dır:
 
-| Column                                  | Örnek        |
+| Sütun                                   | Örnek        |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### Şirketlerle Bağlantı Kurma
 
-Add a column with the Company's unique identifier:
+Şirketin benzersiz tanımlayıcısını içeren bir sütun ekleyin:
 
-| Column Name     | Biçim      | Örnek                                  |
+| Sütun Adı       | Biçim      | Örnek                                  |
 | --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
+| `companyDomain` | URL biçimi | `https://acme.com`                     |
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **Alan Adı URL biçimini kullanın** (`https://acme.com`), etiketi değil. Bu, Şirketlerin Twenty'de nasıl saklandığıyla uyumludur.
 </Note>
 
-### Sample CSV Structure
+### Örnek CSV Yapısı
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,56 +93,56 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **İpucu:** İçe aktarma sırasında **Örnek dosyayı indir**'i tıklayın ya da Twenty'nin beklediği tam sütun adlarını görmek için mevcut birkaç Kişiyi dışa aktarın.
 </Note>
 
-## Step 2: Access the Import Feature
+## Adım 2: İçe Aktarma Özelliğine Erişin
 
-**Option 1: From the People View**
+**Seçenek 1: Kişiler görünümünden**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. Sol kenar çubuğunda **Kişiler**'e gidin
+2. Sağ üstteki **⋮** simgesine tıklayın
+3. **Kayıtları İçe Aktar**'ı seçin
 
-**Option 2: Using Command Menu**
+**Seçenek 2: Komut Menüsünü kullanma**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. Mac'te `Cmd + K`, Windows'ta `Ctrl + K` tuşlarına basın
+2. "import" yazın
+3. **Kayıtları İçe Aktar**'ı seçin
+4. **Kişiler**'i seçin
 
-## Step 3: Upload Your File
+## Adım 3: Dosyanızı Yükleyin
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. **Dosya seç**'e tıklayın
+2. CSV, XLSX veya XLS dosyanızı seçin
+3. Twenty'nin dosyanızı analiz etmesini bekleyin
 
-## Step 4: Map Your Columns
+## Adım 4: Sütunlarınızı Eşleyin
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty, sütunlarınızı alanlarla eşleştirmeyi otomatik olarak dener. Gözden geçirin ve ayarlayın:
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **Otomatik eşlemeleri kontrol edin** — doğru olduklarını doğrulayın
+2. **Yanlış eşlemeleri düzeltin** — doğru alanı seçmek için açılır menüye tıklayın
+3. **Sütunları atlayın** — içe aktarmak istemediğiniz sütunlar için **Do not map** seçeneğini seçin
 
-### Important Mapping Rules
+### Önemli Eşleme Kuralları
 
-| Column Type       | Map To                         | Notlar                             |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| E-posta           | **E-posta**                    | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Telefon           | Separate columns               | Number, Country Code, Calling Code |
+| Sütun Türü       | Eşlenecek Alan                 | Notlar                                                |
+| ---------------- | ------------------------------ | ----------------------------------------------------- |
+| Şirket referansı | **Company** ilişki alanı       | Alan adını YA DA id'yi kullanın, ikisini birden değil |
+| E-posta          | **E-posta**                    | Birincil e-posta adresi                               |
+| Ek e-postalar    | **Emails / Additional Emails** | Dizi biçimi                                           |
+| Telefon          | Ayrı sütunlar                  | Numara, Ülke Kodu, Arama Kodu                         |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### Şirket İlişkisinin Eşlenmesi
 
-When mapping the company column:
+Şirket sütununu eşlerken:
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. Şirket referans sütununuzu bulun (ör. `companyDomain`)
+2. Bunu **Company** ilişki alanına eşleyin
+3. Twenty, her Kişiyi eşleşen Şirkete bağlar
 
 <Warning>
   **Map only ONE unique identifier for relations.**

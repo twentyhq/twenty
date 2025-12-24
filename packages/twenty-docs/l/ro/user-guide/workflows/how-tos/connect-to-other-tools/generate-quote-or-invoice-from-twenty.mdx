@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Generați o ofertă sau o factură din Twenty
+description: Creați automat facturi în instrumente externe atunci când se închid oportunitățile.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+Trimiteți automat datele oportunității către sistemul dvs. de facturare (Stripe, QuickBooks, Xero etc.) atunci când o oportunitate este câștigată.
 
-## Workflow Structure
+## Structura fluxului de lucru
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **Declanșator**: Înregistrarea este actualizată (Oportunitate)
+2. **Filtru**: Etapă = Closed Won
+3. **Căutare înregistrare**: Obțineți detaliile Companiei
+4. **Cod** (opțional): Formatați payload-ul
+5. **Cerere HTTP**: Trimiteți către sistemul de facturare
 
-## Step 1: Set Up the Trigger
+## Pasul 1: Configurați declanșatorul
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. Creați un nou flux de lucru
+2. Selectați declanșatorul **Record is Updated**
+3. Alegeți **Opportunity** ca obiect
 
-## Step 2: Filter for Closed Won
+## Pasul 2: Filtrați pentru Closed Won
 
-Add a **Filter** action to only continue when the deal is won:
+Adăugați o acțiune **Filter** pentru a continua doar când oportunitatea este câștigată:
 
-| Setting       | Valoare                           |
-| ------------- | --------------------------------- |
-| **Field**     | Etapa                             |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| Setare       | Valoare                               |
+| ------------ | ------------------------------------- |
+| **Câmp**     | Etapa                                 |
+| **Condiție** | Egal                                  |
+| **Valoare**  | `CLOSED_WON` (sau numele etapei dvs.) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  Declanșatorul se activează la orice actualizare a unei Oportunități. Filtrul asigură că fluxul de lucru continuă doar când etapa se schimbă la Closed Won.
 </Tip>
 
-## Step 3: Get Company Details
+## Pasul 3: Obțineți detalii despre Companie
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+Înregistrarea Oportunității s-ar putea să nu includă toate câmpurile Companiei de care aveți nevoie pentru factură. Adăugați o acțiune **Search Record**:
 
-| Setting      | Valoare                                  |
-| ------------ | ---------------------------------------- |
-| **Object**   | Companie                                 |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| Setare             | Valoare                                   |
+| ------------------ | ----------------------------------------- |
+| **Obiect**         | Companie                                  |
+| **Potrivire după** | ID egal cu `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+Aceasta preia înregistrarea completă a Companiei cu adresa de facturare, ID fiscal etc.
 
-## Step 4: Format the Payload (Optional)
+## Pasul 4: Formatați payload-ul (opțional)
 
-If your invoicing system expects a specific format, add a **Code** action:
+Dacă sistemul dvs. de facturare așteaptă un format specific, adăugați o acțiune **Code**:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## Pasul 5: Trimiteți către sistemul de facturare
 
-Add an **HTTP Request** action:
+Adăugați o acțiune **HTTP Request**:
 
-| Setting     | Valoare                                   |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| Setare       | Valoare                                                |
+| ------------ | ------------------------------------------------------ |
+| **Metodă**   | POST                                                   |
+| **URL**      | Punctul final al API-ului sistemului dvs. de facturare |
+| **Anteturi** | `Authorization: Bearer YOUR_API_KEY`                   |
+| **Corp**     | `{{code.invoice}}` sau mapați câmpurile direct         |
 
-### Example: Stripe Invoice
+### Exemplu: Factură Stripe
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### Exemplu: Factură QuickBooks
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,24 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## Rezumat complet al fluxului de lucru
 
-| Step | Acțiune                 | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filter                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Cod                     | Format data for invoicing API        |
-| 5    | Solicitare HTTP         | Create invoice in external system    |
+| Pas | Acțiune                                     | Scop                                                       |
+| --- | ------------------------------------------- | ---------------------------------------------------------- |
+| 1   | Declanșator: Înregistrarea este actualizată | Se activează la orice modificare a unei Oportunități       |
+| 2   | Filtru                                      | Continuați doar dacă Etapa = Closed Won                    |
+| 3   | Căutare înregistrare                        | Obțineți detaliile complete ale Companiei pentru facturare |
+| 4   | Cod                                         | Formatați datele pentru API-ul de facturare                |
+| 5   | Solicitare HTTP                             | Creați factura în sistemul extern                          |
 
-## Tips
+## Sfaturi
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **Stocați ID-urile externe**: Salvați ID-ul facturii returnat de API înapoi în Oportunitate folosind o acțiune **Update Record**
+* **Gestionarea erorilor**: Adăugați o ramură pentru a trimite o notificare dacă cererea HTTP eșuează
+* **Testați mai întâi**: Utilizați modul sandbox/test al sistemului dvs. de facturare înainte de lansare
 
-## Related
+## Conexe
 
-* [Workflow Triggers](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizări pentru Closed Won](/l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
