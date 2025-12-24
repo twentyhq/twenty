@@ -19,9 +19,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -35,9 +33,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/ai-agent/filters/agent-api-exception.filter';
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Controller('rest/agent-chat')
