@@ -9,6 +9,7 @@ import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetBu
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
@@ -44,6 +45,7 @@ export const RecordInlineCell = ({
     onCloseEditMode: onCloseEditModeFromContext,
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
@@ -146,7 +148,7 @@ export const RecordInlineCell = ({
           recordId,
           fieldMetadataId: fieldDefinition.fieldMetadataId,
           componentType: 'inline-cell',
-          instanceId: instanceIdPrefix,
+          instanceId: scopeInstanceId,
         });
 
         if (currentDropdownFocusId !== expectedDropdownFocusId) {
@@ -163,11 +165,11 @@ export const RecordInlineCell = ({
         closeInlineCell();
       },
     [
-      closeInlineCell,
       recordId,
       fieldDefinition.fieldMetadataId,
+      scopeInstanceId,
+      closeInlineCell,
       persistFieldFromFieldInputContext,
-      instanceIdPrefix,
     ],
   );
 
@@ -175,7 +177,6 @@ export const RecordInlineCell = ({
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: isReadOnly,
-    instanceIdPrefix,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)

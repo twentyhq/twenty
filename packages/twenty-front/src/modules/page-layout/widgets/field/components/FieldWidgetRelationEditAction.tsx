@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import {
@@ -17,7 +18,6 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
@@ -52,7 +52,7 @@ export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
-  const widget = useCurrentWidget();
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
@@ -92,6 +92,7 @@ export const FieldWidgetRelationEditAction = ({
     getRecordFieldCardRelationPickerDropdownId({
       fieldDefinition,
       recordId,
+      instanceId: scopeInstanceId,
     });
 
   const isRelationSelectionDropdownOpen = useRecoilComponentValue(

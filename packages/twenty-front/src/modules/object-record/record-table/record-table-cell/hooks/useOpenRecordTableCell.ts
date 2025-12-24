@@ -21,6 +21,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -41,6 +42,8 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCell = (recordTableId: string) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+
   const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
     clickOutsideListenerIsActivatedComponentState,
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -161,6 +164,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
             recordId,
             fieldMetadataId: fieldDefinition.fieldMetadataId,
             componentType: 'table-cell',
+            instanceId: scopeInstanceId,
           }),
         );
       },
@@ -175,10 +179,11 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       initDraftValue,
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,
+      scopeInstanceId,
       leaveTableFocus,
+      openRecordFromIndexView,
       activateRecordTableRow,
       unfocusRecordTableRow,
-      openRecordFromIndexView,
     ],
   );
 

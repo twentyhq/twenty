@@ -71,21 +71,23 @@ export const WidgetActionFieldEdit = () => {
   const isRelationField =
     isFieldRelation(fieldDefinition) || isFieldMorphRelation(fieldDefinition);
 
-  if (isRelationField) {
-    return (
-      <FieldWidgetRelationEditAction
-        fieldDefinition={fieldDefinition}
-        recordId={targetRecord.id}
-      />
-    );
-  }
-
   const instanceId = getFieldWidgetInstanceId({
     widgetId: widget.id,
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem.name,
     isInRightDrawer,
   });
+
+  if (isRelationField) {
+    return (
+      <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+        <FieldWidgetRelationEditAction
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
+        />
+      </RecordFieldsScopeContextProvider>
+    );
+  }
 
   const recordFieldInputInstanceId = getRecordFieldInputInstanceId({
     recordId: targetRecord.id,
