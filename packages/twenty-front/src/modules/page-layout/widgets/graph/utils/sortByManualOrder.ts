@@ -17,7 +17,7 @@ export const sortByManualOrder = <T>({
     manualSortOrder.map((value, index) => [value, index]),
   );
 
-  return [...items].sort((a, b) => {
+  return items.toSorted((a, b) => {
     const rawValueA = getRawValue(a) ?? '';
     const rawValueB = getRawValue(b) ?? '';
     const indexA = orderMap.get(rawValueA) ?? -1;
