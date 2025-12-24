@@ -83,6 +83,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   ],
   exports: [
     BillingSubscriptionService,
+    BillingSubscriptionItemService,
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
