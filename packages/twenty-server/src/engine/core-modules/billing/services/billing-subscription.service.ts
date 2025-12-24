@@ -39,7 +39,6 @@ import { BillingPlanService } from 'src/engine/core-modules/billing/services/bil
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
-import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -55,6 +54,11 @@ import { getSubscriptionPricesFromSchedulePhase } from 'src/engine/core-modules/
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+type SubscriptionStripePrices = {
+  licensedPriceId: string;
+  seats: number;
+  meteredPriceId: string;
+};
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
