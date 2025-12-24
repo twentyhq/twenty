@@ -2,8 +2,8 @@
 
 import { Logger, Scope } from '@nestjs/common';
 
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
