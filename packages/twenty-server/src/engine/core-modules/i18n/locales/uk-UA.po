@@ -6444,6 +6444,11 @@ msgstr "Ви не маєте дозволу створювати перегля�
 msgid "You don't have permission to modify this view."
 msgstr "Ви не маєте дозволу змінювати цей перегляд."
 
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
