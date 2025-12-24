@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: Mohu sledovat e-mailovou aktivitu u všech objektů?
+description: Jak funguje sledování e-mailové aktivity napříč různými objekty.
 ---
 
-## Supported Objects
+## Podporované objekty
 
-Email activity is currently available on **three standard objects**:
+E-mailová aktivita je aktuálně dostupná u **tří standardních objektů**:
 
-| Objekt           | What You See                                                     |
-| ---------------- | ---------------------------------------------------------------- |
-| **People**       | All emails exchanged with that specific contact                  |
-| **Společnosti**  | All emails with anyone from that company (based on email domain) |
-| **Příležitosti** | Emails related to the company linked to the opportunity          |
+| Objekt           | Co uvidíte                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| **Osoby**        | Všechny e-maily vyměněné s konkrétním kontaktem                            |
+| **Společnosti**  | Všechny e-maily s kýmkoli z dané společnosti (na základě e-mailové domény) |
+| **Příležitosti** | E-maily související se společností propojenou s příležitostí               |
 
-## Why Only These Objects?
+## Proč právě tyto objekty?
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+Osoby, Společnosti a Příležitosti jsou klíčové relační objekty, kde kontext e-mailů přináší největší hodnotu. E-mailová vlákna se automaticky propojují na základě:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **E-mailová adresa** → přiřazena k záznamům Osob
+* **E-mailová doména** → přiřazena k záznamům Společností
+* **Vazba na Společnost** → propojeno s Příležitostmi
 
 ## Vlastní objekty
 
-**Email tracking is not available on custom objects** at this time.
+**Sledování e-mailů není v tuto chvíli k dispozici u vlastních objektů**.
 
-If you need email context on a custom object, consider:
+Pokud potřebujete e-mailový kontext u vlastního objektu, zvažte:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* Použití relačního pole k propojení vlastního objektu s Osobami nebo Společnostmi
+* Zobrazení historie e-mailů na propojeném záznamu Osoby/Společnosti
 
-## Future Plans
+## Plány do budoucna
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+Zvažujeme rozšíření viditelnosti e-mailů na vlastní objekty. Sdílejte svůj případ použití v našich [diskuzích na GitHubu](https://github.com/twentyhq/twenty/discussions), abyste pomohli upřednostnit tuto funkci.

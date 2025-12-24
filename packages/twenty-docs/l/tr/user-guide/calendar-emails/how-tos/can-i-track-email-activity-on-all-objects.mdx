@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: Tüm nesnelerde e-posta etkinliğini izleyebilir miyim?
+description: Farklı nesneler genelinde e-posta etkinliği izlemenin anlaşılması.
 ---
 
-## Supported Objects
+## Desteklenen Nesneler
 
-Email activity is currently available on **three standard objects**:
+E-posta etkinliği şu anda **üç standart nesnede** kullanılabilir:
 
-| Nesne         | What You See                                                     |
-| ------------- | ---------------------------------------------------------------- |
-| **People**    | All emails exchanged with that specific contact                  |
-| **Şirketler** | All emails with anyone from that company (based on email domain) |
-| **Fırsatlar** | Emails related to the company linked to the opportunity          |
+| Nesne         | Görecekleriniz                                                              |
+| ------------- | --------------------------------------------------------------------------- |
+| **Kişiler**   | İlgili kişiyle karşılıklı tüm e-postalar                                    |
+| **Şirketler** | O şirketteki herhangi biriyle olan tüm e-postalar (e-posta alan adına göre) |
+| **Fırsatlar** | Fırsatla bağlantılı şirkete ilişkin e-postalar                              |
 
-## Why Only These Objects?
+## Neden Yalnızca Bu Nesneler?
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+Kişiler, Şirketler ve Fırsatlar, e-posta bağlamının en fazla değer kattığı temel ilişki nesneleridir. E-posta dizileri aşağıdakilere göre otomatik olarak bağlanır:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **E-posta adresi** → Kişi kayıtlarıyla eşleştirilir
+* **E-posta alan adı** → Şirket kayıtlarıyla eşleştirilir
+* **Şirket ilişkisi** → Fırsatlara bağlanır
 
 ## Özel Nesneler
 
-**Email tracking is not available on custom objects** at this time.
+**E-posta izleme şu anda özel nesnelerde mevcut değildir**.
 
-If you need email context on a custom object, consider:
+Özel bir nesnede e-posta bağlamına ihtiyacınız varsa, şunları göz önünde bulundurun:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* Özel nesnenizi Kişiler veya Şirketler ile ilişkilendirmek için bir ilişki alanı kullanmak
+* Bağlı Kişi/Şirket kaydında e-posta geçmişini görüntülemek
 
-## Future Plans
+## Gelecek Planları
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+E-posta görünürlüğünün özel nesnelere genişletilmesi değerlendiriliyor. Bu özelliğin önceliklendirilmesine yardımcı olmak için kullanım senaryonuzu [GitHub tartışmalarımızda](https://github.com/twentyhq/twenty/discussions) paylaşın.
