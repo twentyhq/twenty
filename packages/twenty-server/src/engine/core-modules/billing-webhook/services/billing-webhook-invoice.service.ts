@@ -44,7 +44,6 @@ export class BillingWebhookInvoiceService {
         { hasReachedCurrentPeriodCap: false },
       );
 
-      // Create new billing alert for this billing period
       if (isDefined(stripeCustomerId)) {
         await this.createBillingAlertForNewPeriod(
           stripeSubscriptionId,

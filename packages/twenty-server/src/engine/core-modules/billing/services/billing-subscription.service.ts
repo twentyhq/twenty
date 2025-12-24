@@ -236,8 +236,6 @@ export class BillingSubscriptionService {
 
     await this.updateSubscription(billingSubscription.id, subscriptionUpdate);
 
-    // If it's an immediate upgrade (not scheduled for period end),
-    // reset the cap flag and create an alert at the new tier cap
     if (!isScheduledForPeriodEnd) {
       await this.billingSubscriptionItemRepository.update(
         { stripeSubscriptionId: billingSubscription.stripeSubscriptionId },
@@ -301,7 +299,6 @@ export class BillingSubscriptionService {
       { hasReachedCurrentPeriodCap: false },
     );
 
-    // Create billing alert at the paid tier cap (not trial cap)
     const tierCap = await this.getWorkflowTierCapForSubscription(
       billingSubscription.id,
     );
