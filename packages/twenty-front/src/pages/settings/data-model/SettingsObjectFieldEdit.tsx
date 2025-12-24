@@ -77,6 +77,7 @@ export const SettingsObjectFieldEdit = () => {
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 

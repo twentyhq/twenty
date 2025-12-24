@@ -163,6 +163,7 @@ export {
   IconFileCheck,
   IconFileExport,
   IconFileImport,
+  IconFileInfo,
   IconFilePencil,
   IconFileText,
   IconFileUpload,
