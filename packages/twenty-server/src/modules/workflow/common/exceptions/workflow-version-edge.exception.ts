@@ -20,7 +20,7 @@ export class WorkflowVersionEdgeException extends CustomException<WorkflowVersio
   constructor(
     message: string,
     code: WorkflowVersionEdgeExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:

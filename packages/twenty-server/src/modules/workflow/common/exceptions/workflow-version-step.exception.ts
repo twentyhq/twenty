@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -10,26 +11,33 @@ export enum WorkflowVersionStepExceptionCode {
   AI_AGENT_STEP_FAILURE = 'AI_AGENT_STEP_FAILURE',
 }
 
-const workflowVersionStepExceptionUserFriendlyMessages: Record<
-  WorkflowVersionStepExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkflowVersionStepExceptionCode.INVALID_REQUEST]: msg`Invalid workflow step request.`,
-  [WorkflowVersionStepExceptionCode.NOT_FOUND]: msg`Workflow step not found.`,
-  [WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE]: msg`Code step execution failed.`,
-  [WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE]: msg`AI agent step execution failed.`,
+const getWorkflowVersionStepExceptionUserFriendlyMessage = (
+  code: WorkflowVersionStepExceptionCode,
+) => {
+  switch (code) {
+    case WorkflowVersionStepExceptionCode.INVALID_REQUEST:
+      return msg`Invalid workflow step request.`;
+    case WorkflowVersionStepExceptionCode.NOT_FOUND:
+      return msg`Workflow step not found.`;
+    case WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE:
+      return msg`Code step execution failed.`;
+    case WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE:
+      return msg`AI agent step execution failed.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkflowVersionStepException extends CustomException<WorkflowVersionStepExceptionCode> {
   constructor(
     message: string,
     code: WorkflowVersionStepExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor },
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
-        workflowVersionStepExceptionUserFriendlyMessages[code],
+        getWorkflowVersionStepExceptionUserFriendlyMessage(code),
     });
   }
 }

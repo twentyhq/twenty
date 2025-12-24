@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -12,26 +13,36 @@ export enum WorkflowRunExceptionCode {
   WORKFLOW_RUN_INVALID = 'WORKFLOW_RUN_INVALID',
 }
 
-const workflowRunExceptionUserFriendlyMessages: Record<
-  WorkflowRunExceptionCode,
-  MessageDescriptor
-> = {
-  [WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND]: msg`Workflow run not found.`,
-  [WorkflowRunExceptionCode.WORKFLOW_ROOT_STEP_NOT_FOUND]: msg`Workflow root step not found.`,
-  [WorkflowRunExceptionCode.INVALID_OPERATION]: msg`Invalid workflow operation.`,
-  [WorkflowRunExceptionCode.INVALID_INPUT]: msg`Invalid workflow input.`,
-  [WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED]: msg`Workflow run limit reached.`,
-  [WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID]: msg`Invalid workflow run.`,
+const getWorkflowRunExceptionUserFriendlyMessage = (
+  code: WorkflowRunExceptionCode,
+) => {
+  switch (code) {
+    case WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND:
+      return msg`Workflow run not found.`;
+    case WorkflowRunExceptionCode.WORKFLOW_ROOT_STEP_NOT_FOUND:
+      return msg`Workflow root step not found.`;
+    case WorkflowRunExceptionCode.INVALID_OPERATION:
+      return msg`Invalid workflow operation.`;
+    case WorkflowRunExceptionCode.INVALID_INPUT:
+      return msg`Invalid workflow input.`;
+    case WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED:
+      return msg`Workflow run limit reached.`;
+    case WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID:
+      return msg`Invalid workflow run.`;
+    default:
+      assertUnreachable(code);
+  }
 };
 
 export class WorkflowRunException extends CustomException<WorkflowRunExceptionCode> {
   constructor(
     message: string,
     code: WorkflowRunExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
-      userFriendlyMessage,
+      userFriendlyMessage:
+        userFriendlyMessage ?? getWorkflowRunExceptionUserFriendlyMessage(code),
     });
   }
 }
