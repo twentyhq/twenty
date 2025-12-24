@@ -148,6 +148,17 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The user who last updated the record`,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata | null;
+
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: RelationType.MANY_TO_ONE,

@@ -130,6 +130,17 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The user who last updated the record`,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata | null;
+
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: RelationType.MANY_TO_ONE,

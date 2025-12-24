@@ -94,6 +94,17 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.updatedBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Updated by`,
+    icon: 'IconUserCircle',
+    description: msg`The user who last updated the record`,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
+  updatedBy: ActorMetadata | null;
+
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Relations`,
