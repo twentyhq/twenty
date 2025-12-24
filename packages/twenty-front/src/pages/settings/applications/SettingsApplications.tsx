@@ -1,21 +1,55 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
 import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
+import {
+  H2Title,
+  CommandBlock,
+  IconCopy,
+  IconFileInfo,
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 
-const StyledNoApplicationContainer = styled.div``;
+const StyledButtonContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(2)} 0;
+`;
 
 export const SettingsApplications = () => {
+  const { t } = useLingui();
+
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const { data } = useFindManyApplicationsQuery();
 
+  const { copyToClipboard } = useCopyToClipboard();
+
   const applications = data?.findManyApplications ?? [];
+
+  const commands = [
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    'npx create-twenty-app@latest my-twenty-app',
+    // eslint-disable-next-line lingui/no-unlocalized-strings
+    'cd my-twenty-app',
+  ];
+
+  const button = (
+    <Button
+      onClick={() => {
+        copyToClipboard(commands.join('\n'), t`Commands copied to clipboard`);
+      }}
+      ariaLabel={t`Copy commands`}
+      Icon={IconCopy}
+    />
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -29,22 +63,30 @@ export const SettingsApplications = () => {
       ]}
     >
       <SettingsPageContainer>
+        {applications.length > 0 && (
+          <SettingsApplicationsTable applications={applications} />
+        )}
         <Section>
-          {applications.length > 0 ? (
-            <SettingsApplicationsTable applications={applications} />
-          ) : (
-            <StyledNoApplicationContainer>
-              <Trans>
-                No installed application. Please check our{' '}
-                <LinkDisplay
-                  value={{
-                    url: 'https://www.npmjs.com/package/twenty-cli',
-                    label: 'twenty-cli',
-                  }}
-                />
-              </Trans>
-            </StyledNoApplicationContainer>
-          )}
+          <H2Title
+            title={t`Create an application`}
+            description={t`You can either create a private app or share it to others`}
+          />
+          <CommandBlock commands={commands} button={button} />
+          <StyledButtonContainer>
+            <Button
+              Icon={IconFileInfo}
+              title={t`Read documentation`}
+              onClick={() =>
+                window.open(
+                  getDocumentationUrl({
+                    locale: currentWorkspaceMember?.locale,
+                    path: '/developers/extend/capabilities/apps',
+                  }),
+                  '_blank',
+                )
+              }
+            />
+          </StyledButtonContainer>
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

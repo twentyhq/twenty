@@ -84,7 +84,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const handleDocumentation = () => {
-    window.open(getDocumentationUrl(currentWorkspaceMember?.locale), '_blank');
+    window.open(
+      getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
+      '_blank',
+    );
     closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
   };
 
