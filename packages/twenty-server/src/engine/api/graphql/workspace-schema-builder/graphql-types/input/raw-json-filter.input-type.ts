@@ -7,5 +7,6 @@ export const RawJsonFilterType = new GraphQLInputObjectType({
   fields: {
     is: { type: FilterIs },
     like: { type: GraphQLString },
+    containsJsonb: { type: GraphQLString },
   },
 });
