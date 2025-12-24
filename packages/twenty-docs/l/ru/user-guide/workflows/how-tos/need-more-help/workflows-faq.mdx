@@ -1,48 +1,48 @@
 ---
-title: Workflows FAQ
-description: Frequently asked questions about workflows in Twenty.
+title: Часто задаваемые вопросы о рабочих процессах
+description: Часто задаваемые вопросы о рабочих процессах в Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Why can't I activate a workflow?">
-    This is likely a permissions issue. You need access to workflows to create and activate them.
+  <Accordion title="Почему я не могу активировать рабочий процесс?">
+    Скорее всего, это проблема с правами доступа. Вам нужен доступ к рабочим процессам, чтобы создавать и активировать их.
 
-    **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Roles**.
+    **Решение**: Свяжитесь с администратором рабочего пространства, чтобы он предоставил вам доступ к рабочим процессам в **Настройки → Роли**.
 
-    If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+    Если вы совсем не видите раздел "Рабочие процессы" в боковой панели, это подтверждает, что проблема в правах доступа.
   </Accordion>
 
-  <Accordion title="Why don't I see my manual workflow button in the top navbar?">
-    Manual workflows only appear in the navbar if properly configured:
+  <Accordion title="Почему я не вижу кнопку ручного рабочего процесса в верхней панели навигации?">
+    Ручные рабочие процессы отображаются в панели навигации только при правильной настройке:
 
-    1. The workflow must be **activated** (not in draft mode)
-    2. The navbar placement must be set to **Pinned**
-    3. For Single/Bulk triggers, you must be on the correct object page
+    1. Рабочий процесс должен быть **активирован** (не в режиме черновика)
+    2. Размещение в панели навигации должно быть установлено в значение **Pinned**
+    3. Для триггеров Single/Bulk вы должны находиться на правильной странице объекта
 
-    **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
+    **Как проверить**: Откройте рабочий процесс → нажмите на триггер → убедитесь, что "Navbar placement" установлено в значение "Pinned".
 
-    You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+    Вы всегда можете получить доступ к ручным рабочим процессам через **Cmd + K** (или **Ctrl + K**) независимо от настроек панели навигации.
   </Accordion>
 
-  <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
-    | Тип | Records Required | Запуски рабочего процесса |
+  <Accordion title="В чем разница между ручными триггерами Single, Global и Bulk?">
+    | Тип | Требуемые записи | Запуски рабочего процесса |
     | --- | ---------------- | ------------------------- |
 
-    \| **Global** | None | Once, no record input |
-    \| **Single** | One or more selected | Once per selected record |
-    \| **Bulk** | One or more selected | Once, with all records as array |
+    \| **Global** | Нет | Один раз, без входной записи |
+    \| **Single** | Одна или несколько выбранных | По одному разу для каждой выбранной записи |
+    \| **Bulk** | Одна или несколько выбранных | Один раз, со всеми записями в виде массива |
 
-    * **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
-    * **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
-    * **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
+    * **Global**: Используйте, когда рабочему процессу не нужен контекст записи (например, для создания отчета)
+    * **Single**: Используйте, когда нужно обрабатывать каждую выбранную запись независимо (например, отправлять отдельные письма)
+    * **Bulk**: Используйте, когда нужно обрабатывать записи вместе или оптимизировать использование кредитов (требуется действие Iterator)
 
-    See [Workflow Triggers](/l/ru/user-guide/workflows/capabilities/workflow-triggers) for details.
+    См. [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers) для подробностей.
   </Accordion>
 
-  <Accordion title="I don't see an If/Else node. Что мне делать?">
-    An explicit If/Else node is not yet available but is on our roadmap.
+  <Accordion title="Я не вижу узла If/Else. Что мне делать?">
+    Явный узел If/Else пока недоступен, но находится в нашем плане развития.
 
-    **Current workaround**: Create multiple branches from your step, each starting with a **Filter** action:
+    **Текущее решение**: Создайте несколько веток от вашего шага, каждая начинается с действия **Filter**:
 
     ```
     Step 1
@@ -52,203 +52,203 @@ description: Frequently asked questions about workflows in Twenty.
        └── Branch B: Filter (condition = false) → Actions...
     ```
 
-    Only the branch where the filter condition passes will execute its subsequent actions.
+    Только ветка, в которой условие фильтра выполняется, будет выполнять последующие действия.
 
-    See [How to Use Branches](/l/ru/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+    См. пошаговое руководство [Как использовать ветки](/l/ru/user-guide/workflows/capabilities/workflow-branches).
   </Accordion>
 
-  <Accordion title="Are workflow branches running in parallel?">
-    **Yes**, branches run in parallel by default.
+  <Accordion title="Ветки рабочего процесса выполняются параллельно?">
+    **Да**, ветки по умолчанию выполняются параллельно.
 
-    If you want only one branch to execute:
+    Если вы хотите, чтобы выполнялась только одна ветка:
 
-    * Add a **Filter** action at the start of each branch
-    * Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
+    * Добавьте действие **Filter** в начало каждой ветки
+    * Задайте противоположные условия (например, Ветка A: status = "Open", Ветка B: status ≠ "Open")
 
-    Branches that fail their filter condition stop executing, while others continue.
+    Ветки, не прошедшие свое условие фильтра, прекращают выполнение, остальные продолжают.
   </Accordion>
 
-  <Accordion title="Can I merge branches back together?">
-    **Yes**. After your parallel branches complete, you can add a step that both branches connect to.
+  <Accordion title="Можно ли объединить ветки обратно?">
+    **Да**. После завершения параллельных веток вы можете добавить шаг, к которому будут подключены обе ветки.
 
-    In the workflow editor:
+    В редакторе рабочего процесса:
 
-    1. Complete your branched actions
-    2. Add a new step after the branches
-    3. Drag connections from the end of each branch to this new step
+    1. Завершите действия в ветках
+    2. Добавьте новый шаг после веток
+    3. Перетащите соединения с конца каждой ветки к этому новому шагу
 
-    The merged step will execute after all connected branches complete.
+    Объединенный шаг выполнится после завершения всех подключенных веток.
   </Accordion>
 
-  <Accordion title="What's the limit on Search Records results?">
-    **Search Records returns a maximum of 200 records.**
+  <Accordion title="Каково ограничение на результаты Search Records?">
+    **Search Records возвращает максимум 200 записей.**
 
-    If you need to process more:
+    Если нужно обработать больше:
 
-    * Add more specific filters to reduce results
-    * Use scheduled workflows to process in batches
-    * Consider using the API for bulk operations
+    * Добавьте более точные фильтры, чтобы сократить результаты
+    * Используйте запланированные рабочие процессы для пакетной обработки
+    * Рассмотрите использование API для массовых операций
 
-    For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+    Для большинства рабочих процессов 200 записей достаточно. Если вы регулярно упираетесь в этот предел, подумайте о переработке вашей автоматизации.
   </Accordion>
 
-  <Accordion title="Can I CC people on workflow emails?">
-    **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
+  <Accordion title="Можно ли добавлять получателей в копию (CC) в письмах рабочего процесса?">
+    **Пока нет.** Поля CC и BCC для действия Send Email в нашем плане развития.
 
-    **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+    **Текущее решение**: Добавьте несколько действий Send Email, чтобы отправить дополнительным получателям, или используйте HTTP Request для отправки через внешний почтовый сервис, поддерживающий CC.
   </Accordion>
 
-  <Accordion title="How do I use outputs from previous steps?">
-    Every action produces output data that can be used in subsequent steps.
+  <Accordion title="Как использовать выходные данные из предыдущих шагов?">
+    Каждое действие формирует выходные данные, которые можно использовать в последующих шагах.
 
-    **To reference previous step data**:
+    **Как ссылаться на данные предыдущих шагов**:
 
-    * Use the variable picker when configuring a field
-    * Or type `{{stepName.fieldName}}` directly
+    * Используйте выбор переменных при настройке поля
+    * Или введите `{{stepName.fieldName}}` напрямую
 
     **Примеры**:
 
-    * Trigger data: `{{trigger.object.email}}`
-    * Search results: `{{searchRecords[0].name}}`
-    * Code output: `{{code.calculatedValue}}`
+    * Данные триггера: `{{trigger.object.email}}`
+    * Результаты поиска: `{{searchRecords[0].name}}`
+    * Вывод кода: `{{code.calculatedValue}}`
 
-    Hover over any field in the action configuration to see available variables from previous steps.
+    Наведите курсор на любое поле в настройках действия, чтобы увидеть доступные переменные из предыдущих шагов.
   </Accordion>
 
-  <Accordion title="Why does my Iterator fail?">
-    **Iterator requires an array input.** Common issues:
+  <Accordion title="Почему Iterator завершается с ошибкой?">
+    **Iterator требует массив на входе.** Частые проблемы:
 
-    1. **Input is not an array**: Ensure you're passing results from Search Records or another action that returns an array
-    2. **Array is empty**: Add a filter before Iterator to check `{{searchRecords.length}} > 0`
-    3. **Wrong variable selected**: Make sure you select the array itself, not a single record
+    1. **Входные данные не являются массивом**: Убедитесь, что вы передаете результаты из Search Records или другого действия, возвращающего массив
+    2. **Массив пуст**: Добавьте фильтр перед Iterator, чтобы проверить `{{searchRecords.length}} > 0`
+    3. **Выбрана неверная переменная**: Убедитесь, что вы выбираете сам массив, а не одну запись
 
-    **Correct setup**:
+    **Правильная настройка**:
 
-    1. Search Records (returns array)
+    1. Search Records (возвращает массив)
     2. Filter: length > 0
-    3. Iterator: select `{{searchRecords}}`
-    4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+    3. Iterator: выберите `{{searchRecords}}`
+    4. Действия внутри Iterator используют `{{iterator.currentItem.fieldName}}`
   </Accordion>
 
-  <Accordion title="What's the maximum execution time for Code actions?">
-    Code actions (serverless functions) have a **default timeout of 5 minutes** (300 seconds).
+  <Accordion title="Каково максимальное время выполнения для действий Code?">
+    Действия Code (serverless-функции) имеют **тайм-аут по умолчанию 5 минут** (300 секунд).
 
-    The maximum configurable timeout is **15 minutes** (900 seconds).
+    Максимально настраиваемый тайм-аут — **15 минут** (900 секунд).
 
-    If your code exceeds this limit, the action will fail with a timeout error.
+    Если ваш код превышает этот предел, действие завершится ошибкой тайм-аута.
 
-    **Tips to avoid timeouts**:
+    **Советы по предотвращению тайм-аутов**:
 
-    * Break large operations into smaller chunks using Iterator
-    * Avoid heavy computations; use external services via HTTP Request for intensive processing
-    * Optimize your code to reduce execution time
-    * If you need longer processing, consider using scheduled workflows that process data in batches
+    * Разбейте большие операции на небольшие части с помощью Iterator
+    * Избегайте тяжелых вычислений; используйте внешние сервисы через HTTP Request для ресурсоемкой обработки
+    * Оптимизируйте ваш код, чтобы сократить время выполнения
+    * Если требуется более длительная обработка, рассмотрите использование запланированных рабочих процессов, которые обрабатывают данные пакетами
   </Accordion>
 
-  <Accordion title="How do I read workflow runs?">
-    Workflow runs show the execution history and help you debug issues.
+  <Accordion title="Как понимать запуски рабочего процесса?">
+    Запуски рабочего процесса показывают историю выполнения и помогают диагностировать проблемы.
 
-    **Access runs**:
+    **Доступ к запускам**:
 
-    * In workflow editor → **Runs** panel on the right
-    * Or go to **Workflow Runs** in the sidebar
+    * В редакторе рабочего процесса → панель **Запуски** справа
+    * Или перейдите в **Запуски рабочего процесса** в боковой панели
 
-    **Understanding a run**:
+    **Понимание запуска**:
 
-    * **Status**: Running, Completed, Failed, Waiting
-    * **Steps**: See which steps executed and their output
-    * **Errors**: Click failed steps to see error messages
-    * **Data**: View input/output data at each step
+    * **Статус**: Running, Completed, Failed, Waiting
+    * **Шаги**: Просматривайте, какие шаги выполнились и их вывод
+    * **Ошибки**: Нажмите на шаги с ошибкой, чтобы увидеть сообщения об ошибках
+    * **Данные**: Просматривайте входные/выходные данные на каждом шаге
 
-    See [Workflow Runs](/l/ru/user-guide/workflows/capabilities/workflow-runs) for details.
+    См. [Запуски рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-runs) для подробностей.
   </Accordion>
 
-  <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+  <Accordion title="Почему я не вижу свои запуски рабочего процесса?">
+    Запуски рабочего процесса могут сразу завершаться с ошибкой из-за ограничений скорости.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
+    **Жесткий лимит: 5 000 запусков в час на рабочее пространство.**
 
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    Если вы превышаете этот лимит, рабочие процессы сразу помечаются как завершившиеся с ошибкой и не появляются в списке запусков, как можно было бы ожидать.
 
-    **Common scenarios that hit this limit**:
+    **Распространенные сценарии, при которых достигается этот лимит**:
 
-    * Selecting more than 5,000 records with a Single manual trigger
-    * Multiple workflows running simultaneously across your workspace
-    * High-frequency automated triggers (e.g., Record Updated on a busy object)
+    * Выбор более 5 000 записей с ручным триггером Single
+    * Одновременная работа нескольких рабочих процессов в вашем рабочем пространстве
+    * Высокочастотные автоматические триггеры (например, Record Updated на загруженном объекте)
 
     **Решения**:
 
-    * Use **Bulk** triggers instead of Single to process many records in one run
-    * Space out large batch operations
-    * Use filters to reduce trigger frequency
-    * Schedule heavy workflows during off-peak hours
+    * Используйте триггеры **Bulk** вместо Single, чтобы обработать много записей за один запуск
+    * Разнесите во времени крупные пакетные операции
+    * Используйте фильтры, чтобы снизить частоту срабатываний
+    * Запускайте «тяжелые» рабочие процессы в часы низкой нагрузки
   </Accordion>
 
-  <Accordion title="What are the workflow rate limits?">
-    Twenty has two rate limits to ensure system stability:
+  <Accordion title="Каковы ограничения скорости для рабочих процессов?">
+    В Twenty есть два лимита скорости для обеспечения стабильности системы:
 
-    | Лимит | Значение | Behavior |
-    | ----- | -------- | -------- |
+    | Лимит | Значение | Поведение |
+    | ----- | -------- | --------- |
 
-    \| **Soft limit** | 100 runs/minute | Runs queue in "Not Started" status, processed gradually |
-    \| **Hard limit** | 5,000 runs/hour | Runs immediately fail |
+    \| **Мягкий лимит** | 100 запусков/мин | Запуски ставятся в очередь со статусом "Not Started", обрабатываются постепенно |
+    \| **Жесткий лимит** | 5 000 запусков/час | Запуски сразу завершаются с ошибкой |
 
-    **Soft limit (100/min)**: Your workflows won't fail—they just wait in the queue and are processed over time. You can trigger more than 100 records; execution will be slower.
+    **Мягкий лимит (100/мин)**: Ваши рабочие процессы не будут завершаться с ошибкой — они просто ждут в очереди и обрабатываются со временем. Вы можете запускать более 100 записей; выполнение будет медленнее.
 
-    **Hard limit (5,000/hr)**: This applies to your entire workspace. If all your workflows combined exceed 5,000 runs in an hour, additional runs will fail immediately.
+    **Жесткий лимит (5 000/ч)**: Он применяется ко всему вашему рабочему пространству. Если суммарно все ваши рабочие процессы превышают 5 000 запусков за час, дополнительные запуски сразу завершатся с ошибкой.
 
-    **Tips to stay within limits**:
+    **Советы, чтобы не выходить за пределы лимитов**:
 
-    * Use Bulk triggers with Iterator instead of Single triggers for large batches
-    * Combine related automations into fewer workflows
-    * Use scheduled workflows to spread load over time
+    * Используйте триггеры Bulk с Iterator вместо Single для больших пакетов
+    * Объединяйте связанные автоматизации в меньшее количество рабочих процессов
+    * Используйте запланированные рабочие процессы, чтобы распределить нагрузку во времени
   </Accordion>
 
-  <Accordion title="Can I retry a failed workflow run?">
-    **No, there is no automatic retry functionality at the moment.**
+  <Accordion title="Можно ли повторно запустить неудавшийся запуск рабочего процесса?">
+    **Нет, в настоящий момент нет функции автоматического повтора.**
 
-    If a workflow run fails, you'll need to:
+    Если запуск рабочего процесса завершился с ошибкой, вам нужно:
 
-    1. Review the error in **Settings → Workflows → [Your Workflow] → Runs**
-    2. Fix the issue (data, configuration, or external service)
-    3. Manually trigger the workflow again on the affected record(s)
+    1. Просмотрите ошибку в **Settings → Workflows → [Your Workflow] → Runs**
+    2. Исправьте проблему (данные, конфигурация или внешний сервис)
+    3. Повторно запустите рабочий процесс вручную для затронутой записи (записей)
 
-    **Tips to reduce failures**:
+    **Советы по снижению количества ошибок**:
 
-    * Add **Filter** nodes to validate data before actions
-    * Use **Search Records** to check if related records exist
-    * Test thoroughly with a few records before bulk operations
+    * Добавьте узлы **Filter** для проверки данных перед действиями
+    * Используйте **Search Records**, чтобы проверить, существуют ли связанные записи
+    * Тщательно протестируйте на нескольких записях перед массовыми операциями
 
-    Automatic retry functionality is on our roadmap for a future release.
+    Функция автоматического повтора находится в нашем плане развития для будущего релиза.
   </Accordion>
 
-  <Accordion title="Should I deactivate workflows before CSV imports?">
-    **Yes, if your workflows are triggered by record creation or updates.**
+  <Accordion title="Нужно ли деактивировать рабочие процессы перед импортом CSV?">
+    **Да, если ваши рабочие процессы запускаются при создании или обновлении записей.**
 
-    When you import data via CSV, each record created or updated can trigger workflows. A large import (thousands of records) could:
+    При импорте данных через CSV каждая созданная или обновленная запись может запускать рабочие процессы. Крупный импорт (тысячи записей) может:
 
-    * Hit the 5,000 runs/hour limit
-    * Consume significant workflow credits
-    * Send unexpected emails or notifications
-    * Create duplicate tasks or records
+    * Достигнуть лимита 5 000 запусков/час
+    * Потреблять значительное количество кредитов рабочего процесса
+    * Отправить неожиданные письма или уведомления
+    * Создать дублирующиеся задачи или записи
 
-    **Before a mass import**:
+    **Перед массовым импортом**:
 
-    1. Go to **Settings → Workflows**
-    2. Identify workflows triggered by the object you're importing
-    3. **Deactivate** them temporarily
-    4. Run your CSV import
-    5. **Reactivate** the workflows when done
+    1. Перейдите в **Настройки → Workflows**
+    2. Определите рабочие процессы, запускаемые объектом, который вы импортируете
+    3. **Деактивируйте** их временно
+    4. Выполните импорт CSV
+    5. **Повторно активируйте** рабочие процессы по завершении
 
-    **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+    **Альтернатива**: Если вам нужно, чтобы рабочие процессы запускались на импортируемых данных, импортируйте небольшими партиями, чтобы укладываться в лимиты скорости.
   </Accordion>
 
-  <Accordion title="How do I clean up my workflow layout?">
-    If your workflow canvas looks messy with nodes scattered around, you can automatically organize it:
+  <Accordion title="Как привести в порядок схему моего рабочего процесса?">
+    Если ваше полотно рабочего процесса выглядит беспорядочно, с разбросанными узлами, вы можете автоматически упорядочить его:
 
-    1. Right-click anywhere on the workflow canvas
-    2. Click **Tidy up workflow**
+    1. Щелкните правой кнопкой мыши в любом месте полотна рабочего процесса
+    2. Нажмите **Tidy up workflow**
 
-    This will automatically rearrange all nodes into a clean, organized layout.
+    Это автоматически переупорядочит все узлы в чистое, упорядоченное расположение.
   </Accordion>
 </AccordionGroup>
