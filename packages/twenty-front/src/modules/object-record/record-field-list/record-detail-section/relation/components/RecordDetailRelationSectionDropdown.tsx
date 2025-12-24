@@ -10,13 +10,11 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionDropdownProps = {
   loading: boolean;
-  instanceId: string;
   dropdownTriggerClickableComponent?: ReactNode;
 };
 
 export const RecordDetailRelationSectionDropdown = ({
   loading,
-  instanceId,
   dropdownTriggerClickableComponent,
 }: RecordDetailRelationSectionDropdownProps) => {
   const { fieldDefinition, isRecordFieldReadOnly, recordId } =
@@ -58,14 +56,12 @@ export const RecordDetailRelationSectionDropdown = ({
   if (isToOneObject) {
     return (
       <RecordDetailRelationSectionDropdownToOne
-        instanceId={instanceId}
         dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
       />
     );
   } else if (isToManyObjects) {
     return (
       <RecordDetailRelationSectionDropdownToMany
-        instanceId={instanceId}
         dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
       />
     );

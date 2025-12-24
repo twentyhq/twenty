@@ -39,12 +39,10 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
-  instanceId: string;
 };
 
 export const RecordDetailRelationSection = ({
   loading,
-  instanceId,
 }: RecordDetailRelationSectionProps) => {
   const { t } = useLingui();
 
@@ -204,15 +202,11 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          <RecordDetailRelationSectionDropdown
-            loading={loading}
-            instanceId={instanceId}
-          />
+          <RecordDetailRelationSectionDropdown loading={loading} />
         }
       >
         {relationRecords.length > 0 && (
           <RecordDetailRelationRecordsList
-            instanceId={instanceId}
             recordsWithObjectNameSingular={relationRecords.map(
               (relationRecord) => ({
                 value: relationRecord,

@@ -47,6 +47,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 
 const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
   isDropdownOpen?: boolean;
@@ -84,7 +85,6 @@ const getDeleteRelationModalId = (recordId: string) =>
   `delete-relation-modal-${recordId}`;
 
 type RecordDetailRelationRecordsListItemProps = {
-  instanceId: string;
   isExpanded: boolean;
   onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
@@ -93,7 +93,6 @@ type RecordDetailRelationRecordsListItemProps = {
 };
 
 export const RecordDetailRelationRecordsListItem = ({
-  instanceId,
   isExpanded,
   onClick,
   relationRecord,
@@ -109,6 +108,7 @@ export const RecordDetailRelationRecordsListItem = ({
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const { openModal } = useModal();
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   const { relationType, objectMetadataNameSingular } =
     fieldDefinition.metadata as FieldRelationMetadata;
@@ -286,7 +286,7 @@ export const RecordDetailRelationRecordsListItem = ({
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
         <RecordFieldList
-          instanceId={instanceId}
+          instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
           objectNameSingular={relationObjectMetadataNameSingular}
           objectRecordId={relationRecord.id}
           showDuplicatesSection={false}

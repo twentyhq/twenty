@@ -133,7 +133,6 @@ export const RecordFieldList = ({
                   }}
                 >
                   <ActivityTargetsInlineCell
-                    instanceIdPrefix={instanceId}
                     componentInstanceId={getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,
@@ -251,12 +250,10 @@ export const RecordFieldList = ({
             {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
               <RecordDetailMorphRelationSection
                 loading={isPrefetchLoading || recordLoading}
-                instanceId={instanceId}
               />
             ) : (
               <RecordDetailRelationSection
                 loading={isPrefetchLoading || recordLoading}
-                instanceId={instanceId}
               />
             )}
           </FieldContext.Provider>

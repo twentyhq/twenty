@@ -21,12 +21,10 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;
-  instanceId: string;
 };
 
 export const RecordDetailMorphRelationSection = ({
   loading,
-  instanceId,
 }: RecordDetailMorphRelationSectionProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
@@ -120,15 +118,11 @@ export const RecordDetailMorphRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecordsCount > 0}
         rightAdornment={
-          <RecordDetailMorphRelationSectionDropdown
-            loading={loading}
-            instanceId={instanceId}
-          />
+          <RecordDetailMorphRelationSectionDropdown loading={loading} />
         }
       >
         {relationRecordsCount > 0 && (
           <RecordDetailRelationRecordsList
-            instanceId={instanceId}
             recordsWithObjectNameSingular={recordsWithObjectNameSingular}
           />
         )}

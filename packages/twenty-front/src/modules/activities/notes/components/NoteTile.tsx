@@ -100,7 +100,6 @@ export const NoteTile = ({
           fieldPosition={0}
         >
           <ActivityTargetsInlineCell
-            instanceIdPrefix={componentInstanceId}
             componentInstanceId={componentInstanceId}
             activityRecordId={note.id}
             activityObjectNameSingular={CoreObjectNameSingular.Note}

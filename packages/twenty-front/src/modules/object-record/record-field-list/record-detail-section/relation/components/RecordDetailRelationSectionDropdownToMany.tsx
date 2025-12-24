@@ -27,12 +27,10 @@ import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
-  instanceId: string;
   dropdownTriggerClickableComponent?: ReactNode;
 };
 
 export const RecordDetailRelationSectionDropdownToMany = ({
-  instanceId,
   dropdownTriggerClickableComponent,
 }: RecordDetailRelationSectionDropdownToManyProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

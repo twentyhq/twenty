@@ -12,10 +12,8 @@ type RecordDetailRelationRecordsListProps = {
 };
 
 export const RecordDetailRelationRecordsList = ({
-  instanceId,
   recordsWithObjectNameSingular,
 }: {
-  instanceId: string;
   recordsWithObjectNameSingular: RecordDetailRelationRecordsListProps[];
 }) => {
   const [expandedItem, setExpandedItem] = useState('');
@@ -40,7 +38,6 @@ export const RecordDetailRelationRecordsList = ({
             />
             <RecordDetailRelationRecordsListItem
               key={recordWithObjectNameSingular.value.id}
-              instanceId={instanceId}
               isExpanded={
                 expandedItem === recordWithObjectNameSingular.value.id
               }
