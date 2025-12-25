@@ -35,11 +35,11 @@ export class CreatedByCreateOnePreQueryHook
     }
 
     const [recordToCreateData] =
-      await this.actorFromAuthContextService.injectCreatedBy(
-        [payload.data],
-        objectName,
+      await this.actorFromAuthContextService.injectCreatedBy({
+        records: [payload.data],
+        objectMetadataNameSingular: objectName,
         authContext,
-      );
+      });
 
     return {
       ...payload,

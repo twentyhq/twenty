@@ -18,6 +18,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 export type RecordInput = Record<string, unknown>;
 
+export type InjectActorParams = {
+  records: RecordInput[];
+  objectMetadataNameSingular: string;
+  authContext: AuthContext;
+};
+
 @Injectable()
 export class ActorFromAuthContextService {
   private readonly logger = new Logger(ActorFromAuthContextService.name);
@@ -27,11 +33,40 @@ export class ActorFromAuthContextService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async injectCreatedBy(
-    records: RecordInput[],
-    objectMetadataNameSingular: string,
-    authContext: AuthContext,
-  ): Promise<RecordInput[]> {
+  async injectCreatedBy({
+    records,
+    objectMetadataNameSingular,
+    authContext,
+  }: InjectActorParams): Promise<RecordInput[]> {
+    return this.injectActorField({
+      records,
+      objectMetadataNameSingular,
+      authContext,
+      fieldName: 'createdBy',
+    });
+  }
+
+  async injectUpdatedBy({
+    records,
+    objectMetadataNameSingular,
+    authContext,
+  }: InjectActorParams): Promise<RecordInput[]> {
+    return this.injectActorField({
+      records,
+      objectMetadataNameSingular,
+      authContext,
+      fieldName: 'updatedBy',
+    });
+  }
+
+  private async injectActorField({
+    records,
+    objectMetadataNameSingular,
+    authContext,
+    fieldName,
+  }: InjectActorParams & { fieldName: 'createdBy' | 'updatedBy' }): Promise<
+    RecordInput[]
+  > {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
@@ -45,7 +80,7 @@ export class ActorFromAuthContextService {
       );
 
     this.logger.log(
-      `Injecting createdBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
+      `Injecting ${fieldName} from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
     );
 
     const { idByNameSingular } = buildObjectIdByNameMaps(
@@ -67,9 +102,9 @@ export class ActorFromAuthContextService {
       `Object metadata found with fields: ${Object.keys(fieldIdByName)}`,
     );
 
-    if (!isDefined(fieldIdByName['createdBy'])) {
+    if (!isDefined(fieldIdByName[fieldName])) {
       this.logger.log(
-        `CreatedBy field not found in object metadata, skipping injection`,
+        `${fieldName} field not found in object metadata, skipping injection`,
       );
 
       return records;
@@ -80,62 +115,7 @@ export class ActorFromAuthContextService {
     const actorMetadata = await this.buildActorMetadata(authContext);
 
     for (const record of clonedRecords) {
-      this.injectActorToRecord(actorMetadata, record, 'createdBy');
-    }
-
-    return clonedRecords;
-  }
-
-  async injectUpdatedBy(
-    records: RecordInput[],
-    objectMetadataNameSingular: string,
-    authContext: AuthContext,
-  ): Promise<RecordInput[]> {
-    const workspace = authContext.workspace;
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: workspace.id,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    this.logger.log(
-      `Injecting updatedBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
-    );
-
-    const { idByNameSingular } = buildObjectIdByNameMaps(
-      flatObjectMetadataMaps,
-    );
-    const objectId = idByNameSingular[objectMetadataNameSingular];
-    const objectMetadata = objectId
-      ? flatObjectMetadataMaps.byId[objectId]
-      : undefined;
-
-    const fieldIdByName = objectMetadata
-      ? buildFieldMapsFromFlatObjectMetadata(
-          flatFieldMetadataMaps,
-          objectMetadata,
-        ).fieldIdByName
-      : {};
-
-    if (!isDefined(fieldIdByName['updatedBy'])) {
-      this.logger.log(
-        `UpdatedBy field not found in object metadata, skipping injection`,
-      );
-
-      return records;
-    }
-
-    const clonedRecords = structuredClone(records);
-
-    const actorMetadata = await this.buildActorMetadata(authContext);
-
-    for (const record of clonedRecords) {
-      this.injectActorToRecord(actorMetadata, record, 'updatedBy');
+      this.injectActorToRecord(actorMetadata, record, fieldName);
     }
 
     return clonedRecords;

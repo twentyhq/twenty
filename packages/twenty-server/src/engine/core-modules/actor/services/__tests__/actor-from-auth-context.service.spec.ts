@@ -129,11 +129,11 @@ describe('ActorFromAuthContextService', () => {
         mockedWorkspaceMember,
       );
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -169,11 +169,11 @@ describe('ActorFromAuthContextService', () => {
         mockedWorkspaceMember,
       );
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -196,11 +196,11 @@ describe('ActorFromAuthContextService', () => {
         workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
       } as const satisfies TestingAuthContext;
 
-      const result = await service.injectCreatedBy(
-        [{}],
-        'person',
-        authContext as AuthContext,
-      );
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext: authContext as AuthContext,
+      });
 
       expect(result).toEqual<ExpectedResult>([
         {
@@ -220,7 +220,11 @@ describe('ActorFromAuthContextService', () => {
       } as const satisfies TestingAuthContext;
 
       await expect(
-        service.injectCreatedBy([{}], 'person', authContext as AuthContext),
+        service.injectCreatedBy({
+          records: [{}],
+          objectMetadataNameSingular: 'person',
+          authContext: authContext as AuthContext,
+        }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `"Unable to build actor metadata - no valid actor information found in auth context"`,
       );

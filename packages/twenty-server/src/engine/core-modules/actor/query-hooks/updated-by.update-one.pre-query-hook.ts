@@ -35,11 +35,11 @@ export class UpdatedByUpdateOnePreQueryHook
     }
 
     const [recordToUpdateData] =
-      await this.actorFromAuthContextService.injectUpdatedBy(
-        [payload.data],
-        objectName,
+      await this.actorFromAuthContextService.injectUpdatedBy({
+        records: [payload.data],
+        objectMetadataNameSingular: objectName,
         authContext,
-      );
+      });
 
     return {
       ...payload,

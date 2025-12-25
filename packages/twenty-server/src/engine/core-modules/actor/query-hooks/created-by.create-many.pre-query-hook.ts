@@ -36,11 +36,11 @@ export class CreatedByCreateManyPreQueryHook
 
     return {
       ...payload,
-      data: await this.actorFromAuthContextService.injectCreatedBy(
-        payload.data,
-        objectName,
+      data: await this.actorFromAuthContextService.injectCreatedBy({
+        records: payload.data,
+        objectMetadataNameSingular: objectName,
         authContext,
-      ),
+      }),
     };
   }
 }
