@@ -32,10 +32,11 @@ spec:
           imagePullPolicy: {{ .Values.redisInternal.image.pullPolicy }}
           command:
             - redis-stack-server
-          args: ["--maxmemory-policy", "noeviction"]
-          env:
-            - name: PORT
-              value: {{ .Values.redisInternal.service.port | quote }}
+          args:
+            - "--port"
+            - {{ .Values.redisInternal.service.port | quote }}
+            - "--maxmemory-policy"
+            - "noeviction"
           ports:
             - containerPort: {{ .Values.redisInternal.service.port }}
               name: redis

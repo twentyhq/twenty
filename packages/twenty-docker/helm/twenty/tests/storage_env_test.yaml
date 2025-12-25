@@ -34,3 +34,13 @@ tests:
           content:
             name: S3_ENDPOINT
             value: https://s3.amazonaws.com
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: S3_ACCESS_KEY_ID
+            value: AKIA
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: S3_SECRET_ACCESS_KEY
+            value: secret

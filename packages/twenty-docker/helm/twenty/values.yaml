@@ -1,8 +1,8 @@
 # Global image defaults
 image:
   repository: twentycrm/twenty
-  tag: latest
-  pullPolicy: Always
+  tag: ""  # defaults to Chart.yaml appVersion; override here to pin a specific version
+  pullPolicy: IfNotPresent
 
 # Optional pull secrets applied to jobs and deployments
 imagePullSecrets: []

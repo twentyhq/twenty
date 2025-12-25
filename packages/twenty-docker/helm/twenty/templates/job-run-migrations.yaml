@@ -37,6 +37,9 @@ spec:
               npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
           env:
             - name: PG_DATABASE_URL
-              value: {{ include "twenty.dbUrl" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}

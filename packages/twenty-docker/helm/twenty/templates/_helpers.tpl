@@ -22,7 +22,7 @@
 {{/* Server image fields merged with globals */}}
 {{- define "twenty.server.image" -}}
 {{- $repo := default $.Values.image.repository $.Values.server.image.repository -}}
-{{- $tag := default $.Values.image.tag $.Values.server.image.tag -}}
+{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) $.Values.server.image.tag -}}
 {{- $pp := default $.Values.image.pullPolicy $.Values.server.image.pullPolicy -}}
 {{- printf "%s:%s|%s" $repo $tag $pp -}}
 {{- end -}}
@@ -30,7 +30,7 @@
 {{/* Worker image fields merged with globals */}}
 {{- define "twenty.worker.image" -}}
 {{- $repo := default $.Values.image.repository $.Values.worker.image.repository -}}
-{{- $tag := default $.Values.image.tag $.Values.worker.image.tag -}}
+{{- $tag := default (default $.Chart.AppVersion $.Values.image.tag) $.Values.worker.image.tag -}}
 {{- $pp := default $.Values.image.pullPolicy $.Values.worker.image.pullPolicy -}}
 {{- printf "%s:%s|%s" $repo $tag $pp -}}
 {{- end -}}
@@ -61,13 +61,14 @@
 {{- $db := .Values.db.internal.database | default "twenty" -}}
 {{- printf "postgres://postgres:postgres@%s.%s.svc.cluster.local/%s" $host (include "twenty.namespace" .) $db -}}
 {{- else -}}
-{{- $scheme := ternary "postgresql" "postgres" (eq .Values.db.external.ssl true) | default "postgres" -}}
+{{- $scheme := "postgres" -}}
 {{- $host := .Values.db.external.host -}}
 {{- $port := .Values.db.external.port | default 5432 -}}
 {{- $user := .Values.db.external.user | default "postgres" -}}
 {{- $pass := .Values.db.external.password | default "postgres" -}}
 {{- $db := .Values.db.external.database | default "twenty" -}}
-{{- printf "%s://%s:%s@%s:%v/%s" $scheme $user $pass $host $port $db -}}
+{{- $qs := ternary "?sslmode=require" "" (eq .Values.db.external.ssl true) -}}
+{{- printf "%s://%s:%s@%s:%v/%s%s" $scheme $user $pass $host $port $db $qs -}}
 {{- end -}}
 {{- end -}}
 
@@ -150,23 +151,23 @@ local
 {{- if eq (include "twenty.storageType" .) "s3" -}}
 {{- with .Values.storage.s3.bucket }}
 - name: S3_BUCKET
-	value: {{ . | quote }}
+  value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.region }}
 - name: S3_REGION
-	value: {{ . | quote }}
+  value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.endpoint }}
 - name: S3_ENDPOINT
-	value: {{ . | quote }}
+  value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.accessKeyId }}
 - name: S3_ACCESS_KEY_ID
-	value: {{ . | quote }}
+  value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.secretAccessKey }}
 - name: S3_SECRET_ACCESS_KEY
-	value: {{ . | quote }}
+  value: {{ . | quote }}
 {{- end }}
 {{- end -}}
 {{- end -}}

@@ -35,7 +35,8 @@ spec:
           {{- $img := include "twenty.worker.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
-          command: {{ toYaml .Values.worker.command | nindent 12 }}
+          command:
+{{ toYaml .Values.worker.command | nindent 12 }}
           {{- with .Values.worker.containerSecurityContext }}
           securityContext:
 {{ toYaml . | nindent 12 }}
@@ -44,7 +45,10 @@ spec:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
             - name: PG_DATABASE_URL
-              value: {{ include "twenty.dbUrl" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: STORAGE_TYPE

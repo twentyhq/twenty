@@ -67,12 +67,21 @@ helm unittest ./packages/twenty-docker/helm/twenty
 
 **Local (default):** Uses PVCs for persistence
 
-**S3:** Set `storage.type=s3` and provide credentials:
+**S3:** Set `storage.type=s3` and provide credentials using a values file:
 ```bash
-helm install my-twenty ./packages/twenty-docker/helm/twenty \
-  --set storage.type=s3 \
-  --set storage.s3.bucket=my-bucket \
-  --set storage.s3.region=us-east-1 \
-  --set storage.s3.accessKeyId=AKIA... \
-  --set storage.s3.secretAccessKey=secret
+# values-secrets.yaml (do not commit)
+# storage:
+#   type: s3
+#   s3:
+#     bucket: my-bucket
+#     region: us-east-1
+#     accessKeyId: AKIA...
+#     secretAccessKey: ...
+
+helm install my-twenty ./packages/twenty-docker/helm/twenty -f values-secrets.yaml
 ```
+
+## Production Tips
+
+- **Image versioning:** The chart defaults to `Chart.yaml`'s `appVersion` (currently v1.14.0). Override via `image.tag` in values to pin a different version or use `latest` for rolling updates.
+- **Keep secrets secure:** Avoid `--set` for sensitive values; use `-f values-secrets.yaml` or reference existing Kubernetes Secrets via `server.extraEnvFrom`.

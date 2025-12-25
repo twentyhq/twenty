@@ -59,7 +59,10 @@ spec:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
             - name: PG_DATABASE_URL
-              value: {{ include "twenty.dbUrl" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: url
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: SIGN_IN_PREFILLED
@@ -90,6 +93,22 @@ spec:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ include "twenty.server.containerPort" . }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ include "twenty.server.containerPort" . }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
           volumeMounts:

@@ -15,10 +15,7 @@ spec:
       app.kubernetes.io/name: {{ include "twenty.name" . }}
       app.kubernetes.io/component: db
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+    type: Recreate
   template:
     metadata:
       labels:
@@ -38,9 +35,15 @@ spec:
           imagePullPolicy: {{ .Values.db.internal.image.pullPolicy }}
           env:
             - name: PGUSER_SUPERUSER
-              value: {{ .Values.db.internal.env.PGUSER_SUPERUSER | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: username
             - name: PGPASSWORD_SUPERUSER
-              value: {{ .Values.db.internal.env.PGPASSWORD_SUPERUSER | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
             - name: SPILO_PROVIDER
               value: {{ .Values.db.internal.env.SPILO_PROVIDER | quote }}
             - name: ALLOW_NOSSL

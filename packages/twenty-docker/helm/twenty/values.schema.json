@@ -161,6 +161,7 @@
         {
           "if": { "properties": { "type": { "const": "s3" } }, "required": ["type"] },
           "then": {
+                "required": ["s3"],
             "properties": {
               "s3": {
                 "required": ["bucket", "region", "accessKeyId", "secretAccessKey"]
