@@ -49,6 +49,7 @@ server:
     LOGIN_TOKEN_EXPIRES_IN: "1h"
 
   service:
+    type: ClusterIP
     port: 3000
 
   ingress:
@@ -108,7 +109,7 @@ db:
     appPassword: ""  # random if empty
     image:
       repository: twentycrm/twenty-postgres-spilo
-      tag: latest
+      tag: 3.3-p2
     resources:
       requests:
         cpu: 250m
@@ -142,7 +143,8 @@ redisInternal:
   enabled: true
   image:
     repository: redis/redis-stack-server
-    tag: latest
+    tag: 7.2.0-v10
+    pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 250m
@@ -152,6 +154,13 @@ redisInternal:
       memory: 2048Mi
   service:
     port: 6379
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+    existingClaim: ""
+    accessModes:
+      - ReadWriteOnce
 
 # External Redis (when redisInternal.enabled=false)
 redis:

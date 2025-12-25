@@ -42,7 +42,7 @@ tests:
     template: templates/deployment-redis-internal.yaml
     set:
       redisInternal.enabled: true
-      redisInternal.port: 6379
+      redisInternal.service.port: 6379
     asserts:
       - contains:
           path: spec.template.spec.containers[0].args

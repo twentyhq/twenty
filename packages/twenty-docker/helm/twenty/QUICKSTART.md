@@ -5,7 +5,7 @@
 Set your domain and install:
 
 ```bash
-export DOMAIN=twenty.gc.kencove.com
+export DOMAIN=crm.example.com
 
 helm install my-twenty ./packages/twenty-docker/helm/twenty \
   --namespace twentycrm --create-namespace --wait \

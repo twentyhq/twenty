@@ -52,7 +52,7 @@ tests:
 
   - it: supports local storage configuration
     set:
-      server.storage.type: local
+      storage.type: local
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[?(@.name=="STORAGE_TYPE")].value

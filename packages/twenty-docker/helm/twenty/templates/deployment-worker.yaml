@@ -72,6 +72,6 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
-          stdin: true
-          tty: true
+          stdin: {{ default true .Values.worker.stdin }}
+          tty: {{ default true .Values.worker.tty }}
 {{- end }}

@@ -133,24 +133,40 @@ local
 {{- define "twenty.storageEnv" -}}
 {{- if eq (include "twenty.storageType" .) "s3" -}}
 {{- with .Values.storage.s3.bucket }}
-- name: S3_BUCKET
+- name: STORAGE_S3_NAME
   value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.region }}
-- name: S3_REGION
+- name: STORAGE_S3_REGION
   value: {{ . | quote }}
 {{- end }}
 {{- with .Values.storage.s3.endpoint }}
-- name: S3_ENDPOINT
+- name: STORAGE_S3_ENDPOINT
   value: {{ . | quote }}
 {{- end }}
-{{- with .Values.storage.s3.accessKeyId }}
-- name: S3_ACCESS_KEY_ID
+{{- if and .Values.storage.s3.secretName .Values.storage.s3.accessKeyIdKey }}
+- name: STORAGE_S3_ACCESS_KEY_ID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.storage.s3.secretName | quote }}
+      key: {{ .Values.storage.s3.accessKeyIdKey | quote }}
+{{- else }}
+  {{- with .Values.storage.s3.accessKeyId }}
+- name: STORAGE_S3_ACCESS_KEY_ID
   value: {{ . | quote }}
+  {{- end }}
 {{- end }}
-{{- with .Values.storage.s3.secretAccessKey }}
-- name: S3_SECRET_ACCESS_KEY
+{{- if and .Values.storage.s3.secretName .Values.storage.s3.secretAccessKeyKey }}
+- name: STORAGE_S3_SECRET_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.storage.s3.secretName | quote }}
+      key: {{ .Values.storage.s3.secretAccessKeyKey | quote }}
+{{- else }}
+  {{- with .Values.storage.s3.secretAccessKey }}
+- name: STORAGE_S3_SECRET_ACCESS_KEY
   value: {{ . | quote }}
+  {{- end }}
 {{- end }}
 {{- end -}}
 {{- end -}}

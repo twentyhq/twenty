@@ -29,7 +29,7 @@ spec:
       containers:
         - name: redis
           image: {{ .Values.redisInternal.image.repository }}:{{ .Values.redisInternal.image.tag }}
-          imagePullPolicy: {{ .Values.redisInternal.image.pullPolicy }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.redisInternal.image.pullPolicy }}
           command:
             - redis-stack-server
           args:
@@ -43,4 +43,15 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.redisInternal.resources | nindent 12 }}
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+    volumes:
+      - name: redis-data
+        {{- if .Values.redisInternal.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.redisInternal.persistence.existingClaim | default (printf "%s-redis" (include "twenty.fullname" .)) }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
 {{- end }}

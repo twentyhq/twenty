@@ -32,7 +32,7 @@ spec:
       containers:
         - name: db
           image: {{ .Values.db.internal.image.repository }}:{{ .Values.db.internal.image.tag }}
-          imagePullPolicy: {{ .Values.db.internal.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.db.internal.image.pullPolicy | default "IfNotPresent" }}
           env:
             - name: PGUSER_SUPERUSER
               valueFrom:

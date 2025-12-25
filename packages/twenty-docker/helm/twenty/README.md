@@ -44,6 +44,7 @@ See `values.yaml` for a comprehensive list.
 - Database `twenty` and schema `core` are created automatically by server init container
 - No optional jobs: the chart no longer provides separate Jobs for DB or migrations.
 - Access token auto-generated (32 chars) if not provided; reuses existing secret if present
+  - For production, provide a strong `secrets.tokens.accessToken` value via a secure values file; the auto-generated token is a convenience fallback.
 - TLS enabled by default via cert-manager (`acme: true`)
 - Requires default StorageClass for PVC provisioning
 ## Testing
@@ -59,7 +60,7 @@ helm unittest ./packages/twenty-docker/helm/twenty
 
 **Local (default):** Uses PVCs for persistence
 
-**S3:** Set `storage.type=s3` and provide credentials using a values file:
+**S3:** Set `storage.type=s3` and provide credentials using a values file. You can either pass credentials directly or reference an existing Kubernetes Secret.
 ```bash
 # values-secrets.yaml (do not commit)
 # storage:
@@ -67,8 +68,13 @@ helm unittest ./packages/twenty-docker/helm/twenty
 #   s3:
 #     bucket: my-bucket
 #     region: us-east-1
+#     # Option A: direct values
 #     accessKeyId: AKIA...
 #     secretAccessKey: ...
+#     # Option B: reference a Secret
+#     # secretName: my-s3-creds
+#     # accessKeyIdKey: accessKeyId
+#     # secretAccessKeyKey: secretAccessKey
 
 helm install my-twenty ./packages/twenty-docker/helm/twenty -f values-secrets.yaml
 ```
@@ -77,3 +83,4 @@ helm install my-twenty ./packages/twenty-docker/helm/twenty -f values-secrets.ya
 
 - **Image versioning:** The chart defaults to `Chart.yaml`'s `appVersion` (currently v1.14.0). Override via `image.tag` in values to pin a different version or use `latest` for rolling updates.
 - **Keep secrets secure:** Avoid `--set` for sensitive values; use `-f values-secrets.yaml` or reference existing Kubernetes Secrets via `server.extraEnvFrom`.
+  - S3 credentials can be referenced via `storage.s3.secretName + accessKeyIdKey/secretAccessKeyKey` to avoid embedding them in pod specs.

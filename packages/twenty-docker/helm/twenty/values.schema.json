@@ -35,7 +35,11 @@
       "type": "object",
       "properties": {
         "enabled": { "type": "boolean" },
-        "replicaCount": { "type": "integer", "minimum": 1 },
+        "replicaCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of server replicas. When using local storage with ReadWriteOnce (RWO) PersistentVolumeClaims (the default), multiple replicas cannot share the same PVC and pods will fail to schedule if replicaCount > 1. Use replicaCount = 1 for local/RWO storage, or configure a shared storage backend such as S3 before increasing this value."
+        },
         "podSecurityContext": { "type": "object" },
         "containerSecurityContext": { "type": "object" },
         "env": {
@@ -152,7 +156,10 @@
             "region": { "type": "string" },
             "endpoint": { "type": "string" },
             "accessKeyId": { "type": "string" },
-            "secretAccessKey": { "type": "string" }
+            "secretAccessKey": { "type": "string" },
+            "secretName": { "type": "string" },
+            "accessKeyIdKey": { "type": "string" },
+            "secretAccessKeyKey": { "type": "string" }
           }
         }
       },
@@ -161,7 +168,7 @@
         {
           "if": { "properties": { "type": { "const": "s3" } }, "required": ["type"] },
           "then": {
-                "required": ["s3"],
+            "required": ["s3"],
             "properties": {
               "s3": {
                 "required": ["bucket", "region", "accessKeyId", "secretAccessKey"]

@@ -99,7 +99,7 @@ tests:
     set:
       server.persistence.enabled: true
       db.enabled: true
-      db.persistence.enabled: true
+      db.internal.persistence.enabled: true
     asserts:
       - contains:
           path: spec.accessModes
