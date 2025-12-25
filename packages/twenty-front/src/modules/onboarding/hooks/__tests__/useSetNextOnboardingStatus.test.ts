@@ -63,6 +63,15 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
   });
 
+  it('should skip SyncEmail when user is not first workspace member', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      false,
+      false,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+  });
+
   it('should set next onboarding status for SyncEmail', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.SYNC_EMAIL,

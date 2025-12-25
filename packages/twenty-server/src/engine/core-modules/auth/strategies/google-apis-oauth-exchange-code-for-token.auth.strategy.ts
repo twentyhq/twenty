@@ -42,6 +42,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenStrategy extends GoogleAPIsOauth
       redirectLocation: state.redirectLocation,
       calendarVisibility: state.calendarVisibility,
       messageVisibility: state.messageVisibility,
+      skipMessageChannelConfiguration: state.skipMessageChannelConfiguration,
     };
 
     done(null, user);
