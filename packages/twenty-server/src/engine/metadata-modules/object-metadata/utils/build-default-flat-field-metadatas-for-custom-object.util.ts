@@ -261,7 +261,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     name: 'updatedBy',
     label: 'Updated by',
     icon: 'IconUserCircle',
-    description: 'The user who last updated the record',
+    description: 'The workspace member who last updated the record',
     isNullable: true,
     isActive: true,
     isCustom: false,

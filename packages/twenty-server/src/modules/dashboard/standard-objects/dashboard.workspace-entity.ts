@@ -96,7 +96,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.ACTOR,
     label: msg`Updated by`,
     icon: 'IconUserCircle',
-    description: msg`The user who last updated the record`,
+    description: msg`The workspace member who last updated the record`,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()

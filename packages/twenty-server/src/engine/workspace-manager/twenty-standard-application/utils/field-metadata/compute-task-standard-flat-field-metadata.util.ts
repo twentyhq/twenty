@@ -232,7 +232,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
       label: 'Updated by',
-      description: 'The user who last updated the record',
+      description: 'The workspace member who last updated the record',
       icon: 'IconUserCircle',
       isUIReadOnly: true,
       isNullable: true,
