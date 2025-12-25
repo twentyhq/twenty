@@ -1,21 +1,21 @@
 ---
-title: Workflow Actions
-description: Learn about the actions available in Twenty workflows.
+title: Akce pracovních postupů
+description: Zjistěte, jaké akce jsou k dispozici v pracovních postupech Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## O akcích
 
-Akce definují, co se stane po spuštění. You can chain multiple actions together to build complex automations.
+Akce definují, co se stane po spuštění. Můžete řetězit více akcí dohromady a vytvářet tak složité automatizace.
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * Použijte nástroj pro výběr proměnných (klikněte na ikonu `(x+)`) k procházení dostupných dat z předchozích kroků
+  * Najetím myší na libovolné vstupní pole zjistíte, ze kterého kroku proměnná pochází — užitečné, když stejné pole (např. ID) existuje ve více předchozích krocích
+  * Každé akci dejte výstižný název pro snazší údržbu
 </Tip>
 
-## Record Actions
+## Akce se záznamy
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
@@ -27,7 +27,7 @@ Přidává nový záznam do vybraného objektu.
 
 * Vyberte cílový objekt
 * Vyplňte povinná a volitelná pole
-* Use data from previous steps or input values manually to populate fields
+* Použijte data z předchozích kroků nebo hodnoty zadané ručně k vyplnění polí
 
 **Výstup**: Data nově vytvořeného záznamu jsou k dispozici pro použití v následujících krocích.
 
@@ -41,8 +41,8 @@ Mění existující záznam ve vybraném objektu.
 
 * Vyberte cílový objekt
 * Vyberte specifický záznam pro aktualizaci.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
+  * Můžete buď vybrat pevně daný záznam pomocí rozevírací nabídky zobrazující všechny dostupné záznamy.
+  * Nebo můžete nechat záznam vybrat dynamicky tím, že určíte záznam nalezený v předchozím kroku pomocí `(x+)`. V této fázi nemůžete vyhledávat záznam podle různých kritérií. Pokud jste zatím neurčili záznam, přidejte krok `Search Record` před tento krok `Update Record`.
 * Vyberte pole k úpravě a zadejte nové hodnoty
 
 **Výstup**: Data aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
@@ -71,25 +71,25 @@ Najde záznamy ve vybraném objektu pomocí filtračních podmínek.
 **Výstup**: Vrací odpovídající záznamy, které lze použít v následujících krocích.
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **Omezení**: Search Records vrací maximálně **200 záznamů**. Pokud potřebujete zpracovat více, přidejte konkrétní filtry k omezení výsledků nebo použijte naplánované pracovní postupy ke zpracování v dávkách.
 </Note>
 
-**Best Practice**: Use [branches](/l/cs/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**Doporučená praxe**: Použijte [větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) po kroku Search Records pro zpracování scénářů "nalezeno" vs "nenalezeno".
 
-### Upsert Record
+### Vložit nebo aktualizovat záznam
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+Vytvoří nový záznam nebo aktualizuje existující na základě kritérií shody. Hodí se, když si nejste jisti, zda záznam již existuje.
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
 **Konfigurace**:
 
 * Vyberte cílový objekt
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* Všimněte si, která pole lze použít pro shodu: e-mail u osob, doména u společností, ID u libovolného objektu nebo jakékoli pole označené jako jedinečné. Níže budete muset vyplnit alespoň jedno z nich.
+* Vyplňte hodnoty polí. Nezapomeňte vyplnit alespoň jeden z jedinečných identifikátorů.
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **Shoda obvykle funguje ještě lépe, když přidáte pouze jeden jedinečný identifikátor.** Například snímek obrazovky níže bude párovat společnosti podle jejich domény. ID není nutně potřeba.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
