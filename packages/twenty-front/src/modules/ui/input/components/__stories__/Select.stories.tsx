@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { IconPlus } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { Select, type SelectProps } from '../Select';
+import { Select, type SelectProps } from '@/ui/input/components/Select';
 
 type RenderProps = SelectProps<string | number | boolean | null>;
 

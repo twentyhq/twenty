@@ -1,46 +1,27 @@
-import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/format-preferences/getDateFormatFromWorkspaceDateFormat';
-import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/format-preferences/getTimeFormatFromWorkspaceTimeFormat';
 import { useUserDateFormat } from '@/ui/input/components/internal/date/hooks/useUserDateFormat';
 import { useUserTimeFormat } from '@/ui/input/components/internal/date/hooks/useUserTimeFormat';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { format } from 'date-fns';
-import { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from 'twenty-shared/utils';
+import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
+import { type Temporal } from 'temporal-polyfill';
+import { formatZonedDateTimeDatePart } from '~/utils/dates/formatZonedDateTimeDatePart';
+import { formatZonedDateTimeTimePart } from '~/utils/dates/formatZonedDateTimeTimePart';
 
 export const useGetDateTimeFilterDisplayValue = () => {
-  const {
-    userTimezone,
-    isSystemTimezone,
-    getTimezoneAbbreviationForPointInTime,
-  } = useUserTimezone();
+  const { isSystemTimezone } = useUserTimezone();
+
   const { userDateFormat } = useUserDateFormat();
   const { userTimeFormat } = useUserTimeFormat();
 
-  const getDateTimeFilterDisplayValue = (correctPointInTime: Date) => {
-    const shiftedDate =
-      shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone(
-        correctPointInTime,
-        userTimezone,
-        'sub',
-      );
-
-    const dateFormatString =
-      getDateFormatFromWorkspaceDateFormat(userDateFormat);
-
-    const timeFormatString =
-      getTimeFormatFromWorkspaceTimeFormat(userTimeFormat);
-
-    const formatToUse = `${dateFormatString} ${timeFormatString}`;
-
+  const getDateTimeFilterDisplayValue = (
+    referenceZonedDateTime: Temporal.ZonedDateTime,
+  ) => {
     const timezoneSuffix = !isSystemTimezone
-      ? ` (${getTimezoneAbbreviationForPointInTime(shiftedDate)})`
+      ? ` (${getTimezoneAbbreviationForZonedDateTime(referenceZonedDateTime)})`
       : '';
 
-    const displayValue = `${format(shiftedDate, formatToUse)}${timezoneSuffix}`;
+    const displayValue = `${formatZonedDateTimeDatePart(referenceZonedDateTime, userDateFormat)} ${formatZonedDateTimeTimePart(referenceZonedDateTime, userTimeFormat)}${timezoneSuffix}`;
 
-    return {
-      correctPointInTime,
-      displayValue,
-    };
+    return { displayValue };
   };
 
   return {

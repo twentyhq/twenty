@@ -1,0 +1,99 @@
+---
+title: Kanban Board Views
+description: Learn how to use Kanban views to visualize and manage your workflows.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## حول عرض كانبان‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏‏.
+
+توضح عروض كانبان التدفقات العملية بشكل مرئي، حيث يرمز كل عمود إلى مرحلة محددة وكل بطاقة تمثل سجل.
+
+## Move Cards between Stages
+
+يمكنك نقل كل بطاقة بين المراحل بينما تتقدم عبر سير العمل الخاص بك عن طريق السحب والإفلات. للمتابعة، اضغط باستمرار على البطاقة وانقلها إلى المرحلة التالية.‏
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Add and Delete Stages
+
+يمكنك تخصيص سير العمل لديك ليتناسب مع احتياجاتك باستخدام المراحل، والتي تمثل قيمة في حقل التحديد:
+
+### إضافة المراحل
+
+لإضافة مرحلة، انتقل إلى إعدادات حقل الاختيار عن طريق الانتقال إلى الإعدادات > نموذج البيانات، وتحديد الكائن، ثم الحقل الذي يعتمد عليه لوحة كانبان الخاصة بك.‏
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+### إزالة مراحل
+
+To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+
+## Display Fields
+
+يمكنك تكوين لوحة عرض كانبان لإظهار بعض الحقول وإخفاء الأخرى. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+
+يمكنك أيضًا إعادة ترتيب ترتيب الحقول عن طريق الضغط باستمرار على اسم الحقل وسحبه إلى المكان الذي تريده.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## عرض مضغوط
+
+You can hide all the fields and get an overview of all records at a glance. To enable:
+
+1. Click **Options** on the top right
+2. Turn on the toggle for **Compact view**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Column Aggregations
+
+Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+
+### Available Aggregations
+
+| Aggregation | الوصف                                         |
+| ----------- | --------------------------------------------- |
+| **Count**   | Number of records in the column               |
+| **Sum**     | Total of a numeric field (e.g., deal amounts) |
+| **Average** | Average value of a numeric field              |
+| **Min**     | Lowest value                                  |
+| **Max**     | Highest value                                 |
+
+### Configuring Aggregations
+
+1. Click on the number displayed next to the Stage value, at the top of a column
+2. Select the aggregation type
+3. Choose the field to aggregate
+
+**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+
+## When to Use Kanban Views
+
+Kanban views are ideal for:
+
+* **Sales pipelines**: Track deals through stages from lead to close
+* **Project management**: Monitor tasks through workflow states
+* **Recruitment**: Track candidates through hiring stages
+* **Any staged process**: Visualize any workflow with defined stages
+
+## أفضل الممارسات
+
+### Organize Your Stages
+
+* **Limit stages**: 5-7 stages is ideal for visibility
+* **Clear naming**: Use descriptive stage names
+* **Logical order**: Arrange stages in process order
+
+### Optimize Card Display
+
+* **Show key fields**: Display only the most important information
+* **Use compact view**: For high-level overviews
+* **Color coding**: Use stage colors to quickly identify status
+
+### Maintain Data Quality
+
+* **Update regularly**: Keep cards moving through stages
+* **Archive completed**: Move closed items out of active view
+* **Review stale cards**: Follow up on cards stuck in stages

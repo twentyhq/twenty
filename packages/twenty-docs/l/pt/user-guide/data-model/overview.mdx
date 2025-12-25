@@ -1,0 +1,180 @@
+---
+title: Data Model
+description: Learn what a data model is and how to design one that fits your business.
+image: /images/user-guide/fields/custom_data_model.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Data Model" />
+</Frame>
+
+## What is a Data Model?
+
+A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+
+## Key Concepts
+
+### Objects
+
+**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+
+Twenty comes with standard objects:
+
+* **People** — individuals (contacts, leads, partners)
+* **Companies** — organizations
+* **Opportunities** — deals or sales
+* **Notes** — attached notes on records
+* **Tasks** — to-dos linked to records
+
+You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+
+### Fields
+
+**Fields** are the properties or attributes that describe each object. They store the actual information.
+
+For example, the **People** object has fields like:
+
+* Name
+* Email
+* Phone
+* Job Title
+* Company (a relation to the Companies object)
+
+Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+
+### Records
+
+**Records** are the individual entries within an object — the actual data you create and manage.
+
+For example:
+
+* "John Smith" is a **record** in the People object
+* "Acme Corp" is a **record** in the Companies object
+
+**An analogy:**
+
+| Data Model Concept | Real-World Analogy                         |
+| ------------------ | ------------------------------------------ |
+| **Objects**        | Sections in a book (the categories)        |
+| **Fields**         | Columns in a spreadsheet (the properties)  |
+| **Records**        | Rows in a spreadsheet (the actual entries) |
+
+You design the data model (objects + fields) once, then create many records within that structure.
+
+## Why Customize Your Data Model?
+
+Every business works differently. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+
+Twenty offers full flexibility:
+
+* Create as many custom objects as you need
+* Add unlimited custom fields
+* The price doesn't change based on customization
+
+## Tips to Design Your Data Model
+
+### 1. Start with Your Core Objects
+
+Identify the main concepts you work with. Twenty already provides:
+
+* **People** — your contacts
+* **Companies** — your accounts
+* **Opportunities** — your deals
+
+Think about what else you might need:
+
+* Stripe would need a `Subscriptions` object
+* Airbnb would need a `Trips` object
+* An accelerator would need a `Batches` object
+
+### 2. Use Fields for Variations, Not New Objects
+
+If something is just a characteristic of an existing object, make it a **field**.
+
+**Use fields for:**
+
+* Categories and labels (e.g., `Industry` for Companies)
+* Status values (e.g., `Stage` for Opportunities)
+* Attributes and properties
+
+### 3. Create an Object When It Stands on Its Own
+
+If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+
+**Create an object for:**
+
+* **Projects** — have deadlines, owners, and tasks
+* **Subscriptions** — connect companies, products, and invoices
+* **Events** — involve attendees and follow-up actions
+
+These go beyond a single field because they carry their own data and relationships.
+
+### 4. Create an Object When Records Are Open-Ended
+
+If something can be linked multiple times and you don't know how many, use an object.
+
+**Bad approach:**
+Creating fields like `Product 1`, `Product 2`, `Product 3`...
+
+**Good approach:**
+Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+
+### 5. Keep It Simple First
+
+Start with fields. Move to new objects only when you feel the limits:
+
+* Too many fields on one object
+* Repeated records that should be separate
+* Relationships that don't fit neatly
+
+## Special Note on People, Companies, and Opportunities
+
+<Warning>
+  **Email and calendar sync only works with People, Companies, and Opportunities.**
+
+  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+</Warning>
+
+**Best practices:**
+
+* If you need categories of People, use fields (not new objects)
+* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
+* Create different **views** to filter: one showing partners, another showing prospects
+
+**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+
+## Questions to Guide Your Choice
+
+Ask yourself:
+
+<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
+<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
+<Check>Does this concept connect to several different objects, not just one?</Check>
+<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+
+If the answer is "yes" to one or more, it's probably time for a new object.
+
+## Accessing Your Data Model
+
+1. Go to **Settings** in the left sidebar
+2. Click **Data Model**
+3. View all your objects (standard and custom)
+4. Click any object to see and edit its fields
+
+<Note>
+  **Don't see Data Model in Settings?**
+
+  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+</Note>
+
+## Next Steps
+
+Once you've planned your data model:
+
+* [How to Create Custom Objects](/l/pt/user-guide/data-model/how-tos/create-custom-objects)
+* [How to Create Custom Fields](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
+* [How to Create Relation Fields](/l/pt/user-guide/data-model/how-tos/create-relation-fields)
+
+## Need Help?
+
+Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/pt/user-guide/getting-started/capabilities/implementation-services).

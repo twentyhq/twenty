@@ -1,0 +1,143 @@
+---
+title: إنشاء عرض سعر أو فاتورة من Twenty
+description: إنشاء فواتير تلقائياً في الأدوات الخارجية عند إغلاق الصفقات.
+---
+
+إرسال بيانات الصفقة تلقائياً إلى نظام الفوترة لديك (Stripe وQuickBooks وXero، إلخ) عند ربح فرصة.
+
+## بنية سير العمل
+
+1. **المحفّز**: يتم تحديث السجل (الفرصة)
+2. **التصفية**: المرحلة = Closed Won
+3. **Search Record**: الحصول على تفاصيل الشركة
+4. **Code** (اختياري): تنسيق الحمولة
+5. **HTTP Request**: الإرسال إلى نظام الفوترة
+
+## الخطوة 1: إعداد المُحفّز
+
+1. إنشاء سير عمل جديد
+2. اختر المُحفّز **Record is Updated**
+3. اختر **Opportunity** بوصفه الكائن
+
+## الخطوة 2: التصفية من أجل Closed Won
+
+أضف إجراء **Filter** للمتابعة فقط عند ربح الصفقة:
+
+| الإعداد    | القيمة                             |
+| ---------- | ---------------------------------- |
+| **الحقل**  | المرحلة                            |
+| **الشرط**  | يساوي                              |
+| **القيمة** | `CLOSED_WON` (أو اسم المرحلة لديك) |
+
+<Tip>
+  يتم تشغيل المُحفّز عند أي تحديث للفرصة. تضمن التصفية أن يستمر سير العمل فقط عندما تتغير المرحلة إلى Closed Won.
+</Tip>
+
+## الخطوة 3: الحصول على تفاصيل الشركة
+
+قد لا يتضمن سجل الفرصة جميع حقول الشركة التي تحتاجها للفاتورة. أضف إجراء **Search Record**:
+
+| الإعداد          | القيمة                                       |
+| ---------------- | -------------------------------------------- |
+| **الكائن**       | الشركة                                       |
+| **المطابقة حسب** | المعرّف يساوي `{{trigger.object.companyId}}` |
+
+يؤدي ذلك إلى استرجاع سجل الشركة الكامل متضمناً عنوان الفوترة، ومعرّف الضريبة، وما إلى ذلك.
+
+## الخطوة 4: تنسيق الحمولة (اختياري)
+
+إذا كان نظام الفوترة لديك يتطلب تنسيقاً محدداً، فأضف إجراء **Code**:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## الخطوة 5: الإرسال إلى نظام الفوترة
+
+أضف إجراء **HTTP Request**:
+
+| الإعداد       | القيمة                                           |
+| ------------- | ------------------------------------------------ |
+| **الطريقة**   | POST                                             |
+| **عنوان URL** | نقطة نهاية واجهة برمجة تطبيقات الفوترة الخاصة بك |
+| **الرؤوس**    | `Authorization: Bearer YOUR_API_KEY`             |
+| **المحتوى**   | `{{code.invoice}}` أو قم بربط الحقول مباشرةً     |
+
+### مثال: فاتورة Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### مثال: فاتورة QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## الملخص الكامل لسير العمل
+
+| الخطوة | الإجراء              | الغرض                                           |
+| ------ | -------------------- | ----------------------------------------------- |
+| 1      | المحفّز: تحديث السجل | يتم تشغيله عند حدوث أي تغيير في أي فرصة         |
+| ٢      | تصفية                | المتابعة فقط إذا كانت المرحلة = Closed Won      |
+| 3      | البحث عن سجل         | الحصول على تفاصيل الشركة الكاملة لأغراض الفوترة |
+| 4      | كود                  | تنسيق البيانات لواجهة برمجة تطبيقات الفوترة     |
+| 5      | طلب HTTP             | إنشاء فاتورة في نظام خارجي                      |
+
+## نصائح
+
+* **تخزين المعرّفات الخارجية**: احفظ معرّف الفاتورة الذي تُرجعه واجهة برمجة التطبيقات إلى الفرصة باستخدام إجراء **Update Record**
+* **التعامل مع الأخطاء**: أضف فرعاً لإرسال إشعار إذا فشل طلب HTTP
+* **اختبر أولاً**: استخدم وضع sandbox/test في نظام الفوترة قبل الإطلاق
+
+## ذات صلة
+
+* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [أتمتة Closed Won](/l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

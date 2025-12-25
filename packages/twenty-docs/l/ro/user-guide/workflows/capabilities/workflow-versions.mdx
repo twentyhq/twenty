@@ -1,0 +1,85 @@
+---
+title: Versiunile fluxului de lucru
+description: Gestionați versiunile și schițele fluxului de lucru.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Despre versiuni
+
+De fiecare dată când activați un flux de lucru, se creează o versiune nouă. Acest lucru vă permite să urmăriți modificările în timp și să reveniți la configurațiile anterioare, dacă este necesar.
+
+## Stările versiunilor
+
+| Status         | Descriere                                    |
+| -------------- | -------------------------------------------- |
+| **Schiță**     | În curs de editare, încă nepublicată         |
+| **Activ**      | Versiunea live care răspunde la declanșatori |
+| **Dezactivat** | Anterior activă, oprită manual               |
+| **Arhivat**    | Versiuni anterioare păstrate pentru istoric  |
+
+## Lucrul cu schițele
+
+Când editați un flux de lucru activ, modificările sunt salvate ca **schiță**. Versiunea activă continuă să ruleze în timp ce lucrați la actualizări.
+
+După ce ați terminat editarea, puteți:
+
+* **Activați**: Publicați schița ca noua versiune activă (versiunea anterioară este arhivată)
+* **Renunțați**: Ștergeți schița și păstrați versiunea activă curentă
+
+## Istoria versiunilor
+
+### Vizualizarea versiunilor anterioare
+
+1. Deschideți fluxul de lucru
+2. Faceți clic pe fila **Versiuni**
+3. Vedeți toate versiunile anterioare cu marcaje de timp
+
+### Restaurarea unei versiuni
+
+1. Găsiți versiunea pe care doriți să o restaurați
+2. Faceți clic pe **Utilizează ca schiță**
+3. Versiunea este copiată într-o nouă schiță
+4. Efectuați actualizările necesare
+5. Activați când sunteți gata
+
+## Cele mai bune practici
+
+### Gestionarea versiunilor
+
+* Activați numai când este gata pentru producție
+* Păstrați modificările semnificative între versiuni
+* Documentați modificările majore în numele sau descrierile fluxurilor de lucru
+* Testați în modul schiță înainte de a activa
+
+### Anularea modificărilor
+
+* Dacă o versiune nouă provoacă probleme, restaurați versiunea anterioară
+* Utilizați istoricul versiunilor pentru a urmări ce s-a schimbat
+* Testați întotdeauna versiunile restaurate înainte de activare
+
+## Fluxuri de lucru comune
+
+### Editare rapidă
+
+1. Faceți modificări minore la un flux de lucru activ
+2. Testați în modul schiță
+3. Activați noua versiune
+
+### Revizie majoră
+
+1. Folosiți versiunea anterioară ca punct de pornire
+2. Efectuați modificări semnificative în schiță
+3. Testați temeinic toate scenariile
+4. Activați când sunteți încrezători
+
+### Revenire
+
+1. Identificați problema versiunii curente
+2. Găsiți în istoric ultima versiune funcțională
+3. Faceți clic pe **Utilizează ca schiță**
+4. Activați pentru a restabili comportamentul vechi
+
+## Conexe
+
+* [Noțiuni de bază despre fluxuri de lucru](/l/ro/user-guide/workflows/overview)
+* [Execuții ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-runs)

@@ -253,7 +253,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       recordFilters,
       recordFilterGroups: recordFilterGroups,
       fields,
-      filterValueDependencies: {},
+      filterValueDependencies: {
+        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+      },
     });
 
     let view: ViewEntity | null = viewFilters[0]?.view;

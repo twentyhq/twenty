@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
@@ -33,6 +34,7 @@ type RecordDetailRelationSectionDropdownToManyProps = {
 export const RecordDetailRelationSectionDropdownToMany = ({
   dropdownTriggerClickableComponent,
 }: RecordDetailRelationSectionDropdownToManyProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldMetadataId } = fieldDefinition;
   const {
@@ -78,6 +80,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
 
   const { closeDropdown } = useCloseDropdown();

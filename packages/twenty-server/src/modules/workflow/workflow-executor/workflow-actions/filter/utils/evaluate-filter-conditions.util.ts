@@ -211,6 +211,7 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 }
 
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
+  // TODO: refactor this with Temporal
   const dateLeftValue = new Date(String(filter.leftOperand));
 
   switch (filter.operand) {

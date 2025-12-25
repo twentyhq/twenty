@@ -109,6 +109,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: 'Messages from the thread.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'message',
       targetFieldName: 'messageThread',
       settings: {
@@ -131,6 +132,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'messageThread',
       settings: {

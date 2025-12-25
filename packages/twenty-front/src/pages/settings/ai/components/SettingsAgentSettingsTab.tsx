@@ -20,8 +20,8 @@ import { type Agent } from '~/generated/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '../components/SettingsAgentModelCapabilities';
-import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
+import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
+import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
   display: flex;

@@ -1,0 +1,91 @@
+---
+title: Obiecte
+description: Learn about standard and custom objects in Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standard Objects
+
+Obiectele standard sunt entități predefinite în spațiul tău de lucru care te ajută să începi. Fac parte dintr-un model de date comun accesibil tuturor utilizatorilor Twenty. Le poți folosi așa cum sunt, le poți personaliza sau le poți dezactiva.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Persoane
+
+Obiectul `People` stochează contactele tale. Include detalii de contact și istoricul interacțiunilor, astfel încât să poți vedea toate interacțiunile cu clienții într-un singur loc.
+
+### Companie
+
+Obiectul `Companies` stochează conturile tale de afaceri. Include detalii precum industria, dimensiunea și locația. Companiile se conectează la obiectele `People` și `Opportunities`.
+
+### Oportunități
+
+Obiectul `Opportunities` stochează datele legate de afaceri. Urmărește progresia posibilelor vânzări, de la prospectare la încheiere, înregistrând etapele, dimensiunile tranzacțiilor, contul asociat și data anticipată de închidere. Poți vizualiza fluxul de vânzări într-un layout kanban.
+
+### Notițe
+
+The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+
+### Sarcini
+
+The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+
+## Obiecte personalizate
+
+Obiectele personalizate îți permit să stochezi informații specifice organizației tale și pe care obiectele standard nu le pot gestiona. De exemplu, dacă ești SpaceX, poți dori să creezi un obiect personalizat pentru Rachete și Lansări.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creating a New Custom Object
+
+Pentru a crea un obiect personalizat nou:
+
+1. Mergi la Setări, în bara laterală din stânga.
+2. Sub Spațiu de lucru, mergi la Model de date. Aici vei putea vedea o prezentare generală a tuturor obiectelor tale Standard și Personalizate (atât active, cât și dezactivate).
+
+<VimeoEmbed videoId="926288174" title="Demonstrație video" />
+
+3. Fă clic pe `+ Obiect nou` în partea de sus. Introduceți numele (singular și plural), alegeți o pictogramă, adăugați o descriere pentru obiectul personalizat și apăsați Salvare (în dreptul sus). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+
+## Managing Objects
+
+### Deactivating Objects
+
+If you don't need a standard or custom object:
+
+1. Go to Settings → Data Model
+2. Find the object you want to deactivate
+3. Click the toggle to deactivate it
+4. The object will be hidden from your workspace but data is preserved
+
+### Reactivating Objects
+
+To bring back a deactivated object:
+
+1. Go to Settings → Data Model
+2. Look for deactivated objects (they'll be grayed out)
+3. Click the toggle to reactivate it
+4. The object and all its data will be restored
+
+## Cele mai bune practici
+
+### When to Create Custom Objects
+
+* **Unique business entities**: Things specific to your industry or process
+* **Complex relationships**: When you need to track connections between multiple entities
+* **Scalable data**: When you might have many instances of something
+
+### When to Use Fields Instead
+
+* **Simple attributes**: Properties that describe existing objects
+* **Categories or labels**: Ways to classify existing records
+* **Single values**: Information that doesn't need its own lifecycle
+
+### Object Naming
+
+* **Use clear, descriptive names**: Make it obvious what the object represents
+* **Follow conventions**: Use singular for the object name, plural for the collection
+* **Consider your team**: Choose names everyone will understand

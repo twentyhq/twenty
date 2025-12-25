@@ -10,6 +10,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
@@ -270,6 +271,7 @@ export const WorkflowStepFilterValueInput = ({
       readonly={readonly}
       VariablePicker={WorkflowVariablePicker}
       placeholder={t`Enter value`}
+      timeZone={WORKFLOW_TIMEZONE}
     />
   );
 };

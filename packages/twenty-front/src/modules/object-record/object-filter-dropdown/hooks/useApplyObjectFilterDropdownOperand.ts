@@ -1,23 +1,27 @@
-import { DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW } from '@/object-record/object-filter-dropdown/constants/DateOperandsThatShouldBeInitializedWithNow';
-import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  relativeDateFilterStringifiedSchema,
+} from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
+  const { userTimezone } = useUserTimezone();
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
@@ -39,8 +43,6 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
-
-  const { getInitialFilterValue } = useGetInitialFilterValue();
 
   const { getRelativeDateFilterWithUserTimezone } =
     useGetRelativeDateFilterWithUserTimezone();
@@ -86,24 +88,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
       (recordFilterToUpsert.type === 'DATE' ||
         recordFilterToUpsert.type === 'DATE_TIME')
     ) {
-      if (
-        DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW.includes(newOperand)
-      ) {
-        // TODO: allow to keep same value when switching between is after, is before, is and is not
-        // For now we reset with now each time we switch operand
-
-        const dateToUseAsISOString = new Date().toISOString();
-
-        const { displayValue, value } = getInitialFilterValue(
-          recordFilterToUpsert.type,
-          newOperand,
-          dateToUseAsISOString,
-        );
-
-        recordFilterToUpsert.value = value;
-
-        recordFilterToUpsert.displayValue = displayValue;
-      } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
+      if (newOperand === RecordFilterOperand.IS_RELATIVE) {
         const newRelativeDateFilter = getRelativeDateFilterWithUserTimezone(
           DEFAULT_RELATIVE_DATE_FILTER_VALUE,
         );
@@ -111,13 +96,33 @@ export const useApplyObjectFilterDropdownOperand = () => {
         recordFilterToUpsert.value = stringifyRelativeDateFilter(
           newRelativeDateFilter,
         );
-
-        recordFilterToUpsert.displayValue = getRelativeDateDisplayValue(
-          newRelativeDateFilter,
-        );
       } else {
-        recordFilterToUpsert.value = '';
-        recordFilterToUpsert.displayValue = '';
+        const filterValueIsEmpty = !isNonEmptyString(
+          recordFilterToUpsert.value,
+        );
+
+        const isStillRelativeFilterValue =
+          relativeDateFilterStringifiedSchema.safeParse(
+            recordFilterToUpsert.value,
+          );
+
+        if (filterValueIsEmpty || isStillRelativeFilterValue.success) {
+          const zonedDateToUse = Temporal.Now.zonedDateTimeISO(userTimezone);
+
+          if (recordFilterToUpsert.type === 'DATE') {
+            const initialNowDateFilterValue = zonedDateToUse
+              .toPlainDate()
+              .toString();
+
+            recordFilterToUpsert.value = initialNowDateFilterValue;
+          } else {
+            const initialNowDateTimeFilterValue = zonedDateToUse
+              .toInstant()
+              .toString();
+
+            recordFilterToUpsert.value = initialNowDateTimeFilterValue;
+          }
+        }
       }
     }
 

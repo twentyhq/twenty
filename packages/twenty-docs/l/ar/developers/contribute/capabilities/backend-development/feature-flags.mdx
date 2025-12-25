@@ -1,0 +1,46 @@
+---
+title: Feature Flags
+---
+
+تُستخدم أعلام الميزات لإخفاء الميزات التجريبية. For Twenty, they are set on workspace level and not on a user level.
+
+## إضافة علم ميزة جديد
+
+في ملف `FeatureFlagKey.ts` أضف علم الميزة:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+أيضًا أضفه إلى التعداد في `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+لتطبيق علم ميزة على ميزة **الخلفية** استخدم:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+لتطبيق علم ميزة على ميزة **الواجهة الأمامية** استخدم:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## تكوين أعلام الميزات للنشر
+
+تغيير السجل المعني في جدول `core.featureFlag`:
+
+| المُعرّف | المفتاح                  | معرف مساحة العمل | القيمة |
+| -------- | ------------------------ | ---------------- | ------ |
+| عشوائي   | `IS_FEATURENAME_ENABLED` | معرف مساحة العمل | `صحيح` |

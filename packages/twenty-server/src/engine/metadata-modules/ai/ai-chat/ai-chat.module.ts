@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -37,6 +38,7 @@ import { ChatExecutionService } from './services/chat-execution.service';
       UserWorkspaceEntity,
     ]),
     AiAgentExecutionModule,
+    BillingModule,
     ThrottlerModule,
     FeatureFlagModule,
     FileUploadModule,

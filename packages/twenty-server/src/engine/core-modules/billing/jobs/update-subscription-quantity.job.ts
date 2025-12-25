@@ -9,7 +9,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
 
 @Processor({
@@ -45,14 +45,9 @@ export class UpdateSubscriptionQuantityJob {
         }
 
         try {
-          const billingBaseProductSubscriptionItem =
-            await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
-              data.workspaceId,
-            );
-
-          await this.stripeSubscriptionItemService.updateSubscriptionItem(
-            billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
-            { quantity: workspaceMembersCount },
+          await this.billingSubscriptionService.changeSeats(
+            data.workspaceId,
+            workspaceMembersCount,
           );
 
           this.logger.log(

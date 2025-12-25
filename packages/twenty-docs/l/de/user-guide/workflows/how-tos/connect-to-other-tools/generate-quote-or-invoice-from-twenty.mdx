@@ -1,0 +1,143 @@
+---
+title: Ein Angebot oder eine Rechnung aus Twenty erstellen.
+description: Rechnungen in externen Tools automatisch erstellen, wenn Deals abgeschlossen werden.
+---
+
+Deal-Daten automatisch an Ihr Rechnungsstellungssystem senden (Stripe, QuickBooks, Xero usw.) wenn eine Opportunity gewonnen wird.
+
+## Workflow-Struktur
+
+1. **Auslöser**: Datensatz wird aktualisiert (Opportunity)
+2. **Filter**: Phase = Closed Won
+3. **Datensatz suchen**: Unternehmensdetails abrufen
+4. **Code** (optional): Nutzlast formatieren
+5. **HTTP-Anfrage**: An Rechnungsstellungssystem senden
+
+## Schritt 1: Auslöser einrichten
+
+1. Erstellen Sie einen neuen Workflow
+2. Wählen Sie den Auslöser **Datensatz wird aktualisiert** aus
+3. Wählen Sie **Opportunity** als Objekt
+
+## Schritt 2: Nach Closed Won filtern
+
+Fügen Sie eine **Filter**-Aktion hinzu, damit nur fortgefahren wird, wenn der Deal gewonnen wurde:
+
+| Einstellung   | Wert                                     |
+| ------------- | ---------------------------------------- |
+| **Feld**      | Phase                                    |
+| **Bedingung** | Gleich                                   |
+| **Wert**      | `CLOSED_WON` (oder der Name Ihrer Phase) |
+
+<Tip>
+  Der Auslöser wird bei jeder Opportunity-Aktualisierung ausgelöst. Der Filter stellt sicher, dass der Workflow nur fortgesetzt wird, wenn die Phase auf Closed Won geändert wird.
+</Tip>
+
+## Schritt 3: Unternehmensdetails abrufen
+
+Der Opportunity-Datensatz enthält möglicherweise nicht alle Unternehmensfelder, die Sie für die Rechnung benötigen. Fügen Sie eine **Datensatz suchen**-Aktion hinzu:
+
+| Einstellung           | Wert                                         |
+| --------------------- | -------------------------------------------- |
+| **Objekt**            | Unternehmen                                  |
+| **Abgleichen anhand** | ID entspricht `{{trigger.object.companyId}}` |
+
+Dadurch wird der vollständige Unternehmensdatensatz mit Rechnungsadresse, Steuernummer usw. abgerufen.
+
+## Schritt 4: Nutzlast formatieren (optional)
+
+Wenn Ihr Rechnungsstellungssystem ein bestimmtes Format erwartet, fügen Sie eine **Code**-Aktion hinzu:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Schritt 5: An Rechnungsstellungssystem senden
+
+Fügen Sie eine **HTTP-Anfrage**-Aktion hinzu:
+
+| Einstellung | Wert                                           |
+| ----------- | ---------------------------------------------- |
+| **Methode** | POST                                           |
+| **URL**     | Ihr API-Endpunkt für die Rechnungsstellung     |
+| **Header**  | `Authorization: Bearer YOUR_API_KEY`           |
+| **Inhalt**  | `{{code.invoice}}` oder Felder direkt zuordnen |
+
+### Beispiel: Stripe-Rechnung
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Beispiel: QuickBooks-Rechnung
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Vollständige Workflow-Zusammenfassung
+
+| Schritt | Aktion                           | Zweck                                                              |
+| ------- | -------------------------------- | ------------------------------------------------------------------ |
+| 1       | Auslöser: Datensatz aktualisiert | Wird ausgelöst, wenn sich eine beliebige Opportunity ändert        |
+| 2       | Filter                           | Nur fortfahren, wenn Phase = Closed Won                            |
+| 3       | Datensatz suchen                 | Vollständige Unternehmensdetails für die Rechnungsstellung abrufen |
+| 4       | Code                             | Daten für die Rechnungsstellungs-API formatieren                   |
+| 5       | HTTP-Anfrage                     | Rechnung im externen System erstellen                              |
+
+## Tipps
+
+* **Externe IDs speichern**: Speichern Sie die von der API zurückgegebene Rechnungs-ID mithilfe einer **Datensatz aktualisieren**-Aktion in der Opportunity
+* **Fehlerbehandlung**: Fügen Sie einen Zweig hinzu, um eine Benachrichtigung zu senden, wenn die HTTP-Anfrage fehlschlägt
+* **Zuerst testen**: Verwenden Sie den Sandbox-/Testmodus Ihres Rechnungsstellungssystems, bevor Sie live gehen
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Automatisierungen für Closed Won](/l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

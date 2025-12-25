@@ -1,0 +1,270 @@
+---
+title: Připravte své soubory CSV
+description: Kompletní návod krok za krokem, jak naformátovat data pro import do Twenty.
+---
+
+## Přehled
+
+Tento průvodce vás provede přípravou vašeho souboru CSV pro úspěšný import. Postupujte podle těchto kroků, abyste předešli chybám.
+
+## Krok 1: Zkontrolujte požadavky na soubor
+
+Než začnete, ujistěte se, že váš soubor splňuje tyto požadavky:
+
+| Požadavek           | Podrobnosti                 |
+| ------------------- | --------------------------- |
+| **Formát**          | CSV, XLSX nebo XLS          |
+| **Limit velikosti** | 10 000 záznamů na soubor    |
+| **Kódování**        | Doporučeno: UTF-8           |
+| **Struktura**       | Jeden typ objektu na soubor |
+
+<Note>U datasetů větších než 10 000 záznamů je rozdělte do více souborů nebo použijte [import přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Krok 2: Stáhněte si ukázkový soubor
+
+**Toto je nejdůležitější krok.** Ukázkový soubor ukazuje přesné názvy sloupců a formát, který Twenty očekává.
+
+1. Přejděte do zobrazení objektu (Osoby, Společnosti atd.)
+2. Klikněte na **⋮** → **Importovat záznamy**
+3. Klikněte na **Stáhnout ukázkový soubor**
+4. Tento soubor použijte jako svou šablonu
+
+<Note>**Profesionální tip:** Místo toho exportujte několik existujících záznamů. Tím získáte reálné příklady, jak mají být data naformátována, a názvy sloupců se během importu namapují automaticky.</Note>
+
+## Krok 3: Odstraňte duplicitní hodnoty
+
+Twenty vynucuje jedinečnost u některých polí. Duplicity způsobí chyby při importu.
+
+| Objekt              | Jedinečná pole                                               |
+| ------------------- | ------------------------------------------------------------ |
+| **Osoby**           | `id`, `email`                                                |
+| **Společnosti**     | `id`, `domain`                                               |
+| **Vlastní objekty** | `id`, plus jakékoli pole, které jste označili jako jedinečné |
+
+**Před importem:**
+
+1. Seřaďte tabulku podle jedinečného pole (e‑mailu nebo domény)
+2. Odstraňte nebo sloučte duplicitní řádky
+3. Zkontrolujte duplicity, které už v Twenty existují
+
+<Warning>**Dočasně smazané záznamy se započítávají do jedinečnosti.** Záznamy v Command Menu → See deleted records způsobí chyby kvůli duplicitám. Trvale je smažte, nebo je obnovte a aktualizujte.</Warning>
+
+## Krok 4: Správně naformátujte každý typ pole
+
+Různé typy polí vyžadují specifické formáty. Zde je úplný přehled:
+
+### Textová pole
+
+* Není vyžadováno žádné speciální formátování
+* Počáteční a koncové mezery jsou automaticky oříznuty
+
+### E‑mailová pole
+
+* Musí být ve validním formátu e‑mailu: `name@domain.com`
+* Musí být jedinečné (žádné duplicity v souboru ani v Twenty)
+* Pro další e‑maily použijte tento formát ve sloupci **E‑maily / Další e‑maily**:
+
+```
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+```
+
+### Doménová pole
+
+* **Doporučený formát**: `https://domain.com`
+* Odpovídá formátu používanému synchronizací schránky/kalendáře (předchází duplicitám)
+* Vyplňte oba sloupce:
+  * **Doména / Štítek domény**: `domain.com`
+  * **Doména / URL domény**: `https://domain.com`
+* Musí být jedinečné v rámci vašeho souboru i v Twenty
+
+### Telefonní pole
+
+Telefon je **vnořené pole**, které vyžaduje více sloupců:
+
+| Sloupec                                                | Příklad      |
+| ------------------------------------------------------ | ------------ |
+| **Telefony / Hlavní telefonní číslo**                  | `4159095555` |
+| **Telefony / Kód země hlavního telefonu**              | `US`         |
+| **Telefony / Mezinárodní předvolba hlavního telefonu** | `+1`         |
+
+### Adresní pole
+
+Adresa je **vnořené pole** s více sloupci (některé mohou zůstat prázdné):
+
+* **Adresa / Adresa 1**: Řádek adresy 1
+* **Adresa / Adresa 2**: Řádek adresy 2 (volitelné)
+* **Adresa / Město**: Název města
+* **Adresa / Stát**: Stát nebo provincie
+* **Adresa / Země**: Název země
+* **Adresa / PSČ**: Poštovní/ZIP kód
+
+### Datumová pole
+
+Používejte jednotný formát v celém souboru:
+
+* `YYYY-MM-DD` (doporučeno): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Číselná pole
+
+* Pouze čísla (bez textu)
+* Pro desetinná místa použijte tečku: `1234.56`
+* Bez oddělovačů tisíců (ne `1,234.56`)
+
+### Měnová pole
+
+Měna je **vnořené pole** vyžadující dva sloupce, které musí být oba vyplněny:
+
+| Sloupec             | Příklad   |
+| ------------------- | --------- |
+| **Částka / Částka** | `1234.56` |
+| **Částka / Měna**   | `USD`     |
+
+### Booleovská pole
+
+Používejte velká písmena: `TRUE` nebo `FALSE`
+
+<Warning>Malá písmena `true` nebo `false` nebudou fungovat.</Warning>
+
+### Výběrová Pole
+
+Použijte název API možnosti, nikoli zobrazovaný štítek.
+
+**Jak najít názvy API:**
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt a pole
+3. Zapněte **Pokročilý režim** (přepínač vpravo dole)
+4. Zkopírujte název API (např. `OPTION_1`, nikoli "Option 1")
+
+<Note>Nové možnosti výběru se nevytvářejí automaticky. Přidejte je v **Nastavení → Datový model** před importem.</Note>
+
+### Pole s vícenásobným výběrem
+
+Použijte názvy API ve formátu pole:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Pole typu array
+
+Použijte formát JSON pole:
+
+```
+["value1","value2"]
+```
+
+### Hodnoticí pole
+
+Použijte formát: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` nebo `RATING_5`
+
+### Pole odkazů/URL
+
+Vyplňte oba sloupce:
+
+* **Odkazy / Štítek odkazu**: `Twenty`
+* **Odkazy / URL odkazu**: `https://twenty.com`
+
+Pro sekundární odkazy použijte sloupec **Odkazy / Sekundární odkazy**:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### JSON pole
+
+Použijte platný formát JSON:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### ID pole
+
+* **Volitelné**: Twenty automaticky generuje ID, pokud nejsou zadána
+* **Formát**: UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Využití**: Zahrňte ID pro aktualizaci existujících záznamů místo vytváření nových
+
+## Krok 5: Přidejte relační sloupce (pokud propojujete záznamy)
+
+Chcete-li propojit záznamy s jinými objekty (např. lidi se společnostmi), přidejte sloupec s jedinečným identifikátorem souvisejícího záznamu.
+
+**Příklad**: Propojení lidí se společnostmi
+
+Přidejte do svého souboru CSV s lidmi sloupec:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Důležitá pravidla pro relace:**
+
+* Nadřazený záznam musí v Twenty již existovat
+* Použijte formát **Domain URL** (`https://domain.com`), nikoli štítek
+* Mapujte pouze JEDEN jedinečný identifikátor (nezahrnujte zároveň `companyId` i `companyDomain`)
+* U členů pracovního prostoru použijte jejich **e-mail** (ne jméno)
+
+<Warning>
+  **Pořadí importu je důležité!**
+
+  Importujte stranu "one" před stranou "many":
+
+  1. **Společnosti** jako první
+  2. **Lidé** jako druzí (s odkazem na společnost)
+  3. **Příležitosti** jako třetí
+
+  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+</Warning>
+
+Podrobné pokyny najdete v [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv).
+
+## Krok 6: Ujistěte se, že pole v Twenty existují
+
+Import vytváří záznamy, nikoli pole. Všechna pole, která chcete importovat, musí již existovat ve vašem datovém modelu.
+
+**Před importem:**
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte požadovaný objekt
+3. Vytvořte všechna vlastní pole, která potřebujete
+4. Poznamenejte si přesné názvy polí (musí odpovídat názvům sloupců)
+
+## Krok 7: Závěrečný kontrolní seznam
+
+Před nahráním souboru ověřte:
+
+<Check>Soubor je ve formátu CSV, XLSX nebo XLS</Check>
+<Check>Soubor obsahuje méně než 10 000 záznamů</Check>
+<Check>Kódování je UTF-8</Check>
+<Check>Žádné duplicitní e-maily (pro lidi) nebo domény (pro společnosti)</Check>
+<Check>Data používají jednotný formát v celém souboru</Check>
+<Check>Domény používají formát `https://domain.com`</Check>
+<Check>Booleovská pole používají `TRUE` nebo `FALSE` (velká písmena)</Check>
+<Check>Výběrová pole používají názvy API, nikoli zobrazované štítky</Check>
+<Check>Všechna vlastní pole existují v Nastavení → Datový model</Check>
+<Check>Nadřazené záznamy byly importovány před podřízenými</Check>
+<Check>Relační sloupce odkazují na existující záznamy</Check>
+
+## Časté chyby, kterým se vyhnout
+
+| Chyba                                          | Řešení                                         |
+| ---------------------------------------------- | ---------------------------------------------- |
+| Použití `true` místo `TRUE`                    | Booleovské hodnoty musí být velkými písmeny    |
+| Použití zobrazovaných štítků u výběrových polí | V Nastavení najděte a používejte názvy API     |
+| Importování lidí před společnostmi             | Vždy nejprve importujte nadřazené objekty      |
+| Chybějící kód měny u měnových polí             | Vyplňte sloupce Částka i Měna                  |
+| Nesprávný formát domény                        | Používejte konzistentně `https://domain.com`   |
+| Mapování více jedinečných polí pro relace      | Mapujte pouze JEDNO (doména NEBO id, ne obojí) |
+
+## Další kroky
+
+Váš soubor je připraven! Nyní:
+
+* [Importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv) (importujte je jako první)
+* [Importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)

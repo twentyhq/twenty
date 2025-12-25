@@ -5,7 +5,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useParams } from 'react-router-dom';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { IconInfoCircle, IconSettings, IconBroadcast } from 'twenty-ui/display';
+import { IconInfoCircle, IconSettings, IconBox } from 'twenty-ui/display';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -39,21 +39,21 @@ export const SettingsApplicationDetails = () => {
 
   const tabs = [
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
+    { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
-    { id: 'content', title: t`Content`, Icon: IconBroadcast },
   ];
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'about':
         return <SettingsApplicationDetailAboutTab application={application} />;
-      case 'settings':
-        return (
-          <SettingsApplicationDetailSettingsTab application={application} />
-        );
       case 'content':
         return (
           <SettingsApplicationDetailContentTab application={application} />
+        );
+      case 'settings':
+        return (
+          <SettingsApplicationDetailSettingsTab application={application} />
         );
       default:
         return <></>;

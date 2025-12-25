@@ -61,6 +61,7 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Bar Chart 
     {
       "createdAt": {
         "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
       },
     },
   ],
@@ -136,6 +137,7 @@ exports[`generateGroupByQueryVariablesFromBarOrLineChartConfiguration Line Chart
     {
       "createdAt": {
         "granularity": "MONTH",
+        "timeZone": "Europe/Paris",
       },
     },
   ],

@@ -101,7 +101,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
             fields,
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {},
+            filterValueDependencies: {
+              timeZone: 'UTC',
+            },
           })
         : {};
 

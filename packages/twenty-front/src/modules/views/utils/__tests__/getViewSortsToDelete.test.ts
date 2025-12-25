@@ -1,6 +1,6 @@
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { ViewSortDirection } from '~/generated/graphql';
-import { getViewSortsToDelete } from '../getViewSortsToDelete';
+import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 
 describe('getViewSortsToDelete', () => {
   const baseSort: CoreViewSortEssential = {

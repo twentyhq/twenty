@@ -286,7 +286,7 @@ msgstr "العنوان"
 #. js-lingui-id: JiOJxf
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address (deprecated) "
-msgstr "<b>العنوان</b> (غير مستخدم)"
+msgstr "العنوان (غير مستخدم)"
 
 #. js-lingui-id: Knl3c9
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3387,6 +3387,11 @@ msgstr "الحقول المطلوبة مفقودة: يجب ملء قيد فري�
 msgid "Missing required system field."
 msgstr "حقل نظامي مطلوب مفقود."
 
+#. js-lingui-id: eM40XC
+#: src/engine/api/common/common-query-runners/errors/common-query-runner.exception.ts
+msgid "Missing time zone for date group by."
+msgstr ""
+
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
@@ -3463,12 +3468,12 @@ msgstr "الاسم"
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr "هذا الاسم غير متاح"
+msgstr "الاسم \"{name}\" غير متاح"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "هذا الاسم غير متاح لأنه مستخدم بالفعل من قبل حقل آخر"
+msgstr "الاسم \"{name}\" غير متاح لأنه مستخدم بالفعل من قبل حقل آخر"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -6438,6 +6443,11 @@ msgstr "ليس لديك الإذن بإنشاء عروض على مستوى مس�
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
 msgstr "ليس لديك إذن لتعديل هذا العرض."
+
+#. js-lingui-id: hMX1AE
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "You have exhausted your credits. Please upgrade your plan to continue."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

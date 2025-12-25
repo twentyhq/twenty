@@ -1,5 +1,5 @@
 ---
-title: 塊編輯器
+title: Block Editor
 image: /images/user-guide/api/api.png
 ---
 
@@ -7,28 +7,25 @@ image: /images/user-guide/api/api.png
   <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
 
-使用來自 [BlockNote](https://www.blocknotejs.org/) 的基於塊的富文本編輯器，允許用戶編輯和查看內容塊。
+Uses a block-based rich text editor from [BlockNote](https://www.blocknotejs.org/) to allow users to edit and view blocks of content.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Usage">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-```jsx
-import { useBlockNote } from "@blocknote/react";
-import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
 
-export const MyComponent = () => {
-  const BlockNoteEditor = useBlockNote();
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
 
-  return <BlockEditor editor={BlockNoteEditor} />;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 屬性  | 類型             | 描述        |
-| --- | -------------- | --------- |
-| 編輯器 | `BlockNote編輯器` | 塊編輯器實例或配置 |
-
-</Tab>
+  <Tab title="Props">
+    | Props  | Type              | Description                                |
+    | ------ | ----------------- | ------------------------------------------ |
+    | editor | `BlockNoteEditor` | The block editor instance or configuration |
+  </Tab>
 </Tabs>

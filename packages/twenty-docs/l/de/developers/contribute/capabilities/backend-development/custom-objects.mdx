@@ -1,0 +1,39 @@
+---
+title: Benutzerdefinierte Objekte
+---
+
+Objekte sind Strukturen, die es Ihnen ermöglichen, Daten (Aufzeichnungen, Attribute und Werte) zu speichern, die spezifisch für eine Organisation sind. Twenty bietet sowohl Standard- als auch benutzerdefinierte Objekte.
+
+Standard objects are in-built objects with a set of attributes available for all users. Beispiele für Standardobjekte in Twenty sind Unternehmen und Person. Standardobjekte verfügen über Standardfelder, die ebenfalls allen Twenty-Nutzern zur Verfügung stehen, wie z.B. Unternehmen.displayName.
+
+Benutzerdefinierte Objekte sind Objekte, die Sie erstellen können, um Informationen zu speichern, die einzigartig für Ihre Organisation sind. Sie sind nicht eingebaut; Mitglieder Ihres Arbeitsbereichs können benutzerdefinierte Objekte erstellen und anpassen, um Informationen zu speichern, für die Standardobjekte nicht geeignet sind.
+
+## High-level schema
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Schema auf hoher Ebene" />
+</div>
+
+<br />
+
+## Wie es funktioniert
+
+Benutzerdefinierte Objekte stammen aus Metadatentabellen, die Form, Namen und Typ der Objekte bestimmen. Alle diese Informationen sind in der Metadaten-Schema-Datenbank vorhanden, die aus Tabellen besteht:
+
+* **Datenquelle**: Gibt an, wo die Daten vorhanden sind.
+* **Objekt**: Beschreibt das Objekt und verlinkt zu einer Datenquelle.
+* **Feld**: Umreißt die Felder eines Objekts und verbindet es mit dem Objekt.
+
+Um ein benutzerdefiniertes Objekt hinzuzufügen, wird das Arbeitsbereichsmitglied die /metadata API abfragen. Dies aktualisiert die Metadaten entsprechend und berechnet ein GraphQL-Schema basierend auf den Metadaten, das in einem GQL-Cache für die spätere Verwendung gespeichert wird.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Fragen Sie die /metadata API ab, um benutzerdefinierte Objekte hinzuzufügen" />
+</div>
+
+<br />
+
+Um Daten abzurufen, wird der Prozess durchgeführt, indem Abfragen über den /graphql-Endpunkt erstellt und über den Abfrage-Resolver weitergeleitet werden.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Fragen Sie den /graphql-Endpunkt ab, um Daten abzurufen" />
+</div>

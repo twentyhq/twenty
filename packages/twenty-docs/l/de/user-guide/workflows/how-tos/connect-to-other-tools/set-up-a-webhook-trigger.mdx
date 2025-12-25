@@ -1,0 +1,171 @@
+---
+title: Webhook-Trigger einrichten
+description: Empfangen Sie Daten von externen Diensten, um Workflows auszulösen.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Webhook-Trigger ermöglichen es externen Diensten, Ihre Workflows zu starten, indem sie Daten an eine eindeutige URL senden. Verwenden Sie sie, um Formulare, Drittanbieter-Apps und benutzerdefinierte Integrationen zu verbinden.
+
+## Wann Sie Webhooks verwenden sollten
+
+| Anwendungsfall                       | Beispiel                                          |
+| ------------------------------------ | ------------------------------------------------- |
+| **Webformulare**                     | Einsendungen von Kontaktformularen erzeugen Leads |
+| **Drittanbieter-Apps**               | Stripe-Zahlung → Kundendatensatz erstellen        |
+| **Benutzerdefinierte Integrationen** | Ihre App → Twenty-Automatisierung                 |
+| **No-Code-Tools**                    | Zapier-, Make- und n8n-Verbindungen               |
+
+## Schritt-für-Schritt-Einrichtung
+
+### Schritt 1: Workflow erstellen
+
+1. Gehen Sie zu **Einstellungen → Workflows**
+2. Klicken Sie auf **+ Neuer Workflow**
+3. Benennen Sie ihn (z. B. „Website-Formularübermittlung“)
+
+### Schritt 2: Webhook-Trigger konfigurieren
+
+1. Klicken Sie auf den Trigger-Block
+2. Wählen Sie **Webhook** aus
+3. Sie erhalten eine eindeutige Webhook-URL wie:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Kopieren Sie diese URL — Sie benötigen sie für Ihren externen Dienst
+
+### Schritt 3: Erwartete Datenstruktur definieren
+
+Bei **POST**-Anfragen die erwartete Body-Struktur definieren:
+
+1. Klicken Sie auf **Erwarteten Body definieren**
+2. Geben Sie ein Beispiel-JSON ein, das dem entspricht, was Ihr Dienst sendet:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Klicken Sie auf **Speichern** — dadurch werden Variablen erstellt, die Sie in den nächsten Schritten verwenden können.
+
+### Schritt 4: Aktionen hinzufügen
+
+Fügen Sie nun Aktionen hinzu, die die Webhook-Daten verwenden:
+
+**Beispiel: Einen Personendatensatz erstellen**
+
+1. Fügen Sie die Aktion **Datensatz erstellen** hinzu
+2. Wählen Sie das Objekt **Personen** aus
+3. Felder zuordnen:
+
+| Feld        | Wert                                                               |
+| ----------- | ------------------------------------------------------------------ |
+| Vorname     | `{{trigger.body.firstName}}`                                       |
+| Nachname    | `{{trigger.body.lastName}}`                                        |
+| E-Mail      | `{{trigger.body.email}}`                                           |
+| Unternehmen | Suchen oder erstellen Sie basierend auf `{{trigger.body.company}}` |
+
+### Schritt 5: Den Webhook testen
+
+Testen Sie Ihren Webhook, bevor Sie ihn aktivieren:
+
+**Mit cURL**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Mit Postman oder ähnlichen Tools**:
+
+1. Erstellen Sie eine POST-Anfrage an Ihre Webhook-URL
+2. Setzen Sie den Content-Type-Header auf `application/json`
+3. Fügen Sie Ihren Test-JSON-Body hinzu
+4. Senden und die Workflow-Ausführungen prüfen
+
+### Schritt 6: Aktivieren
+
+Nach dem Testen klicken Sie auf **Aktivieren**, um den Workflow live zu schalten.
+
+## Umgang mit unterschiedlichen Datenstrukturen
+
+### Verschachtelte Daten
+
+Wenn Ihr Webhook verschachtelte Daten sendet:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Referenzieren mit: `{{trigger.body.contact.email}}`
+
+### Arrays
+
+Wenn die Daten Arrays enthalten:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+Wie Sie Arrays handhaben, hängt von Ihrem Anwendungsfall ab:
+
+**Unbekannte Anzahl von Elementen → Iterator verwenden**
+
+Wenn Sie jedes Element im Array verarbeiten müssen (z. B. für jedes einen Datensatz erstellen), fügen Sie eine **Code**-Aktion hinzu, um das Array zu parsen, und verwenden Sie anschließend **Iterator**:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Verwenden Sie dann Iterator, um zu iterieren: `{{code.items}}`
+
+**Bekannte/spezifische Felder → In benannte Felder extrahieren**
+
+Wenn das Array bestimmte Felder enthält, auf die Sie einzeln zugreifen möchten (z. B. Formularantworten, bei denen Position 0 immer „Vorname“ und Position 1 immer „Nachname“ ist), fügen Sie eine **Code**-Aktion hinzu, um sie zu extrahieren:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Jetzt können Sie `product.name` und `product.qty` in den folgenden Schritten jeweils einzeln auswählen.
+
+<Tip>
+  Weitere Details zum Umgang mit Arrays finden Sie unter [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)

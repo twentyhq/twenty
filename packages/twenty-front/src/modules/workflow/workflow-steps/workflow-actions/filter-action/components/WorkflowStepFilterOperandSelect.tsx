@@ -3,6 +3,8 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
+
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
@@ -27,7 +29,7 @@ export const WorkflowStepFilterOperandSelect = ({
 
   const options = operands.map((operand) => ({
     value: operand,
-    label: getOperandLabel(operand),
+    label: getOperandLabel(operand, WORKFLOW_TIMEZONE),
   }));
 
   const { getRelativeDateFilterWithUserTimezone } =

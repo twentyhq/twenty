@@ -898,7 +898,6 @@ export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToApplications?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -1296,7 +1295,6 @@ export enum FeatureFlagKey {
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
-  IS_READ_ON_REPLICA_ENABLED = 'IS_READ_ON_REPLICA_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
@@ -4254,7 +4252,6 @@ export type UpdateRolePayload = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToApplications?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;

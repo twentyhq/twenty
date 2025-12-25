@@ -1,0 +1,101 @@
+---
+title: Команды бекэнда
+---
+
+## Полезные команды
+
+Эти команды следует выполнять из папки packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Первоначальная настройка
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Запуск сервера
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # добавьте --fix для устранения ошибок линтера
+```
+
+### Тест
+
+```
+npx nx run twenty-server:test:unit # запуск модульных тестов
+npx nx run twenty-server:test:integration # запуск интеграционных тестов
+```
+
+Примечание: вы можете использовать `npx nx run twenty-server:test:integration:with-db-reset`, если необходимо сбросить базу данных перед выполнением интеграционных тестов.
+
+### Сброс базы данных
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Миграции
+
+#### Для объектов в схемах Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Для объектов Рабочего пространства
+
+Файлов миграций нет, миграции создаются автоматически для каждого рабочего пространства,
+хранятся в базе данных и применяются этой командой
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  Это удалит базу данных, переустановит миграции и семена.
+
+  Убедитесь, что создали резервную копию данных, которые хотите сохранить, прежде чем выполнять эту команду.
+</Warning>
+
+## Технологический стек
+
+Для работы с серверной частью Twenty в основном использует NestJS.
+
+Prisma был первым ORM, который мы использовали. Но чтобы пользователи могли создавать собственные поля и объекты, использование более низкого уровня было более логичным, так как нам нужен был тонкий контроль. Теперь проект использует TypeORM.
+
+Вот как теперь выглядит стек технологий.
+
+**Ядро**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**База данных**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Интеграции сторонних решений**
+
+* [Sentry](https://sentry.io/welcome/) для отслеживания ошибок
+
+**Тестирование**
+
+* [Jest](https://jestjs.io/)
+
+**Инструменты**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Разработка**
+
+* [AWS EKS](https://aws.amazon.com/eks/)
