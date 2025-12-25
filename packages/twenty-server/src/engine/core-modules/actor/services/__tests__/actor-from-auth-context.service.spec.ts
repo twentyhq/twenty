@@ -7,7 +7,7 @@ import {
   type FullNameMetadata,
 } from 'twenty-shared/types';
 
-import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';

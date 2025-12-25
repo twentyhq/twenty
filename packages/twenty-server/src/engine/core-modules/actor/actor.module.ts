@@ -8,7 +8,7 @@ import { UpdatedByUpdateOnePreQueryHook } from 'src/engine/core-modules/actor/qu
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
-import { ActorFromAuthContextService } from './services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from './services/actor-from-auth-context.service';
 
 @Module({
   imports: [

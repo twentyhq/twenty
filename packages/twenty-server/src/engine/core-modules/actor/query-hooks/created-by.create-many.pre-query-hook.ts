@@ -11,7 +11,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import {
   ActorFromAuthContextService,
   type RecordInput,
-} from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+} from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook(`*.createMany`)
