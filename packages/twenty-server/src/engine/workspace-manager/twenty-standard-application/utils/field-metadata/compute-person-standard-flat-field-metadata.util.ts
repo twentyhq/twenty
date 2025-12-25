@@ -297,11 +297,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconUserCircle',
       isUIReadOnly: true,
       isNullable: true,
-      defaultValue: {
-        source: "'MANUAL'",
-        name: "'System'",
-        workspaceMemberId: null,
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
